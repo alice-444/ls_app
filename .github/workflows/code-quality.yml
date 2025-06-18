@@ -1,9 +1,10 @@
-name: Build ✅
+name: Qualité de code 🔍
 
 on:
   push:
     branches:
       - main
+      - prod
       - dev
       - feat/*
       - fix/*
@@ -13,22 +14,23 @@ on:
   pull_request:
     branches:
       - main
+      - prod
       - dev
       - feat/*
       - fix/*
       - docs/*
       - test/*
       - style/*
-#     types: [opened, synchronize, reopened]
+
 jobs:
   sonarqube:
-    name: SonarQube
+    name: SonarQube Analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 

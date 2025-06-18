@@ -1,0 +1,45 @@
+name: Tests 🧪
+
+on:
+  push:
+    branches:
+      - main
+      - prod
+      - dev
+      - feat/*
+      - fix/*
+      - docs/*
+      - test/*
+      - style/*
+  pull_request:
+    branches:
+      - main
+      - prod
+      - dev
+      - feat/*
+      - fix/*
+      - docs/*
+      - test/*
+      - style/*
+
+jobs:
+  cypress-run:
+    name: Cypress Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start
+          wait-on: "http://localhost:3000"
+          record: true
+          parallel: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
