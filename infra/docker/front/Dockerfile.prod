@@ -1,0 +1,75 @@
+FROM node:iron-bookworm AS base
+
+# Installer pnpm
+RUN npm install -g pnpm
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Copier les fichiers de configuration pnpm
+COPY package.json pnpm-lock.yaml* ./
+COPY .npmrc* ./
+
+# Installer les dépendances avec pnpm
+RUN pnpm install --frozen-lockfile --prod=false
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+
+# Copier les dépendances installées
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Variables d'environnement pour le build
+# Ces variables peuvent être passées via --build-arg lors du docker build
+ARG NODE_ENV=production
+ARG NEXT_TELEMETRY_DISABLED=1
+
+# Définir les variables d'environnement pour le build Next.js
+ENV NODE_ENV=$NODE_ENV
+ENV NEXT_TELEMETRY_DISABLED=$NEXT_TELEMETRY_DISABLED
+
+# Variables d'environnement personnalisées (remplacez par vos vraies variables)
+# Ces variables seront récupérées depuis les secrets GitLab
+# ARG DATABASE_URL
+# ARG JWT_SECRET
+# ARG API_KEY
+ARG NEXT_PUBLIC_APP_URL
+
+# Les rendre disponibles pour Next.js
+# ENV DATABASE_URL=$DATABASE_URL
+# ENV JWT_SECRET=$JWT_SECRET
+# ENV API_KEY=$API_KEY
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+
+# Build the application with pnpm
+RUN pnpm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# Note: Si votre next.config.ts n'a pas `output: 'standalone'`, vous devrez l'ajouter
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
