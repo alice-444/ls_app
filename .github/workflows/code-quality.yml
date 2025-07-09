@@ -7,8 +7,6 @@ on:
       - prod
       - dev
       - feat/*
-      - fix/*
-      - hotfix/*
     paths:
       - "src/**"
       - "**/*.js"
@@ -24,8 +22,6 @@ on:
       - prod
       - dev
       - feat/*
-      - fix/*
-      - hotfix/*
     paths:
       - "src/**"
       - "**/*.js"
