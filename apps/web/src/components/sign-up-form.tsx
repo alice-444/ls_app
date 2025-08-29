@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignUpForm({
 	onSwitchToSignIn,
@@ -15,6 +16,7 @@ export default function SignUpForm({
 }) {
 	const router = useRouter();
 	const { isPending } = authClient.useSession();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm({
 		defaultValues: {
@@ -24,6 +26,7 @@ export default function SignUpForm({
 			username: "",
 		},
 		onSubmit: async ({ value }) => {
+			setIsSubmitting(true);
 			try {
 				const result = await customAuthClient.signUpEmail(
 					value.email,
@@ -31,9 +34,27 @@ export default function SignUpForm({
 					value.name,
 					value.username
 				);
-				router.push("/dashboard");
-				toast.success("Sign up successful");
+				
+				authClient.signIn.email(
+					{
+						email: value.email,
+						password: value.password,
+					},
+					{
+						onSuccess: () => {
+							setIsSubmitting(false);
+							router.push("/dashboard");
+							toast.success("Account created and signed in successfully!");
+						},
+						onError: (error) => {
+							setIsSubmitting(false);
+							toast.error("Account created but sign in failed. Please sign in manually.");
+							router.push("/login");
+						},
+					},
+				);
 			} catch (error) {
+				setIsSubmitting(false);
 				toast.error(error instanceof Error ? error.message : "Sign up failed");
 			}
 		},
@@ -74,6 +95,7 @@ export default function SignUpForm({
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
+									disabled={isSubmitting}
 								/>
 								{field.state.meta.errors.map((error) => (
 									<p key={error?.message} className="text-red-500">
@@ -96,6 +118,7 @@ export default function SignUpForm({
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
+									disabled={isSubmitting}
 								/>
 								{field.state.meta.errors.map((error) => (
 									<p key={error?.message} className="text-red-500">
@@ -119,6 +142,7 @@ export default function SignUpForm({
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
+									disabled={isSubmitting}
 								/>
 								{field.state.meta.errors.map((error) => (
 									<p key={error?.message} className="text-red-500">
@@ -142,6 +166,7 @@ export default function SignUpForm({
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
+									disabled={isSubmitting}
 								/>
 								{field.state.meta.errors.map((error) => (
 									<p key={error?.message} className="text-red-500">
@@ -158,9 +183,9 @@ export default function SignUpForm({
 						<Button
 							type="submit"
 							className="w-full"
-							disabled={!state.canSubmit || state.isSubmitting}
+							disabled={!state.canSubmit || isSubmitting}
 						>
-							{state.isSubmitting ? "Submitting..." : "Sign Up"}
+							{isSubmitting ? "Creating Account..." : "Sign Up"}
 						</Button>
 					)}
 				</form.Subscribe>
@@ -171,6 +196,7 @@ export default function SignUpForm({
 					variant="link"
 					onClick={onSwitchToSignIn}
 					className="text-indigo-600 hover:text-indigo-800"
+					disabled={isSubmitting}
 				>
 					Already have an account? Sign In
 				</Button>
