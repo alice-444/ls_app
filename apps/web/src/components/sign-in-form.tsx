@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function SignInForm({
@@ -221,6 +222,11 @@ export default function SignInForm({
 						</Button>
 					)}
 				</form.Subscribe>
+				<div className="mt-2 text-right">
+					<Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-800">
+						Forgot password?
+					</Link>
+				</div>
 			</form>
 
 			<div className="mt-4 text-center">
