@@ -1,7 +1,7 @@
 import { authClient, customAuthClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
+import { z } from "zod";
 import { toast } from "sonner";
-import z from "zod";
 import Loader from "./loader";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -18,6 +18,17 @@ export default function SignInForm({
 	const { isPending } = authClient.useSession();
 	const [loginMethod, setLoginMethod] = useState<"email" | "username">("email");
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const signInSchema = z
+		.object({
+			email: z.string().email("Invalid email").optional(),
+			username: z.string().min(1, "Username is required").optional(),
+			password: z.string().min(1, "Password is required"),
+		})
+		.refine((v) => !!v.email || !!v.username, {
+			message: "Email or username is required",
+			path: ["email"],
+		});
 
 	const form = useForm({
 		defaultValues: {
@@ -69,11 +80,16 @@ export default function SignInForm({
 			}
 		},
 		validators: {
-			onSubmit: z.object({
-				email: z.string().optional(),
-				username: z.string().optional(),
-				password: z.string().min(1, "Password is required"),
-			}),
+			onSubmit: ({ value }) => {
+				const parsed = signInSchema.safeParse(value);
+				if (parsed.success) return;
+				const fieldErrors: Record<string, string[]> = {};
+				for (const issue of parsed.error.issues) {
+					const key = issue.path.join(".") || "form";
+					fieldErrors[key] = [...(fieldErrors[key] ?? []), issue.message];
+				}
+				return { fields: fieldErrors };
+			},
 		},
 	});
 
@@ -135,8 +151,8 @@ export default function SignInForm({
 										disabled={isSubmitting}
 									/>
 									{field.state.meta.errors.map((error) => (
-										<p key={error?.message} className="text-red-500">
-											{error?.message}
+										<p key={error} className="text-red-500">
+											{error}
 										</p>
 									))}
 								</div>
@@ -159,8 +175,8 @@ export default function SignInForm({
 										disabled={isSubmitting}
 									/>
 									{field.state.meta.errors.map((error) => (
-										<p key={error?.message} className="text-red-500">
-											{error?.message}
+										<p key={error} className="text-red-500">
+											{error}
 										</p>
 									))}
 								</div>
@@ -185,8 +201,8 @@ export default function SignInForm({
 									disabled={isSubmitting}
 								/>
 								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
+									<p key={error} className="text-red-500">
+										{error}
 									</p>
 								))}
 							</div>

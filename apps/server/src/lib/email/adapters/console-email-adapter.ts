@@ -1,4 +1,4 @@
-import { EmailPort, ResetPasswordEmailParams } from "../ports";
+import type { EmailPort, ResetPasswordEmailParams } from "../ports";
 
 export class ConsoleEmailAdapter implements EmailPort {
   async sendResetPasswordEmail(
