@@ -56,23 +56,24 @@ jobs:
           fetch-depth: 0
 
       - name: Super-linter
-        uses: super-linter/super-linter@v7.4.0
+        uses: super-linter/super-linter@v8.2.0
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ENABLE_LINTERS: |
-            GITLEAKS,
-            GIT_MERGE_CONFLICT_MARKERS,
-            JAVASCRIPT_ES,
-            JAVASCRIPT_PRETTIER,
-            JAVASCRIPT_STANDARD,
-            JSON,
-            JSONC,
-            YAML,
-            TYPESCRIPT_ES,
-            TYPESCRIPT_PRETTIER,
-            TYPESCRIPT_STANDARD,
-            TSX
+          DISABLE_LINTERS: CHECKOV,CSS,CSS_PRETTIER,ENV,GITHUB_ACTIONS,JSCPD,JSON_PRETTIER,JSONC_PRETTIER,MARKDOWN,MARKDOWN_PRETTIER,NATURAL_LANGUAGE,YAML_PRETTIER
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_JAVASCRIPT_PRETTIER: true
+          VALIDATE_JAVASCRIPT_STANDARD: true
+          VALIDATE_JSON: true
+          VALIDATE_JSONC: true
+          VALIDATE_YAML: true
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_TYPESCRIPT_STANDARD: true
+          VALIDATE_TSX: true
+          VALIDATE_GITLEAKS: true
+          VALIDATE_GIT_MERGE_CONFLICT_MARKERS: true
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
