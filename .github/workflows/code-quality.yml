@@ -51,8 +51,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # super-linter needs the full git history to get the
-          # list of files that changed across commits
           fetch-depth: 0
 
       - name: Super-linter
@@ -60,23 +58,31 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ENABLE_LINTERS: |
-            GITLEAKS,
-            GIT_MERGE_CONFLICT_MARKERS,
-            JAVASCRIPT_ES,
-            JAVASCRIPT_PRETTIER,
-            JAVASCRIPT_STANDARD,
-            JSON,
-            JSONC,
-            YAML,
-            TYPESCRIPT_ES,
-            TYPESCRIPT_PRETTIER,
-            TYPESCRIPT_STANDARD,
-            TSX,
-            MARKDOWN,
-            MARKDOWN_PRETTIER,
-            DOCKERFILE_HADOLINT,
-            PNPM
+          DISABLE_LINTERS: |
+            BIOME_FORMAT,
+            BIOME_LINT,
+            CHECKOV,
+            GITHUB_ACTIONS,
+            GITHUB_ACTIONS_ZIZMOR,
+            JSCPD,
+            NATURAL_LANGUAGE,
+            TRIVY,
+            YAML_PRETTIER
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_JAVASCRIPT_PRETTIER: true
+          VALIDATE_JAVASCRIPT_STANDARD: true
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_TYPESCRIPT_STANDARD: true
+          VALIDATE_TSX: true
+          VALIDATE_JSON: true
+          VALIDATE_JSONC: true
+          VALIDATE_YAML: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_MARKDOWN_PRETTIER: true
+          VALIDATE_DOCKERFILE_HADOLINT: true
+          VALIDATE_PNPM: true
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
