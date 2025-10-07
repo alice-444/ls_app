@@ -16,6 +16,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "yarn.lock"
+      - ".github/workflows/**"
   pull_request:
     branches:
       - main
@@ -31,6 +32,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "yarn.lock"
+      - ".github/workflows/**"
 
 permissions: {}
 
