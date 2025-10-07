@@ -58,7 +58,19 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          ENABLE_LINTERS: |
+            GITLEAKS,
+            GIT_MERGE_CONFLICT_MARKERS,
+            JAVASCRIPT_ES,
+            JAVASCRIPT_PRETTIER,
+            JAVASCRIPT_STANDARD,
+            JSON,
+            JSONC,
+            YAML,
+            TYPESCRIPT_ES,
+            TYPESCRIPT_PRETTIER,
+            TYPESCRIPT_STANDARD,
+            TSX
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
