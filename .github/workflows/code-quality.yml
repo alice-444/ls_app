@@ -60,19 +60,19 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ENABLE_LINTERS: |
-            GITLEAKS,
-            GIT_MERGE_CONFLICT_MARKERS,
-            JAVASCRIPT_ES,
-            JAVASCRIPT_PRETTIER,
-            JAVASCRIPT_STANDARD,
-            JSON,
-            JSONC,
-            YAML,
-            TYPESCRIPT_ES,
-            TYPESCRIPT_PRETTIER,
-            TYPESCRIPT_STANDARD,
-            TSX
+          DISABLE_LINTERS: |
+            CHECKOV,
+            CSS,
+            CSS_PRETTIER,
+            ENV,
+            GITHUB_ACTIONS,
+            JSCPD,
+            JSON_PRETTIER,
+            JSONC_PRETTIER,
+            MARKDOWN,
+            MARKDOWN_PRETTIER,
+            NATURAL_LANGUAGE,
+            YAML_PRETTIER
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
@@ -174,3 +174,4 @@ jobs:
               
               _Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}_`
             });
+·
