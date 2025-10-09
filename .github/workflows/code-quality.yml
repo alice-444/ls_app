@@ -38,7 +38,7 @@ permissions: {}
 
 jobs:
   super-linter:
-    name: Lint Code Base
+    name: Super-Linter
     runs-on: ubuntu-latest
 
     permissions:
@@ -55,36 +55,7 @@ jobs:
       - name: Super-linter
         uses: super-linter/super-linter@v8.2.0
         env:
-          # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DISABLE_LINTERS: |
-            BIOME_FORMAT,
-            BIOME_LINT,
-            CHECKOV,
-            GITHUB_ACTIONS,
-            GITHUB_ACTIONS_ZIZMOR,
-            JSCPD,
-            NATURAL_LANGUAGE,
-            TRIVY,
-            YAML_PRETTIER
-          
-          ENABLE_LINTERS: |
-            GITLEAKS,
-            GIT_MERGE_CONFLICT_MARKERS,
-            JAVASCRIPT_ES,
-            JAVASCRIPT_PRETTIER,
-            JAVASCRIPT_STANDARD,
-            TYPESCRIPT_ES,
-            TYPESCRIPT_PRETTIER,
-            TYPESCRIPT_STANDARD,
-            TSX,
-            JSON,
-            JSONC,
-            YAML,
-            MARKDOWN,
-            MARKDOWN_PRETTIER,
-            DOCKERFILE_HADOLINT,
-            PNPM
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
