@@ -24,4 +24,21 @@ export const customAuthClient = {
 
 		return response.json();
 	},
+	async selectRole(role: "PROF" | "APPRENANT") {
+		const response = await fetch(`${baseURL}/api/onboarding/select-role`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+			body: JSON.stringify({ role }),
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.error || "Failed to select role");
+		}
+
+		return response.json();
+	},
 };

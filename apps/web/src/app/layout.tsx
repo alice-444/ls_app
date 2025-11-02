@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "szz",
-	description: "szz",
+	title: "LearnSup",
+	description: "LearnSup is a platform for learning and/or teaching between students",
 };
 
 export default function RootLayout({

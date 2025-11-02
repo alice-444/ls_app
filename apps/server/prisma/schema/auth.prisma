@@ -65,7 +65,8 @@ model Verification {
 }
 
 enum Role {
-  USER
+  PROF
+  APPRENANT
   ADMIN
 }
 
@@ -79,7 +80,7 @@ model AppUser {
   id        String        @id @map("_id")
   userId    String        @unique
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      Role          @default(USER)
+  role      Role?
   status    AppUserStatus @default(PENDING)
   createdAt DateTime
   updatedAt DateTime

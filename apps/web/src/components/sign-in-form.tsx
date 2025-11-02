@@ -1,4 +1,4 @@
-import { authClient, customAuthClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -16,62 +16,39 @@ export default function SignInForm({
 }) {
 	const router = useRouter();
 	const { isPending } = authClient.useSession();
-	const [loginMethod, setLoginMethod] = useState<"email" | "username">("email");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm({
 		defaultValues: {
 			email: "",
-			username: "",
 			password: "",
 		},
 		onSubmit: async ({ value }) => {
-			const { email, username, password } = value;
+			const { email, password } = value;
 			
 			setIsSubmitting(true);
 			
-			if (loginMethod === "email" && email) {
-				authClient.signIn.email(
-					{
-						email,
-						password,
+			authClient.signIn.email(
+				{
+					email,
+					password,
+				},
+				{
+					onSuccess: () => {
+						setIsSubmitting(false);
+						router.push("/dashboard");
+						toast.success("Sign in successful");
 					},
-					{
-						onSuccess: () => {
-							setIsSubmitting(false);
-							router.push("/dashboard");
-							toast.success("Sign in successful");
-						},
-						onError: (error) => {
-							setIsSubmitting(false);
-							toast.error(error.error.message || error.error.statusText);
-						},
+					onError: (error) => {
+						setIsSubmitting(false);
+						toast.error(error.error.message || error.error.statusText);
 					},
-				);
-			} else if (loginMethod === "username" && username) {
-				authClient.signIn.username(
-					{
-						username,
-						password,
-					},
-					{
-						onSuccess: () => {
-							setIsSubmitting(false);
-							router.push("/dashboard");
-							toast.success("Sign in successful");
-						},
-						onError: (error) => {
-							setIsSubmitting(false);
-							toast.error(error.error.message || error.error.statusText);
-						},
-					},
-				);
-			}
+				},
+			);
 		},
 		validators: {
 			onSubmit: z.object({
-				email: z.string().optional(),
-				username: z.string().optional(),
+				email: z.string().email("Invalid email address"),
 				password: z.string().min(1, "Password is required"),
 			}),
 		},
@@ -85,31 +62,6 @@ export default function SignInForm({
 		<div className="mx-auto w-full mt-10 max-w-md p-6">
 			<h1 className="mb-6 text-center text-3xl font-bold">Welcome Back</h1>
 
-			<div className="mb-6 flex rounded-lg border p-1">
-				<button
-					type="button"
-					onClick={() => setLoginMethod("email")}
-					className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-						loginMethod === "email"
-							? "bg-indigo-600 text-white"
-							: "text-gray-600 hover:text-gray-900"
-					}`}
-				>
-					Email
-				</button>
-				<button
-					type="button"
-					onClick={() => setLoginMethod("username")}
-					className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-						loginMethod === "username"
-							? "bg-indigo-600 text-white"
-							: "text-gray-600 hover:text-gray-900"
-					}`}
-				>
-					Username
-				</button>
-			</div>
-
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -118,56 +70,30 @@ export default function SignInForm({
 				}}
 				className="space-y-4"
 			>
-				{loginMethod === "email" ? (
-					<div>
-						<form.Field name="email">
-							{(field) => (
-								<div className="space-y-2">
-									<Label htmlFor={field.name}>Email</Label>
-									<Input
-										id={field.name}
-										name={field.name}
-										type="email"
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value)}
-										required
-										disabled={isSubmitting}
-									/>
-									{field.state.meta.errors.map((error) => (
-										<p key={error?.message} className="text-red-500">
-											{error?.message}
-										</p>
-									))}
-								</div>
-							)}
-						</form.Field>
-					</div>
-				) : (
-					<div>
-						<form.Field name="username">
-							{(field) => (
-								<div className="space-y-2">
-									<Label htmlFor={field.name}>Username</Label>
-									<Input
-										id={field.name}
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value)}
-										required
-										disabled={isSubmitting}
-									/>
-									{field.state.meta.errors.map((error) => (
-										<p key={error?.message} className="text-red-500">
-											{error?.message}
-										</p>
-									))}
-								</div>
-							)}
-						</form.Field>
-					</div>
-				)}
+				<div>
+					<form.Field name="email">
+						{(field) => (
+							<div className="space-y-2">
+								<Label htmlFor={field.name}>Email</Label>
+								<Input
+									id={field.name}
+									name={field.name}
+									type="email"
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									required
+									disabled={isSubmitting}
+								/>
+								{field.state.meta.errors.map((error) => (
+									<p key={error?.message} className="text-red-500">
+										{error?.message}
+									</p>
+								))}
+							</div>
+						)}
+					</form.Field>
+				</div>
 
 				<div>
 					<form.Field name="password">

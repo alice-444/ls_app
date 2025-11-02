@@ -1,16 +1,10 @@
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 
-export const signInInputSchema = z
-	.object({
-		email: z.string().email().optional(),
-		username: z.string().min(3).max(30).optional(),
-		password: z.string().min(8),
-	})
-	.refine((data) => Boolean(data.email || data.username), {
-		message: "Provide email or username",
-		path: ["email"],
-	});
+export const signInInputSchema = z.object({
+	email: z.string().email("Invalid email address"),
+	password: z.string().min(8, "Password must be at least 8 characters"),
+});
 
 type Success<T> = { ok: true; data: T };
 type Failure = { ok: false; error: string; status?: number };
@@ -27,10 +21,8 @@ export class SignInService {
 			};
 		}
 		try {
-			const { email, username, password } = parsed.data;
-			const data = email
-				? await auth.api.signInEmail({ body: { email, password }, headers })
-				: await auth.api.signInUsername({ body: { username: username as string, password }, headers });
+			const { email, password } = parsed.data;
+			const data = await auth.api.signInEmail({ body: { email, password }, headers });
 			if (!data || !data.user) {
 				return { ok: false, error: "Unexpected authentication response", status: 500 };
 			}
