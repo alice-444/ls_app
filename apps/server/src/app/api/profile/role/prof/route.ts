@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { OnboardingService } from "@/lib/auth/services/onboarding";
 import { auth } from "@/lib/auth";
+import { ProfProfileService } from "@/lib/auth/services/prof-profile.service";
 import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
-import { onboardingRateLimit } from "@/lib/rate-limit";
+import { profileRateLimit } from "@/lib/rate-limit";
 
 const appUserRepository = new PrismaAppUserRepository(prisma);
-const service = new OnboardingService(appUserRepository);
+const service = new ProfProfileService(appUserRepository);
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,8 +21,7 @@ export async function POST(req: NextRequest) {
 
     // Rate limiting
     const identifier = session.user.id;
-    const { success, limit, reset, remaining } =
-      await onboardingRateLimit.limit(identifier);
+    const { success, limit, reset, remaining } = await profileRateLimit.limit(identifier);
 
     if (!success) {
       return NextResponse.json(
@@ -44,7 +43,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const result = await service.selectRole(session.user.id, body);
+    const result = await service.saveProfile(session.user.id, body);
 
     if (!result.ok) {
       return NextResponse.json(
@@ -57,9 +56,11 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Internal server error",
+        error:
+          error instanceof Error ? error.message : "Internal server error",
       },
       { status: 500 }
     );
   }
 }
+

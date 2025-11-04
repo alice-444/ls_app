@@ -51,8 +51,31 @@ export function useOnboarding() {
       setIsSubmitting(true);
 
       try {
-        // TODO: Save the prof profile via API
-        // await saveProfProfile(data);
+        let photoUrl: string | null = null;
+
+        // Upload photo if provided
+        if (data.photo) {
+          try {
+            const uploadResult = await customAuthClient.uploadPhoto(data.photo);
+            photoUrl = uploadResult.photoUrl;
+          } catch (error) {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : "Erreur lors de l'upload de la photo"
+            );
+            setIsSubmitting(false);
+            return;
+          }
+        }
+
+        // Save profile
+        await customAuthClient.saveProfProfile({
+          name: data.name,
+          bio: data.bio,
+          domain: data.domain,
+          photoUrl,
+        });
 
         toast.success("Profil créé avec succès !");
         setIsSubmitting(false);
@@ -60,7 +83,11 @@ export function useOnboarding() {
           router.push("/workshop-editor");
         }, 1500);
       } catch (error) {
-        toast.error("Erreur lors de la sauvegarde du profil");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Erreur lors de la sauvegarde du profil"
+        );
         setIsSubmitting(false);
       }
     },

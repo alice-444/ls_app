@@ -44,6 +44,22 @@ export class OnboardingService {
           status: "ACTIVE",
         });
       } else {
+        // Verify that the user does not have a role assigned
+        if (appUser.role !== null) {
+          return failure(
+            "Role already assigned. Cannot change role after onboarding.",
+            403
+          );
+        }
+
+        // Verify that the user is in PENDING status
+        if (appUser.status !== "PENDING") {
+          return failure(
+            "User must be in PENDING status to select role",
+            400
+          );
+        }
+
         // Update the role and activate the user
         appUser = await this.appUserRepository.update(userId, {
           role: validation.data.role,
@@ -51,7 +67,12 @@ export class OnboardingService {
         });
       }
 
-      return success({ role: appUser.role! });
+      // Verify that the role has been assigned
+      if (!appUser.role) {
+        return failure("Failed to assign role", 500);
+      }
+
+      return success({ role: appUser.role });
     } catch (error) {
       return failure((error as Error).message, 500);
     }

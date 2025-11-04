@@ -20,6 +20,9 @@ export interface CreateAppUserInput {
 export interface UpdateAppUserInput {
   role?: Role;
   status?: AppUserStatus;
+  bio?: string | null;
+  domain?: string | null;
+  photoUrl?: string | null;
 }
 
 export interface AppUserRepository {
@@ -86,6 +89,9 @@ export class PrismaAppUserRepository implements AppUserRepository {
       data: {
         ...(input.role !== undefined && { role: input.role as any }),
         ...(input.status !== undefined && { status: input.status }),
+        ...(input.bio !== undefined && { bio: input.bio }),
+        ...(input.domain !== undefined && { domain: input.domain }),
+        ...(input.photoUrl !== undefined && { photoUrl: input.photoUrl }),
         updatedAt: now,
       },
     });
@@ -121,6 +127,9 @@ export class PrismaAppUserRepository implements AppUserRepository {
           role: updateInput.role as any,
         }),
         ...(updateInput.status !== undefined && { status: updateInput.status }),
+        ...(updateInput.bio !== undefined && { bio: updateInput.bio }),
+        ...(updateInput.domain !== undefined && { domain: updateInput.domain }),
+        ...(updateInput.photoUrl !== undefined && { photoUrl: updateInput.photoUrl }),
         updatedAt: now,
       },
     });
