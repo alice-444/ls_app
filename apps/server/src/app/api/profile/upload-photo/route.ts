@@ -6,15 +6,21 @@ import { existsSync } from "fs";
 import { randomUUID } from "crypto";
 import { fileTypeFromBuffer } from "file-type";
 import { uploadRateLimit } from "@/lib/rate-limit";
+import sharp from "sharp";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png"];
+const MAX_IMAGE_WIDTH = 2000;
+const MAX_IMAGE_HEIGHT = 2000;
+const MAX_IMAGE_DIMENSION = 2000 * 2000;
 
 export async function POST(req: NextRequest) {
+  let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null;
+
   try {
     // Retrieve the user's session
-    const session = await auth.api.getSession({
+    session = await auth.api.getSession({
       headers: req.headers,
     });
 
@@ -24,7 +30,9 @@ export async function POST(req: NextRequest) {
 
     // Rate limiting
     const identifier = session.user.id;
-    const { success, limit, reset, remaining } = await uploadRateLimit.limit(identifier);
+    const { success, limit, reset, remaining } = await uploadRateLimit.limit(
+      identifier
+    );
 
     if (!success) {
       return NextResponse.json(
@@ -95,8 +103,70 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate and process image content
+    let processedImage: Buffer;
+    try {
+      const image = sharp(buffer);
+
+      // Get image metadata to validate it's a real image
+      const metadata = await image.metadata();
+
+      if (!metadata.width || !metadata.height) {
+        return NextResponse.json(
+          { error: "Invalid image: unable to read dimensions" },
+          { status: 400 }
+        );
+      }
+
+      // Check dimensions to prevent DoS (too large images)
+      if (
+        metadata.width > MAX_IMAGE_WIDTH ||
+        metadata.height > MAX_IMAGE_HEIGHT
+      ) {
+        return NextResponse.json(
+          {
+            error: `Image dimensions too large. Maximum: ${MAX_IMAGE_WIDTH}x${MAX_IMAGE_HEIGHT}px`,
+          },
+          { status: 400 }
+        );
+      }
+
+      // Check total pixels to prevent extremely large images
+      const totalPixels = metadata.width * metadata.height;
+      if (totalPixels > MAX_IMAGE_DIMENSION) {
+        return NextResponse.json(
+          {
+            error: `Image resolution too high. Maximum: ${MAX_IMAGE_DIMENSION} pixels`,
+          },
+          { status: 400 }
+        );
+      }
+
+      // Process and optimize the image
+      const format = detectedExtension === "png" ? "png" : "jpeg";
+
+      processedImage = await image
+        .resize(MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT, {
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .toFormat(format, {
+          quality: format === "jpeg" ? 85 : undefined,
+          compressionLevel: format === "png" ? 9 : undefined,
+        })
+        .toBuffer();
+    } catch (error) {
+      // If sharp fails, the image is likely corrupted or invalid
+      return NextResponse.json(
+        {
+          error: "Invalid or corrupted image file",
+        },
+        { status: 400 }
+      );
+    }
+
     // Create uploads directory if it doesn't exist
-    const uploadsDir = resolve(process.cwd(), "public", "uploads", "profiles");
+    const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true });
     }
@@ -124,18 +194,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Save file
-    await writeFile(filePath, buffer);
+    // Save processed and validated image
+    await writeFile(filePath, processedImage);
 
-    const photoUrl = `/uploads/profiles/${fileName}`;
+    const photoUrl = `/api/profile/photo/${fileName}`;
 
     return NextResponse.json({ photoUrl });
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Internal server error",
-      },
-      { status: 500 }
-    );
+    const errorMessage =
+      process.env.NODE_ENV === "production"
+        ? "Internal server error"
+        : error instanceof Error
+        ? error.message
+        : "Internal server error";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

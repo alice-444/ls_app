@@ -3,6 +3,7 @@ import { existsSync } from "fs";
 import { join, resolve } from "path";
 import { Result, failure, success, validateInput, prisma } from "../../common";
 import type { AppUserRepository } from "../../users/repositories";
+import { sanitizeString } from "../../utils/sanitize";
 
 export const profProfileSchema = z.object({
   name: z
@@ -62,19 +63,26 @@ export class ProfProfileService {
         return failure("Only users with PROF role can create a profile", 403);
       }
 
+      // Verify that the user is in ACTIVE status
+      if (appUser.status !== "ACTIVE") {
+        return failure("User account is not active", 403);
+      }
+
       // Validate photoUrl if provided
       let validatedPhotoUrl: string | null = null;
       if (validation.data.photoUrl) {
         const photoUrl = validation.data.photoUrl;
 
-        if (!photoUrl.startsWith("/uploads/profiles/")) {
+        // Verify that the URL points to the protected API endpoint
+        if (!photoUrl.startsWith("/api/profile/photo/")) {
           return failure(
-            "Invalid photo URL. Must be from /uploads/profiles/ directory",
+            "Invalid photo URL. Must be from /api/profile/photo/ endpoint",
             400
           );
         }
 
-        const fileName = photoUrl.split("/").pop();
+        // Extract filename from API endpoint
+        const fileName = photoUrl.replace("/api/profile/photo/", "");
         if (!fileName) {
           return failure("Invalid photo URL format", 400);
         }
@@ -111,7 +119,6 @@ export class ProfProfileService {
         }
 
         const userIdFromFileName = match[1]; // Group 1 : userId
-        const uuidFromFileName = match[2]; // Group 2 : UUID (optional verification)
 
         // Verify that the userId in the file name corresponds to the user
         if (userIdFromFileName !== userId) {
@@ -119,12 +126,7 @@ export class ProfProfileService {
         }
 
         // Verify that the file actually exists
-        const uploadsDir = resolve(
-          process.cwd(),
-          "public",
-          "uploads",
-          "profiles"
-        );
+        const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
         const filePath = join(uploadsDir, sanitizedFileName);
 
         const resolvedPath = resolve(filePath);
@@ -139,18 +141,23 @@ export class ProfProfileService {
         validatedPhotoUrl = photoUrl;
       }
 
-      // Update User name
+      // Sanitize text inputs to prevent XSS
+      const sanitizedName = sanitizeString(validation.data.name);
+      const sanitizedBio = sanitizeString(validation.data.bio);
+      const sanitizedDomain = sanitizeString(validation.data.domain);
+
+      // Update User name (sanitized)
       await prisma.user.update({
         where: { id: userId },
         data: {
-          name: validation.data.name,
+          name: sanitizedName,
         },
       });
 
       // Update AppUser with profile data
       await this.appUserRepository.update(userId, {
-        bio: validation.data.bio,
-        domain: validation.data.domain,
+        bio: sanitizedBio,
+        domain: sanitizedDomain,
         photoUrl: validatedPhotoUrl,
       });
 

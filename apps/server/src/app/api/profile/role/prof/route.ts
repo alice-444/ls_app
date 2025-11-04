@@ -9,9 +9,11 @@ const appUserRepository = new PrismaAppUserRepository(prisma);
 const service = new ProfProfileService(appUserRepository);
 
 export async function POST(req: NextRequest) {
+  let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null;
+  
   try {
     // Retrieve the user's session
-    const session = await auth.api.getSession({
+    session = await auth.api.getSession({
       headers: req.headers,
     });
 
@@ -42,7 +44,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json().catch(() => ({}));
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+
     const result = await service.saveProfile(session.user.id, body);
 
     if (!result.ok) {
@@ -54,13 +65,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result.data);
   } catch (error) {
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Internal server error",
-      },
-      { status: 500 }
-    );
+    const errorMessage =
+      process.env.NODE_ENV === "production"
+        ? "Internal server error"
+        : error instanceof Error
+          ? error.message
+          : "Internal server error";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
