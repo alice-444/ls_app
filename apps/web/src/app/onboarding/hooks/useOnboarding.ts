@@ -75,6 +75,7 @@ export function useOnboarding() {
           bio: data.bio,
           domain: data.domain,
           photoUrl,
+          areasOfExpertise: [data.domain], // Use domain as first expertise area
         });
 
         toast.success("Profil créé avec succès !");

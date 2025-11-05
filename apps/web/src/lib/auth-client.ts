@@ -68,6 +68,12 @@ export const customAuthClient = {
     bio: string;
     domain: string;
     photoUrl?: string | null;
+    qualifications?: string | null;
+    experience?: string | null;
+    socialMediaLinks?: Record<string, string> | null;
+    areasOfExpertise?: string[] | null;
+    mentorshipTopics?: string[] | null;
+    calendlyLink?: string | null;
   }): Promise<{ success: boolean }> {
 		const response = await fetch(`${baseURL}/api/profile/role/prof`, {
       method: "POST",
@@ -84,5 +90,52 @@ export const customAuthClient = {
     }
 
     return response.json();
+  },
+  async publishProfile(): Promise<{ success: boolean; publishedAt: string }> {
+    const response = await fetch(`${baseURL}/api/profile/publish`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to publish profile");
+    }
+
+    return response.json();
+  },
+  async unpublishProfile(): Promise<{ success: boolean }> {
+    try {
+      const response = await fetch(`${baseURL}/api/profile/publish`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        let errorMessage = "Failed to unpublish profile";
+        try {
+          const error = await response.json();
+          errorMessage = error.error || errorMessage;
+        } catch {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      return response.json();
+    } catch (error) {
+      if (error instanceof TypeError && error.message === "Failed to fetch") {
+        throw new Error(
+          `Unable to connect to server. Please check that the server is running at ${baseURL}`
+        );
+      }
+      throw error;
+    }
   },
 };

@@ -22,6 +22,45 @@ export const profProfileSchema = z.object({
     .min(2, "Le domaine doit contenir au moins 2 caractères")
     .max(60, "Le domaine ne peut pas dépasser 60 caractères"),
   photoUrl: z.union([z.string(), z.null(), z.undefined()]).optional(),
+  qualifications: z
+    .string()
+    .trim()
+    .max(500, "Les qualifications ne peuvent pas dépasser 500 caractères")
+    .optional()
+    .nullable(),
+  experience: z
+    .string()
+    .trim()
+    .max(700, "L'expérience ne peut pas dépasser 700 caractères")
+    .optional()
+    .nullable(),
+  socialMediaLinks: z
+    .record(
+      z.enum(["linkedin", "twitter", "youtube", "github"]),
+      z.string().url("URL invalide")
+    )
+    .optional()
+    .nullable(),
+  areasOfExpertise: z
+    .array(z.string().trim().min(1).max(50))
+    .min(1, "Au moins un domaine d'expertise est requis")
+    .max(10, "Maximum 10 domaines d'expertise"),
+  mentorshipTopics: z
+    .array(z.string().trim().min(1).max(50))
+    .max(15, "Maximum 15 sujets")
+    .optional()
+    .nullable(),
+  calendlyLink: z
+    .string()
+    .url("Lien Calendly invalide")
+    .optional()
+    .nullable()
+    .refine((val) => {
+      if (!val) return true;
+      const calendlyRegex =
+        /^https:\/\/(www\.)?calendly\.com\/[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)?(\?.*)?$/;
+      return calendlyRegex.test(val);
+    }, "Le lien doit être un lien Calendly valide (format: https://calendly.com/votre-nom)"),
 });
 
 export type ProfProfileInput = z.infer<typeof profProfileSchema>;
@@ -69,7 +108,7 @@ export class ProfProfileService {
       }
 
       // Validate photoUrl if provided
-      let validatedPhotoUrl: string | null = null;
+      let validatedPhotoUrl: string | null | undefined = undefined;
       if (validation.data.photoUrl) {
         const photoUrl = validation.data.photoUrl;
 
@@ -145,6 +184,12 @@ export class ProfProfileService {
       const sanitizedName = sanitizeString(validation.data.name);
       const sanitizedBio = sanitizeString(validation.data.bio);
       const sanitizedDomain = sanitizeString(validation.data.domain);
+      const sanitizedQualifications = validation.data.qualifications
+        ? sanitizeString(validation.data.qualifications)
+        : null;
+      const sanitizedExperience = validation.data.experience
+        ? sanitizeString(validation.data.experience)
+        : null;
 
       // Update User name (sanitized)
       await prisma.user.update({
@@ -155,10 +200,123 @@ export class ProfProfileService {
       });
 
       // Update AppUser with profile data
-      await this.appUserRepository.update(userId, {
+      const updateData: any = {
         bio: sanitizedBio,
         domain: sanitizedDomain,
-        photoUrl: validatedPhotoUrl,
+        qualifications: sanitizedQualifications,
+        experience: sanitizedExperience,
+        socialMediaLinks:
+          (validation.data.socialMediaLinks as Record<string, string>) || null,
+        areasOfExpertise: validation.data.areasOfExpertise,
+        mentorshipTopics: validation.data.mentorshipTopics || null,
+        calendlyLink: validation.data.calendlyLink || null,
+      };
+      
+      if (validatedPhotoUrl !== undefined) {
+        updateData.photoUrl = validatedPhotoUrl;
+      }
+      
+      await this.appUserRepository.update(userId, updateData);
+
+      return success({ success: true });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async publishProfile(
+    userId: string
+  ): Promise<Result<{ success: boolean; publishedAt: Date }>> {
+    try {
+      // Verify that the user exists
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return failure("User not found", 404);
+      }
+
+      // Check AppUser exists and has PROF role
+      const appUser = await this.appUserRepository.findByUserId(userId);
+
+      if (!appUser) {
+        return failure(
+          "AppUser not found. Please complete role selection first.",
+          400
+        );
+      }
+
+      if (appUser.role !== "PROF") {
+        return failure("Only users with PROF role can publish a profile", 403);
+      }
+
+      // Verify that the user is in ACTIVE status
+      if (appUser.status !== "ACTIVE") {
+        return failure("User account is not active", 403);
+      }
+
+      // Verify required fields are present by querying the full profile
+      const fullProfile = await prisma.appUser.findUnique({
+        where: { userId },
+        select: { bio: true, domain: true },
+      });
+
+      if (!fullProfile?.bio || !fullProfile?.domain) {
+        return failure(
+          "Profile must have bio and domain before publishing",
+          400
+        );
+      }
+
+      const publishedAt = new Date();
+
+      // Update AppUser with published status
+      await this.appUserRepository.update(userId, {
+        isPublished: true,
+        publishedAt,
+      });
+
+      return success({ success: true, publishedAt });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async unpublishProfile(
+    userId: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      // Verify that the user exists
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return failure("User not found", 404);
+      }
+
+      // Check AppUser exists and has PROF role
+      const appUser = await this.appUserRepository.findByUserId(userId);
+
+      if (!appUser) {
+        return failure(
+          "AppUser not found. Please complete role selection first.",
+          400
+        );
+      }
+
+      if (appUser.role !== "PROF") {
+        return failure(
+          "Only users with PROF role can unpublish a profile",
+          403
+        );
+      }
+
+      // Update AppUser with unpublished status
+      await this.appUserRepository.update(userId, {
+        isPublished: false,
+        publishedAt: null,
       });
 
       return success({ success: true });

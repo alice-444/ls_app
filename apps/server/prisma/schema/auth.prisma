@@ -92,7 +92,15 @@ model AppUser {
   bio                 String?
   domain              String?
   photoUrl            String?
-
+  qualifications      String?
+  experience          String?
+  socialMediaLinks    Json?
+  areasOfExpertise    Json?
+  mentorshipTopics    Json?
+  calendlyLink        String?
+  isPublished         Boolean  @default(false)
+  publishedAt         DateTime?
+  
   @@map("app_user")
 }
 

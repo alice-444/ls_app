@@ -23,6 +23,14 @@ export interface UpdateAppUserInput {
   bio?: string | null;
   domain?: string | null;
   photoUrl?: string | null;
+  qualifications?: string | null;
+  experience?: string | null;
+  socialMediaLinks?: Record<string, string> | null;
+  areasOfExpertise?: string[] | null;
+  mentorshipTopics?: string[] | null;
+  calendlyLink?: string | null;
+  isPublished?: boolean;
+  publishedAt?: Date | null;
 }
 
 export interface AppUserRepository {
@@ -92,6 +100,14 @@ export class PrismaAppUserRepository implements AppUserRepository {
         ...(input.bio !== undefined && { bio: input.bio }),
         ...(input.domain !== undefined && { domain: input.domain }),
         ...(input.photoUrl !== undefined && { photoUrl: input.photoUrl }),
+        ...(input.qualifications !== undefined && { qualifications: input.qualifications }),
+        ...(input.experience !== undefined && { experience: input.experience }),
+        ...(input.socialMediaLinks !== undefined && { socialMediaLinks: input.socialMediaLinks as any }),
+        ...(input.areasOfExpertise !== undefined && { areasOfExpertise: input.areasOfExpertise as any }),
+        ...(input.mentorshipTopics !== undefined && { mentorshipTopics: input.mentorshipTopics as any }),
+        ...(input.calendlyLink !== undefined && { calendlyLink: input.calendlyLink }),
+        ...(input.isPublished !== undefined && { isPublished: input.isPublished }),
+        ...(input.publishedAt !== undefined && { publishedAt: input.publishedAt }),
         updatedAt: now,
       },
     });
@@ -130,6 +146,14 @@ export class PrismaAppUserRepository implements AppUserRepository {
         ...(updateInput.bio !== undefined && { bio: updateInput.bio }),
         ...(updateInput.domain !== undefined && { domain: updateInput.domain }),
         ...(updateInput.photoUrl !== undefined && { photoUrl: updateInput.photoUrl }),
+        ...(updateInput.qualifications !== undefined && { qualifications: updateInput.qualifications }),
+        ...(updateInput.experience !== undefined && { experience: updateInput.experience }),
+        ...(updateInput.socialMediaLinks !== undefined && { socialMediaLinks: updateInput.socialMediaLinks as any }),
+        ...(updateInput.areasOfExpertise !== undefined && { areasOfExpertise: updateInput.areasOfExpertise as any }),
+        ...(updateInput.mentorshipTopics !== undefined && { mentorshipTopics: updateInput.mentorshipTopics as any }),
+        ...(updateInput.calendlyLink !== undefined && { calendlyLink: updateInput.calendlyLink }),
+        ...(updateInput.isPublished !== undefined && { isPublished: updateInput.isPublished }),
+        ...(updateInput.publishedAt !== undefined && { publishedAt: updateInput.publishedAt }),
         updatedAt: now,
       },
     });

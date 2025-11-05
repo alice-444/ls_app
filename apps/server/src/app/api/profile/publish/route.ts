@@ -10,7 +10,7 @@ const service = new ProfProfileService(appUserRepository);
 
 export async function POST(req: NextRequest) {
   let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null;
-
+  
   try {
     // Retrieve the user's session
     session = await auth.api.getSession({
@@ -23,9 +23,7 @@ export async function POST(req: NextRequest) {
 
     // Rate limiting
     const identifier = session.user.id;
-    const { success, limit, reset, remaining } = await profileRateLimit.limit(
-      identifier
-    );
+    const { success, limit, reset, remaining } = await profileRateLimit.limit(identifier);
 
     if (!success) {
       return NextResponse.json(
@@ -46,17 +44,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let body: unknown;
-    try {
-      body = await req.json();
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Invalid JSON in request body" },
-        { status: 400 }
-      );
-    }
-
-    const result = await service.saveProfile(session.user.id, body);
+    const result = await service.publishProfile(session.user.id);
 
     if (!result.ok) {
       return NextResponse.json(
@@ -71,16 +59,19 @@ export async function POST(req: NextRequest) {
       process.env.NODE_ENV === "production"
         ? "Internal server error"
         : error instanceof Error
-        ? error.message
-        : "Internal server error";
+          ? error.message
+          : "Internal server error";
 
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
+  let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null;
+  
   try {
-    const session = await auth.api.getSession({
+    // Retrieve the user's session
+    session = await auth.api.getSession({
       headers: req.headers,
     });
 
@@ -88,50 +79,47 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const appUser = await appUserRepository.findByUserId(session.user.id);
+    // Rate limiting
+    const identifier = session.user.id;
+    const { success, limit, reset, remaining } = await profileRateLimit.limit(identifier);
 
-    if (!appUser) {
-      return NextResponse.json({ isPublished: false });
-    }
-
-    const fullProfile = (await prisma.appUser.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-          },
+    if (!success) {
+      return NextResponse.json(
+        {
+          error: "Too many requests. Please try again later.",
+          limit,
+          reset,
+          remaining,
         },
-      },
-    })) as any;
-
-    if (!fullProfile) {
-      return NextResponse.json({ isPublished: false });
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          },
+        }
+      );
     }
 
-    return NextResponse.json({
-      isPublished: fullProfile?.isPublished || false,
-      publishedAt: fullProfile?.publishedAt || null,
-      profile: {
-        name: fullProfile.user?.name || null,
-        bio: fullProfile.bio || null,
-        domain: fullProfile.domain || null,
-        photoUrl: fullProfile.photoUrl || null,
-        qualifications: fullProfile.qualifications || null,
-        experience: fullProfile.experience || null,
-        socialMediaLinks: fullProfile.socialMediaLinks || null,
-        areasOfExpertise: fullProfile.areasOfExpertise || null,
-        mentorshipTopics: fullProfile.mentorshipTopics || null,
-        calendlyLink: fullProfile.calendlyLink || null,
-      },
-    });
+    const result = await service.unpublishProfile(session.user.id);
+
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: result.status ?? 400 }
+      );
+    }
+
+    return NextResponse.json(result.data);
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Internal server error",
-      },
-      { status: 500 }
-    );
+    const errorMessage =
+      process.env.NODE_ENV === "production"
+        ? "Internal server error"
+        : error instanceof Error
+          ? error.message
+          : "Internal server error";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
