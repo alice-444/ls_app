@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SignUpService } from "@/lib/auth/services/signup";
+import { PrismaAppUserRepository } from "@/lib/users/repositories";
+import { prisma } from "@/lib/common";
 
-const service = new SignUpService();
+const appUserRepository = new PrismaAppUserRepository(prisma);
+const service = new SignUpService(appUserRepository);
 
 export async function POST(req: NextRequest) {
 	const body = await req.json().catch(() => ({}));

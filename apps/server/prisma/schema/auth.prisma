@@ -65,7 +65,8 @@ model Verification {
 }
 
 enum Role {
-  USER
+  PROF
+  APPRENANT
   ADMIN
 }
 
@@ -76,18 +77,30 @@ enum AppUserStatus {
 }
 
 model AppUser {
-  id        String        @id @map("_id")
-  userId    String        @unique
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      Role          @default(USER)
-  status    AppUserStatus @default(PENDING)
-  createdAt DateTime
-  updatedAt DateTime
+  id                  String        @id @map("_id")
+  userId              String        @unique
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role                Role?
+  status              AppUserStatus @default(PENDING)
+  createdAt           DateTime
+  updatedAt           DateTime
   // Soft delete metadata
-  deletedAt DateTime?
+  deletedAt           DateTime?
   deletionRequestedAt DateTime?
-  deletionReason String?
-
+  deletionReason      String?
+  // Prof profile fields
+  bio                 String?
+  domain              String?
+  photoUrl            String?
+  qualifications      String?
+  experience          String?
+  socialMediaLinks    Json?
+  areasOfExpertise    Json?
+  mentorshipTopics    Json?
+  calendlyLink        String?
+  isPublished         Boolean  @default(false)
+  publishedAt         DateTime?
+  
   @@map("app_user")
 }
 

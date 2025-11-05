@@ -8,7 +8,7 @@ export function middleware() {
 		"Access-Control-Allow-Origin",
 		process.env.CORS_ORIGIN || "",
 	);
-	res.headers.append("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+	res.headers.append("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
 	res.headers.append(
 		"Access-Control-Allow-Headers",
 		"Content-Type, Authorization",
