@@ -1,6 +1,7 @@
 import { createAuthClient } from "better-auth/react";
+import { API_BASE_URL } from "./api-client";
 
-const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+const baseURL = API_BASE_URL;
 
 export const authClient = createAuthClient({
   baseURL,
@@ -133,6 +134,42 @@ export const customAuthClient = {
       if (error instanceof TypeError && error.message === "Failed to fetch") {
         throw new Error(
           `Unable to connect to server. Please check that the server is running at ${baseURL}`
+        );
+      }
+      throw error;
+    }
+  },
+  async deleteAccount(reason?: string): Promise<void> {
+    try {
+      let url = `${baseURL}/api/profile/delete`;
+      if (reason) {
+        url += `?reason=${encodeURIComponent(reason)}`;
+      }
+
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        let errorMessage = "Failed to delete account";
+        try {
+          const error = await response.json();
+          errorMessage = error.error || errorMessage;
+        } catch {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      return;
+    } catch (error) {
+      if (error instanceof TypeError && error.message === "Failed to fetch") {
+        throw new Error(
+          `Unable to connect to server. Please check that the server is running at database`
         );
       }
       throw error;

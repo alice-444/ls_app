@@ -6,6 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   User, 
   Settings, 
@@ -19,9 +28,10 @@ import {
   HelpCircle,
   Trash2
 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { authClient, customAuthClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -30,6 +40,9 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [privacyMode, setPrivacyMode] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSignOut = () => {
     authClient.signOut({
@@ -42,11 +55,29 @@ export default function SettingsPage() {
   };
 
   const handleDeleteAccount = () => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et supprimera définitivement toutes vos données.")) {
-      // TODO: Fonctionnalité de suppression du compte
-      console.log("Suppression du compte demandée");
-      // Appel de l'API pour supprimer le compte
-      // Redirection vers la page de connexion 
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteAccount = async () => {
+    if (!session?.user) {
+      toast.error("Vous devez être connecté pour supprimer votre compte");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await customAuthClient.deleteAccount(deleteReason || undefined);
+      toast.success("Votre compte a été supprimé avec succès");
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Une erreur est survenue lors de la suppression du compte"
+      );
+      setIsDeleting(false);
     }
   };
 
@@ -305,6 +336,74 @@ export default function SettingsPage() {
           </Card>
         </div>
       </div>
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent onClose={() => setDeleteDialogOpen(false)}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              Supprimer votre compte
+            </DialogTitle>
+            <DialogDescription>
+              Cette action est irréversible. Toutes vos données seront définitivement supprimées après une période de rétention de 30 jours.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="delete-reason" className="text-sm font-medium">
+                Raison de la suppression (optionnel)
+              </Label>
+              <Textarea
+                id="delete-reason"
+                placeholder="Partagez avec nous la raison de votre départ (optionnel)..."
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value)}
+                className="min-h-[100px]"
+                disabled={isDeleting}
+              />
+            </div>
+            <div className="rounded-lg bg-destructive/10 p-4 border border-destructive/20">
+              <p className="text-sm text-destructive font-medium mb-2">
+                ⚠️ Attention
+              </p>
+              <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                <li>Votre compte sera immédiatement désactivé</li>
+                <li>Toutes vos données seront supprimées après 30 jours</li>
+                <li>Vous ne pourrez plus vous connecter</li>
+                <li>Cette action ne peut pas être annulée</li>
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setDeleteReason("");
+              }}
+              disabled={isDeleting}
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteAccount}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <span className="mr-2">Suppression...</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer définitivement
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

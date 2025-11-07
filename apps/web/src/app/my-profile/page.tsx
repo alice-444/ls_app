@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
@@ -26,6 +26,7 @@ import {
 import { toast } from "sonner";
 import { customAuthClient } from "@/lib/auth-client";
 import { CalendlyEmbed } from "@/components/calendly-embed";
+import { getProfProfile, API_BASE_URL } from "@/lib/api-client";
 
 interface MentorProfile {
   name: string | null;
@@ -56,41 +57,29 @@ export default function MyProfilePage() {
     }
   }, [session, isSessionPending, router]);
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      if (!session?.user?.id) return;
+  const loadProfile = useCallback(async () => {
+    if (!session?.user?.id) return;
 
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
-          }/api/profile/role/prof`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setIsPublished(data.isPublished || false);
-          if (data.profile) {
-            setProfile(data.profile);
-          }
-        }
-      } catch (error) {
-        console.error("Could not load profile:", error);
-        toast.error("Erreur lors du chargement du profil");
-      } finally {
-        setIsLoading(false);
+    setIsLoading(true);
+    try {
+      const data = await getProfProfile();
+      setIsPublished(data.isPublished || false);
+      if (data.profile) {
+        setProfile(data.profile);
       }
-    };
+    } catch (error) {
+      console.error("Could not load profile:", error);
+      toast.error("Erreur lors du chargement du profil");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [session?.user?.id]);
 
+  useEffect(() => {
     if (session?.user) {
       loadProfile();
     }
-  }, [session]);
+  }, [session, loadProfile]);
 
   const handlePublish = async () => {
     setIsPublishing(true);
@@ -114,31 +103,12 @@ export default function MyProfilePage() {
   const handleUnpublish = async () => {
     setIsUnpublishing(true);
     try {
-      const result = await customAuthClient.unpublishProfile();
-      console.log("Unpublish result:", result);
-      
+      await customAuthClient.unpublishProfile();
       toast.success(
         "Profil dépublié avec succès. Il n'est plus visible dans le répertoire des mentors."
       );
-      setIsPublished(false);
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
-        }/api/profile/role/prof`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setIsPublished(data.isPublished || false);
-        if (data.profile) {
-          setProfile(data.profile);
-        }
-      } else {
-        console.error("Failed to reload profile:", response.status);
-      }
+
+      await loadProfile();
     } catch (error) {
       console.error("Error unpublishing profile:", error);
       toast.error(
@@ -179,8 +149,9 @@ export default function MyProfilePage() {
     );
   }
 
-  const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
-  const photoUrl = profile.photoUrl ? `${baseURL}${profile.photoUrl}` : null;
+  const photoUrl = profile.photoUrl
+    ? `${API_BASE_URL}${profile.photoUrl}`
+    : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4 py-8">
@@ -236,7 +207,6 @@ export default function MyProfilePage() {
           </div>
         </div>
 
-        {/* Publication Status */}
         {isPublished && (
           <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
             <CheckCircle2 className="h-5 w-5 text-green-600" />

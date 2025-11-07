@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { CalendlyEmbed } from "@/components/calendly-embed";
+import { getProfProfile, API_BASE_URL } from "@/lib/api-client";
 
 // Predefined topics
 const PREDEFINED_TOPICS = [
@@ -167,7 +168,7 @@ export default function MentorProfilePage() {
     getValues,
   } = useForm<MentorProfileFormData>({
     resolver: zodResolver(mentorProfileSchema),
-      defaultValues: {
+    defaultValues: {
       name: "",
       bio: "",
       domain: undefined,
@@ -203,41 +204,42 @@ export default function MentorProfilePage() {
       if (!session?.user?.id) return;
 
       try {
-        const response = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
-          }/api/profile/role/prof`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/api/profile/role/prof`, {
+          method: "GET",
+          credentials: "include",
+        });
 
         if (response.ok) {
           const data = await response.json();
           if (data.isPublished) {
             setIsPublished(true);
           }
-          
+
           if (data.profile) {
             const profile = data.profile;
-            
+
             setValue("name", profile.name || "");
             setValue("bio", profile.bio || "");
             setValue("qualifications", profile.qualifications || null);
             setValue("experience", profile.experience || null);
             setValue("calendlyLink", profile.calendlyLink || "");
-            
-            if (profile.areasOfExpertise && Array.isArray(profile.areasOfExpertise)) {
+
+            if (
+              profile.areasOfExpertise &&
+              Array.isArray(profile.areasOfExpertise)
+            ) {
               setSelectedAreas(profile.areasOfExpertise);
               setValue("areasOfExpertise", profile.areasOfExpertise);
             }
-            
-            if (profile.mentorshipTopics && Array.isArray(profile.mentorshipTopics)) {
+
+            if (
+              profile.mentorshipTopics &&
+              Array.isArray(profile.mentorshipTopics)
+            ) {
               setSelectedTopics(profile.mentorshipTopics);
               setValue("mentorshipTopics", profile.mentorshipTopics);
             }
-            
+
             if (profile.socialMediaLinks) {
               setValue("socialMediaLinks", {
                 linkedin: profile.socialMediaLinks.linkedin || "",
@@ -246,11 +248,10 @@ export default function MentorProfilePage() {
                 github: profile.socialMediaLinks.github || "",
               });
             }
-            
+
             if (profile.photoUrl) {
               setExistingPhotoUrl(profile.photoUrl);
-              const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
-              setPreviewPhoto(`${baseURL}${profile.photoUrl}`);
+              setPreviewPhoto(`${API_BASE_URL}${profile.photoUrl}`);
             }
           }
         }
@@ -345,13 +346,12 @@ export default function MentorProfilePage() {
             )
           : null;
 
-
       if (!data.areasOfExpertise || data.areasOfExpertise.length === 0) {
         toast.error("Au moins un domaine d'expertise est requis");
         setIsSubmitting(false);
         return;
       }
-      
+
       const profileData = {
         name: data.name,
         bio: data.bio,
@@ -364,35 +364,29 @@ export default function MentorProfilePage() {
         mentorshipTopics: data.mentorshipTopics || null,
         calendlyLink: data.calendlyLink || null,
       };
-      
+
       await customAuthClient.saveProfProfile(profileData);
 
       toast.success("Profil sauvegardé avec succès !");
-      
+
       if (photoUrl) {
         setExistingPhotoUrl(photoUrl);
       }
-      
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
-        }/api/profile/role/prof`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      
+
+      const response = await fetch(`${API_BASE_URL}/api/profile/role/prof`, {
+        method: "GET",
+        credentials: "include",
+      });
+
       if (response.ok) {
         const data = await response.json();
         if (data.profile && data.profile.photoUrl) {
           setExistingPhotoUrl(data.profile.photoUrl);
-          const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
-          setPreviewPhoto(`${baseURL}${data.profile.photoUrl}`);
+          setPreviewPhoto(`${API_BASE_URL}${data.profile.photoUrl}`);
         }
         setIsPublished(data.isPublished || false);
       }
-      
+
       setIsSubmitting(false);
     } catch (error) {
       toast.error(
@@ -433,20 +427,15 @@ export default function MentorProfilePage() {
     try {
       const result = await customAuthClient.unpublishProfile();
       console.log("Unpublish result:", result);
-      
+
       toast.success(
         "Profil dépublié avec succès. Il n'est plus visible dans le répertoire des mentors."
       );
       setIsPublished(false);
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
-        }/api/profile/role/prof`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/api/profile/role/prof`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (response.ok) {
         const data = await response.json();
         setIsPublished(data.isPublished || false);
@@ -643,7 +632,8 @@ export default function MentorProfilePage() {
                     }}
                   />
                   <p className="text-xs text-gray-500">
-                    Appuyez sur Entrée pour ajouter. Au moins un domaine est requis.
+                    Appuyez sur Entrée pour ajouter. Au moins un domaine est
+                    requis.
                   </p>
                   {errors.areasOfExpertise && (
                     <p className="text-sm text-red-500">
@@ -847,7 +837,11 @@ export default function MentorProfilePage() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log("Unpublish button clicked", { isUnpublishing, isSubmitting, isFormSubmitting });
+                      console.log("Unpublish button clicked", {
+                        isUnpublishing,
+                        isSubmitting,
+                        isFormSubmitting,
+                      });
                       handleUnpublish();
                     }}
                     disabled={isUnpublishing}

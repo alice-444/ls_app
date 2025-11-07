@@ -7,6 +7,7 @@ import {
   AuditLogRepository,
   JobQueue,
 } from "./delete-account.types";
+import { generateInternalId } from "../../utils/id-generator";
 
 export class PrismaAppUserRepository implements AppUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -83,7 +84,7 @@ export class NoopAuditLogRepository implements AuditLogRepository {
     meta?: Record<string, unknown>
   ): Promise<void> {
     await (this.prisma as any).auditLog.create({
-      data: { userId, type, meta: meta ?? null },
+      data: { id: generateInternalId(), userId, type, meta: meta ?? null },
     });
   }
 }
@@ -91,6 +92,8 @@ export class NoopAuditLogRepository implements AuditLogRepository {
 export class NoopJobQueue implements JobQueue {
   constructor(private readonly prisma: PrismaClient) {}
   async enqueueHardPurge(userId: string, runAt: Date): Promise<void> {
-    await (this.prisma as any).deletionJob.create({ data: { userId, runAt } });
+    await (this.prisma as any).deletionJob.create({
+      data: { id: generateInternalId(), userId, runAt },
+    });
   }
 }
