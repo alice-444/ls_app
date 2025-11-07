@@ -11,19 +11,20 @@ import {
   NoopAuditLogRepository,
   NoopJobQueue,
 } from "@/lib/users/services/repositories.prisma";
+import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
 
 const prisma = new PrismaClient();
 
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({ headers: req.headers });
-    const user = session?.user;
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await getAuthenticatedSession(req);
+    if (!authResult.ok) {
+      return authResult.response;
     }
+    const { userId } = authResult;
 
     const appUsers = new PrismaAppUserRepository(prisma);
-    const appUser = await appUsers.findByAuthUserId(user.id);
+    const appUser = await appUsers.findByAuthUserId(userId);
     if (!appUser) {
       return NextResponse.json(
         { error: "App user not found" },
@@ -38,7 +39,7 @@ export async function DELETE(req: NextRequest) {
     const reason = url.searchParams.get("reason") ?? undefined;
 
     const planResult = buildDeletionPlan({
-      authUserId: user.id,
+      authUserId: userId,
       appUserId: appUser.id,
       policy: { retentionDays: 30, requireReason: false },
       now: new Date(),
@@ -72,9 +73,6 @@ export async function DELETE(req: NextRequest) {
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 500 }
-    );
+    return handleRouteError(error);
   }
 }

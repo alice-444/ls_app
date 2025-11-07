@@ -1,22 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { readFile } from "fs/promises";
 import { join, resolve } from "path";
 import { existsSync } from "fs";
+import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    // Retrieve the user's session
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await getAuthenticatedSession(req);
+    if (!authResult.ok) {
+      return authResult.response;
     }
+    const { userId } = authResult;
 
     const { filename } = await params;
 
@@ -25,7 +22,6 @@ export async function GET(
       return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
     }
 
-    // Verify filename format: userId-uuid.extension
     const uuidPattern =
       /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.(jpg|jpeg|png)$/i;
     const match = sanitizedFilename.match(uuidPattern);
@@ -40,8 +36,7 @@ export async function GET(
     const userIdFromFilename = match[1];
     const extension = match[3].toLowerCase();
 
-    // Verify that the file belongs to the authenticated user
-    if (userIdFromFilename !== session.user.id) {
+    if (userIdFromFilename !== userId) {
       return NextResponse.json(
         { error: "Access denied. This file does not belong to you." },
         { status: 403 }
@@ -58,7 +53,6 @@ export async function GET(
       return NextResponse.json({ error: "Invalid file path" }, { status: 400 });
     }
 
-    // Check if file exists
     if (!existsSync(filePath)) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
@@ -78,13 +72,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    const errorMessage =
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
-        : error instanceof Error
-        ? error.message
-        : "Internal server error";
-
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleRouteError(error);
   }
 }

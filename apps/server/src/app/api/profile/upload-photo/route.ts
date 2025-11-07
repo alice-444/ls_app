@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { writeFile, mkdir } from "fs/promises";
 import { join, resolve, normalize } from "path";
 import { existsSync } from "fs";
@@ -7,6 +6,11 @@ import { randomUUID } from "crypto";
 import { fileTypeFromBuffer } from "file-type";
 import { uploadRateLimit } from "@/lib/rate-limit";
 import sharp from "sharp";
+import {
+  getAuthenticatedSession,
+  applyRateLimit,
+  handleRouteError,
+} from "@/lib/api-helpers";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png"];
@@ -16,38 +20,29 @@ const MAX_IMAGE_HEIGHT = 2000;
 const MAX_IMAGE_DIMENSION = 2000 * 2000;
 
 export async function POST(req: NextRequest) {
-  let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null;
-
   try {
-    // Retrieve the user's session
-    session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await getAuthenticatedSession(req);
+    if (!authResult.ok) {
+      return authResult.response;
     }
+    const { userId } = authResult;
 
-    // Rate limiting
-    const identifier = session.user.id;
-    const { success, limit, reset, remaining } = await uploadRateLimit.limit(
-      identifier
-    );
-
-    if (!success) {
+    const rateLimitResult = await applyRateLimit(uploadRateLimit, userId);
+    if (!rateLimitResult.ok) {
       return NextResponse.json(
         {
           error: "Too many upload requests. Please try again later.",
-          limit,
-          reset,
-          remaining,
+          limit: rateLimitResult.result.limit,
+          reset: rateLimitResult.result.reset,
+          remaining: rateLimitResult.result.remaining,
         },
         {
           status: 429,
           headers: {
-            "X-RateLimit-Limit": limit.toString(),
-            "X-RateLimit-Remaining": remaining.toString(),
-            "X-RateLimit-Reset": reset.toString(),
+            "X-RateLimit-Limit": rateLimitResult.result.limit.toString(),
+            "X-RateLimit-Remaining":
+              rateLimitResult.result.remaining.toString(),
+            "X-RateLimit-Reset": rateLimitResult.result.reset.toString(),
           },
         }
       );
@@ -82,7 +77,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate MIME type from magic bytes
     if (!ALLOWED_MIME_TYPES.includes(fileType.mime.toLowerCase())) {
       return NextResponse.json(
         {
@@ -108,7 +102,6 @@ export async function POST(req: NextRequest) {
     try {
       const image = sharp(buffer);
 
-      // Get image metadata to validate it's a real image
       const metadata = await image.metadata();
 
       if (!metadata.width || !metadata.height) {
@@ -118,7 +111,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Check dimensions to prevent DoS (too large images)
       if (
         metadata.width > MAX_IMAGE_WIDTH ||
         metadata.height > MAX_IMAGE_HEIGHT
@@ -131,7 +123,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Check total pixels to prevent extremely large images
       const totalPixels = metadata.width * metadata.height;
       if (totalPixels > MAX_IMAGE_DIMENSION) {
         return NextResponse.json(
@@ -142,7 +133,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Process and optimize the image
       const format = detectedExtension === "png" ? "png" : "jpeg";
 
       processedImage = await image
@@ -156,7 +146,6 @@ export async function POST(req: NextRequest) {
         })
         .toBuffer();
     } catch (error) {
-      // If sharp fails, the image is likely corrupted or invalid
       return NextResponse.json(
         {
           error: "Invalid or corrupted image file",
@@ -165,21 +154,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create uploads directory if it doesn't exist
     const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true });
     }
 
-    const sanitizedUserId = session.user.id.replace(/[^a-zA-Z0-9_-]/g, "");
-    if (!sanitizedUserId || sanitizedUserId !== session.user.id) {
+    const sanitizedUserId = userId.replace(/[^a-zA-Z0-9_-]/g, "");
+    if (!sanitizedUserId || sanitizedUserId !== userId) {
       return NextResponse.json(
         { error: "Invalid user ID format" },
         { status: 400 }
       );
     }
 
-    // Generate filename
     const fileExtension = detectedExtension;
     const fileName = `${sanitizedUserId}-${randomUUID()}.${fileExtension}`;
 
@@ -194,20 +181,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Save processed and validated image
     await writeFile(filePath, processedImage);
 
     const photoUrl = `/api/profile/photo/${fileName}`;
 
     return NextResponse.json({ photoUrl });
   } catch (error) {
-    const errorMessage =
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
-        : error instanceof Error
-        ? error.message
-        : "Internal server error";
-
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleRouteError(error);
   }
 }

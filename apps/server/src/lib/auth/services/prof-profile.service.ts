@@ -4,6 +4,7 @@ import { join, resolve } from "path";
 import { Result, failure, success, validateInput, prisma } from "../../common";
 import type { AppUserRepository } from "../../users/repositories";
 import { sanitizeString } from "../../utils/sanitize";
+import { verifyUserExists, verifyProfUser } from "./user-helpers";
 
 export const profProfileSchema = z.object({
   name: z
@@ -72,42 +73,23 @@ export class ProfProfileService {
     userId: string,
     input: unknown
   ): Promise<Result<{ success: boolean }>> {
-    // Validation
     const validation = validateInput(profProfileSchema, input);
     if (!validation.ok) {
       return validation;
     }
 
     try {
-      // Verify that the user exists
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-
-      if (!user) {
-        return failure("User not found", 404);
+      const userCheck = await verifyUserExists(userId);
+      if (!userCheck.ok) {
+        return userCheck;
       }
 
-      // Check AppUser exists and has PROF role
-      const appUser = await this.appUserRepository.findByUserId(userId);
-
-      if (!appUser) {
-        return failure(
-          "AppUser not found. Please complete role selection first.",
-          400
-        );
+      const profCheck = await verifyProfUser(this.appUserRepository, userId);
+      if (!profCheck.ok) {
+        return profCheck;
       }
+      const { appUser } = profCheck.data;
 
-      if (appUser.role !== "PROF") {
-        return failure("Only users with PROF role can create a profile", 403);
-      }
-
-      // Verify that the user is in ACTIVE status
-      if (appUser.status !== "ACTIVE") {
-        return failure("User account is not active", 403);
-      }
-
-      // Validate photoUrl if provided
       let validatedPhotoUrl: string | null | undefined = undefined;
       if (validation.data.photoUrl) {
         const photoUrl = validation.data.photoUrl;
@@ -159,12 +141,10 @@ export class ProfProfileService {
 
         const userIdFromFileName = match[1]; // Group 1 : userId
 
-        // Verify that the userId in the file name corresponds to the user
         if (userIdFromFileName !== userId) {
           return failure("Photo URL does not belong to this user", 403);
         }
 
-        // Verify that the file actually exists
         const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
         const filePath = join(uploadsDir, sanitizedFileName);
 
@@ -180,7 +160,6 @@ export class ProfProfileService {
         validatedPhotoUrl = photoUrl;
       }
 
-      // Sanitize text inputs to prevent XSS
       const sanitizedName = sanitizeString(validation.data.name);
       const sanitizedBio = sanitizeString(validation.data.bio);
       const sanitizedDomain = sanitizeString(validation.data.domain);
@@ -191,7 +170,6 @@ export class ProfProfileService {
         ? sanitizeString(validation.data.experience)
         : null;
 
-      // Update User name (sanitized)
       await prisma.user.update({
         where: { id: userId },
         data: {
@@ -199,7 +177,6 @@ export class ProfProfileService {
         },
       });
 
-      // Update AppUser with profile data
       const updateData: any = {
         bio: sanitizedBio,
         domain: sanitizedDomain,
@@ -211,11 +188,11 @@ export class ProfProfileService {
         mentorshipTopics: validation.data.mentorshipTopics || null,
         calendlyLink: validation.data.calendlyLink || null,
       };
-      
+
       if (validatedPhotoUrl !== undefined) {
         updateData.photoUrl = validatedPhotoUrl;
       }
-      
+
       await this.appUserRepository.update(userId, updateData);
 
       return success({ success: true });
@@ -228,35 +205,16 @@ export class ProfProfileService {
     userId: string
   ): Promise<Result<{ success: boolean; publishedAt: Date }>> {
     try {
-      // Verify that the user exists
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-
-      if (!user) {
-        return failure("User not found", 404);
+      const userCheck = await verifyUserExists(userId);
+      if (!userCheck.ok) {
+        return userCheck;
       }
 
-      // Check AppUser exists and has PROF role
-      const appUser = await this.appUserRepository.findByUserId(userId);
-
-      if (!appUser) {
-        return failure(
-          "AppUser not found. Please complete role selection first.",
-          400
-        );
+      const profCheck = await verifyProfUser(this.appUserRepository, userId);
+      if (!profCheck.ok) {
+        return profCheck;
       }
 
-      if (appUser.role !== "PROF") {
-        return failure("Only users with PROF role can publish a profile", 403);
-      }
-
-      // Verify that the user is in ACTIVE status
-      if (appUser.status !== "ACTIVE") {
-        return failure("User account is not active", 403);
-      }
-
-      // Verify required fields are present by querying the full profile
       const fullProfile = await prisma.appUser.findUnique({
         where: { userId },
         select: { bio: true, domain: true },
@@ -271,7 +229,6 @@ export class ProfProfileService {
 
       const publishedAt = new Date();
 
-      // Update AppUser with published status
       await this.appUserRepository.update(userId, {
         isPublished: true,
         publishedAt,
@@ -287,33 +244,16 @@ export class ProfProfileService {
     userId: string
   ): Promise<Result<{ success: boolean }>> {
     try {
-      // Verify that the user exists
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-
-      if (!user) {
-        return failure("User not found", 404);
+      const userCheck = await verifyUserExists(userId);
+      if (!userCheck.ok) {
+        return userCheck;
       }
 
-      // Check AppUser exists and has PROF role
-      const appUser = await this.appUserRepository.findByUserId(userId);
-
-      if (!appUser) {
-        return failure(
-          "AppUser not found. Please complete role selection first.",
-          400
-        );
+      const profCheck = await verifyProfUser(this.appUserRepository, userId);
+      if (!profCheck.ok) {
+        return profCheck;
       }
 
-      if (appUser.role !== "PROF") {
-        return failure(
-          "Only users with PROF role can unpublish a profile",
-          403
-        );
-      }
-
-      // Update AppUser with unpublished status
       await this.appUserRepository.update(userId, {
         isPublished: false,
         publishedAt: null,
