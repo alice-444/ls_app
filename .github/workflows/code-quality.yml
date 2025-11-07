@@ -8,10 +8,15 @@ on:
       - dev
       - feat/*
     paths:
-      - "apps/**/*.{js,ts,jsx,tsx}"
-      - "packages/**/*.{js,ts,jsx,tsx}"
+      - "apps/**/*.js"
+      - "apps/**/*.ts"
+      - "apps/**/*.jsx"
+      - "apps/**/*.tsx"
+      - "packages/**/*.js"
+      - "packages/**/*.ts"
+      - "packages/**/*.jsx"
+      - "packages/**/*.tsx"
       - "**/package.json"
-      - "package-lock.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"
   pull_request:
@@ -21,10 +26,15 @@ on:
       - dev
       - feat/*
     paths:
-      - "apps/**/*.{js,ts,jsx,tsx}"
-      - "packages/**/*.{js,ts,jsx,tsx}"
+      - "apps/**/*.js"
+      - "apps/**/*.ts"
+      - "apps/**/*.jsx"
+      - "apps/**/*.tsx"
+      - "packages/**/*.js"
+      - "packages/**/*.ts"
+      - "packages/**/*.jsx"
+      - "packages/**/*.tsx"
       - "**/package.json"
-      - "package-lock.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"
 
@@ -51,7 +61,7 @@ jobs:
         uses: super-linter/super-linter@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CODEBASE: true
           FILTER_REGEX_EXCLUDE: '.*/.next/.*|.*/node_modules/.*|.*/dist/.*|.*/.turbo/.*|.*/prisma/generated/.*'
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_JAVASCRIPT_ES: true
