@@ -1,0 +1,127 @@
+model User {
+  id              String    @id @map("_id")
+  name            String
+  username        String?   @unique
+  email           String
+  emailVerified   Boolean
+  image           String?
+  createdAt       DateTime
+  updatedAt       DateTime
+  // Soft disable / delete flags for defense-in-depth and compliance
+  isDisabled      Boolean   @default(false)
+  deletedAt       DateTime?
+  displayUsername String?
+  sessions        Session[]
+  accounts        Account[]
+  appUser         AppUser?
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @map("_id")
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @map("_id")
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @map("_id")
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+enum Role {
+  PROF
+  APPRENANT
+  ADMIN
+}
+
+enum AppUserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+}
+
+model AppUser {
+  id                  String        @id @map("_id")
+  userId              String        @unique
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role                Role?
+  status              AppUserStatus @default(PENDING)
+  createdAt           DateTime
+  updatedAt           DateTime
+  // Soft delete metadata
+  deletedAt           DateTime?
+  deletionRequestedAt DateTime?
+  deletionReason      String?
+  // Prof profile fields
+  bio                 String?
+  domain              String?
+  photoUrl            String?
+  qualifications      String?
+  experience          String?
+  socialMediaLinks    Json?
+  areasOfExpertise    Json?
+  mentorshipTopics    Json?
+  calendlyLink        String?
+  isPublished         Boolean  @default(false)
+  publishedAt         DateTime?
+  
+  @@map("app_user")
+}
+
+model AuditLog {
+  id        String   @id @map("_id")
+  userId    String
+  type      String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@map("audit_log")
+}
+
+model DeletionJob {
+  id        String   @id @map("_id")
+  userId    String
+  runAt     DateTime
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([runAt])
+  @@map("deletion_job")
+}
