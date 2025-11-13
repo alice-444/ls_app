@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { buildDeletionPlan } from "@/lib/users/services/delete-account.usecase";
-import { PrismaClient } from "../../../../../prisma/generated/client/client";
+import prisma from "../../../../../prisma";
 import { DeleteUserAccountService } from "@/lib/users/services/delete-account.service";
 import {
   PrismaAccountRepository,
@@ -12,8 +12,6 @@ import {
   NoopJobQueue,
 } from "@/lib/users/services/repositories.prisma";
 import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
-
-const prisma = new PrismaClient();
 
 export async function DELETE(req: NextRequest) {
   try {
