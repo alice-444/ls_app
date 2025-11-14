@@ -7,8 +7,14 @@ on:
       - prod
       - dev
     paths:
-      - "apps/**/*.{js,ts,jsx,tsx}"
-      - "packages/**/*.{js,ts,jsx,tsx}"
+      - "apps/**/*.js"
+      - "apps/**/*.ts"
+      - "apps/**/*.jsx"
+      - "apps/**/*.tsx"
+      - "packages/**/*.js"
+      - "packages/**/*.ts"
+      - "packages/**/*.jsx"
+      - "packages/**/*.tsx"
       - "**/package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"
@@ -20,8 +26,14 @@ on:
       - prod
       - dev
     paths:
-      - "apps/**/*.{js,ts,jsx,tsx}"
-      - "packages/**/*.{js,ts,jsx,tsx}"
+      - "apps/**/*.js"
+      - "apps/**/*.ts"
+      - "apps/**/*.jsx"
+      - "apps/**/*.tsx"
+      - "packages/**/*.js"
+      - "packages/**/*.ts"
+      - "packages/**/*.jsx"
+      - "packages/**/*.tsx"
       - "**/package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"

@@ -1,9 +1,8 @@
 import { AuditLogRepository, JobQueue, AppUserRepository, AuthUserRepository, SessionRepository, AccountRepository, DeletionPlan } from "./delete-account.types";
-import { PrismaClient } from "../../../../prisma/generated/client/client";
 
 export class DeleteUserAccountService {
   constructor(
-    private readonly prisma: PrismaClient,
+    private readonly prisma: any,
     private readonly repos: {
       appUsers: AppUserRepository;
       authUsers: AuthUserRepository;

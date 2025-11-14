@@ -1,5 +1,4 @@
-import type { Role } from "../../../../prisma/generated/client/client";
-import type { AppUserStatus } from "../../../../prisma/generated/client/client";
+import type { Role, AppUserStatus } from "../../../../prisma/generated/client/client";
 
 export interface AppUserData {
   id: string;

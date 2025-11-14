@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "../../../../../prisma/generated/client/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../../../../prisma";
 
 function isAuthorized(req: NextRequest): boolean {
   const token = req.headers.get("x-cron-token");

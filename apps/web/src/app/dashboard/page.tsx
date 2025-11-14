@@ -115,7 +115,7 @@ export default function Dashboard() {
   const { data: session, isPending } = authClient.useSession();
   const [userRole, setUserRole] = useState<UserRole>("both");
 
-  const privateData = useQuery(trpc.privateData.queryOptions());
+  // const privateData = useQuery(trpc.privateData.queryOptions());
 
   useEffect(() => {
     if (!session && !isPending) {
