@@ -11,9 +11,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/web/package.json ./apps/web/
 COPY apps/server/package.json ./apps/server/
 
-RUN pnpm install --frozen-lockfile
-
-RUN pnpm add -g turbo
+RUN pnpm install --frozen-lockfile && \
+    pnpm add -g turbo
 
 FROM base AS dev
 WORKDIR /app

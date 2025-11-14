@@ -5,7 +5,7 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat openssl
+RUN apk add --no-cache libc6-compat=1.2.5-r0 openssl=3.3.2-r1
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -13,9 +13,8 @@ COPY turbo.json ./
 COPY apps/server/package.json ./apps/server/
 COPY apps/web/package.json ./apps/web/
 
-RUN pnpm install --frozen-lockfile
-
-RUN pnpm add -g turbo
+RUN pnpm install --frozen-lockfile && \
+    pnpm add -g turbo
 
 FROM base AS dev
 WORKDIR /app
