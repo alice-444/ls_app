@@ -20,9 +20,12 @@ import {
   MoreVertical,
   Edit,
   Trash2,
+  Rocket,
 } from "lucide-react";
 import { CreateWorkshopForm } from "./components/CreateWorkshopForm";
 import { EditWorkshopForm } from "./components/EditWorkshopForm";
+import { DeleteWorkshopDialog } from "./components/DeleteWorkshopDialog";
+import { PublishWorkshopDialog } from "./components/PublishWorkshopDialog";
 import { trpc } from "@/utils/trpc";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -36,6 +39,8 @@ import {
 export default function WorkshopEditorPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<any | null>(null);
+  const [deletingWorkshop, setDeletingWorkshop] = useState<any | null>(null);
+  const [publishingWorkshop, setPublishingWorkshop] = useState<any | null>(null);
 
   const {
     data: workshops,
@@ -183,6 +188,20 @@ export default function WorkshopEditorPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        {workshop.status === "DRAFT" && (
+                          <>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setPublishingWorkshop(workshop);
+                              }}
+                              className="text-blue-600 focus:text-blue-600"
+                            >
+                              <Rocket className="mr-2 h-4 w-4" />
+                              Publier
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                          </>
+                        )}
                         <DropdownMenuItem
                           onClick={() => {
                             setEditingWorkshop(workshop);
@@ -195,8 +214,7 @@ export default function WorkshopEditorPage() {
                         <DropdownMenuItem
                           className="text-red-600 focus:text-red-600"
                           onClick={() => {
-                            // TODO: Implement delete functionality
-                            console.log("Delete workshop:", workshop.id);
+                            setDeletingWorkshop(workshop);
                           }}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
@@ -281,6 +299,26 @@ export default function WorkshopEditorPage() {
           </Card>
         )}
       </div>
+      <DeleteWorkshopDialog
+        workshop={deletingWorkshop}
+        open={!!deletingWorkshop}
+        onOpenChange={(open) => {
+          if (!open) setDeletingWorkshop(null);
+        }}
+        onSuccess={() => {
+          refetch();
+        }}
+      />
+      <PublishWorkshopDialog
+        workshop={publishingWorkshop}
+        open={!!publishingWorkshop}
+        onOpenChange={(open) => {
+          if (!open) setPublishingWorkshop(null);
+        }}
+        onSuccess={() => {
+          refetch();
+        }}
+      />
     </div>
   );
 }
