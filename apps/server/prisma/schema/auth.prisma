@@ -100,6 +100,8 @@ model AppUser {
   calendlyLink        String?
   isPublished         Boolean  @default(false)
   publishedAt         DateTime?
+  // Relations
+  workshops           Workshop[]
   
   @@map("app_user")
 }
@@ -124,4 +126,34 @@ model DeletionJob {
 
   @@index([runAt])
   @@map("deletion_job")
+}
+
+enum WorkshopStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+model Workshop {
+  id                String         @id @map("_id")
+  title             String
+  description       String?        
+  date              DateTime?      
+  time              String?        
+  duration          Int?           
+  location          String?
+  isVirtual         Boolean        @default(false)
+  maxParticipants   Int?
+  materialsNeeded   String?
+  status            WorkshopStatus @default(DRAFT)
+  creatorId         String
+  creator           AppUser        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  publishedAt       DateTime?
+
+  @@index([creatorId])
+  @@index([status])
+  @@map("workshop")
 }
