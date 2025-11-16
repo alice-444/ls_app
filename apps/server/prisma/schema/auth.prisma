@@ -102,6 +102,9 @@ model AppUser {
   publishedAt         DateTime?
   // Relations
   workshops           Workshop[]
+  // Feedbacks
+  mentorFeedbacks     MentorFeedback[] @relation("MentorFeedbacks")
+  apprenticeFeedbacks MentorFeedback[] @relation("ApprenticeFeedbacks")
   
   @@map("app_user")
 }
@@ -152,8 +155,30 @@ model Workshop {
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   publishedAt       DateTime?
+  feedbacks         MentorFeedback[]
 
   @@index([creatorId])
   @@index([status])
   @@map("workshop")
+}
+
+model MentorFeedback {
+  id                String    @id @map("_id")
+  mentorId          String
+  mentor            AppUser   @relation("MentorFeedbacks", fields: [mentorId], references: [id], onDelete: Cascade)
+  apprenticeId      String
+  apprentice        AppUser   @relation("ApprenticeFeedbacks", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  workshopId       String?
+  workshop          Workshop? @relation(fields: [workshopId], references: [id], onDelete: SetNull)
+  rating            Int       // 1-5 stars
+  comment           String?
+  isAnonymous       Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([mentorId])
+  @@index([apprenticeId])
+  @@index([workshopId])
+  @@index([createdAt])
+  @@map("mentor_feedback")
 }

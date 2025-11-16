@@ -484,9 +484,17 @@ export default function WorkshopRoomPage() {
                   {workshop.creator && (
                     <div className="flex items-center gap-2 text-sm">
                       <User className="h-4 w-4 text-slate-500" />
-                      <span className="text-slate-600 dark:text-slate-400">
-                        {workshop.creator.user?.name || "Animateur"}
-                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (workshop.creator) {
+                            router.push(`/mentors/${workshop.creator.id}`);
+                          }
+                        }}
+                        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:underline"
+                      >
+                        {workshop.creator.user?.name || "Mentor"}
+                      </button>
                     </div>
                   )}
 

@@ -26,6 +26,7 @@ import {
   CheckCircle,
   XCircle,
   EyeOff,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getStatusBadge, formatDate, formatTime } from "@/lib/workshop-utils";
@@ -328,7 +329,10 @@ export default function WorkshopDetailPage() {
             </Card>
 
             {workshop.creator && (
-              <Card>
+              <Card
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => router.push(`/mentors/${workshop.creator.id}`)}
+              >
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <User className="w-5 h-5" />
@@ -342,7 +346,7 @@ export default function WorkshopDetailPage() {
                         "?"}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">
+                      <p className="font-semibold text-slate-900 dark:text-slate-100 hover:underline">
                         {workshop.creator.user?.name || "Animateur"}
                       </p>
                       <p className="text-sm text-slate-600 dark:text-slate-400">
@@ -355,6 +359,10 @@ export default function WorkshopDetailPage() {
                       {workshop.creator.bio}
                     </p>
                   )}
+                  <p className="mt-3 text-sm text-blue-600 dark:text-blue-400 font-medium">
+                    Voir le profil complet{" "}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </p>
                 </CardContent>
               </Card>
             )}
