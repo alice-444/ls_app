@@ -25,10 +25,13 @@ import {
   User,
   CheckCircle,
   XCircle,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getStatusBadge, formatDate, formatTime } from "@/lib/workshop-utils";
 import { DeleteWorkshopDialog } from "@/components/workshop/DeleteWorkshopDialog";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 
 export default function WorkshopDetailPage() {
   const router = useRouter();
@@ -58,6 +61,16 @@ export default function WorkshopDetailPage() {
     },
   });
 
+  const unpublishMutation = trpc.workshop.unpublish.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier dépublié avec succès");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la dépublication");
+    },
+  });
+
   const handleDelete = () => {
     deleteMutation.mutate({ workshopId });
     setShowDeleteDialog(false);
@@ -67,8 +80,15 @@ export default function WorkshopDetailPage() {
     router.push(`/workshop-editor?id=${workshopId}`);
   };
 
-  const isOwner =
-    session?.user?.id && workshop?.creator?.userId === session.user.id;
+  const handleUnpublish = () => {
+    unpublishMutation.mutate({ workshopId });
+  };
+
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
 
   if (isLoading) {
     return (
@@ -79,6 +99,7 @@ export default function WorkshopDetailPage() {
   }
 
   if (!workshop) {
+    const backUrl = userRole === "PROF" ? "/my-workshops" : "/workshop-room";
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
         <div className="max-w-4xl mx-auto text-center py-12">
@@ -88,7 +109,7 @@ export default function WorkshopDetailPage() {
           <p className="text-slate-600 dark:text-slate-400 mb-6">
             L'atelier que vous recherchez n'existe pas ou a été supprimé.
           </p>
-          <Button onClick={() => router.push("/my-workshops")}>
+          <Button onClick={() => router.push(backUrl)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour aux ateliers
           </Button>
@@ -97,13 +118,21 @@ export default function WorkshopDetailPage() {
     );
   }
 
+  const isOwner =
+    session?.user?.id && workshop?.creator?.userId === session.user.id;
+
+  const shouldShowStatusBadge = isOwner;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => router.push("/my-workshops")}
+            onClick={() => {
+              const backUrl = isOwner ? "/my-workshops" : "/workshop-room";
+              router.push(backUrl);
+            }}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -116,12 +145,12 @@ export default function WorkshopDetailPage() {
                 <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100">
                   {workshop.title}
                 </h1>
-                {getStatusBadge(workshop.status)}
+                {shouldShowStatusBadge && getStatusBadge(workshop.status)}
               </div>
               <p className="text-slate-600 dark:text-slate-400">
                 Créé le{" "}
                 {formatDate(workshop.createdAt, { includeWeekday: false })}
-                {workshop.publishedAt && (
+                {shouldShowStatusBadge && workshop.publishedAt && (
                   <span>
                     {" "}
                     • Publié le{" "}
@@ -139,6 +168,16 @@ export default function WorkshopDetailPage() {
                   <Edit className="w-4 h-4 mr-2" />
                   Éditer
                 </Button>
+                {workshop.status === "PUBLISHED" && (
+                  <Button
+                    variant="outline"
+                    onClick={handleUnpublish}
+                    disabled={unpublishMutation.isPending}
+                  >
+                    <EyeOff className="w-4 h-4 mr-2" />
+                    Dépublier
+                  </Button>
+                )}
                 <Button
                   variant="destructive"
                   onClick={() => setShowDeleteDialog(true)}

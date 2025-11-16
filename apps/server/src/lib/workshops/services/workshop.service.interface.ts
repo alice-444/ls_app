@@ -16,6 +16,11 @@ export interface IWorkshopService {
     input: unknown
   ): Promise<Result<{ success: boolean; publishedAt: Date }>>;
 
+  unpublishWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>>;
+
   deleteWorkshop(
     userId: string,
     input: unknown
