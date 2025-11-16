@@ -17,7 +17,10 @@ export default function Header() {
 
   const commonLinks = [{ to: "/dashboard", label: "Dashboard" }];
 
-  const profLinks = [{ to: "/workshop-editor", label: "Atelab" }];
+  const profLinks = [
+    { to: "/my-workshops", label: "Mes Ateliers" },
+    { to: "/workshop-editor", label: "Atelab" }
+  ];
 
   const apprenantLinks = [{ to: "/workshop-room", label: "e-Atelier" }];
 

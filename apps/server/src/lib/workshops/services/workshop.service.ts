@@ -2,6 +2,7 @@ import { Result, failure, success, validateInput } from "../../common";
 import type { IWorkshopRepository } from "../repositories/workshop.repository.interface";
 import { sanitizeString } from "../../utils/sanitize";
 import type { AppUserRepository } from "../../users/repositories";
+import { z } from "zod";
 import {
   verifyUserExists,
   verifyProfUser,
@@ -11,6 +12,7 @@ import {
   createWorkshopBackendSchema,
   updateWorkshopBackendSchema,
   publishWorkshopSchema,
+  unpublishWorkshopSchema,
   deleteWorkshopSchema,
   type CreateWorkshopBackendInput,
   type UpdateWorkshopBackendInput,
@@ -22,10 +24,11 @@ import {
 
 export const createWorkshopSchema = createWorkshopBackendSchema;
 export const updateWorkshopSchema = updateWorkshopBackendSchema;
-export { publishWorkshopSchema, deleteWorkshopSchema };
+export { publishWorkshopSchema, unpublishWorkshopSchema, deleteWorkshopSchema };
 export type CreateWorkshopInput = CreateWorkshopBackendInput;
 export type UpdateWorkshopInput = UpdateWorkshopBackendInput;
 export type { PublishWorkshopInput, DeleteWorkshopInput };
+export type UnpublishWorkshopInput = z.infer<typeof unpublishWorkshopSchema>;
 
 export class WorkshopService implements IWorkshopService {
   constructor(
@@ -260,6 +263,53 @@ export class WorkshopService implements IWorkshopService {
       });
 
       return success({ success: true, publishedAt });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async unpublishWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>> {
+    const validation = validateInput(unpublishWorkshopSchema, input);
+    if (!validation.ok) {
+      return validation;
+    }
+
+    try {
+      const accessCheck = await this.verifyProfAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+
+      const isOwner = await this.workshopRepository.checkCreatorOwnership(
+        validation.data.workshopId,
+        appUser.id
+      );
+      if (!isOwner) {
+        return failure("Vous n'êtes pas autorisé à dépublier cet atelier", 403);
+      }
+
+      const workshop = await this.workshopRepository.findById(
+        validation.data.workshopId
+      );
+      if (!workshop) {
+        return failure("Atelier introuvable", 404);
+      }
+
+      if (workshop.status !== "PUBLISHED") {
+        return failure("Cet atelier n'est pas publié", 400);
+      }
+
+      await this.workshopRepository.update(validation.data.workshopId, {
+        status: "DRAFT",
+        publishedAt: null,
+      });
+
+      return success({ success: true });
     } catch (error) {
       return failure((error as Error).message, 500);
     }

@@ -4,6 +4,7 @@ import {
   createWorkshopSchema,
   updateWorkshopSchema,
   publishWorkshopSchema,
+  unpublishWorkshopSchema,
   deleteWorkshopSchema,
 } from "../lib/workshops/services";
 import { z } from "zod";
@@ -27,6 +28,14 @@ export const workshopRouter = router({
 
   publish: profProcedure.input(publishWorkshopSchema).mutation(async ({ ctx, input }) => {
     const result = await container.workshopService.publishWorkshop(ctx.session.user.id, input);
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
+
+  unpublish: profProcedure.input(unpublishWorkshopSchema).mutation(async ({ ctx, input }) => {
+    const result = await container.workshopService.unpublishWorkshop(ctx.session.user.id, input);
     if (!result.ok) {
       throw new Error(result.error);
     }
