@@ -104,6 +104,10 @@ export const publishWorkshopSchema = z.object({
   workshopId: z.string().uuid(),
 });
 
+export const unpublishWorkshopSchema = z.object({
+  workshopId: z.string().uuid(),
+});
+
 export const deleteWorkshopSchema = z.object({
   workshopId: z.string().uuid(),
 });

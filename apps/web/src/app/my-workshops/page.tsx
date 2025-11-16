@@ -27,6 +27,7 @@ import {
   Search,
   Trash2,
   Eye,
+  EyeOff,
 } from "lucide-react";
 import {
   Select,
@@ -75,6 +76,16 @@ export default function MyWorkshopsPage() {
     },
     onError: (error) => {
       toast.error(error.message || "Erreur lors de la publication");
+    },
+  });
+
+  const unpublishMutation = trpc.workshop.unpublish.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier dépublié avec succès");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la dépublication");
     },
   });
 
@@ -141,6 +152,10 @@ export default function MyWorkshopsPage() {
 
   const handlePublish = (workshopId: string) => {
     publishMutation.mutate({ workshopId });
+  };
+
+  const handleUnpublish = (workshopId: string) => {
+    unpublishMutation.mutate({ workshopId });
   };
 
   const handleEdit = (workshopId: string) => {
@@ -464,6 +479,18 @@ export default function MyWorkshopsPage() {
                           >
                             <CheckCircle className="w-4 h-4 lg:mr-0 xl:mr-2" />
                             <span className="lg:hidden xl:inline">Publier</span>
+                          </Button>
+                        )}
+                        {workshop.status === "PUBLISHED" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleUnpublish(workshop.id)}
+                            disabled={unpublishMutation.isPending}
+                            className="flex-1 lg:flex-none"
+                          >
+                            <EyeOff className="w-4 h-4 lg:mr-0 xl:mr-2" />
+                            <span className="lg:hidden xl:inline">Dépublier</span>
                           </Button>
                         )}
                         <Button
