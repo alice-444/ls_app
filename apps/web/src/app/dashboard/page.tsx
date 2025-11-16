@@ -1,6 +1,6 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,6 +13,14 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BookOpen, Check, X } from "lucide-react";
+import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
+import {
+  getWorkshopRequestStatusLabel,
+  getWorkshopRequestStatusColor,
+} from "@/lib/workshop-request-utils";
+import { toast } from "sonner";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -112,8 +120,50 @@ const mockUserData = {
 
 export default function Dashboard() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
   const [userRole, setUserRole] = useState<UserRole>("both");
+
+  const { data: workshopRequests } = trpc.mentor.getMyWorkshopRequests.useQuery(
+    undefined,
+    {
+      enabled: !!session && userRole === "apprenant",
+    }
+  );
+
+  const { data: mentorWorkshopRequests } = trpc.mentor.getMentorWorkshopRequests.useQuery(
+    undefined,
+    {
+      enabled: !!session && (userRole === "mentor" || userRole === "both"),
+    }
+  );
+
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+
+  const utils = trpc.useUtils();
+  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée avec succès");
+      utils.mentor.getMentorWorkshopRequests.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const handleAcceptRequest = (request: any) => {
+    setSelectedRequest(request);
+    setSelectedRequestId(request.id);
+    setShowAcceptDialog(true);
+  };
+
+  const handleRejectRequest = (requestId: string) => {
+    if (confirm("Êtes-vous sûr de vouloir refuser cette demande ?")) {
+      rejectRequest.mutate({ requestId });
+    }
+  };
 
   // const privateData = useQuery(trpc.privateData.queryOptions());
 
@@ -353,7 +403,44 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Prochains ateliers */}
+      <Card className="lg:col-span-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BookOpen className="w-4 h-4" />
+            Mes demandes d'atelier
+          </CardTitle>
+          <CardDescription>
+            Vos demandes d'atelier envoyées aux mentors
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-3">
+          {workshopRequests && workshopRequests.length > 0 ? (
+            workshopRequests.map((request: any) => (
+              <WorkshopRequestCard
+                key={request.id}
+                request={request}
+                variant="dashboard"
+                showTitle={true}
+                showDescription={true}
+                showMentor={true}
+              />
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <p className="text-sm">Aucune demande d'atelier pour le moment</p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-4"
+                onClick={() => router.push("/workshop-room")}
+              >
+                Parcourir les mentors
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="lg:col-span-2">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -525,6 +612,40 @@ export default function Dashboard() {
               Utiliser mes crédits
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="lg:col-span-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BookOpen className="w-4 h-4" />
+            Demandes d'atelier reçues
+          </CardTitle>
+          <CardDescription>
+            Les demandes d'atelier que vous avez reçues de la part des apprentis
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-3">
+          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
+            mentorWorkshopRequests.map((request: any) => (
+              <WorkshopRequestCard
+                key={request.id}
+                request={request}
+                onAccept={handleAcceptRequest}
+                onReject={handleRejectRequest}
+                isRejecting={rejectRequest.isPending}
+                variant="dashboard"
+                showTitle={true}
+                showDescription={true}
+                showPreferredDate={true}
+              />
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p>Aucune demande d'atelier reçue</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -742,6 +863,62 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
+
+      <Card className="lg:col-span-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BookOpen className="w-4 h-4" />
+            Demandes d'atelier reçues
+          </CardTitle>
+          <CardDescription>
+            Les demandes d'atelier que vous avez reçues de la part des apprentis
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-3">
+          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
+            mentorWorkshopRequests.map((request: any) => (
+              <WorkshopRequestCard
+                key={request.id}
+                request={request}
+                onAccept={handleAcceptRequest}
+                onReject={handleRejectRequest}
+                isRejecting={rejectRequest.isPending}
+                variant="dashboard"
+                showTitle={true}
+                showDescription={true}
+                showPreferredDate={true}
+              />
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p>Aucune demande d'atelier reçue</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {selectedRequest && (
+        <AcceptWorkshopRequestDialog
+          open={showAcceptDialog}
+          onOpenChange={(open) => {
+            setShowAcceptDialog(open);
+            if (!open) {
+              setSelectedRequest(null);
+              setSelectedRequestId(null);
+              utils.mentor.getMentorWorkshopRequests.invalidate();
+            }
+          }}
+          requestId={selectedRequest.id}
+          requestTitle={selectedRequest.title}
+          preferredDate={
+            selectedRequest.preferredDate
+              ? new Date(selectedRequest.preferredDate)
+              : null
+          }
+          preferredTime={selectedRequest.preferredTime}
+        />
+      )}
     </>
   );
 

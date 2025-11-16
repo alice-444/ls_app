@@ -28,7 +28,17 @@ import {
   Trash2,
   Eye,
   EyeOff,
+  BookOpen,
+  Check,
+  X,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
+import {
+  getWorkshopRequestStatusLabel,
+  getWorkshopRequestStatusColor,
+} from "@/lib/workshop-request-utils";
 import {
   Select,
   SelectContent,
@@ -40,6 +50,82 @@ import {
 type SortField = "date" | "title" | "status" | "createdAt";
 type SortOrder = "asc" | "desc";
 type StatusFilter = "all" | "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
+
+function WorkshopRequests({
+  workshopId,
+  expandedWorkshopId,
+  setExpandedWorkshopId,
+  onAcceptRequest,
+  onRejectRequest,
+  isRejecting,
+}: {
+  workshopId: string;
+  expandedWorkshopId: string | null;
+  setExpandedWorkshopId: (id: string | null) => void;
+  onAcceptRequest: (request: any) => void;
+  onRejectRequest: (requestId: string) => void;
+  isRejecting: boolean;
+}) {
+  const { data: requests } = trpc.mentor.getWorkshopRequests.useQuery(
+    { workshopId },
+    { enabled: !!workshopId }
+  );
+
+  const pendingRequests =
+    requests?.filter((r: any) => r.status === "PENDING") || [];
+  const allRequests = requests || [];
+
+  return (
+    <div className="mt-4 pt-4 border-t">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-slate-600" />
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Demandes de participation ({allRequests.length})
+          </span>
+          {pendingRequests.length > 0 && (
+            <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+              {pendingRequests.length} en attente
+            </Badge>
+          )}
+        </div>
+        {allRequests.length > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() =>
+              setExpandedWorkshopId(
+                expandedWorkshopId === workshopId ? null : workshopId
+              )
+            }
+          >
+            {expandedWorkshopId === workshopId ? "Masquer" : "Voir"}
+          </Button>
+        )}
+      </div>
+      {allRequests.length === 0 ? (
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+          Aucune demande de participation pour le moment
+        </p>
+      ) : (
+        expandedWorkshopId === workshopId && (
+          <div className="space-y-2 mt-2">
+            {allRequests.map((request: any) => (
+              <WorkshopRequestCard
+                key={request.id}
+                request={request}
+                onAccept={onAcceptRequest}
+                onReject={onRejectRequest}
+                isRejecting={isRejecting}
+                variant="compact"
+              />
+            ))}
+          </div>
+        )
+      )}
+    </div>
+  );
+}
 
 export default function MyWorkshopsPage() {
   const router = useRouter();
@@ -90,6 +176,33 @@ export default function MyWorkshopsPage() {
   });
 
   const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [expandedWorkshopId, setExpandedWorkshopId] = useState<string | null>(
+    null
+  );
+
+  const utils = trpc.useUtils();
+  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée avec succès");
+      utils.mentor.getWorkshopRequests.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const handleAcceptRequest = (request: any) => {
+    setSelectedRequest(request);
+    setShowAcceptDialog(true);
+  };
+
+  const handleRejectRequest = (requestId: string) => {
+    if (confirm("Êtes-vous sûr de vouloir refuser cette demande ?")) {
+      rejectRequest.mutate({ requestId });
+    }
+  };
 
   const filteredAndSortedWorkshops = useMemo(() => {
     if (!workshops) return [];
@@ -448,6 +561,14 @@ export default function MyWorkshopsPage() {
                             {workshop.maxParticipants || "∞"} participants
                           </div>
                         </div>
+                        <WorkshopRequests
+                          workshopId={workshop.id}
+                          expandedWorkshopId={expandedWorkshopId}
+                          setExpandedWorkshopId={setExpandedWorkshopId}
+                          onAcceptRequest={handleAcceptRequest}
+                          onRejectRequest={handleRejectRequest}
+                          isRejecting={rejectRequest.isPending}
+                        />
                       </div>
 
                       <div className="flex gap-2 lg:flex-col xl:flex-row">
@@ -490,7 +611,9 @@ export default function MyWorkshopsPage() {
                             className="flex-1 lg:flex-none"
                           >
                             <EyeOff className="w-4 h-4 lg:mr-0 xl:mr-2" />
-                            <span className="lg:hidden xl:inline">Dépublier</span>
+                            <span className="lg:hidden xl:inline">
+                              Dépublier
+                            </span>
                           </Button>
                         )}
                         <Button
@@ -518,6 +641,27 @@ export default function MyWorkshopsPage() {
           onConfirm={() => showDeleteDialog && handleDelete(showDeleteDialog)}
           isLoading={deleteMutation.isPending}
         />
+
+        {selectedRequest && (
+          <AcceptWorkshopRequestDialog
+            open={showAcceptDialog}
+            onOpenChange={(open) => {
+              setShowAcceptDialog(open);
+              if (!open) {
+                setSelectedRequest(null);
+                utils.mentor.getWorkshopRequests.invalidate();
+              }
+            }}
+            requestId={selectedRequest.id}
+            requestTitle={selectedRequest.title}
+            preferredDate={
+              selectedRequest.preferredDate
+                ? new Date(selectedRequest.preferredDate)
+                : null
+            }
+            preferredTime={selectedRequest.preferredTime}
+          />
+        )}
       </div>
     </div>
   );

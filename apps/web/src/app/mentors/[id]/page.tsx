@@ -34,6 +34,7 @@ import { CalendlyEmbed } from "@/components/calendly-embed";
 import { API_BASE_URL } from "@/lib/api-client";
 import Loader from "@/components/loader";
 import { ContactMentorDialog } from "@/components/mentor/ContactMentorDialog";
+import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 import { MentorFeedbacks } from "@/components/mentor/MentorFeedbacks";
 import { MentorWorkshopHistory } from "@/components/mentor/MentorWorkshopHistory";
 
@@ -43,6 +44,7 @@ export default function MentorProfileViewPage() {
   const mentorId = params.id as string;
   const { data: session } = authClient.useSession();
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
 
   const { data: userRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
@@ -130,9 +132,17 @@ export default function MentorProfileViewPage() {
             {session &&
               userRole === "APPRENANT" &&
               mentor.userId !== session.user.id && (
-                <div className="flex justify-center pt-2">
+                <div className="flex justify-center pt-2 gap-2">
+                  <Button
+                    onClick={() => setShowRequestDialog(true)}
+                    className="gap-2"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Participer à l'atelier
+                  </Button>
                   <Button
                     onClick={() => setShowContactDialog(true)}
+                    variant="outline"
                     className="gap-2"
                   >
                     <MessageSquare className="h-4 w-4" />
@@ -323,7 +333,10 @@ export default function MentorProfileViewPage() {
           </CardContent>
         </Card>
 
-        <MentorWorkshopHistory mentorId={mentorId} />
+        <MentorWorkshopHistory
+          mentorId={mentorId}
+          mentorName={mentor.name || "Mentor"}
+        />
 
         <MentorFeedbacks mentorId={mentorId} />
       </div>
@@ -331,6 +344,13 @@ export default function MentorProfileViewPage() {
       <ContactMentorDialog
         open={showContactDialog}
         onOpenChange={setShowContactDialog}
+        mentorId={mentorId}
+        mentorName={mentor.name || "Mentor"}
+      />
+
+      <RequestWorkshopParticipationDialog
+        open={showRequestDialog}
+        onOpenChange={setShowRequestDialog}
         mentorId={mentorId}
         mentorName={mentor.name || "Mentor"}
       />

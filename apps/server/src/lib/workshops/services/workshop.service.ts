@@ -387,4 +387,144 @@ export class WorkshopService implements IWorkshopService {
       return failure((error as Error).message, 500);
     }
   }
+
+  async getConfirmedWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+
+      const workshops = await this.workshopRepository.findByApprenticeId(
+        appUser.id
+      );
+
+      const confirmedWorkshops = workshops.filter(
+        (w) => w.date && w.time && w.status !== "CANCELLED"
+      );
+
+      return success(confirmedWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async updateWorkshopScheduling(
+    userId: string,
+    workshopId: string,
+    input: {
+      date?: Date | null;
+      time?: string | null;
+      duration?: number | null;
+      location?: string | null;
+    }
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const workshop = await this.workshopRepository.findById(workshopId);
+      if (!workshop) {
+        return failure("Atelier non trouvé", 404);
+      }
+
+      const accessCheck = await this.verifyProfAccess(userId);
+      const isMentor =
+        accessCheck.ok && accessCheck.data.appUser.id === workshop.creatorId;
+
+      let isApprentice = false;
+      if (workshop.apprenticeId) {
+        const apprenticeCheck = await this.verifyApprenticeAccess(userId);
+        isApprentice =
+          apprenticeCheck.ok &&
+          apprenticeCheck.data.appUser.id === workshop.apprenticeId;
+      }
+
+      if (!isMentor && !isApprentice) {
+        return failure("Vous n'êtes pas autorisé à modifier cet atelier", 403);
+      }
+
+      const updateData: any = {};
+      if (input.date !== undefined) updateData.date = input.date;
+      if (input.time !== undefined) updateData.time = input.time;
+      if (input.duration !== undefined) updateData.duration = input.duration;
+      if (input.location !== undefined) {
+        updateData.location = input.location
+          ? this.sanitizeWorkshopFields({ location: input.location }).location
+          : null;
+      }
+
+      await this.workshopRepository.update(workshopId, updateData);
+
+      // TODO: System of notification will be implemented later
+      // TODO: Calendar integration (Calendly) will be implemented later
+
+      return success({ success: true });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async cancelConfirmedWorkshop(
+    userId: string,
+    workshopId: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const workshop = await this.workshopRepository.findById(workshopId);
+      if (!workshop) {
+        return failure("Atelier non trouvé", 404);
+      }
+
+      const accessCheck = await this.verifyProfAccess(userId);
+      const isMentor =
+        accessCheck.ok && accessCheck.data.appUser.id === workshop.creatorId;
+
+      let isApprentice = false;
+      if (workshop.apprenticeId) {
+        const apprenticeCheck = await this.verifyApprenticeAccess(userId);
+        isApprentice =
+          apprenticeCheck.ok &&
+          apprenticeCheck.data.appUser.id === workshop.apprenticeId;
+      }
+
+      if (!isMentor && !isApprentice) {
+        return failure("Vous n'êtes pas autorisé à annuler cet atelier", 403);
+      }
+
+      await this.workshopRepository.update(workshopId, {
+        status: "CANCELLED",
+      });
+
+      // TODO: System of notification will be implemented later
+      // TODO: Calendar integration (Calendly) will be implemented later
+
+      return success({ success: true });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  private async verifyApprenticeAccess(
+    userId: string
+  ): Promise<Result<{ appUser: any }>> {
+    const appUser = await this.appUserRepository.findByUserId(userId);
+
+    if (!appUser) {
+      return failure(
+        "AppUser not found. Please complete role selection first.",
+        404
+      );
+    }
+
+    if (appUser.role !== "APPRENANT") {
+      return failure("Only apprentices can perform this action", 403);
+    }
+
+    if (appUser.status !== "ACTIVE") {
+      return failure("User account is not active", 403);
+    }
+
+    return success({ appUser });
+  }
 }

@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +17,7 @@ import {
   GraduationCap,
   ArrowRight,
   Lock,
+  BookOpen,
 } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 import { renderStars } from "@/lib/rating-utils";
@@ -22,16 +26,29 @@ import type {
   WorkshopBasic,
   WorkshopWithFeedback,
 } from "@/types/workshop";
+import { RequestWorkshopParticipationDialog } from "./RequestWorkshopParticipationDialog";
 
 interface MentorWorkshopHistoryProps {
   mentorId: string;
+  mentorName?: string;
 }
 
 export function MentorWorkshopHistory({
   mentorId,
+  mentorName = "",
 }: MentorWorkshopHistoryProps) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
+  const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(null);
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
+
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
+  const isApprentice = userRole === "APPRENANT";
 
   const {
     data: workshopsData,
@@ -152,17 +169,31 @@ export function MentorWorkshopHistory({
                               </p>
                             )}
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              router.push(`/workshop/${workshop.id}`)
-                            }
-                            className="ml-4"
-                          >
-                            Voir détails
-                            <ArrowRight className="h-4 w-4 ml-1" />
-                          </Button>
+                          <div className="flex gap-2 ml-4">
+                            {isApprentice && (
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedWorkshopId(workshop.id);
+                                  setShowRequestDialog(true);
+                                }}
+                                className="gap-1"
+                              >
+                                <BookOpen className="h-4 w-4" />
+                                Demander à participer
+                              </Button>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                router.push(`/workshop/${workshop.id}`)
+                              }
+                            >
+                              Voir détails
+                              <ArrowRight className="h-4 w-4 ml-1" />
+                            </Button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                           {workshop.date && (
@@ -297,6 +328,21 @@ export function MentorWorkshopHistory({
           </>
         )}
       </CardContent>
+
+      {isApprentice && (
+        <RequestWorkshopParticipationDialog
+          open={showRequestDialog}
+          onOpenChange={(open) => {
+            setShowRequestDialog(open);
+            if (!open) {
+              setSelectedWorkshopId(null);
+            }
+          }}
+          mentorId={mentorId}
+          mentorName={mentorName}
+          preselectedWorkshopId={selectedWorkshopId}
+        />
+      )}
     </Card>
   );
 }

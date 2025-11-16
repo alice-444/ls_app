@@ -5,7 +5,7 @@ import type { AppUserRepository } from "@/lib/users/repositories";
 export async function verifyUserExists(
   userId: string
 ): Promise<Result<{ user: { id: string } }>> {
-  const user = await prisma.user.findUnique({
+  const user = await (prisma as any).user.findUnique({
     where: { id: userId },
   });
 

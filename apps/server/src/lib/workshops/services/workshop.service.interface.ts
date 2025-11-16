@@ -31,5 +31,25 @@ export interface IWorkshopService {
   getPublishedWorkshops(): Promise<Result<any[]>>;
 
   getWorkshopById(workshopId: string): Promise<Result<any>>;
+
+  getConfirmedWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>>;
+
+  updateWorkshopScheduling(
+    userId: string,
+    workshopId: string,
+    input: {
+      date?: Date | null;
+      time?: string | null;
+      duration?: number | null;
+      location?: string | null;
+    }
+  ): Promise<Result<{ success: boolean }>>;
+
+  cancelConfirmedWorkshop(
+    userId: string,
+    workshopId: string
+  ): Promise<Result<{ success: boolean }>>;
 }
 

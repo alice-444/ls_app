@@ -3,23 +3,34 @@ import Link from "next/link";
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
 import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { useEffect } from "react";
 
 export default function Header() {
   const { data: session } = authClient.useSession();
+  const queryClient = useQueryClient();
 
-  const { data: userRole } = useQuery({
+  const {
+    data: userRole,
+    refetch: refetchUserRole,
+    isLoading: isLoadingRole,
+    error: roleError,
+  } = useQuery({
     queryKey: ["userRole", session?.user?.id],
     queryFn: getUserRole,
     enabled: !!session?.user?.id,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    gcTime: 0,
   });
 
   const commonLinks = [{ to: "/dashboard", label: "Dashboard" }];
 
   const profLinks = [
     { to: "/my-workshops", label: "Mes Ateliers" },
-    { to: "/workshop-editor", label: "Atelab" }
+    { to: "/workshop-editor", label: "Atelab" },
   ];
 
   const apprenantLinks = [{ to: "/workshop-room", label: "e-Atelier" }];

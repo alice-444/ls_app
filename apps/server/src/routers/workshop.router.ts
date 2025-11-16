@@ -1,4 +1,4 @@
-import { profProcedure, publicProcedure, router } from "../lib/trpc";
+import { profProcedure, publicProcedure, protectedProcedure, router } from "../lib/trpc";
 import { container } from "../lib/di/container";
 import {
   createWorkshopSchema,
@@ -73,5 +73,51 @@ export const workshopRouter = router({
     }
     return result.data;
   }),
+
+  getConfirmedWorkshops: protectedProcedure.query(async ({ ctx }) => {
+    const result = await container.workshopService.getConfirmedWorkshopsForApprentice(
+      ctx.session.user.id
+    );
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
+
+  updateScheduling: protectedProcedure
+    .input(
+      z.object({
+        workshopId: z.string(),
+        date: z.date().optional().nullable(),
+        time: z.string().optional().nullable(),
+        duration: z.number().int().min(15).max(480).optional().nullable(),
+        location: z.string().max(200).optional().nullable(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { workshopId, ...schedulingData } = input;
+      const result = await container.workshopService.updateWorkshopScheduling(
+        ctx.session.user.id,
+        workshopId,
+        schedulingData
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
+
+  cancelConfirmed: protectedProcedure
+    .input(z.object({ workshopId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.workshopService.cancelConfirmedWorkshop(
+        ctx.session.user.id,
+        input.workshopId
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 });
 

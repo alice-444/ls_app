@@ -8,7 +8,7 @@ import type {
 export class PrismaWorkshopRepository implements IWorkshopRepository {
   constructor(private readonly prisma: any) {}
   async create(input: CreateWorkshopInput): Promise<WorkshopEntity> {
-    return this.prisma.workshop.create({
+    return (this.prisma as any).workshop.create({
       data: {
         id: crypto.randomUUID(),
         title: input.title,
@@ -21,37 +21,68 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         maxParticipants: input.maxParticipants,
         materialsNeeded: input.materialsNeeded,
         creatorId: input.creatorId,
+        apprenticeId: input.apprenticeId ?? null,
+        requestId: input.requestId ?? null,
       },
     });
   }
 
   async findById(id: string): Promise<WorkshopEntity | null> {
-    return this.prisma.workshop.findUnique({
+    const workshop = await (this.prisma as any).workshop.findUnique({
       where: { id },
       include: {
-        creator: {
+        app_user_workshop_creatorIdToapp_user: {
           include: {
             user: true,
           },
         },
       },
     });
+    if (!workshop) return null;
+    return {
+      ...workshop,
+      creator: workshop.app_user_workshop_creatorIdToapp_user,
+    } as WorkshopEntity;
   }
 
   async findByCreatorId(creatorId: string): Promise<WorkshopEntity[]> {
-    return this.prisma.workshop.findMany({
+    return (this.prisma as any).workshop.findMany({
       where: { creatorId },
       orderBy: { createdAt: "desc" },
     });
   }
 
+  async findByApprenticeId(apprenticeId: string): Promise<WorkshopEntity[]> {
+    const workshops = await (this.prisma as any).workshop.findMany({
+      where: { apprenticeId },
+      include: {
+        app_user_workshop_creatorIdToapp_user: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { date: "asc" },
+    });
+    return workshops.map((w: any) => ({
+      ...w,
+      creator: w.app_user_workshop_creatorIdToapp_user,
+    })) as WorkshopEntity[];
+  }
+
   async findPublished(): Promise<WorkshopEntity[]> {
-    return this.prisma.workshop.findMany({
+    const workshops = await (this.prisma as any).workshop.findMany({
       where: {
         status: "PUBLISHED",
       },
       include: {
-        creator: {
+        app_user_workshop_creatorIdToapp_user: {
           include: {
             user: true,
           },
@@ -59,17 +90,24 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
       },
       orderBy: { date: "asc" },
     });
+    return workshops.map((w: any) => ({
+      ...w,
+      creator: w.app_user_workshop_creatorIdToapp_user,
+    })) as WorkshopEntity[];
   }
 
-  async update(id: string, input: UpdateWorkshopInput): Promise<WorkshopEntity> {
-    return this.prisma.workshop.update({
+  async update(
+    id: string,
+    input: UpdateWorkshopInput
+  ): Promise<WorkshopEntity> {
+    return (this.prisma as any).workshop.update({
       where: { id },
       data: input,
     });
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.workshop.delete({
+    await (this.prisma as any).workshop.delete({
       where: { id },
     });
   }
@@ -78,11 +116,10 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
     workshopId: string,
     creatorId: string
   ): Promise<boolean> {
-    const workshop = await this.prisma.workshop.findUnique({
+    const workshop = await (this.prisma as any).workshop.findUnique({
       where: { id: workshopId },
       select: { creatorId: true },
     });
     return workshop?.creatorId === creatorId;
   }
 }
-

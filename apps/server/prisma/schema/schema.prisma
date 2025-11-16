@@ -7,3 +7,208 @@ datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
 }
+
+model account {
+  id                    String    @id @map("_id")
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model app_user {
+  id                                                       String             @id @map("_id")
+  userId                                                   String             @unique
+  role                                                     Role?
+  status                                                   AppUserStatus      @default(PENDING)
+  createdAt                                                DateTime
+  updatedAt                                                DateTime
+  deletedAt                                                DateTime?
+  deletionRequestedAt                                      DateTime?
+  deletionReason                                           String?
+  bio                                                      String?
+  domain                                                   String?
+  photoUrl                                                 String?
+  areasOfExpertise                                         Json?
+  calendlyLink                                             String?
+  experience                                               String?
+  isPublished                                              Boolean            @default(false)
+  mentorshipTopics                                         Json?
+  publishedAt                                              DateTime?
+  qualifications                                           String?
+  socialMediaLinks                                         Json?
+  user                                                     user               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user   mentor_feedback[]  @relation("mentor_feedback_apprenticeIdToapp_user")
+  mentor_feedback_mentor_feedback_mentorIdToapp_user       mentor_feedback[]  @relation("mentor_feedback_mentorIdToapp_user")
+  workshop_workshop_apprenticeIdToapp_user                 workshop[]         @relation("workshop_apprenticeIdToapp_user")
+  workshop_workshop_creatorIdToapp_user                    workshop[]         @relation("workshop_creatorIdToapp_user")
+  workshop_request_workshop_request_apprenticeIdToapp_user workshop_request[] @relation("workshop_request_apprenticeIdToapp_user")
+  workshop_request_workshop_request_mentorIdToapp_user     workshop_request[] @relation("workshop_request_mentorIdToapp_user")
+}
+
+model audit_log {
+  id        String   @id @map("_id")
+  userId    String
+  type      String
+  meta      Json?
+  createdAt DateTime @default(now())
+}
+
+model deletion_job {
+  id        String   @id @map("_id")
+  userId    String
+  runAt     DateTime
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([runAt])
+}
+
+model mentor_feedback {
+  id                                              String    @id @map("_id")
+  mentorId                                        String
+  apprenticeId                                    String
+  workshopId                                      String?
+  rating                                          Int
+  comment                                         String?
+  isAnonymous                                     Boolean   @default(false)
+  createdAt                                       DateTime  @default(now())
+  updatedAt                                       DateTime
+  app_user_mentor_feedback_apprenticeIdToapp_user app_user  @relation("mentor_feedback_apprenticeIdToapp_user", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  app_user_mentor_feedback_mentorIdToapp_user     app_user  @relation("mentor_feedback_mentorIdToapp_user", fields: [mentorId], references: [id], onDelete: Cascade)
+  workshop                                        workshop? @relation(fields: [workshopId], references: [id])
+
+  @@index([apprenticeId])
+  @@index([createdAt])
+  @@index([mentorId])
+  @@index([workshopId])
+}
+
+model session {
+  id        String   @id @map("_id")
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model user {
+  id              String    @id @map("_id")
+  name            String
+  username        String?   @unique
+  email           String    @unique
+  emailVerified   Boolean
+  image           String?
+  createdAt       DateTime
+  updatedAt       DateTime
+  isDisabled      Boolean   @default(false)
+  deletedAt       DateTime?
+  displayUsername String?
+  account         account[]
+  app_user        app_user?
+  session         session[]
+}
+
+model verification {
+  id         String    @id @map("_id")
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+}
+
+model workshop {
+  id                                                     String             @id @map("_id")
+  title                                                  String
+  description                                            String?
+  date                                                   DateTime?
+  time                                                   String?
+  location                                               String?
+  isVirtual                                              Boolean            @default(false)
+  maxParticipants                                        Int?
+  materialsNeeded                                        String?
+  status                                                 WorkshopStatus     @default(DRAFT)
+  creatorId                                              String
+  createdAt                                              DateTime           @default(now())
+  updatedAt                                              DateTime
+  publishedAt                                            DateTime?
+  duration                                               Int?
+  apprenticeId                                           String?
+  requestId                                              String?
+  mentor_feedback                                        mentor_feedback[]
+  app_user_workshop_apprenticeIdToapp_user               app_user?          @relation("workshop_apprenticeIdToapp_user", fields: [apprenticeId], references: [id])
+  app_user_workshop_creatorIdToapp_user                  app_user           @relation("workshop_creatorIdToapp_user", fields: [creatorId], references: [id], onDelete: Cascade)
+  workshop_request_workshop_requestIdToworkshop_request  workshop_request?  @relation("workshop_requestIdToworkshop_request", fields: [requestId], references: [id])
+  workshop_request_workshop_request_workshopIdToworkshop workshop_request[] @relation("workshop_request_workshopIdToworkshop")
+
+  @@index([apprenticeId])
+  @@index([creatorId])
+  @@index([requestId])
+  @@index([status])
+}
+
+model workshop_request {
+  id                                               String                @id @map("_id")
+  title                                            String
+  description                                      String?
+  message                                          String?
+  preferredDate                                    DateTime?
+  preferredTime                                    String?
+  status                                           WorkshopRequestStatus @default(PENDING)
+  apprenticeId                                     String
+  mentorId                                         String
+  createdAt                                        DateTime              @default(now())
+  updatedAt                                        DateTime
+  workshopId                                       String?
+  workshop_workshop_requestIdToworkshop_request    workshop[]            @relation("workshop_requestIdToworkshop_request")
+  app_user_workshop_request_apprenticeIdToapp_user app_user              @relation("workshop_request_apprenticeIdToapp_user", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  app_user_workshop_request_mentorIdToapp_user     app_user              @relation("workshop_request_mentorIdToapp_user", fields: [mentorId], references: [id], onDelete: Cascade)
+  workshop_workshop_request_workshopIdToworkshop   workshop?             @relation("workshop_request_workshopIdToworkshop", fields: [workshopId], references: [id])
+
+  @@index([apprenticeId])
+  @@index([createdAt])
+  @@index([mentorId])
+  @@index([status])
+  @@index([workshopId])
+}
+
+enum AppUserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+}
+
+enum Role {
+  PROF
+  APPRENANT
+  ADMIN
+}
+
+enum WorkshopRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+enum WorkshopStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}

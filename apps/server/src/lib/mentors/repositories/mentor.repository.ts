@@ -9,7 +9,7 @@ export class PrismaMentorRepository implements IMentorRepository {
   constructor(private readonly prisma: any) {}
 
   async findPublishedMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await this.prisma.appUser.findUnique({
+    const mentor = await (this.prisma as any).app_user.findUnique({
       where: { id },
       include: {
         user: {
@@ -30,7 +30,7 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await this.prisma.appUser.findUnique({
+    const mentor = await (this.prisma as any).app_user.findUnique({
       where: { id },
     });
 
@@ -42,7 +42,7 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findApprenticeByUserId(userId: string): Promise<MentorEntity | null> {
-    const apprentice = await this.prisma.appUser.findUnique({
+    const apprentice = await (this.prisma as any).app_user.findUnique({
       where: { userId },
     });
 
@@ -61,10 +61,10 @@ export class PrismaMentorRepository implements IMentorRepository {
       where.workshopId = filters.workshopId;
     }
 
-    const feedbacks = await this.prisma.mentorFeedback.findMany({
+    const feedbacks = await (this.prisma as any).mentor_feedback.findMany({
       where,
       include: {
-        apprentice: {
+        app_user_mentor_feedback_apprenticeIdToapp_user: {
           include: {
             user: {
               select: {
@@ -87,19 +87,22 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    return feedbacks as MentorFeedbackEntity[];
+    return feedbacks.map((f: any) => ({
+      ...f,
+      apprentice: f.app_user_mentor_feedback_apprenticeIdToapp_user,
+    })) as MentorFeedbackEntity[];
   }
 
   async findMentorPublicWorkshops(
     mentorId: string
   ): Promise<MentorWorkshopEntity[]> {
-    const workshops = await this.prisma.workshop.findMany({
+    const workshops = await (this.prisma as any).workshop.findMany({
       where: {
         creatorId: mentorId,
         status: "PUBLISHED",
       },
       include: {
-        feedbacks: {
+        mentor_feedback: {
           select: {
             rating: true,
           },
@@ -113,4 +116,3 @@ export class PrismaMentorRepository implements IMentorRepository {
     return workshops as MentorWorkshopEntity[];
   }
 }
-

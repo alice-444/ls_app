@@ -2,6 +2,7 @@ export interface IWorkshopRepository {
   create(input: CreateWorkshopInput): Promise<WorkshopEntity>;
   findById(id: string): Promise<WorkshopEntity | null>;
   findByCreatorId(creatorId: string): Promise<WorkshopEntity[]>;
+  findByApprenticeId(apprenticeId: string): Promise<WorkshopEntity[]>;
   findPublished(): Promise<WorkshopEntity[]>;
   update(id: string, input: UpdateWorkshopInput): Promise<WorkshopEntity>;
   delete(id: string): Promise<void>;
@@ -19,6 +20,8 @@ export interface CreateWorkshopInput {
   maxParticipants?: number | null;
   materialsNeeded?: string | null;
   creatorId: string;
+  apprenticeId?: string | null;
+  requestId?: string | null;
 }
 
 export interface UpdateWorkshopInput {
@@ -48,9 +51,12 @@ export interface WorkshopEntity {
   materialsNeeded: string | null;
   status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   creatorId: string;
+  apprenticeId: string | null;
+  requestId: string | null;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
   creator?: any;
+  apprentice?: any;
 }
 

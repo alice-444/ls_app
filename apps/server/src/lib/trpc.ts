@@ -25,7 +25,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 
 export const profProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-	const appUser = await prisma.appUser.findUnique({
+	const appUser = await (prisma as any).app_user.findUnique({
 		where: { userId: ctx.session.user.id },
 	});
 

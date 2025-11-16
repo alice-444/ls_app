@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
+import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 import {
   Card,
   CardContent,
@@ -27,12 +28,20 @@ import {
   XCircle,
   EyeOff,
   ArrowRight,
+  BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getStatusBadge, formatDate, formatTime } from "@/lib/workshop-utils";
 import { DeleteWorkshopDialog } from "@/components/workshop/DeleteWorkshopDialog";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { Badge } from "@/components/ui/badge";
+import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
+import {
+  getWorkshopRequestStatusLabel,
+  getWorkshopRequestStatusColor,
+} from "@/lib/workshop-request-utils";
 
 export default function WorkshopDetailPage() {
   const router = useRouter();
@@ -40,6 +49,38 @@ export default function WorkshopDetailPage() {
   const workshopId = params.id as string;
   const { data: session } = authClient.useSession();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+
+  const utils = trpc.useUtils();
+  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée avec succès");
+      utils.mentor.getWorkshopRequests.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const { data: workshopRequests } = trpc.mentor.getWorkshopRequests.useQuery(
+    { workshopId },
+    {
+      enabled: !!workshopId && !!session?.user?.id,
+    }
+  );
+
+  const handleAcceptRequest = (request: any) => {
+    setSelectedRequest(request);
+    setShowAcceptDialog(true);
+  };
+
+  const handleRejectRequest = (requestId: string) => {
+    if (confirm("Êtes-vous sûr de vouloir refuser cette demande ?")) {
+      rejectRequest.mutate({ requestId });
+    }
+  };
 
   const {
     data: workshop,
@@ -119,9 +160,10 @@ export default function WorkshopDetailPage() {
     );
   }
 
+  const isApprentice = userRole === "APPRENANT";
   const isOwner =
     session?.user?.id && workshop?.creator?.userId === session.user.id;
-
+  const canRequestParticipation = isApprentice && !isOwner && workshop?.status === "PUBLISHED";
   const shouldShowStatusBadge = isOwner;
 
   return (
@@ -226,6 +268,40 @@ export default function WorkshopDetailPage() {
                   <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
                     {workshop.materialsNeeded}
                   </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {isOwner && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" />
+                    Demandes de participation
+                  </CardTitle>
+                  <CardDescription>
+                    {workshopRequests?.filter((r: any) => r.status === "PENDING").length || 0} demande(s) en attente
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {workshopRequests && workshopRequests.length > 0 ? (
+                    <div className="space-y-3">
+                      {workshopRequests.map((request: any) => (
+                        <WorkshopRequestCard
+                          key={request.id}
+                          request={request}
+                          onAccept={handleAcceptRequest}
+                          onReject={handleRejectRequest}
+                          isRejecting={rejectRequest.isPending}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-slate-500">
+                      <BookOpen className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                      <p>Aucune demande de participation pour le moment</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -366,6 +442,30 @@ export default function WorkshopDetailPage() {
                 </CardContent>
               </Card>
             )}
+
+            {canRequestParticipation && workshop.creator && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" />
+                    Participer à cet atelier
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                    Vous souhaitez participer à cet atelier ? Envoyez une demande
+                    au mentor.
+                  </p>
+                  <Button
+                    className="w-full gap-2"
+                    onClick={() => setShowRequestDialog(true)}
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Demander à participer
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
@@ -376,6 +476,37 @@ export default function WorkshopDetailPage() {
         onConfirm={handleDelete}
         isLoading={deleteMutation.isPending}
       />
+
+      {canRequestParticipation && workshop?.creator && (
+        <RequestWorkshopParticipationDialog
+          open={showRequestDialog}
+          onOpenChange={setShowRequestDialog}
+          mentorId={workshop.creator.id}
+          mentorName={workshop.creator.user?.name || "Mentor"}
+          preselectedWorkshopId={workshop.id}
+        />
+      )}
+
+      {selectedRequest && (
+        <AcceptWorkshopRequestDialog
+          open={showAcceptDialog}
+          onOpenChange={(open) => {
+            setShowAcceptDialog(open);
+            if (!open) {
+              setSelectedRequest(null);
+              utils.mentor.getWorkshopRequests.invalidate();
+            }
+          }}
+          requestId={selectedRequest.id}
+          requestTitle={selectedRequest.title}
+          preferredDate={
+            selectedRequest.preferredDate
+              ? new Date(selectedRequest.preferredDate)
+              : null
+          }
+          preferredTime={selectedRequest.preferredTime}
+        />
+      )}
     </div>
   );
 }

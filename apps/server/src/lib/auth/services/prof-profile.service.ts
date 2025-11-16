@@ -170,7 +170,7 @@ export class ProfProfileService {
         ? sanitizeString(validation.data.experience)
         : null;
 
-      await prisma.user.update({
+      await (prisma as any).user.update({
         where: { id: userId },
         data: {
           name: sanitizedName,
@@ -215,7 +215,7 @@ export class ProfProfileService {
         return profCheck;
       }
 
-      const fullProfile = await prisma.appUser.findUnique({
+      const fullProfile = await (prisma as any).app_user.findUnique({
         where: { userId },
         select: { bio: true, domain: true },
       });

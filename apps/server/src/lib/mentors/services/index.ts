@@ -6,3 +6,5 @@ export * from "./mentor-feedback.service";
 export * from "./mentor-feedback.service.interface";
 export * from "./mentor-workshop.service";
 export * from "./mentor-workshop.service.interface";
+export * from "./workshop-request.service";
+export * from "./workshop-request.service.interface";
