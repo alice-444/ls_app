@@ -278,4 +278,83 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       return failure((error as Error).message, 500);
     }
   }
+
+  async updateWorkshopRequest(
+    userId: string,
+    requestId: string,
+    input: {
+      title?: string;
+      description?: string | null;
+      message?: string | null;
+      preferredDate?: Date | null;
+      preferredTime?: string | null;
+      mentorId?: string;
+    }
+  ): Promise<Result<{ requestId: string }>> {
+    try {
+      const request = await this.workshopRequestRepository.findById(requestId);
+      if (!request) {
+        return failure("Demande d'atelier introuvable", 404);
+      }
+
+      const apprentice = await this.mentorRepository.findApprenticeByUserId(
+        userId
+      );
+      if (!apprentice || apprentice.id !== request.apprenticeId) {
+        return failure(
+          "Vous n'êtes pas autorisé à modifier cette demande",
+          403
+        );
+      }
+
+      if (request.status !== "REJECTED" && request.status !== "CANCELLED") {
+        return failure(
+          `Cette demande ne peut pas être modifiée. Statut actuel: ${request.status}`,
+          400
+        );
+      }
+
+      let mentorId = request.mentorId;
+      if (input.mentorId && input.mentorId !== request.mentorId) {
+        const newMentor = await this.mentorRepository.findMentorById(
+          input.mentorId
+        );
+        if (!newMentor) {
+          return failure("Mentor introuvable", 404);
+        }
+        mentorId = newMentor.id;
+      }
+
+      const updateData: any = {
+        status: "PENDING",
+      };
+
+      if (input.title !== undefined) {
+        updateData.title = input.title;
+      }
+      if (input.description !== undefined) {
+        updateData.description = input.description;
+      }
+      if (input.message !== undefined) {
+        updateData.message = input.message;
+      }
+      if (input.preferredDate !== undefined) {
+        updateData.preferredDate = input.preferredDate;
+      }
+      if (input.preferredTime !== undefined) {
+        updateData.preferredTime = input.preferredTime;
+      }
+      if (mentorId !== request.mentorId) {
+        updateData.mentorId = mentorId;
+      }
+
+      await this.workshopRequestRepository.update(requestId, updateData);
+
+      // TODO: System of notification will be implemented later
+
+      return success({ requestId });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
 }

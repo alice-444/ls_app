@@ -53,6 +53,7 @@ type StatusFilter = "all" | "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 
 function WorkshopRequests({
   workshopId,
+  workshopStatus,
   expandedWorkshopId,
   setExpandedWorkshopId,
   onAcceptRequest,
@@ -60,15 +61,20 @@ function WorkshopRequests({
   isRejecting,
 }: {
   workshopId: string;
+  workshopStatus: string;
   expandedWorkshopId: string | null;
   setExpandedWorkshopId: (id: string | null) => void;
   onAcceptRequest: (request: any) => void;
   onRejectRequest: (requestId: string) => void;
   isRejecting: boolean;
 }) {
+  if (workshopStatus !== "PUBLISHED") {
+    return null;
+  }
+
   const { data: requests } = trpc.mentor.getWorkshopRequests.useQuery(
     { workshopId },
-    { enabled: !!workshopId }
+    { enabled: !!workshopId && workshopStatus === "PUBLISHED" }
   );
 
   const pendingRequests =
@@ -563,6 +569,7 @@ export default function MyWorkshopsPage() {
                         </div>
                         <WorkshopRequests
                           workshopId={workshop.id}
+                          workshopStatus={workshop.status}
                           expandedWorkshopId={expandedWorkshopId}
                           setExpandedWorkshopId={setExpandedWorkshopId}
                           onAcceptRequest={handleAcceptRequest}

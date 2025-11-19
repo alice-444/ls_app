@@ -114,10 +114,10 @@ export const workshopRouter = router({
         ctx.session.user.id,
         input.workshopId
       );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
 });
 

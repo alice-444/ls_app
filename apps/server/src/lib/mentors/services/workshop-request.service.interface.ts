@@ -42,5 +42,17 @@ export interface IWorkshopRequestService {
     userId: string,
     requestId: string
   ): Promise<Result<{ success: boolean }>>;
+  updateWorkshopRequest(
+    userId: string,
+    requestId: string,
+    input: {
+      title?: string;
+      description?: string | null;
+      message?: string | null;
+      preferredDate?: Date | null;
+      preferredTime?: string | null;
+      mentorId?: string;
+    }
+  ): Promise<Result<{ requestId: string }>>;
 }
 

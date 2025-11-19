@@ -199,4 +199,41 @@ export const mentorRouter = router({
       }
       return result.data;
     }),
+  updateWorkshopRequest: protectedProcedure
+    .input(
+      z.object({
+        requestId: z.string(),
+        title: z
+          .string()
+          .min(3, "Le titre doit contenir au moins 3 caractères")
+          .max(200, "Le titre ne peut pas dépasser 200 caractères")
+          .optional(),
+        description: z
+          .string()
+          .max(1000, "La description ne peut pas dépasser 1000 caractères")
+          .optional()
+          .nullable(),
+        message: z
+          .string()
+          .max(500, "Le message ne peut pas dépasser 500 caractères")
+          .optional()
+          .nullable(),
+        preferredDate: z.coerce.date().optional().nullable(),
+        preferredTime: z.string().optional().nullable(),
+        mentorId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { requestId, ...updateData } = input;
+      const result =
+        await container.workshopRequestService.updateWorkshopRequest(
+          ctx.session.user.id,
+          requestId,
+          updateData
+        );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 });
