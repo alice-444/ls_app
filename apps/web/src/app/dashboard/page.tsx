@@ -1,6 +1,6 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,6 +13,16 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BookOpen, Check, X } from "lucide-react";
+import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
+import { EditWorkshopRequestDialog } from "@/components/workshop/EditWorkshopRequestDialog";
+import {
+  getWorkshopRequestStatusLabel,
+  getWorkshopRequestStatusColor,
+} from "@/lib/workshop-request-utils";
+import { toast } from "sonner";
+import { Edit, Users } from "lucide-react";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -112,8 +122,150 @@ const mockUserData = {
 
 export default function Dashboard() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
   const [userRole, setUserRole] = useState<UserRole>("both");
+
+  const { data: workshopRequests, refetch: refetchApprenticeRequests } =
+    trpc.mentor.getMyWorkshopRequests.useQuery(undefined, {
+      enabled: !!session && userRole === "apprenant",
+      refetchInterval: 10000,
+      refetchOnWindowFocus: true,
+    });
+
+  const [previousApprenticeRequests, setPreviousApprenticeRequests] = useState<
+    any[] | null
+  >(null);
+
+  useEffect(() => {
+    if (workshopRequests && previousApprenticeRequests) {
+      workshopRequests.forEach((currentRequest: any) => {
+        const previousRequest = previousApprenticeRequests.find(
+          (r: any) => r.id === currentRequest.id
+        );
+
+        if (previousRequest) {
+          if (
+            previousRequest.status === "PENDING" &&
+            currentRequest.status === "ACCEPTED"
+          ) {
+            toast.success(
+              `Votre demande "${currentRequest.title}" a été acceptée !`,
+              {
+                description:
+                  "L'atelier a été programmé. Consultez vos ateliers confirmés.",
+                duration: 6000,
+              }
+            );
+          }
+
+          if (
+            previousRequest.status === "PENDING" &&
+            currentRequest.status === "REJECTED"
+          ) {
+            toast.error(
+              `Votre demande "${currentRequest.title}" a été refusée`,
+              {
+                description:
+                  "Vous pouvez modifier et renvoyer votre demande ou choisir un autre mentor.",
+                duration: 8000,
+              }
+            );
+          }
+        }
+      });
+    }
+
+    if (workshopRequests) {
+      setPreviousApprenticeRequests([...workshopRequests]);
+    }
+  }, [workshopRequests, previousApprenticeRequests]);
+
+  const { data: mentorWorkshopRequests, refetch: refetchMentorRequests } =
+    trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
+      enabled: !!session && (userRole === "mentor" || userRole === "both"),
+      refetchInterval: 10000,
+      refetchOnWindowFocus: true,
+    });
+
+  const [previousRequestCount, setPreviousRequestCount] = useState<number>(0);
+  const [previousPendingCount, setPreviousPendingCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (mentorWorkshopRequests) {
+      const currentCount = mentorWorkshopRequests.length;
+      const currentPendingCount = mentorWorkshopRequests.filter(
+        (r: any) => r.status === "PENDING"
+      ).length;
+
+      if (previousRequestCount > 0 && currentCount > previousRequestCount) {
+        const newRequests = currentCount - previousRequestCount;
+        toast.success(
+          `${newRequests} nouvelle${newRequests > 1 ? "s" : ""} demande${
+            newRequests > 1 ? "s" : ""
+          } d'atelier reçue${newRequests > 1 ? "s" : ""}`,
+          {
+            duration: 5000,
+          }
+        );
+      }
+
+      if (
+        previousPendingCount > 0 &&
+        currentPendingCount !== previousPendingCount
+      ) {
+        if (currentPendingCount > previousPendingCount) {
+          toast.info(
+            `${currentPendingCount - previousPendingCount} nouvelle${
+              currentPendingCount - previousPendingCount > 1 ? "s" : ""
+            } demande${
+              currentPendingCount - previousPendingCount > 1 ? "s" : ""
+            } en attente`,
+            {
+              duration: 4000,
+            }
+          );
+        }
+      }
+
+      setPreviousRequestCount(currentCount);
+      setPreviousPendingCount(currentPendingCount);
+    }
+  }, [mentorWorkshopRequests, previousRequestCount, previousPendingCount]);
+
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
+    null
+  );
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [selectedEditRequest, setSelectedEditRequest] = useState<any | null>(
+    null
+  );
+  const [showEditDialog, setShowEditDialog] = useState(false);
+
+  const utils = trpc.useUtils();
+  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée avec succès");
+      utils.mentor.getMentorWorkshopRequests.invalidate();
+      refetchMentorRequests();
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const handleAcceptRequest = (request: any) => {
+    setSelectedRequest(request);
+    setSelectedRequestId(request.id);
+    setShowAcceptDialog(true);
+  };
+
+  const handleRejectRequest = (requestId: string) => {
+    if (confirm("Êtes-vous sûr de vouloir refuser cette demande ?")) {
+      rejectRequest.mutate({ requestId });
+    }
+  };
 
   // const privateData = useQuery(trpc.privateData.queryOptions());
 
@@ -353,7 +505,124 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Prochains ateliers */}
+      <Card className="lg:col-span-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between text-base">
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              Mes demandes d'atelier
+              {workshopRequests && workshopRequests.length > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                >
+                  {workshopRequests.length}
+                </Badge>
+              )}
+            </div>
+            {workshopRequests &&
+              workshopRequests.filter((r: any) => r.status === "PENDING")
+                .length > 0 && (
+                <Badge
+                  variant="default"
+                  className="bg-yellow-500 text-white animate-pulse"
+                >
+                  {
+                    workshopRequests.filter((r: any) => r.status === "PENDING")
+                      .length
+                  }{" "}
+                  en attente
+                </Badge>
+              )}
+          </CardTitle>
+          <CardDescription>
+            Vos demandes d'atelier envoyées aux mentors
+            {workshopRequests &&
+              workshopRequests.filter((r: any) => r.status === "PENDING")
+                .length > 0 && (
+                <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
+                  • Mise à jour automatique toutes les 10 secondes
+                </span>
+              )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-3">
+          {workshopRequests && workshopRequests.length > 0 ? (
+            workshopRequests.map((request: any) => {
+              const isRejected = request.status === "REJECTED";
+              return (
+                <div key={request.id} className="space-y-2">
+                  <WorkshopRequestCard
+                    request={request}
+                    variant="dashboard"
+                    showTitle={true}
+                    showDescription={true}
+                    showMentor={true}
+                  />
+                  {isRejected && (
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedEditRequest(request);
+                          setShowEditDialog(true);
+                        }}
+                        className="text-xs"
+                      >
+                        <Edit className="w-3 h-3 mr-1" />
+                        Éditer et renvoyer
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          router.push("/workshop-room");
+                        }}
+                        className="text-xs"
+                      >
+                        <Users className="w-3 h-3 mr-1" />
+                        Créer une nouvelle demande
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <p className="text-sm">Aucune demande d'atelier pour le moment</p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-4"
+                onClick={() => router.push("/workshop-room")}
+              >
+                Parcourir les mentors
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {selectedEditRequest && (
+        <EditWorkshopRequestDialog
+          open={showEditDialog}
+          onOpenChange={(open) => {
+            setShowEditDialog(open);
+            if (!open) {
+              setSelectedEditRequest(null);
+              refetchApprenticeRequests();
+            }
+          }}
+          request={selectedEditRequest}
+          onSuccess={() => {
+            refetchApprenticeRequests();
+            utils.mentor.getMyWorkshopRequests.invalidate();
+          }}
+        />
+      )}
+
       <Card className="lg:col-span-2">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -525,6 +794,72 @@ export default function Dashboard() {
               Utiliser mes crédits
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="lg:col-span-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between text-base">
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              Demandes d'atelier reçues
+              {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                >
+                  {mentorWorkshopRequests.length}
+                </Badge>
+              )}
+            </div>
+            {mentorWorkshopRequests &&
+              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
+                .length > 0 && (
+                <Badge
+                  variant="default"
+                  className="bg-yellow-500 text-white animate-pulse"
+                >
+                  {
+                    mentorWorkshopRequests.filter(
+                      (r: any) => r.status === "PENDING"
+                    ).length
+                  }{" "}
+                  en attente
+                </Badge>
+              )}
+          </CardTitle>
+          <CardDescription>
+            Les demandes d'atelier que vous avez reçues de la part des apprentis
+            {mentorWorkshopRequests &&
+              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
+                .length > 0 && (
+                <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
+                  • Mise à jour automatique toutes les 10 secondes
+                </span>
+              )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-3">
+          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
+            mentorWorkshopRequests.map((request: any) => (
+              <WorkshopRequestCard
+                key={request.id}
+                request={request}
+                onAccept={handleAcceptRequest}
+                onReject={handleRejectRequest}
+                isRejecting={rejectRequest.isPending}
+                variant="dashboard"
+                showTitle={true}
+                showDescription={true}
+                showPreferredDate={true}
+              />
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p>Aucune demande d'atelier reçue</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -742,6 +1077,99 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
+
+      <Card className="lg:col-span-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between text-base">
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              Demandes d'atelier reçues
+              {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                >
+                  {mentorWorkshopRequests.length}
+                </Badge>
+              )}
+            </div>
+            {mentorWorkshopRequests &&
+              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
+                .length > 0 && (
+                <Badge
+                  variant="default"
+                  className="bg-yellow-500 text-white animate-pulse"
+                >
+                  {
+                    mentorWorkshopRequests.filter(
+                      (r: any) => r.status === "PENDING"
+                    ).length
+                  }{" "}
+                  en attente
+                </Badge>
+              )}
+          </CardTitle>
+          <CardDescription>
+            Les demandes d'atelier que vous avez reçues de la part des apprentis
+            {mentorWorkshopRequests &&
+              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
+                .length > 0 && (
+                <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
+                  • Mise à jour automatique toutes les 10 secondes
+                </span>
+              )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-3">
+          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
+            mentorWorkshopRequests.map((request: any) => (
+              <WorkshopRequestCard
+                key={request.id}
+                request={request}
+                onAccept={handleAcceptRequest}
+                onReject={handleRejectRequest}
+                isRejecting={rejectRequest.isPending}
+                variant="dashboard"
+                showTitle={true}
+                showDescription={true}
+                showPreferredDate={true}
+              />
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p>Aucune demande d'atelier reçue</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {selectedRequest && (
+        <AcceptWorkshopRequestDialog
+          open={showAcceptDialog}
+          onOpenChange={(open) => {
+            setShowAcceptDialog(open);
+            if (!open) {
+              setSelectedRequest(null);
+              setSelectedRequestId(null);
+              utils.mentor.getMentorWorkshopRequests.invalidate();
+              refetchMentorRequests();
+            }
+          }}
+          requestId={selectedRequest.id}
+          requestTitle={selectedRequest.title}
+          preferredDate={
+            selectedRequest.preferredDate
+              ? new Date(selectedRequest.preferredDate)
+              : null
+          }
+          preferredTime={selectedRequest.preferredTime}
+          onSuccess={() => {
+            refetchMentorRequests();
+            toast.success("Demande acceptée avec succès !");
+          }}
+        />
+      )}
     </>
   );
 

@@ -1,11 +1,11 @@
 import { betterAuth } from "better-auth";
 import { username } from "better-auth/plugins/username";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "./common/prisma";
+import { authPrisma } from "./common/prisma";
 
 export const auth = betterAuth({
 	secret: process.env.BETTER_AUTH_SECRET,
-	database: prismaAdapter(prisma, {
+	database: prismaAdapter(authPrisma, {
 		provider: "postgresql",
 	}),
 	trustedOrigins: [process.env.CORS_ORIGIN || ""],

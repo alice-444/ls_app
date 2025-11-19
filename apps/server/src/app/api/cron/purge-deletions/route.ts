@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       await prisma.$transaction(async (tx) => {
         await (tx as any).session.deleteMany({ where: { userId: job.userId } });
         await (tx as any).account.deleteMany({ where: { userId: job.userId } });
-        await (tx as any).appUser.deleteMany({ where: { userId: job.userId } });
+        await (tx as any).app_user.deleteMany({ where: { userId: job.userId } });
         await (tx as any).user.update({
           where: { id: job.userId },
           data: {

@@ -47,42 +47,49 @@ export async function GET(req: NextRequest) {
     }
     const { userId } = authResult;
 
-    const appUser = await appUserRepository.findByUserId(userId);
-
-    if (!appUser) {
-      return NextResponse.json({ isPublished: false });
-    }
-
-    const fullProfile = (await prisma.appUser.findUnique({
+    const fullAppUser = await (prisma as any).app_user.findUnique({
       where: { userId },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
+      select: {
+        isPublished: true,
+        publishedAt: true,
+        bio: true,
+        domain: true,
+        photoUrl: true,
+        qualifications: true,
+        experience: true,
+        socialMediaLinks: true,
+        areasOfExpertise: true,
+        mentorshipTopics: true,
+        calendlyLink: true,
       },
-    })) as any;
+    });
 
-    if (!fullProfile) {
+    if (!fullAppUser) {
       return NextResponse.json({ isPublished: false });
     }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        name: true,
+        email: true,
+      },
+    });
 
     return NextResponse.json({
-      isPublished: fullProfile?.isPublished || false,
-      publishedAt: fullProfile?.publishedAt || null,
+      isPublished: fullAppUser.isPublished || false,
+      publishedAt: fullAppUser.publishedAt || null,
       profile: {
-        name: fullProfile.user?.name || null,
-        bio: fullProfile.bio || null,
-        domain: fullProfile.domain || null,
-        photoUrl: fullProfile.photoUrl || null,
-        qualifications: fullProfile.qualifications || null,
-        experience: fullProfile.experience || null,
-        socialMediaLinks: fullProfile.socialMediaLinks || null,
-        areasOfExpertise: fullProfile.areasOfExpertise || null,
-        mentorshipTopics: fullProfile.mentorshipTopics || null,
-        calendlyLink: fullProfile.calendlyLink || null,
+        name: user?.name || null,
+        bio: fullAppUser.bio || null,
+        domain: fullAppUser.domain || null,
+        photoUrl: fullAppUser.photoUrl || null,
+        qualifications: fullAppUser.qualifications || null,
+        experience: fullAppUser.experience || null,
+        socialMediaLinks: fullAppUser.socialMediaLinks || null,
+        areasOfExpertise: fullAppUser.areasOfExpertise || null,
+        mentorshipTopics: fullAppUser.mentorshipTopics || null,
+        calendlyLink: fullAppUser.calendlyLink || null,
       },
     });
   } catch (error) {

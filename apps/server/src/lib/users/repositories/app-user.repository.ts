@@ -47,13 +47,29 @@ export class PrismaAppUserRepository implements AppUserRepository {
   constructor(private readonly prisma: any) {}
 
   async findByUserId(userId: string): Promise<AppUserData | null> {
-    const appUser = await this.prisma.appUser.findUnique({
+    console.log("Repository findByUserId - this.prisma:", this.prisma, "type:", typeof this.prisma);
+    console.log("Repository findByUserId - this.prisma keys:", this.prisma ? Object.keys(this.prisma).slice(0, 10) : "prisma is undefined");
+    
+    if (!this.prisma) {
+      console.error("Repository findByUserId - ERROR: this.prisma is undefined!");
+      throw new Error("Prisma client is not initialized");
+    }
+
+    const appUser = await (this.prisma as any).app_user.findUnique({
       where: { userId },
+      select: {
+        id: true,
+        userId: true,
+        role: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!appUser) return null;
 
-    return {
+    const result = {
       id: appUser.id,
       userId: appUser.userId,
       role: appUser.role as Role | null,
@@ -61,11 +77,13 @@ export class PrismaAppUserRepository implements AppUserRepository {
       createdAt: appUser.createdAt,
       updatedAt: appUser.updatedAt,
     };
+
+    return result;
   }
 
   async create(input: CreateAppUserInput): Promise<AppUserData> {
     const now = new Date();
-    const appUser = await this.prisma.appUser.create({
+    const appUser = await (this.prisma as any).app_user.create({
       data: {
         id: input.id,
         userId: input.userId,
@@ -91,7 +109,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     input: UpdateAppUserInput
   ): Promise<AppUserData> {
     const now = new Date();
-    const appUser = await this.prisma.appUser.update({
+    const appUser = await (this.prisma as any).app_user.update({
       where: { userId },
       data: {
         ...(input.role !== undefined && { role: input.role as any }),
@@ -127,7 +145,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     updateInput: UpdateAppUserInput = {}
   ): Promise<AppUserData> {
     const now = new Date();
-    const appUser = await this.prisma.appUser.upsert({
+    const appUser = await (this.prisma as any).app_user.upsert({
       where: { userId },
       create: {
         id: createInput.id,

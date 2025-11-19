@@ -101,7 +101,14 @@ model AppUser {
   isPublished         Boolean  @default(false)
   publishedAt         DateTime?
   // Relations
-  workshops           Workshop[]
+  workshops           Workshop[] @relation("CreatorWorkshops")
+  apprenticeWorkshops Workshop[] @relation("ApprenticeWorkshops")
+  // Feedbacks
+  mentorFeedbacks     MentorFeedback[] @relation("MentorFeedbacks")
+  apprenticeFeedbacks MentorFeedback[] @relation("ApprenticeFeedbacks")
+  // Workshop Requests
+  requestedWorkshops  WorkshopRequest[] @relation("ApprenticeRequests")
+  receivedWorkshopRequests WorkshopRequest[] @relation("MentorRequests")
   
   @@map("app_user")
 }
@@ -135,6 +142,13 @@ enum WorkshopStatus {
   COMPLETED
 }
 
+enum WorkshopRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
 model Workshop {
   id                String         @id @map("_id")
   title             String
@@ -148,12 +162,65 @@ model Workshop {
   materialsNeeded   String?
   status            WorkshopStatus @default(DRAFT)
   creatorId         String
-  creator           AppUser        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator           AppUser        @relation("CreatorWorkshops", fields: [creatorId], references: [id], onDelete: Cascade)
+  apprenticeId      String?         // Apprenti participant (pour ateliers confirmés depuis une demande)
+  apprentice        AppUser?        @relation("ApprenticeWorkshops", fields: [apprenticeId], references: [id], onDelete: SetNull)
+  requestId         String?         // Lien vers la demande d'atelier originale
+  request           WorkshopRequest? @relation("WorkshopFromRequest", fields: [requestId], references: [id], onDelete: SetNull)
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   publishedAt       DateTime?
+  feedbacks         MentorFeedback[]
 
   @@index([creatorId])
+  @@index([apprenticeId])
   @@index([status])
+  @@index([requestId])
   @@map("workshop")
+}
+
+model MentorFeedback {
+  id                String    @id @map("_id")
+  mentorId          String
+  mentor            AppUser   @relation("MentorFeedbacks", fields: [mentorId], references: [id], onDelete: Cascade)
+  apprenticeId      String
+  apprentice        AppUser   @relation("ApprenticeFeedbacks", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  workshopId       String?
+  workshop          Workshop? @relation(fields: [workshopId], references: [id], onDelete: SetNull)
+  rating            Int       // 1-5 stars
+  comment           String?
+  isAnonymous       Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([mentorId])
+  @@index([apprenticeId])
+  @@index([workshopId])
+  @@index([createdAt])
+  @@map("mentor_feedback")
+}
+
+model WorkshopRequest {
+  id            String                @id @map("_id")
+  title         String
+  description   String?
+  message       String?
+  preferredDate DateTime?
+  preferredTime String?
+  status        WorkshopRequestStatus @default(PENDING)
+  apprenticeId  String
+  apprentice    AppUser               @relation("ApprenticeRequests", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  mentorId      String
+  mentor        AppUser               @relation("MentorRequests", fields: [mentorId], references: [id], onDelete: Cascade)
+  workshopId    String?               // Lien vers l'atelier créé quand la demande est acceptée
+  workshop      Workshop?              @relation("WorkshopFromRequest")
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  @@index([apprenticeId])
+  @@index([mentorId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([workshopId])
+  @@map("workshop_request")
 }

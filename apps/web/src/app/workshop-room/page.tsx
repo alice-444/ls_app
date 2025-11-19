@@ -2,8 +2,10 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
+import { getUserRole } from "@/lib/api-client";
 import {
   Card,
   CardContent,
@@ -34,9 +36,11 @@ import {
   Search,
   ChevronDown,
   Tag,
+  BookOpen,
 } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 import { Badge } from "@/components/ui/badge";
+import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 
 type Workshop = {
   id: string;
@@ -63,6 +67,18 @@ type Workshop = {
 export default function WorkshopRoomPage() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
+  const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(null);
+  const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
+  const [selectedMentorName, setSelectedMentorName] = useState<string>("");
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
+
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
+  const isApprentice = userRole === "APPRENANT";
 
   const [mentorSearchQuery, setMentorSearchQuery] = useState<string>("");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
@@ -484,9 +500,17 @@ export default function WorkshopRoomPage() {
                   {workshop.creator && (
                     <div className="flex items-center gap-2 text-sm">
                       <User className="h-4 w-4 text-slate-500" />
-                      <span className="text-slate-600 dark:text-slate-400">
-                        {workshop.creator.user?.name || "Animateur"}
-                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (workshop.creator) {
+                            router.push(`/mentors/${workshop.creator.id}`);
+                          }
+                        }}
+                        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:underline"
+                      >
+                        {workshop.creator.user?.name || "Mentor"}
+                      </button>
                     </div>
                   )}
 
@@ -530,12 +554,48 @@ export default function WorkshopRoomPage() {
                       </span>
                     </div>
                   )}
+
+                  {isApprentice && workshop.creator && (
+                    <div className="pt-2 border-t">
+                      <Button
+                        size="sm"
+                        className="w-full gap-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedWorkshopId(workshop.id);
+                          setSelectedMentorId(workshop.creator?.id || null);
+                          setSelectedMentorName(workshop.creator?.user?.name || "Mentor");
+                          setShowRequestDialog(true);
+                        }}
+                      >
+                        <BookOpen className="h-4 w-4" />
+                        Demander à participer
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
       </div>
+
+      {isApprentice && selectedMentorId && (
+        <RequestWorkshopParticipationDialog
+          open={showRequestDialog}
+          onOpenChange={(open) => {
+            setShowRequestDialog(open);
+            if (!open) {
+              setSelectedWorkshopId(null);
+              setSelectedMentorId(null);
+              setSelectedMentorName("");
+            }
+          }}
+          mentorId={selectedMentorId}
+          mentorName={selectedMentorName}
+          preselectedWorkshopId={selectedWorkshopId}
+        />
+      )}
     </div>
   );
 }

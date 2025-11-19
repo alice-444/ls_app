@@ -3,12 +3,26 @@ import { prisma } from "../common/prisma";
 // Repositories
 import { PrismaWorkshopRepository } from "../workshops/repositories/workshop.repository";
 import { PrismaAppUserRepository } from "../users/repositories/app-user.repository";
+import { PrismaMentorRepository } from "../mentors/repositories/mentor.repository";
+import { PrismaWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository";
 import type { IWorkshopRepository } from "../workshops/repositories/workshop.repository.interface";
 import type { AppUserRepository } from "../users/repositories";
+import type { IMentorRepository } from "../mentors/repositories/mentor.repository.interface";
+import type { IWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository.interface";
 
 // Services
 import { WorkshopService } from "../workshops/services/workshop.service";
 import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
+import { MentorProfileService } from "../mentors/services/mentor-profile.service";
+import type { IMentorProfileService } from "../mentors/services/mentor-profile.service.interface";
+import { MentorContactService } from "../mentors/services/mentor-contact.service";
+import type { IMentorContactService } from "../mentors/services/mentor-contact.service.interface";
+import { MentorFeedbackService } from "../mentors/services/mentor-feedback.service";
+import type { IMentorFeedbackService } from "../mentors/services/mentor-feedback.service.interface";
+import { MentorWorkshopService } from "../mentors/services/mentor-workshop.service";
+import type { IMentorWorkshopService } from "../mentors/services/mentor-workshop.service.interface";
+import { WorkshopRequestService } from "../mentors/services/workshop-request.service";
+import type { IWorkshopRequestService } from "../mentors/services/workshop-request.service.interface";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -17,9 +31,16 @@ class DIContainer {
   // Repository instances
   private _workshopRepository?: IWorkshopRepository;
   private _appUserRepository?: AppUserRepository;
+  private _mentorRepository?: IMentorRepository;
+  private _workshopRequestRepository?: IWorkshopRequestRepository;
 
   // Service instances
   private _workshopService?: IWorkshopService;
+  private _mentorProfileService?: IMentorProfileService;
+  private _mentorContactService?: IMentorContactService;
+  private _mentorFeedbackService?: IMentorFeedbackService;
+  private _mentorWorkshopService?: IMentorWorkshopService;
+  private _workshopRequestService?: IWorkshopRequestService;
 
   private constructor() {
     this._prisma = prisma;
@@ -47,6 +68,22 @@ class DIContainer {
     return this._appUserRepository;
   }
 
+  get mentorRepository(): IMentorRepository {
+    if (!this._mentorRepository) {
+      this._mentorRepository = new PrismaMentorRepository(this._prisma);
+    }
+    return this._mentorRepository;
+  }
+
+  get workshopRequestRepository(): IWorkshopRequestRepository {
+    if (!this._workshopRequestRepository) {
+      this._workshopRequestRepository = new PrismaWorkshopRequestRepository(
+        this._prisma
+      );
+    }
+    return this._workshopRequestRepository;
+  }
+
   // Getters for services
   get workshopService(): IWorkshopService {
     if (!this._workshopService) {
@@ -57,7 +94,53 @@ class DIContainer {
     }
     return this._workshopService;
   }
+
+  get mentorProfileService(): IMentorProfileService {
+    if (!this._mentorProfileService) {
+      this._mentorProfileService = new MentorProfileService(
+        this.mentorRepository
+      );
+    }
+    return this._mentorProfileService;
+  }
+
+  get mentorContactService(): IMentorContactService {
+    if (!this._mentorContactService) {
+      this._mentorContactService = new MentorContactService(
+        this.mentorRepository
+      );
+    }
+    return this._mentorContactService;
+  }
+
+  get mentorFeedbackService(): IMentorFeedbackService {
+    if (!this._mentorFeedbackService) {
+      this._mentorFeedbackService = new MentorFeedbackService(
+        this.mentorRepository
+      );
+    }
+    return this._mentorFeedbackService;
+  }
+
+  get mentorWorkshopService(): IMentorWorkshopService {
+    if (!this._mentorWorkshopService) {
+      this._mentorWorkshopService = new MentorWorkshopService(
+        this.mentorRepository
+      );
+    }
+    return this._mentorWorkshopService;
+  }
+
+  get workshopRequestService(): IWorkshopRequestService {
+    if (!this._workshopRequestService) {
+      this._workshopRequestService = new WorkshopRequestService(
+        this.workshopRequestRepository,
+        this.mentorRepository,
+        this.workshopRepository
+      );
+    }
+    return this._workshopRequestService;
+  }
 }
 
 export const container = DIContainer.getInstance();
-
