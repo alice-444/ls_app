@@ -39,6 +39,7 @@ export interface UpdateWorkshopInput {
   materialsNeeded?: string | null;
   status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   publishedAt?: Date | null;
+  apprenticeId?: string | null;
 }
 
 export interface WorkshopEntity {

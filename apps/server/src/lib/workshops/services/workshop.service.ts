@@ -22,6 +22,7 @@ import {
   isMinimumTomorrow,
   WORKSHOP_VALIDATION,
 } from "../../../shared/validation";
+import { WorkshopNotificationService } from "./workshop-notification.service";
 
 export const createWorkshopSchema = createWorkshopBackendSchema;
 export const updateWorkshopSchema = updateWorkshopBackendSchema;
@@ -32,11 +33,17 @@ export type { PublishWorkshopInput, DeleteWorkshopInput };
 export type UnpublishWorkshopInput = z.infer<typeof unpublishWorkshopSchema>;
 
 export class WorkshopService implements IWorkshopService {
+  private readonly notificationService: WorkshopNotificationService;
+
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly appUserRepository: AppUserRepository,
     private readonly workshopRequestRepository?: IWorkshopRequestRepository
-  ) {}
+  ) {
+    this.notificationService = new WorkshopNotificationService(
+      this.workshopRepository
+    );
+  }
 
   private async verifyProfAccess(userId: string) {
     const userCheck = await verifyUserExists(userId);
@@ -711,6 +718,259 @@ export class WorkshopService implements IWorkshopService {
       );
 
       return success(availableWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  private async checkResourceConflicts(
+    mentorId: string,
+    workshopId: string,
+    newDate: Date,
+    newTime: string,
+    newDuration: number,
+    newLocation: string | null,
+    isVirtual: boolean
+  ): Promise<Result<{ hasConflict: boolean; conflictMessage?: string }>> {
+    try {
+      const mentorWorkshops = await this.workshopRepository.findByCreatorId(
+        mentorId
+      );
+
+      const newStartTime = this.calculateWorkshopStartTime(newDate, newTime);
+      const newEndTime = this.calculateWorkshopEndTime(
+        newDate,
+        newTime,
+        newDuration
+      );
+
+      if (!newStartTime || !newEndTime) {
+        return failure("Impossible de calculer les horaires", 400);
+      }
+
+      for (const workshop of mentorWorkshops) {
+        if (
+          workshop.id === workshopId ||
+          workshop.status === "CANCELLED" ||
+          !workshop.date ||
+          !workshop.time ||
+          !workshop.duration
+        ) {
+          continue;
+        }
+
+        const existingStartTime = this.calculateWorkshopStartTime(
+          workshop.date,
+          workshop.time
+        );
+        const existingEndTime = this.calculateWorkshopEndTime(
+          workshop.date,
+          workshop.time,
+          workshop.duration
+        );
+
+        if (!existingStartTime || !existingEndTime) {
+          continue;
+        }
+
+        if (
+          (newStartTime >= existingStartTime &&
+            newStartTime < existingEndTime) ||
+          (newEndTime > existingStartTime && newEndTime <= existingEndTime) ||
+          (newStartTime <= existingStartTime && newEndTime >= existingEndTime)
+        ) {
+          return success({
+            hasConflict: true,
+            conflictMessage: `Vous avez déjà un atelier prévu à cette date/heure : "${workshop.title}"`,
+          });
+        }
+      }
+
+      if (!isVirtual && newLocation) {
+        const publishedWorkshops =
+          await this.workshopRepository.findPublished();
+        for (const workshop of publishedWorkshops) {
+          if (
+            workshop.id === workshopId ||
+            workshop.status === "CANCELLED" ||
+            workshop.isVirtual ||
+            !workshop.location ||
+            !workshop.date ||
+            !workshop.time ||
+            !workshop.duration
+          ) {
+            continue;
+          }
+
+          if (
+            workshop.location.toLowerCase().trim() ===
+            newLocation.toLowerCase().trim()
+          ) {
+            const existingStartTime = this.calculateWorkshopStartTime(
+              workshop.date,
+              workshop.time
+            );
+            const existingEndTime = this.calculateWorkshopEndTime(
+              workshop.date,
+              workshop.time,
+              workshop.duration
+            );
+
+            if (!existingStartTime || !existingEndTime) {
+              continue;
+            }
+
+            if (
+              (newStartTime >= existingStartTime &&
+                newStartTime < existingEndTime) ||
+              (newEndTime > existingStartTime &&
+                newEndTime <= existingEndTime) ||
+              (newStartTime <= existingStartTime &&
+                newEndTime >= existingEndTime)
+            ) {
+              return success({
+                hasConflict: true,
+                conflictMessage: `Le lieu "${newLocation}" est déjà réservé à cette date/heure pour l'atelier "${workshop.title}"`,
+              });
+            }
+          }
+        }
+      }
+
+      return success({ hasConflict: false });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  private calculateWorkshopStartTime(
+    date: Date | null,
+    time: string | null
+  ): Date | null {
+    if (!date || !time) {
+      return null;
+    }
+
+    try {
+      const [hours, minutes] = time.split(":").map(Number);
+      const startTime = new Date(date);
+      startTime.setHours(hours, minutes, 0, 0);
+      return startTime;
+    } catch {
+      return null;
+    }
+  }
+
+  async rescheduleWorkshop(
+    userId: string,
+    workshopId: string,
+    input: {
+      date: Date;
+      time: string;
+      duration?: number | null;
+      location?: string | null;
+    }
+  ): Promise<
+    Result<{ success: boolean; oldDate: Date | null; oldTime: string | null }>
+  > {
+    try {
+      const workshop = await this.workshopRepository.findById(workshopId);
+      if (!workshop) {
+        return failure("Atelier non trouvé", 404);
+      }
+
+      const accessCheck = await this.verifyProfAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+      if (appUser.id !== workshop.creatorId) {
+        return failure(
+          "Vous n'êtes pas autorisé à reprogrammer cet atelier",
+          403
+        );
+      }
+
+      if (workshop.status !== "PUBLISHED") {
+        return failure(
+          "Seuls les ateliers publiés peuvent être reprogrammés",
+          400
+        );
+      }
+
+      if (!isMinimumTomorrow(input.date)) {
+        return failure("La nouvelle date doit être au minimum demain", 400);
+      }
+
+      if (!input.time.match(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)) {
+        return failure("Format d'heure invalide (HH:MM requis)", 400);
+      }
+
+      const duration = input.duration ?? workshop.duration ?? 60;
+
+      const conflictCheck = await this.checkResourceConflicts(
+        workshop.creatorId,
+        workshopId,
+        input.date,
+        input.time,
+        duration,
+        input.location ?? workshop.location,
+        workshop.isVirtual
+      );
+
+      if (!conflictCheck.ok) {
+        return conflictCheck;
+      }
+
+      if (conflictCheck.data.hasConflict) {
+        return failure(
+          conflictCheck.data.conflictMessage || "Conflit de ressources détecté",
+          409
+        );
+      }
+
+      const oldDate = workshop.date;
+      const oldTime = workshop.time;
+
+      const updateData: any = {
+        date: input.date,
+        time: input.time,
+      };
+
+      if (input.duration !== undefined) {
+        updateData.duration = input.duration;
+      }
+
+      if (input.location !== undefined) {
+        updateData.location = input.location
+          ? this.sanitizeWorkshopFields({ location: input.location }).location
+          : null;
+      }
+
+      await this.workshopRepository.update(workshopId, updateData);
+
+      const notificationResult =
+        await this.notificationService.notifyWorkshopRescheduled(
+          workshopId,
+          oldDate,
+          oldTime,
+          input.date,
+          input.time
+        );
+
+      if (!notificationResult.ok) {
+        console.warn(
+          "Erreur lors de l'envoi des notifications:",
+          notificationResult.error
+        );
+      }
+
+      return success({
+        success: true,
+        oldDate,
+        oldTime,
+      });
     } catch (error) {
       return failure((error as Error).message, 500);
     }

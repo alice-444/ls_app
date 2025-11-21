@@ -195,4 +195,51 @@ export const workshopRouter = router({
     }
     return result.data;
   }),
+
+  reschedule: profProcedure
+    .input(
+      z.object({
+        workshopId: z.string(),
+        date: z.coerce.date(),
+        time: z
+          .string()
+          .regex(
+            /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
+            "Format d'heure invalide (HH:MM requis)"
+          ),
+        duration: z.number().int().min(15).max(480).optional().nullable(),
+        location: z.string().max(200).optional().nullable(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { workshopId, ...rescheduleData } = input;
+      const result = await container.workshopService.rescheduleWorkshop(
+        ctx.session.user.id,
+        workshopId,
+        rescheduleData
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
+
+  cancelAfterReschedule: protectedProcedure
+    .input(
+      z.object({
+        workshopId: z.string(),
+        cancellationReason: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.workshopService.cancelConfirmedWorkshop(
+        ctx.session.user.id,
+        input.workshopId,
+        input.cancellationReason
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 });

@@ -64,5 +64,16 @@ export interface IWorkshopService {
   getAvailableWorkshopsForApprentice(
     userId: string
   ): Promise<Result<any[]>>;
+
+  rescheduleWorkshop(
+    userId: string,
+    workshopId: string,
+    input: {
+      date: Date;
+      time: string;
+      duration?: number | null;
+      location?: string | null;
+    }
+  ): Promise<Result<{ success: boolean; oldDate: Date | null; oldTime: string | null }>>;
 }
 

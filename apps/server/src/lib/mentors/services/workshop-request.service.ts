@@ -163,24 +163,67 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         );
       }
 
-      const sanitizedLocation = input.location
-        ? sanitizeString(input.location)
-        : null;
+      let workshop;
 
-      const workshop = await this.workshopRepository.create({
-        title: request.title,
-        description: request.description,
-        date: input.date,
-        time: input.time,
-        duration: input.duration ?? null,
-        location: sanitizedLocation,
-        isVirtual: input.isVirtual ?? false,
-        maxParticipants: input.maxParticipants ?? null,
-        materialsNeeded: null,
-        creatorId: mentor.id,
-        apprenticeId: request.apprenticeId,
-        requestId: request.id,
-      });
+      if (request.workshopId) {
+        const existingWorkshop = await this.workshopRepository.findById(
+          request.workshopId
+        );
+
+        if (!existingWorkshop) {
+          return failure("L'atelier référencé n'existe pas", 404);
+        }
+
+        if (existingWorkshop.creatorId !== mentor.id) {
+          return failure(
+            "Vous n'êtes pas autorisé à accepter cette demande pour cet atelier",
+            403
+          );
+        }
+
+        if (existingWorkshop.apprenticeId) {
+          return failure(
+            "Cet atelier a déjà un participant. Un atelier ne peut avoir qu'un seul participant.",
+            400
+          );
+        }
+
+        const sanitizedLocation = input.location
+          ? sanitizeString(input.location)
+          : existingWorkshop.location;
+
+        workshop = await this.workshopRepository.update(request.workshopId, {
+          apprenticeId: request.apprenticeId,
+          date: input.date,
+          time: input.time,
+          duration: input.duration ?? existingWorkshop.duration ?? undefined,
+          location: sanitizedLocation,
+          isVirtual: input.isVirtual ?? existingWorkshop.isVirtual,
+          maxParticipants:
+            input.maxParticipants ??
+            existingWorkshop.maxParticipants ??
+            undefined,
+        });
+      } else {
+        const sanitizedLocation = input.location
+          ? sanitizeString(input.location)
+          : null;
+
+        workshop = await this.workshopRepository.create({
+          title: request.title,
+          description: request.description,
+          date: input.date,
+          time: input.time,
+          duration: input.duration ?? null,
+          location: sanitizedLocation,
+          isVirtual: input.isVirtual ?? false,
+          maxParticipants: input.maxParticipants ?? null,
+          materialsNeeded: null,
+          creatorId: mentor.id,
+          apprenticeId: request.apprenticeId,
+          requestId: request.id,
+        });
+      }
 
       await this.workshopRequestRepository.update(requestId, {
         status: "ACCEPTED",
