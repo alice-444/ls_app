@@ -74,7 +74,7 @@ export function CreateWorkshopForm({
     createMutation.mutate({
       title: data.title,
       description: data.description || "",
-      date: data.date ? new Date(data.date) : null,
+      date: data.date || null,
       time: data.time || null,
       duration,
       location: data.location || null,

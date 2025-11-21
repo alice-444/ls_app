@@ -468,7 +468,8 @@ export class WorkshopService implements IWorkshopService {
 
   async cancelConfirmedWorkshop(
     userId: string,
-    workshopId: string
+    workshopId: string,
+    cancellationReason?: string
   ): Promise<Result<{ success: boolean }>> {
     try {
       const workshop = await this.workshopRepository.findById(workshopId);
@@ -476,9 +477,6 @@ export class WorkshopService implements IWorkshopService {
         return failure("Atelier non trouvé", 404);
       }
 
-      const accessCheck = await this.verifyProfAccess(userId);
-      const isMentor =
-        accessCheck.ok && accessCheck.data.appUser.id === workshop.creatorId;
 
       let isApprentice = false;
       if (workshop.apprenticeId) {
@@ -488,8 +486,37 @@ export class WorkshopService implements IWorkshopService {
           apprenticeCheck.data.appUser.id === workshop.apprenticeId;
       }
 
+      let isMentor = false;
+      if (!isApprentice) {
+        const accessCheck = await this.verifyProfAccess(userId);
+        isMentor =
+          accessCheck.ok && accessCheck.data.appUser.id === workshop.creatorId;
+      }
+
       if (!isMentor && !isApprentice) {
         return failure("Vous n'êtes pas autorisé à annuler cet atelier", 403);
+      }
+
+      if (isApprentice) {
+        await this.workshopRepository.removeApprentice(workshopId);
+
+        // Mock: Send email to apprentice
+        console.log(
+          `[Email] Sending cancellation confirmation to apprentice ${userId} for workshop ${workshopId}`
+        );
+
+        // Mock: Notify organizer (Anonymous if reason provided)
+        if (cancellationReason) {
+          console.log(
+            `[Notification] Organizer notified of anonymous cancellation for workshop ${workshopId}. Reason: ${cancellationReason}`
+          );
+        } else {
+          console.log(
+            `[Notification] Organizer notified of cancellation for workshop ${workshopId}.`
+          );
+        }
+
+        return success({ success: true });
       }
 
       await this.workshopRepository.update(workshopId, {

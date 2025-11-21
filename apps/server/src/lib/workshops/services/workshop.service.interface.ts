@@ -49,7 +49,8 @@ export interface IWorkshopService {
 
   cancelConfirmedWorkshop(
     userId: string,
-    workshopId: string
+    workshopId: string,
+    cancellationReason?: string
   ): Promise<Result<{ success: boolean }>>;
 }
 

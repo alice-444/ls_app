@@ -7,6 +7,7 @@ export interface IWorkshopRepository {
   update(id: string, input: UpdateWorkshopInput): Promise<WorkshopEntity>;
   delete(id: string): Promise<void>;
   checkCreatorOwnership(workshopId: string, creatorId: string): Promise<boolean>;
+  removeApprentice(workshopId: string): Promise<void>;
 }
 
 export interface CreateWorkshopInput {

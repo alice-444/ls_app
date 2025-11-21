@@ -115,7 +115,9 @@ export function RequestWorkshopParticipationDialog({
       description: selectedWorkshop.description || null,
       message: data.message || null,
       preferredDate: selectedWorkshop.date
-        ? new Date(selectedWorkshop.date)
+        ? typeof selectedWorkshop.date === 'string'
+          ? selectedWorkshop.date
+          : new Date(selectedWorkshop.date).toISOString().split('T')[0]
         : null,
       preferredTime: selectedWorkshop.time || null,
       workshopId: selectedWorkshop.id,

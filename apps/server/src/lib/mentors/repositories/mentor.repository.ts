@@ -30,8 +30,22 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await (this.prisma as any).app_user.findUnique({
-      where: { id },
+    const mentor = await (this.prisma as any).app_user.findFirst({
+      where: {
+        OR: [
+          { id },
+          { userId: id },
+        ],
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     if (!mentor || !mentor.isPublished || mentor.role !== "PROF") {

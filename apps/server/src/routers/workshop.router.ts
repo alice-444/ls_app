@@ -88,7 +88,7 @@ export const workshopRouter = router({
     .input(
       z.object({
         workshopId: z.string(),
-        date: z.date().optional().nullable(),
+        date: z.coerce.date().optional().nullable(),
         time: z.string().optional().nullable(),
         duration: z.number().int().min(15).max(480).optional().nullable(),
         location: z.string().max(200).optional().nullable(),
@@ -108,11 +108,17 @@ export const workshopRouter = router({
     }),
 
   cancelConfirmed: protectedProcedure
-    .input(z.object({ workshopId: z.string() }))
+    .input(
+      z.object({
+        workshopId: z.string(),
+        cancellationReason: z.string().optional(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopService.cancelConfirmedWorkshop(
         ctx.session.user.id,
-        input.workshopId
+        input.workshopId,
+        input.cancellationReason
       );
     if (!result.ok) {
       throw new Error(result.error);

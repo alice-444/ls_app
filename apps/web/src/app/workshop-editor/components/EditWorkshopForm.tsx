@@ -88,7 +88,7 @@ export function EditWorkshopForm({
       workshopId: data.workshopId,
       title: data.title,
       description: data.description || "",
-      date: data.date ? new Date(data.date) : undefined,
+      date: data.date || undefined,
       time: data.time || undefined,
       duration: duration || undefined,
       location: data.location || null,

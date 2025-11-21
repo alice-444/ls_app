@@ -22,7 +22,10 @@ import {
   getWorkshopRequestStatusColor,
 } from "@/lib/workshop-request-utils";
 import { toast } from "sonner";
-import { Edit, Users } from "lucide-react";
+import { Edit, Users, Calendar } from "lucide-react";
+import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
+import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
+import { formatDate } from "@/lib/workshop-utils";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -96,20 +99,6 @@ const mockUserData = {
         date: "Vendredi, 14h",
         matiere: "Informatique",
         niveau: "Débutant",
-      },
-      {
-        titre: "Calcul différentiel",
-        etudiant: "Sophie K.",
-        date: "Lundi, 16h",
-        matiere: "Mathématiques",
-        niveau: "Avancé",
-      },
-      {
-        titre: "Mécanique quantique",
-        etudiant: "Alex R.",
-        date: "Mardi, 15h",
-        matiere: "Physique",
-        niveau: "Intermédiaire",
       },
     ],
     statistiques: {
@@ -188,6 +177,27 @@ export default function Dashboard() {
       refetchOnWindowFocus: true,
     });
 
+  const { data: confirmedWorkshops, refetch: refetchConfirmedWorkshops } =
+    trpc.workshop.getConfirmedWorkshops.useQuery(undefined, {
+      enabled: !!session && (userRole === "apprenant" || userRole === "both"),
+    });
+
+  const cancelWorkshopMutation = trpc.workshop.cancelConfirmed.useMutation({
+    onSuccess: () => {
+      toast.success("Inscription annulée avec succès");
+      refetchConfirmedWorkshops();
+      setShowCancelDialog(null);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de l'annulation");
+    },
+  });
+
+  const [showCancelDialog, setShowCancelDialog] = useState<string | null>(null);
+  const selectedCancellationWorkshop = confirmedWorkshops?.find(
+    (w: any) => w.id === showCancelDialog
+  );
+
   const [previousRequestCount, setPreviousRequestCount] = useState<number>(0);
   const [previousPendingCount, setPreviousPendingCount] = useState<number>(0);
 
@@ -242,6 +252,8 @@ export default function Dashboard() {
     null
   );
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [requestToReject, setRequestToReject] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
@@ -249,6 +261,8 @@ export default function Dashboard() {
       toast.success("Demande refusée avec succès");
       utils.mentor.getMentorWorkshopRequests.invalidate();
       refetchMentorRequests();
+      setShowRejectDialog(false);
+      setRequestToReject(null);
     },
     onError: (error) => {
       toast.error(`Erreur: ${error.message}`);
@@ -262,8 +276,13 @@ export default function Dashboard() {
   };
 
   const handleRejectRequest = (requestId: string) => {
-    if (confirm("Êtes-vous sûr de vouloir refuser cette demande ?")) {
-      rejectRequest.mutate({ requestId });
+    setRequestToReject(requestId);
+    setShowRejectDialog(true);
+  };
+
+  const confirmRejectRequest = () => {
+    if (requestToReject) {
+      rejectRequest.mutate({ requestId: requestToReject });
     }
   };
 
@@ -288,7 +307,7 @@ export default function Dashboard() {
   }
 
   const renderSocialNetworkSection = () => (
-    <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
+    <Card className="bg-linear-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <svg
@@ -429,7 +448,7 @@ export default function Dashboard() {
 
   const renderApprenantDashboard = () => (
     <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
+      <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl">
             Bienvenue dans votre parcours d'apprentissage
@@ -441,7 +460,7 @@ export default function Dashboard() {
       </Card>
 
       {/* ateliers passés */}
-      <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -473,7 +492,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -623,59 +642,61 @@ export default function Dashboard() {
         />
       )}
 
-      <Card className="lg:col-span-2">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Prochains ateliers
-          </CardTitle>
-          <CardDescription>
-            Vos ateliers programmés avec vos mentors
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          {mockUserData.apprenant.prochainsAteliers.map((atelier, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              <div className="flex-1">
-                <h4 className="font-medium text-sm">{atelier.titre}</h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Mentor: {atelier.mentor}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
-                  {atelier.date}
-                </Badge>
-                <Button size="sm" className="text-xs">
-                  Rejoindre
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs text-red-600 hover:text-red-700"
+      {(userRole === "apprenant" || userRole === "both") && (
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Calendar className="w-4 h-4" />
+              Prochains ateliers
+            </CardTitle>
+            <CardDescription>
+              Vos ateliers programmés avec vos mentors
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-3">
+            {confirmedWorkshops && confirmedWorkshops.length > 0 ? (
+              confirmedWorkshops.map((atelier: any) => (
+                <div
+                  key={atelier.id}
+                  className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  Annuler
-                </Button>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{atelier.title}</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                      Mentor: {atelier.creator?.user?.name || "Inconnu"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {formatDate(atelier.date)}
+                      {atelier.time && ` • ${atelier.time}`}
+                    </Badge>
+                    <Button
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => router.push(`/workshop-room`)}
+                    >
+                      Rejoindre
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs text-red-600 hover:text-red-700"
+                      onClick={() => setShowCancelDialog(atelier.id)}
+                    >
+                      Annuler
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-4 text-muted-foreground text-sm">
+                Aucun atelier programmé
               </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {renderSocialNetworkSection()}
     </>
@@ -683,7 +704,7 @@ export default function Dashboard() {
 
   const renderMentorDashboard = () => (
     <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
+      <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl">
             Bienvenue dans votre espace mentor
@@ -765,7 +786,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-yellow-500 to-orange-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -794,72 +815,6 @@ export default function Dashboard() {
               Utiliser mes crédits
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="lg:col-span-2">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-base">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              Demandes d'atelier reçues
-              {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                >
-                  {mentorWorkshopRequests.length}
-                </Badge>
-              )}
-            </div>
-            {mentorWorkshopRequests &&
-              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <Badge
-                  variant="default"
-                  className="bg-yellow-500 text-white animate-pulse"
-                >
-                  {
-                    mentorWorkshopRequests.filter(
-                      (r: any) => r.status === "PENDING"
-                    ).length
-                  }{" "}
-                  en attente
-                </Badge>
-              )}
-          </CardTitle>
-          <CardDescription>
-            Les demandes d'atelier que vous avez reçues de la part des apprentis
-            {mentorWorkshopRequests &&
-              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 10 secondes
-                </span>
-              )}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
-            mentorWorkshopRequests.map((request: any) => (
-              <WorkshopRequestCard
-                key={request.id}
-                request={request}
-                onAccept={handleAcceptRequest}
-                onReject={handleRejectRequest}
-                isRejecting={rejectRequest.isPending}
-                variant="dashboard"
-                showTitle={true}
-                showDescription={true}
-                showPreferredDate={true}
-              />
-            ))
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Aucune demande d'atelier reçue</p>
-            </div>
-          )}
         </CardContent>
       </Card>
 
@@ -969,7 +924,7 @@ export default function Dashboard() {
 
       {renderSocialNetworkSection()}
 
-      <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -1121,24 +1076,28 @@ export default function Dashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 space-y-3">
-          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
-            mentorWorkshopRequests.map((request: any) => (
-              <WorkshopRequestCard
-                key={request.id}
-                request={request}
-                onAccept={handleAcceptRequest}
-                onReject={handleRejectRequest}
-                isRejecting={rejectRequest.isPending}
-                variant="dashboard"
-                showTitle={true}
-                showDescription={true}
-                showPreferredDate={true}
-              />
-            ))
+          {mentorWorkshopRequests &&
+          mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
+            .length > 0 ? (
+            mentorWorkshopRequests
+              .filter((r: any) => r.status === "PENDING")
+              .map((request: any) => (
+                <WorkshopRequestCard
+                  key={request.id}
+                  request={request}
+                  onAccept={handleAcceptRequest}
+                  onReject={handleRejectRequest}
+                  isRejecting={rejectRequest.isPending}
+                  variant="dashboard"
+                  showTitle={true}
+                  showDescription={true}
+                  showPreferredDate={true}
+                />
+              ))
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Aucune demande d'atelier reçue</p>
+              <p>Aucune demande d'atelier en attente</p>
             </div>
           )}
         </CardContent>
@@ -1170,12 +1129,22 @@ export default function Dashboard() {
           }}
         />
       )}
+
+      <RejectWorkshopRequestDialog
+        open={showRejectDialog}
+        onOpenChange={(open) => {
+          setShowRejectDialog(open);
+          if (!open) setRequestToReject(null);
+        }}
+        onConfirm={confirmRejectRequest}
+        isSubmitting={rejectRequest.isPending}
+      />
     </>
   );
 
   const renderBothDashboard = () => (
     <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
+      <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl">
             Bienvenue dans votre espace d'entraide
@@ -1256,7 +1225,7 @@ export default function Dashboard() {
       </Card>
 
       {/* ateliers passés */}
-      <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -1288,7 +1257,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -1320,66 +1289,68 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="lg:col-span-2">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Prochains ateliers
-          </CardTitle>
-          <CardDescription>
-            Vos ateliers programmés avec vos mentors
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          {mockUserData.apprenant.prochainsAteliers.map((atelier, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              <div className="flex-1">
-                <h4 className="font-medium text-sm">{atelier.titre}</h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Mentor: {atelier.mentor}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
-                  {atelier.date}
-                </Badge>
-                <Button size="sm" className="text-xs">
-                  Rejoindre
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs text-red-600 hover:text-red-700"
+      {(userRole === "apprenant" || userRole === "both") && (
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Calendar className="w-4 h-4" />
+              Prochains ateliers
+            </CardTitle>
+            <CardDescription>
+              Vos ateliers programmés avec vos mentors
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-3">
+            {confirmedWorkshops && confirmedWorkshops.length > 0 ? (
+              confirmedWorkshops.map((atelier: any) => (
+                <div
+                  key={atelier.id}
+                  className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  Annuler
-                </Button>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{atelier.title}</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                      Mentor: {atelier.creator?.user?.name || "Inconnu"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {formatDate(atelier.date)}
+                      {atelier.time && ` • ${atelier.time}`}
+                    </Badge>
+                    <Button
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => router.push(`/workshop-room`)}
+                    >
+                      Rejoindre
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs text-red-600 hover:text-red-700"
+                      onClick={() => setShowCancelDialog(atelier.id)}
+                    >
+                      Annuler
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-4 text-muted-foreground text-sm">
+                Aucun atelier programmé
               </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {renderSocialNetworkSection()}
     </>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
@@ -1391,7 +1362,6 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* Sélecteur de rôle */}
           <div className="flex gap-2">
             <Button
               variant={userRole === "apprenant" ? "default" : "outline"}
@@ -1423,6 +1393,28 @@ export default function Dashboard() {
         {userRole === "mentor" && renderMentorDashboard()}
         {userRole === "both" && renderBothDashboard()}
       </div>
+
+      {selectedCancellationWorkshop && (
+        <CancelWorkshopRegistrationDialog
+          open={showCancelDialog !== null}
+          onOpenChange={(open) => !open && setShowCancelDialog(null)}
+          onConfirm={(reason) => {
+            if (showCancelDialog) {
+              cancelWorkshopMutation.mutate({
+                workshopId: showCancelDialog,
+                cancellationReason: reason,
+              });
+            }
+          }}
+          isLoading={cancelWorkshopMutation.isPending}
+          workshopTitle={selectedCancellationWorkshop.title}
+          workshopDate={
+            selectedCancellationWorkshop.date
+              ? new Date(selectedCancellationWorkshop.date)
+              : new Date()
+          }
+        />
+      )}
     </div>
   );
 }

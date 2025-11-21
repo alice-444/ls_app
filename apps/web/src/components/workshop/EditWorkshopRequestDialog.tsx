@@ -118,7 +118,7 @@ export function EditWorkshopRequestDialog({
       title: data.title,
       description: data.description || null,
       message: data.message || null,
-      preferredDate: data.preferredDate ? new Date(data.preferredDate) : null,
+      preferredDate: data.preferredDate || null,
       preferredTime: data.preferredTime || null,
     };
 

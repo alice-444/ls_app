@@ -8,6 +8,7 @@ import type {
 export class PrismaWorkshopRepository implements IWorkshopRepository {
   constructor(private readonly prisma: any) {}
   async create(input: CreateWorkshopInput): Promise<WorkshopEntity> {
+    const now = new Date();
     return (this.prisma as any).workshop.create({
       data: {
         id: crypto.randomUUID(),
@@ -23,6 +24,7 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         creatorId: input.creatorId,
         apprenticeId: input.apprenticeId ?? null,
         requestId: input.requestId ?? null,
+        updatedAt: now,
       },
     });
   }
@@ -36,20 +38,49 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
             user: true,
           },
         },
+        app_user_workshop_apprenticeIdToapp_user: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!workshop) return null;
     return {
       ...workshop,
       creator: workshop.app_user_workshop_creatorIdToapp_user,
+      apprentice: workshop.app_user_workshop_apprenticeIdToapp_user,
     } as WorkshopEntity;
   }
 
   async findByCreatorId(creatorId: string): Promise<WorkshopEntity[]> {
-    return (this.prisma as any).workshop.findMany({
+    const workshops = await (this.prisma as any).workshop.findMany({
       where: { creatorId },
+      include: {
+        app_user_workshop_apprenticeIdToapp_user: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
+    return workshops.map((w: any) => ({
+      ...w,
+      apprentice: w.app_user_workshop_apprenticeIdToapp_user,
+    })) as WorkshopEntity[];
   }
 
   async findByApprenticeId(apprenticeId: string): Promise<WorkshopEntity[]> {
@@ -87,12 +118,24 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
             user: true,
           },
         },
+        app_user_workshop_apprenticeIdToapp_user: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
       orderBy: { date: "asc" },
     });
     return workshops.map((w: any) => ({
       ...w,
       creator: w.app_user_workshop_creatorIdToapp_user,
+      apprentice: w.app_user_workshop_apprenticeIdToapp_user,
     })) as WorkshopEntity[];
   }
 
@@ -121,5 +164,12 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
       select: { creatorId: true },
     });
     return workshop?.creatorId === creatorId;
+  }
+
+  async removeApprentice(id: string): Promise<void> {
+    await (this.prisma as any).workshop.update({
+      where: { id },
+      data: { apprenticeId: null },
+    });
   }
 }

@@ -37,6 +37,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { Badge } from "@/components/ui/badge";
 import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
 import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
 import {
   getWorkshopRequestStatusLabel,
@@ -52,12 +53,16 @@ export default function WorkshopDetailPage() {
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [requestToReject, setRequestToReject] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande refusée avec succès");
       utils.mentor.getWorkshopRequests.invalidate();
+      setShowRejectDialog(false);
+      setRequestToReject(null);
     },
     onError: (error) => {
       toast.error(`Erreur: ${error.message}`);
@@ -77,8 +82,13 @@ export default function WorkshopDetailPage() {
   };
 
   const handleRejectRequest = (requestId: string) => {
-    if (confirm("Êtes-vous sûr de vouloir refuser cette demande ?")) {
-      rejectRequest.mutate({ requestId });
+    setRequestToReject(requestId);
+    setShowRejectDialog(true);
+  };
+
+  const confirmRejectRequest = () => {
+    if (requestToReject) {
+      rejectRequest.mutate({ requestId: requestToReject });
     }
   };
 
@@ -143,7 +153,7 @@ export default function WorkshopDetailPage() {
   if (!workshop) {
     const backUrl = userRole === "PROF" ? "/my-workshops" : "/workshop-room";
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
         <div className="max-w-4xl mx-auto text-center py-12">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             Atelier introuvable
@@ -167,7 +177,7 @@ export default function WorkshopDetailPage() {
   const shouldShowStatusBadge = isOwner;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
           <Button
@@ -284,17 +294,21 @@ export default function WorkshopDetailPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {workshopRequests && workshopRequests.length > 0 ? (
+                  {workshopRequests &&
+                  workshopRequests.filter((r: any) => r.status === "PENDING")
+                    .length > 0 ? (
                     <div className="space-y-3">
-                      {workshopRequests.map((request: any) => (
-                        <WorkshopRequestCard
-                          key={request.id}
-                          request={request}
-                          onAccept={handleAcceptRequest}
-                          onReject={handleRejectRequest}
-                          isRejecting={rejectRequest.isPending}
-                        />
-                      ))}
+                      {workshopRequests
+                        .filter((r: any) => r.status === "PENDING")
+                        .map((request: any) => (
+                          <WorkshopRequestCard
+                            key={request.id}
+                            request={request}
+                            onAccept={handleAcceptRequest}
+                            onReject={handleRejectRequest}
+                            isRejecting={rejectRequest.isPending}
+                          />
+                        ))}
                     </div>
                   ) : (
                     <div className="text-center py-8 text-slate-500">
@@ -313,17 +327,43 @@ export default function WorkshopDetailPage() {
                   Participants inscrits
                 </CardTitle>
                 <CardDescription>
-                  0 / {workshop.maxParticipants || "∞"} participants
+                  {workshop.status === "PUBLISHED" && workshop.apprenticeId ? 1 : 0} / {workshop.maxParticipants || "∞"} participants
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-slate-500">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                  <p>Aucun participant inscrit pour le moment</p>
-                  <p className="text-sm mt-2">
-                    Les inscriptions seront visibles une fois l'atelier publié
-                  </p>
-                </div>
+                {workshop.status === "PUBLISHED" && workshop.apprenticeId && workshop.apprentice ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 rounded-lg border bg-slate-50 dark:bg-slate-900">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <User className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">
+                            {workshop.apprentice.user?.name || "Apprenti"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {workshop.apprentice.user?.email || ""}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-500">
+                    <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                    <p>
+                      {workshop.status === "DRAFT" 
+                        ? "Les participants seront visibles une fois l'atelier publié"
+                        : "Aucun participant inscrit pour le moment"}
+                    </p>
+                    {workshop.status === "PUBLISHED" && (
+                      <p className="text-sm mt-2">
+                        Les inscriptions seront visibles une fois l'atelier publié
+                      </p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -417,7 +457,7 @@ export default function WorkshopDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white font-semibold">
+                    <div className="w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white font-semibold">
                       {workshop.creator.user?.name?.charAt(0).toUpperCase() ||
                         "?"}
                     </div>
@@ -507,6 +547,16 @@ export default function WorkshopDetailPage() {
           preferredTime={selectedRequest.preferredTime}
         />
       )}
+
+      <RejectWorkshopRequestDialog
+        open={showRejectDialog}
+        onOpenChange={(open) => {
+          setShowRejectDialog(open);
+          if (!open) setRequestToReject(null);
+        }}
+        onConfirm={confirmRejectRequest}
+        isSubmitting={rejectRequest.isPending}
+      />
     </div>
   );
 }
