@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar, Clock, MapPin } from "lucide-react";
-import { formatDate, formatTime } from "@/lib/workshop-utils";
+import { formatDate, formatTime, isValidTimeFormat } from "@/lib/workshop-utils";
 import {
   getMinimumDate,
   formatDateForInput,
@@ -78,7 +78,7 @@ export function RescheduleWorkshopDialog({
 
     if (!time) {
       newErrors.time = "L'heure est requise";
-    } else if (!/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time)) {
+    } else if (!isValidTimeFormat(time)) {
       newErrors.time = "Format d'heure invalide (HH:MM requis)";
     }
 

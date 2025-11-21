@@ -1,24 +1,7 @@
 import type { Result } from "../../common";
 import { failure, success } from "../../common";
 import type { IWorkshopRepository } from "../repositories/workshop.repository.interface";
-
-function formatDate(
-  date: Date | null,
-  options?: { includeWeekday?: boolean }
-): string {
-  if (!date) return "Non définie";
-  return date.toLocaleDateString("fr-FR", {
-    ...(options?.includeWeekday && { weekday: "long" }),
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-function formatTime(time: string | null): string {
-  if (!time) return "Non définie";
-  return time;
-}
+import { formatDateTime } from "../utils/date-formatters";
 
 export interface WorkshopRescheduleNotificationData {
   workshopId: string;
@@ -75,45 +58,51 @@ export class WorkshopNotificationService {
   private async sendRescheduleNotification(
     data: WorkshopRescheduleNotificationData
   ): Promise<void> {
-    const oldDateTime =
-      data.oldDate && data.oldTime
-        ? `${formatDate(data.oldDate, { includeWeekday: true })} à ${formatTime(
-            data.oldTime
-          )}`
-        : "Non défini";
-
-    const newDateTime = `${formatDate(data.newDate, {
+    const oldDateTime = formatDateTime(data.oldDate, data.oldTime, {
       includeWeekday: true,
-    })} à ${formatTime(data.newTime)}`;
+    });
+    const newDateTime = formatDateTime(data.newDate, data.newTime, {
+      includeWeekday: true,
+    });
 
-    // TODO: Integration with realtime system of notifications and mail service will be implemented later
-    console.log("=".repeat(80));
-    console.log("📧 EMAIL NOTIFICATION - Workshop Rescheduled");
-    console.log("=".repeat(80));
-    console.log(`To: ${data.apprenticeEmail || "Email non disponible"}`);
-    console.log(`Subject: Changement d'horaire : ${data.workshopTitle}`);
-    console.log("");
-    console.log(`Bonjour ${data.apprenticeName || "Participant"},`);
-    console.log("");
-    console.log(`L'atelier "${data.workshopTitle}" a été reprogrammé.`);
-    console.log("");
-    console.log("📅 Ancien horaire:");
-    console.log(`   ${oldDateTime}`);
-    console.log("");
-    console.log("📅 Nouvel horaire:");
-    console.log(`   ${newDateTime}`);
-    console.log("");
-    console.log("Actions disponibles:");
-    console.log("  ✅ Garder ma place (par défaut)");
-    console.log(
-      "  ❌ Le nouvel horaire ne me convient pas - Annuler mon inscription"
-    );
-    console.log("");
-    console.log(`Workshop ID: ${data.workshopId}`);
-    console.log(`Apprentice ID: ${data.apprenticeId}`);
-    console.log("=".repeat(80));
+    this.logRescheduleNotification(data, oldDateTime, newDateTime);
 
     // TODO: Integration with a mailing service (SendGrid, Resend, etc.)
     // TODO: Create a notification in the database for the dashboard
+  }
+
+  private logRescheduleNotification(
+    data: WorkshopRescheduleNotificationData,
+    oldDateTime: string,
+    newDateTime: string
+  ): void {
+    const separator = "=".repeat(80);
+    const emailContent = [
+      separator,
+      "📧 EMAIL NOTIFICATION - Workshop Rescheduled",
+      separator,
+      `To: ${data.apprenticeEmail || "Email non disponible"}`,
+      `Subject: Changement d'horaire : ${data.workshopTitle}`,
+      "",
+      `Bonjour ${data.apprenticeName || "Participant"},`,
+      "",
+      `L'atelier "${data.workshopTitle}" a été reprogrammé.`,
+      "",
+      "📅 Ancien horaire:",
+      `   ${oldDateTime}`,
+      "",
+      "📅 Nouvel horaire:",
+      `   ${newDateTime}`,
+      "",
+      "Actions disponibles:",
+      "  ✅ Garder ma place (par défaut)",
+      "  ❌ Le nouvel horaire ne me convient pas - Annuler mon inscription",
+      "",
+      `Workshop ID: ${data.workshopId}`,
+      `Apprentice ID: ${data.apprenticeId}`,
+      separator,
+    ].join("\n");
+
+    console.log(emailContent);
   }
 }

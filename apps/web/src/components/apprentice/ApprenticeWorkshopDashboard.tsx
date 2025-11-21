@@ -24,7 +24,12 @@ import {
   Sparkles,
   MessageSquare,
 } from "lucide-react";
-import { formatDate, formatTime } from "@/lib/workshop-utils";
+import {
+  formatDate,
+  formatTime,
+  calculateEndTime,
+  formatTimeRange,
+} from "@/lib/workshop-utils";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
@@ -32,49 +37,6 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { X, Users, Plus } from "lucide-react";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
-
-function calculateEndTime(
-  date: Date | string | null,
-  time: string | null,
-  duration: number | null
-): Date | null {
-  if (!date || !time || !duration) return null;
-
-  try {
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    const [hours, minutes] = time.split(":").map(Number);
-    const startTime = new Date(dateObj);
-    startTime.setHours(hours, minutes, 0, 0);
-
-    const endTime = new Date(startTime);
-    endTime.setMinutes(endTime.getMinutes() + duration);
-
-    return endTime;
-  } catch {
-    return null;
-  }
-}
-
-function formatTimeRange(time: string | null, duration: number | null): string {
-  if (!time) return "Non définie";
-
-  if (!duration) return time;
-
-  try {
-    const [hours, minutes] = time.split(":").map(Number);
-    const startMinutes = hours * 60 + minutes;
-    const endMinutes = startMinutes + duration;
-    const endHours = Math.floor(endMinutes / 60);
-    const endMins = endMinutes % 60;
-    const endTimeStr = `${endHours.toString().padStart(2, "0")}:${endMins
-      .toString()
-      .padStart(2, "0")}`;
-
-    return `${time} - ${endTimeStr}`;
-  } catch {
-    return time;
-  }
-}
 
 interface Workshop {
   id: string;
