@@ -98,6 +98,7 @@ export class WorkshopService implements IWorkshopService {
       const workshop = await this.workshopRepository.create({
         title: sanitized.title!,
         description: sanitized.description,
+        topic: validation.data.topic ?? null,
         date: validation.data.date,
         time: validation.data.time,
         duration: validation.data.duration,
@@ -166,6 +167,9 @@ export class WorkshopService implements IWorkshopService {
       }
       if (sanitized.materialsNeeded !== undefined) {
         updateData.materialsNeeded = sanitized.materialsNeeded;
+      }
+      if (validation.data.topic !== undefined) {
+        updateData.topic = validation.data.topic;
       }
 
       await this.workshopRepository.update(

@@ -73,11 +73,18 @@ export const workshopFieldSchemas = {
       WORKSHOP_VALIDATION.materialsNeeded.max,
       WORKSHOP_ERROR_MESSAGES.materialsNeeded.max
     ),
+
+  topic: z
+    .string()
+    .trim()
+    .min(WORKSHOP_VALIDATION.topic.min, WORKSHOP_ERROR_MESSAGES.topic.min)
+    .max(WORKSHOP_VALIDATION.topic.max, WORKSHOP_ERROR_MESSAGES.topic.max),
 } as const;
 
 export const createWorkshopBackendSchema = z.object({
   title: workshopFieldSchemas.title,
   description: workshopFieldSchemas.description.optional().default(""),
+  topic: workshopFieldSchemas.topic.optional().nullable(),
   date: workshopFieldSchemas.date.optional().nullable(),
   time: workshopFieldSchemas.time.optional().nullable(),
   duration: workshopFieldSchemas.duration.optional().nullable(),
@@ -91,6 +98,7 @@ export const updateWorkshopBackendSchema = z.object({
   workshopId: z.string().uuid(),
   title: workshopFieldSchemas.title.optional(),
   description: workshopFieldSchemas.description.optional(),
+  topic: workshopFieldSchemas.topic.optional().nullable(),
   date: workshopFieldSchemas.date.optional(),
   time: workshopFieldSchemas.time.optional(),
   duration: workshopFieldSchemas.duration.optional(),

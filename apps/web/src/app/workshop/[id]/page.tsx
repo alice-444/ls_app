@@ -18,6 +18,7 @@ import {
   Clock,
   MapPin,
   Users,
+  Tag,
   Edit,
   Trash2,
   ArrowLeft,
@@ -151,7 +152,7 @@ export default function WorkshopDetailPage() {
   }
 
   if (!workshop) {
-    const backUrl = userRole === "PROF" ? "/my-workshops" : "/workshop-room";
+    const backUrl = userRole === "MENTOR" ? "/my-workshops" : "/workshop-room";
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
         <div className="max-w-4xl mx-auto text-center py-12">
@@ -374,6 +375,20 @@ export default function WorkshopDetailPage() {
                 <CardTitle>Détails de l'atelier</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {workshop.topic && (
+                  <div className="flex items-start gap-3">
+                    <Tag className="w-5 h-5 text-slate-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                        Thème / Topic
+                      </p>
+                      <p className="text-slate-900 dark:text-slate-100">
+                        {workshop.topic}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-start gap-3">
                   <Calendar className="w-5 h-5 text-slate-500 mt-0.5" />
                   <div>

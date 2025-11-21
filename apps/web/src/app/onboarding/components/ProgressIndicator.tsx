@@ -65,7 +65,7 @@ export function ProgressIndicator({
 
 function getMaxSteps(selectedRole: Role | null, currentStep: Step): number {
   if (
-    selectedRole === "PROF" &&
+    selectedRole === "MENTOR" &&
     (currentStep === "confirm-features" || currentStep === "prof-form")
   ) {
     return 3;
@@ -90,7 +90,7 @@ function getCurrentStepNumber(currentStep: Step): number {
 
 function buildSteps(selectedRole: Role | null, currentStep: Step) {
   if (
-    selectedRole === "PROF" &&
+    selectedRole === "MENTOR" &&
     (currentStep === "confirm-features" || currentStep === "prof-form")
   ) {
     return [

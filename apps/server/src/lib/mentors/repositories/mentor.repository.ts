@@ -22,7 +22,7 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    if (!mentor || !mentor.isPublished || mentor.role !== "PROF") {
+    if (!mentor || !mentor.isPublished || mentor.role !== "MENTOR") {
       return null;
     }
 
@@ -48,7 +48,7 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    if (!mentor || !mentor.isPublished || mentor.role !== "PROF") {
+    if (!mentor || !mentor.isPublished || mentor.role !== "MENTOR") {
       return null;
     }
 

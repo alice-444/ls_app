@@ -48,6 +48,7 @@ export function EditWorkshopForm({
       workshopId: workshop.id,
       title: workshop.title || "",
       description: workshop.description || "",
+      topic: workshop.topic || "",
       date: workshop.date
         ? new Date(workshop.date).toISOString().split("T")[0]
         : "",
@@ -88,6 +89,7 @@ export function EditWorkshopForm({
       workshopId: data.workshopId,
       title: data.title,
       description: data.description || "",
+      topic: data.topic || null,
       date: data.date || undefined,
       time: data.time || undefined,
       duration: duration || undefined,

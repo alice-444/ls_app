@@ -25,7 +25,7 @@ import { useState } from "react";
 export default function UserMenu() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const [currentRole, setCurrentRole] = useState<"PROF" | "APPRENANT">("PROF");
+  const [currentRole, setCurrentRole] = useState<"MENTOR" | "APPRENANT">("MENTOR");
   const [isOpen, setIsOpen] = useState(false);
 
   if (isPending) {
@@ -41,19 +41,19 @@ export default function UserMenu() {
   }
 
   const handleRoleToggle = () => {
-    setCurrentRole(currentRole === "PROF" ? "APPRENANT" : "PROF");
+    setCurrentRole(currentRole === "MENTOR" ? "APPRENANT" : "MENTOR");
   };
 
-  const getRoleIcon = (role: "PROF" | "APPRENANT") => {
-    return role === "PROF" ? (
+  const getRoleIcon = (role: "MENTOR" | "APPRENANT") => {
+    return role === "MENTOR" ? (
       <Users className="h-4 w-4" />
     ) : (
       <GraduationCap className="h-4 w-4" />
     );
   };
 
-  const getRoleLabel = (role: "PROF" | "APPRENANT") => {
-    return role === "PROF" ? "Prof" : "Apprenant";
+  const getRoleLabel = (role: "MENTOR" | "APPRENANT") => {
+    return role === "MENTOR" ? "Mentor" : "Apprenant";
   };
 
   return (

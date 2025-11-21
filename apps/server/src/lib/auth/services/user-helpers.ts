@@ -33,8 +33,8 @@ export async function verifyProfUser(
     );
   }
 
-  if (appUser.role !== "PROF") {
-    return failure("Only users with PROF role can perform this action", 403);
+  if (appUser.role !== "MENTOR") {
+    return failure("Only users with MENTOR role can perform this action", 403);
   }
 
   if (appUser.status !== "ACTIVE") {

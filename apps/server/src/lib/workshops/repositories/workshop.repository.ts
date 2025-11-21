@@ -17,6 +17,7 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         date: input.date,
         time: input.time,
         duration: input.duration,
+        topic: input.topic,
         location: input.location,
         isVirtual: input.isVirtual ?? false,
         maxParticipants: input.maxParticipants,

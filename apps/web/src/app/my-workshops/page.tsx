@@ -278,7 +278,12 @@ export default function MyWorkshopsPage() {
     if (!workshops) return [];
     const now = new Date();
     return workshops
-      .filter((w) => w.date && new Date(w.date) > now)
+      .filter(
+        (w) =>
+          w.date &&
+          new Date(w.date) > now &&
+          w.status === "PUBLISHED"
+      )
       .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
       .slice(0, 5);
   }, [workshops]);

@@ -5,7 +5,7 @@ import type { AppUserRepository } from "../../users/repositories";
 import { verifyUserExists } from "./user-helpers";
 
 export const selectRoleSchema = z.object({
-  role: z.enum(["PROF", "APPRENANT"]),
+  role: z.enum(["MENTOR", "APPRENANT"]),
 });
 
 export type SelectRoleInput = z.infer<typeof selectRoleSchema>;
