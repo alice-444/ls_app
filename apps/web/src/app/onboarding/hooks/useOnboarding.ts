@@ -28,7 +28,7 @@ export function useOnboarding() {
       await customAuthClient.selectRole(selectedRole);
       setIsSubmitting(false);
 
-      if (selectedRole === "PROF") {
+      if (selectedRole === "MENTOR") {
         setCurrentStep("prof-form");
       } else {
         setCurrentStep("apprenant-flow");

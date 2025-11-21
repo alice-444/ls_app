@@ -136,6 +136,7 @@ model workshop {
   id                                                     String             @id @map("_id")
   title                                                  String
   description                                            String?
+  topic                                                   String?
   date                                                   DateTime?
   time                                                   String?
   location                                               String?
@@ -160,6 +161,7 @@ model workshop {
   @@index([creatorId])
   @@index([requestId])
   @@index([status])
+  @@index([topic])
 }
 
 model workshop_request {
@@ -194,7 +196,7 @@ enum AppUserStatus {
 }
 
 enum Role {
-  PROF
+  MENTOR
   APPRENANT
   ADMIN
 }

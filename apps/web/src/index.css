@@ -19,6 +19,13 @@ body {
 }
 
 :root {
+	--primary-orange: #FFB647;
+	--secondary-orange: #FF8C42;
+	--primary-orange-dark: #e69a2f;
+	--primary-blue: #4A90E2CC;
+	--secondary-blue: #4A90E2A3;
+	--tertiary-blue: #26547C;
+	--primary-purple: #C9A0DC;
 	--radius: 0.625rem;
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.145 0 0);

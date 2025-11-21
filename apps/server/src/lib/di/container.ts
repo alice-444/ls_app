@@ -1,4 +1,4 @@
-import { prisma } from "../common/prisma";
+import { PrismaClient } from "../../../prisma/generated/client/client";
 
 // Repositories
 import { PrismaWorkshopRepository } from "../workshops/repositories/workshop.repository";
@@ -26,7 +26,7 @@ import type { IWorkshopRequestService } from "../mentors/services/workshop-reque
 
 class DIContainer {
   private static instance: DIContainer;
-  private readonly _prisma: typeof prisma;
+  private readonly _prisma: PrismaClient;
 
   // Repository instances
   private _workshopRepository?: IWorkshopRepository;
@@ -43,7 +43,7 @@ class DIContainer {
   private _workshopRequestService?: IWorkshopRequestService;
 
   private constructor() {
-    this._prisma = prisma;
+    this._prisma = new PrismaClient();
   }
 
   public static getInstance(): DIContainer {
@@ -89,7 +89,8 @@ class DIContainer {
     if (!this._workshopService) {
       this._workshopService = new WorkshopService(
         this.workshopRepository,
-        this.appUserRepository
+        this.appUserRepository,
+        this.workshopRequestRepository
       );
     }
     return this._workshopService;

@@ -3,7 +3,7 @@ import { authClient } from "@/lib/auth-client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -22,7 +22,11 @@ import {
   getWorkshopRequestStatusColor,
 } from "@/lib/workshop-request-utils";
 import { toast } from "sonner";
-import { Edit, Users } from "lucide-react";
+import { Edit, Users, Calendar } from "lucide-react";
+import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
+import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
+import { formatDate } from "@/lib/workshop-utils";
+import { ApprenticeWorkshopDashboard } from "@/components/apprentice/ApprenticeWorkshopDashboard";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -97,20 +101,6 @@ const mockUserData = {
         matiere: "Informatique",
         niveau: "Débutant",
       },
-      {
-        titre: "Calcul différentiel",
-        etudiant: "Sophie K.",
-        date: "Lundi, 16h",
-        matiere: "Mathématiques",
-        niveau: "Avancé",
-      },
-      {
-        titre: "Mécanique quantique",
-        etudiant: "Alex R.",
-        date: "Mardi, 15h",
-        matiere: "Physique",
-        niveau: "Intermédiaire",
-      },
     ],
     statistiques: {
       matieres: ["Mathématiques", "Physique", "Informatique"],
@@ -133,11 +123,11 @@ export default function Dashboard() {
       refetchOnWindowFocus: true,
     });
 
-  const [previousApprenticeRequests, setPreviousApprenticeRequests] = useState<
-    any[] | null
-  >(null);
+  const previousApprenticeRequestsRef = useRef<any[] | null>(null);
 
   useEffect(() => {
+    const previousApprenticeRequests = previousApprenticeRequestsRef.current;
+
     if (workshopRequests && previousApprenticeRequests) {
       workshopRequests.forEach((currentRequest: any) => {
         const previousRequest = previousApprenticeRequests.find(
@@ -177,9 +167,9 @@ export default function Dashboard() {
     }
 
     if (workshopRequests) {
-      setPreviousApprenticeRequests([...workshopRequests]);
+      previousApprenticeRequestsRef.current = [...workshopRequests];
     }
-  }, [workshopRequests, previousApprenticeRequests]);
+  }, [workshopRequests]);
 
   const { data: mentorWorkshopRequests, refetch: refetchMentorRequests } =
     trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
@@ -187,6 +177,27 @@ export default function Dashboard() {
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
     });
+
+  const { data: confirmedWorkshops, refetch: refetchConfirmedWorkshops } =
+    trpc.workshop.getConfirmedWorkshops.useQuery(undefined, {
+      enabled: !!session && (userRole === "apprenant" || userRole === "both"),
+    });
+
+  const cancelWorkshopMutation = trpc.workshop.cancelConfirmed.useMutation({
+    onSuccess: () => {
+      toast.success("Inscription annulée avec succès");
+      refetchConfirmedWorkshops();
+      setShowCancelDialog(null);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de l'annulation");
+    },
+  });
+
+  const [showCancelDialog, setShowCancelDialog] = useState<string | null>(null);
+  const selectedCancellationWorkshop = confirmedWorkshops?.find(
+    (w: any) => w.id === showCancelDialog
+  );
 
   const [previousRequestCount, setPreviousRequestCount] = useState<number>(0);
   const [previousPendingCount, setPreviousPendingCount] = useState<number>(0);
@@ -242,13 +253,30 @@ export default function Dashboard() {
     null
   );
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [requestToReject, setRequestToReject] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
+
+  const cancelRequestMutation = trpc.mentor.cancelWorkshopRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande annulée avec succès");
+      utils.mentor.getMyWorkshopRequests.invalidate();
+      utils.workshop.getAvailableWorkshops.invalidate();
+      refetchApprenticeRequests();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de l'annulation de la demande");
+    },
+  });
+
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande refusée avec succès");
       utils.mentor.getMentorWorkshopRequests.invalidate();
       refetchMentorRequests();
+      setShowRejectDialog(false);
+      setRequestToReject(null);
     },
     onError: (error) => {
       toast.error(`Erreur: ${error.message}`);
@@ -262,8 +290,13 @@ export default function Dashboard() {
   };
 
   const handleRejectRequest = (requestId: string) => {
-    if (confirm("Êtes-vous sûr de vouloir refuser cette demande ?")) {
-      rejectRequest.mutate({ requestId });
+    setRequestToReject(requestId);
+    setShowRejectDialog(true);
+  };
+
+  const confirmRejectRequest = () => {
+    if (requestToReject) {
+      rejectRequest.mutate({ requestId: requestToReject });
     }
   };
 
@@ -287,161 +320,9 @@ export default function Dashboard() {
     );
   }
 
-  const renderSocialNetworkSection = () => (
-    <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-          Réseaux sociaux
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0 space-y-3">
-        <div className="text-center mb-3">
-          <div className="text-xl font-bold mb-1">
-            {userRole === "mentor"
-              ? mockUserData.mentor.demandesEnAttente
-              : mockUserData.apprenant.demandesAide}
-          </div>
-          <p className="text-xs text-indigo-100">Demandes en attente</p>
-        </div>
-        <div className="space-y-2">
-          <div className="bg-white/20 rounded p-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-sm">Demande de Marie L.</p>
-                <p className="text-xs text-indigo-100">
-                  Mathématiques • Il y a 2h
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <Button size="sm" variant="secondary" className="text-xs px-2">
-                  ✓
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs px-2 text-red-300 hover:text-red-100"
-                >
-                  ✕
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/20 rounded p-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-sm">Demande de Thomas R.</p>
-                <p className="text-xs text-indigo-100">
-                  Programmation • Il y a 4h
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <Button size="sm" variant="secondary" className="text-xs px-2">
-                  ✓
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs px-2 text-red-300 hover:text-red-100"
-                >
-                  ✕
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/20 rounded p-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-sm">Demande de Sophie M.</p>
-                <p className="text-xs text-indigo-100">
-                  Littérature • Il y a 6h
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <Button size="sm" variant="secondary" className="text-xs px-2">
-                  ✓
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs px-2 text-red-300 hover:text-red-100"
-                >
-                  ✕
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button className="flex-1 text-xs" variant="outline" size="sm">
-            <svg
-              className="w-3 h-3 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-            Nouvelle demande
-          </Button>
-          <Button
-            className="flex-1 text-xs"
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/relationship")}
-          >
-            <svg
-              className="w-3 h-3 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            Relationships
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   const renderApprenantDashboard = () => (
     <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-xl">
-            Bienvenue dans votre parcours d'apprentissage
-          </CardTitle>
-          <CardDescription className="text-green-100">
-            Continuez votre progression avec l'aide de nos mentors expérimentés
-          </CardDescription>
-        </CardHeader>
-      </Card>
-
-      {/* ateliers passés */}
-      <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -473,7 +354,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -541,7 +422,7 @@ export default function Dashboard() {
               workshopRequests.filter((r: any) => r.status === "PENDING")
                 .length > 0 && (
                 <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 10 secondes
+                  • Mise à jour automatique toutes les 5 minutes
                 </span>
               )}
           </CardDescription>
@@ -550,6 +431,7 @@ export default function Dashboard() {
           {workshopRequests && workshopRequests.length > 0 ? (
             workshopRequests.map((request: any) => {
               const isRejected = request.status === "REJECTED";
+              const isPending = request.status === "PENDING";
               return (
                 <div key={request.id} className="space-y-2">
                   <WorkshopRequestCard
@@ -559,6 +441,30 @@ export default function Dashboard() {
                     showDescription={true}
                     showMentor={true}
                   />
+                  {isPending && (
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                        onClick={() => {
+                          if (
+                            confirm(
+                              "Êtes-vous sûr de vouloir annuler cette demande ?"
+                            )
+                          ) {
+                            cancelRequestMutation.mutate({
+                              requestId: request.id,
+                            });
+                          }
+                        }}
+                        disabled={cancelRequestMutation.isPending}
+                      >
+                        <X className="w-3 h-3 mr-1" />
+                        Annuler
+                      </Button>
+                    </div>
+                  )}
                   {isRejected && (
                     <div className="flex gap-2 ml-4">
                       <Button
@@ -623,67 +529,17 @@ export default function Dashboard() {
         />
       )}
 
-      <Card className="lg:col-span-2">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Prochains ateliers
-          </CardTitle>
-          <CardDescription>
-            Vos ateliers programmés avec vos mentors
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          {mockUserData.apprenant.prochainsAteliers.map((atelier, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              <div className="flex-1">
-                <h4 className="font-medium text-sm">{atelier.titre}</h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Mentor: {atelier.mentor}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
-                  {atelier.date}
-                </Badge>
-                <Button size="sm" className="text-xs">
-                  Rejoindre
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs text-red-600 hover:text-red-700"
-                >
-                  Annuler
-                </Button>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {renderSocialNetworkSection()}
+      {(userRole === "apprenant" || userRole === "both") && (
+        <div className="lg:col-span-full">
+          <ApprenticeWorkshopDashboard />
+        </div>
+      )}
     </>
   );
 
   const renderMentorDashboard = () => (
     <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
+      <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl">
             Bienvenue dans votre espace mentor
@@ -765,7 +621,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-yellow-500 to-orange-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -794,72 +650,6 @@ export default function Dashboard() {
               Utiliser mes crédits
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="lg:col-span-2">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-base">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              Demandes d'atelier reçues
-              {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                >
-                  {mentorWorkshopRequests.length}
-                </Badge>
-              )}
-            </div>
-            {mentorWorkshopRequests &&
-              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <Badge
-                  variant="default"
-                  className="bg-yellow-500 text-white animate-pulse"
-                >
-                  {
-                    mentorWorkshopRequests.filter(
-                      (r: any) => r.status === "PENDING"
-                    ).length
-                  }{" "}
-                  en attente
-                </Badge>
-              )}
-          </CardTitle>
-          <CardDescription>
-            Les demandes d'atelier que vous avez reçues de la part des apprentis
-            {mentorWorkshopRequests &&
-              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 10 secondes
-                </span>
-              )}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
-            mentorWorkshopRequests.map((request: any) => (
-              <WorkshopRequestCard
-                key={request.id}
-                request={request}
-                onAccept={handleAcceptRequest}
-                onReject={handleRejectRequest}
-                isRejecting={rejectRequest.isPending}
-                variant="dashboard"
-                showTitle={true}
-                showDescription={true}
-                showPreferredDate={true}
-              />
-            ))
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Aucune demande d'atelier reçue</p>
-            </div>
-          )}
         </CardContent>
       </Card>
 
@@ -967,9 +757,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {renderSocialNetworkSection()}
-
-      <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -1115,30 +903,34 @@ export default function Dashboard() {
               mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
                 .length > 0 && (
                 <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 10 secondes
+                  • Mise à jour automatique toutes les 5 minutes
                 </span>
               )}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 space-y-3">
-          {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 ? (
-            mentorWorkshopRequests.map((request: any) => (
-              <WorkshopRequestCard
-                key={request.id}
-                request={request}
-                onAccept={handleAcceptRequest}
-                onReject={handleRejectRequest}
-                isRejecting={rejectRequest.isPending}
-                variant="dashboard"
-                showTitle={true}
-                showDescription={true}
-                showPreferredDate={true}
-              />
-            ))
+          {mentorWorkshopRequests &&
+          mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
+            .length > 0 ? (
+            mentorWorkshopRequests
+              .filter((r: any) => r.status === "PENDING")
+              .map((request: any) => (
+                <WorkshopRequestCard
+                  key={request.id}
+                  request={request}
+                  onAccept={handleAcceptRequest}
+                  onReject={handleRejectRequest}
+                  isRejecting={rejectRequest.isPending}
+                  variant="dashboard"
+                  showTitle={true}
+                  showDescription={true}
+                  showPreferredDate={true}
+                />
+              ))
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Aucune demande d'atelier reçue</p>
+              <p>Aucune demande d'atelier en attente</p>
             </div>
           )}
         </CardContent>
@@ -1170,12 +962,22 @@ export default function Dashboard() {
           }}
         />
       )}
+
+      <RejectWorkshopRequestDialog
+        open={showRejectDialog}
+        onOpenChange={(open) => {
+          setShowRejectDialog(open);
+          if (!open) setRequestToReject(null);
+        }}
+        onConfirm={confirmRejectRequest}
+        isSubmitting={rejectRequest.isPending}
+      />
     </>
   );
 
   const renderBothDashboard = () => (
     <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
+      <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl">
             Bienvenue dans votre espace d'entraide
@@ -1256,7 +1058,7 @@ export default function Dashboard() {
       </Card>
 
       {/* ateliers passés */}
-      <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -1288,7 +1090,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
+      <Card className="bg-linear-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <svg
@@ -1320,66 +1122,66 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="lg:col-span-2">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Prochains ateliers
-          </CardTitle>
-          <CardDescription>
-            Vos ateliers programmés avec vos mentors
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          {mockUserData.apprenant.prochainsAteliers.map((atelier, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              <div className="flex-1">
-                <h4 className="font-medium text-sm">{atelier.titre}</h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Mentor: {atelier.mentor}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
-                  {atelier.date}
-                </Badge>
-                <Button size="sm" className="text-xs">
-                  Rejoindre
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs text-red-600 hover:text-red-700"
+      {(userRole === "apprenant" || userRole === "both") && (
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Calendar className="w-4 h-4" />
+              Prochains ateliers
+            </CardTitle>
+            <CardDescription>
+              Vos ateliers programmés avec vos mentors
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-3">
+            {confirmedWorkshops && confirmedWorkshops.length > 0 ? (
+              confirmedWorkshops.map((atelier: any) => (
+                <div
+                  key={atelier.id}
+                  className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  Annuler
-                </Button>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{atelier.title}</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                      Mentor: {atelier.creator?.user?.name || "Inconnu"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {formatDate(atelier.date)}
+                      {atelier.time && ` • ${atelier.time}`}
+                    </Badge>
+                    <Button
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => router.push(`/workshop-room`)}
+                    >
+                      Rejoindre
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs text-red-600 hover:text-red-700"
+                      onClick={() => setShowCancelDialog(atelier.id)}
+                    >
+                      Annuler
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-4 text-muted-foreground text-sm">
+                Aucun atelier programmé
               </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {renderSocialNetworkSection()}
+            )}
+          </CardContent>
+        </Card>
+      )}
     </>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
@@ -1391,7 +1193,6 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* Sélecteur de rôle */}
           <div className="flex gap-2">
             <Button
               variant={userRole === "apprenant" ? "default" : "outline"}
@@ -1423,6 +1224,28 @@ export default function Dashboard() {
         {userRole === "mentor" && renderMentorDashboard()}
         {userRole === "both" && renderBothDashboard()}
       </div>
+
+      {selectedCancellationWorkshop && (
+        <CancelWorkshopRegistrationDialog
+          open={showCancelDialog !== null}
+          onOpenChange={(open) => !open && setShowCancelDialog(null)}
+          onConfirm={(reason) => {
+            if (showCancelDialog) {
+              cancelWorkshopMutation.mutate({
+                workshopId: showCancelDialog,
+                cancellationReason: reason,
+              });
+            }
+          }}
+          isLoading={cancelWorkshopMutation.isPending}
+          workshopTitle={selectedCancellationWorkshop.title}
+          workshopDate={
+            selectedCancellationWorkshop.date
+              ? new Date(selectedCancellationWorkshop.date)
+              : new Date()
+          }
+        />
+      )}
     </div>
   );
 }

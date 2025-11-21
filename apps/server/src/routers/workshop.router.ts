@@ -1,4 +1,9 @@
-import { profProcedure, publicProcedure, protectedProcedure, router } from "../lib/trpc";
+import {
+  profProcedure,
+  publicProcedure,
+  protectedProcedure,
+  router,
+} from "../lib/trpc";
 import { container } from "../lib/di/container";
 import {
   createWorkshopSchema,
@@ -10,48 +15,75 @@ import {
 import { z } from "zod";
 
 export const workshopRouter = router({
-  create: profProcedure.input(createWorkshopSchema).mutation(async ({ ctx, input }) => {
-    const result = await container.workshopService.createWorkshop(ctx.session.user.id, input);
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  create: profProcedure
+    .input(createWorkshopSchema)
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.workshopService.createWorkshop(
+        ctx.session.user.id,
+        input
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 
-  update: profProcedure.input(updateWorkshopSchema).mutation(async ({ ctx, input }) => {
-    const result = await container.workshopService.updateWorkshop(ctx.session.user.id, input);
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  update: profProcedure
+    .input(updateWorkshopSchema)
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.workshopService.updateWorkshop(
+        ctx.session.user.id,
+        input
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 
-  publish: profProcedure.input(publishWorkshopSchema).mutation(async ({ ctx, input }) => {
-    const result = await container.workshopService.publishWorkshop(ctx.session.user.id, input);
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  publish: profProcedure
+    .input(publishWorkshopSchema)
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.workshopService.publishWorkshop(
+        ctx.session.user.id,
+        input
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 
-  unpublish: profProcedure.input(unpublishWorkshopSchema).mutation(async ({ ctx, input }) => {
-    const result = await container.workshopService.unpublishWorkshop(ctx.session.user.id, input);
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  unpublish: profProcedure
+    .input(unpublishWorkshopSchema)
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.workshopService.unpublishWorkshop(
+        ctx.session.user.id,
+        input
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 
-  delete: profProcedure.input(deleteWorkshopSchema).mutation(async ({ ctx, input }) => {
-    const result = await container.workshopService.deleteWorkshop(ctx.session.user.id, input);
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  delete: profProcedure
+    .input(deleteWorkshopSchema)
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.workshopService.deleteWorkshop(
+        ctx.session.user.id,
+        input
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 
   getMyWorkshops: profProcedure.query(async ({ ctx }) => {
-    const result = await container.workshopService.getWorkshopsByCreator(ctx.session.user.id);
+    const result = await container.workshopService.getWorkshopsByCreator(
+      ctx.session.user.id
+    );
     if (!result.ok) {
       throw new Error(result.error);
     }
@@ -66,18 +98,23 @@ export const workshopRouter = router({
     return result.data;
   }),
 
-  getById: publicProcedure.input(z.object({ workshopId: z.string() })).query(async ({ input }) => {
-    const result = await container.workshopService.getWorkshopById(input.workshopId);
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  getById: publicProcedure
+    .input(z.object({ workshopId: z.string() }))
+    .query(async ({ input }) => {
+      const result = await container.workshopService.getWorkshopById(
+        input.workshopId
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
 
   getConfirmedWorkshops: protectedProcedure.query(async ({ ctx }) => {
-    const result = await container.workshopService.getConfirmedWorkshopsForApprentice(
-      ctx.session.user.id
-    );
+    const result =
+      await container.workshopService.getConfirmedWorkshopsForApprentice(
+        ctx.session.user.id
+      );
     if (!result.ok) {
       throw new Error(result.error);
     }
@@ -88,7 +125,7 @@ export const workshopRouter = router({
     .input(
       z.object({
         workshopId: z.string(),
-        date: z.date().optional().nullable(),
+        date: z.coerce.date().optional().nullable(),
         time: z.string().optional().nullable(),
         duration: z.number().int().min(15).max(480).optional().nullable(),
         location: z.string().max(200).optional().nullable(),
@@ -108,11 +145,50 @@ export const workshopRouter = router({
     }),
 
   cancelConfirmed: protectedProcedure
-    .input(z.object({ workshopId: z.string() }))
+    .input(
+      z.object({
+        workshopId: z.string(),
+        cancellationReason: z.string().optional(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopService.cancelConfirmedWorkshop(
         ctx.session.user.id,
-        input.workshopId
+        input.workshopId,
+        input.cancellationReason
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
+
+  getUpcomingWorkshops: protectedProcedure.query(async ({ ctx }) => {
+    const result =
+      await container.workshopService.getUpcomingWorkshopsForApprentice(
+        ctx.session.user.id
+      );
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
+
+  getWorkshopHistory: protectedProcedure.query(async ({ ctx }) => {
+    const result =
+      await container.workshopService.getWorkshopHistoryForApprentice(
+        ctx.session.user.id
+      );
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
+
+  getAvailableWorkshops: protectedProcedure.query(async ({ ctx }) => {
+    const result =
+      await container.workshopService.getAvailableWorkshopsForApprentice(
+        ctx.session.user.id
       );
     if (!result.ok) {
       throw new Error(result.error);
@@ -120,4 +196,3 @@ export const workshopRouter = router({
     return result.data;
   }),
 });
-

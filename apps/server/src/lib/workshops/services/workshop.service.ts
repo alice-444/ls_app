@@ -2,6 +2,7 @@ import { Result, failure, success, validateInput } from "../../common";
 import type { IWorkshopRepository } from "../repositories/workshop.repository.interface";
 import { sanitizeString } from "../../utils/sanitize";
 import type { AppUserRepository } from "../../users/repositories";
+import type { IWorkshopRequestRepository } from "../../mentors/repositories/workshop-request.repository.interface";
 import { z } from "zod";
 import {
   verifyUserExists,
@@ -33,7 +34,8 @@ export type UnpublishWorkshopInput = z.infer<typeof unpublishWorkshopSchema>;
 export class WorkshopService implements IWorkshopService {
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly appUserRepository: AppUserRepository
+    private readonly appUserRepository: AppUserRepository,
+    private readonly workshopRequestRepository?: IWorkshopRequestRepository
   ) {}
 
   private async verifyProfAccess(userId: string) {
@@ -98,6 +100,7 @@ export class WorkshopService implements IWorkshopService {
       const workshop = await this.workshopRepository.create({
         title: sanitized.title!,
         description: sanitized.description,
+        topic: validation.data.topic ?? null,
         date: validation.data.date,
         time: validation.data.time,
         duration: validation.data.duration,
@@ -166,6 +169,9 @@ export class WorkshopService implements IWorkshopService {
       }
       if (sanitized.materialsNeeded !== undefined) {
         updateData.materialsNeeded = sanitized.materialsNeeded;
+      }
+      if (validation.data.topic !== undefined) {
+        updateData.topic = validation.data.topic;
       }
 
       await this.workshopRepository.update(
@@ -468,17 +474,14 @@ export class WorkshopService implements IWorkshopService {
 
   async cancelConfirmedWorkshop(
     userId: string,
-    workshopId: string
+    workshopId: string,
+    cancellationReason?: string
   ): Promise<Result<{ success: boolean }>> {
     try {
       const workshop = await this.workshopRepository.findById(workshopId);
       if (!workshop) {
         return failure("Atelier non trouvé", 404);
       }
-
-      const accessCheck = await this.verifyProfAccess(userId);
-      const isMentor =
-        accessCheck.ok && accessCheck.data.appUser.id === workshop.creatorId;
 
       let isApprentice = false;
       if (workshop.apprenticeId) {
@@ -488,8 +491,37 @@ export class WorkshopService implements IWorkshopService {
           apprenticeCheck.data.appUser.id === workshop.apprenticeId;
       }
 
+      let isMentor = false;
+      if (!isApprentice) {
+        const accessCheck = await this.verifyProfAccess(userId);
+        isMentor =
+          accessCheck.ok && accessCheck.data.appUser.id === workshop.creatorId;
+      }
+
       if (!isMentor && !isApprentice) {
         return failure("Vous n'êtes pas autorisé à annuler cet atelier", 403);
+      }
+
+      if (isApprentice) {
+        await this.workshopRepository.removeApprentice(workshopId);
+
+        // Mock: Send email to apprentice
+        console.log(
+          `[Email] Sending cancellation confirmation to apprentice ${userId} for workshop ${workshopId}`
+        );
+
+        // Mock: Notify organizer (Anonymous if reason provided)
+        if (cancellationReason) {
+          console.log(
+            `[Notification] Organizer notified of anonymous cancellation for workshop ${workshopId}. Reason: ${cancellationReason}`
+          );
+        } else {
+          console.log(
+            `[Notification] Organizer notified of cancellation for workshop ${workshopId}.`
+          );
+        }
+
+        return success({ success: true });
       }
 
       await this.workshopRepository.update(workshopId, {
@@ -526,5 +558,161 @@ export class WorkshopService implements IWorkshopService {
     }
 
     return success({ appUser });
+  }
+
+  private calculateWorkshopEndTime(
+    date: Date | null,
+    time: string | null,
+    duration: number | null
+  ): Date | null {
+    if (!date || !time || !duration) {
+      return null;
+    }
+
+    try {
+      const [hours, minutes] = time.split(":").map(Number);
+      const startTime = new Date(date);
+      startTime.setHours(hours, minutes, 0, 0);
+
+      const endTime = new Date(startTime);
+      endTime.setMinutes(endTime.getMinutes() + duration);
+
+      return endTime;
+    } catch {
+      return null;
+    }
+  }
+
+  async getUpcomingWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+      const workshops = await this.workshopRepository.findByApprenticeId(
+        appUser.id
+      );
+
+      const now = new Date();
+      const upcomingWorkshops = workshops
+        .filter((w) => {
+          if (w.status === "CANCELLED") {
+            return false;
+          }
+
+          if (w.date && w.time) {
+            const endTime = this.calculateWorkshopEndTime(
+              w.date,
+              w.time,
+              w.duration
+            );
+            return endTime && endTime >= now;
+          }
+
+          return !w.date || !w.time;
+        })
+        .sort((a, b) => {
+          if (a.date && b.date) {
+            return a.date.getTime() - b.date.getTime();
+          }
+          if (a.date && !b.date) return -1;
+          if (!a.date && b.date) return 1;
+
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        });
+
+      return success(upcomingWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async getWorkshopHistoryForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+      const workshops = await this.workshopRepository.findByApprenticeId(
+        appUser.id
+      );
+
+      const now = new Date();
+      const historyWorkshops = workshops
+        .filter((w) => {
+          if (!w.date || !w.time) {
+            return false;
+          }
+
+          const endTime = this.calculateWorkshopEndTime(
+            w.date,
+            w.time,
+            w.duration
+          );
+          return endTime && endTime < now;
+        })
+        .sort((a, b) => {
+          if (!a.date || !b.date) return 0;
+          return b.date.getTime() - a.date.getTime();
+        });
+
+      return success(historyWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async getAvailableWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+
+      const publishedWorkshops = await this.workshopRepository.findPublished();
+
+      const registeredWorkshops =
+        await this.workshopRepository.findByApprenticeId(appUser.id);
+      const registeredWorkshopIds = new Set(
+        registeredWorkshops.map((w) => w.id)
+      );
+
+      let pendingRequestWorkshopIds = new Set<string>();
+      if (this.workshopRequestRepository) {
+        const pendingRequests =
+          await this.workshopRequestRepository.findByApprenticeId(appUser.id);
+        pendingRequestWorkshopIds = new Set(
+          pendingRequests
+            .filter((r) => r.status === "PENDING" && r.workshopId)
+            .map((r) => r.workshopId!)
+        );
+      }
+
+      const availableWorkshops = publishedWorkshops.filter(
+        (w) =>
+          !registeredWorkshopIds.has(w.id) &&
+          !pendingRequestWorkshopIds.has(w.id) &&
+          w.status === "PUBLISHED" &&
+          w.apprenticeId === null
+      );
+
+      return success(availableWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
   }
 }

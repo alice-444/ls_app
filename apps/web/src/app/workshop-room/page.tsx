@@ -46,6 +46,7 @@ type Workshop = {
   id: string;
   title: string;
   description: string | null;
+  topic: string | null;
   date: Date | null;
   time: string | null;
   duration: number | null;
@@ -101,13 +102,8 @@ export default function WorkshopRoomPage() {
     if (!workshops) return [];
     const topicSet = new Set<string>();
     workshops.forEach((workshop: Workshop) => {
-      const topics = workshop.creator?.mentorshipTopics;
-      if (Array.isArray(topics)) {
-        topics.forEach((topic) => {
-          if (typeof topic === "string" && topic.trim().length > 0) {
-            topicSet.add(topic.trim());
-          }
-        });
+      if (workshop.topic && typeof workshop.topic === "string" && workshop.topic.trim().length > 0) {
+        topicSet.add(workshop.topic.trim());
       }
     });
     return Array.from(topicSet).sort((a, b) => a.localeCompare(b));
@@ -127,14 +123,11 @@ export default function WorkshopRoomPage() {
 
     if (selectedTopics.length > 0) {
       result = result.filter((workshop: Workshop) => {
-        const workshopTopics = workshop.creator?.mentorshipTopics || [];
-        if (!Array.isArray(workshopTopics)) return false;
-        return selectedTopics.some((selectedTopic) =>
-          workshopTopics.some(
-            (topic) =>
-              typeof topic === "string" &&
-              topic.trim().toLowerCase() === selectedTopic.toLowerCase()
-          )
+        if (!workshop.topic) return false;
+        return selectedTopics.some(
+          (selectedTopic) =>
+            workshop.topic &&
+            workshop.topic.trim().toLowerCase() === selectedTopic.toLowerCase()
         );
       });
     }

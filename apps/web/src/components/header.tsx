@@ -26,9 +26,12 @@ export default function Header() {
     gcTime: 0,
   });
 
-  const commonLinks = [{ to: "/dashboard", label: "Dashboard" }];
+  const commonLinks = [
+    { to: "/community", label: "Communité" },
+    { to: "/dashboard", label: "Dashboard" },
+  ];
 
-  const profLinks = [
+  const mentorLinks = [
     { to: "/my-workshops", label: "Mes Ateliers" },
     { to: "/workshop-editor", label: "Atelab" },
   ];
@@ -42,8 +45,8 @@ export default function Header() {
 
   const links = [
     ...commonLinks,
-    ...(userRole === "PROF"
-      ? profLinks
+    ...(userRole === "MENTOR"
+      ? mentorLinks
       : userRole === "APPRENANT"
       ? apprenantLinks
       : []),

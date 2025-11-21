@@ -144,7 +144,7 @@ export const mentorRouter = router({
     .input(
       z.object({
         requestId: z.string(),
-        date: z.date(),
+        date: z.coerce.date(),
         time: z.string().min(1, "L'heure est requise"),
         duration: z.number().int().min(15).max(480).optional().nullable(),
         location: z.string().max(200).optional().nullable(),

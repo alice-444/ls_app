@@ -49,7 +49,20 @@ export interface IWorkshopService {
 
   cancelConfirmedWorkshop(
     userId: string,
-    workshopId: string
+    workshopId: string,
+    cancellationReason?: string
   ): Promise<Result<{ success: boolean }>>;
+
+  getUpcomingWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>>;
+
+  getWorkshopHistoryForApprentice(
+    userId: string
+  ): Promise<Result<any[]>>;
+
+  getAvailableWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>>;
 }
 

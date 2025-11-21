@@ -31,7 +31,7 @@ export function RoleConfirmationStep({
 }: RoleConfirmationStepProps) {
   const config = ROLE_CONFIG[selectedRole];
   const features = config.features;
-  const Icon = selectedRole === "PROF" ? BookOpen : GraduationCap;
+  const Icon = selectedRole === "MENTOR" ? BookOpen : GraduationCap;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4">
@@ -43,7 +43,7 @@ export function RoleConfirmationStep({
           />
           <div
             className={`mx-auto p-4 rounded-full w-fit ${
-              selectedRole === "PROF" ? "bg-indigo-600" : "bg-purple-600"
+              selectedRole === "MENTOR" ? "bg-indigo-600" : "bg-purple-600"
             }`}
           >
             <Icon className="h-8 w-8 text-white" />
@@ -64,7 +64,7 @@ export function RoleConfirmationStep({
               >
                   <CheckCircle2
                     className={`h-5 w-5 mt-0.5 shrink-0 ${
-                      selectedRole === "PROF" ? "text-indigo-600" : "text-purple-600"
+                      selectedRole === "MENTOR" ? "text-indigo-600" : "text-purple-600"
                     }`}
                   />
                 <p className="text-gray-700 dark:text-gray-300">{feature}</p>

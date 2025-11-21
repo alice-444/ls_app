@@ -106,7 +106,7 @@ export function AcceptWorkshopRequestDialog({
     setIsSubmitting(true);
     acceptMutation.mutate({
       requestId,
-      date: new Date(data.date),
+      date: data.date,
       time: data.time,
       duration: data.duration ?? null,
       location: data.location || null,

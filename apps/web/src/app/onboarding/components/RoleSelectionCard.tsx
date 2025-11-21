@@ -16,24 +16,24 @@ export function RoleSelectionCard({
   onSelect,
 }: RoleSelectionCardProps) {
   const config = ROLE_CONFIG[role];
-  const Icon = role === "PROF" ? BookOpen : GraduationCap;
+  const Icon = role === "MENTOR" ? BookOpen : GraduationCap;
 
   const borderClass = isSelected
-    ? role === "PROF"
+    ? role === "MENTOR"
       ? "border-indigo-600 bg-indigo-50"
       : "border-purple-600 bg-purple-50"
     : "border-gray-200 hover:border-indigo-300 bg-white";
 
   const iconBgClass = isSelected
-    ? role === "PROF"
+    ? role === "MENTOR"
       ? "bg-indigo-600 text-white"
       : "bg-purple-600 text-white"
-    : role === "PROF"
+    : role === "MENTOR"
     ? "bg-indigo-100 text-indigo-600"
     : "bg-purple-100 text-purple-600";
 
   const checkIconClass = isSelected
-    ? role === "PROF"
+    ? role === "MENTOR"
       ? "text-indigo-600"
       : "text-purple-600"
     : "";

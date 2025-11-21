@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Calendar, Clock, MapPin, Users, Package } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Package, Tag } from "lucide-react";
 import { WORKSHOP_VALIDATION } from "@/shared/validation";
 
 interface WorkshopFormFieldsProps {
@@ -118,6 +118,25 @@ export function WorkshopFormFields({
           <p className="text-sm text-red-500">
             {String(errors.description.message)}
           </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label
+          htmlFor="topic"
+          className="text-base font-semibold flex items-center gap-2"
+        >
+          <Tag className="h-4 w-4" />
+          Tag(s) / Sujet(s)
+        </Label>
+        <Input
+          id="topic"
+          placeholder="Ex: React, Mathématiques, Design, Programmation..."
+          {...register("topic")}
+          className={errors.topic ? "border-red-500" : ""}
+        />
+        {errors.topic?.message && (
+          <p className="text-sm text-red-500">{String(errors.topic.message)}</p>
         )}
       </div>
 

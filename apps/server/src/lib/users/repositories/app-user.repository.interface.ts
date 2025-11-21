@@ -6,7 +6,7 @@ export interface IAppUserRepository {
 export interface AppUserEntity {
   id: string;
   userId: string;
-  role: "PROF" | "APPRENANT" | "ADMIN" | null;
+  role: "MENTOR" | "APPRENANT" | "ADMIN" | null;
   status: "ACTIVE" | "SUSPENDED" | "PENDING";
   createdAt: Date;
   updatedAt: Date;
@@ -27,7 +27,7 @@ export interface AppUserEntity {
 }
 
 export interface AppUserUpdateData {
-  role?: "PROF" | "APPRENANT" | "ADMIN" | null;
+  role?: "MENTOR" | "APPRENANT" | "ADMIN" | null;
   status?: "ACTIVE" | "SUSPENDED" | "PENDING";
   bio?: string | null;
   domain?: string | null;

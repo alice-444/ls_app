@@ -1,6 +1,6 @@
 import type { Role } from "./types";
 
-export const PROF_FEATURES = [
+export const MENTOR_FEATURES = [
   "Créez et animez vos propres ateliers",
   "Partagez vos connaissances avec des étudiants",
   "Gérez votre planning et vos disponibilités",
@@ -27,10 +27,10 @@ export const ROLE_CONFIG: Record<
     };
   }
 > = {
-  PROF: {
-    label: "Prof",
+  MENTOR: {
+    label: "Mentor",
     description: "Je veux partager mes connaissances.",
-    features: PROF_FEATURES,
+    features: MENTOR_FEATURES,
     color: {
       primary: "indigo-600",
       secondary: "indigo-50",

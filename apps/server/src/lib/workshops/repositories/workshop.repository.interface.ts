@@ -7,11 +7,13 @@ export interface IWorkshopRepository {
   update(id: string, input: UpdateWorkshopInput): Promise<WorkshopEntity>;
   delete(id: string): Promise<void>;
   checkCreatorOwnership(workshopId: string, creatorId: string): Promise<boolean>;
+  removeApprentice(workshopId: string): Promise<void>;
 }
 
 export interface CreateWorkshopInput {
   title: string;
   description?: string | null;
+  topic?: string | null;
   date?: Date | null;
   time?: string | null;
   duration?: number | null;
@@ -27,6 +29,7 @@ export interface CreateWorkshopInput {
 export interface UpdateWorkshopInput {
   title?: string;
   description?: string;
+  topic?: string | null;
   date?: Date;
   time?: string;
   duration?: number;
@@ -42,6 +45,7 @@ export interface WorkshopEntity {
   id: string;
   title: string;
   description: string | null;
+  topic: string | null;
   date: Date | null;
   time: string | null;
   duration: number | null;
