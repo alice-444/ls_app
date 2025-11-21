@@ -89,7 +89,8 @@ class DIContainer {
     if (!this._workshopService) {
       this._workshopService = new WorkshopService(
         this.workshopRepository,
-        this.appUserRepository
+        this.appUserRepository,
+        this.workshopRequestRepository
       );
     }
     return this._workshopService;

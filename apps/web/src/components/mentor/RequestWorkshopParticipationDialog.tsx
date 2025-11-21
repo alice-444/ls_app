@@ -46,6 +46,7 @@ interface RequestWorkshopParticipationDialogProps {
   mentorId: string;
   mentorName: string;
   preselectedWorkshopId?: string | null;
+  onSuccess?: () => void;
 }
 
 export function RequestWorkshopParticipationDialog({
@@ -54,6 +55,7 @@ export function RequestWorkshopParticipationDialog({
   mentorId,
   mentorName,
   preselectedWorkshopId,
+  onSuccess,
 }: RequestWorkshopParticipationDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -70,6 +72,9 @@ export function RequestWorkshopParticipationDialog({
       toast.success("Demande de participation envoyée avec succès !");
       onOpenChange(false);
       form.reset();
+      if (onSuccess) {
+        onSuccess();
+      }
     },
     onError: (error) => {
       toast.error(error.message || "Erreur lors de l'envoi de la demande");

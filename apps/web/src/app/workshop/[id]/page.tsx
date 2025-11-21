@@ -44,6 +44,8 @@ import {
   getWorkshopRequestStatusLabel,
   getWorkshopRequestStatusColor,
 } from "@/lib/workshop-request-utils";
+import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
+import { X } from "lucide-react";
 
 export default function WorkshopDetailPage() {
   const router = useRouter();
@@ -56,6 +58,7 @@ export default function WorkshopDetailPage() {
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [requestToReject, setRequestToReject] = useState<string | null>(null);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const utils = trpc.useUtils();
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
@@ -143,6 +146,24 @@ export default function WorkshopDetailPage() {
     enabled: !!session?.user?.id,
   });
 
+  const { data: upcomingWorkshops } = trpc.workshop.getUpcomingWorkshops.useQuery(
+    undefined,
+    {
+      enabled: userRole === "APPRENANT" && !!session?.user?.id,
+    }
+  );
+
+  const cancelMutation = trpc.workshop.cancelConfirmed.useMutation({
+    onSuccess: () => {
+      toast.success("Inscription annulée avec succès");
+      refetch();
+      setShowCancelDialog(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de l'annulation");
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -174,8 +195,40 @@ export default function WorkshopDetailPage() {
   const isApprentice = userRole === "APPRENANT";
   const isOwner =
     session?.user?.id && workshop?.creator?.userId === session.user.id;
-  const canRequestParticipation = isApprentice && !isOwner && workshop?.status === "PUBLISHED";
+  const canRequestParticipation = isApprentice && !isOwner && workshop?.status === "PUBLISHED" && !workshop?.apprenticeId;
   const shouldShowStatusBadge = isOwner;
+  const isRegistered = isApprentice && workshop?.apprenticeId && 
+    upcomingWorkshops?.some((w: any) => w.id === workshop.id);
+  
+  const isWorkshopPast = (): boolean => {
+    if (!workshop?.date || !workshop?.time) return false;
+    try {
+      const date = typeof workshop.date === "string" ? new Date(workshop.date) : workshop.date;
+      const [hours, minutes] = workshop.time.split(":").map(Number);
+      const startTime = new Date(date);
+      startTime.setHours(hours, minutes, 0, 0);
+      const endTime = new Date(startTime);
+      if (workshop.duration) {
+        endTime.setMinutes(endTime.getMinutes() + workshop.duration);
+      }
+      return endTime < new Date();
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCancelClick = () => {
+    setShowCancelDialog(true);
+  };
+
+  const handleCancelConfirm = (reason?: string) => {
+    if (workshop) {
+      cancelMutation.mutate({
+        workshopId: workshop.id,
+        cancellationReason: reason,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
@@ -498,6 +551,31 @@ export default function WorkshopDetailPage() {
               </Card>
             )}
 
+            {isRegistered && !isWorkshopPast() && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    Vous êtes inscrit à cet atelier
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                    Vous êtes inscrit à cet atelier. Vous pouvez annuler votre inscription si nécessaire.
+                  </p>
+                  <Button
+                    variant="destructive"
+                    className="w-full gap-2"
+                    onClick={handleCancelClick}
+                    disabled={cancelMutation.isPending}
+                  >
+                    <X className="h-4 w-4" />
+                    Annuler mon inscription
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
             {canRequestParticipation && workshop.creator && (
               <Card>
                 <CardHeader>
@@ -572,6 +650,21 @@ export default function WorkshopDetailPage() {
         onConfirm={confirmRejectRequest}
         isSubmitting={rejectRequest.isPending}
       />
+
+      {workshop && workshop.date && isRegistered && (
+        <CancelWorkshopRegistrationDialog
+          open={showCancelDialog}
+          onOpenChange={setShowCancelDialog}
+          onConfirm={handleCancelConfirm}
+          isLoading={cancelMutation.isPending}
+          workshopTitle={workshop.title}
+          workshopDate={
+            typeof workshop.date === "string"
+              ? new Date(workshop.date)
+              : workshop.date
+          }
+        />
+      )}
     </div>
   );
 }

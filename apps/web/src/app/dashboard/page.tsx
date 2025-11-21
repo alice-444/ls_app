@@ -3,7 +3,7 @@ import { authClient } from "@/lib/auth-client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ import { Edit, Users, Calendar } from "lucide-react";
 import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
 import { formatDate } from "@/lib/workshop-utils";
+import { ApprenticeWorkshopDashboard } from "@/components/apprentice/ApprenticeWorkshopDashboard";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -122,11 +123,11 @@ export default function Dashboard() {
       refetchOnWindowFocus: true,
     });
 
-  const [previousApprenticeRequests, setPreviousApprenticeRequests] = useState<
-    any[] | null
-  >(null);
+  const previousApprenticeRequestsRef = useRef<any[] | null>(null);
 
   useEffect(() => {
+    const previousApprenticeRequests = previousApprenticeRequestsRef.current;
+
     if (workshopRequests && previousApprenticeRequests) {
       workshopRequests.forEach((currentRequest: any) => {
         const previousRequest = previousApprenticeRequests.find(
@@ -166,9 +167,9 @@ export default function Dashboard() {
     }
 
     if (workshopRequests) {
-      setPreviousApprenticeRequests([...workshopRequests]);
+      previousApprenticeRequestsRef.current = [...workshopRequests];
     }
-  }, [workshopRequests, previousApprenticeRequests]);
+  }, [workshopRequests]);
 
   const { data: mentorWorkshopRequests, refetch: refetchMentorRequests } =
     trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
@@ -256,6 +257,19 @@ export default function Dashboard() {
   const [requestToReject, setRequestToReject] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
+
+  const cancelRequestMutation = trpc.mentor.cancelWorkshopRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande annulée avec succès");
+      utils.mentor.getMyWorkshopRequests.invalidate();
+      utils.workshop.getAvailableWorkshops.invalidate();
+      refetchApprenticeRequests();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de l'annulation de la demande");
+    },
+  });
+
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande refusée avec succès");
@@ -306,160 +320,8 @@ export default function Dashboard() {
     );
   }
 
-  const renderSocialNetworkSection = () => (
-    <Card className="bg-linear-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-          Réseaux sociaux
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0 space-y-3">
-        <div className="text-center mb-3">
-          <div className="text-xl font-bold mb-1">
-            {userRole === "mentor"
-              ? mockUserData.mentor.demandesEnAttente
-              : mockUserData.apprenant.demandesAide}
-          </div>
-          <p className="text-xs text-indigo-100">Demandes en attente</p>
-        </div>
-        <div className="space-y-2">
-          <div className="bg-white/20 rounded p-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-sm">Demande de Marie L.</p>
-                <p className="text-xs text-indigo-100">
-                  Mathématiques • Il y a 2h
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <Button size="sm" variant="secondary" className="text-xs px-2">
-                  ✓
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs px-2 text-red-300 hover:text-red-100"
-                >
-                  ✕
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/20 rounded p-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-sm">Demande de Thomas R.</p>
-                <p className="text-xs text-indigo-100">
-                  Programmation • Il y a 4h
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <Button size="sm" variant="secondary" className="text-xs px-2">
-                  ✓
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs px-2 text-red-300 hover:text-red-100"
-                >
-                  ✕
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/20 rounded p-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-sm">Demande de Sophie M.</p>
-                <p className="text-xs text-indigo-100">
-                  Littérature • Il y a 6h
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <Button size="sm" variant="secondary" className="text-xs px-2">
-                  ✓
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs px-2 text-red-300 hover:text-red-100"
-                >
-                  ✕
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button className="flex-1 text-xs" variant="outline" size="sm">
-            <svg
-              className="w-3 h-3 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-            Nouvelle demande
-          </Button>
-          <Button
-            className="flex-1 text-xs"
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/relationship")}
-          >
-            <svg
-              className="w-3 h-3 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            Relationships
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   const renderApprenantDashboard = () => (
     <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-xl">
-            Bienvenue dans votre parcours d'apprentissage
-          </CardTitle>
-          <CardDescription className="text-green-100">
-            Continuez votre progression avec l'aide de nos mentors expérimentés
-          </CardDescription>
-        </CardHeader>
-      </Card>
-
-      {/* ateliers passés */}
       <Card className="bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -560,7 +422,7 @@ export default function Dashboard() {
               workshopRequests.filter((r: any) => r.status === "PENDING")
                 .length > 0 && (
                 <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 10 secondes
+                  • Mise à jour automatique toutes les 5 minutes
                 </span>
               )}
           </CardDescription>
@@ -569,6 +431,7 @@ export default function Dashboard() {
           {workshopRequests && workshopRequests.length > 0 ? (
             workshopRequests.map((request: any) => {
               const isRejected = request.status === "REJECTED";
+              const isPending = request.status === "PENDING";
               return (
                 <div key={request.id} className="space-y-2">
                   <WorkshopRequestCard
@@ -578,6 +441,30 @@ export default function Dashboard() {
                     showDescription={true}
                     showMentor={true}
                   />
+                  {isPending && (
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                        onClick={() => {
+                          if (
+                            confirm(
+                              "Êtes-vous sûr de vouloir annuler cette demande ?"
+                            )
+                          ) {
+                            cancelRequestMutation.mutate({
+                              requestId: request.id,
+                            });
+                          }
+                        }}
+                        disabled={cancelRequestMutation.isPending}
+                      >
+                        <X className="w-3 h-3 mr-1" />
+                        Annuler
+                      </Button>
+                    </div>
+                  )}
                   {isRejected && (
                     <div className="flex gap-2 ml-4">
                       <Button
@@ -643,62 +530,10 @@ export default function Dashboard() {
       )}
 
       {(userRole === "apprenant" || userRole === "both") && (
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Calendar className="w-4 h-4" />
-              Prochains ateliers
-            </CardTitle>
-            <CardDescription>
-              Vos ateliers programmés avec vos mentors
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-3">
-            {confirmedWorkshops && confirmedWorkshops.length > 0 ? (
-              confirmedWorkshops.map((atelier: any) => (
-                <div
-                  key={atelier.id}
-                  className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                >
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm">{atelier.title}</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
-                      Mentor: {atelier.creator?.user?.name || "Inconnu"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {formatDate(atelier.date)}
-                      {atelier.time && ` • ${atelier.time}`}
-                    </Badge>
-                    <Button
-                      size="sm"
-                      className="text-xs"
-                      onClick={() => router.push(`/workshop-room`)}
-                    >
-                      Rejoindre
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-xs text-red-600 hover:text-red-700"
-                      onClick={() => setShowCancelDialog(atelier.id)}
-                    >
-                      Annuler
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-4 text-muted-foreground text-sm">
-                Aucun atelier programmé
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-full">
+          <ApprenticeWorkshopDashboard />
+        </div>
       )}
-
-      {renderSocialNetworkSection()}
     </>
   );
 
@@ -922,8 +757,6 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {renderSocialNetworkSection()}
-
       <Card className="bg-linear-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -1070,7 +903,7 @@ export default function Dashboard() {
               mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
                 .length > 0 && (
                 <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 10 secondes
+                  • Mise à jour automatique toutes les 5 minutes
                 </span>
               )}
           </CardDescription>
@@ -1344,8 +1177,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       )}
-
-      {renderSocialNetworkSection()}
     </>
   );
 
