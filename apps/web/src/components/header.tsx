@@ -26,7 +26,10 @@ export default function Header() {
     gcTime: 0,
   });
 
-  const commonLinks = [{ to: "/dashboard", label: "Dashboard" }];
+  const commonLinks = [
+    { to: "/community", label: "Communité" },
+    { to: "/dashboard", label: "Dashboard" },
+  ];
 
   const mentorLinks = [
     { to: "/my-workshops", label: "Mes Ateliers" },

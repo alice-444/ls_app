@@ -19,16 +19,25 @@ import {
   Users,
   GraduationCap,
   ChevronDown,
+  BookOpen,
 } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 
 export default function UserMenu() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const [currentRole, setCurrentRole] = useState<"MENTOR" | "APPRENANT">("MENTOR");
   const [isOpen, setIsOpen] = useState(false);
 
-  if (isPending) {
+  const { data: userRole, isLoading: isLoadingRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (isPending || isLoadingRole) {
     return <Skeleton className="h-9 w-24" />;
   }
 
@@ -40,11 +49,7 @@ export default function UserMenu() {
     );
   }
 
-  const handleRoleToggle = () => {
-    setCurrentRole(currentRole === "MENTOR" ? "APPRENANT" : "MENTOR");
-  };
-
-  const getRoleIcon = (role: "MENTOR" | "APPRENANT") => {
+  const getRoleIcon = (role: "MENTOR" | "APPRENANT" | null) => {
     return role === "MENTOR" ? (
       <Users className="h-4 w-4" />
     ) : (
@@ -52,9 +57,12 @@ export default function UserMenu() {
     );
   };
 
-  const getRoleLabel = (role: "MENTOR" | "APPRENANT") => {
+  const getRoleLabel = (role: "MENTOR" | "APPRENANT" | null) => {
     return role === "MENTOR" ? "Mentor" : "Apprenant";
   };
+
+  const isMentor = userRole === "MENTOR";
+  const isApprenant = userRole === "APPRENANT";
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -82,39 +90,43 @@ export default function UserMenu() {
             Tableau de bord
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/my-profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Mon Profil Prof
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/mentor-profile" className="flex items-center gap-2">
-            <GraduationCap className="h-4 w-4" />
-            Modifier mon profil
-          </Link>
-        </DropdownMenuItem>
+        {isMentor && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/my-workshops" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Mes Ateliers
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/workshop-editor" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Atelab
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/mentor-profile" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Mon Profil Mentor
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+        {isApprenant && (
+          <DropdownMenuItem asChild>
+            <Link href="/workshop-room" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              e-Atelier
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleRoleToggle}
-          className="flex items-center justify-between cursor-pointer"
-        >
-          <div className="flex items-center gap-2">
-            {getRoleIcon(currentRole)}
-            <span>Rôle actuel : {getRoleLabel(currentRole)}</span>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleRoleToggle();
-            }}
-            className="ml-2"
-          >
-            Changer
-          </Button>
-        </DropdownMenuItem>
+        {userRole && (
+          <DropdownMenuItem className="flex items-center gap-2 cursor-default">
+            {getRoleIcon(userRole)}
+            <span>Rôle : {getRoleLabel(userRole)}</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/notifications" className="flex items-center gap-2">
