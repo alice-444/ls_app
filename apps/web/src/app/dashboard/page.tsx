@@ -3,7 +3,8 @@ import { authClient } from "@/lib/auth-client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { getUserRole } from "@/lib/api-client";
 import {
   Card,
   CardContent,
@@ -22,11 +23,55 @@ import {
   getWorkshopRequestStatusColor,
 } from "@/lib/workshop-request-utils";
 import { toast } from "sonner";
-import { Edit, Users, Calendar } from "lucide-react";
+import {
+  Edit,
+  Users,
+  Calendar,
+  Clock,
+  MapPin,
+  LinkIcon,
+  ArrowRight,
+  Plus,
+  MoreVertical,
+  Eye,
+  Copy,
+  Trash2,
+  Star,
+  History,
+  Copy as CopyIcon,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
-import { formatDate } from "@/lib/workshop-utils";
+import {
+  formatDate,
+  formatTime,
+  calculateEndTime,
+  calculateCountdown,
+  formatCountdown,
+  getStatusBadge,
+} from "@/lib/workshop-utils";
 import { ApprenticeWorkshopDashboard } from "@/components/apprentice/ApprenticeWorkshopDashboard";
+import { DeleteWorkshopDialog } from "@/components/workshop/DeleteWorkshopDialog";
+import { RescheduleWorkshopDialog } from "@/components/workshop/RescheduleWorkshopDialog";
+import { WorkshopCard } from "@/components/workshop/WorkshopCard";
+import { WorkshopDetails } from "@/components/workshop/WorkshopDetails";
+import { WorkshopDropdownMenu } from "@/components/workshop/WorkshopDropdownMenu";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { RequestBadges } from "@/components/dashboard/RequestBadges";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -114,11 +159,40 @@ export default function Dashboard() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
-  const [userRole, setUserRole] = useState<UserRole>("both");
+
+  const { data: actualUserRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
+  const getInitialUserRole = (
+    role: "MENTOR" | "APPRENANT" | null
+  ): UserRole => {
+    if (role === "MENTOR") {
+      return "mentor";
+    }
+    if (role === "APPRENANT") {
+      return "apprenant";
+    }
+    return "both";
+  };
+
+  const [userRole, setUserRole] = useState<UserRole>(() =>
+    getInitialUserRole(actualUserRole || null)
+  );
+
+  useEffect(() => {
+    if (actualUserRole) {
+      const initialRole = getInitialUserRole(actualUserRole);
+      setUserRole(initialRole);
+    }
+  }, [actualUserRole]);
 
   const { data: workshopRequests, refetch: refetchApprenticeRequests } =
     trpc.mentor.getMyWorkshopRequests.useQuery(undefined, {
-      enabled: !!session && userRole === "apprenant",
+      enabled:
+        !!session && userRole === "apprenant" && actualUserRole === "APPRENANT",
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
     });
@@ -173,14 +247,30 @@ export default function Dashboard() {
 
   const { data: mentorWorkshopRequests, refetch: refetchMentorRequests } =
     trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
-      enabled: !!session && (userRole === "mentor" || userRole === "both"),
+      enabled:
+        !!session &&
+        (userRole === "mentor" || userRole === "both") &&
+        actualUserRole === "MENTOR",
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
     });
 
+  const { data: mentorWorkshops } = trpc.workshop.getMyWorkshops.useQuery(
+    undefined,
+    {
+      enabled:
+        !!session &&
+        (userRole === "mentor" || userRole === "both") &&
+        actualUserRole === "MENTOR",
+    }
+  );
+
   const { data: confirmedWorkshops, refetch: refetchConfirmedWorkshops } =
     trpc.workshop.getConfirmedWorkshops.useQuery(undefined, {
-      enabled: !!session && (userRole === "apprenant" || userRole === "both"),
+      enabled:
+        !!session &&
+        (userRole === "apprenant" || userRole === "both") &&
+        actualUserRole === "APPRENANT",
     });
 
   const cancelWorkshopMutation = trpc.workshop.cancelConfirmed.useMutation({
@@ -255,8 +345,40 @@ export default function Dashboard() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [requestToReject, setRequestToReject] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
+  const [showRescheduleDialog, setShowRescheduleDialog] = useState<
+    string | null
+  >(null);
+  const [showParticipantsDialog, setShowParticipantsDialog] = useState<
+    string | null
+  >(null);
+  const [workshopViewTab, setWorkshopViewTab] = useState<"upcoming" | "past">(
+    "upcoming"
+  );
 
   const utils = trpc.useUtils();
+
+  const deleteWorkshopMutation = trpc.workshop.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier supprimé avec succès");
+      utils.workshop.getMyWorkshops.invalidate();
+      setShowDeleteDialog(null);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la suppression");
+    },
+  });
+
+  const rescheduleWorkshopMutation = trpc.workshop.reschedule.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier reprogrammé avec succès");
+      utils.workshop.getMyWorkshops.invalidate();
+      setShowRescheduleDialog(null);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la reprogrammation");
+    },
+  });
 
   const cancelRequestMutation = trpc.mentor.cancelWorkshopRequest.useMutation({
     onSuccess: () => {
@@ -312,6 +434,127 @@ export default function Dashboard() {
     setUserRole(role);
   };
 
+  const upcomingWorkshops = useMemo(() => {
+    if (!mentorWorkshops) return [];
+    const now = new Date();
+    return mentorWorkshops
+      .filter((w: any) => {
+        if (w.status === "CANCELLED") return false;
+        if (w.status !== "PUBLISHED" && w.status !== "COMPLETED") return false;
+        if (!w.date || !w.time) return false;
+        const duration = w.duration || 60;
+        const endTime = calculateEndTime(w.date, w.time, duration);
+        if (!endTime || endTime <= now) return false;
+        return true;
+      })
+      .sort(
+        (a: any, b: any) =>
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
+  }, [mentorWorkshops]);
+
+  const pastWorkshops = useMemo(() => {
+    if (!mentorWorkshops) return [];
+    const now = new Date();
+    return mentorWorkshops
+      .filter((w: any) => {
+        if (w.status === "CANCELLED") return true;
+        if (w.status === "COMPLETED") return true;
+        if (w.status === "PUBLISHED" && w.date && w.time) {
+          const duration = w.duration || 60;
+          const endTime = calculateEndTime(w.date, w.time, duration);
+          return endTime && endTime < now;
+        }
+        return false;
+      })
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.date || b.createdAt).getTime() -
+          new Date(a.date || a.createdAt).getTime()
+      );
+  }, [mentorWorkshops]);
+
+  const nextWorkshop = useMemo(() => {
+    return upcomingWorkshops.length > 0 ? upcomingWorkshops[0] : null;
+  }, [upcomingWorkshops]);
+
+  const [countdown, setCountdown] =
+    useState<ReturnType<typeof calculateCountdown>>(null);
+
+  useEffect(() => {
+    if (!nextWorkshop || !nextWorkshop.date || !nextWorkshop.time) {
+      setCountdown(null);
+      return;
+    }
+
+    const updateCountdown = () => {
+      const result = calculateCountdown(nextWorkshop.date, nextWorkshop.time);
+      setCountdown(result);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [nextWorkshop]);
+
+  const mentorStats = useMemo(() => {
+    if (!mentorWorkshops) {
+      return {
+        totalWorkshops: 0,
+        completedWorkshops: 0,
+        creditsEarned: 0,
+        creditsPending: 0,
+        studentsHelped: 0,
+        hoursTaught: 0,
+        averageRating: null,
+      };
+    }
+
+    const now = new Date();
+    const completedWorkshops = mentorWorkshops.filter((w: any) => {
+      if (w.status === "COMPLETED") return true;
+      if (w.status === "PUBLISHED" && w.date && w.time) {
+        const duration = w.duration || 60;
+        const endTime = calculateEndTime(w.date, w.time, duration);
+        return endTime && endTime < now;
+      }
+      return false;
+    });
+
+    const pendingWorkshops = mentorWorkshops.filter((w: any) => {
+      if (w.status !== "PUBLISHED") return false;
+      if (!w.date || !w.time) return false;
+      const duration = w.duration || 60;
+      const endTime = calculateEndTime(w.date, w.time, duration);
+      return endTime && endTime >= now;
+    });
+
+    const creditsEarned = completedWorkshops.length * 20;
+    const creditsPending = pendingWorkshops.length * 20;
+
+    const uniqueStudents = new Set<string>();
+    mentorWorkshops.forEach((w: any) => {
+      if (w.apprenticeId) {
+        uniqueStudents.add(w.apprenticeId);
+      }
+    });
+
+    const hoursTaught = completedWorkshops.reduce((total: number, w: any) => {
+      const duration = w.duration || 60;
+      return total + duration / 60;
+    }, 0);
+
+    return {
+      totalWorkshops: mentorWorkshops.length,
+      completedWorkshops: completedWorkshops.length,
+      creditsEarned,
+      creditsPending,
+      studentsHelped: uniqueStudents.size,
+      hoursTaught: Math.round(hoursTaught * 10) / 10,
+      averageRating: null,
+    };
+  }, [mentorWorkshops]);
   if (isPending) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -392,39 +635,18 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
               Mes demandes d'atelier
-              {workshopRequests && workshopRequests.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                >
-                  {workshopRequests.length}
-                </Badge>
-              )}
+              <RequestBadges
+                requests={workshopRequests}
+                showPendingBadge={true}
+              />
             </div>
-            {workshopRequests &&
-              workshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <Badge
-                  variant="default"
-                  className="bg-yellow-500 text-white animate-pulse"
-                >
-                  {
-                    workshopRequests.filter((r: any) => r.status === "PENDING")
-                      .length
-                  }{" "}
-                  en attente
-                </Badge>
-              )}
           </CardTitle>
           <CardDescription>
             Vos demandes d'atelier envoyées aux mentors
-            {workshopRequests &&
-              workshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 5 minutes
-                </span>
-              )}
+            <RequestBadges
+              requests={workshopRequests}
+              showAutoUpdateText={true}
+            />
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 space-y-3">
@@ -539,6 +761,165 @@ export default function Dashboard() {
 
   const renderMentorDashboard = () => (
     <>
+      {nextWorkshop && nextWorkshop.date && nextWorkshop.time ? (
+        <Card className="mb-6 bg-linear-to-br from-[#4A90E2] to-[#26547C] text-white border-0 shadow-lg lg:col-span-full">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-white text-2xl mb-2">
+                  <Calendar className="w-6 h-6" />
+                  Prochaine session
+                </CardTitle>
+                <CardDescription className="text-blue-100 text-base">
+                  {countdown && !countdown.isPast
+                    ? `Prochaine session dans ${formatCountdown(countdown)}`
+                    : "Prochaine session"}
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <WorkshopDropdownMenu
+                  workshop={nextWorkshop}
+                  variant="hero"
+                  onViewDetails={(id) => router.push(`/workshop/${id}`)}
+                  onViewParticipants={(id) => setShowParticipantsDialog(id)}
+                  onEdit={(id) => router.push(`/workshop-editor?edit=${id}`)}
+                  onReschedule={(id) => setShowRescheduleDialog(id)}
+                  onDelete={(id) => setShowDeleteDialog(id)}
+                />
+                <Button
+                  variant="secondary"
+                  onClick={() => router.push(`/workshop/${nextWorkshop.id}`)}
+                  className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                >
+                  Voir les détails
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="font-bold text-2xl mb-4">{nextWorkshop.title}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <WorkshopDetails workshop={nextWorkshop} variant="hero" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        upcomingWorkshops.length === 0 && (
+          <Card className="mb-6 border-2 border-dashed lg:col-span-full">
+            <CardContent className="pt-12 pb-12 text-center">
+              <Calendar className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+              <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                Aucun atelier programmé
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">
+                Créez votre premier atelier pour commencer à partager vos
+                connaissances
+              </p>
+              <Button
+                onClick={() => router.push("/workshop-editor")}
+                size="lg"
+                className="gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Créer un atelier
+              </Button>
+            </CardContent>
+          </Card>
+        )
+      )}
+
+      {(upcomingWorkshops.length > 1 || pastWorkshops.length > 0) && (
+        <Card className="lg:col-span-full mb-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  {workshopViewTab === "upcoming"
+                    ? "Ateliers à venir"
+                    : "Ateliers passés"}
+                </CardTitle>
+                <CardDescription>
+                  {workshopViewTab === "upcoming"
+                    ? `${upcomingWorkshops.length - 1} autre${
+                        upcomingWorkshops.length - 1 > 1 ? "s" : ""
+                      } atelier${
+                        upcomingWorkshops.length - 1 > 1 ? "s" : ""
+                      } programmé${upcomingWorkshops.length - 1 > 1 ? "s" : ""}`
+                    : `${pastWorkshops.length} atelier${
+                        pastWorkshops.length > 1 ? "s" : ""
+                      } terminé${pastWorkshops.length > 1 ? "s" : ""}`}
+                </CardDescription>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={
+                    workshopViewTab === "upcoming" ? "default" : "outline"
+                  }
+                  size="sm"
+                  onClick={() => setWorkshopViewTab("upcoming")}
+                >
+                  <Calendar className="w-4 h-4 mr-2" />À venir
+                </Button>
+                <Button
+                  variant={workshopViewTab === "past" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setWorkshopViewTab("past")}
+                >
+                  <History className="w-4 h-4 mr-2" />
+                  Passés
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {workshopViewTab === "upcoming" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {upcomingWorkshops.slice(1).map((workshop: any) => (
+                  <WorkshopCard
+                    key={workshop.id}
+                    workshop={workshop}
+                    variant="default"
+                    onViewDetails={(id) => router.push(`/workshop/${id}`)}
+                    onViewParticipants={(id) => setShowParticipantsDialog(id)}
+                    onEdit={(id) => router.push(`/workshop-editor?edit=${id}`)}
+                    onReschedule={(id) => setShowRescheduleDialog(id)}
+                    onDelete={(id) => setShowDeleteDialog(id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {pastWorkshops.length > 0 ? (
+                  pastWorkshops.map((workshop: any) => (
+                    <WorkshopCard
+                      key={workshop.id}
+                      workshop={workshop}
+                      variant="past"
+                      onViewDetails={(id) => router.push(`/workshop/${id}`)}
+                      onEdit={(id) =>
+                        router.push(`/workshop-editor?edit=${id}`)
+                      }
+                      onDuplicate={(id) =>
+                        router.push(`/workshop-editor?edit=${id}`)
+                      }
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12 text-slate-500">
+                    <History className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                    <p>Aucun atelier passé pour le moment</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl">
@@ -571,7 +952,32 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="font-semibold">Progression globale</p>
-              <p className="text-sm text-blue-100">4.8/5.0 moyenne des notes</p>
+              <div className="flex items-center gap-2">
+                {mentorStats.averageRating ? (
+                  <>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${
+                            mentorStats.averageRating &&
+                            star <= Math.round(mentorStats.averageRating)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-yellow-200"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-blue-100">
+                      {mentorStats.averageRating}/5.0
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-sm text-blue-100">
+                    Aucune note pour le moment
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3">
@@ -593,7 +999,7 @@ export default function Dashboard() {
                 <span className="text-sm font-medium">Ateliers donnés</span>
               </div>
               <p className="text-xs text-blue-100">
-                {mockUserData.mentor.ateliersDonnes}
+                {mentorStats.completedWorkshops}
               </p>
             </div>
             <div className="bg-white/10 rounded-lg p-3">
@@ -614,7 +1020,7 @@ export default function Dashboard() {
                 <span className="text-sm font-medium">Étudiants aidés</span>
               </div>
               <p className="text-xs text-blue-100">
-                {mockUserData.mentor.etudiantsAides}
+                {mentorStats.studentsHelped}
               </p>
             </div>
           </div>
@@ -643,12 +1049,51 @@ export default function Dashboard() {
         <CardContent className="pt-0">
           <div className="text-center">
             <div className="text-3xl font-bold mb-1">
-              {mockUserData.mentor.creditsGagnes}
+              {mentorStats.creditsEarned}
             </div>
-            <p className="text-xs text-yellow-100 mb-2">Crédits disponibles</p>
+            <p className="text-xs text-yellow-100 mb-1">Crédits disponibles</p>
+            {mentorStats.creditsPending > 0 && (
+              <p className="text-xs text-yellow-200 mb-2">
+                {mentorStats.creditsPending} en attente
+              </p>
+            )}
             <Button variant="secondary" size="sm" className="w-full text-xs">
               Utiliser mes crédits
             </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-linear-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Clock className="w-4 h-4" />
+            Heures enseignées
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="text-center">
+            <div className="text-3xl font-bold mb-1">
+              {mentorStats.hoursTaught}
+            </div>
+            <p className="text-xs text-green-100">Heures totales</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-linear-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Users className="w-4 h-4" />
+            Étudiants aidés
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="text-center">
+            <div className="text-3xl font-bold mb-1">
+              {mentorStats.studentsHelped}
+            </div>
+            <p className="text-xs text-purple-100">apprenants aidés</p>
           </div>
         </CardContent>
       </Card>
@@ -872,40 +1317,12 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
               Demandes d'atelier reçues
-              {mentorWorkshopRequests && mentorWorkshopRequests.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                >
-                  {mentorWorkshopRequests.length}
-                </Badge>
-              )}
+              <RequestBadges requests={mentorWorkshopRequests} showPendingBadge={true} />
             </div>
-            {mentorWorkshopRequests &&
-              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <Badge
-                  variant="default"
-                  className="bg-yellow-500 text-white animate-pulse"
-                >
-                  {
-                    mentorWorkshopRequests.filter(
-                      (r: any) => r.status === "PENDING"
-                    ).length
-                  }{" "}
-                  en attente
-                </Badge>
-              )}
           </CardTitle>
           <CardDescription>
             Les demandes d'atelier que vous avez reçues de la part des apprentis
-            {mentorWorkshopRequests &&
-              mentorWorkshopRequests.filter((r: any) => r.status === "PENDING")
-                .length > 0 && (
-                <span className="ml-2 text-yellow-600 dark:text-yellow-400 font-medium">
-                  • Mise à jour automatique toutes les 5 minutes
-                </span>
-              )}
+            <RequestBadges requests={mentorWorkshopRequests} showAutoUpdateText={true} />
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 space-y-3">
@@ -972,211 +1389,98 @@ export default function Dashboard() {
         onConfirm={confirmRejectRequest}
         isSubmitting={rejectRequest.isPending}
       />
-    </>
-  );
 
-  const renderBothDashboard = () => (
-    <>
-      <Card className="md:col-span-2 lg:col-span-2 bg-linear-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-xl">
-            Bienvenue dans votre espace d'entraide
-          </CardTitle>
-          <CardDescription className="text-indigo-100">
-            Vous êtes à la fois mentor et apprenant - partagez et apprenez !
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex items-center gap-4">
-            <div className="bg-white/20 rounded-full p-2">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                />
-              </svg>
-            </div>
-            <div>
-              <p className="font-semibold">Progression globale</p>
-              <p className="text-sm text-indigo-100">78% de progression</p>
-            </div>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="bg-white/10 rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-                <span className="text-sm font-medium">Ateliers suivis</span>
-              </div>
-              <p className="text-xs text-indigo-100">
-                {mockUserData.apprenant.ateliersSuivis}
-              </p>
-            </div>
-            <div className="bg-white/10 rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span className="text-sm font-medium">
-                  Heures d'apprentissage
-                </span>
-              </div>
-              <p className="text-xs text-indigo-100">
-                {mockUserData.apprenant.heuresApprentissage}h
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ateliers passés */}
-      <Card className="bg-linear-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-              />
-            </svg>
-            Ateliers passés
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="text-center">
-            <div className="text-2xl font-bold mb-1">
-              {mockUserData.apprenant.coursEnCours}
-            </div>
-            <p className="text-xs text-blue-100 mb-2">Ateliers passés</p>
-            <Button variant="secondary" size="sm" className="w-full text-xs">
-              Voir les ateliers
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-linear-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            Mes mentors
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="text-center">
-            <div className="text-2xl font-bold mb-1">
-              {mockUserData.apprenant.mentorsSuivis}
-            </div>
-            <p className="text-xs text-purple-100 mb-2">Mentors suivis</p>
-            <Button variant="secondary" size="sm" className="w-full text-xs">
-              Voir les mentors
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {(userRole === "apprenant" || userRole === "both") && (
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Calendar className="w-4 h-4" />
-              Prochains ateliers
-            </CardTitle>
-            <CardDescription>
-              Vos ateliers programmés avec vos mentors
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-3">
-            {confirmedWorkshops && confirmedWorkshops.length > 0 ? (
-              confirmedWorkshops.map((atelier: any) => (
-                <div
-                  key={atelier.id}
-                  className="flex items-center justify-between p-2 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                >
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm">{atelier.title}</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
-                      Mentor: {atelier.creator?.user?.name || "Inconnu"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {formatDate(atelier.date)}
-                      {atelier.time && ` • ${atelier.time}`}
-                    </Badge>
-                    <Button
-                      size="sm"
-                      className="text-xs"
-                      onClick={() => router.push(`/workshop-room`)}
-                    >
-                      Rejoindre
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-xs text-red-600 hover:text-red-700"
-                      onClick={() => setShowCancelDialog(atelier.id)}
-                    >
-                      Annuler
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-4 text-muted-foreground text-sm">
-                Aucun atelier programmé
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {showDeleteDialog && (
+        <DeleteWorkshopDialog
+          open={showDeleteDialog !== null}
+          onOpenChange={(open) => !open && setShowDeleteDialog(null)}
+          onConfirm={() => {
+            if (showDeleteDialog) {
+              deleteWorkshopMutation.mutate({ workshopId: showDeleteDialog });
+            }
+          }}
+          isLoading={deleteWorkshopMutation.isPending}
+        />
       )}
+
+      {showRescheduleDialog &&
+        (() => {
+          const workshop = mentorWorkshops?.find(
+            (w: any) => w.id === showRescheduleDialog
+          );
+          if (!workshop) return null;
+          return (
+            <RescheduleWorkshopDialog
+              open={showRescheduleDialog !== null}
+              onOpenChange={(open) => !open && setShowRescheduleDialog(null)}
+              onConfirm={(data) => {
+                if (showRescheduleDialog) {
+                  rescheduleWorkshopMutation.mutate({
+                    workshopId: showRescheduleDialog,
+                    ...data,
+                  });
+                }
+              }}
+              isLoading={rescheduleWorkshopMutation.isPending}
+              workshopTitle={workshop.title}
+              oldDate={workshop.date ? new Date(workshop.date) : new Date()}
+              oldTime={workshop.time || ""}
+              oldDuration={workshop.duration || 60}
+              oldLocation={workshop.location || null}
+              isVirtual={workshop.isVirtual || false}
+            />
+          );
+        })()}
+
+      {showParticipantsDialog &&
+        (() => {
+          const workshop = mentorWorkshops?.find(
+            (w: any) => w.id === showParticipantsDialog
+          );
+          if (!workshop) return null;
+          return (
+            <Dialog
+              open={showParticipantsDialog !== null}
+              onOpenChange={(open) => !open && setShowParticipantsDialog(null)}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Participants inscrits</DialogTitle>
+                  <DialogDescription>
+                    {workshop.apprenticeId ? 1 : 0} /{" "}
+                    {workshop.maxParticipants || "∞"} participants
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-4">
+                  {workshop.apprenticeId && workshop.apprentice ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-3 rounded-lg border bg-slate-50 dark:bg-slate-900">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Users className="w-5 h-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">
+                              {workshop.apprentice.user?.name || "Apprenti"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {workshop.apprentice.user?.email || ""}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-slate-500">
+                      <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p>Aucun participant inscrit pour le moment</p>
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+          );
+        })()}
     </>
   );
 
@@ -1198,6 +1502,9 @@ export default function Dashboard() {
               variant={userRole === "apprenant" ? "default" : "outline"}
               size="sm"
               onClick={() => handleRoleChange("apprenant")}
+              disabled={
+                actualUserRole !== "APPRENANT" && actualUserRole !== null
+              }
             >
               Apprenant
             </Button>
@@ -1205,15 +1512,9 @@ export default function Dashboard() {
               variant={userRole === "mentor" ? "default" : "outline"}
               size="sm"
               onClick={() => handleRoleChange("mentor")}
+              disabled={actualUserRole !== "MENTOR" && actualUserRole !== null}
             >
               Mentor
-            </Button>
-            <Button
-              variant={userRole === "both" ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleRoleChange("both")}
-            >
-              Les deux
             </Button>
           </div>
         </div>
@@ -1222,7 +1523,6 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
         {userRole === "apprenant" && renderApprenantDashboard()}
         {userRole === "mentor" && renderMentorDashboard()}
-        {userRole === "both" && renderBothDashboard()}
       </div>
 
       {selectedCancellationWorkshop && (
@@ -1246,6 +1546,19 @@ export default function Dashboard() {
           }
         />
       )}
+
+      {(userRole === "mentor" || userRole === "both") &&
+        actualUserRole === "MENTOR" && (
+          <Button
+            onClick={() => router.push("/workshop-editor")}
+            size="lg"
+            className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 h-16 w-16 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-200 flex items-center justify-center p-0 bg-primary hover:bg-primary/90 text-primary-foreground"
+            aria-label="Créer un atelier"
+            title="Créer un atelier"
+          >
+            <Plus className="w-7 h-7" />
+          </Button>
+        )}
     </div>
   );
 }

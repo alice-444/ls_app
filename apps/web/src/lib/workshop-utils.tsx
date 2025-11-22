@@ -106,3 +106,69 @@ export const formatTimeRange = (
     return time;
   }
 };
+
+export interface CountdownResult {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  isPast: boolean;
+}
+
+export const calculateCountdown = (
+  date: Date | string | null,
+  time: string | null
+): CountdownResult | null => {
+  if (!date || !time) return null;
+
+  try {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    const [timeHours, timeMinutes] = time.split(":").map(Number);
+    const workshopDateTime = new Date(dateObj);
+    workshopDateTime.setHours(timeHours, timeMinutes, 0, 0);
+
+    const now = new Date();
+    const diff = workshopDateTime.getTime() - now.getTime();
+
+    if (diff < 0) {
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        isPast: true,
+      };
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const countdownHours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const countdownMinutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return {
+      days,
+      hours: countdownHours,
+      minutes: countdownMinutes,
+      seconds,
+      isPast: false,
+    };
+  } catch {
+    return null;
+  }
+};
+
+export const formatCountdown = (countdown: CountdownResult | null): string => {
+  if (!countdown) return "Date non définie";
+  if (countdown.isPast) return "Terminé";
+
+  if (countdown.days > 0) {
+    return `${countdown.days} jour${countdown.days > 1 ? "s" : ""}`;
+  }
+  if (countdown.hours > 0) {
+    return `${countdown.hours} heure${countdown.hours > 1 ? "s" : ""}`;
+  }
+  if (countdown.minutes > 0) {
+    return `${countdown.minutes} minute${countdown.minutes > 1 ? "s" : ""}`;
+  }
+  return `${countdown.seconds} seconde${countdown.seconds > 1 ? "s" : ""}`;
+};

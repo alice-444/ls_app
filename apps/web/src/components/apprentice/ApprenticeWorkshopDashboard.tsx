@@ -37,6 +37,9 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { X, Users, Plus } from "lucide-react";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
+import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 
 interface Workshop {
   id: string;
@@ -66,6 +69,14 @@ function getWorkshopStatus(workshop: Workshop): "confirmed" | "pending" {
 
 export function ApprenticeWorkshopDashboard() {
   const router = useRouter();
+  const { data: session } = authClient.useSession();
+  
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
   const [cancelDialogWorkshop, setCancelDialogWorkshop] =
     useState<Workshop | null>(null);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
@@ -77,16 +88,19 @@ export function ApprenticeWorkshopDashboard() {
 
   const { data: upcomingWorkshops, isLoading: isLoadingUpcoming } =
     trpc.workshop.getUpcomingWorkshops.useQuery(undefined, {
+      enabled: !!session && userRole === "APPRENANT",
       refetchOnWindowFocus: true,
     });
 
   const { data: availableWorkshops, isLoading: isLoadingAvailable } =
     trpc.workshop.getAvailableWorkshops.useQuery(undefined, {
+      enabled: !!session && userRole === "APPRENANT",
       refetchOnWindowFocus: true,
     });
 
   const { data: workshopHistory, isLoading: isLoadingHistory } =
     trpc.workshop.getWorkshopHistory.useQuery(undefined, {
+      enabled: !!session && userRole === "APPRENANT",
       refetchOnWindowFocus: true,
     });
 

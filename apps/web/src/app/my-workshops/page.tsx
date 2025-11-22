@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 import {
   Card,
   CardContent,
@@ -14,7 +16,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { getStatusBadge, formatDate } from "@/lib/workshop-utils";
+import {
+  getStatusBadge,
+  formatDate,
+  formatTime,
+  calculateCountdown,
+  formatCountdown,
+  calculateEndTime,
+} from "@/lib/workshop-utils";
 import { DeleteWorkshopDialog } from "@/components/workshop/DeleteWorkshopDialog";
 import {
   Calendar,
@@ -31,6 +40,9 @@ import {
   BookOpen,
   Check,
   X,
+  MapPin,
+  Link as LinkIcon,
+  ArrowRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
@@ -80,7 +92,7 @@ function WorkshopRequests({
 
   const pendingRequests =
     requests?.filter((r: any) => r.status === "PENDING") || [];
-  
+
   const displayRequests = pendingRequests;
 
   return (
@@ -140,6 +152,12 @@ export default function MyWorkshopsPage() {
   const { data: session, isPending: isSessionLoading } =
     authClient.useSession();
 
+  const { data: userRole, isLoading: isLoadingRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
@@ -149,8 +167,10 @@ export default function MyWorkshopsPage() {
     data: workshops,
     isLoading,
     refetch,
+    error: workshopsError,
   } = trpc.workshop.getMyWorkshops.useQuery(undefined, {
-    enabled: !!session,
+    enabled: !!session && userRole === "MENTOR",
+    retry: false,
   });
 
   const { data: mentorRequests } =
@@ -277,16 +297,51 @@ export default function MyWorkshopsPage() {
   const upcomingWorkshops = useMemo(() => {
     if (!workshops) return [];
     const now = new Date();
-    return workshops
-      .filter(
-        (w) =>
-          w.date &&
-          new Date(w.date) > now &&
-          w.status === "PUBLISHED"
-      )
-      .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
-      .slice(0, 5);
+    const filtered = workshops
+      .filter((w) => {
+        if (w.status !== "PUBLISHED") return false;
+        
+        if (!w.date || !w.time) return false;
+        
+        const duration = w.duration || 60;
+        const endTime = calculateEndTime(w.date, w.time, duration);
+        
+        if (!endTime || endTime <= now) return false;
+        
+        return true;
+      })
+      .sort(
+        (a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime()
+      );
+    return filtered;
   }, [workshops]);
+
+  const nextWorkshop = useMemo(() => {
+    if (!upcomingWorkshops || upcomingWorkshops.length === 0) return null;
+    return upcomingWorkshops[0];
+  }, [upcomingWorkshops]);
+
+  const [countdown, setCountdown] = useState<ReturnType<typeof calculateCountdown>>(null);
+
+  useEffect(() => {
+    if (!nextWorkshop || !nextWorkshop.date || !nextWorkshop.time) {
+      setCountdown(null);
+      return;
+    }
+
+    const initialCountdown = calculateCountdown(nextWorkshop.date, nextWorkshop.time);
+    setCountdown(initialCountdown);
+
+    const interval = setInterval(() => {
+      const newCountdown = calculateCountdown(
+        nextWorkshop.date,
+        nextWorkshop.time
+      );
+      setCountdown(newCountdown);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [nextWorkshop]);
 
   const handleDelete = (workshopId: string) => {
     deleteMutation.mutate({ workshopId });
@@ -309,7 +364,7 @@ export default function MyWorkshopsPage() {
     router.push(`/workshop/${workshopId}`);
   };
 
-  if (isSessionLoading || isLoading) {
+  if (isSessionLoading || isLoading || isLoadingRole) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
@@ -320,6 +375,59 @@ export default function MyWorkshopsPage() {
   if (!session) {
     router.push("/login");
     return null;
+  }
+
+  if (userRole !== "MENTOR") {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Card className="border-yellow-500">
+            <CardHeader>
+              <CardTitle className="text-yellow-600 dark:text-yellow-400">
+                Accès réservé aux mentors
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
+                Cette page est réservée aux mentors. Votre rôle actuel est :{" "}
+                <strong>{userRole || "Non défini"}</strong>
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-500 mb-4">
+                Si vous devriez avoir accès à cette page, veuillez vérifier votre
+                profil et sélectionner le rôle MENTOR.
+              </p>
+              <Button onClick={() => router.push("/dashboard")}>
+                Retour au dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (workshopsError) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Card className="border-red-500">
+            <CardHeader>
+              <CardTitle className="text-red-600 dark:text-red-400">
+                Erreur d'accès
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
+                {workshopsError.message || "Une erreur est survenue"}
+              </p>
+              <Button onClick={() => router.push("/dashboard")}>
+                Retour au dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -436,43 +544,166 @@ export default function MyWorkshopsPage() {
           </div>
         </div>
 
-        {upcomingWorkshops.length > 0 && (
-          <Card className="mb-6 bg-linear-to-br from-[#4A90E2] to-[#26547C] text-white border-0">
+        {nextWorkshop ? (
+          <Card className="mb-6 bg-linear-to-br from-[#4A90E2] to-[#26547C] text-white border-0 shadow-lg">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-white text-2xl mb-2">
+                    <Calendar className="w-6 h-6" />
+                    Prochaine session
+                  </CardTitle>
+                  <CardDescription className="text-blue-100 text-base">
+                    {countdown && !countdown.isPast
+                      ? `Prochaine session dans ${formatCountdown(countdown)}`
+                      : "Prochaine session"}
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => router.push(`/workshop/${nextWorkshop.id}`)}
+                  className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                >
+                  Voir les détails
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="font-bold text-2xl mb-4">
+                  {nextWorkshop.title}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {nextWorkshop.date && (
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <Calendar className="w-5 h-5" />
+                      <span className="font-medium">
+                        {formatDate(nextWorkshop.date, { includeWeekday: true })}
+                      </span>
+                    </div>
+                  )}
+                  {nextWorkshop.time && (
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <Clock className="w-5 h-5" />
+                      <span className="font-medium">
+                        {formatTime(nextWorkshop.time)}
+                        {nextWorkshop.duration &&
+                          ` • ${nextWorkshop.duration} min`}
+                      </span>
+                    </div>
+                  )}
+                  {nextWorkshop.isVirtual ? (
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <LinkIcon className="w-5 h-5" />
+                      <span className="font-medium">Atelier en ligne</span>
+                    </div>
+                  ) : (
+                    nextWorkshop.location && (
+                      <div className="flex items-center gap-2 text-blue-100">
+                        <MapPin className="w-5 h-5" />
+                        <span className="font-medium">
+                          {nextWorkshop.location}
+                        </span>
+                      </div>
+                    )
+                  )}
+                  <div className="flex items-center gap-2 text-blue-100">
+                    <Users className="w-5 h-5" />
+                    <span className="font-medium">
+                      Inscrits: {nextWorkshop.apprenticeId ? 1 : 0} /{" "}
+                      {nextWorkshop.maxParticipants || "∞"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="mb-6 border-2 border-dashed">
+            <CardContent className="pt-12 pb-12 text-center">
+              <Calendar className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+              <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                Aucun atelier programmé
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">
+                Créez votre premier atelier pour commencer à partager vos
+                connaissances
+              </p>
+              <Button
+                onClick={() => router.push("/workshop-editor")}
+                size="lg"
+                className="gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Créer un atelier
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {upcomingWorkshops.length > 1 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
-                Ateliers à venir
+                Autres ateliers à venir ({upcomingWorkshops.length - 1})
               </CardTitle>
-              <CardDescription className="text-blue-100">
+              <CardDescription>
                 Vos prochains ateliers programmés
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {upcomingWorkshops.map((workshop) => (
-                  <div
+                {upcomingWorkshops.slice(1).map((workshop) => (
+                  <Card
                     key={workshop.id}
-                    className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer"
+                    className="hover:shadow-md transition-shadow cursor-pointer"
                     onClick={() => router.push(`/workshop/${workshop.id}`)}
                   >
-                    <h3 className="font-semibold text-lg mb-2">
-                      {workshop.title}
-                    </h3>
-                    <div className="flex items-center gap-2 text-sm text-blue-100 mb-1">
-                      <Calendar className="w-4 h-4" />
-                      {formatDate(workshop.date)}
-                    </div>
-                    {workshop.time && (
-                      <div className="flex items-center gap-2 text-sm text-blue-100">
-                        <Clock className="w-4 h-4" />
-                        {workshop.time}
-                        {workshop.duration && ` • ${workshop.duration}min`}
+                    <CardHeader>
+                      <CardTitle className="text-lg line-clamp-2">
+                        {workshop.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          {formatDate(workshop.date, { includeWeekday: true })}
+                        </div>
+                        {workshop.time && (
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            {formatTime(workshop.time)}
+                            {workshop.duration && ` • ${workshop.duration} min`}
+                          </div>
+                        )}
+                        {workshop.isVirtual ? (
+                          <div className="flex items-center gap-2">
+                            <LinkIcon className="w-4 h-4" />
+                            <span>En ligne</span>
+                          </div>
+                        ) : (
+                          workshop.location && (
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-4 h-4" />
+                              <span className="truncate">
+                                {workshop.location}
+                              </span>
+                            </div>
+                          )
+                        )}
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4" />
+                          <span>
+                            Inscrits: {workshop.apprenticeId ? 1 : 0} /{" "}
+                            {workshop.maxParticipants || "∞"}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                    <div className="mt-2">
-                      {getStatusBadge(workshop.status)}
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </CardContent>
@@ -613,8 +844,11 @@ export default function MyWorkshopsPage() {
                           )}
                           <div className="flex items-center gap-1">
                             <Users className="w-4 h-4" />
-                            {workshop.status === "PUBLISHED" && workshop.apprenticeId ? 1 : 0} /{" "}
-                            {workshop.maxParticipants || "∞"} participants
+                            {workshop.status === "PUBLISHED" &&
+                            workshop.apprenticeId
+                              ? 1
+                              : 0}{" "}
+                            / {workshop.maxParticipants || "∞"} participants
                           </div>
                         </div>
                         <WorkshopRequests
