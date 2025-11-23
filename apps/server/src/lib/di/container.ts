@@ -52,12 +52,20 @@ class DIContainer {
   private _userConnectionService?: UserConnectionService;
 
   private constructor() {
-    if (!process.env.DATABASE_URL) {
-      throw new Error("DATABASE_URL environment variable is not set");
+    const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
+
+    if (useAccelerate) {
+      this._prisma = new PrismaClient({
+        accelerateUrl: process.env.PRISMA_ACCELERATE_URL!,
+      });
+    } else {
+      if (!process.env.DATABASE_URL) {
+        throw new Error("Either PRISMA_ACCELERATE_URL or DATABASE_URL environment variable must be set");
+      }
+      const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+      const adapter = new PrismaPg(pool);
+      this._prisma = new PrismaClient({ adapter });
     }
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    const adapter = new PrismaPg(pool);
-    this._prisma = new PrismaClient({ adapter });
   }
 
   public static getInstance(): DIContainer {

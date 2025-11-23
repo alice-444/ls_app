@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ isPublished: false });
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await (prisma as any).user.findUnique({
       where: { id: userId },
       select: {
         name: true,
