@@ -99,10 +99,19 @@ jobs:
         run: pnpm run db:generate
         working-directory: apps/server
 
-      - name: Build project
+      - name: Build server application
         run: pnpm run build
+        working-directory: apps/server
         env:
           NODE_ENV: production
+
+      - name: Build web application
+        run: pnpm run build
+        working-directory: apps/web
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_SERVER_URL: http://localhost:3000
 
       - name: Run tests for coverage
         run: pnpm run test:coverage
