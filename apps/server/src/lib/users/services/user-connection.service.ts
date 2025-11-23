@@ -85,8 +85,9 @@ export class UserConnectionService implements IUserConnectionService {
         return failure("User not found", 404);
       }
 
-      const connection =
-        await this.userConnectionRepository.findById(connectionId);
+      const connection = await this.userConnectionRepository.findById(
+        connectionId
+      );
 
       if (!connection) {
         return failure("Connection request not found", 404);
@@ -129,8 +130,9 @@ export class UserConnectionService implements IUserConnectionService {
         return failure("User not found", 404);
       }
 
-      const connection =
-        await this.userConnectionRepository.findById(connectionId);
+      const connection = await this.userConnectionRepository.findById(
+        connectionId
+      );
 
       if (!connection) {
         return failure("Connection request not found", 404);
@@ -221,9 +223,7 @@ export class UserConnectionService implements IUserConnectionService {
     }
   }
 
-  async getPendingRequestsReceived(
-    userId: string
-  ): Promise<
+  async getPendingRequestsReceived(userId: string): Promise<
     Result<
       Array<{
         connectionId: string;
@@ -231,6 +231,8 @@ export class UserConnectionService implements IUserConnectionService {
         requesterName: string | null;
         requesterDisplayName: string | null;
         requesterPhotoUrl: string | null;
+        requesterRole: "MENTOR" | "APPRENANT" | "ADMIN" | null;
+        requesterAppId: string;
         createdAt: Date;
       }>
     >
@@ -248,8 +250,9 @@ export class UserConnectionService implements IUserConnectionService {
 
       const requestsWithUserInfo = await Promise.all(
         connections.map(async (connection) => {
-          const requesterAppUser =
-            await this.appUserRepository.findByAppUserId(connection.requesterId);
+          const requesterAppUser = await this.appUserRepository.findByAppUserId(
+            connection.requesterId
+          );
           if (!requesterAppUser) {
             return null;
           }
@@ -286,9 +289,7 @@ export class UserConnectionService implements IUserConnectionService {
     }
   }
 
-  async getAcceptedConnections(
-    userId: string
-  ): Promise<
+  async getAcceptedConnections(userId: string): Promise<
     Result<
       Array<{
         connectionId: string;
@@ -296,6 +297,8 @@ export class UserConnectionService implements IUserConnectionService {
         otherUserName: string | null;
         otherUserDisplayName: string | null;
         otherUserPhotoUrl: string | null;
+        otherUserRole: "MENTOR" | "APPRENANT" | "ADMIN" | null;
+        otherUserAppId: string;
         createdAt: Date;
         updatedAt: Date;
       }>
@@ -319,8 +322,9 @@ export class UserConnectionService implements IUserConnectionService {
               ? connection.receiverId
               : connection.requesterId;
 
-          const otherAppUser =
-            await this.appUserRepository.findByAppUserId(otherAppUserId);
+          const otherAppUser = await this.appUserRepository.findByAppUserId(
+            otherAppUserId
+          );
           if (!otherAppUser) {
             return null;
           }
