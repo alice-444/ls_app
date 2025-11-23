@@ -1,12 +1,20 @@
 export interface IAppUserRepository {
   findByUserId(userId: string): Promise<AppUserEntity | null>;
   update(userId: string, data: Partial<AppUserUpdateData>): Promise<AppUserEntity>;
+  findIdentityCardByUserId(userId: string): Promise<{
+    displayName: string | null;
+    studyDomain: string | null;
+    studyProgram: string | null;
+    photoUrl: string | null;
+    iceBreakerTags: string[] | null;
+  } | null>;
+  findUserNameByUserId(userId: string): Promise<string | null>;
 }
 
 export interface AppUserEntity {
   id: string;
   userId: string;
-  role: "PROF" | "APPRENANT" | "ADMIN" | null;
+  role: "MENTOR" | "APPRENANT" | "ADMIN" | null;
   status: "ACTIVE" | "SUSPENDED" | "PENDING";
   createdAt: Date;
   updatedAt: Date;
@@ -27,7 +35,7 @@ export interface AppUserEntity {
 }
 
 export interface AppUserUpdateData {
-  role?: "PROF" | "APPRENANT" | "ADMIN" | null;
+  role?: "MENTOR" | "APPRENANT" | "ADMIN" | null;
   status?: "ACTIVE" | "SUSPENDED" | "PENDING";
   bio?: string | null;
   domain?: string | null;

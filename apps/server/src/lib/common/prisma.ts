@@ -1,3 +1,3 @@
-import prisma from "../../../prisma";
+import prisma, { authPrisma } from "../../../prisma";
 
-export { prisma };
+export { prisma, authPrisma };

@@ -1,5 +1,6 @@
 import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
@@ -15,7 +16,8 @@ export default function SignInForm({
 	onSwitchToSignUp: () => void;
 }) {
 	const router = useRouter();
-	const { isPending } = authClient.useSession();
+	const { data: session, isPending } = authClient.useSession();
+	const queryClient = useQueryClient();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm({
@@ -34,8 +36,16 @@ export default function SignInForm({
 					password,
 				},
 				{
-					onSuccess: () => {
+					onSuccess: async () => {
 						setIsSubmitting(false);
+						await new Promise(resolve => setTimeout(resolve, 200));
+						await queryClient.invalidateQueries({ 
+							queryKey: ["userRole"] 
+						});
+						await queryClient.refetchQueries({ 
+							queryKey: ["userRole"] 
+						});
+						router.refresh();
 						router.push("/dashboard");
 						toast.success("Sign in successful");
 					},

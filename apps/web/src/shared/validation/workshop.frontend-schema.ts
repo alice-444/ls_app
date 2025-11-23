@@ -56,6 +56,13 @@ export const createWorkshopFrontendSchema = z.object({
     .string()
     .max(WORKSHOP_VALIDATION.materialsNeeded.max, WORKSHOP_ERROR_MESSAGES.materialsNeeded.max)
     .optional(),
+
+  topic: z
+    .string()
+    .min(WORKSHOP_VALIDATION.topic.min, WORKSHOP_ERROR_MESSAGES.topic.min)
+    .max(WORKSHOP_VALIDATION.topic.max, WORKSHOP_ERROR_MESSAGES.topic.max)
+    .optional()
+    .nullable(),
 });
 
 export const editWorkshopFrontendSchema = createWorkshopFrontendSchema.extend({

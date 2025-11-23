@@ -46,8 +46,8 @@ export function RoleSelectionStep({
         <CardContent className="space-y-6">
           <div className="grid md:grid-cols-2 gap-4">
             <RoleSelectionCard
-              role="PROF"
-              isSelected={selectedRole === "PROF"}
+              role="MENTOR"
+              isSelected={selectedRole === "MENTOR"}
               onSelect={onRoleSelect}
             />
             <RoleSelectionCard

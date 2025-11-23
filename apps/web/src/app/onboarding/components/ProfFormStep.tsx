@@ -65,7 +65,7 @@ export function ProfFormStep({
             <BookOpen className="h-8 w-8 text-white" />
           </div>
           <CardTitle className="text-3xl font-bold">
-            Créez votre profil Prof
+            Créez votre profil Mentor
           </CardTitle>
           <CardDescription className="text-lg">
             Quelques informations pour commencer

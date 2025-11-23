@@ -2,6 +2,8 @@ import { Result, failure, success, validateInput } from "../../common";
 import type { IWorkshopRepository } from "../repositories/workshop.repository.interface";
 import { sanitizeString } from "../../utils/sanitize";
 import type { AppUserRepository } from "../../users/repositories";
+import type { IWorkshopRequestRepository } from "../../mentors/repositories/workshop-request.repository.interface";
+import { z } from "zod";
 import {
   verifyUserExists,
   verifyProfUser,
@@ -11,6 +13,7 @@ import {
   createWorkshopBackendSchema,
   updateWorkshopBackendSchema,
   publishWorkshopSchema,
+  unpublishWorkshopSchema,
   deleteWorkshopSchema,
   type CreateWorkshopBackendInput,
   type UpdateWorkshopBackendInput,
@@ -19,19 +22,36 @@ import {
   isMinimumTomorrow,
   WORKSHOP_VALIDATION,
 } from "../../../shared/validation";
+import { WorkshopNotificationService } from "./workshop-notification.service";
+import {
+  isValidTimeFormat,
+  doTimeRangesOverlap,
+  calculateWorkshopStartTime,
+  calculateWorkshopEndTime,
+  isWorkshopValidForConflictCheck,
+  calculateWorkshopTimeRange,
+} from "../utils/workshop-helpers";
 
 export const createWorkshopSchema = createWorkshopBackendSchema;
 export const updateWorkshopSchema = updateWorkshopBackendSchema;
-export { publishWorkshopSchema, deleteWorkshopSchema };
+export { publishWorkshopSchema, unpublishWorkshopSchema, deleteWorkshopSchema };
 export type CreateWorkshopInput = CreateWorkshopBackendInput;
 export type UpdateWorkshopInput = UpdateWorkshopBackendInput;
 export type { PublishWorkshopInput, DeleteWorkshopInput };
+export type UnpublishWorkshopInput = z.infer<typeof unpublishWorkshopSchema>;
 
 export class WorkshopService implements IWorkshopService {
+  private readonly notificationService: WorkshopNotificationService;
+
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly appUserRepository: AppUserRepository
-  ) {}
+    private readonly appUserRepository: AppUserRepository,
+    private readonly workshopRequestRepository?: IWorkshopRequestRepository
+  ) {
+    this.notificationService = new WorkshopNotificationService(
+      this.workshopRepository
+    );
+  }
 
   private async verifyProfAccess(userId: string) {
     const userCheck = await verifyUserExists(userId);
@@ -44,12 +64,33 @@ export class WorkshopService implements IWorkshopService {
       return profCheck;
     }
 
-    const { appUser } = profCheck.data;
+    return profCheck;
+  }
+
+  private async verifyWorkshopOwnership(
+    userId: string,
+    workshopId: string,
+    action: string
+  ): Promise<Result<{ appUser: any; workshopId: string }>> {
+    const accessCheck = await this.verifyProfAccess(userId);
+    if (!accessCheck.ok) {
+      return accessCheck;
+    }
+
+    const { appUser } = accessCheck.data;
     if (!appUser) {
       return failure("AppUser not found", 404);
     }
 
-    return success({ appUser });
+    const isOwner = await this.workshopRepository.checkCreatorOwnership(
+      workshopId,
+      appUser.id
+    );
+    if (!isOwner) {
+      return failure(`Vous n'êtes pas autorisé à ${action} cet atelier`, 403);
+    }
+
+    return success({ appUser, workshopId });
   }
 
   private sanitizeWorkshopFields(data: {
@@ -84,6 +125,9 @@ export class WorkshopService implements IWorkshopService {
       }
 
       const { appUser } = accessCheck.data;
+      if (!appUser) {
+        return failure("AppUser not found", 404);
+      }
 
       const sanitized = this.sanitizeWorkshopFields({
         title: validation.data.title,
@@ -95,6 +139,7 @@ export class WorkshopService implements IWorkshopService {
       const workshop = await this.workshopRepository.create({
         title: sanitized.title!,
         description: sanitized.description,
+        topic: validation.data.topic ?? null,
         date: validation.data.date,
         time: validation.data.time,
         duration: validation.data.duration,
@@ -121,20 +166,16 @@ export class WorkshopService implements IWorkshopService {
     }
 
     try {
-      const accessCheck = await this.verifyProfAccess(userId);
-      if (!accessCheck.ok) {
-        return accessCheck;
-      }
-
-      const { appUser } = accessCheck.data;
-
-      const isOwner = await this.workshopRepository.checkCreatorOwnership(
+      const ownershipCheck = await this.verifyWorkshopOwnership(
+        userId,
         validation.data.workshopId,
-        appUser.id
+        "modifier"
       );
-      if (!isOwner) {
-        return failure("Vous n'êtes pas autorisé à modifier cet atelier", 403);
+      if (!ownershipCheck.ok) {
+        return ownershipCheck;
       }
+
+      const { appUser } = ownershipCheck.data;
 
       const sanitized = this.sanitizeWorkshopFields({
         title: validation.data.title,
@@ -164,6 +205,9 @@ export class WorkshopService implements IWorkshopService {
       if (sanitized.materialsNeeded !== undefined) {
         updateData.materialsNeeded = sanitized.materialsNeeded;
       }
+      if (validation.data.topic !== undefined) {
+        updateData.topic = validation.data.topic;
+      }
 
       await this.workshopRepository.update(
         validation.data.workshopId,
@@ -186,20 +230,16 @@ export class WorkshopService implements IWorkshopService {
     }
 
     try {
-      const accessCheck = await this.verifyProfAccess(userId);
-      if (!accessCheck.ok) {
-        return accessCheck;
-      }
-
-      const { appUser } = accessCheck.data;
-
-      const isOwner = await this.workshopRepository.checkCreatorOwnership(
+      const ownershipCheck = await this.verifyWorkshopOwnership(
+        userId,
         validation.data.workshopId,
-        appUser.id
+        "publier"
       );
-      if (!isOwner) {
-        return failure("Vous n'êtes pas autorisé à publier cet atelier", 403);
+      if (!ownershipCheck.ok) {
+        return ownershipCheck;
       }
+
+      const { appUser } = ownershipCheck.data;
 
       // Get workshop to validate required fields for publication
       const workshop = await this.workshopRepository.findById(
@@ -265,6 +305,49 @@ export class WorkshopService implements IWorkshopService {
     }
   }
 
+  async unpublishWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>> {
+    const validation = validateInput(unpublishWorkshopSchema, input);
+    if (!validation.ok) {
+      return validation;
+    }
+
+    try {
+      const ownershipCheck = await this.verifyWorkshopOwnership(
+        userId,
+        validation.data.workshopId,
+        "dépublier"
+      );
+      if (!ownershipCheck.ok) {
+        return ownershipCheck;
+      }
+
+      const { appUser } = ownershipCheck.data;
+
+      const workshop = await this.workshopRepository.findById(
+        validation.data.workshopId
+      );
+      if (!workshop) {
+        return failure("Atelier introuvable", 404);
+      }
+
+      if (workshop.status !== "PUBLISHED") {
+        return failure("Cet atelier n'est pas publié", 400);
+      }
+
+      await this.workshopRepository.update(validation.data.workshopId, {
+        status: "DRAFT",
+        publishedAt: null,
+      });
+
+      return success({ success: true });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
   async deleteWorkshop(
     userId: string,
     input: unknown
@@ -275,20 +358,16 @@ export class WorkshopService implements IWorkshopService {
     }
 
     try {
-      const accessCheck = await this.verifyProfAccess(userId);
-      if (!accessCheck.ok) {
-        return accessCheck;
-      }
-
-      const { appUser } = accessCheck.data;
-
-      const isOwner = await this.workshopRepository.checkCreatorOwnership(
+      const ownershipCheck = await this.verifyWorkshopOwnership(
+        userId,
         validation.data.workshopId,
-        appUser.id
+        "supprimer"
       );
-      if (!isOwner) {
-        return failure("Vous n'êtes pas autorisé à supprimer cet atelier", 403);
+      if (!ownershipCheck.ok) {
+        return ownershipCheck;
       }
+
+      const { appUser } = ownershipCheck.data;
 
       await this.workshopRepository.delete(validation.data.workshopId);
 
@@ -306,6 +385,10 @@ export class WorkshopService implements IWorkshopService {
       }
 
       const { appUser } = accessCheck.data;
+      // verifyProfUser guarantees appUser is not null
+      if (!appUser) {
+        return failure("AppUser not found", 404);
+      }
 
       const workshops = await this.workshopRepository.findByCreatorId(
         appUser.id
@@ -333,6 +416,577 @@ export class WorkshopService implements IWorkshopService {
         return failure("Atelier non trouvé", 404);
       }
       return success(workshop);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async getConfirmedWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+
+      const workshops = await this.workshopRepository.findByApprenticeId(
+        appUser.id
+      );
+
+      const confirmedWorkshops = workshops.filter(
+        (w) => w.date && w.time && w.status !== "CANCELLED"
+      );
+
+      return success(confirmedWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async updateWorkshopScheduling(
+    userId: string,
+    workshopId: string,
+    input: {
+      date?: Date | null;
+      time?: string | null;
+      duration?: number | null;
+      location?: string | null;
+    }
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const workshop = await this.workshopRepository.findById(workshopId);
+      if (!workshop) {
+        return failure("Atelier non trouvé", 404);
+      }
+
+      const accessCheck = await this.verifyProfAccess(userId);
+      const isMentor =
+        accessCheck.ok &&
+        accessCheck.data.appUser !== null &&
+        accessCheck.data.appUser.id === workshop.creatorId;
+
+      let isApprentice = false;
+      if (workshop.apprenticeId) {
+        const apprenticeCheck = await this.verifyApprenticeAccess(userId);
+        isApprentice =
+          apprenticeCheck.ok &&
+          apprenticeCheck.data.appUser.id === workshop.apprenticeId;
+      }
+
+      if (!isMentor && !isApprentice) {
+        return failure("Vous n'êtes pas autorisé à modifier cet atelier", 403);
+      }
+
+      const updateData: any = {};
+      if (input.date !== undefined) updateData.date = input.date;
+      if (input.time !== undefined) updateData.time = input.time;
+      if (input.duration !== undefined) updateData.duration = input.duration;
+      if (input.location !== undefined) {
+        updateData.location = input.location
+          ? this.sanitizeWorkshopFields({ location: input.location }).location
+          : null;
+      }
+
+      await this.workshopRepository.update(workshopId, updateData);
+
+      // TODO: System of notification will be implemented later
+      // TODO: Calendar integration (Calendly) will be implemented later
+
+      return success({ success: true });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async cancelConfirmedWorkshop(
+    userId: string,
+    workshopId: string,
+    cancellationReason?: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const workshop = await this.workshopRepository.findById(workshopId);
+      if (!workshop) {
+        return failure("Atelier non trouvé", 404);
+      }
+
+      let isApprentice = false;
+      if (workshop.apprenticeId) {
+        const apprenticeCheck = await this.verifyApprenticeAccess(userId);
+        isApprentice =
+          apprenticeCheck.ok &&
+          apprenticeCheck.data.appUser.id === workshop.apprenticeId;
+      }
+
+      let isMentor = false;
+      if (!isApprentice) {
+        const accessCheck = await this.verifyProfAccess(userId);
+        isMentor =
+          accessCheck.ok &&
+          accessCheck.data.appUser !== null &&
+          accessCheck.data.appUser.id === workshop.creatorId;
+      }
+
+      if (!isMentor && !isApprentice) {
+        return failure("Vous n'êtes pas autorisé à annuler cet atelier", 403);
+      }
+
+      if (isApprentice) {
+        await this.workshopRepository.removeApprentice(workshopId);
+
+        // Mock: Send email to apprentice
+        console.log(
+          `[Email] Sending cancellation confirmation to apprentice ${userId} for workshop ${workshopId}`
+        );
+
+        // Mock: Notify organizer (Anonymous if reason provided)
+        if (cancellationReason) {
+          console.log(
+            `[Notification] Organizer notified of anonymous cancellation for workshop ${workshopId}. Reason: ${cancellationReason}`
+          );
+        } else {
+          console.log(
+            `[Notification] Organizer notified of cancellation for workshop ${workshopId}.`
+          );
+        }
+
+        return success({ success: true });
+      }
+
+      await this.workshopRepository.update(workshopId, {
+        status: "CANCELLED",
+      });
+
+      // TODO: System of notification will be implemented later
+      // TODO: Calendar integration (Calendly) will be implemented later
+
+      return success({ success: true });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  private async verifyApprenticeAccess(
+    userId: string
+  ): Promise<Result<{ appUser: any }>> {
+    const appUser = await this.appUserRepository.findByUserId(userId);
+
+    if (!appUser) {
+      return failure(
+        "AppUser not found. Please complete role selection first.",
+        404
+      );
+    }
+
+    if (appUser.role !== "APPRENANT") {
+      return failure("Only apprentices can perform this action", 403);
+    }
+
+    if (appUser.status !== "ACTIVE") {
+      return failure("User account is not active", 403);
+    }
+
+    return success({ appUser });
+  }
+
+  async getUpcomingWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+      const workshops = await this.workshopRepository.findByApprenticeId(
+        appUser.id
+      );
+
+      const now = new Date();
+      const upcomingWorkshops = workshops
+        .filter((w) => {
+          if (w.status === "CANCELLED") {
+            return false;
+          }
+
+          if (w.date && w.time) {
+            const endTime = calculateWorkshopEndTime(
+              w.date,
+              w.time,
+              w.duration
+            );
+            return endTime && endTime >= now;
+          }
+
+          return !w.date || !w.time;
+        })
+        .sort((a, b) => {
+          if (a.date && b.date) {
+            return a.date.getTime() - b.date.getTime();
+          }
+          if (a.date && !b.date) return -1;
+          if (!a.date && b.date) return 1;
+
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        });
+
+      return success(upcomingWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async getWorkshopHistoryForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+      const workshops = await this.workshopRepository.findByApprenticeId(
+        appUser.id
+      );
+
+      const now = new Date();
+      const historyWorkshops = workshops
+        .filter((w) => {
+          if (!w.date || !w.time) {
+            return false;
+          }
+
+          const endTime = calculateWorkshopEndTime(w.date, w.time, w.duration);
+          return endTime && endTime < now;
+        })
+        .sort((a, b) => {
+          if (!a.date || !b.date) return 0;
+          return b.date.getTime() - a.date.getTime();
+        });
+
+      return success(historyWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async getAvailableWorkshopsForApprentice(
+    userId: string
+  ): Promise<Result<any[]>> {
+    try {
+      const accessCheck = await this.verifyApprenticeAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+
+      const publishedWorkshops = await this.workshopRepository.findPublished();
+
+      const registeredWorkshops =
+        await this.workshopRepository.findByApprenticeId(appUser.id);
+      const registeredWorkshopIds = new Set(
+        registeredWorkshops.map((w) => w.id)
+      );
+
+      let pendingRequestWorkshopIds = new Set<string>();
+      if (this.workshopRequestRepository) {
+        const pendingRequests =
+          await this.workshopRequestRepository.findByApprenticeId(appUser.id);
+        pendingRequestWorkshopIds = new Set(
+          pendingRequests
+            .filter((r) => r.status === "PENDING" && r.workshopId)
+            .map((r) => r.workshopId!)
+        );
+      }
+
+      const availableWorkshops = publishedWorkshops.filter(
+        (w) =>
+          !registeredWorkshopIds.has(w.id) &&
+          !pendingRequestWorkshopIds.has(w.id) &&
+          w.status === "PUBLISHED" &&
+          w.apprenticeId === null
+      );
+
+      return success(availableWorkshops);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  private async checkResourceConflicts(
+    mentorId: string,
+    workshopId: string,
+    newDate: Date,
+    newTime: string,
+    newDuration: number,
+    newLocation: string | null,
+    isVirtual: boolean
+  ): Promise<Result<{ hasConflict: boolean; conflictMessage?: string }>> {
+    try {
+      const newStartTime = calculateWorkshopStartTime(newDate, newTime);
+      const newEndTime = calculateWorkshopEndTime(
+        newDate,
+        newTime,
+        newDuration
+      );
+
+      if (!newStartTime || !newEndTime) {
+        return failure("Impossible de calculer les horaires", 400);
+      }
+
+      const mentorConflict = await this.checkMentorTimeConflict(
+        mentorId,
+        workshopId,
+        newStartTime,
+        newEndTime
+      );
+
+      if (mentorConflict) {
+        return mentorConflict;
+      }
+
+      if (!isVirtual && newLocation) {
+        const locationConflict = await this.checkLocationConflict(
+          workshopId,
+          newLocation,
+          newStartTime,
+          newEndTime
+        );
+
+        if (locationConflict) {
+          return locationConflict;
+        }
+      }
+
+      return success({ hasConflict: false });
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  private async checkMentorTimeConflict(
+    mentorId: string,
+    workshopId: string,
+    newStartTime: Date,
+    newEndTime: Date
+  ): Promise<Result<{
+    hasConflict: boolean;
+    conflictMessage?: string;
+  }> | null> {
+    const mentorWorkshops = await this.workshopRepository.findByCreatorId(
+      mentorId
+    );
+
+    for (const workshop of mentorWorkshops) {
+      if (!isWorkshopValidForConflictCheck(workshop, workshopId)) {
+        continue;
+      }
+
+      const { startTime: existingStartTime, endTime: existingEndTime } =
+        calculateWorkshopTimeRange(workshop);
+
+      if (!existingStartTime || !existingEndTime) {
+        continue;
+      }
+
+      if (
+        doTimeRangesOverlap(
+          newStartTime,
+          newEndTime,
+          existingStartTime,
+          existingEndTime
+        )
+      ) {
+        return success({
+          hasConflict: true,
+          conflictMessage: `Vous avez déjà un atelier prévu à cette date/heure : "${workshop.title}"`,
+        });
+      }
+    }
+
+    return null;
+  }
+
+  private async checkLocationConflict(
+    workshopId: string,
+    newLocation: string,
+    newStartTime: Date,
+    newEndTime: Date
+  ): Promise<Result<{
+    hasConflict: boolean;
+    conflictMessage?: string;
+  }> | null> {
+    const publishedWorkshops = await this.workshopRepository.findPublished();
+
+    for (const workshop of publishedWorkshops) {
+      if (
+        !isWorkshopValidForConflictCheck(workshop, workshopId) ||
+        workshop.isVirtual ||
+        !workshop.location ||
+        workshop.location.toLowerCase().trim() !==
+          newLocation.toLowerCase().trim()
+      ) {
+        continue;
+      }
+
+      const { startTime: existingStartTime, endTime: existingEndTime } =
+        calculateWorkshopTimeRange(workshop);
+
+      if (!existingStartTime || !existingEndTime) {
+        continue;
+      }
+
+      if (
+        doTimeRangesOverlap(
+          newStartTime,
+          newEndTime,
+          existingStartTime,
+          existingEndTime
+        )
+      ) {
+        return success({
+          hasConflict: true,
+          conflictMessage: `Le lieu "${newLocation}" est déjà réservé à cette date/heure pour l'atelier "${workshop.title}"`,
+        });
+      }
+    }
+
+    return null;
+  }
+
+  private validateRescheduleInput(
+    input: { date: Date; time: string },
+    workshop: any
+  ): Result<any> | null {
+    if (!isMinimumTomorrow(input.date)) {
+      return failure("La nouvelle date doit être au minimum demain", 400);
+    }
+
+    if (!isValidTimeFormat(input.time)) {
+      return failure("Format d'heure invalide (HH:MM requis)", 400);
+    }
+
+    return null;
+  }
+
+  async rescheduleWorkshop(
+    userId: string,
+    workshopId: string,
+    input: {
+      date: Date;
+      time: string;
+      duration?: number | null;
+      location?: string | null;
+    }
+  ): Promise<
+    Result<{ success: boolean; oldDate: Date | null; oldTime: string | null }>
+  > {
+    try {
+      const workshop = await this.workshopRepository.findById(workshopId);
+      if (!workshop) {
+        return failure("Atelier non trouvé", 404);
+      }
+
+      const accessCheck = await this.verifyProfAccess(userId);
+      if (!accessCheck.ok) {
+        return accessCheck;
+      }
+
+      const { appUser } = accessCheck.data;
+
+      if (!appUser) {
+        return failure("AppUser not found", 404);
+      }
+
+      if (appUser.id !== workshop.creatorId) {
+        return failure(
+          "Vous n'êtes pas autorisé à reprogrammer cet atelier",
+          403
+        );
+      }
+
+      if (workshop.status !== "PUBLISHED") {
+        return failure(
+          "Seuls les ateliers publiés peuvent être reprogrammés",
+          400
+        );
+      }
+
+      const validationError = this.validateRescheduleInput(input, workshop);
+      if (validationError) {
+        return validationError;
+      }
+
+      const duration = input.duration ?? workshop.duration ?? 60;
+      const conflictCheck = await this.checkResourceConflicts(
+        workshop.creatorId,
+        workshopId,
+        input.date,
+        input.time,
+        duration,
+        input.location ?? workshop.location,
+        workshop.isVirtual
+      );
+
+      if (!conflictCheck.ok) {
+        return conflictCheck;
+      }
+
+      if (conflictCheck.data.hasConflict) {
+        return failure(
+          conflictCheck.data.conflictMessage || "Conflit de ressources détecté",
+          409
+        );
+      }
+
+      const oldDate = workshop.date;
+      const oldTime = workshop.time;
+
+      const updateData: any = {
+        date: input.date,
+        time: input.time,
+      };
+
+      if (input.duration !== undefined) {
+        updateData.duration = input.duration;
+      }
+
+      if (input.location !== undefined) {
+        updateData.location = input.location
+          ? this.sanitizeWorkshopFields({ location: input.location }).location
+          : null;
+      }
+
+      await this.workshopRepository.update(workshopId, updateData);
+
+      const notificationResult =
+        await this.notificationService.notifyWorkshopRescheduled(
+          workshopId,
+          oldDate,
+          oldTime,
+          input.date,
+          input.time
+        );
+
+      if (!notificationResult.ok) {
+        console.warn(
+          "Erreur lors de l'envoi des notifications:",
+          notificationResult.error
+        );
+      }
+
+      return success({
+        success: true,
+        oldDate,
+        oldTime,
+      });
     } catch (error) {
       return failure((error as Error).message, 500);
     }

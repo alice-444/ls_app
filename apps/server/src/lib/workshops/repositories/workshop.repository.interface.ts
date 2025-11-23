@@ -2,15 +2,22 @@ export interface IWorkshopRepository {
   create(input: CreateWorkshopInput): Promise<WorkshopEntity>;
   findById(id: string): Promise<WorkshopEntity | null>;
   findByCreatorId(creatorId: string): Promise<WorkshopEntity[]>;
+  findByApprenticeId(apprenticeId: string): Promise<WorkshopEntity[]>;
   findPublished(): Promise<WorkshopEntity[]>;
   update(id: string, input: UpdateWorkshopInput): Promise<WorkshopEntity>;
   delete(id: string): Promise<void>;
   checkCreatorOwnership(workshopId: string, creatorId: string): Promise<boolean>;
+  removeApprentice(workshopId: string): Promise<void>;
+  findWorkshopBetweenMentorAndApprentice(
+    mentorAppUserId: string,
+    apprenticeAppUserId: string
+  ): Promise<WorkshopEntity | null>;
 }
 
 export interface CreateWorkshopInput {
   title: string;
   description?: string | null;
+  topic?: string | null;
   date?: Date | null;
   time?: string | null;
   duration?: number | null;
@@ -19,11 +26,14 @@ export interface CreateWorkshopInput {
   maxParticipants?: number | null;
   materialsNeeded?: string | null;
   creatorId: string;
+  apprenticeId?: string | null;
+  requestId?: string | null;
 }
 
 export interface UpdateWorkshopInput {
   title?: string;
   description?: string;
+  topic?: string | null;
   date?: Date;
   time?: string;
   duration?: number;
@@ -33,12 +43,14 @@ export interface UpdateWorkshopInput {
   materialsNeeded?: string | null;
   status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   publishedAt?: Date | null;
+  apprenticeId?: string | null;
 }
 
 export interface WorkshopEntity {
   id: string;
   title: string;
   description: string | null;
+  topic: string | null;
   date: Date | null;
   time: string | null;
   duration: number | null;
@@ -48,9 +60,12 @@ export interface WorkshopEntity {
   materialsNeeded: string | null;
   status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   creatorId: string;
+  apprenticeId: string | null;
+  requestId: string | null;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
   creator?: any;
+  apprentice?: any;
 }
 

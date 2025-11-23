@@ -25,7 +25,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 
 export const profProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-	const appUser = await prisma.appUser.findUnique({
+	const appUser = await (prisma as any).app_user.findUnique({
 		where: { userId: ctx.session.user.id },
 	});
 
@@ -36,10 +36,10 @@ export const profProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 		});
 	}
 
-	if (appUser.role !== "PROF") {
+	if (appUser.role !== "MENTOR") {
 		throw new TRPCError({
 			code: "FORBIDDEN",
-			message: "Only users with PROF role can perform this action",
+			message: "Only users with MENTOR role can perform this action",
 		});
 	}
 

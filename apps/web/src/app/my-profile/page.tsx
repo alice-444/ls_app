@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+// @ts-ignore - useRouter is exported from next/navigation, this is a TypeScript resolution issue
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
@@ -25,8 +26,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { customAuthClient } from "@/lib/auth-client";
-import { CalendlyEmbed } from "@/components/calendly-embed";
-import { getProfProfile, API_BASE_URL } from "@/lib/api-client";
+import { getProfProfile, API_BASE_URL, getUserRole } from "@/lib/api-client";
+import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { trpc } from "@/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
 
 interface MentorProfile {
   name: string | null;
@@ -50,6 +53,19 @@ export default function MyProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isUnpublishing, setIsUnpublishing] = useState(false);
+
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
+  const { data: myWorkshops } = trpc.workshop.getMyWorkshops.useQuery(
+    undefined,
+    {
+      enabled: !!session && userRole === "MENTOR",
+    }
+  );
 
   useEffect(() => {
     if (!session && !isSessionPending) {
@@ -131,7 +147,7 @@ export default function MyProfilePage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-indigo-50 via-white to-purple-50 p-4">
         <Card className="w-full max-w-2xl">
           <CardHeader>
             <CardTitle>Profil non trouvé</CardTitle>
@@ -154,7 +170,7 @@ export default function MyProfilePage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4 py-8">
+    <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-purple-50 p-4 py-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header with actions */}
         <div className="flex items-center justify-between">
@@ -220,7 +236,7 @@ export default function MyProfilePage() {
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-6">
               {photoUrl && (
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <img
                     src={photoUrl}
                     alt={profile.name || "Photo de profil"}
@@ -298,13 +314,22 @@ export default function MyProfilePage() {
               </div>
             )}
 
-            {profile.calendlyLink && (
+            {userRole === "MENTOR" && myWorkshops && myWorkshops.length > 0 && (
               <div className="mt-6 pt-6 border-t">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  Réserver une session
+                  Calendrier de mes ateliers
                 </h3>
-                <CalendlyEmbed url={profile.calendlyLink} height="600px" />
+                <div className="border rounded-lg overflow-hidden">
+                  <WorkshopCalendar
+                    workshops={myWorkshops}
+                    height="600px"
+                    userRole="MENTOR"
+                    onSelectEvent={(workshop) => {
+                      router.push(`/workshop/${workshop.id}`);
+                    }}
+                  />
+                </div>
               </div>
             )}
 

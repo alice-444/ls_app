@@ -30,7 +30,7 @@ export const customAuthClient = {
 
     return response.json();
   },
-  async selectRole(role: "PROF" | "APPRENANT") {
+  async selectRole(role: "MENTOR" | "APPRENANT") {
     const response = await fetch(`${baseURL}/api/onboarding/select-role`, {
       method: "POST",
       headers: {

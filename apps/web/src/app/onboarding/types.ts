@@ -1,4 +1,4 @@
-export type Role = "PROF" | "APPRENANT";
+export type Role = "MENTOR" | "APPRENANT";
 
 export type Step = "select" | "confirm-features" | "prof-form" | "apprenant-flow";
 
