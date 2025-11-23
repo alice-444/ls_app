@@ -30,6 +30,7 @@ import {
   EyeOff,
   ArrowRight,
   BookOpen,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getStatusBadge, formatDate, formatTime } from "@/lib/workshop-utils";
@@ -45,7 +46,7 @@ import {
   getWorkshopRequestStatusColor,
 } from "@/lib/workshop-request-utils";
 import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
-import { X } from "lucide-react";
+import { RescheduleWorkshopDialog } from "@/components/workshop/RescheduleWorkshopDialog";
 
 export default function WorkshopDetailPage() {
   const router = useRouter();
@@ -59,6 +60,7 @@ export default function WorkshopDetailPage() {
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [requestToReject, setRequestToReject] = useState<string | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
 
   const utils = trpc.useUtils();
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
@@ -161,6 +163,17 @@ export default function WorkshopDetailPage() {
     },
     onError: (error) => {
       toast.error(error.message || "Erreur lors de l'annulation");
+    },
+  });
+
+  const rescheduleMutation = trpc.workshop.reschedule.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier reprogrammé avec succès");
+      refetch();
+      setShowRescheduleDialog(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la reprogrammation");
     },
   });
 
@@ -275,7 +288,27 @@ export default function WorkshopDetailPage() {
                   <Edit className="w-4 h-4 mr-2" />
                   Éditer
                 </Button>
-                {workshop.status === "PUBLISHED" && (
+                {workshop.status === "PUBLISHED" && workshop.date && !isWorkshopPast() && (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowRescheduleDialog(true)}
+                      disabled={rescheduleMutation.isPending}
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Reprogrammer
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleUnpublish}
+                      disabled={unpublishMutation.isPending}
+                    >
+                      <EyeOff className="w-4 h-4 mr-2" />
+                      Dépublier
+                    </Button>
+                  </>
+                )}
+                {workshop.status === "PUBLISHED" && isWorkshopPast() && (
                   <Button
                     variant="outline"
                     onClick={handleUnpublish}
@@ -663,6 +696,26 @@ export default function WorkshopDetailPage() {
               ? new Date(workshop.date)
               : workshop.date
           }
+        />
+      )}
+
+      {workshop && isOwner && workshop.status === "PUBLISHED" && (
+        <RescheduleWorkshopDialog
+          open={showRescheduleDialog}
+          onOpenChange={setShowRescheduleDialog}
+          onConfirm={(data) => {
+            rescheduleMutation.mutate({
+              workshopId: workshop.id,
+              ...data,
+            });
+          }}
+          isLoading={rescheduleMutation.isPending}
+          workshopTitle={workshop.title}
+          oldDate={workshop.date}
+          oldTime={workshop.time}
+          oldDuration={workshop.duration}
+          oldLocation={workshop.location}
+          isVirtual={workshop.isVirtual}
         />
       )}
     </div>

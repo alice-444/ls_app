@@ -46,6 +46,10 @@ model app_user {
   publishedAt                                              DateTime?
   qualifications                                           String?
   socialMediaLinks                                         Json?
+  displayName                                              String?
+  iceBreakerTags                                           Json?
+  studyDomain                                              String?
+  studyProgram                                             String?
   user                                                     user               @relation(fields: [userId], references: [id], onDelete: Cascade)
   mentor_feedback_mentor_feedback_apprenticeIdToapp_user   mentor_feedback[]  @relation("mentor_feedback_apprenticeIdToapp_user")
   mentor_feedback_mentor_feedback_mentorIdToapp_user       mentor_feedback[]  @relation("mentor_feedback_mentorIdToapp_user")
@@ -53,6 +57,8 @@ model app_user {
   workshop_workshop_creatorIdToapp_user                    workshop[]         @relation("workshop_creatorIdToapp_user")
   workshop_request_workshop_request_apprenticeIdToapp_user workshop_request[] @relation("workshop_request_apprenticeIdToapp_user")
   workshop_request_workshop_request_mentorIdToapp_user     workshop_request[] @relation("workshop_request_mentorIdToapp_user")
+  user_connection_requester                                user_connection[]  @relation("user_connection_requester")
+  user_connection_receiver                                 user_connection[]  @relation("user_connection_receiver")
 }
 
 model audit_log {
@@ -136,7 +142,6 @@ model workshop {
   id                                                     String             @id @map("_id")
   title                                                  String
   description                                            String?
-  topic                                                   String?
   date                                                   DateTime?
   time                                                   String?
   location                                               String?
@@ -151,6 +156,7 @@ model workshop {
   duration                                               Int?
   apprenticeId                                           String?
   requestId                                              String?
+  topic                                                  String?
   mentor_feedback                                        mentor_feedback[]
   app_user_workshop_apprenticeIdToapp_user               app_user?          @relation("workshop_apprenticeIdToapp_user", fields: [apprenticeId], references: [id])
   app_user_workshop_creatorIdToapp_user                  app_user           @relation("workshop_creatorIdToapp_user", fields: [creatorId], references: [id], onDelete: Cascade)
@@ -213,4 +219,26 @@ enum WorkshopStatus {
   PUBLISHED
   CANCELLED
   COMPLETED
+}
+
+model user_connection {
+  id                String              @id @map("_id")
+  requesterId       String
+  receiverId        String
+  status            ConnectionStatus     @default(PENDING)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime
+  app_user_requester app_user            @relation("user_connection_requester", fields: [requesterId], references: [id], onDelete: Cascade)
+  app_user_receiver  app_user            @relation("user_connection_receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, receiverId])
+  @@index([requesterId])
+  @@index([receiverId])
+  @@index([status])
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

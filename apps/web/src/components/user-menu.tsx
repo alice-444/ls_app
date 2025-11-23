@@ -113,12 +113,23 @@ export default function UserMenu() {
           </>
         )}
         {isApprenant && (
-          <DropdownMenuItem asChild>
-            <Link href="/workshop-room" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              e-Atelier
-            </Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/workshop-room" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                e-Atelier
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/profil"
+                className="flex items-center gap-2"
+              >
+                <User className="h-4 w-4" />
+                Profil
+              </Link>
+            </DropdownMenuItem>
+          </>
         )}
         <DropdownMenuSeparator />
         {userRole && (

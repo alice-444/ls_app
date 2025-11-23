@@ -1,6 +1,8 @@
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 import { workshopRouter } from "./workshop.router";
 import { mentorRouter } from "./mentor.router";
+import { apprenticeRouter } from "./apprentice.router";
+import { connectionRouter } from "./connection.router";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -14,6 +16,8 @@ export const appRouter = router({
   }),
   workshop: workshopRouter,
   mentor: mentorRouter,
+  apprentice: apprenticeRouter,
+  connection: connectionRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -8,6 +8,10 @@ export interface IWorkshopRepository {
   delete(id: string): Promise<void>;
   checkCreatorOwnership(workshopId: string, creatorId: string): Promise<boolean>;
   removeApprentice(workshopId: string): Promise<void>;
+  findWorkshopBetweenMentorAndApprentice(
+    mentorAppUserId: string,
+    apprenticeAppUserId: string
+  ): Promise<WorkshopEntity | null>;
 }
 
 export interface CreateWorkshopInput {
@@ -39,6 +43,7 @@ export interface UpdateWorkshopInput {
   materialsNeeded?: string | null;
   status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   publishedAt?: Date | null;
+  apprenticeId?: string | null;
 }
 
 export interface WorkshopEntity {

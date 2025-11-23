@@ -30,6 +30,10 @@ export interface UpdateAppUserInput {
   calendlyLink?: string | null;
   isPublished?: boolean;
   publishedAt?: Date | null;
+  displayName?: string | null;
+  studyDomain?: string | null;
+  studyProgram?: string | null;
+  iceBreakerTags?: string[] | null;
 }
 
 export interface AppUserRepository {
@@ -41,17 +45,21 @@ export interface AppUserRepository {
     createInput: CreateAppUserInput,
     updateInput?: UpdateAppUserInput
   ): Promise<AppUserData>;
+  findIdentityCardByUserId(userId: string): Promise<{
+    displayName: string | null;
+    studyDomain: string | null;
+    studyProgram: string | null;
+    photoUrl: string | null;
+    iceBreakerTags: string[] | null;
+  } | null>;
+  findUserNameByUserId(userId: string): Promise<string | null>;
 }
 
 export class PrismaAppUserRepository implements AppUserRepository {
   constructor(private readonly prisma: any) {}
 
   async findByUserId(userId: string): Promise<AppUserData | null> {
-    console.log("Repository findByUserId - this.prisma:", this.prisma, "type:", typeof this.prisma);
-    console.log("Repository findByUserId - this.prisma keys:", this.prisma ? Object.keys(this.prisma).slice(0, 10) : "prisma is undefined");
-    
     if (!this.prisma) {
-      console.error("Repository findByUserId - ERROR: this.prisma is undefined!");
       throw new Error("Prisma client is not initialized");
     }
 
@@ -125,6 +133,10 @@ export class PrismaAppUserRepository implements AppUserRepository {
         ...(input.calendlyLink !== undefined && { calendlyLink: input.calendlyLink }),
         ...(input.isPublished !== undefined && { isPublished: input.isPublished }),
         ...(input.publishedAt !== undefined && { publishedAt: input.publishedAt }),
+        ...(input.displayName !== undefined && { displayName: input.displayName }),
+        ...(input.studyDomain !== undefined && { studyDomain: input.studyDomain }),
+        ...(input.studyProgram !== undefined && { studyProgram: input.studyProgram }),
+        ...(input.iceBreakerTags !== undefined && { iceBreakerTags: input.iceBreakerTags as any }),
         updatedAt: now,
       },
     });
@@ -171,6 +183,10 @@ export class PrismaAppUserRepository implements AppUserRepository {
         ...(updateInput.calendlyLink !== undefined && { calendlyLink: updateInput.calendlyLink }),
         ...(updateInput.isPublished !== undefined && { isPublished: updateInput.isPublished }),
         ...(updateInput.publishedAt !== undefined && { publishedAt: updateInput.publishedAt }),
+        ...(updateInput.displayName !== undefined && { displayName: updateInput.displayName }),
+        ...(updateInput.studyDomain !== undefined && { studyDomain: updateInput.studyDomain }),
+        ...(updateInput.studyProgram !== undefined && { studyProgram: updateInput.studyProgram }),
+        ...(updateInput.iceBreakerTags !== undefined && { iceBreakerTags: updateInput.iceBreakerTags as any }),
         updatedAt: now,
       },
     });
@@ -183,5 +199,45 @@ export class PrismaAppUserRepository implements AppUserRepository {
       createdAt: appUser.createdAt,
       updatedAt: appUser.updatedAt,
     };
+  }
+
+  async findIdentityCardByUserId(userId: string): Promise<{
+    displayName: string | null;
+    studyDomain: string | null;
+    studyProgram: string | null;
+    photoUrl: string | null;
+    iceBreakerTags: string[] | null;
+  } | null> {
+    const appUser = await (this.prisma as any).app_user.findUnique({
+      where: { userId },
+      select: {
+        displayName: true,
+        studyDomain: true,
+        studyProgram: true,
+        photoUrl: true,
+        iceBreakerTags: true,
+      },
+    });
+
+    if (!appUser) return null;
+
+    return {
+      displayName: appUser.displayName || null,
+      studyDomain: appUser.studyDomain || null,
+      studyProgram: appUser.studyProgram || null,
+      photoUrl: appUser.photoUrl || null,
+      iceBreakerTags: (appUser.iceBreakerTags as string[]) || null,
+    };
+  }
+
+  async findUserNameByUserId(userId: string): Promise<string | null> {
+    const user = await (this.prisma as any).user.findUnique({
+      where: { id: userId },
+      select: {
+        name: true,
+      },
+    });
+
+    return user?.name || null;
   }
 }

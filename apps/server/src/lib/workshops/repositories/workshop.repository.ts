@@ -173,4 +173,44 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
       data: { apprenticeId: null },
     });
   }
+
+  async findWorkshopBetweenMentorAndApprentice(
+    mentorAppUserId: string,
+    apprenticeAppUserId: string
+  ): Promise<WorkshopEntity | null> {
+    const workshop = await (this.prisma as any).workshop.findFirst({
+      where: {
+        creatorId: mentorAppUserId,
+        apprenticeId: apprenticeAppUserId,
+        status: {
+          in: ["PUBLISHED", "COMPLETED"],
+        },
+      },
+    });
+
+    if (!workshop) return null;
+
+    return {
+      id: workshop.id,
+      title: workshop.title,
+      description: workshop.description,
+      topic: workshop.topic,
+      date: workshop.date,
+      time: workshop.time,
+      duration: workshop.duration,
+      location: workshop.location,
+      isVirtual: workshop.isVirtual,
+      maxParticipants: workshop.maxParticipants,
+      materialsNeeded: workshop.materialsNeeded,
+      status: workshop.status,
+      creatorId: workshop.creatorId,
+      apprenticeId: workshop.apprenticeId,
+      requestId: workshop.requestId,
+      createdAt: workshop.createdAt,
+      updatedAt: workshop.updatedAt,
+      publishedAt: workshop.publishedAt,
+      creator: workshop.creator,
+      apprentice: workshop.apprentice,
+    };
+  }
 }

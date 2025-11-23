@@ -23,6 +23,10 @@ import { MentorWorkshopService } from "../mentors/services/mentor-workshop.servi
 import type { IMentorWorkshopService } from "../mentors/services/mentor-workshop.service.interface";
 import { WorkshopRequestService } from "../mentors/services/workshop-request.service";
 import type { IWorkshopRequestService } from "../mentors/services/workshop-request.service.interface";
+import { ApprenticeProfileService } from "../users/services/apprentice-profile.service";
+import { UserConnectionService } from "../users/services/user-connection.service";
+import { PrismaUserConnectionRepository } from "../users/repositories/user-connection.repository";
+import type { IUserConnectionRepository } from "../users/repositories/user-connection.repository.interface";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -33,6 +37,7 @@ class DIContainer {
   private _appUserRepository?: AppUserRepository;
   private _mentorRepository?: IMentorRepository;
   private _workshopRequestRepository?: IWorkshopRequestRepository;
+  private _userConnectionRepository?: IUserConnectionRepository;
 
   // Service instances
   private _workshopService?: IWorkshopService;
@@ -41,6 +46,8 @@ class DIContainer {
   private _mentorFeedbackService?: IMentorFeedbackService;
   private _mentorWorkshopService?: IMentorWorkshopService;
   private _workshopRequestService?: IWorkshopRequestService;
+  private _apprenticeProfileService?: ApprenticeProfileService;
+  private _userConnectionService?: UserConnectionService;
 
   private constructor() {
     this._prisma = new PrismaClient();
@@ -141,6 +148,34 @@ class DIContainer {
       );
     }
     return this._workshopRequestService;
+  }
+
+  get apprenticeProfileService(): ApprenticeProfileService {
+    if (!this._apprenticeProfileService) {
+      this._apprenticeProfileService = new ApprenticeProfileService(
+        this.appUserRepository,
+        this.workshopRepository,
+        this.userConnectionRepository
+      );
+    }
+    return this._apprenticeProfileService;
+  }
+
+  get userConnectionRepository(): IUserConnectionRepository {
+    if (!this._userConnectionRepository) {
+      this._userConnectionRepository = new PrismaUserConnectionRepository();
+    }
+    return this._userConnectionRepository;
+  }
+
+  get userConnectionService(): UserConnectionService {
+    if (!this._userConnectionService) {
+      this._userConnectionService = new UserConnectionService(
+        this.appUserRepository,
+        this.userConnectionRepository
+      );
+    }
+    return this._userConnectionService;
   }
 }
 

@@ -5,6 +5,7 @@ import type { IWorkshopRequestRepository } from "../repositories/workshop-reques
 import type { IMentorRepository } from "../repositories/mentor.repository.interface";
 import type { IWorkshopRepository } from "../../workshops/repositories/workshop.repository.interface";
 import { sanitizeString } from "../../utils/sanitize";
+import { sanitizeLocation } from "../../workshops/utils/workshop-helpers";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   constructor(
@@ -163,37 +164,131 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         );
       }
 
-      const sanitizedLocation = input.location
-        ? sanitizeString(input.location)
-        : null;
+      const workshop = await this.createOrUpdateWorkshopForRequest(
+        request,
+        mentor.id,
+        input
+      );
 
-      const workshop = await this.workshopRepository.create({
-        title: request.title,
-        description: request.description,
-        date: input.date,
-        time: input.time,
-        duration: input.duration ?? null,
-        location: sanitizedLocation,
-        isVirtual: input.isVirtual ?? false,
-        maxParticipants: input.maxParticipants ?? null,
-        materialsNeeded: null,
-        creatorId: mentor.id,
-        apprenticeId: request.apprenticeId,
-        requestId: request.id,
-      });
+      if (!workshop.ok) {
+        return workshop;
+      }
 
       await this.workshopRequestRepository.update(requestId, {
         status: "ACCEPTED",
-        workshopId: workshop.id,
+        workshopId: workshop.data.id,
       });
 
-      // TODO: System of notification will be implemented later
-      // TODO: Calendar integration (Calendly) will be implemented later
-
-      return success({ workshopId: workshop.id, requestId: request.id });
+      return success({
+        workshopId: workshop.data.id,
+        requestId: request.id,
+      });
     } catch (error) {
       return failure((error as Error).message, 500);
     }
+  }
+
+  private async createOrUpdateWorkshopForRequest(
+    request: any,
+    mentorId: string,
+    input: {
+      date: Date;
+      time: string;
+      duration?: number | null;
+      location?: string | null;
+      isVirtual?: boolean;
+      maxParticipants?: number | null;
+    }
+  ): Promise<Result<{ id: string }>> {
+    if (request.workshopId) {
+      return this.updateExistingWorkshopForRequest(request, mentorId, input);
+    }
+
+    return this.createNewWorkshopForRequest(request, mentorId, input);
+  }
+
+  private async updateExistingWorkshopForRequest(
+    request: any,
+    mentorId: string,
+    input: {
+      date: Date;
+      time: string;
+      duration?: number | null;
+      location?: string | null;
+      isVirtual?: boolean;
+      maxParticipants?: number | null;
+    }
+  ): Promise<Result<{ id: string }>> {
+    const existingWorkshop = await this.workshopRepository.findById(
+      request.workshopId
+    );
+
+    if (!existingWorkshop) {
+      return failure("L'atelier référencé n'existe pas", 404);
+    }
+
+    if (existingWorkshop.creatorId !== mentorId) {
+      return failure(
+        "Vous n'êtes pas autorisé à accepter cette demande pour cet atelier",
+        403
+      );
+    }
+
+    if (existingWorkshop.apprenticeId) {
+      return failure(
+        "Cet atelier a déjà un participant. Un atelier ne peut avoir qu'un seul participant.",
+        400
+      );
+    }
+
+    const sanitizedLocation = sanitizeLocation(
+      input.location ?? existingWorkshop.location
+    );
+
+    const workshop = await this.workshopRepository.update(request.workshopId, {
+      apprenticeId: request.apprenticeId,
+      date: input.date,
+      time: input.time,
+      duration: input.duration ?? existingWorkshop.duration ?? undefined,
+      location: sanitizedLocation,
+      isVirtual: input.isVirtual ?? existingWorkshop.isVirtual,
+      maxParticipants:
+        input.maxParticipants ?? existingWorkshop.maxParticipants ?? undefined,
+    });
+
+    return success({ id: workshop.id });
+  }
+
+  private async createNewWorkshopForRequest(
+    request: any,
+    mentorId: string,
+    input: {
+      date: Date;
+      time: string;
+      duration?: number | null;
+      location?: string | null;
+      isVirtual?: boolean;
+      maxParticipants?: number | null;
+    }
+  ): Promise<Result<{ id: string }>> {
+    const sanitizedLocation = sanitizeLocation(input.location);
+
+    const workshop = await this.workshopRepository.create({
+      title: request.title,
+      description: request.description,
+      date: input.date,
+      time: input.time,
+      duration: input.duration ?? null,
+      location: sanitizedLocation,
+      isVirtual: input.isVirtual ?? false,
+      maxParticipants: input.maxParticipants ?? null,
+      materialsNeeded: null,
+      creatorId: mentorId,
+      apprenticeId: request.apprenticeId,
+      requestId: request.id,
+    });
+
+    return success({ id: workshop.id });
   }
 
   async rejectWorkshopRequest(
