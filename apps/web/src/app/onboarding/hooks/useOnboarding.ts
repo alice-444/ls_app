@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useCallback, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { customAuthClient } from "@/lib/auth-client";
 import type { Role, Step } from "../types";
@@ -7,9 +7,24 @@ import type { ProfFormData } from "../schemas";
 
 export function useOnboarding() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<Step>("select");
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const roleParam = searchParams?.get("role") as Role | null;
+    const stepParam = searchParams?.get("step") as Step | null;
+
+    if (roleParam && (roleParam === "MENTOR" || roleParam === "APPRENANT")) {
+      setSelectedRole(roleParam);
+      if (stepParam && (stepParam === "confirm-features" || stepParam === "prof-form")) {
+        setCurrentStep(stepParam);
+      } else if (roleParam === "MENTOR") {
+        setCurrentStep("confirm-features");
+      }
+    }
+  }, [searchParams]);
 
   const handleRoleSelect = useCallback((role: Role) => {
     setSelectedRole(role);

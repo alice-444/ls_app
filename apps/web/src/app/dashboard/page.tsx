@@ -74,6 +74,7 @@ import { WorkshopDropdownMenu } from "@/components/workshop/WorkshopDropdownMenu
 import { StatCard } from "@/components/dashboard/StatCard";
 import { RequestBadges } from "@/components/dashboard/RequestBadges";
 import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { MiniProfileModal } from "@/components/apprentice/MiniProfileModal";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -357,6 +358,9 @@ export default function Dashboard() {
   const [workshopViewTab, setWorkshopViewTab] = useState<"upcoming" | "past">(
     "upcoming"
   );
+  const [miniProfileApprenticeId, setMiniProfileApprenticeId] = useState<
+    string | null
+  >(null);
 
   const utils = trpc.useUtils();
 
@@ -1486,9 +1490,18 @@ export default function Dashboard() {
                             <Users className="w-5 h-5 text-primary" />
                           </div>
                           <div>
-                            <p className="font-medium text-sm">
+                            <button
+                              onClick={() => {
+                                if (workshop.apprentice?.user?.id) {
+                                  setMiniProfileApprenticeId(
+                                    workshop.apprentice.user.id
+                                  );
+                                }
+                              }}
+                              className="font-medium text-sm hover:underline text-left"
+                            >
                               {workshop.apprentice.user?.name || "Apprenti"}
-                            </p>
+                            </button>
                             <p className="text-xs text-muted-foreground">
                               {workshop.apprentice.user?.email || ""}
                             </p>
@@ -1507,6 +1520,18 @@ export default function Dashboard() {
             </Dialog>
           );
         })()}
+
+      {miniProfileApprenticeId && (
+        <MiniProfileModal
+          open={!!miniProfileApprenticeId}
+          onOpenChange={(open) => {
+            if (!open) {
+              setMiniProfileApprenticeId(null);
+            }
+          }}
+          apprenticeUserId={miniProfileApprenticeId}
+        />
+      )}
     </>
   );
 

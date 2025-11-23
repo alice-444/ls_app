@@ -1,6 +1,14 @@
 export interface IAppUserRepository {
   findByUserId(userId: string): Promise<AppUserEntity | null>;
   update(userId: string, data: Partial<AppUserUpdateData>): Promise<AppUserEntity>;
+  findIdentityCardByUserId(userId: string): Promise<{
+    displayName: string | null;
+    studyDomain: string | null;
+    studyProgram: string | null;
+    photoUrl: string | null;
+    iceBreakerTags: string[] | null;
+  } | null>;
+  findUserNameByUserId(userId: string): Promise<string | null>;
 }
 
 export interface AppUserEntity {

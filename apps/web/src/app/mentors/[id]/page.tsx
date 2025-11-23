@@ -29,6 +29,8 @@ import {
   BookOpen,
   Globe,
   MessageSquare,
+  UserPlus,
+  UserMinus,
 } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api-client";
 import Loader from "@/components/loader";
@@ -37,6 +39,7 @@ import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestW
 import { MentorFeedbacks } from "@/components/mentor/MentorFeedbacks";
 import { MentorWorkshopHistory } from "@/components/mentor/MentorWorkshopHistory";
 import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { toast } from "sonner";
 
 export default function MentorProfileViewPage() {
   const router = useRouter();
@@ -45,6 +48,8 @@ export default function MentorProfileViewPage() {
   const { data: session } = authClient.useSession();
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
+  const [isSendingConnectionRequest, setIsSendingConnectionRequest] =
+    useState(false);
 
   const { data: userRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
@@ -72,6 +77,58 @@ export default function MentorProfileViewPage() {
       enabled: !!mentorId && !!session,
     }
   );
+
+  const { data: connectionStatus } =
+    trpc.connection.checkConnectionStatus.useQuery(
+      { otherUserId: mentor?.userId || "" },
+      {
+        enabled: !!mentor?.userId && !!session && mentor.userId !== session?.user?.id,
+      }
+    );
+
+  const sendConnectionRequestMutation =
+    trpc.connection.sendConnectionRequest.useMutation({
+      onSuccess: () => {
+        toast.success("Demande d'invitation envoyée");
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de l'envoi", {
+          description: error.message,
+        });
+      },
+    });
+
+  const removeConnectionMutation = trpc.connection.removeConnection.useMutation(
+    {
+      onSuccess: () => {
+        toast.success("Connexion supprimée");
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de la suppression", {
+          description: error.message,
+        });
+      },
+    }
+  );
+
+  const handleSendConnectionRequest = async () => {
+    if (!mentor?.userId) return;
+    setIsSendingConnectionRequest(true);
+    try {
+      await sendConnectionRequestMutation.mutateAsync({
+        receiverUserId: mentor.userId,
+      });
+    } finally {
+      setIsSendingConnectionRequest(false);
+    }
+  };
+
+  const handleRemoveConnection = async () => {
+    if (!mentor?.userId) return;
+    removeConnectionMutation.mutate({
+      otherUserId: mentor.userId,
+    });
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -142,7 +199,7 @@ export default function MentorProfileViewPage() {
             {session &&
               userRole === "APPRENANT" &&
               mentor.userId !== session.user.id && (
-                <div className="flex justify-center pt-2 gap-2">
+                <div className="flex justify-center pt-2 gap-2 flex-wrap">
                   <Button
                     onClick={() => setShowRequestDialog(true)}
                     className="gap-2"
@@ -158,6 +215,43 @@ export default function MentorProfileViewPage() {
                     <MessageSquare className="h-4 w-4" />
                     Contacter
                   </Button>
+                  {connectionStatus?.status !== "ACCEPTED" &&
+                    connectionStatus?.status !== "PENDING" && (
+                      <Button
+                        onClick={handleSendConnectionRequest}
+                        disabled={
+                          isSendingConnectionRequest ||
+                          sendConnectionRequestMutation.isPending
+                        }
+                        variant="outline"
+                        className="gap-2"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                        {isSendingConnectionRequest ||
+                        sendConnectionRequestMutation.isPending
+                          ? "Envoi..."
+                          : "Envoyer une demande"}
+                      </Button>
+                    )}
+                  {connectionStatus?.status === "PENDING" && (
+                    <Button variant="outline" disabled className="gap-2">
+                      <UserPlus className="h-4 w-4" />
+                      Demande d'invitation en attente
+                    </Button>
+                  )}
+                  {connectionStatus?.status === "ACCEPTED" && (
+                    <Button
+                      onClick={handleRemoveConnection}
+                      disabled={removeConnectionMutation.isPending}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <UserMinus className="h-4 w-4" />
+                      {removeConnectionMutation.isPending
+                        ? "Suppression..."
+                        : "Supprimer la connexion"}
+                    </Button>
+                  )}
                 </div>
               )}
           </CardHeader>
