@@ -17,8 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Check, X } from "lucide-react";
 import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
-import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
-import { EditWorkshopRequestDialog } from "@/components/workshop/EditWorkshopRequestDialog";
+import { WorkshopRequestCard } from "@/components/workshop/requests/WorkshopRequestCard";
+import { EditWorkshopRequestDialog } from "@/components/workshop/dialogs/EditWorkshopRequestDialog";
 import {
   getWorkshopRequestStatusLabel,
   getWorkshopRequestStatusColor,
@@ -55,7 +55,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
+import { CancelWorkshopRegistrationDialog } from "@/components/workshop/dialogs/CancelWorkshopRegistrationDialog";
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
 import {
   formatDate,
@@ -66,14 +66,14 @@ import {
   getStatusBadge,
 } from "@/lib/workshop-utils";
 import { ApprenticeWorkshopDashboard } from "@/components/apprentice/ApprenticeWorkshopDashboard";
-import { DeleteWorkshopDialog } from "@/components/workshop/DeleteWorkshopDialog";
-import { RescheduleWorkshopDialog } from "@/components/workshop/RescheduleWorkshopDialog";
-import { WorkshopCard } from "@/components/workshop/WorkshopCard";
+import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
+import { RescheduleWorkshopDialog } from "@/components/workshop/dialogs/RescheduleWorkshopDialog";
+import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
 import { WorkshopDetails } from "@/components/workshop/WorkshopDetails";
 import { WorkshopDropdownMenu } from "@/components/workshop/WorkshopDropdownMenu";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { RequestBadges } from "@/components/dashboard/RequestBadges";
-import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { MiniProfileModal } from "@/components/apprentice/MiniProfileModal";
 
 type UserRole = "apprenant" | "mentor" | "both";
@@ -1502,9 +1502,6 @@ export default function Dashboard() {
                             >
                               {workshop.apprentice.user?.name || "Apprenti"}
                             </button>
-                            <p className="text-xs text-muted-foreground">
-                              {workshop.apprentice.user?.email || ""}
-                            </p>
                           </div>
                         </div>
                       </div>

@@ -71,5 +71,27 @@ export const connectionRouter = router({
       }
       return result.data;
     }),
+
+  getPendingRequestsReceived: protectedProcedure.query(async ({ ctx }) => {
+    const result =
+      await container.userConnectionService.getPendingRequestsReceived(
+        ctx.session.user.id
+      );
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
+
+  getAcceptedConnections: protectedProcedure.query(async ({ ctx }) => {
+    const result =
+      await container.userConnectionService.getAcceptedConnections(
+        ctx.session.user.id
+      );
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
 });
 

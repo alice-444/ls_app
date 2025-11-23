@@ -40,7 +40,7 @@ export default function Header() {
 
   const additionalCommonLinks = [
     { to: "/discussions", label: "Discussions" },
-    { to: "/relationships", label: "Relations" },
+    { to: "/network", label: "Connexions" },
   ];
 
   const links = [

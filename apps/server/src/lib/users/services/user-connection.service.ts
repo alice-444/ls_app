@@ -220,4 +220,141 @@ export class UserConnectionService implements IUserConnectionService {
       return failure((error as Error).message, 500);
     }
   }
+
+  async getPendingRequestsReceived(
+    userId: string
+  ): Promise<
+    Result<
+      Array<{
+        connectionId: string;
+        requesterUserId: string;
+        requesterName: string | null;
+        requesterDisplayName: string | null;
+        requesterPhotoUrl: string | null;
+        createdAt: Date;
+      }>
+    >
+  > {
+    try {
+      const appUser = await this.appUserRepository.findByUserId(userId);
+      if (!appUser) {
+        return failure("User not found", 404);
+      }
+
+      const connections =
+        await this.userConnectionRepository.findPendingRequestsReceivedBy(
+          appUser.id
+        );
+
+      const requestsWithUserInfo = await Promise.all(
+        connections.map(async (connection) => {
+          const requesterAppUser =
+            await this.appUserRepository.findByAppUserId(connection.requesterId);
+          if (!requesterAppUser) {
+            return null;
+          }
+
+          const requesterName =
+            await this.appUserRepository.findUserNameByUserId(
+              requesterAppUser.userId
+            );
+          const identityCard =
+            await this.appUserRepository.findIdentityCardByUserId(
+              requesterAppUser.userId
+            );
+
+          return {
+            connectionId: connection.id,
+            requesterUserId: requesterAppUser.userId,
+            requesterName,
+            requesterDisplayName: identityCard?.displayName || null,
+            requesterPhotoUrl: identityCard?.photoUrl || null,
+            requesterRole: requesterAppUser.role,
+            requesterAppId: requesterAppUser.id,
+            createdAt: connection.createdAt,
+          };
+        })
+      );
+
+      const validRequests = requestsWithUserInfo.filter(
+        (req): req is NonNullable<typeof req> => req !== null
+      );
+
+      return success(validRequests);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
+
+  async getAcceptedConnections(
+    userId: string
+  ): Promise<
+    Result<
+      Array<{
+        connectionId: string;
+        otherUserId: string;
+        otherUserName: string | null;
+        otherUserDisplayName: string | null;
+        otherUserPhotoUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+      }>
+    >
+  > {
+    try {
+      const appUser = await this.appUserRepository.findByUserId(userId);
+      if (!appUser) {
+        return failure("User not found", 404);
+      }
+
+      const connections =
+        await this.userConnectionRepository.findAcceptedConnectionsFor(
+          appUser.id
+        );
+
+      const connectionsWithUserInfo = await Promise.all(
+        connections.map(async (connection) => {
+          const otherAppUserId =
+            connection.requesterId === appUser.id
+              ? connection.receiverId
+              : connection.requesterId;
+
+          const otherAppUser =
+            await this.appUserRepository.findByAppUserId(otherAppUserId);
+          if (!otherAppUser) {
+            return null;
+          }
+
+          const otherUserName =
+            await this.appUserRepository.findUserNameByUserId(
+              otherAppUser.userId
+            );
+          const identityCard =
+            await this.appUserRepository.findIdentityCardByUserId(
+              otherAppUser.userId
+            );
+
+          return {
+            connectionId: connection.id,
+            otherUserId: otherAppUser.userId,
+            otherUserName,
+            otherUserDisplayName: identityCard?.displayName || null,
+            otherUserPhotoUrl: identityCard?.photoUrl || null,
+            otherUserRole: otherAppUser.role,
+            otherUserAppId: otherAppUser.id,
+            createdAt: connection.createdAt,
+            updatedAt: connection.updatedAt,
+          };
+        })
+      );
+
+      const validConnections = connectionsWithUserInfo.filter(
+        (conn): conn is NonNullable<typeof conn> => conn !== null
+      );
+
+      return success(validConnections);
+    } catch (error) {
+      return failure((error as Error).message, 500);
+    }
+  }
 }

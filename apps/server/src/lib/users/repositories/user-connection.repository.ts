@@ -103,5 +103,73 @@ export class PrismaUserConnectionRepository
       where: { id: connectionId },
     });
   }
-}
 
+  async findPendingRequestsReceivedBy(
+    appUserId: string
+  ): Promise<UserConnectionEntity[]> {
+    const connections = await (prisma as any).user_connection.findMany({
+      where: {
+        receiverId: appUserId,
+        status: "PENDING",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return connections.map((connection: any) => ({
+      id: connection.id,
+      requesterId: connection.requesterId,
+      receiverId: connection.receiverId,
+      status: connection.status,
+      createdAt: connection.createdAt,
+      updatedAt: connection.updatedAt,
+    }));
+  }
+
+  async findAcceptedConnectionsFor(
+    appUserId: string
+  ): Promise<UserConnectionEntity[]> {
+    const connections = await (prisma as any).user_connection.findMany({
+      where: {
+        status: "ACCEPTED",
+        OR: [{ requesterId: appUserId }, { receiverId: appUserId }],
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    return connections.map((connection: any) => ({
+      id: connection.id,
+      requesterId: connection.requesterId,
+      receiverId: connection.receiverId,
+      status: connection.status,
+      createdAt: connection.createdAt,
+      updatedAt: connection.updatedAt,
+    }));
+  }
+
+  async findPendingRequestsSentBy(
+    appUserId: string
+  ): Promise<UserConnectionEntity[]> {
+    const connections = await (prisma as any).user_connection.findMany({
+      where: {
+        requesterId: appUserId,
+        status: "PENDING",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return connections.map((connection: any) => ({
+      id: connection.id,
+      requesterId: connection.requesterId,
+      receiverId: connection.receiverId,
+      status: connection.status,
+      createdAt: connection.createdAt,
+      updatedAt: connection.updatedAt,
+    }));
+  }
+}

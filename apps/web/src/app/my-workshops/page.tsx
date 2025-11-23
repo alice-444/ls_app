@@ -25,7 +25,7 @@ import {
   formatCountdown,
   calculateEndTime,
 } from "@/lib/workshop-utils";
-import { DeleteWorkshopDialog } from "@/components/workshop/DeleteWorkshopDialog";
+import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
 import {
   Calendar,
   Clock,
@@ -33,14 +33,10 @@ import {
   Plus,
   Edit,
   CheckCircle,
-  XCircle,
   Search,
   Trash2,
   Eye,
   EyeOff,
-  BookOpen,
-  Check,
-  X,
   MapPin,
   Link as LinkIcon,
   ArrowRight,
@@ -48,11 +44,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
-import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
-import {
-  getWorkshopRequestStatusLabel,
-  getWorkshopRequestStatusColor,
-} from "@/lib/workshop-request-utils";
 import {
   Select,
   SelectContent,
@@ -60,94 +51,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
+import { WorkshopStatsCards } from "@/components/workshop/stats/WorkshopStatsCards";
+import {
+  NextWorkshopCard,
+  EmptyNextWorkshopCard,
+} from "@/components/workshop/cards/NextWorkshopCard";
+import { WorkshopFilters } from "@/components/workshop/filters/WorkshopFilters";
+import { WorkshopListItem } from "@/components/workshop/lists/WorkshopListItem";
+import { UpcomingWorkshopsList } from "@/components/workshop/lists/UpcomingWorkshopsList";
+import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequests";
 
 type SortField = "date" | "title" | "status" | "createdAt";
 type SortOrder = "asc" | "desc";
 type StatusFilter = "all" | "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-
-function WorkshopRequests({
-  workshopId,
-  workshopStatus,
-  expandedWorkshopId,
-  setExpandedWorkshopId,
-  onAcceptRequest,
-  onRejectRequest,
-  isRejecting,
-}: {
-  workshopId: string;
-  workshopStatus: string;
-  expandedWorkshopId: string | null;
-  setExpandedWorkshopId: (id: string | null) => void;
-  onAcceptRequest: (request: any) => void;
-  onRejectRequest: (requestId: string) => void;
-  isRejecting: boolean;
-}) {
-  if (workshopStatus !== "PUBLISHED") {
-    return null;
-  }
-
-  const { data: requests } = trpc.mentor.getWorkshopRequests.useQuery(
-    { workshopId },
-    { enabled: !!workshopId && workshopStatus === "PUBLISHED" }
-  );
-
-  const pendingRequests =
-    requests?.filter((r: any) => r.status === "PENDING") || [];
-
-  const displayRequests = pendingRequests;
-
-  return (
-    <div className="mt-4 pt-4 border-t">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-slate-600" />
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Demandes de participation ({displayRequests.length})
-          </span>
-          {pendingRequests.length > 0 && (
-            <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
-              {pendingRequests.length} en attente
-            </Badge>
-          )}
-        </div>
-        {displayRequests.length > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() =>
-              setExpandedWorkshopId(
-                expandedWorkshopId === workshopId ? null : workshopId
-              )
-            }
-          >
-            {expandedWorkshopId === workshopId ? "Masquer" : "Voir"}
-          </Button>
-        )}
-      </div>
-      {displayRequests.length === 0 ? (
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-          Aucune demande de participation en attente
-        </p>
-      ) : (
-        expandedWorkshopId === workshopId && (
-          <div className="space-y-2 mt-2">
-            {displayRequests.map((request: any) => (
-              <WorkshopRequestCard
-                key={request.id}
-                request={request}
-                onAccept={onAcceptRequest}
-                onReject={onRejectRequest}
-                isRejecting={isRejecting}
-                variant="compact"
-              />
-            ))}
-          </div>
-        )
-      )}
-    </div>
-  );
-}
 
 export default function MyWorkshopsPage() {
   const router = useRouter();
@@ -302,14 +219,14 @@ export default function MyWorkshopsPage() {
     const filtered = workshops
       .filter((w) => {
         if (w.status !== "PUBLISHED") return false;
-        
+
         if (!w.date || !w.time) return false;
-        
+
         const duration = w.duration || 60;
         const endTime = calculateEndTime(w.date, w.time, duration);
-        
+
         if (!endTime || endTime <= now) return false;
-        
+
         return true;
       })
       .sort(
@@ -323,7 +240,8 @@ export default function MyWorkshopsPage() {
     return upcomingWorkshops[0];
   }, [upcomingWorkshops]);
 
-  const [countdown, setCountdown] = useState<ReturnType<typeof calculateCountdown>>(null);
+  const [countdown, setCountdown] =
+    useState<ReturnType<typeof calculateCountdown>>(null);
 
   useEffect(() => {
     if (!nextWorkshop || !nextWorkshop.date || !nextWorkshop.time) {
@@ -331,7 +249,10 @@ export default function MyWorkshopsPage() {
       return;
     }
 
-    const initialCountdown = calculateCountdown(nextWorkshop.date, nextWorkshop.time);
+    const initialCountdown = calculateCountdown(
+      nextWorkshop.date,
+      nextWorkshop.time
+    );
     setCountdown(initialCountdown);
 
     const interval = setInterval(() => {
@@ -395,8 +316,8 @@ export default function MyWorkshopsPage() {
                 <strong>{userRole || "Non défini"}</strong>
               </p>
               <p className="text-sm text-slate-500 dark:text-slate-500 mb-4">
-                Si vous devriez avoir accès à cette page, veuillez vérifier votre
-                profil et sélectionner le rôle MENTOR.
+                Si vous devriez avoir accès à cette page, veuillez vérifier
+                votre profil et sélectionner le rôle MENTOR.
               </p>
               <Button onClick={() => router.push("/dashboard")}>
                 Retour au dashboard
@@ -454,96 +375,17 @@ export default function MyWorkshopsPage() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <Card className="border-l-4 border-l-[#26547C]">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                      Total
-                    </p>
-                    <p className="text-2xl font-bold text-[#26547C]">
-                      {workshops?.length || 0}
-                    </p>
-                  </div>
-                  <div className="p-2 bg-[#26547C]/10 rounded-full">
-                    <Calendar className="w-6 h-6 text-[#26547C]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-l-4 border-l-[#4A90E2]">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                      Publiés
-                    </p>
-                    <p className="text-2xl font-bold text-[#4A90E2]">
-                      {workshops?.filter((w) => w.status === "PUBLISHED")
-                        .length || 0}
-                    </p>
-                  </div>
-                  <div className="p-2 bg-[#4A90E2]/10 rounded-full">
-                    <CheckCircle className="w-6 h-6 text-[#4A90E2]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-l-4 border-l-[#FF8C42]">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                      Brouillons
-                    </p>
-                    <p className="text-2xl font-bold text-[#FF8C42]">
-                      {workshops?.filter((w) => w.status === "DRAFT").length ||
-                        0}
-                    </p>
-                  </div>
-                  <div className="p-2 bg-[#FF8C42]/10 rounded-full">
-                    <Edit className="w-6 h-6 text-[#FF8C42]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-l-4 border-l-[#C9A0DC]">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                      Terminés
-                    </p>
-                    <p className="text-2xl font-bold text-[#C9A0DC]">
-                      {workshops?.filter((w) => w.status === "COMPLETED")
-                        .length || 0}
-                    </p>
-                  </div>
-                  <div className="p-2 bg-[#C9A0DC]/10 rounded-full">
-                    <Clock className="w-6 h-6 text-[#C9A0DC]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-l-4 border-l-[#FFB647]">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                      En attente
-                    </p>
-                    <p className="text-2xl font-bold text-[#FFB647]">
-                      {pendingRequestsCount}
-                    </p>
-                  </div>
-                  <div className="p-2 bg-[#FFB647]/10 rounded-full">
-                    <BookOpen className="w-6 h-6 text-[#FFB647]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <WorkshopStatsCards
+            total={workshops?.length || 0}
+            published={
+              workshops?.filter((w) => w.status === "PUBLISHED").length || 0
+            }
+            drafts={workshops?.filter((w) => w.status === "DRAFT").length || 0}
+            completed={
+              workshops?.filter((w) => w.status === "COMPLETED").length || 0
+            }
+            pendingRequests={pendingRequestsCount}
+          />
         </div>
 
         {nextWorkshop ? (
@@ -581,7 +423,9 @@ export default function MyWorkshopsPage() {
                     <div className="flex items-center gap-2 text-blue-100">
                       <Calendar className="w-5 h-5" />
                       <span className="font-medium">
-                        {formatDate(nextWorkshop.date, { includeWeekday: true })}
+                        {formatDate(nextWorkshop.date, {
+                          includeWeekday: true,
+                        })}
                       </span>
                     </div>
                   )}
