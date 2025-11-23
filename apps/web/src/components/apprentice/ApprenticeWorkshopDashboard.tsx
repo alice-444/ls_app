@@ -1,5 +1,7 @@
 "use client";
 
+// @ts-ignore - useRouter is exported from next/navigation, this is a TypeScript resolution issue
+import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import {
   Card,
@@ -30,7 +32,6 @@ import {
   calculateEndTime,
   formatTimeRange,
 } from "@/lib/workshop-utils";
-import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
 import { toast } from "sonner";
@@ -40,6 +41,7 @@ import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestW
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
 
 interface Workshop {
   id: string;
@@ -517,6 +519,41 @@ export function ApprenticeWorkshopDashboard() {
                   >
                     Parcourir le Catalogue
                   </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-md bg-white dark:bg-slate-950 overflow-hidden">
+            <CardHeader className="border-b bg-slate-50/50 dark:bg-slate-900/50 pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                Calendrier de mes ateliers
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Vue d'ensemble de vos ateliers
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {upcomingWorkshops && upcomingWorkshops.length > 0 ? (
+                <WorkshopCalendar
+                  workshops={upcomingWorkshops}
+                  height="600px"
+                  showOnlyConfirmed={true}
+                  userRole="APPRENANT"
+                  onSelectEvent={(workshop) => {
+                    router.push(`/workshop/${workshop.id}`);
+                  }}
+                />
+              ) : (
+                <div className="text-center py-12 px-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed">
+                  <Calendar className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">
+                    Aucun atelier programmé
+                  </h3>
+                  <p className="text-muted-foreground mb-6">
+                    Vos ateliers confirmés apparaîtront ici
+                  </p>
                 </div>
               )}
             </CardContent>

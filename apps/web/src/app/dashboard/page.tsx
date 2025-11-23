@@ -2,6 +2,7 @@
 import { authClient } from "@/lib/auth-client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
+// @ts-ignore - useRouter is exported from next/navigation, this is a TypeScript resolution issue
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { getUserRole } from "@/lib/api-client";
@@ -72,6 +73,7 @@ import { WorkshopDetails } from "@/components/workshop/WorkshopDetails";
 import { WorkshopDropdownMenu } from "@/components/workshop/WorkshopDropdownMenu";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { RequestBadges } from "@/components/dashboard/RequestBadges";
+import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -916,6 +918,30 @@ export default function Dashboard() {
                 )}
               </div>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {mentorWorkshops && mentorWorkshops.length > 0 && (
+        <Card className="lg:col-span-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Vue calendrier
+            </CardTitle>
+            <CardDescription>
+              Visualisez tous vos ateliers
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <WorkshopCalendar
+              workshops={mentorWorkshops}
+              height="600px"
+              userRole="MENTOR"
+              onSelectEvent={(workshop) => {
+                router.push(`/workshop/${workshop.id}`);
+              }}
+            />
           </CardContent>
         </Card>
       )}

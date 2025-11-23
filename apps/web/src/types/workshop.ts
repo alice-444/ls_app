@@ -8,6 +8,7 @@ export interface WorkshopBasic {
   location: string | null;
   isVirtual: boolean;
   maxParticipants: number | null;
+  status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 }
 
 export interface WorkshopWithFeedback extends WorkshopBasic {

@@ -30,13 +30,13 @@ import {
   Globe,
   MessageSquare,
 } from "lucide-react";
-import { CalendlyEmbed } from "@/components/calendly-embed";
 import { API_BASE_URL } from "@/lib/api-client";
 import Loader from "@/components/loader";
 import { ContactMentorDialog } from "@/components/mentor/ContactMentorDialog";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 import { MentorFeedbacks } from "@/components/mentor/MentorFeedbacks";
 import { MentorWorkshopHistory } from "@/components/mentor/MentorWorkshopHistory";
+import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
 
 export default function MentorProfileViewPage() {
   const router = useRouter();
@@ -60,6 +60,16 @@ export default function MentorProfileViewPage() {
     { mentorId },
     {
       enabled: !!mentorId,
+    }
+  );
+
+  const {
+    data: mentorWorkshopsData,
+    isLoading: isLoadingWorkshops,
+  } = trpc.mentor.getPublicWorkshops.useQuery(
+    { mentorId },
+    {
+      enabled: !!mentorId && !!session,
     }
   );
 
@@ -319,14 +329,21 @@ export default function MentorProfileViewPage() {
               </div>
             )}
 
-            {mentor.calendlyLink && (
+            {mentorWorkshopsData && (mentorWorkshopsData.upcoming.length > 0 || mentorWorkshopsData.past.length > 0) && (
               <div className="pt-4 border-t">
                 <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  Réserver un atelier
+                  Calendrier des ateliers
                 </h3>
                 <div className="border rounded-lg overflow-hidden">
-                  <CalendlyEmbed url={mentor.calendlyLink} height="600px" />
+                  <WorkshopCalendar
+                    workshops={[...mentorWorkshopsData.upcoming, ...mentorWorkshopsData.past]}
+                    height="600px"
+                    userRole="MENTOR"
+                    onSelectEvent={(workshop) => {
+                      router.push(`/workshop/${workshop.id}`);
+                    }}
+                  />
                 </div>
               </div>
             )}

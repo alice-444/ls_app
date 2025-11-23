@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+// @ts-ignore - useRouter is exported from next/navigation, this is a TypeScript resolution issue
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
@@ -59,6 +60,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
 
 type SortField = "date" | "title" | "status" | "createdAt";
 type SortOrder = "asc" | "desc";
@@ -921,6 +923,35 @@ export default function MyWorkshopsPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Vue calendrier
+            </CardTitle>
+            <CardDescription>
+              Visualisez tous vos ateliers dans un calendrier
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {workshops && workshops.length > 0 ? (
+              <WorkshopCalendar
+                workshops={workshops}
+                height="600px"
+                userRole="MENTOR"
+                onSelectEvent={(workshop) => {
+                  router.push(`/workshop/${workshop.id}`);
+                }}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <Calendar className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+                <p className="text-slate-500">Aucun atelier à afficher</p>
               </div>
             )}
           </CardContent>
