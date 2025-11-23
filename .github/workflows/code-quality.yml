@@ -92,6 +92,13 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm run db:generate
+        working-directory: apps/server
+
       - name: Build project
         run: pnpm run build
         env:
