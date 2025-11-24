@@ -4,14 +4,17 @@ import type { IWorkshopRequestService } from "./workshop-request.service.interfa
 import type { IWorkshopRequestRepository } from "../repositories/workshop-request.repository.interface";
 import type { IMentorRepository } from "../repositories/mentor.repository.interface";
 import type { IWorkshopRepository } from "../../workshops/repositories/workshop.repository.interface";
+import type { INotificationService } from "../../notifications/services/notification.service.interface";
 import { sanitizeString } from "../../utils/sanitize";
 import { sanitizeLocation } from "../../workshops/utils/workshop-helpers";
+import { logger } from "../../common/logger";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   constructor(
     private readonly workshopRequestRepository: IWorkshopRequestRepository,
     private readonly mentorRepository: IMentorRepository,
-    private readonly workshopRepository: IWorkshopRepository
+    private readonly workshopRepository: IWorkshopRepository,
+    private readonly notificationService?: INotificationService
   ) {}
 
   async submitWorkshopRequest(
@@ -69,7 +72,30 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         workshopId: input.workshopId ?? null,
       });
 
-      // TODO: System of notification will be implemented later
+      logger.info("Workshop request created", {
+        requestId: workshopRequest.id,
+        apprenticeId: apprentice.id,
+        mentorId: mentor.id,
+        title: sanitizedTitle,
+      });
+
+      if (this.notificationService) {
+        const requestWithRelations =
+          await this.workshopRequestRepository.findById(workshopRequest.id);
+
+        if (requestWithRelations?.mentor?.user?.id) {
+          const apprenticeName =
+            requestWithRelations.apprentice?.user?.name || "un apprenti";
+          const mentorUserId = requestWithRelations.mentor.user.id;
+
+          await this.notificationService.createNotification(mentorUserId, {
+            type: "workshop",
+            title: "Nouvelle demande d'atelier",
+            message: `${apprenticeName} vous a envoyé une demande pour l'atelier "${sanitizedTitle}".`,
+            actionUrl: `/dashboard/workshop-requests`,
+          });
+        }
+      }
 
       return success({ requestId: workshopRequest.id });
     } catch (error) {
@@ -178,6 +204,71 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         status: "ACCEPTED",
         workshopId: workshop.data.id,
       });
+
+      logger.info("Workshop request accepted", {
+        requestId,
+        workshopId: workshop.data.id,
+        mentorId: mentor.id,
+        apprenticeId: request.apprenticeId,
+      });
+
+      if (this.notificationService) {
+        const requestWithRelations =
+          await this.workshopRequestRepository.findById(requestId);
+
+        if (requestWithRelations?.apprentice?.user?.id) {
+          const workshopDetails = await this.workshopRepository.findById(
+            workshop.data.id
+          );
+          const mentorName =
+            requestWithRelations.mentor?.user?.name || "le mentor";
+          const workshopTitle = workshopDetails?.title || request.title;
+          const apprenticeUserId = requestWithRelations.apprentice.user.id;
+
+          logger.debug("Creating notification for apprentice", {
+            apprenticeUserId,
+            workshopId: workshop.data.id,
+            mentorName,
+            workshopTitle,
+          });
+
+          const notificationResult =
+            await this.notificationService.createNotification(
+              apprenticeUserId,
+              {
+                type: "workshop",
+                title: "Demande d'atelier acceptée",
+                message: `${mentorName} a accepté votre demande pour l'atelier "${workshopTitle}".`,
+                actionUrl: `/workshop/${workshop.data.id}`,
+              }
+            );
+
+          if (!notificationResult.ok) {
+            logger.error(
+              "Failed to create notification",
+              notificationResult.error,
+              {
+                apprenticeUserId,
+                workshopId: workshop.data.id,
+              }
+            );
+          } else {
+            logger.debug("Notification created successfully", {
+              notificationId: notificationResult.data.id,
+              apprenticeUserId,
+            });
+          }
+        } else {
+          logger.warn("Cannot create notification: apprentice user not found", {
+            requestId,
+            hasApprentice: !!requestWithRelations?.apprentice,
+            hasUser: !!requestWithRelations?.apprentice?.user,
+            hasUserId: !!requestWithRelations?.apprentice?.user?.id,
+          });
+        }
+      } else {
+        logger.warn("Notification service not available", { requestId });
+      }
 
       return success({
         workshopId: workshop.data.id,
@@ -321,7 +412,29 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         status: "REJECTED",
       });
 
-      // TODO: System of notification will be implemented later
+      logger.info("Workshop request rejected", {
+        requestId,
+        mentorId: mentor.id,
+        apprenticeId: request.apprenticeId,
+      });
+
+      if (this.notificationService) {
+        const requestWithRelations =
+          await this.workshopRequestRepository.findById(requestId);
+
+        if (requestWithRelations?.apprentice?.user?.id) {
+          const mentorName =
+            requestWithRelations.mentor?.user?.name || "le mentor";
+          const apprenticeUserId = requestWithRelations.apprentice.user.id;
+
+          await this.notificationService.createNotification(apprenticeUserId, {
+            type: "workshop",
+            title: "Demande d'atelier rejetée",
+            message: `${mentorName} a rejeté votre demande pour l'atelier "${request.title}".`,
+            actionUrl: `/workshop-room`,
+          });
+        }
+      }
 
       return success({ success: true });
     } catch (error) {
@@ -366,7 +479,40 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         status: "CANCELLED",
       });
 
-      // TODO: System of notification will be implemented later
+      logger.info("Workshop request cancelled", {
+        requestId,
+        cancelledBy: isApprentice ? "apprentice" : "mentor",
+        userId,
+      });
+
+      if (this.notificationService) {
+        const requestWithRelations =
+          await this.workshopRequestRepository.findById(requestId);
+
+        if (isApprentice && requestWithRelations?.mentor?.user?.id) {
+          const apprenticeName =
+            requestWithRelations.apprentice?.user?.name || "un apprenti";
+          const mentorUserId = requestWithRelations.mentor.user.id;
+
+          await this.notificationService.createNotification(mentorUserId, {
+            type: "workshop",
+            title: "Demande d'atelier annulée",
+            message: `${apprenticeName} a annulé sa demande pour l'atelier "${request.title}".`,
+            actionUrl: `/dashboard/workshop-requests`,
+          });
+        } else if (isMentor && requestWithRelations?.apprentice?.user?.id) {
+          const mentorName =
+            requestWithRelations.mentor?.user?.name || "le mentor";
+          const apprenticeUserId = requestWithRelations.apprentice.user.id;
+
+          await this.notificationService.createNotification(apprenticeUserId, {
+            type: "workshop",
+            title: "Demande d'atelier annulée",
+            message: `${mentorName} a annulé votre demande pour l'atelier "${request.title}".`,
+            actionUrl: `/workshop-room`,
+          });
+        }
+      }
 
       return success({ success: true });
     } catch (error) {
@@ -445,7 +591,47 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       await this.workshopRequestRepository.update(requestId, updateData);
 
-      // TODO: System of notification will be implemented later
+      logger.info("Workshop request updated", {
+        requestId,
+        apprenticeId: apprentice.id,
+        changes: Object.keys(updateData).filter((key) => key !== "status"),
+      });
+
+      if (this.notificationService) {
+        const requestWithRelations =
+          await this.workshopRequestRepository.findById(requestId);
+
+        if (requestWithRelations?.mentor?.user?.id) {
+          const apprenticeName =
+            requestWithRelations.apprentice?.user?.name || "un apprenti";
+          const mentorUserId = requestWithRelations.mentor.user.id;
+
+          const changes: string[] = [];
+          if (input.title !== undefined) changes.push("le titre");
+          if (input.description !== undefined) changes.push("la description");
+          if (input.message !== undefined) changes.push("le message");
+          if (input.preferredDate !== undefined)
+            changes.push("la date préférée");
+          if (input.preferredTime !== undefined)
+            changes.push("l'heure préférée");
+          if (input.mentorId && input.mentorId !== request.mentorId)
+            changes.push("le mentor");
+
+          const changesText =
+            changes.length > 0
+              ? ` a modifié ${changes.join(", ")}`
+              : " a mis à jour";
+
+          await this.notificationService.createNotification(mentorUserId, {
+            type: "workshop",
+            title: "Demande d'atelier modifiée",
+            message: `${apprenticeName}${changesText} de sa demande pour l'atelier "${
+              requestWithRelations.title || request.title
+            }".`,
+            actionUrl: `/dashboard/workshop-requests`,
+          });
+        }
+      }
 
       return success({ requestId });
     } catch (error) {

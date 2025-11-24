@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "../common/logger";
 
 export async function parseJsonBody(
   req: NextRequest
@@ -24,7 +25,7 @@ export async function parseJsonBodySafe(req: NextRequest): Promise<unknown> {
     return await req.json();
   } catch (error) {
     if (!(error instanceof SyntaxError)) {
-      console.error("Unexpected error parsing JSON body:", error);
+      logger.error("Unexpected error parsing JSON body", error);
     }
     return {};
   }

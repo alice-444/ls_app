@@ -23,6 +23,8 @@ import {
   WORKSHOP_VALIDATION,
 } from "../../../shared/validation";
 import { WorkshopNotificationService } from "./workshop-notification.service";
+import type { INotificationService } from "../../notifications/services/notification.service.interface";
+import { logger } from "../../common/logger";
 import {
   isValidTimeFormat,
   doTimeRangesOverlap,
@@ -46,10 +48,13 @@ export class WorkshopService implements IWorkshopService {
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly appUserRepository: AppUserRepository,
-    private readonly workshopRequestRepository?: IWorkshopRequestRepository
+    private readonly workshopRequestRepository?: IWorkshopRequestRepository,
+    private readonly dbNotificationService?: INotificationService
   ) {
     this.notificationService = new WorkshopNotificationService(
-      this.workshopRepository
+      this.workshopRepository,
+      this.dbNotificationService,
+      this.appUserRepository
     );
   }
 
@@ -492,8 +497,42 @@ export class WorkshopService implements IWorkshopService {
 
       await this.workshopRepository.update(workshopId, updateData);
 
-      // TODO: System of notification will be implemented later
-      // TODO: Calendar integration (Calendly) will be implemented later
+      if (isMentor && this.dbNotificationService) {
+        const updatedWorkshop = await this.workshopRepository.findById(
+          workshopId
+        );
+        if (updatedWorkshop?.apprentice?.user?.id) {
+          const changes: string[] = [];
+          if (input.date !== undefined) changes.push("la date");
+          if (input.time !== undefined) changes.push("l'heure");
+          if (input.duration !== undefined) changes.push("la durée");
+          if (input.location !== undefined) changes.push("le lieu");
+
+          if (changes.length > 0) {
+            const mentorName =
+              updatedWorkshop.creator?.user?.name || "le mentor";
+            const apprenticeUserId = updatedWorkshop.apprentice.user.id;
+
+            await this.dbNotificationService.createNotification(
+              apprenticeUserId,
+              {
+                type: "workshop",
+                title: "Modification de l'atelier",
+                message: `${mentorName} a modifié ${changes.join(
+                  ", "
+                )} de l'atelier "${updatedWorkshop.title}".`,
+                actionUrl: `/workshop/${workshopId}`,
+              }
+            );
+          }
+        }
+      }
+
+      logger.info("Workshop scheduling updated", {
+        workshopId,
+        mentorId: userId,
+        changes: Object.keys(updateData),
+      });
 
       return success({ success: true });
     } catch (error) {
@@ -536,21 +575,33 @@ export class WorkshopService implements IWorkshopService {
       if (isApprentice) {
         await this.workshopRepository.removeApprentice(workshopId);
 
-        // Mock: Send email to apprentice
-        console.log(
-          `[Email] Sending cancellation confirmation to apprentice ${userId} for workshop ${workshopId}`
-        );
+        if (this.dbNotificationService) {
+          const cancelledWorkshop = await this.workshopRepository.findById(
+            workshopId
+          );
+          if (cancelledWorkshop?.creator?.user?.id) {
+            const apprenticeName =
+              cancelledWorkshop.apprentice?.user?.name || "un apprenti";
+            const mentorUserId = cancelledWorkshop.creator.user.id;
 
-        // Mock: Notify organizer (Anonymous if reason provided)
-        if (cancellationReason) {
-          console.log(
-            `[Notification] Organizer notified of anonymous cancellation for workshop ${workshopId}. Reason: ${cancellationReason}`
-          );
-        } else {
-          console.log(
-            `[Notification] Organizer notified of cancellation for workshop ${workshopId}.`
-          );
+            const message = cancellationReason
+              ? `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}". Raison: ${cancellationReason}`
+              : `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}".`;
+
+            await this.dbNotificationService.createNotification(mentorUserId, {
+              type: "workshop",
+              title: "Participation annulée",
+              message,
+              actionUrl: `/workshop/${workshopId}`,
+            });
+          }
         }
+
+        logger.info("Workshop participation cancelled by apprentice", {
+          workshopId,
+          apprenticeId: userId,
+          hasReason: !!cancellationReason,
+        });
 
         return success({ success: true });
       }
@@ -559,8 +610,31 @@ export class WorkshopService implements IWorkshopService {
         status: "CANCELLED",
       });
 
-      // TODO: System of notification will be implemented later
-      // TODO: Calendar integration (Calendly) will be implemented later
+      if (isMentor && this.dbNotificationService) {
+        const cancelledWorkshop = await this.workshopRepository.findById(
+          workshopId
+        );
+        if (cancelledWorkshop?.apprentice?.user?.id) {
+          const mentorName =
+            cancelledWorkshop.creator?.user?.name || "le mentor";
+          const apprenticeUserId = cancelledWorkshop.apprentice.user.id;
+
+          await this.dbNotificationService.createNotification(
+            apprenticeUserId,
+            {
+              type: "workshop",
+              title: "Atelier annulé",
+              message: `${mentorName} a annulé l'atelier "${cancelledWorkshop.title}".`,
+              actionUrl: `/workshop-room`,
+            }
+          );
+        }
+      }
+
+      logger.info("Workshop cancelled by mentor", {
+        workshopId,
+        mentorId: userId,
+      });
 
       return success({ success: true });
     } catch (error) {
@@ -976,9 +1050,13 @@ export class WorkshopService implements IWorkshopService {
         );
 
       if (!notificationResult.ok) {
-        console.warn(
-          "Erreur lors de l'envoi des notifications:",
-          notificationResult.error
+        logger.error(
+          "Erreur lors de l'envoi des notifications",
+          notificationResult.error,
+          {
+            workshopId,
+            userId,
+          }
         );
       }
 

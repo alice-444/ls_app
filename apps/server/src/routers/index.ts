@@ -4,6 +4,7 @@ import { mentorRouter } from "./mentor.router";
 import { apprenticeRouter } from "./apprentice.router";
 import { connectionRouter } from "./connection.router";
 import { messagingRouter } from "./messaging.router";
+import { notificationRouter } from "./notification.router";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -20,6 +21,7 @@ export const appRouter = router({
   apprentice: apprenticeRouter,
   connection: connectionRouter,
   messaging: messagingRouter,
+  notification: notificationRouter,
 });
 
 export type AppRouter = typeof appRouter;

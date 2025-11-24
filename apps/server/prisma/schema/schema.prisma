@@ -62,6 +62,7 @@ model app_user {
   user_connection_receiver                                 user_connection[]  @relation("user_connection_receiver")
   conversation_participant1                                conversation[]     @relation("conversation_participant1")
   conversation_participant2                                conversation[]     @relation("conversation_participant2")
+  notifications                                            notification[]
 }
 
 model audit_log {
@@ -299,4 +300,20 @@ model message_reaction {
   @@unique([messageId, userId, emoji])
   @@index([messageId])
   @@index([userId])
+}
+
+model notification {
+  id        String    @id @map("_id")
+  userId    String
+  type      String
+  title     String
+  message   String
+  isRead    Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  actionUrl String?
+  app_user  app_user  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
 }

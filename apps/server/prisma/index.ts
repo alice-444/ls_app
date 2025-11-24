@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient } from "./generated/client/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Pool } from "pg";

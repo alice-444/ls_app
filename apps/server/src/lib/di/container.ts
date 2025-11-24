@@ -43,6 +43,11 @@ import { MessageValidationService } from "../messaging/services/message-validati
 import { MessageEnrichmentService } from "../messaging/services/message-enrichment.service";
 import type { IMessageValidationService } from "../messaging/services/message-validation.service.interface";
 import type { IMessageEnrichmentService } from "../messaging/services/message-enrichment.service.interface";
+import { PrismaNotificationRepository } from "../notifications/repositories/notification.repository";
+import type { INotificationRepository } from "../notifications/repositories/notification.repository.interface";
+import { NotificationService } from "../notifications/services/notification.service";
+import type { INotificationService } from "../notifications/services/notification.service.interface";
+import { SocketNotificationEventEmitter } from "../notifications/services/socket-notification-event-emitter";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -57,6 +62,7 @@ class DIContainer {
   private _conversationRepository?: IConversationRepository;
   private _messageRepository?: IMessageRepository;
   private _messageReactionRepository?: IMessageReactionRepository;
+  private _notificationRepository?: INotificationRepository;
 
   // Service instances
   private _workshopService?: IWorkshopService;
@@ -72,6 +78,7 @@ class DIContainer {
   private _messageReactionService?: MessageReactionService;
   private _messageValidationService?: IMessageValidationService;
   private _messageEnrichmentService?: IMessageEnrichmentService;
+  private _notificationService?: INotificationService;
 
   private constructor() {
     const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
@@ -151,7 +158,8 @@ class DIContainer {
       this._workshopService = new WorkshopService(
         this.workshopRepository,
         this.appUserRepository,
-        this.workshopRequestRepository
+        this.workshopRequestRepository,
+        this.notificationService
       );
     }
     return this._workshopService;
@@ -169,7 +177,9 @@ class DIContainer {
   get mentorContactService(): IMentorContactService {
     if (!this._mentorContactService) {
       this._mentorContactService = new MentorContactService(
-        this.mentorRepository
+        this.mentorRepository,
+        this.notificationService,
+        this.messagingService
       );
     }
     return this._mentorContactService;
@@ -198,7 +208,8 @@ class DIContainer {
       this._workshopRequestService = new WorkshopRequestService(
         this.workshopRequestRepository,
         this.mentorRepository,
-        this.workshopRepository
+        this.workshopRepository,
+        this.notificationService
       );
     }
     return this._workshopRequestService;
@@ -300,6 +311,27 @@ class DIContainer {
       );
     }
     return this._messageReactionService;
+  }
+
+  get notificationRepository(): INotificationRepository {
+    if (!this._notificationRepository) {
+      this._notificationRepository = new PrismaNotificationRepository(
+        this._prisma
+      );
+    }
+    return this._notificationRepository;
+  }
+
+  get notificationService(): INotificationService {
+    if (!this._notificationService) {
+      const eventEmitter = new SocketNotificationEventEmitter();
+      this._notificationService = new NotificationService(
+        this.notificationRepository,
+        this.appUserRepository,
+        eventEmitter
+      );
+    }
+    return this._notificationService;
   }
 }
 

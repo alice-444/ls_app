@@ -2,6 +2,7 @@ import type { AppUserRepository } from "../../users/repositories";
 import type { IMessageRepository } from "../repositories/message.repository.interface";
 import type { MessageItem } from "./messaging.service.interface";
 import type { IMessageEnrichmentService } from "./message-enrichment.service.interface";
+import { logger } from "../../common/logger";
 
 export class MessageEnrichmentService implements IMessageEnrichmentService {
   constructor(
@@ -30,7 +31,7 @@ export class MessageEnrichmentService implements IMessageEnrichmentService {
       }
     } catch (error) {
       if (!(error instanceof SyntaxError)) {
-        console.error("Unexpected error parsing message content:", error);
+        logger.error("Unexpected error parsing message content", error);
       }
     }
     return null;

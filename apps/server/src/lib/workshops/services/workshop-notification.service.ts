@@ -1,7 +1,10 @@
 import type { Result } from "../../common";
 import { failure, success } from "../../common";
 import type { IWorkshopRepository } from "../repositories/workshop.repository.interface";
+import type { INotificationService } from "../../notifications/services/notification.service.interface";
+import type { AppUserRepository } from "../../users/repositories";
 import { formatDateTime } from "../utils/date-formatters";
+import { logger } from "../../common/logger";
 
 export interface WorkshopRescheduleNotificationData {
   workshopId: string;
@@ -13,10 +16,15 @@ export interface WorkshopRescheduleNotificationData {
   apprenticeId: string;
   apprenticeEmail: string | null;
   apprenticeName: string | null;
+  apprenticeUserId?: string;
 }
 
 export class WorkshopNotificationService {
-  constructor(private readonly workshopRepository: IWorkshopRepository) {}
+  constructor(
+    private readonly workshopRepository: IWorkshopRepository,
+    private readonly dbNotificationService?: INotificationService,
+    private readonly appUserRepository?: AppUserRepository
+  ) {}
 
   async notifyWorkshopRescheduled(
     workshopId: string,
@@ -35,6 +43,16 @@ export class WorkshopNotificationService {
         return success({ notifiedCount: 0 });
       }
 
+      let apprenticeUserId = workshop.apprentice.user?.id;
+      if (!apprenticeUserId && this.appUserRepository) {
+        const apprenticeAppUser = await this.appUserRepository.findByAppUserId(
+          workshop.apprentice.id
+        );
+        if (apprenticeAppUser) {
+          apprenticeUserId = apprenticeAppUser.userId;
+        }
+      }
+
       const notificationData: WorkshopRescheduleNotificationData = {
         workshopId: workshop.id,
         workshopTitle: workshop.title,
@@ -45,6 +63,7 @@ export class WorkshopNotificationService {
         apprenticeId: workshop.apprentice.id,
         apprenticeEmail: workshop.apprentice.user?.email || null,
         apprenticeName: workshop.apprentice.user?.name || null,
+        apprenticeUserId: apprenticeUserId || undefined,
       };
 
       await this.sendRescheduleNotification(notificationData);
@@ -67,8 +86,30 @@ export class WorkshopNotificationService {
 
     this.logRescheduleNotification(data, oldDateTime, newDateTime);
 
+    if (this.dbNotificationService && data.apprenticeUserId) {
+      try {
+        await this.dbNotificationService.createNotification(
+          data.apprenticeUserId,
+          {
+            type: "workshop",
+            title: "Changement d'horaire",
+            message: `L'atelier "${data.workshopTitle}" a été reprogrammé. Ancien horaire: ${oldDateTime}. Nouvel horaire: ${newDateTime}.`,
+            actionUrl: `/workshop/${data.workshopId}`,
+          }
+        );
+      } catch (error) {
+        logger.error(
+          "Failed to create reschedule notification in database",
+          error,
+          {
+            workshopId: data.workshopId,
+            apprenticeUserId: data.apprenticeUserId,
+          }
+        );
+      }
+    }
+
     // TODO: Integration with a mailing service (SendGrid, Resend, etc.)
-    // TODO: Create a notification in the database for the dashboard
   }
 
   private logRescheduleNotification(
@@ -103,6 +144,11 @@ export class WorkshopNotificationService {
       separator,
     ].join("\n");
 
-    console.log(emailContent);
+    logger.debug("Workshop reschedule notification sent", {
+      workshopId: data.workshopId,
+      apprenticeId: data.apprenticeId,
+      oldDateTime,
+      newDateTime,
+    });
   }
 }
