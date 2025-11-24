@@ -58,6 +58,8 @@ model app_user {
   workshop_request_workshop_request_mentorIdToapp_user     workshop_request[] @relation("workshop_request_mentorIdToapp_user")
   user_connection_requester                                user_connection[]  @relation("user_connection_requester")
   user_connection_receiver                                 user_connection[]  @relation("user_connection_receiver")
+  conversation_participant1                                conversation[]     @relation("conversation_participant1")
+  conversation_participant2                                conversation[]     @relation("conversation_participant2")
 }
 
 model audit_log {
@@ -161,6 +163,7 @@ model workshop {
   app_user_workshop_creatorIdToapp_user                  app_user           @relation("workshop_creatorIdToapp_user", fields: [creatorId], references: [id], onDelete: Cascade)
   workshop_request_workshop_requestIdToworkshop_request  workshop_request?  @relation("workshop_requestIdToworkshop_request", fields: [requestId], references: [id])
   workshop_request_workshop_request_workshopIdToworkshop workshop_request[] @relation("workshop_request_workshopIdToworkshop")
+  conversation                                            conversation[]
 
   @@index([apprenticeId])
   @@index([creatorId])
@@ -240,4 +243,44 @@ enum ConnectionStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+model conversation {
+  id            String    @id @map("_id")
+  participant1Id String
+  participant2Id String
+  workshopId    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
+  participant1  app_user  @relation("conversation_participant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2  app_user  @relation("conversation_participant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  workshop      workshop? @relation(fields: [workshopId], references: [id], onDelete: SetNull)
+  messages      message[]
+
+  @@unique([participant1Id, participant2Id])
+  @@index([participant1Id])
+  @@index([participant2Id])
+  @@index([workshopId])
+  @@index([updatedAt])
+}
+
+model message {
+  id               String       @id @map("_id")
+  conversationId   String
+  senderId         String
+  content          String
+  isRead           Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime?
+  editCount        Int          @default(0)
+  replyToMessageId String?
+  deletedAt        DateTime?
+  conversation     conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@index([isRead])
+  @@index([replyToMessageId])
+  @@index([deletedAt])
 }

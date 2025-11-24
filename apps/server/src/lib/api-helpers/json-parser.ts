@@ -22,7 +22,10 @@ export async function parseJsonBody(
 export async function parseJsonBodySafe(req: NextRequest): Promise<unknown> {
   try {
     return await req.json();
-  } catch {
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) {
+      console.error("Unexpected error parsing JSON body:", error);
+    }
     return {};
   }
 }

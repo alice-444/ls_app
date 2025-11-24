@@ -78,6 +78,22 @@ export default function NetworkPage() {
     }
   );
 
+  const getOrCreateConversationMutation =
+    trpc.messaging.getOrCreateConversation.useMutation({
+      onSuccess: (data) => {
+        router.push(`/inbox/${data.conversationId}`);
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de l'ouverture de la conversation", {
+          description: error.message,
+        });
+      },
+    });
+
+  const handleMessage = (otherUserId: string) => {
+    getOrCreateConversationMutation.mutate({ otherUserId });
+  };
+
   useEffect(() => {
     if (!session && !isSessionPending) {
       router.push("/login");
@@ -149,6 +165,7 @@ export default function NetworkPage() {
           handleViewProfile(connection.otherUserId, role, appId);
         }}
         onRemove={handleRemoveConnection}
+        onMessage={handleMessage}
         isRemoving={removeConnectionMutation.isPending}
       />
 

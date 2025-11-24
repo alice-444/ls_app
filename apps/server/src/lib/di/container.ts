@@ -29,6 +29,12 @@ import { ApprenticeProfileService } from "../users/services/apprentice-profile.s
 import { UserConnectionService } from "../users/services/user-connection.service";
 import { PrismaUserConnectionRepository } from "../users/repositories/user-connection.repository";
 import type { IUserConnectionRepository } from "../users/repositories/user-connection.repository.interface";
+import { PrismaConversationRepository } from "../messaging/repositories/conversation.repository";
+import { PrismaMessageRepository } from "../messaging/repositories/message.repository";
+import type { IConversationRepository } from "../messaging/repositories/conversation.repository.interface";
+import type { IMessageRepository } from "../messaging/repositories/message.repository.interface";
+import { MessagingService } from "../messaging/services/messaging.service";
+import type { IMessagingService } from "../messaging/services/messaging.service.interface";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -40,6 +46,8 @@ class DIContainer {
   private _mentorRepository?: IMentorRepository;
   private _workshopRequestRepository?: IWorkshopRequestRepository;
   private _userConnectionRepository?: IUserConnectionRepository;
+  private _conversationRepository?: IConversationRepository;
+  private _messageRepository?: IMessageRepository;
 
   // Service instances
   private _workshopService?: IWorkshopService;
@@ -50,6 +58,7 @@ class DIContainer {
   private _workshopRequestService?: IWorkshopRequestService;
   private _apprenticeProfileService?: ApprenticeProfileService;
   private _userConnectionService?: UserConnectionService;
+  private _messagingService?: IMessagingService;
 
   private constructor() {
     const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
@@ -57,14 +66,31 @@ class DIContainer {
     if (useAccelerate) {
       this._prisma = new PrismaClient({
         accelerateUrl: process.env.PRISMA_ACCELERATE_URL!,
+        log:
+          process.env.NODE_ENV === "development"
+            ? ["error", "warn"]
+            : ["error"],
       });
     } else {
       if (!process.env.DATABASE_URL) {
-        throw new Error("Either PRISMA_ACCELERATE_URL or DATABASE_URL environment variable must be set");
+        throw new Error(
+          "Either PRISMA_ACCELERATE_URL or DATABASE_URL environment variable must be set"
+        );
       }
-      const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+      const pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        connectionTimeoutMillis: 10000,
+        idleTimeoutMillis: 30000,
+        max: 20,
+      });
       const adapter = new PrismaPg(pool);
-      this._prisma = new PrismaClient({ adapter });
+      this._prisma = new PrismaClient({
+        adapter,
+        log:
+          process.env.NODE_ENV === "development"
+            ? ["error", "warn"]
+            : ["error"],
+      });
     }
   }
 
@@ -191,6 +217,32 @@ class DIContainer {
       );
     }
     return this._userConnectionService;
+  }
+
+  get conversationRepository(): IConversationRepository {
+    if (!this._conversationRepository) {
+      this._conversationRepository = new PrismaConversationRepository();
+    }
+    return this._conversationRepository;
+  }
+
+  get messageRepository(): IMessageRepository {
+    if (!this._messageRepository) {
+      this._messageRepository = new PrismaMessageRepository();
+    }
+    return this._messageRepository;
+  }
+
+  get messagingService(): IMessagingService {
+    if (!this._messagingService) {
+      this._messagingService = new MessagingService(
+        this.appUserRepository,
+        this.conversationRepository,
+        this.messageRepository,
+        this.workshopRepository
+      );
+    }
+    return this._messagingService;
   }
 }
 

@@ -6,10 +6,40 @@ import { authClient } from "@/lib/auth-client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { useEffect } from "react";
+import { trpc } from "@/utils/trpc";
+import { useSocket } from "@/lib/socket-client";
+import { Badge } from "@/components/ui/badge";
 
 export default function Header() {
   const { data: session } = authClient.useSession();
   const queryClient = useQueryClient();
+  const socket = useSocket();
+
+  const { data: unreadCount, refetch: refetchUnreadCount } =
+    trpc.messaging.getUnreadConversationsCount.useQuery(undefined, {
+      enabled: !!session,
+      refetchInterval: 30000,
+    });
+
+  useEffect(() => {
+    if (!socket || !session) return;
+
+    const handleNewMessage = () => {
+      refetchUnreadCount();
+    };
+
+    const handleConversationUpdated = () => {
+      refetchUnreadCount();
+    };
+
+    socket.on("new-message", handleNewMessage);
+    socket.on("conversation-updated", handleConversationUpdated);
+
+    return () => {
+      socket.off("new-message", handleNewMessage);
+      socket.off("conversation-updated", handleConversationUpdated);
+    };
+  }, [socket, session, refetchUnreadCount]);
 
   const {
     data: userRole,
@@ -26,20 +56,28 @@ export default function Header() {
     gcTime: 0,
   });
 
-  const commonLinks = [
+  type NavLink = {
+    to: string;
+    label: string;
+    showBadge?: boolean;
+  };
+
+  const commonLinks: NavLink[] = [
     { to: "/community", label: "Communité" },
     { to: "/dashboard", label: "Dashboard" },
   ];
 
-  const mentorLinks = [
+  const mentorLinks: NavLink[] = [
     { to: "/my-workshops", label: "Mes Ateliers" },
     { to: "/workshop-editor", label: "Atelab" },
   ];
 
-  const apprenantLinks = [{ to: "/workshop-room", label: "e-Atelier" }];
+  const apprenantLinks: NavLink[] = [
+    { to: "/workshop-room", label: "e-Atelier" },
+  ];
 
-  const additionalCommonLinks = [
-    { to: "/discussions", label: "Discussions" },
+  const additionalCommonLinks: NavLink[] = [
+    { to: "/inbox", label: "Messages", showBadge: true },
     { to: "/network", label: "Connexions" },
   ];
 
@@ -57,10 +95,19 @@ export default function Header() {
     <div>
       <div className="flex flex-row items-center justify-between px-2 py-1">
         <nav className="flex gap-4 text-lg">
-          {links.map(({ to, label }) => {
+          {links.map(({ to, label, showBadge }) => {
+            const hasBadge = showBadge && unreadCount && unreadCount.count > 0;
             return (
-              <Link key={to} href={to}>
+              <Link key={to} href={to} className={hasBadge ? "relative" : ""}>
                 {label}
+                {hasBadge && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -top-2 -right-2 h-5 min-w-5 flex items-center justify-center px-1.5 text-xs"
+                  >
+                    {unreadCount.count > 9 ? "9+" : unreadCount.count}
+                  </Badge>
+                )}
               </Link>
             );
           })}

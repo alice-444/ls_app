@@ -67,7 +67,11 @@ export async function DELETE(req: NextRequest) {
 
     try {
       await auth.api.signOut({ headers: req.headers });
-    } catch {}
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        console.error("Unexpected error during signOut:", error);
+      }
+    }
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

@@ -17,6 +17,7 @@ interface ConnectionItemProps {
   };
   onViewProfile: () => void;
   onRemove: () => void;
+  onMessage?: (otherUserId: string) => void;
   isRemoving: boolean;
 }
 
@@ -24,6 +25,7 @@ export function ConnectionItem({
   connection,
   onViewProfile,
   onRemove,
+  onMessage,
   isRemoving,
 }: ConnectionItemProps) {
   return (
@@ -64,8 +66,8 @@ export function ConnectionItem({
         <Button
           size="sm"
           variant="outline"
-          disabled
-          title="La messagerie sera disponible prochainement"
+          onClick={() => onMessage?.(connection.otherUserId)}
+          disabled={!onMessage}
         >
           <MessageSquare className="h-4 w-4 mr-2" />
           Message

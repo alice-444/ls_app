@@ -27,6 +27,7 @@ interface AcceptedConnectionsListProps {
   connections: Connection[];
   onViewProfile: (connection: Connection) => void;
   onRemove: (otherUserId: string) => void;
+  onMessage?: (otherUserId: string) => void;
   isRemoving: boolean;
 }
 
@@ -34,6 +35,7 @@ export function AcceptedConnectionsList({
   connections,
   onViewProfile,
   onRemove,
+  onMessage,
   isRemoving,
 }: AcceptedConnectionsListProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -84,6 +86,7 @@ export function AcceptedConnectionsList({
                 connection={connection}
                 onViewProfile={() => onViewProfile(connection)}
                 onRemove={() => onRemove(connection.otherUserId)}
+                onMessage={onMessage}
                 isRemoving={isRemoving}
               />
             ))}

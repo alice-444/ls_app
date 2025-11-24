@@ -44,6 +44,31 @@ export default function WorkshopDetailPage() {
   >(null);
 
   const utils = trpc.useUtils();
+  const getOrCreateConversationMutation =
+    trpc.messaging.getOrCreateConversation.useMutation({
+      onSuccess: (data) => {
+        utils.messaging.getConversationDetails.invalidate({
+          conversationId: data.conversationId,
+        });
+        utils.messaging.getConversations.invalidate();
+        router.push(`/inbox/${data.conversationId}`);
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de l'ouverture de la conversation", {
+          description: error.message,
+        });
+      },
+    });
+
+  const handleContactMentor = () => {
+    if (workshop?.creator?.userId) {
+      getOrCreateConversationMutation.mutate({
+        otherUserId: workshop.creator.userId,
+        workshopId: workshop.id,
+      });
+    }
+  };
+
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande refusée avec succès");
@@ -305,6 +330,8 @@ export default function WorkshopDetailPage() {
               isWorkshopPast={isWorkshopPast()}
               onRequestParticipation={() => setShowRequestDialog(true)}
               onCancelRegistration={handleCancelClick}
+              onContactMentor={handleContactMentor}
+              showContactMentor={isApprentice && !!workshop?.creator}
               isCancelling={cancelMutation.isPending}
             />
           </div>
