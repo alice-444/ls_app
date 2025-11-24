@@ -133,11 +133,26 @@ export default function NotificationsPage() {
     }
   };
 
-  const markAsRead = (id: string) => {
+  const handleNotificationClick = (notification: {
+    id: string;
+    isRead: boolean;
+    actionUrl?: string | null;
+  }) => {
+    if (!notification.isRead) {
+      markAsReadMutation.mutate({ notificationId: notification.id });
+    }
+    if (notification.actionUrl) {
+      router.push(notification.actionUrl);
+    }
+  };
+
+  const markAsRead = (id: string, event?: React.MouseEvent) => {
+    event?.stopPropagation();
     markAsReadMutation.mutate({ notificationId: id });
   };
 
-  const deleteNotification = (id: string) => {
+  const deleteNotification = (id: string, event?: React.MouseEvent) => {
+    event?.stopPropagation();
     deleteNotificationMutation.mutate({ notificationId: id });
   };
 
@@ -321,12 +336,15 @@ export default function NotificationsPage() {
                   !notification.isRead
                     ? "border-l-4 border-l-primary bg-primary/5"
                     : ""
+                } ${
+                  notification.actionUrl ? "cursor-pointer hover:shadow-md" : ""
                 }`}
+                onClick={() => handleNotificationClick(notification)}
               >
                 <CardContent className="p-4 sm:p-5">
                   <div className="flex items-start gap-3">
                     <div
-                      className={`p-2 rounded-lg flex-shrink-0 ${
+                      className={`p-2 rounded-lg shrink-0 ${
                         !notification.isRead ? "bg-primary/10" : "bg-muted"
                       }`}
                     >
@@ -373,7 +391,7 @@ export default function NotificationsPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => markAsRead(notification.id)}
+                              onClick={(e) => markAsRead(notification.id, e)}
                               disabled={markAsReadMutation.isPending}
                               className="text-xs h-8 px-3"
                             >
@@ -386,9 +404,10 @@ export default function NotificationsPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() =>
-                                router.push(notification.actionUrl!)
-                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(notification.actionUrl!);
+                              }}
                               className="text-xs h-8 px-3"
                             >
                               Voir
@@ -398,7 +417,9 @@ export default function NotificationsPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => deleteNotification(notification.id)}
+                            onClick={(e) =>
+                              deleteNotification(notification.id, e)
+                            }
                             disabled={deleteNotificationMutation.isPending}
                             className="text-xs h-8 px-3"
                           >

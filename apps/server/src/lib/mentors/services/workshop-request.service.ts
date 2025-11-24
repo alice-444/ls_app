@@ -270,6 +270,12 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         logger.warn("Notification service not available", { requestId });
       }
 
+      // TODO: Send critical email to apprentice when workshop request is accepted
+      // Event: WORKSHOP_REGISTERED
+      // Recipient: requestWithRelations.apprentice.user.email
+      // Data needed: workshopTitle, workshopDate, workshopTime, workshopLocation, mentorName, workshopId
+      // Integration point: Add email service call here after Resend implementation
+
       return success({
         workshopId: workshop.data.id,
         requestId: request.id,

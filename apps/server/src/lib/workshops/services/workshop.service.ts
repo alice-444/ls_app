@@ -603,6 +603,13 @@ export class WorkshopService implements IWorkshopService {
           hasReason: !!cancellationReason,
         });
 
+        // TODO: Email Alert: WORKSHOP_CANCELLED
+        // Send critical email to mentor when apprentice cancels participation
+        // Event: WORKSHOP_CANCELLED (cancelled by apprentice)
+        // Recipient: cancelledWorkshop.creator.user.email
+        // Data needed: workshopTitle, workshopDate, workshopTime, apprenticeName, cancellationReason, workshopId
+        // Integration point: Add email service call here after Resend implementation
+
         return success({ success: true });
       }
 
@@ -635,6 +642,13 @@ export class WorkshopService implements IWorkshopService {
         workshopId,
         mentorId: userId,
       });
+
+      // TODO: Email Alert: WORKSHOP_CANCELLED
+      // Send critical email to apprentice when mentor cancels workshop
+      // Event: WORKSHOP_CANCELLED (cancelled by mentor)
+      // Recipient: cancelledWorkshop.apprentice.user.email
+      // Data needed: workshopTitle, workshopDate, workshopTime, mentorName, workshopId
+      // Integration point: Add email service call here after Resend implementation
 
       return success({ success: true });
     } catch (error) {

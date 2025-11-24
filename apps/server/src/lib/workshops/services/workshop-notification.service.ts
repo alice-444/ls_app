@@ -109,7 +109,12 @@ export class WorkshopNotificationService {
       }
     }
 
-    // TODO: Integration with a mailing service (SendGrid, Resend, etc.)
+    // TODO: Email Alert: WORKSHOP_RESCHEDULED
+    // Send critical email to apprentice when workshop is rescheduled
+    // Event: WORKSHOP_RESCHEDULED
+    // Recipient: data.apprenticeEmail
+    // Data needed: workshopTitle, oldDate, oldTime, newDate, newTime, workshopLocation, workshopDuration, workshopId
+    // Integration point: Add email service call here after Resend implementation
   }
 
   private logRescheduleNotification(
