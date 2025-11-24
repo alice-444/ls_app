@@ -1,59 +1,74 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { Context } from "./context";
 import { prisma } from "./common/prisma";
+import { rateLimitMutation, rateLimitQuery } from "./rate-limit/rate-limit-middleware";
 
 export const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
 
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(async ({ ctx, next }) => {
 
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-	if (!ctx.session) {
-		throw new TRPCError({
-			code: "UNAUTHORIZED",
-			message: "Authentication required",
-			cause: "No session",
-		});
-	}
-	return next({
-		ctx: {
-			...ctx,
-			session: ctx.session,
-		},
-	});
+	await rateLimitQuery(ctx.session?.user?.id, ctx.ipAddress);
+	return next({ ctx });
 });
 
-export const profProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-	const appUser = await (prisma as any).app_user.findUnique({
-		where: { userId: ctx.session.user.id },
+export const protectedProcedure = t.procedure
+	.use(async ({ ctx, next }) => {
+		if (!ctx.session) {
+			throw new TRPCError({
+				code: "UNAUTHORIZED",
+				message: "Authentication required",
+				cause: "No session",
+			});
+		}
+		return next({
+			ctx: {
+				...ctx,
+				session: ctx.session,
+			},
+		});
+	})
+	.use(async ({ ctx, next }) => {
+		await rateLimitQuery(ctx.session?.user?.id, ctx.ipAddress);
+		return next({ ctx });
 	});
 
-	if (!appUser) {
-		throw new TRPCError({
-			code: "FORBIDDEN",
-			message: "AppUser not found. Please complete role selection first.",
+export const profProcedure = protectedProcedure
+	.use(async ({ ctx, next }) => {
+		await rateLimitMutation(ctx.session?.user?.id, ctx.ipAddress);
+		return next({ ctx });
+	})
+	.use(async ({ ctx, next }) => {
+		const appUser = await (prisma as any).app_user.findUnique({
+			where: { userId: ctx.session.user.id },
 		});
-	}
 
-	if (appUser.role !== "MENTOR") {
-		throw new TRPCError({
-			code: "FORBIDDEN",
-			message: "Only users with MENTOR role can perform this action",
+		if (!appUser) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "AppUser not found. Please complete role selection first.",
+			});
+		}
+
+		if (appUser.role !== "MENTOR") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "Only users with MENTOR role can perform this action",
+			});
+		}
+
+		if (appUser.status !== "ACTIVE") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "User account is not active",
+			});
+		}
+
+		return next({
+			ctx: {
+				...ctx,
+				appUser,
+			},
 		});
-	}
-
-	if (appUser.status !== "ACTIVE") {
-		throw new TRPCError({
-			code: "FORBIDDEN",
-			message: "User account is not active",
-		});
-	}
-
-	return next({
-		ctx: {
-			...ctx,
-			appUser,
-		},
 	});
-});

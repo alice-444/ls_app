@@ -209,7 +209,8 @@ class DIContainer {
         this.workshopRequestRepository,
         this.mentorRepository,
         this.workshopRepository,
-        this.notificationService
+        this.notificationService,
+        this._prisma
       );
     }
     return this._workshopRequestService;
@@ -282,7 +283,8 @@ class DIContainer {
         this.messageRepository,
         this.messageValidationService,
         this.messageEnrichmentService,
-        this.workshopRepository
+        this.workshopRepository,
+        this._prisma
       );
     }
     return this._messagingService;
@@ -332,6 +334,10 @@ class DIContainer {
       );
     }
     return this._notificationService;
+  }
+
+  get prisma(): PrismaClient {
+    return this._prisma;
   }
 }
 

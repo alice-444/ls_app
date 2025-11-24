@@ -26,7 +26,7 @@ export const notificationRouter = router({
       z
         .object({
           limit: z.number().min(1).max(100).optional().default(50),
-          offset: z.number().min(0).optional().default(0),
+          offset: z.number().min(0).max(10000).optional().default(0),
         })
         .optional()
         .default({ limit: 50, offset: 0 })

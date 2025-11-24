@@ -16,6 +16,8 @@ import { verifyUserExists } from "../../auth/services/user-helpers";
 import type { IWorkshopRepository } from "../../workshops/repositories/workshop.repository.interface";
 import type { IMessageValidationService } from "./message-validation.service.interface";
 import type { IMessageEnrichmentService } from "./message-enrichment.service.interface";
+import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import { prisma } from "../../common";
 
 export class MessagingService implements IMessagingService {
   constructor(
@@ -24,7 +26,8 @@ export class MessagingService implements IMessagingService {
     private readonly messageRepository: IMessageRepository,
     private readonly validationService: IMessageValidationService,
     private readonly enrichmentService: IMessageEnrichmentService,
-    private readonly workshopRepository?: IWorkshopRepository
+    private readonly workshopRepository?: IWorkshopRepository,
+    private readonly prismaClient?: PrismaClient
   ) {}
 
   private async validateUserAndGetAppUser(userId: string): Promise<
@@ -236,47 +239,88 @@ export class MessagingService implements IMessagingService {
         return failure("One or both users not found", 404);
       }
 
-      let conversation =
-        await this.conversationRepository.findConversationBetweenUsers(
-          appUser1.id,
-          appUser2.id
-        );
+      const prismaClient = this.prismaClient || prisma;
+      const result = await (prismaClient as any).$transaction(
+        async (tx: any) => {
+          let conversation =
+            await this.conversationRepository.findConversationBetweenUsersWithTransaction(
+              appUser1.id,
+              appUser2.id,
+              tx
+            );
 
-      if (!conversation) {
-        conversation = await this.conversationRepository.create({
-          id: generateInternalId(),
-          participant1Id: appUser1.id,
-          participant2Id: appUser2.id,
-          workshopId: workshopId || null,
-          updatedAt: new Date(),
-        });
+          if (!conversation) {
+            try {
+              conversation =
+                await this.conversationRepository.createWithTransaction(
+                  {
+                    id: generateInternalId(),
+                    participant1Id: appUser1.id,
+                    participant2Id: appUser2.id,
+                    workshopId: workshopId || null,
+                    updatedAt: new Date(),
+                  },
+                  tx
+                );
+            } catch (error: any) {
+              if (
+                error?.code === "P2002" ||
+                error?.message?.includes("Unique constraint")
+              ) {
+                conversation =
+                  await this.conversationRepository.findConversationBetweenUsersWithTransaction(
+                    appUser1.id,
+                    appUser2.id,
+                    tx
+                  );
+                if (!conversation) {
+                  throw new Error("Failed to create or find conversation");
+                }
+              } else {
+                throw error;
+              }
+            }
 
-        if (workshopId) {
-          await this.createWorkshopReferenceMessage(
-            conversation.id,
-            appUser1.id,
-            workshopId
-          );
-        }
-      } else if (workshopId) {
-        const previousWorkshopId = conversation.workshopId;
-        conversation = await this.conversationRepository.update(
-          conversation.id,
-          {
-            workshopId: workshopId,
-            updatedAt: new Date(),
+            if (workshopId && conversation) {
+              await this.createWorkshopReferenceMessage(
+                conversation.id,
+                appUser1.id,
+                workshopId
+              );
+            }
+          } else if (workshopId) {
+            const previousWorkshopId = conversation.workshopId;
+            conversation =
+              await this.conversationRepository.updateWithTransaction(
+                conversation.id,
+                {
+                  workshopId: workshopId,
+                  updatedAt: new Date(),
+                },
+                tx
+              );
+            if (previousWorkshopId !== workshopId) {
+              await this.createWorkshopReferenceMessage(
+                conversation.id,
+                appUser1.id,
+                workshopId
+              );
+            }
           }
-        );
-        if (previousWorkshopId !== workshopId) {
-          await this.createWorkshopReferenceMessage(
-            conversation.id,
-            appUser1.id,
-            workshopId
-          );
+
+          return conversation;
+        },
+        {
+          isolationLevel: "Serializable",
+          timeout: 10000,
         }
+      );
+
+      if (!result) {
+        return failure("Failed to create or find conversation", 500);
       }
 
-      return success({ conversationId: conversation.id });
+      return success({ conversationId: result.id });
     } catch (error) {
       return handleError(
         error,

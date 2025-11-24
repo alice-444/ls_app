@@ -110,11 +110,29 @@ export class WorkshopService implements IWorkshopService {
     materialsNeeded?: string | null;
   }) {
     return {
-      title: data.title ? sanitizeString(data.title) : undefined,
-      description: data.description ? sanitizeString(data.description) : null,
-      location: data.location ? sanitizeString(data.location) : null,
+      title: data.title
+        ? sanitizeString(data.title, {
+            maxLength: WORKSHOP_VALIDATION.title.max,
+            trim: true,
+          })
+        : undefined,
+      description: data.description
+        ? sanitizeString(data.description, {
+            maxLength: WORKSHOP_VALIDATION.description.max,
+            trim: true,
+          })
+        : null,
+      location: data.location
+        ? sanitizeString(data.location, {
+            maxLength: WORKSHOP_VALIDATION.location.max,
+            trim: true,
+          })
+        : null,
       materialsNeeded: data.materialsNeeded
-        ? sanitizeString(data.materialsNeeded)
+        ? sanitizeString(data.materialsNeeded, {
+            maxLength: WORKSHOP_VALIDATION.materialsNeeded.max,
+            trim: true,
+          })
         : null,
     };
   }
@@ -204,8 +222,12 @@ export class WorkshopService implements IWorkshopService {
       if (sanitized.title !== undefined) updateData.title = sanitized.title;
       if (sanitized.description !== undefined)
         updateData.description = sanitized.description;
-      if (validation.data.date !== undefined)
+      if (validation.data.date !== undefined) {
+        if (!isMinimumTomorrow(validation.data.date)) {
+          return failure("La date doit être au minimum demain", 400);
+        }
         updateData.date = validation.data.date;
+      }
       if (validation.data.time !== undefined)
         updateData.time = validation.data.time;
       if (validation.data.duration !== undefined)
@@ -619,6 +641,10 @@ export class WorkshopService implements IWorkshopService {
 
       if (!isMentor && !isApprentice) {
         return failure("Vous n'êtes pas autorisé à annuler cet atelier", 403);
+      }
+
+      if (workshop.status === "CANCELLED") {
+        return failure("Cet atelier est déjà annulé", 400);
       }
 
       if (isApprentice) {

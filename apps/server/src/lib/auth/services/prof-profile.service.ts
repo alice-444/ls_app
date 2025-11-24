@@ -161,14 +161,29 @@ export class ProfProfileService {
         validatedPhotoUrl = photoUrl;
       }
 
-      const sanitizedName = sanitizeString(validation.data.name);
-      const sanitizedBio = sanitizeString(validation.data.bio);
-      const sanitizedDomain = sanitizeString(validation.data.domain);
+      const sanitizedName = sanitizeString(validation.data.name, {
+        maxLength: 100,
+        trim: true,
+      });
+      const sanitizedBio = sanitizeString(validation.data.bio, {
+        maxLength: 2000,
+        trim: true,
+      });
+      const sanitizedDomain = sanitizeString(validation.data.domain, {
+        maxLength: 100,
+        trim: true,
+      });
       const sanitizedQualifications = validation.data.qualifications
-        ? sanitizeString(validation.data.qualifications)
+        ? sanitizeString(validation.data.qualifications, {
+            maxLength: 2000,
+            trim: true,
+          })
         : null;
       const sanitizedExperience = validation.data.experience
-        ? sanitizeString(validation.data.experience)
+        ? sanitizeString(validation.data.experience, {
+            maxLength: 2000,
+            trim: true,
+          })
         : null;
 
       await (prisma as any).user.update({

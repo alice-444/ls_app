@@ -9,13 +9,15 @@ import { sanitizeString } from "../../utils/sanitize";
 import { sanitizeLocation } from "../../workshops/utils/workshop-helpers";
 import { logger } from "../../common/logger";
 import { handleError, createErrorContext } from "../../common/error-handler";
+import type { PrismaClient } from "../../../../prisma/generated/client/client";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   constructor(
     private readonly workshopRequestRepository: IWorkshopRequestRepository,
     private readonly mentorRepository: IMentorRepository,
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly notificationService?: INotificationService
+    private readonly notificationService?: INotificationService,
+    private readonly prisma?: PrismaClient
   ) {}
 
   async submitWorkshopRequest(
@@ -54,12 +56,21 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Vous ne pouvez pas faire une demande à vous-même", 400);
       }
 
-      const sanitizedTitle = sanitizeString(input.title);
+      const sanitizedTitle = sanitizeString(input.title, {
+        maxLength: 100,
+        trim: true,
+      });
       const sanitizedDescription = input.description
-        ? sanitizeString(input.description)
+        ? sanitizeString(input.description, {
+            maxLength: 100,
+            trim: true,
+          })
         : null;
       const sanitizedMessage = input.message
-        ? sanitizeString(input.message)
+        ? sanitizeString(input.message, {
+            maxLength: 1000,
+            trim: true,
+          })
         : null;
 
       const workshopRequest = await this.workshopRequestRepository.create({
@@ -201,33 +212,103 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         );
       }
 
-      if (request.status !== "PENDING") {
-        return failure(
-          `Cette demande ne peut pas être acceptée. Statut actuel: ${request.status}`,
-          400
-        );
+      if (!this.prisma) {
+        return failure("Prisma client not available", 500);
       }
 
-      const workshop = await this.createOrUpdateWorkshopForRequest(
-        request,
-        mentor.id,
-        input
+      const result = await this.prisma.$transaction(
+        async (tx) => {
+          const lockedRequest =
+            await this.workshopRequestRepository.findByIdWithLock(
+              requestId,
+              tx
+            );
+
+          if (!lockedRequest) {
+            throw new Error("Demande d'atelier introuvable");
+          }
+
+          if (lockedRequest.status !== "PENDING") {
+            throw new Error(
+              `Cette demande ne peut pas être acceptée. Statut actuel: ${lockedRequest.status}`
+            );
+          }
+
+          const updateResult = await (tx as any).workshop_request.updateMany({
+            where: {
+              id: requestId,
+              status: "PENDING",
+            },
+            data: {
+              status: "ACCEPTED",
+              updatedAt: new Date(),
+            },
+          });
+
+          if (updateResult.count === 0) {
+            throw new Error(
+              "Cette demande ne peut pas être acceptée. Le statut a changé entre temps."
+            );
+          }
+
+          if (lockedRequest.workshopId) {
+            const existingWorkshop = await this.workshopRepository.findById(
+              lockedRequest.workshopId
+            );
+
+            if (existingWorkshop) {
+              const maxParticipants =
+                input.maxParticipants ?? existingWorkshop.maxParticipants;
+
+              if (maxParticipants !== null && maxParticipants > 0) {
+                const acceptedCount =
+                  await this.workshopRequestRepository.countAcceptedByWorkshopId(
+                    lockedRequest.workshopId,
+                    tx
+                  );
+
+                if (acceptedCount + 1 > maxParticipants) {
+                  throw new Error(
+                    `Cet atelier est complet. Nombre maximum de participants atteint (${
+                      acceptedCount + 1
+                    }/${maxParticipants}).`
+                  );
+                }
+              }
+            }
+          }
+
+          const workshop = await this.createOrUpdateWorkshopForRequest(
+            lockedRequest,
+            mentor.id,
+            input,
+            tx
+          );
+
+          if (!workshop.ok) {
+            throw new Error(workshop.error);
+          }
+
+          await (tx as any).workshop_request.update({
+            where: { id: requestId },
+            data: { workshopId: workshop.data.id },
+          });
+
+          return { workshop, request: lockedRequest };
+        },
+        {
+          isolationLevel: "Serializable",
+          timeout: 10000,
+        }
       );
 
-      if (!workshop.ok) {
-        return workshop;
-      }
-
-      await this.workshopRequestRepository.update(requestId, {
-        status: "ACCEPTED",
-        workshopId: workshop.data.id,
-      });
+      const { workshop, request: updatedRequest } = result;
 
       logger.info("Workshop request accepted", {
         requestId,
         workshopId: workshop.data.id,
         mentorId: mentor.id,
-        apprenticeId: request.apprenticeId,
+        apprenticeId: updatedRequest.apprenticeId,
       });
 
       if (this.notificationService) {
@@ -296,7 +377,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success({
         workshopId: workshop.data.id,
-        requestId: request.id,
+        requestId: updatedRequest.id,
       });
     } catch (error) {
       return handleError(
@@ -320,10 +401,16 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       location?: string | null;
       isVirtual?: boolean;
       maxParticipants?: number | null;
-    }
+    },
+    tx?: any
   ): Promise<Result<{ id: string }>> {
     if (request.workshopId) {
-      return this.updateExistingWorkshopForRequest(request, mentorId, input);
+      return this.updateExistingWorkshopForRequest(
+        request,
+        mentorId,
+        input,
+        tx
+      );
     }
 
     return this.createNewWorkshopForRequest(request, mentorId, input);
@@ -339,7 +426,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       location?: string | null;
       isVirtual?: boolean;
       maxParticipants?: number | null;
-    }
+    },
+    tx?: any
   ): Promise<Result<{ id: string }>> {
     const existingWorkshop = await this.workshopRepository.findById(
       request.workshopId
@@ -356,19 +444,31 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       );
     }
 
-    if (existingWorkshop.apprenticeId) {
-      return failure(
-        "Cet atelier a déjà un participant. Un atelier ne peut avoir qu'un seul participant.",
-        400
-      );
+    const maxParticipants =
+      input.maxParticipants ?? existingWorkshop.maxParticipants;
+
+    if (maxParticipants !== null && maxParticipants > 0) {
+      const acceptedCount =
+        await this.workshopRequestRepository.countAcceptedByWorkshopId(
+          request.workshopId,
+          tx
+        );
+
+      if (acceptedCount + 1 > maxParticipants) {
+        return failure(
+          `Cet atelier est complet. Nombre maximum de participants atteint (${
+            acceptedCount + 1
+          }/${maxParticipants}).`,
+          400
+        );
+      }
     }
 
     const sanitizedLocation = sanitizeLocation(
       input.location ?? existingWorkshop.location
     );
 
-    const workshop = await this.workshopRepository.update(request.workshopId, {
-      apprenticeId: request.apprenticeId,
+    const updateData: any = {
       date: input.date,
       time: input.time,
       duration: input.duration ?? existingWorkshop.duration ?? undefined,
@@ -376,7 +476,16 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       isVirtual: input.isVirtual ?? existingWorkshop.isVirtual,
       maxParticipants:
         input.maxParticipants ?? existingWorkshop.maxParticipants ?? undefined,
-    });
+    };
+
+    if (!existingWorkshop.apprenticeId) {
+      updateData.apprenticeId = request.apprenticeId;
+    }
+
+    const workshop = await this.workshopRepository.update(
+      request.workshopId,
+      updateData
+    );
 
     return success({ id: workshop.id });
   }
