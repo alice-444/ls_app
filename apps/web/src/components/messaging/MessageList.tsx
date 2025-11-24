@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { MessageReactions } from "./MessageReactions";
 
 interface Message {
   messageId: string;
@@ -46,6 +47,7 @@ interface Message {
 interface MessageListProps {
   messages: Message[];
   currentUserId: string;
+  conversationId: string;
   onEditMessage?: (messageId: string, newContent: string) => void;
   onReplyToMessage?: (messageId: string) => void;
   onDeleteMessage?: (messageId: string) => void;
@@ -60,6 +62,7 @@ interface MessageListProps {
 export function MessageList({
   messages,
   currentUserId,
+  conversationId,
   onEditMessage,
   onReplyToMessage,
   onDeleteMessage,
@@ -419,6 +422,13 @@ export function MessageList({
                     </div>
                   )}
                 </div>
+                {!message.deletedAt && (
+                  <MessageReactions
+                    messageId={message.messageId}
+                    currentUserId={currentUserId}
+                    conversationId={conversationId}
+                  />
+                )}
               </div>
               {isOwnMessage && (
                 <Avatar.Root className="h-8 w-8 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">

@@ -114,12 +114,26 @@ export function ConversationList() {
       });
     };
 
+    const handleUserOnline = (data: { userId: string }) => {
+      utils.messaging.getUserPresence.invalidate({ userId: data.userId });
+      utils.messaging.getMultipleUsersPresence.invalidate();
+    };
+
+    const handleUserOffline = (data: { userId: string }) => {
+      utils.messaging.getUserPresence.invalidate({ userId: data.userId });
+      utils.messaging.getMultipleUsersPresence.invalidate();
+    };
+
     socket.on("conversation-updated", handleConversationUpdate);
+    socket.on("user-online", handleUserOnline);
+    socket.on("user-offline", handleUserOffline);
 
     return () => {
       socket.off("conversation-updated", handleConversationUpdate);
+      socket.off("user-online", handleUserOnline);
+      socket.off("user-offline", handleUserOffline);
     };
-  }, [socket]);
+  }, [socket, utils]);
 
   if (isLoading) {
     return (

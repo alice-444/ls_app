@@ -7,6 +7,7 @@ import { useSocket } from "@/lib/socket-client";
 import { authClient } from "@/lib/auth-client";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
+import { TypingIndicator } from "./TypingIndicator";
 import { ArrowLeft, BookOpen, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -42,6 +43,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         senderName: string | null;
         senderDisplayName: string | null;
       } | null;
+      workshopReference?: {
+        workshopId: string;
+        workshopTitle: string;
+        workshopDate: Date | string | null;
+      } | null;
     }>
   >([]);
   const [replyingToMessageId, setReplyingToMessageId] = useState<string | null>(
@@ -49,6 +55,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [typingUsers, setTypingUsers] = useState<Map<string, string>>(
+    new Map()
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: searchResults, isLoading: isSearching } =
@@ -159,6 +168,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         senderName: string | null;
         senderDisplayName: string | null;
       } | null;
+      workshopReference?: {
+        workshopId: string;
+        workshopTitle: string;
+        workshopDate: Date | string | null;
+      } | null;
     }) => {
       if (message.conversationId === conversationId) {
         setLocalMessages((prev) => [...prev, message]);
@@ -225,16 +239,84 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       }
     };
 
+    const handleUserTyping = (data: {
+      userId: string;
+      conversationId: string;
+    }) => {
+      if (
+        data.conversationId === conversationId &&
+        data.userId !== session?.user?.id
+      ) {
+        const otherUser =
+          conversation?.otherUserId === data.userId ? conversation : null;
+        const userName =
+          otherUser?.otherUserDisplayName ||
+          otherUser?.otherUserName ||
+          "Quelqu'un";
+
+        setTypingUsers((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(data.userId, userName);
+          return newMap;
+        });
+
+        setTimeout(() => {
+          setTypingUsers((prev) => {
+            const newMap = new Map(prev);
+            newMap.delete(data.userId);
+            return newMap;
+          });
+        }, 3000);
+      }
+    };
+
+    const handleUserStoppedTyping = (data: {
+      userId: string;
+      conversationId: string;
+    }) => {
+      if (data.conversationId === conversationId) {
+        setTypingUsers((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(data.userId);
+          return newMap;
+        });
+      }
+    };
+
+    const handleReactionAdded = (data: {
+      messageId: string;
+      userId: string;
+      emoji: string;
+    }) => {
+      refetch();
+    };
+
+    const handleReactionRemoved = (data: {
+      messageId: string;
+      userId: string;
+      emoji: string;
+    }) => {
+      refetch();
+    };
+
     socket.on("new-message", handleNewMessage);
     socket.on("message-updated", handleMessageUpdated);
     socket.on("messages-read", handleMessagesRead);
     socket.on("message-deleted", handleMessageDeleted);
+    socket.on("user-typing", handleUserTyping);
+    socket.on("user-stopped-typing", handleUserStoppedTyping);
+    socket.on("reaction-added", handleReactionAdded);
+    socket.on("reaction-removed", handleReactionRemoved);
 
     return () => {
       socket.off("new-message", handleNewMessage);
       socket.off("message-updated", handleMessageUpdated);
       socket.off("messages-read", handleMessagesRead);
       socket.off("message-deleted", handleMessageDeleted);
+      socket.off("user-typing", handleUserTyping);
+      socket.off("user-stopped-typing", handleUserStoppedTyping);
+      socket.off("reaction-added", handleReactionAdded);
+      socket.off("reaction-removed", handleReactionRemoved);
     };
   }, [socket, conversationId, session]);
 
@@ -495,38 +577,71 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           <MessageList
             messages={localMessages}
             currentUserId={session?.user?.id || ""}
+            conversationId={conversationId}
             onEditMessage={handleEditMessage}
             onReplyToMessage={handleReplyToMessage}
             onDeleteMessage={handleDeleteMessage}
             isEditing={updateMessageMutation.isPending}
             workshopContext={conversationDetails}
           />
+          {typingUsers.size > 0 && (
+            <TypingIndicator userName={Array.from(typingUsers.values())[0]} />
+          )}
           <div ref={messagesEndRef} />
         </div>
         <div className="border-t p-4 shrink-0">
-          {replyingToMessageId && (
-            <div className="mb-2 p-2 bg-muted rounded-lg flex items-center justify-between">
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground mb-1">
-                  Répondre à:
-                </p>
-                <p className="text-sm truncate">
-                  {localMessages.find(
-                    (m) => m.messageId === replyingToMessageId
-                  )?.content || ""}
-                </p>
+          {replyingToMessageId && (() => {
+            const replyingToMessage = localMessages.find(
+              (m) => m.messageId === replyingToMessageId
+            );
+            
+            if (!replyingToMessage) return null;
+
+            return (
+              <div className="mb-2 p-2 bg-muted rounded-lg flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Répondre à:
+                  </p>
+                  {replyingToMessage.workshopReference ? (
+                    <div className="flex items-center gap-2 text-sm">
+                      <BookOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">
+                          {replyingToMessage.workshopReference.workshopTitle || "Atelier"}
+                        </p>
+                        {replyingToMessage.workshopReference.workshopDate && (
+                          <p className="text-xs text-muted-foreground">
+                            {format(
+                              new Date(replyingToMessage.workshopReference.workshopDate),
+                              "d MMM yyyy",
+                              { locale: fr }
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm truncate">
+                      {replyingToMessage.content}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6 shrink-0"
+                  onClick={() => setReplyingToMessageId(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-6 w-6 shrink-0"
-                onClick={() => setReplyingToMessageId(null)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-          <MessageInput onSend={handleSendMessage} />
+            );
+          })()}
+          <MessageInput
+            onSend={handleSendMessage}
+            conversationId={conversationId}
+          />
         </div>
       </CardContent>
     </Card>

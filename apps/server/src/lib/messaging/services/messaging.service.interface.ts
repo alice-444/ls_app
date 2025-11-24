@@ -36,7 +36,6 @@ export interface MessageItem {
     senderDisplayName: string | null;
   } | null;
   workshopReference?: {
-    workshopId: string;
     workshopTitle: string;
     workshopDate: Date | null;
   } | null;

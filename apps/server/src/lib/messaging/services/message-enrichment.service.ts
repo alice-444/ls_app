@@ -1,15 +1,15 @@
 import type { AppUserRepository } from "../../users/repositories";
 import type { IMessageRepository } from "../repositories/message.repository.interface";
 import type { MessageItem } from "./messaging.service.interface";
+import type { IMessageEnrichmentService } from "./message-enrichment.service.interface";
 
-export class MessageEnrichmentService {
+export class MessageEnrichmentService implements IMessageEnrichmentService {
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly messageRepository: IMessageRepository
   ) {}
 
   parseWorkshopReference(content: string): {
-    workshopId: string;
     workshopTitle: string;
     workshopDate: Date | null;
   } | null {
@@ -22,7 +22,6 @@ export class MessageEnrichmentService {
       const parsed = JSON.parse(content);
       if (parsed.type === "workshop_reference") {
         return {
-          workshopId: parsed.workshopId,
           workshopTitle: parsed.workshopTitle,
           workshopDate: parsed.workshopDate
             ? new Date(parsed.workshopDate)
@@ -40,7 +39,7 @@ export class MessageEnrichmentService {
   formatWorkshopReferenceContent(content: string): string {
     const workshopRef = this.parseWorkshopReference(content);
     if (workshopRef) {
-      return `À propos de: ${workshopRef.workshopTitle}`;
+      return `📚 ${workshopRef.workshopTitle}`;
     }
     return content;
   }

@@ -1,21 +1,66 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import { useState, useEffect, useRef, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSocket } from "@/lib/socket-client";
 
 interface MessageInputProps {
   onSend: (content: string) => void;
+  conversationId: string;
 }
 
-export function MessageInput({ onSend }: MessageInputProps) {
+export function MessageInput({ onSend, conversationId }: MessageInputProps) {
+  const socket = useSocket();
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasTypedRef = useRef(false);
+
+  const emitTypingStart = () => {
+    if (socket && socket.connected && !hasTypedRef.current) {
+      socket.emit("typing-start", { conversationId });
+      hasTypedRef.current = true;
+    }
+  };
+
+  const emitTypingStop = () => {
+    if (socket && socket.connected && hasTypedRef.current) {
+      socket.emit("typing-stop", { conversationId });
+      hasTypedRef.current = false;
+    }
+  };
+
+  const handleChange = (value: string) => {
+    setMessage(value);
+
+    if (value.trim().length > 0) {
+      emitTypingStart();
+
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        emitTypingStop();
+      }, 3000);
+    } else {
+      emitTypingStop();
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    }
+  };
 
   const handleSend = async () => {
     if (!message.trim() || isSending) return;
+
+    emitTypingStop();
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
 
     setIsSending(true);
     onSend(message);
@@ -30,11 +75,20 @@ export function MessageInput({ onSend }: MessageInputProps) {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      emitTypingStop();
+    };
+  }, []);
+
   return (
     <div className="flex gap-2 items-end">
       <Textarea
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Tapez votre message..."
         className={cn(

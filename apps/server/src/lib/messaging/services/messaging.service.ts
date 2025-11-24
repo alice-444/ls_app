@@ -13,25 +13,18 @@ import type {
 } from "./messaging.service.interface";
 import { verifyUserExists } from "../../auth/services/user-helpers";
 import type { IWorkshopRepository } from "../../workshops/repositories/workshop.repository.interface";
-import { MessageValidationService } from "./message-validation.service";
-import { MessageEnrichmentService } from "./message-enrichment.service";
+import type { IMessageValidationService } from "./message-validation.service.interface";
+import type { IMessageEnrichmentService } from "./message-enrichment.service.interface";
 
 export class MessagingService implements IMessagingService {
-  private readonly validationService: MessageValidationService;
-  private readonly enrichmentService: MessageEnrichmentService;
-
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly conversationRepository: IConversationRepository,
     private readonly messageRepository: IMessageRepository,
+    private readonly validationService: IMessageValidationService,
+    private readonly enrichmentService: IMessageEnrichmentService,
     private readonly workshopRepository?: IWorkshopRepository
-  ) {
-    this.validationService = new MessageValidationService();
-    this.enrichmentService = new MessageEnrichmentService(
-      this.appUserRepository,
-      this.messageRepository
-    );
-  }
+  ) {}
 
   private async validateUserAndGetAppUser(userId: string): Promise<
     Result<{
@@ -96,6 +89,31 @@ export class MessagingService implements IMessagingService {
     return { workshopTitle, workshopDate };
   }
 
+  private async createWorkshopReferenceMessage(
+    conversationId: string,
+    senderId: string,
+    workshopId: string
+  ): Promise<void> {
+    const { workshopTitle, workshopDate } = await this.enrichWithWorkshopInfo(
+      workshopId
+    );
+    if (workshopTitle) {
+      const systemMessageContent = JSON.stringify({
+        type: "workshop_reference",
+        workshopId: workshopId,
+        workshopTitle: workshopTitle,
+        workshopDate: workshopDate,
+      });
+      await this.messageRepository.create({
+        id: generateInternalId(),
+        conversationId,
+        senderId,
+        content: systemMessageContent,
+        replyToMessageId: null,
+      });
+    }
+  }
+
   async getConversations(
     userId: string
   ): Promise<Result<ConversationListItem[]>> {
@@ -147,6 +165,14 @@ export class MessagingService implements IMessagingService {
           const { workshopTitle, workshopDate } =
             await this.enrichWithWorkshopInfo(conversation.workshopId);
 
+          let formattedLastMessageContent: string | null = null;
+          if (lastMessage) {
+            formattedLastMessageContent =
+              this.enrichmentService.formatWorkshopReferenceContent(
+                lastMessage.content
+              );
+          }
+
           return {
             conversationId: conversation.id,
             otherUserId: otherAppUser.userId,
@@ -156,7 +182,7 @@ export class MessagingService implements IMessagingService {
             otherUserRole: otherAppUser.role,
             lastMessage: lastMessage
               ? {
-                  content: lastMessage.content,
+                  content: formattedLastMessageContent || lastMessage.content,
                   createdAt: lastMessage.createdAt,
                 }
               : null,
@@ -222,23 +248,11 @@ export class MessagingService implements IMessagingService {
         });
 
         if (workshopId) {
-          const { workshopTitle, workshopDate } =
-            await this.enrichWithWorkshopInfo(workshopId);
-          if (workshopTitle) {
-            const systemMessageContent = JSON.stringify({
-              type: "workshop_reference",
-              workshopId: workshopId,
-              workshopTitle: workshopTitle,
-              workshopDate: workshopDate,
-            });
-            await this.messageRepository.create({
-              id: generateInternalId(),
-              conversationId: conversation.id,
-              senderId: appUser1.id,
-              content: systemMessageContent,
-              replyToMessageId: null,
-            });
-          }
+          await this.createWorkshopReferenceMessage(
+            conversation.id,
+            appUser1.id,
+            workshopId
+          );
         }
       } else if (workshopId) {
         const previousWorkshopId = conversation.workshopId;
@@ -250,23 +264,11 @@ export class MessagingService implements IMessagingService {
           }
         );
         if (previousWorkshopId !== workshopId) {
-          const { workshopTitle, workshopDate } =
-            await this.enrichWithWorkshopInfo(workshopId);
-          if (workshopTitle) {
-            const systemMessageContent = JSON.stringify({
-              type: "workshop_reference",
-              workshopId: workshopId,
-              workshopTitle: workshopTitle,
-              workshopDate: workshopDate,
-            });
-            await this.messageRepository.create({
-              id: generateInternalId(),
-              conversationId: conversation.id,
-              senderId: appUser1.id,
-              content: systemMessageContent,
-              replyToMessageId: null,
-            });
-          }
+          await this.createWorkshopReferenceMessage(
+            conversation.id,
+            appUser1.id,
+            workshopId
+          );
         }
       }
 

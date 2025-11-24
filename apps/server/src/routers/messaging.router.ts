@@ -2,13 +2,34 @@ import { protectedProcedure, router } from "../lib/trpc";
 import { container } from "../lib/di/container";
 import { z } from "zod";
 
+const getSafeErrorMessage = (error: string): string => {
+  if (error.includes("not found") || error.includes("Not found")) {
+    return "Ressource introuvable";
+  }
+  if (
+    error.includes("unauthorized") ||
+    error.includes("Unauthorized") ||
+    error.includes("Not a participant")
+  ) {
+    return "Vous n'êtes pas autorisé à effectuer cette action";
+  }
+  if (error.includes("validation") || error.includes("Validation")) {
+    return "Les données fournies sont invalides";
+  }
+  if (error.includes("time limit") || error.includes("Time limit")) {
+    return "Le délai pour cette action a expiré";
+  }
+  return "Une erreur est survenue. Veuillez réessayer.";
+};
+
 export const messagingRouter = router({
   getConversations: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.messagingService.getConversations(
       ctx.session.user.id
     );
     if (!result.ok) {
-      throw new Error(result.error);
+      console.error("[Messaging] getConversations error:", result.error);
+      throw new Error(getSafeErrorMessage(result.error));
     }
     return result.data;
   }),
@@ -29,7 +50,8 @@ export const messagingRouter = router({
         input.offset
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -42,7 +64,8 @@ export const messagingRouter = router({
         input.conversationId
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -63,7 +86,8 @@ export const messagingRouter = router({
         input.replyToMessageId
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -84,7 +108,8 @@ export const messagingRouter = router({
         input.limit
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -103,7 +128,8 @@ export const messagingRouter = router({
         input.workshopId
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -116,7 +142,8 @@ export const messagingRouter = router({
         input.conversationId
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -139,7 +166,8 @@ export const messagingRouter = router({
         input.conversationId
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -158,7 +186,8 @@ export const messagingRouter = router({
         input.content
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),
@@ -171,7 +200,90 @@ export const messagingRouter = router({
         input.messageId
       );
       if (!result.ok) {
-        throw new Error(result.error);
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
+      }
+      return result.data;
+    }),
+
+  getUserPresence: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const result = await container.presenceService.getUserPresence(
+        input.userId
+      );
+      if (!result) {
+        throw new Error("User not found");
+      }
+      return result;
+    }),
+
+  getMultipleUsersPresence: protectedProcedure
+    .input(z.object({ userIds: z.array(z.string()) }))
+    .query(async ({ ctx, input }) => {
+      const presenceMap =
+        await container.presenceService.getMultipleUsersPresence(input.userIds);
+      return Object.fromEntries(presenceMap);
+    }),
+
+  addReaction: protectedProcedure
+    .input(
+      z.object({
+        messageId: z.string(),
+        emoji: z.string().min(1).max(10),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.messageReactionService.addReaction(
+        ctx.session.user.id,
+        input.messageId,
+        input.emoji
+      );
+      if (!result.ok) {
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
+      }
+      return result.data;
+    }),
+
+  removeReaction: protectedProcedure
+    .input(z.object({ reactionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.messageReactionService.removeReaction(
+        ctx.session.user.id,
+        input.reactionId
+      );
+      if (!result.ok) {
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
+      }
+      return result.data;
+    }),
+
+  getMessageReactions: protectedProcedure
+    .input(z.object({ messageId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const result = await container.messageReactionService.getMessageReactions(
+        input.messageId,
+        ctx.session.user.id
+      );
+      if (!result.ok) {
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
+      }
+      return result.data;
+    }),
+
+  getMessageReactionsWithUsers: protectedProcedure
+    .input(z.object({ messageId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const result =
+        await container.messageReactionService.getMessageReactionsWithUsers(
+          input.messageId
+        );
+      if (!result.ok) {
+        console.error("[Messaging] Error:", result.error);
+        throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
     }),

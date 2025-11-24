@@ -1,7 +1,8 @@
 import { Result, failure, success } from "../../common";
 import { sanitizeString } from "../../utils/sanitize";
+import type { IMessageValidationService } from "./message-validation.service.interface";
 
-export class MessageValidationService {
+export class MessageValidationService implements IMessageValidationService {
   private static readonly MAX_MESSAGE_LENGTH = 5000;
   private static readonly MAX_EDIT_COUNT = 5;
   private static readonly EDIT_TIME_LIMIT_MS = 15 * 60 * 1000; // 15 minutes

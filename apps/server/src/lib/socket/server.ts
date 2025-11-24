@@ -74,6 +74,10 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
 
     socket.join(`user:${userId}`);
 
+    await container.presenceService.updateUserPresence(userId, true);
+
+    socket.broadcast.emit("user-online", { userId });
+
     socket.on("join-conversation", async (conversationId: string) => {
       try {
         const conversation = await container.conversationRepository.findById(
@@ -136,6 +140,16 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
             socket.emit("error", { message: "Message not found" });
             return;
           }
+
+          const { MessageEnrichmentService } = await import(
+            "../messaging/services/message-enrichment.service"
+          );
+          const enrichmentService = new MessageEnrichmentService(
+            container.appUserRepository,
+            container.messageRepository
+          );
+          const messageWithDetails =
+            await enrichmentService.enrichMessageEntity(message);
 
           const conversation = await container.conversationRepository.findById(
             data.conversationId
@@ -201,26 +215,17 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
                   )
                 : null;
 
-              let replyToContent = replyTo.content;
-              const trimmedReplyContent = replyTo.content.trim();
-              if (
-                trimmedReplyContent.startsWith("{") &&
-                trimmedReplyContent.endsWith("}")
-              ) {
-                try {
-                  const parsed = JSON.parse(replyTo.content);
-                  if (parsed.type === "workshop_reference") {
-                    replyToContent = `À propos de: ${parsed.workshopTitle}`;
-                  }
-                } catch (error) {
-                  if (!(error instanceof SyntaxError)) {
-                    console.error(
-                      "Unexpected error parsing reply message content:",
-                      error
-                    );
-                  }
-                }
-              }
+              const { MessageEnrichmentService } = await import(
+                "../messaging/services/message-enrichment.service"
+              );
+              const enrichmentService = new MessageEnrichmentService(
+                container.appUserRepository,
+                container.messageRepository
+              );
+              const replyToContent =
+                enrichmentService.formatWorkshopReferenceContent(
+                  replyTo.content
+                );
 
               replyToMessage = {
                 messageId: replyTo.id,
@@ -245,6 +250,7 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
             isRead: message.isRead,
             replyToMessageId: message.replyToMessageId || null,
             replyToMessage,
+            workshopReference: messageWithDetails?.workshopReference || null,
           });
 
           const conversationsResult =
@@ -371,13 +377,55 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       }
     );
 
+    socket.on("delete-message", async (data: { messageId: string }) => {
+      try {
+        const result = await container.messagingService.deleteMessage(
+          userId,
+          data.messageId
+        );
+
+        if (!result.ok) {
+          socket.emit("error", { message: result.error });
+          return;
+        }
+
+        io!
+          .to(`conversation:${result.data.conversationId}`)
+          .emit("message-deleted", {
+            messageId: data.messageId,
+            conversationId: result.data.conversationId,
+          });
+      } catch (error) {
+        socket.emit("error", {
+          message: (error as Error).message || "Failed to delete message",
+        });
+      }
+    });
+
+    socket.on("typing-start", (data: { conversationId: string }) => {
+      socket.to(`conversation:${data.conversationId}`).emit("user-typing", {
+        userId,
+        conversationId: data.conversationId,
+      });
+    });
+
+    socket.on("typing-stop", (data: { conversationId: string }) => {
+      socket
+        .to(`conversation:${data.conversationId}`)
+        .emit("user-stopped-typing", {
+          userId,
+          conversationId: data.conversationId,
+        });
+    });
+
     socket.on(
-      "delete-message",
-      async (data: { messageId: string }) => {
+      "add-reaction",
+      async (data: { messageId: string; emoji: string }) => {
         try {
-          const result = await container.messagingService.deleteMessage(
+          const result = await container.messageReactionService.addReaction(
             userId,
-            data.messageId
+            data.messageId,
+            data.emoji
           );
 
           if (!result.ok) {
@@ -385,23 +433,75 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
             return;
           }
 
-          io!.to(`conversation:${result.data.conversationId}`).emit(
-            "message-deleted",
-            {
-              messageId: data.messageId,
-              conversationId: result.data.conversationId,
-            }
+          const message = await container.messageRepository.findById(
+            data.messageId
           );
+          if (message) {
+            io!
+              .to(`conversation:${message.conversationId}`)
+              .emit("reaction-added", {
+                messageId: data.messageId,
+                userId,
+                emoji: data.emoji,
+              });
+          }
         } catch (error) {
           socket.emit("error", {
-            message: (error as Error).message || "Failed to delete message",
+            message: (error as Error).message || "Failed to add reaction",
           });
         }
       }
     );
 
-    socket.on("disconnect", () => {
-      // Cleanup if needed
+    socket.on(
+      "remove-reaction",
+      async (data: { messageId: string; emoji: string }) => {
+        try {
+          const reactions =
+            await container.messageReactionRepository.findByMessageIdAndUserId(
+              data.messageId,
+              userId
+            );
+          const reaction = reactions.find((r) => r.emoji === data.emoji);
+
+          if (!reaction) {
+            socket.emit("error", { message: "Reaction not found" });
+            return;
+          }
+
+          const result = await container.messageReactionService.removeReaction(
+            userId,
+            reaction.id
+          );
+
+          if (!result.ok) {
+            socket.emit("error", { message: result.error });
+            return;
+          }
+
+          const message = await container.messageRepository.findById(
+            data.messageId
+          );
+          if (message) {
+            io!
+              .to(`conversation:${message.conversationId}`)
+              .emit("reaction-removed", {
+                messageId: data.messageId,
+                userId,
+                emoji: data.emoji,
+              });
+          }
+        } catch (error) {
+          socket.emit("error", {
+            message: (error as Error).message || "Failed to remove reaction",
+          });
+        }
+      }
+    );
+
+    socket.on("disconnect", async () => {
+      await container.presenceService.updateUserPresence(userId, false);
+      socket.broadcast.emit("user-offline", { userId });
     });
   });
 

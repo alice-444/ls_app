@@ -49,6 +49,8 @@ model app_user {
   iceBreakerTags                                           Json?
   studyDomain                                              String?
   studyProgram                                             String?
+  lastSeen                                                DateTime?
+  isOnline                                                 Boolean            @default(false)
   user                                                     user               @relation(fields: [userId], references: [id], onDelete: Cascade)
   mentor_feedback_mentor_feedback_apprenticeIdToapp_user   mentor_feedback[]  @relation("mentor_feedback_apprenticeIdToapp_user")
   mentor_feedback_mentor_feedback_mentorIdToapp_user       mentor_feedback[]  @relation("mentor_feedback_mentorIdToapp_user")
@@ -265,17 +267,18 @@ model conversation {
 }
 
 model message {
-  id               String       @id @map("_id")
+  id               String          @id @map("_id")
   conversationId   String
   senderId         String
   content          String
-  isRead           Boolean      @default(false)
-  createdAt        DateTime     @default(now())
+  isRead           Boolean         @default(false)
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime?
-  editCount        Int          @default(0)
+  editCount        Int             @default(0)
   replyToMessageId String?
   deletedAt        DateTime?
-  conversation     conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation     conversation    @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  reactions        message_reaction[]
 
   @@index([conversationId])
   @@index([senderId])
@@ -283,4 +286,17 @@ model message {
   @@index([isRead])
   @@index([replyToMessageId])
   @@index([deletedAt])
+}
+
+model message_reaction {
+  id        String   @id @map("_id")
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+  message   message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@index([userId])
 }
