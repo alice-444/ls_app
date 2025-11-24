@@ -12,8 +12,8 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { formatDate, formatTime, getStatusBadge } from "@/lib/workshop-utils";
-import { WorkshopDropdownMenu } from "./WorkshopDropdownMenu";
-import { WorkshopDetails } from "./WorkshopDetails";
+import { WorkshopDropdownMenu } from "../WorkshopDropdownMenu";
+import { WorkshopDetails } from "../WorkshopDetails";
 import { Star } from "lucide-react";
 
 interface WorkshopCardProps {

@@ -5,48 +5,24 @@ import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Users,
-  Tag,
-  Edit,
-  Trash2,
-  ArrowLeft,
-  Video,
-  FileText,
-  User,
-  CheckCircle,
-  XCircle,
-  EyeOff,
-  ArrowRight,
-  BookOpen,
-  X,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { getStatusBadge, formatDate, formatTime } from "@/lib/workshop-utils";
-import { DeleteWorkshopDialog } from "@/components/workshop/DeleteWorkshopDialog";
+import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
-import { Badge } from "@/components/ui/badge";
 import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
-import { WorkshopRequestCard } from "@/components/workshop/WorkshopRequestCard";
-import {
-  getWorkshopRequestStatusLabel,
-  getWorkshopRequestStatusColor,
-} from "@/lib/workshop-request-utils";
-import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
-import { RescheduleWorkshopDialog } from "@/components/workshop/RescheduleWorkshopDialog";
+import { CancelWorkshopRegistrationDialog } from "@/components/workshop/dialogs/CancelWorkshopRegistrationDialog";
+import { RescheduleWorkshopDialog } from "@/components/workshop/dialogs/RescheduleWorkshopDialog";
+import { MiniProfileModal } from "@/components/apprentice/MiniProfileModal";
+import { WorkshopHeader } from "@/components/workshop/cards/WorkshopHeader";
+import { WorkshopDescription } from "@/components/workshop/cards/WorkshopDescription";
+import { WorkshopDetailsCard } from "@/components/workshop/cards/WorkshopDetailsCard";
+import { WorkshopCreatorCard } from "@/components/workshop/cards/WorkshopCreatorCard";
+import { WorkshopParticipantsCard } from "@/components/workshop/cards/WorkshopParticipantsCard";
+import { WorkshopActionsCard } from "@/components/workshop/cards/WorkshopActionsCard";
+import { WorkshopRequestsCard } from "@/components/workshop/requests/WorkshopRequestsCard";
 
 export default function WorkshopDetailPage() {
   const router = useRouter();
@@ -61,8 +37,38 @@ export default function WorkshopDetailPage() {
   const [requestToReject, setRequestToReject] = useState<string | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+  const [showApprenticeProfileModal, setShowApprenticeProfileModal] =
+    useState(false);
+  const [selectedApprenticeUserId, setSelectedApprenticeUserId] = useState<
+    string | null
+  >(null);
 
   const utils = trpc.useUtils();
+  const getOrCreateConversationMutation =
+    trpc.messaging.getOrCreateConversation.useMutation({
+      onSuccess: (data) => {
+        utils.messaging.getConversationDetails.invalidate({
+          conversationId: data.conversationId,
+        });
+        utils.messaging.getConversations.invalidate();
+        router.push(`/inbox/${data.conversationId}`);
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de l'ouverture de la conversation", {
+          description: error.message,
+        });
+      },
+    });
+
+  const handleContactMentor = () => {
+    if (workshop?.creator?.userId) {
+      getOrCreateConversationMutation.mutate({
+        otherUserId: workshop.creator.userId,
+        workshopId: workshop.id,
+      });
+    }
+  };
+
   const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande refusée avec succès");
@@ -148,12 +154,10 @@ export default function WorkshopDetailPage() {
     enabled: !!session?.user?.id,
   });
 
-  const { data: upcomingWorkshops } = trpc.workshop.getUpcomingWorkshops.useQuery(
-    undefined,
-    {
+  const { data: upcomingWorkshops } =
+    trpc.workshop.getUpcomingWorkshops.useQuery(undefined, {
       enabled: userRole === "APPRENANT" && !!session?.user?.id,
-    }
-  );
+    });
 
   const cancelMutation = trpc.workshop.cancelConfirmed.useMutation({
     onSuccess: () => {
@@ -206,17 +210,27 @@ export default function WorkshopDetailPage() {
   }
 
   const isApprentice = userRole === "APPRENANT";
-  const isOwner =
-    session?.user?.id && workshop?.creator?.userId === session.user.id;
-  const canRequestParticipation = isApprentice && !isOwner && workshop?.status === "PUBLISHED" && !workshop?.apprenticeId;
+  const isOwner = Boolean(
+    session?.user?.id && workshop?.creator?.userId === session.user.id
+  );
+  const canRequestParticipation =
+    isApprentice &&
+    !isOwner &&
+    workshop?.status === "PUBLISHED" &&
+    !workshop?.apprenticeId;
   const shouldShowStatusBadge = isOwner;
-  const isRegistered = isApprentice && workshop?.apprenticeId && 
+  const isRegistered =
+    isApprentice &&
+    workshop?.apprenticeId &&
     upcomingWorkshops?.some((w: any) => w.id === workshop.id);
-  
+
   const isWorkshopPast = (): boolean => {
     if (!workshop?.date || !workshop?.time) return false;
     try {
-      const date = typeof workshop.date === "string" ? new Date(workshop.date) : workshop.date;
+      const date =
+        typeof workshop.date === "string"
+          ? new Date(workshop.date)
+          : workshop.date;
       const [hours, minutes] = workshop.time.split(":").map(Number);
       const startTime = new Date(date);
       startTime.setHours(hours, minutes, 0, 0);
@@ -243,395 +257,83 @@ export default function WorkshopDetailPage() {
     }
   };
 
+  const handleBack = () => {
+    const backUrl = isOwner ? "/my-workshops" : "/workshop-room";
+    router.push(backUrl);
+  };
+
+  const canReschedule =
+    workshop.status === "PUBLISHED" &&
+    Boolean(workshop.date) &&
+    !isWorkshopPast();
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const backUrl = isOwner ? "/my-workshops" : "/workshop-room";
-              router.push(backUrl);
-            }}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour aux ateliers
-          </Button>
-
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-start gap-3 mb-2">
-                <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100">
-                  {workshop.title}
-                </h1>
-                {shouldShowStatusBadge && getStatusBadge(workshop.status)}
-              </div>
-              <p className="text-slate-600 dark:text-slate-400">
-                Créé le{" "}
-                {formatDate(workshop.createdAt, { includeWeekday: false })}
-                {shouldShowStatusBadge && workshop.publishedAt && (
-                  <span>
-                    {" "}
-                    • Publié le{" "}
-                    {formatDate(workshop.publishedAt, {
-                      includeWeekday: false,
-                    })}
-                  </span>
-                )}
-              </p>
-            </div>
-
-            {isOwner && (
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={handleEdit}>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Éditer
-                </Button>
-                {workshop.status === "PUBLISHED" && workshop.date && !isWorkshopPast() && (
-                  <>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowRescheduleDialog(true)}
-                      disabled={rescheduleMutation.isPending}
-                    >
-                      <Calendar className="w-4 h-4 mr-2" />
-                      Reprogrammer
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={handleUnpublish}
-                      disabled={unpublishMutation.isPending}
-                    >
-                      <EyeOff className="w-4 h-4 mr-2" />
-                      Dépublier
-                    </Button>
-                  </>
-                )}
-                {workshop.status === "PUBLISHED" && isWorkshopPast() && (
-                  <Button
-                    variant="outline"
-                    onClick={handleUnpublish}
-                    disabled={unpublishMutation.isPending}
-                  >
-                    <EyeOff className="w-4 h-4 mr-2" />
-                    Dépublier
-                  </Button>
-                )}
-                <Button
-                  variant="destructive"
-                  onClick={() => setShowDeleteDialog(true)}
-                  disabled={deleteMutation.isPending}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Supprimer
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
+        <WorkshopHeader
+          workshop={workshop}
+          isOwner={isOwner}
+          canReschedule={Boolean(canReschedule)}
+          onBack={handleBack}
+          onEdit={handleEdit}
+          onReschedule={() => setShowRescheduleDialog(true)}
+          onUnpublish={handleUnpublish}
+          onDelete={() => setShowDeleteDialog(true)}
+          isRescheduling={rescheduleMutation.isPending}
+          isUnpublishing={unpublishMutation.isPending}
+          isDeleting={deleteMutation.isPending}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Description
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {workshop.description ? (
-                  <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
-                    {workshop.description}
-                  </p>
-                ) : (
-                  <p className="text-slate-500 italic">
-                    Aucune description disponible
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+            <WorkshopDescription
+              description={workshop.description}
+              materialsNeeded={workshop.materialsNeeded}
+            />
 
-            {workshop.materialsNeeded && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5" />
-                    Matériel nécessaire
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
-                    {workshop.materialsNeeded}
-                  </p>
-                </CardContent>
-              </Card>
+            {isOwner && workshopRequests && (
+              <WorkshopRequestsCard
+                requests={workshopRequests}
+                onAccept={handleAcceptRequest}
+                onReject={handleRejectRequest}
+                isRejecting={rejectRequest.isPending}
+              />
             )}
 
-            {isOwner && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="w-5 h-5" />
-                    Demandes de participation
-                  </CardTitle>
-                  <CardDescription>
-                    {workshopRequests?.filter((r: any) => r.status === "PENDING").length || 0} demande(s) en attente
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {workshopRequests &&
-                  workshopRequests.filter((r: any) => r.status === "PENDING")
-                    .length > 0 ? (
-                    <div className="space-y-3">
-                      {workshopRequests
-                        .filter((r: any) => r.status === "PENDING")
-                        .map((request: any) => (
-                          <WorkshopRequestCard
-                            key={request.id}
-                            request={request}
-                            onAccept={handleAcceptRequest}
-                            onReject={handleRejectRequest}
-                            isRejecting={rejectRequest.isPending}
-                          />
-                        ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-slate-500">
-                      <BookOpen className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                      <p>Aucune demande de participation pour le moment</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Participants inscrits
-                </CardTitle>
-                <CardDescription>
-                  {workshop.status === "PUBLISHED" && workshop.apprenticeId ? 1 : 0} / {workshop.maxParticipants || "∞"} participants
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {workshop.status === "PUBLISHED" && workshop.apprenticeId && workshop.apprentice ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between p-3 rounded-lg border bg-slate-50 dark:bg-slate-900">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm">
-                            {workshop.apprentice.user?.name || "Apprenti"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {workshop.apprentice.user?.email || ""}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-slate-500">
-                    <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                    <p>
-                      {workshop.status === "DRAFT" 
-                        ? "Les participants seront visibles une fois l'atelier publié"
-                        : "Aucun participant inscrit pour le moment"}
-                    </p>
-                    {workshop.status === "PUBLISHED" && (
-                      <p className="text-sm mt-2">
-                        Les inscriptions seront visibles une fois l'atelier publié
-                      </p>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <WorkshopParticipantsCard
+              workshop={workshop}
+              onViewApprenticeProfile={(userId) => {
+                setSelectedApprenticeUserId(userId);
+                setShowApprenticeProfileModal(true);
+              }}
+            />
           </div>
 
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Détails de l'atelier</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {workshop.topic && (
-                  <div className="flex items-start gap-3">
-                    <Tag className="w-5 h-5 text-slate-500 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                        Thème / Topic
-                      </p>
-                      <p className="text-slate-900 dark:text-slate-100">
-                        {workshop.topic}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-slate-500 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                      Date
-                    </p>
-                    <p className="text-slate-900 dark:text-slate-100">
-                      {formatDate(workshop.date, { includeWeekday: true })}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-slate-500 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                      Heure
-                    </p>
-                    <p className="text-slate-900 dark:text-slate-100">
-                      {formatTime(workshop.time)}
-                    </p>
-                  </div>
-                </div>
-
-                {workshop.duration && (
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-slate-500 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                        Durée
-                      </p>
-                      <p className="text-slate-900 dark:text-slate-100">
-                        {workshop.duration} minutes
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-start gap-3">
-                  {workshop.isVirtual ? (
-                    <Video className="w-5 h-5 text-slate-500 mt-0.5" />
-                  ) : (
-                    <MapPin className="w-5 h-5 text-slate-500 mt-0.5" />
-                  )}
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                      {workshop.isVirtual ? "En ligne" : "Lieu"}
-                    </p>
-                    <p className="text-slate-900 dark:text-slate-100">
-                      {workshop.location || "Non spécifié"}
-                    </p>
-                  </div>
-                </div>
-
-                {workshop.maxParticipants && (
-                  <div className="flex items-start gap-3">
-                    <Users className="w-5 h-5 text-slate-500 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                        Participants max
-                      </p>
-                      <p className="text-slate-900 dark:text-slate-100">
-                        {workshop.maxParticipants} personnes
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <WorkshopDetailsCard
+              topic={workshop.topic}
+              date={workshop.date}
+              time={workshop.time}
+              duration={workshop.duration}
+              location={workshop.location}
+              isVirtual={workshop.isVirtual}
+              maxParticipants={workshop.maxParticipants}
+            />
 
             {workshop.creator && (
-              <Card
-                className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => router.push(`/mentors/${workshop.creator.id}`)}
-              >
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="w-5 h-5" />
-                    Professeur
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white font-semibold">
-                      {workshop.creator.user?.name?.charAt(0).toUpperCase() ||
-                        "?"}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100 hover:underline">
-                        {workshop.creator.user?.name || "Animateur"}
-                      </p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        {workshop.creator.user?.email}
-                      </p>
-                    </div>
-                  </div>
-                  {workshop.creator.bio && (
-                    <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
-                      {workshop.creator.bio}
-                    </p>
-                  )}
-                  <p className="mt-3 text-sm text-blue-600 dark:text-blue-400 font-medium">
-                    Voir le profil complet{" "}
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </p>
-                </CardContent>
-              </Card>
+              <WorkshopCreatorCard creator={workshop.creator} />
             )}
 
-            {isRegistered && !isWorkshopPast() && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    Vous êtes inscrit à cet atelier
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                    Vous êtes inscrit à cet atelier. Vous pouvez annuler votre inscription si nécessaire.
-                  </p>
-                  <Button
-                    variant="destructive"
-                    className="w-full gap-2"
-                    onClick={handleCancelClick}
-                    disabled={cancelMutation.isPending}
-                  >
-                    <X className="h-4 w-4" />
-                    Annuler mon inscription
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-
-            {canRequestParticipation && workshop.creator && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="w-5 h-5" />
-                    Participer à cet atelier
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                    Vous souhaitez participer à cet atelier ? Envoyez une demande
-                    au mentor.
-                  </p>
-                  <Button
-                    className="w-full gap-2"
-                    onClick={() => setShowRequestDialog(true)}
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    Demander à participer
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+            <WorkshopActionsCard
+              isRegistered={isRegistered}
+              canRequestParticipation={canRequestParticipation}
+              isWorkshopPast={isWorkshopPast()}
+              onRequestParticipation={() => setShowRequestDialog(true)}
+              onCancelRegistration={handleCancelClick}
+              onContactMentor={handleContactMentor}
+              showContactMentor={isApprentice && !!workshop?.creator}
+              isCancelling={cancelMutation.isPending}
+            />
           </div>
         </div>
       </div>
@@ -716,6 +418,19 @@ export default function WorkshopDetailPage() {
           oldDuration={workshop.duration}
           oldLocation={workshop.location}
           isVirtual={workshop.isVirtual}
+        />
+      )}
+
+      {selectedApprenticeUserId && (
+        <MiniProfileModal
+          open={showApprenticeProfileModal}
+          onOpenChange={(open) => {
+            setShowApprenticeProfileModal(open);
+            if (!open) {
+              setSelectedApprenticeUserId(null);
+            }
+          }}
+          apprenticeUserId={selectedApprenticeUserId}
         />
       )}
     </div>

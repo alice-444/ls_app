@@ -38,7 +38,7 @@ import { ContactMentorDialog } from "@/components/mentor/ContactMentorDialog";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 import { MentorFeedbacks } from "@/components/mentor/MentorFeedbacks";
 import { MentorWorkshopHistory } from "@/components/mentor/MentorWorkshopHistory";
-import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { toast } from "sonner";
 
 export default function MentorProfileViewPage() {
@@ -338,17 +338,6 @@ export default function MentorProfileViewPage() {
                 Contact
               </h3>
               <div className="space-y-2">
-                {mentor.email && (
-                  <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                    <Mail className="h-4 w-4" />
-                    <a
-                      href={`mailto:${mentor.email}`}
-                      className="hover:underline"
-                    >
-                      {mentor.email}
-                    </a>
-                  </div>
-                )}
                 {mentor.calendlyLink && (
                   <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                     <Calendar className="h-4 w-4" />

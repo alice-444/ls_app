@@ -95,7 +95,10 @@ export function calculateWorkshopStartTime(
     const startTime = new Date(date);
     startTime.setHours(hours, minutes, 0, 0);
     return startTime;
-  } catch {
+  } catch (error) {
+    if (!(error instanceof TypeError && error.message.includes("Invalid"))) {
+      console.error("Unexpected error calculating workshop start time:", error);
+    }
     return null;
   }
 }
@@ -118,7 +121,10 @@ export function calculateWorkshopEndTime(
     const endTime = new Date(startTime);
     endTime.setMinutes(endTime.getMinutes() + duration);
     return endTime;
-  } catch {
+  } catch (error) {
+    if (!(error instanceof TypeError && error.message.includes("Invalid"))) {
+      console.error("Unexpected error calculating workshop end time:", error);
+    }
     return null;
   }
 }

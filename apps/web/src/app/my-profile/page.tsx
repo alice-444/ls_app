@@ -27,7 +27,7 @@ import {
 import { toast } from "sonner";
 import { customAuthClient } from "@/lib/auth-client";
 import { getProfProfile, API_BASE_URL, getUserRole } from "@/lib/api-client";
-import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 

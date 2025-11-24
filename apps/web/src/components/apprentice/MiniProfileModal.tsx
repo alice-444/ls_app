@@ -7,9 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import Loader from "@/components/loader";
-import { User, GraduationCap, Tag } from "lucide-react";
+import { User, GraduationCap, Tag, UserPlus, UserMinus } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 interface MiniProfileModalProps {
   open: boolean;
@@ -22,6 +25,7 @@ export function MiniProfileModal({
   onOpenChange,
   apprenticeUserId,
 }: MiniProfileModalProps) {
+  const { data: session } = authClient.useSession();
   const { data: miniProfile, isLoading } =
     trpc.apprentice.getMiniProfileForMentor.useQuery(
       { apprenticeUserId },
@@ -29,6 +33,45 @@ export function MiniProfileModal({
         enabled: open && !!apprenticeUserId,
       }
     );
+
+  const { data: connectionStatus, refetch: refetchConnectionStatus } =
+    trpc.connection.checkConnectionStatus.useQuery(
+      { otherUserId: apprenticeUserId },
+      {
+        enabled:
+          open &&
+          !!apprenticeUserId &&
+          !!session &&
+          apprenticeUserId !== session?.user?.id,
+      }
+    );
+
+  const sendConnectionRequestMutation =
+    trpc.connection.sendConnectionRequest.useMutation({
+      onSuccess: () => {
+        toast.success("Demande d'invitation envoyée");
+        refetchConnectionStatus();
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de l'envoi", {
+          description: error.message,
+        });
+      },
+    });
+
+  const removeConnectionMutation = trpc.connection.removeConnection.useMutation(
+    {
+      onSuccess: () => {
+        toast.success("Connexion supprimée");
+        refetchConnectionStatus();
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de la suppression", {
+          description: error.message,
+        });
+      },
+    }
+  );
 
   if (isLoading) {
     return (
@@ -107,6 +150,48 @@ export function MiniProfileModal({
                 </div>
               </div>
             )}
+
+          {session && apprenticeUserId !== session?.user?.id && (
+            <div className="pt-4 border-t">
+              {connectionStatus?.status === "ACCEPTED" ? (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    removeConnectionMutation.mutate({
+                      otherUserId: apprenticeUserId,
+                    });
+                  }}
+                  disabled={removeConnectionMutation.isPending}
+                >
+                  <UserMinus className="h-4 w-4 mr-2" />
+                  {removeConnectionMutation.isPending
+                    ? "Suppression..."
+                    : "Retirer la connexion"}
+                </Button>
+              ) : connectionStatus?.status === "PENDING" ? (
+                <Button variant="outline" className="w-full" disabled>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Demande en attente
+                </Button>
+              ) : (
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    sendConnectionRequestMutation.mutate({
+                      receiverUserId: apprenticeUserId,
+                    });
+                  }}
+                  disabled={sendConnectionRequestMutation.isPending}
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  {sendConnectionRequestMutation.isPending
+                    ? "Envoi..."
+                    : "Connecter"}
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
