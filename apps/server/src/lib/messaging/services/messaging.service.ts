@@ -1,4 +1,5 @@
 import { Result, failure, success } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import { generateInternalId } from "../../utils/id-generator";
 import type { AppUserRepository } from "../../users/repositories";
 import type {
@@ -201,7 +202,10 @@ export class MessagingService implements IMessagingService {
 
       return success(validConversations);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getConversations", { userId })
+      );
     }
   }
 
@@ -274,7 +278,13 @@ export class MessagingService implements IMessagingService {
 
       return success({ conversationId: conversation.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getOrCreateConversation", {
+          userId: userId1,
+          details: { userId2, workshopId },
+        })
+      );
     }
   }
 
@@ -332,7 +342,14 @@ export class MessagingService implements IMessagingService {
 
       return success({ messageId: message.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("sendMessage", {
+          userId,
+          resourceId: conversationId,
+          details: { replyToMessageId },
+        })
+      );
     }
   }
 
@@ -365,7 +382,14 @@ export class MessagingService implements IMessagingService {
 
       return success(messagesWithDetails);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getMessages", {
+          userId,
+          resourceId: conversationId,
+          details: { limit, offset },
+        })
+      );
     }
   }
 
@@ -391,7 +415,13 @@ export class MessagingService implements IMessagingService {
 
       return success({ success: true, messageIds });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("markMessagesAsRead", {
+          userId,
+          resourceId: conversationId,
+        })
+      );
     }
   }
 
@@ -425,7 +455,13 @@ export class MessagingService implements IMessagingService {
         workshopDate,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getConversationDetails", {
+          userId,
+          resourceId: conversationId,
+        })
+      );
     }
   }
 
@@ -457,7 +493,10 @@ export class MessagingService implements IMessagingService {
 
       return success({ count: totalUnreadCount });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getUnreadConversationsCount", { userId })
+      );
     }
   }
 
@@ -478,7 +517,13 @@ export class MessagingService implements IMessagingService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("deleteConversation", {
+          userId,
+          resourceId: conversationId,
+        })
+      );
     }
   }
 
@@ -536,7 +581,13 @@ export class MessagingService implements IMessagingService {
         conversationId: updatedMessage.conversationId,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateMessage", {
+          userId,
+          resourceId: messageId,
+        })
+      );
     }
   }
 
@@ -574,7 +625,14 @@ export class MessagingService implements IMessagingService {
 
       return success(messagesWithDetails);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("searchMessages", {
+          userId,
+          resourceId: conversationId,
+          details: { query, limit },
+        })
+      );
     }
   }
 
@@ -621,7 +679,13 @@ export class MessagingService implements IMessagingService {
         conversationId: deletedMessage.conversationId,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("deleteMessage", {
+          userId,
+          resourceId: messageId,
+        })
+      );
     }
   }
 }

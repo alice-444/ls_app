@@ -1,4 +1,5 @@
 import { Result, failure, success } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../repositories";
 import type { IWorkshopRepository } from "../../workshops/repositories/workshop.repository.interface";
 import type { IUserConnectionRepository } from "../repositories/user-connection.repository.interface";
@@ -53,7 +54,10 @@ export class ApprenticeProfileService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("saveIdentityCard", { userId })
+      );
     }
   }
 
@@ -75,7 +79,9 @@ export class ApprenticeProfileService {
 
       const identityCard =
         await this.appUserRepository.findIdentityCardByUserId(userId);
-      const userName = await this.appUserRepository.findUserNameByUserId(userId);
+      const userName = await this.appUserRepository.findUserNameByUserId(
+        userId
+      );
 
       if (!identityCard) {
         return failure("Identity card not found", 404);
@@ -90,7 +96,10 @@ export class ApprenticeProfileService {
         userName,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getIdentityCard", { userId })
+      );
     }
   }
 
@@ -157,7 +166,13 @@ export class ApprenticeProfileService {
         iceBreakerTags: identityCard.iceBreakerTags || [],
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getMiniProfileForMentor", {
+          userId: mentorUserId,
+          details: { apprenticeUserId },
+        })
+      );
     }
   }
 
@@ -195,7 +210,9 @@ export class ApprenticeProfileService {
 
       if (viewerUserId === apprenticeUserId) {
         const identityCard =
-          await this.appUserRepository.findIdentityCardByUserId(apprenticeUserId);
+          await this.appUserRepository.findIdentityCardByUserId(
+            apprenticeUserId
+          );
 
         if (!identityCard) {
           return failure("Identity card not found", 404);
@@ -249,7 +266,13 @@ export class ApprenticeProfileService {
         hasFullAccess,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getApprenticeProfileForViewer", {
+          userId: viewerUserId,
+          details: { apprenticeUserId },
+        })
+      );
     }
   }
 }

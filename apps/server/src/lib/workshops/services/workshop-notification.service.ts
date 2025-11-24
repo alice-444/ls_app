@@ -5,6 +5,7 @@ import type { INotificationService } from "../../notifications/services/notifica
 import type { AppUserRepository } from "../../users/repositories";
 import { formatDateTime } from "../utils/date-formatters";
 import { logger } from "../../common/logger";
+import { handleError, createErrorContext } from "../../common/error-handler";
 
 export interface WorkshopRescheduleNotificationData {
   workshopId: string;
@@ -70,7 +71,13 @@ export class WorkshopNotificationService {
 
       return success({ notifiedCount: 1 });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("notifyWorkshopRescheduled", {
+          resourceId: workshopId,
+          details: { oldDate, oldTime, newDate, newTime },
+        })
+      );
     }
   }
 

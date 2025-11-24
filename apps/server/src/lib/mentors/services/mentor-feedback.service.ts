@@ -1,25 +1,15 @@
 import type { Result } from "../../common";
-import { failure, success } from "../../common";
+import { success } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import type { IMentorFeedbackService } from "./mentor-feedback.service.interface";
 import type { IMentorRepository } from "../repositories/mentor.repository.interface";
+import {
+  verifyMentorAccess,
+  calculateAverageRating,
+} from "../utils/mentor-helpers";
 
 export class MentorFeedbackService implements IMentorFeedbackService {
   constructor(private readonly mentorRepository: IMentorRepository) {}
-
-  private async verifyMentorAccess(mentorId: string): Promise<Result<any>> {
-    const mentor = await this.mentorRepository.findMentorById(mentorId);
-
-    if (!mentor) {
-      return failure("Mentor introuvable", 404);
-    }
-
-    return success({ mentor });
-  }
-
-  private calculateAverageRating(ratings: number[]): number {
-    if (ratings.length === 0) return 0;
-    return ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-  }
 
   async getMentorFeedbacks(
     mentorId: string,
@@ -28,7 +18,10 @@ export class MentorFeedbackService implements IMentorFeedbackService {
     }
   ): Promise<Result<any>> {
     try {
-      const mentorCheck = await this.verifyMentorAccess(mentorId);
+      const mentorCheck = await verifyMentorAccess(
+        this.mentorRepository,
+        mentorId
+      );
       if (!mentorCheck.ok) {
         return mentorCheck;
       }
@@ -39,7 +32,7 @@ export class MentorFeedbackService implements IMentorFeedbackService {
       );
 
       const ratings = feedbacks.map((f) => f.rating);
-      const averageRating = this.calculateAverageRating(ratings);
+      const averageRating = calculateAverageRating(ratings);
       const ratingCount = ratings.length;
       const ratingDistribution = [1, 2, 3, 4, 5].map((star) => ({
         star,
@@ -64,14 +57,19 @@ export class MentorFeedbackService implements IMentorFeedbackService {
               },
         })),
         aggregate: {
-          averageRating: Math.round(averageRating * 10) / 10,
+          averageRating,
           totalCount: ratingCount,
           ratingDistribution,
         },
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getMentorFeedbacks", {
+          resourceId: mentorId,
+          details: { workshopId: filters?.workshopId },
+        })
+      );
     }
   }
 }
-

@@ -1,10 +1,12 @@
 import type { Result } from "../../common";
-import { failure, success } from "../../common";
+import { success } from "../../common";
 import type { IMentorContactService } from "./mentor-contact.service.interface";
 import type { IMentorRepository } from "../repositories/mentor.repository.interface";
 import type { INotificationService } from "../../notifications/services/notification.service.interface";
 import type { IMessagingService } from "../../messaging/services/messaging.service.interface";
 import { logger } from "../../common/logger";
+import { handleError, createErrorContext } from "../../common/error-handler";
+import { verifyMentorAccess } from "../utils/mentor-helpers";
 
 export class MentorContactService implements IMentorContactService {
   constructor(
@@ -13,16 +15,6 @@ export class MentorContactService implements IMentorContactService {
     private readonly messagingService?: IMessagingService
   ) {}
 
-  private async verifyMentorAccess(mentorId: string): Promise<Result<any>> {
-    const mentor = await this.mentorRepository.findMentorById(mentorId);
-
-    if (!mentor) {
-      return failure("Mentor introuvable", 404);
-    }
-
-    return success({ mentor });
-  }
-
   async sendContactRequest(
     apprenticeId: string,
     mentorId: string,
@@ -30,7 +22,7 @@ export class MentorContactService implements IMentorContactService {
     subject?: string
   ): Promise<Result<{ success: boolean }>> {
     try {
-      const mentorCheck = await this.verifyMentorAccess(mentorId);
+      const mentorCheck = await verifyMentorAccess(this.mentorRepository, mentorId);
       if (!mentorCheck.ok) {
         return mentorCheck;
       }
@@ -96,7 +88,13 @@ export class MentorContactService implements IMentorContactService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("sendContactRequest", {
+          userId: apprenticeId,
+          details: { mentorId, hasSubject: !!subject },
+        })
+      );
     }
   }
 }

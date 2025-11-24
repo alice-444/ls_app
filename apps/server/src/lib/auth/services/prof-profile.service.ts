@@ -2,6 +2,7 @@ import { z } from "zod";
 import { existsSync } from "fs";
 import { join, resolve } from "path";
 import { Result, failure, success, validateInput, prisma } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../../users/repositories";
 import { sanitizeString } from "../../utils/sanitize";
 import { verifyUserExists, verifyProfUser } from "./user-helpers";
@@ -197,7 +198,10 @@ export class ProfProfileService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateProfile", { userId })
+      );
     }
   }
 
@@ -236,7 +240,10 @@ export class ProfProfileService {
 
       return success({ success: true, publishedAt });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("publishProfile", { userId })
+      );
     }
   }
 
@@ -261,7 +268,10 @@ export class ProfProfileService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("unpublishProfile", { userId })
+      );
     }
   }
 }

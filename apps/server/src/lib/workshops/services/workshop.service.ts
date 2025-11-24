@@ -26,6 +26,11 @@ import { WorkshopNotificationService } from "./workshop-notification.service";
 import type { INotificationService } from "../../notifications/services/notification.service.interface";
 import { logger } from "../../common/logger";
 import {
+  handleError,
+  createErrorContext,
+  ErrorCategory,
+} from "../../common/error-handler";
+import {
   isValidTimeFormat,
   doTimeRangesOverlap,
   calculateWorkshopStartTime,
@@ -157,7 +162,12 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ workshopId: workshop.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("createWorkshop", {
+          userId,
+        })
+      );
     }
   }
 
@@ -221,7 +231,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -306,7 +322,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true, publishedAt });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("publishWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -349,7 +371,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("unpublishWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -378,7 +406,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("deleteWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -401,7 +435,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(workshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getWorkshopsByCreator", { userId })
+      );
     }
   }
 
@@ -410,7 +447,7 @@ export class WorkshopService implements IWorkshopService {
       const workshops = await this.workshopRepository.findPublished();
       return success(workshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(error, createErrorContext("getPublishedWorkshops"));
     }
   }
 
@@ -422,7 +459,10 @@ export class WorkshopService implements IWorkshopService {
       }
       return success(workshop);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getWorkshopById", { resourceId: workshopId })
+      );
     }
   }
 
@@ -447,7 +487,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(confirmedWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getConfirmedWorkshopsForApprentice", { userId })
+      );
     }
   }
 
@@ -536,7 +579,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateWorkshopScheduling", {
+          userId,
+          resourceId: workshopId,
+        })
+      );
     }
   }
 
@@ -652,7 +701,14 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("cancelConfirmedWorkshop", {
+          userId,
+          resourceId: workshopId,
+          details: { cancellationReason },
+        })
+      );
     }
   }
 
@@ -725,7 +781,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(upcomingWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getUpcomingWorkshopsForApprentice", { userId })
+      );
     }
   }
 
@@ -760,7 +819,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(historyWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getWorkshopHistoryForApprentice", { userId })
+      );
     }
   }
 
@@ -804,7 +866,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(availableWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getAvailableWorkshopsForApprentice", { userId })
+      );
     }
   }
 
@@ -855,7 +920,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ hasConflict: false });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("checkResourceConflicts", {
+          resourceId: workshopId,
+          details: { mentorId, newDate, newTime },
+        })
+      );
     }
   }
 
@@ -1036,6 +1107,8 @@ export class WorkshopService implements IWorkshopService {
 
       const oldDate = workshop.date;
       const oldTime = workshop.time;
+      const newDate = input.date;
+      const newTime = input.time;
 
       const updateData: any = {
         date: input.date,
@@ -1080,7 +1153,17 @@ export class WorkshopService implements IWorkshopService {
         oldTime,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("rescheduleWorkshop", {
+          userId,
+          resourceId: workshopId,
+          details: {
+            newDate: input.date,
+            newTime: input.time,
+          },
+        })
+      );
     }
   }
 }

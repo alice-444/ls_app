@@ -8,6 +8,7 @@ import type { INotificationService } from "../../notifications/services/notifica
 import { sanitizeString } from "../../utils/sanitize";
 import { sanitizeLocation } from "../../workshops/utils/workshop-helpers";
 import { logger } from "../../common/logger";
+import { handleError, createErrorContext } from "../../common/error-handler";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   constructor(
@@ -99,7 +100,13 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success({ requestId: workshopRequest.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("submitWorkshopRequest", {
+          userId,
+          details: { mentorId: input.mentorId },
+        })
+      );
     }
   }
 
@@ -119,7 +126,10 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success(requests);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getApprenticeRequests", { userId })
+      );
     }
   }
 
@@ -137,7 +147,10 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success(requests);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getMentorRequests", { userId })
+      );
     }
   }
 
@@ -149,7 +162,10 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success(requests);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getWorkshopRequests", { resourceId: workshopId })
+      );
     }
   }
 
@@ -165,13 +181,15 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       maxParticipants?: number | null;
     }
   ): Promise<Result<{ workshopId: string; requestId: string }>> {
+    let mentor: any = null;
+    let request: any = null;
     try {
-      const mentor = await this.mentorRepository.findMentorById(userId);
+      mentor = await this.mentorRepository.findMentorById(userId);
       if (!mentor) {
         return failure("Mentor introuvable", 404);
       }
 
-      const request = await this.workshopRequestRepository.findById(requestId);
+      request = await this.workshopRequestRepository.findById(requestId);
       if (!request) {
         return failure("Demande d'atelier introuvable", 404);
       }
@@ -281,7 +299,14 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         requestId: request.id,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("acceptWorkshopRequest", {
+          userId,
+          resourceId: requestId,
+          details: { mentorId: mentor.id, apprenticeId: request.apprenticeId },
+        })
+      );
     }
   }
 
@@ -444,7 +469,13 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("rejectWorkshopRequest", {
+          userId,
+          resourceId: requestId,
+        })
+      );
     }
   }
 
@@ -522,7 +553,13 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("cancelWorkshopRequest", {
+          userId,
+          resourceId: requestId,
+        })
+      );
     }
   }
 
@@ -641,7 +678,13 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return success({ requestId });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateWorkshopRequest", {
+          userId,
+          resourceId: requestId,
+        })
+      );
     }
   }
 }
