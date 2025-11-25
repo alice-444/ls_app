@@ -21,7 +21,7 @@ try {
       tableName: "rate_limiter",
       points: 10,
       duration: 60,
-      blockDuration: 60,
+      blockDuration: 0,
     });
   }
 } catch (error) {
@@ -35,7 +35,7 @@ if (!rateLimiterPostgres) {
   rateLimiterMemory = new RateLimiterMemory({
     points: 10,
     duration: 60,
-    blockDuration: 60,
+    blockDuration: 0,
   });
 }
 
@@ -47,12 +47,12 @@ export const apiRateLimiter = pgPool
       tableName: "rate_limiter_api",
       points: 100,
       duration: 60,
-      blockDuration: 60,
+      blockDuration: 0,
     })
   : new RateLimiterMemory({
       points: 100,
       duration: 60,
-      blockDuration: 60,
+      blockDuration: 0,
     });
 
 export const authRateLimiter = pgPool
@@ -61,12 +61,12 @@ export const authRateLimiter = pgPool
       tableName: "rate_limiter_auth",
       points: 5,
       duration: 60,
-      blockDuration: 60,
+      blockDuration: 0,
     })
   : new RateLimiterMemory({
       points: 5,
       duration: 60,
-      blockDuration: 60,
+      blockDuration: 0,
     });
 
 export function getRateLimitIdentifier(

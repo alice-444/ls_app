@@ -1,15 +1,12 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { Context } from "./context";
 import { prisma } from "./common/prisma";
-import { rateLimitMutation, rateLimitQuery } from "./rate-limit/rate-limit-middleware";
 
 export const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
 
 export const publicProcedure = t.procedure.use(async ({ ctx, next }) => {
-
-	await rateLimitQuery(ctx.session?.user?.id, ctx.ipAddress);
 	return next({ ctx });
 });
 
@@ -28,17 +25,9 @@ export const protectedProcedure = t.procedure
 				session: ctx.session,
 			},
 		});
-	})
-	.use(async ({ ctx, next }) => {
-		await rateLimitQuery(ctx.session?.user?.id, ctx.ipAddress);
-		return next({ ctx });
 	});
 
 export const profProcedure = protectedProcedure
-	.use(async ({ ctx, next }) => {
-		await rateLimitMutation(ctx.session?.user?.id, ctx.ipAddress);
-		return next({ ctx });
-	})
 	.use(async ({ ctx, next }) => {
 		const appUser = await (prisma as any).app_user.findUnique({
 			where: { userId: ctx.session.user.id },

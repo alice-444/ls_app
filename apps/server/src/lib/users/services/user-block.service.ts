@@ -224,6 +224,23 @@ export class UserBlockService implements IUserBlockService {
 
       return success(validBlockedUsers);
     } catch (error) {
+      if (error instanceof Error) {
+        logger.error("getBlockedUsers error details", error, {
+          operation: "getBlockedUsers",
+          userId: blockerUserId,
+          errorName: error.name,
+          errorMessage: error.message,
+          errorStack: error.stack,
+        });
+      } else {
+        logger.error("getBlockedUsers error (non-Error)", error, {
+          operation: "getBlockedUsers",
+          userId: blockerUserId,
+          errorType: typeof error,
+          errorString: String(error),
+        });
+      }
+
       return handleError(
         error,
         createErrorContext("getBlockedUsers", {
