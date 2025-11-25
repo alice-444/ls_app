@@ -100,12 +100,16 @@ export class WorkshopRequestService implements IWorkshopRequestService {
             requestWithRelations.apprentice?.user?.name || "un apprenti";
           const mentorUserId = requestWithRelations.mentor.user.id;
 
-          await this.notificationService.createNotification(mentorUserId, {
-            type: "workshop",
-            title: "Nouvelle demande d'atelier",
-            message: `${apprenticeName} vous a envoyé une demande pour l'atelier "${sanitizedTitle}".`,
-            actionUrl: `/dashboard/workshop-requests`,
-          });
+          await this.notificationService.createNotification(
+            mentorUserId,
+            {
+              type: "workshop",
+              title: "Nouvelle demande d'atelier",
+              message: `${apprenticeName} vous a envoyé une demande pour l'atelier "${sanitizedTitle}".`,
+              actionUrl: `/dashboard/workshop-requests`,
+            },
+            userId
+          );
         }
       }
 
@@ -339,7 +343,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
                 title: "Demande d'atelier acceptée",
                 message: `${mentorName} a accepté votre demande pour l'atelier "${workshopTitle}".`,
                 actionUrl: `/workshop/${workshop.data.id}`,
-              }
+              },
+              userId
             );
 
           if (!notificationResult.ok) {
@@ -567,12 +572,16 @@ export class WorkshopRequestService implements IWorkshopRequestService {
             requestWithRelations.mentor?.user?.name || "le mentor";
           const apprenticeUserId = requestWithRelations.apprentice.user.id;
 
-          await this.notificationService.createNotification(apprenticeUserId, {
-            type: "workshop",
-            title: "Demande d'atelier rejetée",
-            message: `${mentorName} a rejeté votre demande pour l'atelier "${request.title}".`,
-            actionUrl: `/workshop-room`,
-          });
+          await this.notificationService.createNotification(
+            apprenticeUserId,
+            {
+              type: "workshop",
+              title: "Demande d'atelier rejetée",
+              message: `${mentorName} a rejeté votre demande pour l'atelier "${request.title}".`,
+              actionUrl: `/workshop-room`,
+            },
+            userId
+          );
         }
       }
 
@@ -640,23 +649,31 @@ export class WorkshopRequestService implements IWorkshopRequestService {
             requestWithRelations.apprentice?.user?.name || "un apprenti";
           const mentorUserId = requestWithRelations.mentor.user.id;
 
-          await this.notificationService.createNotification(mentorUserId, {
-            type: "workshop",
-            title: "Demande d'atelier annulée",
-            message: `${apprenticeName} a annulé sa demande pour l'atelier "${request.title}".`,
-            actionUrl: `/dashboard/workshop-requests`,
-          });
+          await this.notificationService.createNotification(
+            mentorUserId,
+            {
+              type: "workshop",
+              title: "Demande d'atelier annulée",
+              message: `${apprenticeName} a annulé sa demande pour l'atelier "${request.title}".`,
+              actionUrl: `/dashboard/workshop-requests`,
+            },
+            userId
+          );
         } else if (isMentor && requestWithRelations?.apprentice?.user?.id) {
           const mentorName =
             requestWithRelations.mentor?.user?.name || "le mentor";
           const apprenticeUserId = requestWithRelations.apprentice.user.id;
 
-          await this.notificationService.createNotification(apprenticeUserId, {
-            type: "workshop",
-            title: "Demande d'atelier annulée",
-            message: `${mentorName} a annulé votre demande pour l'atelier "${request.title}".`,
-            actionUrl: `/workshop-room`,
-          });
+          await this.notificationService.createNotification(
+            apprenticeUserId,
+            {
+              type: "workshop",
+              title: "Demande d'atelier annulée",
+              message: `${mentorName} a annulé votre demande pour l'atelier "${request.title}".`,
+              actionUrl: `/workshop-room`,
+            },
+            userId
+          );
         }
       }
 
@@ -774,14 +791,18 @@ export class WorkshopRequestService implements IWorkshopRequestService {
               ? ` a modifié ${changes.join(", ")}`
               : " a mis à jour";
 
-          await this.notificationService.createNotification(mentorUserId, {
-            type: "workshop",
-            title: "Demande d'atelier modifiée",
-            message: `${apprenticeName}${changesText} de sa demande pour l'atelier "${
-              requestWithRelations.title || request.title
-            }".`,
-            actionUrl: `/dashboard/workshop-requests`,
-          });
+          await this.notificationService.createNotification(
+            mentorUserId,
+            {
+              type: "workshop",
+              title: "Demande d'atelier modifiée",
+              message: `${apprenticeName}${changesText} de sa demande pour l'atelier "${
+                requestWithRelations.title || request.title
+              }".`,
+              actionUrl: `/dashboard/workshop-requests`,
+            },
+            userId
+          );
         }
       }
 

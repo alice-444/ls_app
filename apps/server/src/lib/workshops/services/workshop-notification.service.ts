@@ -32,7 +32,8 @@ export class WorkshopNotificationService {
     oldDate: Date | null,
     oldTime: string | null,
     newDate: Date,
-    newTime: string
+    newTime: string,
+    senderUserId?: string | null
   ): Promise<Result<{ notifiedCount: number }>> {
     try {
       const workshop = await this.workshopRepository.findById(workshopId);
@@ -67,7 +68,7 @@ export class WorkshopNotificationService {
         apprenticeUserId: apprenticeUserId || undefined,
       };
 
-      await this.sendRescheduleNotification(notificationData);
+      await this.sendRescheduleNotification(notificationData, senderUserId);
 
       return success({ notifiedCount: 1 });
     } catch (error) {
@@ -82,7 +83,8 @@ export class WorkshopNotificationService {
   }
 
   private async sendRescheduleNotification(
-    data: WorkshopRescheduleNotificationData
+    data: WorkshopRescheduleNotificationData,
+    senderUserId?: string | null
   ): Promise<void> {
     const oldDateTime = formatDateTime(data.oldDate, data.oldTime, {
       includeWeekday: true,
@@ -102,7 +104,8 @@ export class WorkshopNotificationService {
             title: "Changement d'horaire",
             message: `L'atelier "${data.workshopTitle}" a été reprogrammé. Ancien horaire: ${oldDateTime}. Nouvel horaire: ${newDateTime}.`,
             actionUrl: `/workshop/${data.workshopId}`,
-          }
+          },
+          senderUserId
         );
       } catch (error) {
         logger.error(

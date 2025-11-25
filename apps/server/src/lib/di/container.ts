@@ -48,6 +48,16 @@ import type { INotificationRepository } from "../notifications/repositories/noti
 import { NotificationService } from "../notifications/services/notification.service";
 import type { INotificationService } from "../notifications/services/notification.service.interface";
 import { SocketNotificationEventEmitter } from "../notifications/services/socket-notification-event-emitter";
+import { PrismaUserBlockRepository } from "../users/repositories/user-block.repository";
+import type { IUserBlockRepository } from "../users/repositories/user-block.repository.interface";
+import { PrismaUserReportRepository } from "../users/repositories/user-report.repository";
+import type { IUserReportRepository } from "../users/repositories/user-report.repository.interface";
+import { UserBlockService } from "../users/services/user-block.service";
+import type { IUserBlockService } from "../users/services/user-block.service.interface";
+import { UserReportService } from "../users/services/user-report.service";
+import type { IUserReportService } from "../users/services/user-report.service.interface";
+import { AuditLogService } from "../common/audit-log.service";
+import type { IAuditLogService } from "../common/audit-log.service";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -79,6 +89,11 @@ class DIContainer {
   private _messageValidationService?: IMessageValidationService;
   private _messageEnrichmentService?: IMessageEnrichmentService;
   private _notificationService?: INotificationService;
+  private _userBlockRepository?: IUserBlockRepository;
+  private _userReportRepository?: IUserReportRepository;
+  private _userBlockService?: IUserBlockService;
+  private _userReportService?: IUserReportService;
+  private _auditLogService?: IAuditLogService;
 
   private constructor() {
     const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
@@ -283,6 +298,7 @@ class DIContainer {
         this.messageRepository,
         this.messageValidationService,
         this.messageEnrichmentService,
+        this.userBlockService,
         this.workshopRepository,
         this._prisma
       );
@@ -330,10 +346,54 @@ class DIContainer {
       this._notificationService = new NotificationService(
         this.notificationRepository,
         this.appUserRepository,
-        eventEmitter
+        eventEmitter,
+        this.userBlockService
       );
     }
     return this._notificationService;
+  }
+
+  get userBlockRepository(): IUserBlockRepository {
+    if (!this._userBlockRepository) {
+      this._userBlockRepository = new PrismaUserBlockRepository();
+    }
+    return this._userBlockRepository;
+  }
+
+  get userReportRepository(): IUserReportRepository {
+    if (!this._userReportRepository) {
+      this._userReportRepository = new PrismaUserReportRepository();
+    }
+    return this._userReportRepository;
+  }
+
+  get auditLogService(): IAuditLogService {
+    if (!this._auditLogService) {
+      this._auditLogService = new AuditLogService();
+    }
+    return this._auditLogService;
+  }
+
+  get userBlockService(): IUserBlockService {
+    if (!this._userBlockService) {
+      this._userBlockService = new UserBlockService(
+        this.userBlockRepository,
+        this.appUserRepository,
+        this.auditLogService
+      );
+    }
+    return this._userBlockService;
+  }
+
+  get userReportService(): IUserReportService {
+    if (!this._userReportService) {
+      this._userReportService = new UserReportService(
+        this.userReportRepository,
+        this.appUserRepository,
+        this.auditLogService
+      );
+    }
+    return this._userReportService;
   }
 
   get prisma(): PrismaClient {

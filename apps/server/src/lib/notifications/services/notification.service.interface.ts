@@ -7,7 +7,8 @@ import type {
 export interface INotificationService {
   createNotification(
     userId: string,
-    input: Omit<CreateNotificationInput, "id" | "userId">
+    input: Omit<CreateNotificationInput, "id" | "userId">,
+    senderUserId?: string | null
   ): Promise<Result<NotificationEntity>>;
 
   getNotifications(

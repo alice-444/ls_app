@@ -3,14 +3,17 @@ import type { INotificationRepository } from "../repositories/notification.repos
 import type { Result } from "../../common/types";
 import type { AppUserRepository } from "../../users/repositories";
 import type { INotificationEventEmitter } from "./notification-event-emitter.interface";
+import type { IUserBlockService } from "../../users/services/user-block.service.interface";
 import { success, failure } from "../../common/types";
 import { generateInternalId } from "../../utils/id-generator";
+import { logger } from "../../common/logger";
 
 export class NotificationService implements INotificationService {
   constructor(
     private readonly notificationRepository: INotificationRepository,
     private readonly appUserRepository: AppUserRepository,
-    private readonly eventEmitter: INotificationEventEmitter
+    private readonly eventEmitter: INotificationEventEmitter,
+    private readonly userBlockService?: IUserBlockService
   ) {}
 
   private async getAppUserId(userId: string): Promise<string | null> {
@@ -25,7 +28,8 @@ export class NotificationService implements INotificationService {
       title: string;
       message: string;
       actionUrl?: string | null;
-    }
+    },
+    senderUserId?: string | null
   ): Promise<
     Result<
       import("../repositories/notification.repository.interface").NotificationEntity
@@ -35,6 +39,42 @@ export class NotificationService implements INotificationService {
       const appUserId = await this.getAppUserId(userId);
       if (!appUserId) {
         return failure("User not found", 404);
+      }
+
+      if (senderUserId && this.userBlockService) {
+        const blockResult = await this.userBlockService.areUsersBlocked(
+          senderUserId,
+          userId
+        );
+        if (!blockResult.ok) {
+          logger.warn("Error checking block status before notification", {
+            senderUserId,
+            recipientUserId: userId,
+            error: blockResult.error,
+            notificationType: input.type,
+          });
+        } else {
+          const { user1BlockedUser2, user2BlockedUser1 } = blockResult.data;
+          if (user1BlockedUser2 || user2BlockedUser1) {
+            logger.debug("Notification blocked due to user block", {
+              senderUserId,
+              recipientUserId: userId,
+              user1BlockedUser2,
+              user2BlockedUser1,
+              notificationType: input.type,
+            });
+            return success({
+              id: generateInternalId(),
+              userId: appUserId,
+              type: input.type,
+              title: input.title,
+              message: input.message,
+              isRead: false,
+              createdAt: new Date(),
+              actionUrl: input.actionUrl || null,
+            });
+          }
+        }
       }
 
       const notification = await this.notificationRepository.create({

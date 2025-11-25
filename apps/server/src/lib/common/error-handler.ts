@@ -42,6 +42,12 @@ function getUserFriendlyMessage(
     sendMessage: "envoyer le message",
     createConversation: "créer la conversation",
     sendContactRequest: "envoyer la demande de contact",
+    blockUser: "bloquer l'utilisateur",
+    unblockUser: "débloquer l'utilisateur",
+    getBlockedUsers: "récupérer les utilisateurs bloqués",
+    isUserBlocked: "vérifier si l'utilisateur est bloqué",
+    createReport: "créer un signalement",
+    getReportsByReporter: "récupérer les signalements",
   };
 
   const operationLabel = operationMap[operation] || operation;

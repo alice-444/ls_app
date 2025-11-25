@@ -1,5 +1,5 @@
 import type { Result } from "../../common";
-import { success } from "../../common";
+import { success, failure } from "../../common";
 import type { IMentorContactService } from "./mentor-contact.service.interface";
 import type { IMentorRepository } from "../repositories/mentor.repository.interface";
 import type { INotificationService } from "../../notifications/services/notification.service.interface";
@@ -22,7 +22,10 @@ export class MentorContactService implements IMentorContactService {
     subject?: string
   ): Promise<Result<{ success: boolean }>> {
     try {
-      const mentorCheck = await verifyMentorAccess(this.mentorRepository, mentorId);
+      const mentorCheck = await verifyMentorAccess(
+        this.mentorRepository,
+        mentorId
+      );
       if (!mentorCheck.ok) {
         return mentorCheck;
       }
@@ -76,14 +79,18 @@ export class MentorContactService implements IMentorContactService {
             ? `${message.substring(0, 50)}...`
             : message;
 
-        await this.notificationService.createNotification(mentorUserId, {
-          type: "social",
-          title: "Nouvelle demande de contact",
-          message: `${apprenticeName} vous a envoyé une demande de contact${
-            subject ? ` : "${subject}"` : ""
-          }${messagePreview ? `. "${messagePreview}"` : ""}.`,
-          actionUrl: `/dashboard/messages`,
-        });
+        await this.notificationService.createNotification(
+          mentorUserId,
+          {
+            type: "social",
+            title: "Nouvelle demande de contact",
+            message: `${apprenticeName} vous a envoyé une demande de contact${
+              subject ? ` : "${subject}"` : ""
+            }${messagePreview ? `. "${messagePreview}"` : ""}.`,
+            actionUrl: `/dashboard/messages`,
+          },
+          apprenticeId
+        );
       }
 
       return success({ success: true });

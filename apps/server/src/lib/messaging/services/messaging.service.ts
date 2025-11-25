@@ -18,6 +18,8 @@ import type { IMessageValidationService } from "./message-validation.service.int
 import type { IMessageEnrichmentService } from "./message-enrichment.service.interface";
 import type { PrismaClient } from "../../../../prisma/generated/client/client";
 import { prisma } from "../../common";
+import type { IUserBlockService } from "../../users/services/user-block.service.interface";
+import { logger } from "../../common/logger";
 
 export class MessagingService implements IMessagingService {
   constructor(
@@ -26,6 +28,7 @@ export class MessagingService implements IMessagingService {
     private readonly messageRepository: IMessageRepository,
     private readonly validationService: IMessageValidationService,
     private readonly enrichmentService: IMessageEnrichmentService,
+    private readonly userBlockService: IUserBlockService,
     private readonly workshopRepository?: IWorkshopRepository,
     private readonly prismaClient?: PrismaClient
   ) {}
@@ -129,6 +132,23 @@ export class MessagingService implements IMessagingService {
 
       const appUser = userResult.data.appUser;
 
+      const blockedUsersResult =
+        await this.userBlockService.getAllBlockedAppUserIds(appUser.id);
+      const blockedAppUserIds = new Set<string>();
+      if (blockedUsersResult.ok) {
+        blockedUsersResult.data.blockedByUser.forEach((id) =>
+          blockedAppUserIds.add(id)
+        );
+        blockedUsersResult.data.blockedUser.forEach((id) =>
+          blockedAppUserIds.add(id)
+        );
+      } else {
+        logger.warn("Error loading blocked users, continuing without filter", {
+          userId: appUser.userId,
+          error: blockedUsersResult.error,
+        });
+      }
+
       const conversations =
         await this.conversationRepository.findConversationsForUser(appUser.id);
 
@@ -138,6 +158,15 @@ export class MessagingService implements IMessagingService {
             conversation.participant1Id === appUser.id
               ? conversation.participant2Id
               : conversation.participant1Id;
+
+          if (blockedAppUserIds.has(otherAppUserId)) {
+            logger.debug("Conversation filtered due to block", {
+              viewerUserId: appUser.userId,
+              blockedAppUserId: otherAppUserId,
+              conversationId: conversation.id,
+            });
+            return null;
+          }
 
           const otherAppUser = await this.appUserRepository.findByAppUserId(
             otherAppUserId
@@ -348,6 +377,41 @@ export class MessagingService implements IMessagingService {
       }
 
       const { appUser, conversation } = accessResult.data;
+
+      const otherParticipantId =
+        conversation.participant1Id === appUser.id
+          ? conversation.participant2Id
+          : conversation.participant1Id;
+
+      const otherAppUser = await this.appUserRepository.findByAppUserId(
+        otherParticipantId
+      );
+      if (otherAppUser) {
+        const blockResult = await this.userBlockService.areUsersBlocked(
+          appUser.userId,
+          otherAppUser.userId
+        );
+        if (!blockResult.ok) {
+          logger.error("Error checking block status before sending message", {
+            senderUserId: appUser.userId,
+            recipientUserId: otherAppUser.userId,
+            error: blockResult.error,
+            conversationId,
+          });
+          return failure("Cannot verify if user is blocked", 500);
+        }
+        const { user1BlockedUser2, user2BlockedUser1 } = blockResult.data;
+        if (user1BlockedUser2 || user2BlockedUser1) {
+          logger.warn("Message blocked due to user block", {
+            senderUserId: appUser.userId,
+            recipientUserId: otherAppUser.userId,
+            user1BlockedUser2,
+            user2BlockedUser1,
+            conversationId,
+          });
+          return failure("Cannot send message to this user", 403);
+        }
+      }
 
       const contentValidation =
         this.validationService.validateMessageContent(content);

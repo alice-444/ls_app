@@ -587,7 +587,8 @@ export class WorkshopService implements IWorkshopService {
                   ", "
                 )} de l'atelier "${updatedWorkshop.title}".`,
                 actionUrl: `/workshop/${workshopId}`,
-              }
+              },
+              userId
             );
           }
         }
@@ -663,12 +664,16 @@ export class WorkshopService implements IWorkshopService {
               ? `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}". Raison: ${cancellationReason}`
               : `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}".`;
 
-            await this.dbNotificationService.createNotification(mentorUserId, {
-              type: "workshop",
-              title: "Participation annulée",
-              message,
-              actionUrl: `/workshop/${workshopId}`,
-            });
+            await this.dbNotificationService.createNotification(
+              mentorUserId,
+              {
+                type: "workshop",
+                title: "Participation annulée",
+                message,
+                actionUrl: `/workshop/${workshopId}`,
+              },
+              userId
+            );
           }
         }
 
@@ -708,7 +713,8 @@ export class WorkshopService implements IWorkshopService {
               title: "Atelier annulé",
               message: `${mentorName} a annulé l'atelier "${cancelledWorkshop.title}".`,
               actionUrl: `/workshop-room`,
-            }
+            },
+            userId
           );
         }
       }
@@ -1159,7 +1165,8 @@ export class WorkshopService implements IWorkshopService {
           oldDate,
           oldTime,
           input.date,
-          input.time
+          input.time,
+          userId
         );
 
       if (!notificationResult.ok) {
