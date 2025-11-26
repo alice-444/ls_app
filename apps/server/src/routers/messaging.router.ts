@@ -1,6 +1,7 @@
 import { protectedProcedure, router } from "../lib/trpc";
 import { container } from "../lib/di/container";
 import { z } from "zod";
+import { logger } from "../lib/common/logger";
 
 const getSafeErrorMessage = (error: string): string => {
   if (error.includes("not found") || error.includes("Not found")) {
@@ -28,7 +29,9 @@ export const messagingRouter = router({
       ctx.session.user.id
     );
     if (!result.ok) {
-      console.error("[Messaging] getConversations error:", result.error);
+      logger.error("getConversations error", result.error, {
+        userId: ctx.session.user.id,
+      });
       throw new Error(getSafeErrorMessage(result.error));
     }
     return result.data;
@@ -39,7 +42,7 @@ export const messagingRouter = router({
       z.object({
         conversationId: z.string(),
         limit: z.number().min(1).max(100).optional().default(50),
-        offset: z.number().min(0).optional().default(0),
+        offset: z.number().min(0).max(10000).optional().default(0),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -50,7 +53,10 @@ export const messagingRouter = router({
         input.offset
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("getMessages error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -64,7 +70,10 @@ export const messagingRouter = router({
         input.conversationId
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("markMessagesAsRead error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -86,7 +95,10 @@ export const messagingRouter = router({
         input.replyToMessageId
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("sendMessage error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -108,7 +120,11 @@ export const messagingRouter = router({
         input.limit
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("searchMessages error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+          query: input.query,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -128,7 +144,11 @@ export const messagingRouter = router({
         input.workshopId
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("getOrCreateConversation error", result.error, {
+          userId: ctx.session.user.id,
+          otherUserId: input.otherUserId,
+          workshopId: input.workshopId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -142,7 +162,10 @@ export const messagingRouter = router({
         input.conversationId
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("getConversationDetails error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -166,7 +189,10 @@ export const messagingRouter = router({
         input.conversationId
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("deleteConversation error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -186,7 +212,10 @@ export const messagingRouter = router({
         input.content
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("updateMessage error", result.error, {
+          userId: ctx.session.user.id,
+          messageId: input.messageId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -200,7 +229,10 @@ export const messagingRouter = router({
         input.messageId
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("deleteMessage error", result.error, {
+          userId: ctx.session.user.id,
+          messageId: input.messageId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -240,7 +272,11 @@ export const messagingRouter = router({
         input.emoji
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("addReaction error", result.error, {
+          userId: ctx.session.user.id,
+          messageId: input.messageId,
+          emoji: input.emoji,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -254,7 +290,10 @@ export const messagingRouter = router({
         input.reactionId
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("removeReaction error", result.error, {
+          userId: ctx.session.user.id,
+          reactionId: input.reactionId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -268,7 +307,10 @@ export const messagingRouter = router({
         ctx.session.user.id
       );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("getMessageReactions error", result.error, {
+          userId: ctx.session.user.id,
+          messageId: input.messageId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;
@@ -282,7 +324,10 @@ export const messagingRouter = router({
           input.messageId
         );
       if (!result.ok) {
-        console.error("[Messaging] Error:", result.error);
+        logger.error("getMessageReactionsWithUsers error", result.error, {
+          userId: ctx.session.user.id,
+          messageId: input.messageId,
+        });
         throw new Error(getSafeErrorMessage(result.error));
       }
       return result.data;

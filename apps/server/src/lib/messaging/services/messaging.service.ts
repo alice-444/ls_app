@@ -1,4 +1,5 @@
 import { Result, failure, success } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import { generateInternalId } from "../../utils/id-generator";
 import type { AppUserRepository } from "../../users/repositories";
 import type {
@@ -15,6 +16,10 @@ import { verifyUserExists } from "../../auth/services/user-helpers";
 import type { IWorkshopRepository } from "../../workshops/repositories/workshop.repository.interface";
 import type { IMessageValidationService } from "./message-validation.service.interface";
 import type { IMessageEnrichmentService } from "./message-enrichment.service.interface";
+import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import { prisma } from "../../common";
+import type { IUserBlockService } from "../../users/services/user-block.service.interface";
+import { logger } from "../../common/logger";
 
 export class MessagingService implements IMessagingService {
   constructor(
@@ -23,7 +28,9 @@ export class MessagingService implements IMessagingService {
     private readonly messageRepository: IMessageRepository,
     private readonly validationService: IMessageValidationService,
     private readonly enrichmentService: IMessageEnrichmentService,
-    private readonly workshopRepository?: IWorkshopRepository
+    private readonly userBlockService: IUserBlockService,
+    private readonly workshopRepository?: IWorkshopRepository,
+    private readonly prismaClient?: PrismaClient
   ) {}
 
   private async validateUserAndGetAppUser(userId: string): Promise<
@@ -125,6 +132,23 @@ export class MessagingService implements IMessagingService {
 
       const appUser = userResult.data.appUser;
 
+      const blockedUsersResult =
+        await this.userBlockService.getAllBlockedAppUserIds(appUser.id);
+      const blockedAppUserIds = new Set<string>();
+      if (blockedUsersResult.ok) {
+        blockedUsersResult.data.blockedByUser.forEach((id) =>
+          blockedAppUserIds.add(id)
+        );
+        blockedUsersResult.data.blockedUser.forEach((id) =>
+          blockedAppUserIds.add(id)
+        );
+      } else {
+        logger.warn("Error loading blocked users, continuing without filter", {
+          userId: appUser.userId,
+          error: blockedUsersResult.error,
+        });
+      }
+
       const conversations =
         await this.conversationRepository.findConversationsForUser(appUser.id);
 
@@ -134,6 +158,15 @@ export class MessagingService implements IMessagingService {
             conversation.participant1Id === appUser.id
               ? conversation.participant2Id
               : conversation.participant1Id;
+
+          if (blockedAppUserIds.has(otherAppUserId)) {
+            logger.debug("Conversation filtered due to block", {
+              viewerUserId: appUser.userId,
+              blockedAppUserId: otherAppUserId,
+              conversationId: conversation.id,
+            });
+            return null;
+          }
 
           const otherAppUser = await this.appUserRepository.findByAppUserId(
             otherAppUserId
@@ -201,7 +234,10 @@ export class MessagingService implements IMessagingService {
 
       return success(validConversations);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getConversations", { userId })
+      );
     }
   }
 
@@ -232,49 +268,96 @@ export class MessagingService implements IMessagingService {
         return failure("One or both users not found", 404);
       }
 
-      let conversation =
-        await this.conversationRepository.findConversationBetweenUsers(
-          appUser1.id,
-          appUser2.id
-        );
+      const prismaClient = this.prismaClient || prisma;
+      const result = await (prismaClient as any).$transaction(
+        async (tx: any) => {
+          let conversation =
+            await this.conversationRepository.findConversationBetweenUsersWithTransaction(
+              appUser1.id,
+              appUser2.id,
+              tx
+            );
 
-      if (!conversation) {
-        conversation = await this.conversationRepository.create({
-          id: generateInternalId(),
-          participant1Id: appUser1.id,
-          participant2Id: appUser2.id,
-          workshopId: workshopId || null,
-          updatedAt: new Date(),
-        });
+          if (!conversation) {
+            try {
+              conversation =
+                await this.conversationRepository.createWithTransaction(
+                  {
+                    id: generateInternalId(),
+                    participant1Id: appUser1.id,
+                    participant2Id: appUser2.id,
+                    workshopId: workshopId || null,
+                    updatedAt: new Date(),
+                  },
+                  tx
+                );
+            } catch (error: any) {
+              if (
+                error?.code === "P2002" ||
+                error?.message?.includes("Unique constraint")
+              ) {
+                conversation =
+                  await this.conversationRepository.findConversationBetweenUsersWithTransaction(
+                    appUser1.id,
+                    appUser2.id,
+                    tx
+                  );
+                if (!conversation) {
+                  throw new Error("Failed to create or find conversation");
+                }
+              } else {
+                throw error;
+              }
+            }
 
-        if (workshopId) {
-          await this.createWorkshopReferenceMessage(
-            conversation.id,
-            appUser1.id,
-            workshopId
-          );
-        }
-      } else if (workshopId) {
-        const previousWorkshopId = conversation.workshopId;
-        conversation = await this.conversationRepository.update(
-          conversation.id,
-          {
-            workshopId: workshopId,
-            updatedAt: new Date(),
+            if (workshopId && conversation) {
+              await this.createWorkshopReferenceMessage(
+                conversation.id,
+                appUser1.id,
+                workshopId
+              );
+            }
+          } else if (workshopId) {
+            const previousWorkshopId = conversation.workshopId;
+            conversation =
+              await this.conversationRepository.updateWithTransaction(
+                conversation.id,
+                {
+                  workshopId: workshopId,
+                  updatedAt: new Date(),
+                },
+                tx
+              );
+            if (previousWorkshopId !== workshopId) {
+              await this.createWorkshopReferenceMessage(
+                conversation.id,
+                appUser1.id,
+                workshopId
+              );
+            }
           }
-        );
-        if (previousWorkshopId !== workshopId) {
-          await this.createWorkshopReferenceMessage(
-            conversation.id,
-            appUser1.id,
-            workshopId
-          );
+
+          return conversation;
+        },
+        {
+          isolationLevel: "Serializable",
+          timeout: 10000,
         }
+      );
+
+      if (!result) {
+        return failure("Failed to create or find conversation", 500);
       }
 
-      return success({ conversationId: conversation.id });
+      return success({ conversationId: result.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getOrCreateConversation", {
+          userId: userId1,
+          details: { userId2, workshopId },
+        })
+      );
     }
   }
 
@@ -294,6 +377,41 @@ export class MessagingService implements IMessagingService {
       }
 
       const { appUser, conversation } = accessResult.data;
+
+      const otherParticipantId =
+        conversation.participant1Id === appUser.id
+          ? conversation.participant2Id
+          : conversation.participant1Id;
+
+      const otherAppUser = await this.appUserRepository.findByAppUserId(
+        otherParticipantId
+      );
+      if (otherAppUser) {
+        const blockResult = await this.userBlockService.areUsersBlocked(
+          appUser.userId,
+          otherAppUser.userId
+        );
+        if (!blockResult.ok) {
+          logger.error("Error checking block status before sending message", {
+            senderUserId: appUser.userId,
+            recipientUserId: otherAppUser.userId,
+            error: blockResult.error,
+            conversationId,
+          });
+          return failure("Cannot verify if user is blocked", 500);
+        }
+        const { user1BlockedUser2, user2BlockedUser1 } = blockResult.data;
+        if (user1BlockedUser2 || user2BlockedUser1) {
+          logger.warn("Message blocked due to user block", {
+            senderUserId: appUser.userId,
+            recipientUserId: otherAppUser.userId,
+            user1BlockedUser2,
+            user2BlockedUser1,
+            conversationId,
+          });
+          return failure("Cannot send message to this user", 403);
+        }
+      }
 
       const contentValidation =
         this.validationService.validateMessageContent(content);
@@ -332,7 +450,14 @@ export class MessagingService implements IMessagingService {
 
       return success({ messageId: message.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("sendMessage", {
+          userId,
+          resourceId: conversationId,
+          details: { replyToMessageId },
+        })
+      );
     }
   }
 
@@ -365,7 +490,14 @@ export class MessagingService implements IMessagingService {
 
       return success(messagesWithDetails);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getMessages", {
+          userId,
+          resourceId: conversationId,
+          details: { limit, offset },
+        })
+      );
     }
   }
 
@@ -391,7 +523,13 @@ export class MessagingService implements IMessagingService {
 
       return success({ success: true, messageIds });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("markMessagesAsRead", {
+          userId,
+          resourceId: conversationId,
+        })
+      );
     }
   }
 
@@ -425,7 +563,13 @@ export class MessagingService implements IMessagingService {
         workshopDate,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getConversationDetails", {
+          userId,
+          resourceId: conversationId,
+        })
+      );
     }
   }
 
@@ -457,7 +601,10 @@ export class MessagingService implements IMessagingService {
 
       return success({ count: totalUnreadCount });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getUnreadConversationsCount", { userId })
+      );
     }
   }
 
@@ -478,7 +625,13 @@ export class MessagingService implements IMessagingService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("deleteConversation", {
+          userId,
+          resourceId: conversationId,
+        })
+      );
     }
   }
 
@@ -536,7 +689,13 @@ export class MessagingService implements IMessagingService {
         conversationId: updatedMessage.conversationId,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateMessage", {
+          userId,
+          resourceId: messageId,
+        })
+      );
     }
   }
 
@@ -574,7 +733,14 @@ export class MessagingService implements IMessagingService {
 
       return success(messagesWithDetails);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("searchMessages", {
+          userId,
+          resourceId: conversationId,
+          details: { query, limit },
+        })
+      );
     }
   }
 
@@ -621,7 +787,13 @@ export class MessagingService implements IMessagingService {
         conversationId: deletedMessage.conversationId,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("deleteMessage", {
+          userId,
+          resourceId: messageId,
+        })
+      );
     }
   }
 }

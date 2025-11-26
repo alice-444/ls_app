@@ -13,6 +13,12 @@ export interface IConversationRepository {
     appUserId2: string
   ): Promise<ConversationEntity | null>;
 
+  findConversationBetweenUsersWithTransaction(
+    appUserId1: string,
+    appUserId2: string,
+    tx: any
+  ): Promise<ConversationEntity | null>;
+
   findById(conversationId: string): Promise<ConversationEntity | null>;
 
   findConversationsForUser(
@@ -27,12 +33,32 @@ export interface IConversationRepository {
     updatedAt: Date;
   }): Promise<ConversationEntity>;
 
+  createWithTransaction(
+    data: {
+      id: string;
+      participant1Id: string;
+      participant2Id: string;
+      workshopId?: string | null;
+      updatedAt: Date;
+    },
+    tx: any
+  ): Promise<ConversationEntity>;
+
   update(
     conversationId: string,
     data: {
       workshopId?: string | null;
       updatedAt: Date;
     }
+  ): Promise<ConversationEntity>;
+
+  updateWithTransaction(
+    conversationId: string,
+    data: {
+      workshopId?: string | null;
+      updatedAt: Date;
+    },
+    tx: any
   ): Promise<ConversationEntity>;
 
   delete(conversationId: string): Promise<void>;

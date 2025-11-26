@@ -1,4 +1,5 @@
 import { Result, failure, success } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import { generateInternalId } from "../../utils/id-generator";
 import type { AppUserRepository } from "../repositories";
 import type { IUserConnectionRepository } from "../repositories/user-connection.repository.interface";
@@ -66,7 +67,13 @@ export class UserConnectionService implements IUserConnectionService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("sendConnectionRequest", {
+          userId: requesterUserId,
+          details: { receiverUserId },
+        })
+      );
     }
   }
 
@@ -111,7 +118,13 @@ export class UserConnectionService implements IUserConnectionService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("acceptConnectionRequest", {
+          userId,
+          resourceId: connectionId,
+        })
+      );
     }
   }
 
@@ -156,7 +169,13 @@ export class UserConnectionService implements IUserConnectionService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("rejectConnectionRequest", {
+          userId,
+          resourceId: connectionId,
+        })
+      );
     }
   }
 
@@ -193,7 +212,13 @@ export class UserConnectionService implements IUserConnectionService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("removeConnection", {
+          userId,
+          details: { otherUserId },
+        })
+      );
     }
   }
 
@@ -219,7 +244,13 @@ export class UserConnectionService implements IUserConnectionService {
         status: connection?.status || null,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("checkConnectionStatus", {
+          userId: userId1,
+          details: { userId2 },
+        })
+      );
     }
   }
 
@@ -285,7 +316,10 @@ export class UserConnectionService implements IUserConnectionService {
 
       return success(validRequests);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getPendingRequestsReceived", { userId })
+      );
     }
   }
 
@@ -358,7 +392,10 @@ export class UserConnectionService implements IUserConnectionService {
 
       return success(validConnections);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getAcceptedConnections", { userId })
+      );
     }
   }
 }

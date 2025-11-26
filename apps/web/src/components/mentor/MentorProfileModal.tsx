@@ -18,9 +18,14 @@ import {
   Twitter,
   Youtube,
   Github,
+  Ban,
+  Flag,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { BlockUserDialog } from "@/components/user/BlockUserDialog";
+import { ReportUserDialog } from "@/components/user/ReportUserDialog";
+import { useState } from "react";
 
 interface MentorProfileModalProps {
   open: boolean;
@@ -34,6 +39,8 @@ export function MentorProfileModal({
   mentorId,
 }: MentorProfileModalProps) {
   const { data: session } = authClient.useSession();
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
   const { data: mentor, isLoading } = trpc.mentor.getById.useQuery(
     { mentorId },
     {
@@ -235,7 +242,7 @@ export function MentorProfileModal({
           )}
 
           {session && mentor.userId !== session?.user?.id && (
-            <div className="pt-4 border-t">
+            <div className="pt-4 border-t space-y-2">
               {connectionStatus?.status === "ACCEPTED" ? (
                 <Button
                   variant="outline"
@@ -273,10 +280,44 @@ export function MentorProfileModal({
                     : "Connecter"}
                 </Button>
               )}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowBlockDialog(true)}
+                >
+                  <Ban className="h-4 w-4 mr-2" />
+                  Bloquer
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowReportDialog(true)}
+                >
+                  <Flag className="h-4 w-4 mr-2" />
+                  Signaler
+                </Button>
+              </div>
             </div>
           )}
         </div>
       </DialogContent>
+      {session && mentor.userId !== session?.user?.id && (
+        <>
+          <BlockUserDialog
+            open={showBlockDialog}
+            onOpenChange={setShowBlockDialog}
+            userId={mentor.userId}
+            userName={mentor.name || null}
+          />
+          <ReportUserDialog
+            open={showReportDialog}
+            onOpenChange={setShowReportDialog}
+            userId={mentor.userId}
+            userName={mentor.name || null}
+          />
+        </>
+      )}
     </Dialog>
   );
 }

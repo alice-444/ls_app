@@ -54,9 +54,12 @@ export interface UpdateWorkshopRequestInput {
 export interface IWorkshopRequestRepository {
   create(input: CreateWorkshopRequestInput): Promise<WorkshopRequestEntity>;
   findById(id: string): Promise<WorkshopRequestEntity | null>;
+  findByIdWithLock(id: string, tx?: any): Promise<WorkshopRequestEntity | null>;
   findByApprenticeId(apprenticeId: string): Promise<WorkshopRequestEntity[]>;
   findByMentorId(mentorId: string): Promise<WorkshopRequestEntity[]>;
   findByWorkshopId(workshopId: string): Promise<WorkshopRequestEntity[]>;
+  countAcceptedByWorkshopId(workshopId: string, tx?: any): Promise<number>;
   update(id: string, input: UpdateWorkshopRequestInput): Promise<WorkshopRequestEntity>;
+  updateWithTransaction(id: string, input: UpdateWorkshopRequestInput, tx: any): Promise<WorkshopRequestEntity>;
 }
 

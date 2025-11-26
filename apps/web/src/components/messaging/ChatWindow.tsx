@@ -8,13 +8,30 @@ import { authClient } from "@/lib/auth-client";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { TypingIndicator } from "./TypingIndicator";
-import { ArrowLeft, BookOpen, X, Search } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  X,
+  Search,
+  MoreVertical,
+  Ban,
+  Flag,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { BlockUserDialog } from "@/components/user/BlockUserDialog";
+import { ReportUserDialog } from "@/components/user/ReportUserDialog";
 
 interface ChatWindowProps {
   conversationId: string;
@@ -44,7 +61,6 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         senderDisplayName: string | null;
       } | null;
       workshopReference?: {
-        workshopId: string;
         workshopTitle: string;
         workshopDate: Date | string | null;
       } | null;
@@ -59,6 +75,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     new Map()
   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   const { data: searchResults, isLoading: isSearching } =
     trpc.messaging.searchMessages.useQuery(
@@ -169,7 +187,6 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         senderDisplayName: string | null;
       } | null;
       workshopReference?: {
-        workshopId: string;
         workshopTitle: string;
         workshopDate: Date | string | null;
       } | null;
@@ -491,13 +508,41 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                 "Conversation"}
             </h2>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowSearch(!showSearch)}
-          >
-            <Search className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowSearch(!showSearch)}
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+            {conversation?.otherUserId && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => setShowBlockDialog(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Ban className="h-4 w-4 mr-2" />
+                    Bloquer l'utilisateur
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setShowReportDialog(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Flag className="h-4 w-4 mr-2" />
+                    Signaler l'utilisateur
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
         {showSearch && (
           <div className="mt-4">
@@ -590,60 +635,87 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           <div ref={messagesEndRef} />
         </div>
         <div className="border-t p-4 shrink-0">
-          {replyingToMessageId && (() => {
-            const replyingToMessage = localMessages.find(
-              (m) => m.messageId === replyingToMessageId
-            );
-            
-            if (!replyingToMessage) return null;
+          {replyingToMessageId &&
+            (() => {
+              const replyingToMessage = localMessages.find(
+                (m) => m.messageId === replyingToMessageId
+              );
 
-            return (
-              <div className="mb-2 p-2 bg-muted rounded-lg flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Répondre à:
-                  </p>
-                  {replyingToMessage.workshopReference ? (
-                    <div className="flex items-center gap-2 text-sm">
-                      <BookOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">
-                          {replyingToMessage.workshopReference.workshopTitle || "Atelier"}
-                        </p>
-                        {replyingToMessage.workshopReference.workshopDate && (
-                          <p className="text-xs text-muted-foreground">
-                            {format(
-                              new Date(replyingToMessage.workshopReference.workshopDate),
-                              "d MMM yyyy",
-                              { locale: fr }
-                            )}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-sm truncate">
-                      {replyingToMessage.content}
+              if (!replyingToMessage) return null;
+
+              return (
+                <div className="mb-2 p-2 bg-muted rounded-lg flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Répondre à:
                     </p>
-                  )}
+                    {replyingToMessage.workshopReference ? (
+                      <div className="flex items-center gap-2 text-sm">
+                        <BookOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">
+                            {replyingToMessage.workshopReference
+                              .workshopTitle || "Atelier"}
+                          </p>
+                          {replyingToMessage.workshopReference.workshopDate && (
+                            <p className="text-xs text-muted-foreground">
+                              {format(
+                                new Date(
+                                  replyingToMessage.workshopReference.workshopDate
+                                ),
+                                "d MMM yyyy",
+                                { locale: fr }
+                              )}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm truncate">
+                        {replyingToMessage.content}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6 shrink-0"
+                    onClick={() => setReplyingToMessageId(null)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="h-6 w-6 shrink-0"
-                  onClick={() => setReplyingToMessageId(null)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            );
-          })()}
+              );
+            })()}
           <MessageInput
             onSend={handleSendMessage}
             conversationId={conversationId}
           />
         </div>
       </CardContent>
+      {conversation?.otherUserId && (
+        <>
+          <BlockUserDialog
+            open={showBlockDialog}
+            onOpenChange={setShowBlockDialog}
+            userId={conversation.otherUserId}
+            userName={
+              conversation.otherUserDisplayName || conversation.otherUserName
+            }
+            onBlocked={() => {
+              router.push("/inbox");
+            }}
+          />
+          <ReportUserDialog
+            open={showReportDialog}
+            onOpenChange={setShowReportDialog}
+            userId={conversation.otherUserId}
+            userName={
+              conversation.otherUserDisplayName || conversation.otherUserName
+            }
+          />
+        </>
+      )}
     </Card>
   );
 }

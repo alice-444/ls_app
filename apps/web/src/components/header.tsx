@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { trpc } from "@/utils/trpc";
 import { useSocket } from "@/lib/socket-client";
 import { Badge } from "@/components/ui/badge";
+import { NotificationBell } from "./notification-bell";
 
 export default function Header() {
   const { data: session } = authClient.useSession();
@@ -113,6 +114,7 @@ export default function Header() {
           })}
         </nav>
         <div className="flex items-center gap-2">
+          <NotificationBell />
           <ModeToggle />
           <UserMenu />
         </div>

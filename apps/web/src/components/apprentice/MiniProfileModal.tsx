@@ -10,9 +10,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import Loader from "@/components/loader";
-import { User, GraduationCap, Tag, UserPlus, UserMinus } from "lucide-react";
+import {
+  User,
+  GraduationCap,
+  Tag,
+  UserPlus,
+  UserMinus,
+  Ban,
+  Flag,
+} from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { BlockUserDialog } from "@/components/user/BlockUserDialog";
+import { ReportUserDialog } from "@/components/user/ReportUserDialog";
+import { useState } from "react";
 
 interface MiniProfileModalProps {
   open: boolean;
@@ -26,6 +37,8 @@ export function MiniProfileModal({
   apprenticeUserId,
 }: MiniProfileModalProps) {
   const { data: session } = authClient.useSession();
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
   const { data: miniProfile, isLoading } =
     trpc.apprentice.getMiniProfileForMentor.useQuery(
       { apprenticeUserId },
@@ -152,7 +165,7 @@ export function MiniProfileModal({
             )}
 
           {session && apprenticeUserId !== session?.user?.id && (
-            <div className="pt-4 border-t">
+            <div className="pt-4 border-t space-y-2">
               {connectionStatus?.status === "ACCEPTED" ? (
                 <Button
                   variant="outline"
@@ -190,10 +203,44 @@ export function MiniProfileModal({
                     : "Connecter"}
                 </Button>
               )}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowBlockDialog(true)}
+                >
+                  <Ban className="h-4 w-4 mr-2" />
+                  Bloquer
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowReportDialog(true)}
+                >
+                  <Flag className="h-4 w-4 mr-2" />
+                  Signaler
+                </Button>
+              </div>
             </div>
           )}
         </div>
       </DialogContent>
+      {session && apprenticeUserId !== session?.user?.id && (
+        <>
+          <BlockUserDialog
+            open={showBlockDialog}
+            onOpenChange={setShowBlockDialog}
+            userId={apprenticeUserId}
+            userName={miniProfile?.displayName || null}
+          />
+          <ReportUserDialog
+            open={showReportDialog}
+            onOpenChange={setShowReportDialog}
+            userId={apprenticeUserId}
+            userName={miniProfile?.displayName || null}
+          />
+        </>
+      )}
     </Dialog>
   );
 }

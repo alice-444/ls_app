@@ -23,6 +23,13 @@ import {
   WORKSHOP_VALIDATION,
 } from "../../../shared/validation";
 import { WorkshopNotificationService } from "./workshop-notification.service";
+import type { INotificationService } from "../../notifications/services/notification.service.interface";
+import { logger } from "../../common/logger";
+import {
+  handleError,
+  createErrorContext,
+  ErrorCategory,
+} from "../../common/error-handler";
 import {
   isValidTimeFormat,
   doTimeRangesOverlap,
@@ -46,10 +53,13 @@ export class WorkshopService implements IWorkshopService {
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly appUserRepository: AppUserRepository,
-    private readonly workshopRequestRepository?: IWorkshopRequestRepository
+    private readonly workshopRequestRepository?: IWorkshopRequestRepository,
+    private readonly dbNotificationService?: INotificationService
   ) {
     this.notificationService = new WorkshopNotificationService(
-      this.workshopRepository
+      this.workshopRepository,
+      this.dbNotificationService,
+      this.appUserRepository
     );
   }
 
@@ -100,11 +110,29 @@ export class WorkshopService implements IWorkshopService {
     materialsNeeded?: string | null;
   }) {
     return {
-      title: data.title ? sanitizeString(data.title) : undefined,
-      description: data.description ? sanitizeString(data.description) : null,
-      location: data.location ? sanitizeString(data.location) : null,
+      title: data.title
+        ? sanitizeString(data.title, {
+            maxLength: WORKSHOP_VALIDATION.title.max,
+            trim: true,
+          })
+        : undefined,
+      description: data.description
+        ? sanitizeString(data.description, {
+            maxLength: WORKSHOP_VALIDATION.description.max,
+            trim: true,
+          })
+        : null,
+      location: data.location
+        ? sanitizeString(data.location, {
+            maxLength: WORKSHOP_VALIDATION.location.max,
+            trim: true,
+          })
+        : null,
       materialsNeeded: data.materialsNeeded
-        ? sanitizeString(data.materialsNeeded)
+        ? sanitizeString(data.materialsNeeded, {
+            maxLength: WORKSHOP_VALIDATION.materialsNeeded.max,
+            trim: true,
+          })
         : null,
     };
   }
@@ -152,7 +180,12 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ workshopId: workshop.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("createWorkshop", {
+          userId,
+        })
+      );
     }
   }
 
@@ -189,8 +222,12 @@ export class WorkshopService implements IWorkshopService {
       if (sanitized.title !== undefined) updateData.title = sanitized.title;
       if (sanitized.description !== undefined)
         updateData.description = sanitized.description;
-      if (validation.data.date !== undefined)
+      if (validation.data.date !== undefined) {
+        if (!isMinimumTomorrow(validation.data.date)) {
+          return failure("La date doit être au minimum demain", 400);
+        }
         updateData.date = validation.data.date;
+      }
       if (validation.data.time !== undefined)
         updateData.time = validation.data.time;
       if (validation.data.duration !== undefined)
@@ -216,7 +253,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -301,7 +344,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true, publishedAt });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("publishWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -344,7 +393,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("unpublishWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -373,7 +428,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("deleteWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
     }
   }
 
@@ -396,7 +457,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(workshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getWorkshopsByCreator", { userId })
+      );
     }
   }
 
@@ -405,7 +469,7 @@ export class WorkshopService implements IWorkshopService {
       const workshops = await this.workshopRepository.findPublished();
       return success(workshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(error, createErrorContext("getPublishedWorkshops"));
     }
   }
 
@@ -417,7 +481,10 @@ export class WorkshopService implements IWorkshopService {
       }
       return success(workshop);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getWorkshopById", { resourceId: workshopId })
+      );
     }
   }
 
@@ -442,7 +509,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(confirmedWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getConfirmedWorkshopsForApprentice", { userId })
+      );
     }
   }
 
@@ -492,12 +562,53 @@ export class WorkshopService implements IWorkshopService {
 
       await this.workshopRepository.update(workshopId, updateData);
 
-      // TODO: System of notification will be implemented later
-      // TODO: Calendar integration (Calendly) will be implemented later
+      if (isMentor && this.dbNotificationService) {
+        const updatedWorkshop = await this.workshopRepository.findById(
+          workshopId
+        );
+        if (updatedWorkshop?.apprentice?.user?.id) {
+          const changes: string[] = [];
+          if (input.date !== undefined) changes.push("la date");
+          if (input.time !== undefined) changes.push("l'heure");
+          if (input.duration !== undefined) changes.push("la durée");
+          if (input.location !== undefined) changes.push("le lieu");
+
+          if (changes.length > 0) {
+            const mentorName =
+              updatedWorkshop.creator?.user?.name || "le mentor";
+            const apprenticeUserId = updatedWorkshop.apprentice.user.id;
+
+            await this.dbNotificationService.createNotification(
+              apprenticeUserId,
+              {
+                type: "workshop",
+                title: "Modification de l'atelier",
+                message: `${mentorName} a modifié ${changes.join(
+                  ", "
+                )} de l'atelier "${updatedWorkshop.title}".`,
+                actionUrl: `/workshop/${workshopId}`,
+              },
+              userId
+            );
+          }
+        }
+      }
+
+      logger.info("Workshop scheduling updated", {
+        workshopId,
+        mentorId: userId,
+        changes: Object.keys(updateData),
+      });
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateWorkshopScheduling", {
+          userId,
+          resourceId: workshopId,
+        })
+      );
     }
   }
 
@@ -533,24 +644,51 @@ export class WorkshopService implements IWorkshopService {
         return failure("Vous n'êtes pas autorisé à annuler cet atelier", 403);
       }
 
+      if (workshop.status === "CANCELLED") {
+        return failure("Cet atelier est déjà annulé", 400);
+      }
+
       if (isApprentice) {
         await this.workshopRepository.removeApprentice(workshopId);
 
-        // Mock: Send email to apprentice
-        console.log(
-          `[Email] Sending cancellation confirmation to apprentice ${userId} for workshop ${workshopId}`
-        );
+        if (this.dbNotificationService) {
+          const cancelledWorkshop = await this.workshopRepository.findById(
+            workshopId
+          );
+          if (cancelledWorkshop?.creator?.user?.id) {
+            const apprenticeName =
+              cancelledWorkshop.apprentice?.user?.name || "un apprenti";
+            const mentorUserId = cancelledWorkshop.creator.user.id;
 
-        // Mock: Notify organizer (Anonymous if reason provided)
-        if (cancellationReason) {
-          console.log(
-            `[Notification] Organizer notified of anonymous cancellation for workshop ${workshopId}. Reason: ${cancellationReason}`
-          );
-        } else {
-          console.log(
-            `[Notification] Organizer notified of cancellation for workshop ${workshopId}.`
-          );
+            const message = cancellationReason
+              ? `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}". Raison: ${cancellationReason}`
+              : `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}".`;
+
+            await this.dbNotificationService.createNotification(
+              mentorUserId,
+              {
+                type: "workshop",
+                title: "Participation annulée",
+                message,
+                actionUrl: `/workshop/${workshopId}`,
+              },
+              userId
+            );
+          }
         }
+
+        logger.info("Workshop participation cancelled by apprentice", {
+          workshopId,
+          apprenticeId: userId,
+          hasReason: !!cancellationReason,
+        });
+
+        // TODO: Email Alert: WORKSHOP_CANCELLED
+        // Send critical email to mentor when apprentice cancels participation
+        // Event: WORKSHOP_CANCELLED (cancelled by apprentice)
+        // Recipient: cancelledWorkshop.creator.user.email
+        // Data needed: workshopTitle, workshopDate, workshopTime, apprenticeName, cancellationReason, workshopId
+        // Integration point: Add email service call here after Resend implementation
 
         return success({ success: true });
       }
@@ -559,12 +697,50 @@ export class WorkshopService implements IWorkshopService {
         status: "CANCELLED",
       });
 
-      // TODO: System of notification will be implemented later
-      // TODO: Calendar integration (Calendly) will be implemented later
+      if (isMentor && this.dbNotificationService) {
+        const cancelledWorkshop = await this.workshopRepository.findById(
+          workshopId
+        );
+        if (cancelledWorkshop?.apprentice?.user?.id) {
+          const mentorName =
+            cancelledWorkshop.creator?.user?.name || "le mentor";
+          const apprenticeUserId = cancelledWorkshop.apprentice.user.id;
+
+          await this.dbNotificationService.createNotification(
+            apprenticeUserId,
+            {
+              type: "workshop",
+              title: "Atelier annulé",
+              message: `${mentorName} a annulé l'atelier "${cancelledWorkshop.title}".`,
+              actionUrl: `/workshop-room`,
+            },
+            userId
+          );
+        }
+      }
+
+      logger.info("Workshop cancelled by mentor", {
+        workshopId,
+        mentorId: userId,
+      });
+
+      // TODO: Email Alert: WORKSHOP_CANCELLED
+      // Send critical email to apprentice when mentor cancels workshop
+      // Event: WORKSHOP_CANCELLED (cancelled by mentor)
+      // Recipient: cancelledWorkshop.apprentice.user.email
+      // Data needed: workshopTitle, workshopDate, workshopTime, mentorName, workshopId
+      // Integration point: Add email service call here after Resend implementation
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("cancelConfirmedWorkshop", {
+          userId,
+          resourceId: workshopId,
+          details: { cancellationReason },
+        })
+      );
     }
   }
 
@@ -637,7 +813,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(upcomingWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getUpcomingWorkshopsForApprentice", { userId })
+      );
     }
   }
 
@@ -672,7 +851,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(historyWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getWorkshopHistoryForApprentice", { userId })
+      );
     }
   }
 
@@ -716,7 +898,10 @@ export class WorkshopService implements IWorkshopService {
 
       return success(availableWorkshops);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getAvailableWorkshopsForApprentice", { userId })
+      );
     }
   }
 
@@ -767,7 +952,13 @@ export class WorkshopService implements IWorkshopService {
 
       return success({ hasConflict: false });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("checkResourceConflicts", {
+          resourceId: workshopId,
+          details: { mentorId, newDate, newTime },
+        })
+      );
     }
   }
 
@@ -948,6 +1139,8 @@ export class WorkshopService implements IWorkshopService {
 
       const oldDate = workshop.date;
       const oldTime = workshop.time;
+      const newDate = input.date;
+      const newTime = input.time;
 
       const updateData: any = {
         date: input.date,
@@ -972,13 +1165,18 @@ export class WorkshopService implements IWorkshopService {
           oldDate,
           oldTime,
           input.date,
-          input.time
+          input.time,
+          userId
         );
 
       if (!notificationResult.ok) {
-        console.warn(
-          "Erreur lors de l'envoi des notifications:",
-          notificationResult.error
+        logger.error(
+          "Erreur lors de l'envoi des notifications",
+          notificationResult.error,
+          {
+            workshopId,
+            userId,
+          }
         );
       }
 
@@ -988,7 +1186,17 @@ export class WorkshopService implements IWorkshopService {
         oldTime,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("rescheduleWorkshop", {
+          userId,
+          resourceId: workshopId,
+          details: {
+            newDate: input.date,
+            newTime: input.time,
+          },
+        })
+      );
     }
   }
 }

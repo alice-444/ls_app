@@ -1,5 +1,6 @@
 import { sanitizeString } from "../../utils/sanitize";
 import { WORKSHOP_VALIDATION } from "../../../shared/validation/workshop.constants";
+import { logger } from "../../common/logger";
 
 export function isValidTimeFormat(time: string): boolean {
   return WORKSHOP_VALIDATION.time.regex.test(time);
@@ -97,7 +98,10 @@ export function calculateWorkshopStartTime(
     return startTime;
   } catch (error) {
     if (!(error instanceof TypeError && error.message.includes("Invalid"))) {
-      console.error("Unexpected error calculating workshop start time:", error);
+      logger.error("Unexpected error calculating workshop start time", error, {
+        date: date?.toISOString(),
+        time,
+      });
     }
     return null;
   }
@@ -123,7 +127,11 @@ export function calculateWorkshopEndTime(
     return endTime;
   } catch (error) {
     if (!(error instanceof TypeError && error.message.includes("Invalid"))) {
-      console.error("Unexpected error calculating workshop end time:", error);
+      logger.error("Unexpected error calculating workshop end time", error, {
+        date: date?.toISOString(),
+        time,
+        duration,
+      });
     }
     return null;
   }
@@ -154,13 +162,11 @@ export function isWorkshopValidForConflictCheck(
   return true;
 }
 
-export function calculateWorkshopTimeRange(
-  workshop: {
-    date: Date | null;
-    time: string | null;
-    duration: number | null;
-  }
-): { startTime: Date | null; endTime: Date | null } {
+export function calculateWorkshopTimeRange(workshop: {
+  date: Date | null;
+  time: string | null;
+  duration: number | null;
+}): { startTime: Date | null; endTime: Date | null } {
   const startTime = calculateWorkshopStartTime(workshop.date, workshop.time);
   const endTime = calculateWorkshopEndTime(
     workshop.date,

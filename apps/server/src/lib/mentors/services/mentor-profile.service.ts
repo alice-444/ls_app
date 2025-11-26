@@ -1,29 +1,23 @@
 import type { Result } from "../../common";
 import { failure, success } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import type { IMentorProfileService } from "./mentor-profile.service.interface";
 import type { IMentorRepository } from "../repositories/mentor.repository.interface";
+import { verifyMentorAccess } from "../utils/mentor-helpers";
 
 export class MentorProfileService implements IMentorProfileService {
   constructor(private readonly mentorRepository: IMentorRepository) {}
 
-  private async verifyMentorAccess(mentorId: string): Promise<Result<any>> {
-    const mentor = await this.mentorRepository.findMentorById(mentorId);
-
-    if (!mentor) {
-      return failure("Mentor introuvable", 404);
-    }
-
-    return success({ mentor });
-  }
-
   async getPublishedMentorById(mentorId: string): Promise<Result<any>> {
     try {
-      const mentorCheck = await this.verifyMentorAccess(mentorId);
+      const mentorCheck = await verifyMentorAccess(this.mentorRepository, mentorId);
       if (!mentorCheck.ok) {
         return mentorCheck;
       }
 
-      const mentor = await this.mentorRepository.findPublishedMentorById(mentorId);
+      const mentor = await this.mentorRepository.findPublishedMentorById(
+        mentorId
+      );
 
       if (!mentor) {
         return failure("Mentor introuvable", 404);
@@ -46,8 +40,12 @@ export class MentorProfileService implements IMentorProfileService {
         publishedAt: mentor.publishedAt || null,
       });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getPublishedMentorById", {
+          resourceId: mentorId,
+        })
+      );
     }
   }
 }
-

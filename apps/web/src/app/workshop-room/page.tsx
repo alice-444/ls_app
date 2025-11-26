@@ -90,13 +90,31 @@ export default function WorkshopRoomPage() {
   const [dateRangeStart, setDateRangeStart] = useState<string>("");
   const [dateRangeEnd, setDateRangeEnd] = useState<string>("");
 
-  const {
-    data: workshops,
-    isLoading,
-    error,
-  } = trpc.workshop.getPublished.useQuery(undefined, {
-    enabled: !!session,
-  });
+  const availableWorkshopsQuery = trpc.workshop.getAvailableWorkshops.useQuery(
+    undefined,
+    {
+      enabled: !!session && isApprentice,
+    }
+  );
+
+  const publishedWorkshopsQuery = trpc.workshop.getPublished.useQuery(
+    undefined,
+    {
+      enabled: !session || !isApprentice,
+    }
+  );
+
+  const workshops = isApprentice && session
+    ? availableWorkshopsQuery.data
+    : publishedWorkshopsQuery.data;
+  const isLoading =
+    (isApprentice && session
+      ? availableWorkshopsQuery.isLoading
+      : publishedWorkshopsQuery.isLoading) || !userRole;
+  const error =
+    isApprentice && session
+      ? availableWorkshopsQuery.error
+      : publishedWorkshopsQuery.error;
 
   const availableTopics = useMemo(() => {
     if (!workshops) return [];

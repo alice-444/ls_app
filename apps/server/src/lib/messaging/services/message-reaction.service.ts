@@ -1,4 +1,5 @@
 import { Result, failure, success } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import { generateInternalId } from "../../utils/id-generator";
 import type { IMessageReactionRepository } from "../repositories/message-reaction.repository.interface";
 import type { IMessageRepository } from "../repositories/message.repository.interface";
@@ -64,7 +65,14 @@ export class MessageReactionService {
 
       return success({ reactionId: reaction.id });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("addReaction", {
+          userId,
+          resourceId: messageId,
+          details: { emoji },
+        })
+      );
     }
   }
 
@@ -97,7 +105,13 @@ export class MessageReactionService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("removeReaction", {
+          userId,
+          resourceId: reactionId,
+        })
+      );
     }
   }
 
@@ -141,7 +155,12 @@ export class MessageReactionService {
 
       return success(Array.from(emojiMap.values()));
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getMessageReactions", {
+          resourceId: messageId,
+        })
+      );
     }
   }
 
@@ -181,7 +200,12 @@ export class MessageReactionService {
 
       return success(reactionsWithUsers);
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("getMessageReactionsWithUsers", {
+          resourceId: messageId,
+        })
+      );
     }
   }
 }

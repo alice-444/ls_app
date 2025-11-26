@@ -38,7 +38,6 @@ interface Message {
     senderDisplayName: string | null;
   } | null;
   workshopReference?: {
-    workshopId: string;
     workshopTitle: string;
     workshopDate: Date | string | null;
   } | null;
