@@ -367,3 +367,28 @@ enum ReportStatus {
   RESOLVED
   DISMISSED
 }
+
+model support_request {
+  id          String   @id @map("_id")
+  userId      String?
+  email       String
+  subject     String
+  description String
+  problemType String
+  status      SupportRequestStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  attachments Json?
+
+  @@index([userId])
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SupportRequestStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
