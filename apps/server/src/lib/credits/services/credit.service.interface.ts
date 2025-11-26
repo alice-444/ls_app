@@ -19,6 +19,16 @@ export interface ICreditService {
     description: string
   ): Promise<Result<{ newBalance: number; transactionId: string }>>;
 
+  debitCreditsInTransaction(
+    userId: string,
+    amount: number,
+    description: string,
+    tx: Omit<
+      any,
+      "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+    >
+  ): Promise<Result<{ newBalance: number; transactionId: string }>>;
+
   creditCredits(
     userId: string,
     amount: number,

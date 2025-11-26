@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import {
   Card,
@@ -11,15 +11,29 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coins, ArrowLeft } from "lucide-react";
+import { Coins, ArrowLeft, Loader2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 export default function BuyCreditsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, isPending } = authClient.useSession();
-  const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
-    enabled: !!session,
+  const { data: creditBalance, refetch: refetchBalance } =
+    trpc.credits.getBalance.useQuery(undefined, {
+      enabled: !!session,
+    });
+
+  const createCheckoutSession = trpc.credits.createCheckoutSession.useMutation({
+    onSuccess: (data) => {
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    },
   });
+
+  const [loadingPackage, setLoadingPackage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!session && !isPending) {
@@ -27,12 +41,32 @@ export default function BuyCreditsPage() {
     }
   }, [session, isPending, router]);
 
-  // TODO: Intégrer le service de paiement externe (Stripe, etc.)
-  // Pour l'instant, c'est une page placeholder
-  const handleBuyCredits = (packageId: string) => {
-    // Placeholder - à remplacer par l'intégration du service de paiement
-    alert(`Intégration du paiement à venir. Package sélectionné: ${packageId}`);
+  useEffect(() => {
+    const success = searchParams.get("success");
+    const canceled = searchParams.get("canceled");
+    const sessionId = searchParams.get("session_id");
+
+    if (success === "true" && sessionId) {
+      refetchBalance();
+    }
+  }, [searchParams, refetchBalance]);
+
+  const handleBuyCredits = async (credits: number, price: number) => {
+    setLoadingPackage(`${credits}-${price}`);
+    try {
+      await createCheckoutSession.mutateAsync({
+        credits,
+        amount: price,
+      });
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    } finally {
+      setLoadingPackage(null);
+    }
   };
+
+  const success = searchParams.get("success");
+  const canceled = searchParams.get("canceled");
 
   if (isPending) {
     return (
@@ -69,6 +103,44 @@ export default function BuyCreditsPage() {
           )}
         </div>
 
+        {success === "true" && (
+          <Alert className="mb-6 border-green-500 bg-green-50 dark:bg-green-950">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-700 dark:text-green-300">
+              <strong className="text-green-800 dark:text-green-200 block mb-1">
+                Paiement réussi !
+              </strong>
+              Vos crédits ont été ajoutés à votre compte. Merci pour votre achat
+              !
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {canceled === "true" && (
+          <Alert className="mb-6 border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
+            <XCircle className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-700 dark:text-yellow-300">
+              <strong className="text-yellow-800 dark:text-yellow-200 block mb-1">
+                Paiement annulé
+              </strong>
+              Votre paiement a été annulé. Aucun montant n'a été débité.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {createCheckoutSession.error && (
+          <Alert className="mb-6 border-red-500 bg-red-50 dark:bg-red-950">
+            <XCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-700 dark:text-red-300">
+              <strong className="text-red-800 dark:text-red-200 block mb-1">
+                Erreur
+              </strong>
+              {createCheckoutSession.error.message ||
+                "Une erreur est survenue lors de la création de la session de paiement."}
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {creditPackages.map((pkg) => (
             <Card
@@ -103,10 +175,23 @@ export default function BuyCreditsPage() {
                 <Button
                   className="w-full"
                   variant={pkg.popular ? "default" : "outline"}
-                  onClick={() => handleBuyCredits(pkg.id)}
+                  onClick={() => handleBuyCredits(pkg.credits, pkg.price)}
+                  disabled={
+                    createCheckoutSession.isPending ||
+                    loadingPackage === `${pkg.credits}-${pkg.price}`
+                  }
                 >
-                  <Coins className="w-4 h-4 mr-2" />
-                  Acheter {pkg.credits} crédits
+                  {loadingPackage === `${pkg.credits}-${pkg.price}` ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Chargement...
+                    </>
+                  ) : (
+                    <>
+                      <Coins className="w-4 h-4 mr-2" />
+                      Acheter {pkg.credits} crédits
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>

@@ -61,4 +61,23 @@ export const creditsRouter = router({
         total,
       };
     }),
+
+  createCheckoutSession: protectedProcedure
+    .input(
+      z.object({
+        credits: z.number().min(1).max(10000),
+        amount: z.number().min(0.01).max(10000),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.stripeService.createCheckoutSession(
+        ctx.session.user.id,
+        input.credits,
+        input.amount
+      );
+      return handleRouterResult(result, {
+        operation: "createCheckoutSession",
+        userId: ctx.session.user.id,
+      });
+    }),
 });

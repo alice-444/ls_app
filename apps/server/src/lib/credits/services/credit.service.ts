@@ -43,11 +43,14 @@ export class CreditService implements ICreditService {
     const prisma = tx || this.prisma;
     const appUserId = await this.getAppUserId(userId, tx);
 
+    const isCredit = type === "TOP_UP" || type === "REFUND";
+    const absoluteAmount = Math.abs(amount);
+
     const updatedUser = await prisma.app_user.update({
       where: { userId },
       data: {
         creditBalance: {
-          [amount > 0 ? "increment" : "decrement"]: Math.abs(amount),
+          [isCredit ? "increment" : "decrement"]: absoluteAmount,
         },
       },
       select: { creditBalance: true },
@@ -57,7 +60,7 @@ export class CreditService implements ICreditService {
       data: {
         id: generateInternalId(),
         userId: appUserId,
-        amount,
+        amount: isCredit ? absoluteAmount : -absoluteAmount,
         type,
         description,
       },
@@ -101,24 +104,32 @@ export class CreditService implements ICreditService {
     description: string
   ): Promise<Result<{ newBalance: number; transactionId: string }>> {
     try {
-      const balanceCheck = await this.checkBalance(userId, amount);
-      if (!balanceCheck.ok) {
-        return balanceCheck;
-      }
-
-      if (!balanceCheck.data.hasEnough) {
-        return failure(
-          `Crédits insuffisants. Vous avez ${balanceCheck.data.balance} crédit${
-            balanceCheck.data.balance > 1 ? "s" : ""
-          } mais ${amount} crédits sont requis. Veuillez acheter plus de crédits.`,
-          400
-        );
+      if (amount <= 0) {
+        return failure("Le montant à débiter doit être positif", 400);
       }
 
       const result = await this.prisma.$transaction(async (tx) => {
+        const appUser = await tx.app_user.findUnique({
+          where: { userId },
+          select: { creditBalance: true, id: true },
+        });
+
+        if (!appUser) {
+          throw new Error(`App user not found for userId: ${userId}`);
+        }
+
+        const currentBalance = appUser.creditBalance || 0;
+        if (currentBalance < amount) {
+          throw new Error(
+            `Crédits insuffisants. Vous avez ${currentBalance} crédit${
+              currentBalance > 1 ? "s" : ""
+            } mais ${amount} crédits sont requis. Veuillez acheter plus de crédits.`
+          );
+        }
+
         return this.createCreditTransaction(
           userId,
-          -amount,
+          amount,
           "USAGE",
           description,
           tx
@@ -127,9 +138,68 @@ export class CreditService implements ICreditService {
 
       return success(result);
     } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes("Crédits insuffisants")
+      ) {
+        return failure(error.message, 400);
+      }
       return handleError(
         error,
         createErrorContext("debitCredits", {
+          userId,
+          details: { amount, description },
+        })
+      );
+    }
+  }
+
+  async debitCreditsInTransaction(
+    userId: string,
+    amount: number,
+    description: string,
+    tx: Omit<
+      PrismaClient,
+      "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+    >
+  ): Promise<Result<{ newBalance: number; transactionId: string }>> {
+    try {
+      if (amount <= 0) {
+        return failure("Le montant à débiter doit être positif", 400);
+      }
+
+      const appUser = await tx.app_user.findUnique({
+        where: { userId },
+        select: { creditBalance: true, id: true },
+      });
+
+      if (!appUser) {
+        return failure(`App user not found for userId: ${userId}`, 404);
+      }
+
+      const currentBalance = appUser.creditBalance || 0;
+      if (currentBalance < amount) {
+        return failure(
+          `Crédits insuffisants. Vous avez ${currentBalance} crédit${
+            currentBalance > 1 ? "s" : ""
+          } mais ${amount} crédits sont requis. Veuillez acheter plus de crédits.`,
+          400
+        );
+      }
+
+      const result = await this.createCreditTransaction(
+        userId,
+        amount,
+        "USAGE",
+        description,
+        tx
+      );
+
+      return success(result);
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("debitCreditsInTransaction", {
           userId,
           details: { amount, description },
         })
@@ -143,6 +213,10 @@ export class CreditService implements ICreditService {
     description: string
   ): Promise<Result<{ newBalance: number; transactionId: string }>> {
     try {
+      if (amount <= 0) {
+        return failure("Le montant à créditer doit être positif", 400);
+      }
+
       const result = await this.prisma.$transaction(async (tx) => {
         return this.createCreditTransaction(
           userId,

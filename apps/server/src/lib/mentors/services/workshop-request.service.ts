@@ -11,6 +11,7 @@ import { logger } from "../../common/logger";
 import { handleError, createErrorContext } from "../../common/error-handler";
 import type { ICreditService } from "../../credits/services/credit.service.interface";
 import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import { generateInternalId } from "../../utils/id-generator";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   constructor(
@@ -60,18 +61,6 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Vous ne pouvez pas faire une demande à vous-même", 400);
       }
 
-      if (this.creditService) {
-        const debitResult = await this.creditService.debitCredits(
-          userId,
-          this.WORKSHOP_REQUEST_COST,
-          `Demande d'atelier: ${input.title}`
-        );
-
-        if (!debitResult.ok) {
-          return debitResult;
-        }
-      }
-
       const sanitizedTitle = sanitizeString(input.title, {
         maxLength: 100,
         trim: true,
@@ -89,33 +78,85 @@ export class WorkshopRequestService implements IWorkshopRequestService {
           })
         : null;
 
-      const workshopRequest = await this.workshopRequestRepository.create({
-        title: sanitizedTitle,
-        description: sanitizedDescription,
-        message: sanitizedMessage,
-        preferredDate: input.preferredDate ?? null,
-        preferredTime: input.preferredTime ?? null,
-        apprenticeId: apprentice.id,
-        mentorId: mentor.id,
-        workshopId: input.workshopId ?? null,
-      });
+      if (this.prisma && this.creditService) {
+        const result = await this.prisma.$transaction(async (tx) => {
+          const debitResult =
+            await this.creditService!.debitCreditsInTransaction(
+              userId,
+              this.WORKSHOP_REQUEST_COST,
+              `Demande d'atelier: ${sanitizedTitle}`,
+              tx
+            );
 
-      logger.info("Workshop request created", {
-        requestId: workshopRequest.id,
-        apprenticeId: apprentice.id,
-        mentorId: mentor.id,
-        title: sanitizedTitle,
-        creditsUsed: this.WORKSHOP_REQUEST_COST,
-      });
+          if (!debitResult.ok) {
+            throw new Error(debitResult.error);
+          }
 
-      if (this.notificationService) {
-        const requestWithRelations =
-          await this.workshopRequestRepository.findById(workshopRequest.id);
+          // Créer la demande d'atelier dans la même transaction
+          const now = new Date();
+          const workshopRequest = await (tx as any).workshop_request.create({
+            data: {
+              id: generateInternalId(),
+              title: sanitizedTitle,
+              description: sanitizedDescription ?? null,
+              message: sanitizedMessage ?? null,
+              preferredDate: input.preferredDate ?? null,
+              preferredTime: input.preferredTime ?? null,
+              apprenticeId: apprentice.id,
+              mentorId: mentor.id,
+              workshopId: input.workshopId ?? null,
+              createdAt: now,
+              updatedAt: now,
+            },
+            include: {
+              app_user_workshop_request_apprenticeIdToapp_user: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                    },
+                  },
+                },
+              },
+              app_user_workshop_request_mentorIdToapp_user: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                    },
+                  },
+                },
+              },
+            },
+          });
 
-        if (requestWithRelations?.mentor?.user?.id) {
+          return {
+            ...workshopRequest,
+            apprentice:
+              workshopRequest.app_user_workshop_request_apprenticeIdToapp_user,
+            mentor:
+              workshopRequest.app_user_workshop_request_mentorIdToapp_user,
+          };
+        });
+
+        const workshopRequest = result as any;
+
+        logger.info("Workshop request created", {
+          requestId: workshopRequest.id,
+          apprenticeId: apprentice.id,
+          mentorId: mentor.id,
+          title: sanitizedTitle,
+          creditsUsed: this.WORKSHOP_REQUEST_COST,
+        });
+
+        if (this.notificationService && workshopRequest.mentor?.user?.id) {
           const apprenticeName =
-            requestWithRelations.apprentice?.user?.name || "un apprenti";
-          const mentorUserId = requestWithRelations.mentor.user.id;
+            workshopRequest.apprentice?.user?.name || "un apprenti";
+          const mentorUserId = workshopRequest.mentor.user.id;
 
           await this.notificationService.createNotification(
             mentorUserId,
@@ -128,9 +169,51 @@ export class WorkshopRequestService implements IWorkshopRequestService {
             userId
           );
         }
-      }
 
-      return success({ requestId: workshopRequest.id });
+        return success({ requestId: workshopRequest.id });
+      } else {
+        const workshopRequest = await this.workshopRequestRepository.create({
+          title: sanitizedTitle,
+          description: sanitizedDescription,
+          message: sanitizedMessage,
+          preferredDate: input.preferredDate ?? null,
+          preferredTime: input.preferredTime ?? null,
+          apprenticeId: apprentice.id,
+          mentorId: mentor.id,
+          workshopId: input.workshopId ?? null,
+        });
+
+        logger.info("Workshop request created", {
+          requestId: workshopRequest.id,
+          apprenticeId: apprentice.id,
+          mentorId: mentor.id,
+          title: sanitizedTitle,
+        });
+
+        if (this.notificationService) {
+          const requestWithRelations =
+            await this.workshopRequestRepository.findById(workshopRequest.id);
+
+          if (requestWithRelations?.mentor?.user?.id) {
+            const apprenticeName =
+              requestWithRelations.apprentice?.user?.name || "un apprenti";
+            const mentorUserId = requestWithRelations.mentor.user.id;
+
+            await this.notificationService.createNotification(
+              mentorUserId,
+              {
+                type: "workshop",
+                title: "Nouvelle demande d'atelier",
+                message: `${apprenticeName} vous a envoyé une demande pour l'atelier "${sanitizedTitle}".`,
+                actionUrl: `/dashboard/workshop-requests`,
+              },
+              userId
+            );
+          }
+        }
+
+        return success({ requestId: workshopRequest.id });
+      }
     } catch (error) {
       return handleError(
         error,
