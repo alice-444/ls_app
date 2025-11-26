@@ -33,7 +33,7 @@ import {
   formatTimeRange,
 } from "@/lib/workshop-utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CancelWorkshopRegistrationDialog } from "@/components/workshop/CancelWorkshopRegistrationDialog";
+import { CancelWorkshopRegistrationDialog } from "@/components/workshop/dialogs/CancelWorkshopRegistrationDialog";
 import { toast } from "sonner";
 import { useState } from "react";
 import { X, Users, Plus } from "lucide-react";
@@ -41,7 +41,7 @@ import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestW
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
-import { WorkshopCalendar } from "@/components/workshop/WorkshopCalendar";
+import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 
 interface Workshop {
   id: string;

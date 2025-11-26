@@ -12,6 +12,7 @@ import {
   NoopJobQueue,
 } from "@/lib/users/services/repositories.prisma";
 import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
+import { logger } from "@/lib/common/logger";
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -67,7 +68,11 @@ export async function DELETE(req: NextRequest) {
 
     try {
       await auth.api.signOut({ headers: req.headers });
-    } catch {}
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        logger.error("Unexpected error during signOut", error);
+      }
+    }
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

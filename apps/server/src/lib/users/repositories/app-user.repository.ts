@@ -38,6 +38,7 @@ export interface UpdateAppUserInput {
 
 export interface AppUserRepository {
   findByUserId(userId: string): Promise<AppUserData | null>;
+  findByAppUserId(appUserId: string): Promise<AppUserData | null>;
   create(input: CreateAppUserInput): Promise<AppUserData>;
   update(userId: string, input: UpdateAppUserInput): Promise<AppUserData>;
   upsert(
@@ -87,6 +88,35 @@ export class PrismaAppUserRepository implements AppUserRepository {
     };
 
     return result;
+  }
+
+  async findByAppUserId(appUserId: string): Promise<AppUserData | null> {
+    if (!this.prisma) {
+      throw new Error("Prisma client is not initialized");
+    }
+
+    const appUser = await (this.prisma as any).app_user.findUnique({
+      where: { id: appUserId },
+      select: {
+        id: true,
+        userId: true,
+        role: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!appUser) return null;
+
+    return {
+      id: appUser.id,
+      userId: appUser.userId,
+      role: appUser.role as Role | null,
+      status: appUser.status,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+    };
   }
 
   async create(input: CreateAppUserInput): Promise<AppUserData> {

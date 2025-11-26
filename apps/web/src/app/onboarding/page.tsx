@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 import { useOnboarding } from "./hooks/useOnboarding";
@@ -9,11 +9,10 @@ import { RoleSelectionStep } from "./components/RoleSelectionStep";
 import { RoleConfirmationStep } from "./components/RoleConfirmationStep";
 import { ProfFormStep } from "./components/ProfFormStep";
 import { ApprenantCompleteStep } from "./components/ApprenantCompleteStep";
-import type { Role, Step } from "./types";
+import type { Role } from "./types";
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
 
@@ -27,7 +26,6 @@ export default function OnboardingPage() {
     handleProfFormSubmit,
     handleGoBack,
   } = useOnboarding();
-
 
   useEffect(() => {
     if (!session && !isSessionPending) {
@@ -92,4 +90,12 @@ export default function OnboardingPage() {
     default:
       return null;
   }
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <OnboardingContent />
+    </Suspense>
+  );
 }

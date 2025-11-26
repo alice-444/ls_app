@@ -3,6 +3,10 @@ import { workshopRouter } from "./workshop.router";
 import { mentorRouter } from "./mentor.router";
 import { apprenticeRouter } from "./apprentice.router";
 import { connectionRouter } from "./connection.router";
+import { messagingRouter } from "./messaging.router";
+import { notificationRouter } from "./notification.router";
+import { userBlockRouter } from "./user-block.router";
+import { userReportRouter } from "./user-report.router";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -18,6 +22,10 @@ export const appRouter = router({
   mentor: mentorRouter,
   apprentice: apprenticeRouter,
   connection: connectionRouter,
+  messaging: messagingRouter,
+  notification: notificationRouter,
+  userBlock: userBlockRouter,
+  userReport: userReportRouter,
 });
 
 export type AppRouter = typeof appRouter;

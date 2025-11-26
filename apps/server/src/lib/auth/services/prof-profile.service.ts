@@ -2,6 +2,7 @@ import { z } from "zod";
 import { existsSync } from "fs";
 import { join, resolve } from "path";
 import { Result, failure, success, validateInput, prisma } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../../users/repositories";
 import { sanitizeString } from "../../utils/sanitize";
 import { verifyUserExists, verifyProfUser } from "./user-helpers";
@@ -160,14 +161,29 @@ export class ProfProfileService {
         validatedPhotoUrl = photoUrl;
       }
 
-      const sanitizedName = sanitizeString(validation.data.name);
-      const sanitizedBio = sanitizeString(validation.data.bio);
-      const sanitizedDomain = sanitizeString(validation.data.domain);
+      const sanitizedName = sanitizeString(validation.data.name, {
+        maxLength: 100,
+        trim: true,
+      });
+      const sanitizedBio = sanitizeString(validation.data.bio, {
+        maxLength: 2000,
+        trim: true,
+      });
+      const sanitizedDomain = sanitizeString(validation.data.domain, {
+        maxLength: 100,
+        trim: true,
+      });
       const sanitizedQualifications = validation.data.qualifications
-        ? sanitizeString(validation.data.qualifications)
+        ? sanitizeString(validation.data.qualifications, {
+            maxLength: 2000,
+            trim: true,
+          })
         : null;
       const sanitizedExperience = validation.data.experience
-        ? sanitizeString(validation.data.experience)
+        ? sanitizeString(validation.data.experience, {
+            maxLength: 2000,
+            trim: true,
+          })
         : null;
 
       await (prisma as any).user.update({
@@ -197,7 +213,10 @@ export class ProfProfileService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("updateProfile", { userId })
+      );
     }
   }
 
@@ -236,7 +255,10 @@ export class ProfProfileService {
 
       return success({ success: true, publishedAt });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("publishProfile", { userId })
+      );
     }
   }
 
@@ -261,7 +283,10 @@ export class ProfProfileService {
 
       return success({ success: true });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("unpublishProfile", { userId })
+      );
     }
   }
 }

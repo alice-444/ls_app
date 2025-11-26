@@ -32,5 +32,17 @@ export interface IUserConnectionRepository {
   ): Promise<UserConnectionEntity>;
 
   delete(connectionId: string): Promise<void>;
+
+  findPendingRequestsReceivedBy(
+    appUserId: string
+  ): Promise<UserConnectionEntity[]>;
+
+  findAcceptedConnectionsFor(
+    appUserId: string
+  ): Promise<UserConnectionEntity[]>;
+
+  findPendingRequestsSentBy(
+    appUserId: string
+  ): Promise<UserConnectionEntity[]>;
 }
 

@@ -37,7 +37,7 @@ export default function UserMenu() {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (isPending || isLoadingRole) {
+  if (isPending) {
     return <Skeleton className="h-9 w-24" />;
   }
 
@@ -47,6 +47,10 @@ export default function UserMenu() {
         <Link href="/login">Sign In</Link>
       </Button>
     );
+  }
+
+  if (isLoadingRole) {
+    return <Skeleton className="h-9 w-24" />;
   }
 
   const getRoleIcon = (role: "MENTOR" | "APPRENANT" | null) => {

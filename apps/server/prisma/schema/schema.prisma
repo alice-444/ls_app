@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgres"
-  url      = env("DATABASE_URL")
 }
 
 model account {
@@ -50,6 +49,8 @@ model app_user {
   iceBreakerTags                                           Json?
   studyDomain                                              String?
   studyProgram                                             String?
+  lastSeen                                                 DateTime?
+  isOnline                                                 Boolean            @default(false)
   user                                                     user               @relation(fields: [userId], references: [id], onDelete: Cascade)
   mentor_feedback_mentor_feedback_apprenticeIdToapp_user   mentor_feedback[]  @relation("mentor_feedback_apprenticeIdToapp_user")
   mentor_feedback_mentor_feedback_mentorIdToapp_user       mentor_feedback[]  @relation("mentor_feedback_mentorIdToapp_user")
@@ -59,6 +60,11 @@ model app_user {
   workshop_request_workshop_request_mentorIdToapp_user     workshop_request[] @relation("workshop_request_mentorIdToapp_user")
   user_connection_requester                                user_connection[]  @relation("user_connection_requester")
   user_connection_receiver                                 user_connection[]  @relation("user_connection_receiver")
+  conversation_participant1                                conversation[]     @relation("conversation_participant1")
+  conversation_participant2                                conversation[]     @relation("conversation_participant2")
+  notifications                                            notification[]
+  user_block_blocker                                       user_block[]       @relation("user_block_blocker")
+  user_block_blocked                                       user_block[]       @relation("user_block_blocked")
 }
 
 model audit_log {
@@ -162,6 +168,7 @@ model workshop {
   app_user_workshop_creatorIdToapp_user                  app_user           @relation("workshop_creatorIdToapp_user", fields: [creatorId], references: [id], onDelete: Cascade)
   workshop_request_workshop_requestIdToworkshop_request  workshop_request?  @relation("workshop_requestIdToworkshop_request", fields: [requestId], references: [id])
   workshop_request_workshop_request_workshopIdToworkshop workshop_request[] @relation("workshop_request_workshopIdToworkshop")
+  conversation                                           conversation[]
 
   @@index([apprenticeId])
   @@index([creatorId])
@@ -222,14 +229,14 @@ enum WorkshopStatus {
 }
 
 model user_connection {
-  id                String              @id @map("_id")
-  requesterId       String
-  receiverId        String
-  status            ConnectionStatus     @default(PENDING)
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime
-  app_user_requester app_user            @relation("user_connection_requester", fields: [requesterId], references: [id], onDelete: Cascade)
-  app_user_receiver  app_user            @relation("user_connection_receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  id                 String           @id @map("_id")
+  requesterId        String
+  receiverId         String
+  status             ConnectionStatus @default(PENDING)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime
+  app_user_requester app_user         @relation("user_connection_requester", fields: [requesterId], references: [id], onDelete: Cascade)
+  app_user_receiver  app_user         @relation("user_connection_receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@unique([requesterId, receiverId])
   @@index([requesterId])
@@ -241,4 +248,122 @@ enum ConnectionStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+model conversation {
+  id             String    @id @map("_id")
+  participant1Id String
+  participant2Id String
+  workshopId     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime
+  participant1   app_user  @relation("conversation_participant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2   app_user  @relation("conversation_participant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  workshop       workshop? @relation(fields: [workshopId], references: [id], onDelete: SetNull)
+  messages       message[]
+
+  @@unique([participant1Id, participant2Id])
+  @@index([participant1Id])
+  @@index([participant2Id])
+  @@index([workshopId])
+  @@index([updatedAt])
+}
+
+model message {
+  id               String             @id @map("_id")
+  conversationId   String
+  senderId         String
+  content          String
+  isRead           Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime?
+  editCount        Int                @default(0)
+  replyToMessageId String?
+  deletedAt        DateTime?
+  conversation     conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  reactions        message_reaction[]
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@index([isRead])
+  @@index([replyToMessageId])
+  @@index([deletedAt])
+}
+
+model message_reaction {
+  id        String   @id @map("_id")
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+  message   message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@index([userId])
+}
+
+model notification {
+  id        String   @id @map("_id")
+  userId    String
+  type      String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  actionUrl String?
+  app_user  app_user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model user_block {
+  id        String   @id @map("_id")
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+  blocker   app_user @relation("user_block_blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   app_user @relation("user_block_blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+  @@index([createdAt])
+}
+
+model user_report {
+  id         String       @id @map("_id")
+  reporterId String
+  reportedId String
+  reason     ReportReason
+  details    String?
+  messageId  String?
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+  reviewedAt DateTime?
+  reviewedBy String?
+  adminNotes String?
+
+  @@index([reporterId])
+  @@index([reportedId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum ReportReason {
+  HARASSMENT
+  SPAM
+  INAPPROPRIATE_CONTENT
+  FAKE_PROFILE
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
 }

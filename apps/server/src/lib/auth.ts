@@ -20,4 +20,5 @@ export const auth = betterAuth({
 			httpOnly: true,
 		},
 	},
+	basePath: "/api/auth",
 });

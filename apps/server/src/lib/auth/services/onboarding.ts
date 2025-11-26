@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { generateInternalId } from "../../utils/id-generator";
 import { Result, failure, success, validateInput, prisma } from "../../common";
+import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../../users/repositories";
 import { verifyUserExists } from "./user-helpers";
 
@@ -77,7 +78,13 @@ export class OnboardingService {
 
       return success({ role: appUser.role });
     } catch (error) {
-      return failure((error as Error).message, 500);
+      return handleError(
+        error,
+        createErrorContext("selectRole", {
+          userId,
+          details: { role: validation.data.role },
+        })
+      );
     }
   }
 }
