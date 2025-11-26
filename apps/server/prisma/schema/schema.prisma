@@ -51,7 +51,9 @@ model app_user {
   studyProgram                                             String?
   lastSeen                                                 DateTime?
   isOnline                                                 Boolean            @default(false)
+  creditBalance                                            Int                @default(0)
   user                                                     user               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credit_transactions                                      credit_transaction[]
   mentor_feedback_mentor_feedback_apprenticeIdToapp_user   mentor_feedback[]  @relation("mentor_feedback_apprenticeIdToapp_user")
   mentor_feedback_mentor_feedback_mentorIdToapp_user       mentor_feedback[]  @relation("mentor_feedback_mentorIdToapp_user")
   workshop_workshop_apprenticeIdToapp_user                 workshop[]         @relation("workshop_apprenticeIdToapp_user")
@@ -391,4 +393,24 @@ enum SupportRequestStatus {
   IN_PROGRESS
   RESOLVED
   CLOSED
+}
+
+model credit_transaction {
+  id          String                @id @map("_id")
+  userId      String
+  amount      Int
+  type        CreditTransactionType
+  description String
+  createdAt   DateTime              @default(now())
+  app_user    app_user              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+enum CreditTransactionType {
+  TOP_UP
+  USAGE
+  REFUND
 }

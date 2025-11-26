@@ -1,0 +1,182 @@
+import type {
+  ICreditService,
+  CreditTransactionInput,
+} from "./credit.service.interface";
+import type { Result } from "../../common/types";
+import { success, failure } from "../../common/types";
+import { handleError, createErrorContext } from "../../common/error-handler";
+import { generateInternalId } from "../../utils/id-generator";
+import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import type { Prisma } from "../../../../prisma/generated/client/client";
+
+export class CreditService implements ICreditService {
+  constructor(private readonly prisma: PrismaClient) {}
+
+  private async getAppUserId(
+    userId: string,
+    tx?: Omit<
+      PrismaClient,
+      "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+    >
+  ): Promise<string> {
+    const prisma = tx || this.prisma;
+    const appUser = await prisma.app_user.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!appUser) {
+      throw new Error(`App user not found for userId: ${userId}`);
+    }
+    return appUser.id;
+  }
+
+  private async createCreditTransaction(
+    userId: string,
+    amount: number,
+    type: "TOP_UP" | "USAGE" | "REFUND",
+    description: string,
+    tx?: Omit<
+      PrismaClient,
+      "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+    >
+  ): Promise<{ newBalance: number; transactionId: string }> {
+    const prisma = tx || this.prisma;
+    const appUserId = await this.getAppUserId(userId, tx);
+
+    const updatedUser = await prisma.app_user.update({
+      where: { userId },
+      data: {
+        creditBalance: {
+          [amount > 0 ? "increment" : "decrement"]: Math.abs(amount),
+        },
+      },
+      select: { creditBalance: true },
+    });
+
+    const transaction = await prisma.credit_transaction.create({
+      data: {
+        id: generateInternalId(),
+        userId: appUserId,
+        amount,
+        type,
+        description,
+      },
+    });
+
+    return {
+      newBalance: updatedUser.creditBalance,
+      transactionId: transaction.id,
+    };
+  }
+
+  async checkBalance(
+    userId: string,
+    requiredAmount: number
+  ): Promise<Result<{ balance: number; hasEnough: boolean }>> {
+    try {
+      const appUser = await this.prisma.app_user.findUnique({
+        where: { userId },
+        select: { creditBalance: true },
+      });
+
+      const balance = appUser?.creditBalance || 0;
+      return success({
+        balance,
+        hasEnough: balance >= requiredAmount,
+      });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("checkBalance", {
+          userId,
+          details: { requiredAmount },
+        })
+      );
+    }
+  }
+
+  async debitCredits(
+    userId: string,
+    amount: number,
+    description: string
+  ): Promise<Result<{ newBalance: number; transactionId: string }>> {
+    try {
+      const balanceCheck = await this.checkBalance(userId, amount);
+      if (!balanceCheck.ok) {
+        return balanceCheck;
+      }
+
+      if (!balanceCheck.data.hasEnough) {
+        return failure(
+          `Crédits insuffisants. Vous avez ${balanceCheck.data.balance} crédit${
+            balanceCheck.data.balance > 1 ? "s" : ""
+          } mais ${amount} crédits sont requis. Veuillez acheter plus de crédits.`,
+          400
+        );
+      }
+
+      const result = await this.prisma.$transaction(async (tx) => {
+        return this.createCreditTransaction(
+          userId,
+          -amount,
+          "USAGE",
+          description,
+          tx
+        );
+      });
+
+      return success(result);
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("debitCredits", {
+          userId,
+          details: { amount, description },
+        })
+      );
+    }
+  }
+
+  async creditCredits(
+    userId: string,
+    amount: number,
+    description: string
+  ): Promise<Result<{ newBalance: number; transactionId: string }>> {
+    try {
+      const result = await this.prisma.$transaction(async (tx) => {
+        return this.createCreditTransaction(
+          userId,
+          amount,
+          "TOP_UP",
+          description,
+          tx
+        );
+      });
+
+      return success(result);
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("creditCredits", {
+          userId,
+          details: { amount, description },
+        })
+      );
+    }
+  }
+
+  async getBalance(userId: string): Promise<Result<{ balance: number }>> {
+    try {
+      const appUser = await this.prisma.app_user.findUnique({
+        where: { userId },
+        select: { creditBalance: true },
+      });
+
+      return success({
+        balance: appUser?.creditBalance || 0,
+      });
+    } catch (error) {
+      return handleError(error, createErrorContext("getBalance", { userId }));
+    }
+  }
+}

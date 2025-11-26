@@ -58,6 +58,8 @@ import { UserReportService } from "../users/services/user-report.service";
 import type { IUserReportService } from "../users/services/user-report.service.interface";
 import { AuditLogService } from "../common/audit-log.service";
 import type { IAuditLogService } from "../common/audit-log.service";
+import { CreditService } from "../credits/services/credit.service";
+import type { ICreditService } from "../credits/services/credit.service.interface";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -94,6 +96,7 @@ class DIContainer {
   private _userBlockService?: IUserBlockService;
   private _userReportService?: IUserReportService;
   private _auditLogService?: IAuditLogService;
+  private _creditService?: ICreditService;
 
   private constructor() {
     const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
@@ -225,6 +228,7 @@ class DIContainer {
         this.mentorRepository,
         this.workshopRepository,
         this.notificationService,
+        this.creditService,
         this._prisma
       );
     }
@@ -394,6 +398,13 @@ class DIContainer {
       );
     }
     return this._userReportService;
+  }
+
+  get creditService(): ICreditService {
+    if (!this._creditService) {
+      this._creditService = new CreditService(this._prisma);
+    }
+    return this._creditService;
   }
 
   get prisma(): PrismaClient {

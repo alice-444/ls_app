@@ -9,6 +9,7 @@ import { sanitizeString } from "../../utils/sanitize";
 import { sanitizeLocation } from "../../workshops/utils/workshop-helpers";
 import { logger } from "../../common/logger";
 import { handleError, createErrorContext } from "../../common/error-handler";
+import type { ICreditService } from "../../credits/services/credit.service.interface";
 import type { PrismaClient } from "../../../../prisma/generated/client/client";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
@@ -17,8 +18,11 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     private readonly mentorRepository: IMentorRepository,
     private readonly workshopRepository: IWorkshopRepository,
     private readonly notificationService?: INotificationService,
+    private readonly creditService?: ICreditService,
     private readonly prisma?: PrismaClient
   ) {}
+
+  private readonly WORKSHOP_REQUEST_COST = 10;
 
   async submitWorkshopRequest(
     userId: string,
@@ -56,6 +60,18 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Vous ne pouvez pas faire une demande à vous-même", 400);
       }
 
+      if (this.creditService) {
+        const debitResult = await this.creditService.debitCredits(
+          userId,
+          this.WORKSHOP_REQUEST_COST,
+          `Demande d'atelier: ${input.title}`
+        );
+
+        if (!debitResult.ok) {
+          return debitResult;
+        }
+      }
+
       const sanitizedTitle = sanitizeString(input.title, {
         maxLength: 100,
         trim: true,
@@ -89,6 +105,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         apprenticeId: apprentice.id,
         mentorId: mentor.id,
         title: sanitizedTitle,
+        creditsUsed: this.WORKSHOP_REQUEST_COST,
       });
 
       if (this.notificationService) {

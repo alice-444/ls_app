@@ -7,6 +7,7 @@ import { messagingRouter } from "./messaging.router";
 import { notificationRouter } from "./notification.router";
 import { userBlockRouter } from "./user-block.router";
 import { userReportRouter } from "./user-report.router";
+import { creditsRouter } from "./credits.router";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -26,6 +27,7 @@ export const appRouter = router({
   notification: notificationRouter,
   userBlock: userBlockRouter,
   userReport: userReportRouter,
+  credits: creditsRouter,
 });
 
 export type AppRouter = typeof appRouter;

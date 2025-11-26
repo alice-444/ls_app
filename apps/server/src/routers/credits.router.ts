@@ -1,0 +1,64 @@
+import { z } from "zod";
+import { router, protectedProcedure } from "../lib/trpc";
+import { container } from "../lib/di/container";
+import { handleRouterResult } from "./router-helpers";
+
+export const creditsRouter = router({
+  getBalance: protectedProcedure.query(async ({ ctx }) => {
+    const result = await container.creditService.getBalance(
+      ctx.session.user.id
+    );
+    return handleRouterResult(result, {
+      operation: "getBalance",
+      userId: ctx.session.user.id,
+    });
+  }),
+
+  getTransactionHistory: protectedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().min(1).max(100).default(50),
+          offset: z.number().min(0).default(0),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input?.limit || 50;
+      const offset = input?.offset || 0;
+
+      const appUser = await container.appUserRepository.findByUserId(
+        ctx.session.user.id
+      );
+
+      if (!appUser) {
+        return { transactions: [], total: 0 };
+      }
+
+      const creditTransactionRepository = new (
+        await import(
+          "../lib/credits/repositories/credit-transaction.repository"
+        )
+      ).PrismaCreditTransactionRepository(container.prisma);
+
+      const [transactions, total] = await Promise.all([
+        creditTransactionRepository.findManyByUserId(appUser.id, {
+          limit,
+          offset,
+          orderBy: "desc",
+        }),
+        creditTransactionRepository.countByUserId(appUser.id),
+      ]);
+
+      return {
+        transactions: transactions.map((t) => ({
+          id: t.id,
+          amount: t.amount,
+          type: t.type,
+          description: t.description,
+          createdAt: t.createdAt,
+        })),
+        total,
+      };
+    }),
+});
