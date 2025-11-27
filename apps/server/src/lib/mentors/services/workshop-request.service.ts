@@ -12,6 +12,7 @@ import { handleError, createErrorContext } from "../../common/error-handler";
 import type { ICreditService } from "../../credits/services/credit.service.interface";
 import type { PrismaClient } from "../../../../prisma/generated/client/client";
 import { generateInternalId } from "../../utils/id-generator";
+import { container } from "../../di/container";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   constructor(
@@ -474,11 +475,154 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         logger.warn("Notification service not available", { requestId });
       }
 
-      // TODO: Send critical email to apprentice when workshop request is accepted
-      // Event: WORKSHOP_REGISTERED
-      // Recipient: requestWithRelations.apprentice.user.email
-      // Data needed: workshopTitle, workshopDate, workshopTime, workshopLocation, mentorName, workshopId
-      // Integration point: Add email service call here after Resend implementation
+      try {
+        const requestWithRelations =
+          await this.workshopRequestRepository.findById(requestId);
+
+        if (requestWithRelations?.apprentice?.user?.id) {
+          const apprenticeUserId = requestWithRelations.apprentice.user.id;
+          const apprenticeUser = await container.prisma.user.findUnique({
+            where: { id: apprenticeUserId },
+            select: { email: true, name: true },
+          });
+
+          if (apprenticeUser?.email) {
+            const workshopDetails = await this.workshopRepository.findById(
+              workshop.data.id
+            );
+            const mentorName =
+              requestWithRelations.mentor?.user?.name || "le mentor";
+            const workshopTitle = workshopDetails?.title || request.title;
+            const workshopDate = workshopDetails?.date
+              ? new Date(workshopDetails.date).toLocaleDateString("fr-FR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : "Date à confirmer";
+            const workshopTime = workshopDetails?.time || "Heure à confirmer";
+            const workshopLocation =
+              workshopDetails?.location || "Lieu à confirmer";
+            const workshopDuration = workshopDetails?.duration
+              ? `${Math.floor(workshopDetails.duration / 60)}h${
+                  workshopDetails.duration % 60 !== 0
+                    ? (workshopDetails.duration % 60)
+                        .toString()
+                        .padStart(2, "0")
+                    : ""
+                }`
+              : "Durée à confirmer";
+            const isVirtual = workshopDetails?.isVirtual || false;
+
+            const emailResult = await container.emailService.sendEmail({
+              to: apprenticeUser.email,
+              subject: `Demande acceptée - ${workshopTitle} 🎉`,
+              html: `
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  </head>
+                  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background-color: #10b981; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                      <h1 style="color: white; margin: 0;">Demande acceptée ! 🎉</h1>
+                    </div>
+                    
+                    <p>Bonjour ${apprenticeUser.name || "Apprenti"},</p>
+                    
+                    <p>Excellente nouvelle ! <strong>${mentorName}</strong> a accepté votre demande pour l'atelier <strong>"${workshopTitle}"</strong>.</p>
+                    
+                    <div style="background-color: #dbeafe; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                      <p style="margin: 0; font-weight: bold; color: #1e40af;">📅 Détails de l'atelier :</p>
+                      <p style="margin: 5px 0 0 0;"><strong>Date :</strong> ${workshopDate}</p>
+                      <p style="margin: 5px 0 0 0;"><strong>Heure :</strong> ${workshopTime}</p>
+                      <p style="margin: 5px 0 0 0;"><strong>Durée :</strong> ${workshopDuration}</p>
+                      <p style="margin: 5px 0 0 0;"><strong>Lieu :</strong> ${
+                        isVirtual
+                          ? "🌐 Atelier en ligne (virtuel)"
+                          : workshopLocation
+                      }</p>
+                      <p style="margin: 5px 0 0 0;"><strong>Mentor :</strong> ${mentorName}</p>
+                    </div>
+                    
+                    <div style="background-color: #f0fdf4; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #10b981;">
+                      <p style="margin: 0; font-weight: bold;">✅ Prochaines étapes :</p>
+                      <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+                        <li>Ajoutez cet atelier à votre calendrier</li>
+                        <li>Préparez vos questions et vos notes</li>
+                        <li>Consultez les détails de l'atelier pour plus d'informations</li>
+                      </ul>
+                    </div>
+                    
+                    <p>Nous vous souhaitons un excellent atelier !</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="${
+                        process.env.NEXT_PUBLIC_APP_URL ||
+                        "http://localhost:3001"
+                      }/workshop/${workshop.data.id}" 
+                         style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        Voir les détails de l'atelier
+                      </a>
+                    </div>
+                    
+                    <p style="margin-top: 30px;">Cordialement,<br>L'équipe LearnSup</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+                    <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                      Cet email est envoyé automatiquement, merci de ne pas y répondre.
+                    </p>
+                  </body>
+                </html>
+              `,
+              text: `
+Demande acceptée ! 🎉
+
+Bonjour ${apprenticeUser.name || "Apprenti"},
+
+Excellente nouvelle ! ${mentorName} a accepté votre demande pour l'atelier "${workshopTitle}".
+
+📅 Détails de l'atelier :
+- Date : ${workshopDate}
+- Heure : ${workshopTime}
+- Durée : ${workshopDuration}
+- Lieu : ${isVirtual ? "Atelier en ligne (virtuel)" : workshopLocation}
+- Mentor : ${mentorName}
+
+✅ Prochaines étapes :
+- Ajoutez cet atelier à votre calendrier
+- Préparez vos questions et vos notes
+- Consultez les détails de l'atelier pour plus d'informations
+
+Nous vous souhaitons un excellent atelier !
+
+Voir les détails de l'atelier : ${
+                process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
+              }/workshop/${workshop.data.id}
+
+Cordialement,
+L'équipe LearnSup
+              `.trim(),
+            });
+
+            if (!emailResult.ok) {
+              logger.error("Failed to send acceptance email", {
+                apprenticeUserId,
+                workshopId: workshop.data.id,
+                error: emailResult.error,
+              });
+            }
+          }
+        }
+      } catch (error) {
+        logger.error("Error sending acceptance email", {
+          requestId,
+          workshopId: workshop.data.id,
+          error,
+        });
+      }
 
       return success({
         workshopId: workshop.data.id,
@@ -683,6 +827,104 @@ export class WorkshopRequestService implements IWorkshopRequestService {
             userId
           );
         }
+      }
+
+      try {
+        const requestWithRelations =
+          await this.workshopRequestRepository.findById(requestId);
+
+        if (requestWithRelations?.apprentice?.user?.id) {
+          const apprenticeUserId = requestWithRelations.apprentice.user.id;
+          const apprenticeUser = await container.prisma.user.findUnique({
+            where: { id: apprenticeUserId },
+            select: { email: true, name: true },
+          });
+
+          if (apprenticeUser?.email) {
+            const mentorName =
+              requestWithRelations.mentor?.user?.name || "le mentor";
+            const workshopTitle = request.title;
+
+            const emailResult = await container.emailService.sendEmail({
+              to: apprenticeUser.email,
+              subject: `Demande d'atelier rejetée - ${workshopTitle}`,
+              html: `
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  </head>
+                  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background-color: #f59e0b; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                      <h1 style="color: white; margin: 0;">Demande rejetée</h1>
+                    </div>
+                    
+                    <p>Bonjour ${apprenticeUser.name || "Apprenti"},</p>
+                    
+                    <p>Nous vous informons que <strong>${mentorName}</strong> a rejeté votre demande pour l'atelier <strong>"${workshopTitle}"</strong>.</p>
+                    
+                    <div style="background-color: #fef3c7; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                      <p style="margin: 0; font-weight: bold;">💡 Ne vous découragez pas !</p>
+                      <p style="margin: 5px 0 0 0;">Il existe de nombreux autres ateliers qui pourraient vous intéresser. Continuez à explorer et à faire de nouvelles demandes.</p>
+                    </div>
+                    
+                    <p>Vous pouvez consulter d'autres ateliers disponibles et faire de nouvelles demandes depuis votre tableau de bord.</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="${
+                        process.env.NEXT_PUBLIC_APP_URL ||
+                        "http://localhost:3001"
+                      }/workshop-room" 
+                         style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        Voir les ateliers disponibles
+                      </a>
+                    </div>
+                    
+                    <p style="margin-top: 30px;">Cordialement,<br>L'équipe LearnSup</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+                    <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                      Cet email est envoyé automatiquement, merci de ne pas y répondre.
+                    </p>
+                  </body>
+                </html>
+              `,
+              text: `
+Demande rejetée
+
+Bonjour ${apprenticeUser.name || "Apprenti"},
+
+Nous vous informons que ${mentorName} a rejeté votre demande pour l'atelier "${workshopTitle}".
+
+💡 Ne vous découragez pas !
+Il existe de nombreux autres ateliers qui pourraient vous intéresser. Continuez à explorer et à faire de nouvelles demandes.
+
+Vous pouvez consulter d'autres ateliers disponibles et faire de nouvelles demandes depuis votre tableau de bord.
+
+Voir les ateliers disponibles : ${
+                process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
+              }/workshop-room
+
+Cordialement,
+L'équipe LearnSup
+              `.trim(),
+            });
+
+            if (!emailResult.ok) {
+              logger.error("Failed to send rejection email", {
+                apprenticeUserId,
+                requestId,
+                error: emailResult.error,
+              });
+            }
+          }
+        }
+      } catch (error) {
+        logger.error("Error sending rejection email", {
+          requestId,
+          error,
+        });
       }
 
       return success({ success: true });
