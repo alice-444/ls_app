@@ -62,6 +62,8 @@ import { CreditService } from "../credits/services/credit.service";
 import type { ICreditService } from "../credits/services/credit.service.interface";
 import { StripeService } from "../payment/services/stripe.service";
 import type { IStripeService } from "../payment/services/stripe.service.interface";
+import { ResendEmailService } from "../email/services/resend-email.service";
+import type { IEmailService } from "../email/services/email.service.interface";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -100,6 +102,7 @@ class DIContainer {
   private _auditLogService?: IAuditLogService;
   private _creditService?: ICreditService;
   private _stripeService?: IStripeService;
+  private _emailService?: IEmailService;
 
   private constructor() {
     const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
@@ -415,6 +418,13 @@ class DIContainer {
       this._stripeService = new StripeService();
     }
     return this._stripeService;
+  }
+
+  get emailService(): IEmailService {
+    if (!this._emailService) {
+      this._emailService = new ResendEmailService();
+    }
+    return this._emailService;
   }
 
   get prisma(): PrismaClient {
