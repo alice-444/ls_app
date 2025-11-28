@@ -4,10 +4,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 // Repositories
 import { PrismaWorkshopRepository } from "../workshops/repositories/workshop.repository";
+import { PrismaWorkshopFeedbackRepository } from "../workshops/repositories/workshop-feedback.repository";
 import { PrismaAppUserRepository } from "../users/repositories/app-user.repository";
 import { PrismaMentorRepository } from "../mentors/repositories/mentor.repository";
 import { PrismaWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository";
 import type { IWorkshopRepository } from "../workshops/repositories/workshop.repository.interface";
+import type { IWorkshopFeedbackRepository } from "../workshops/repositories/workshop-feedback.repository.interface";
 import type { AppUserRepository } from "../users/repositories";
 import type { IMentorRepository } from "../mentors/repositories/mentor.repository.interface";
 import type { IWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository.interface";
@@ -15,6 +17,8 @@ import type { IWorkshopRequestRepository } from "../mentors/repositories/worksho
 // Services
 import { WorkshopService } from "../workshops/services/workshop.service";
 import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
+import { WorkshopFeedbackService } from "../workshops/services/workshop-feedback.service";
+import type { IWorkshopFeedbackService } from "../workshops/services/workshop-feedback.service.interface";
 import { MentorProfileService } from "../mentors/services/mentor-profile.service";
 import type { IMentorProfileService } from "../mentors/services/mentor-profile.service.interface";
 import { MentorContactService } from "../mentors/services/mentor-contact.service";
@@ -71,6 +75,7 @@ class DIContainer {
 
   // Repository instances
   private _workshopRepository?: IWorkshopRepository;
+  private _workshopFeedbackRepository?: IWorkshopFeedbackRepository;
   private _appUserRepository?: AppUserRepository;
   private _mentorRepository?: IMentorRepository;
   private _workshopRequestRepository?: IWorkshopRequestRepository;
@@ -82,6 +87,7 @@ class DIContainer {
 
   // Service instances
   private _workshopService?: IWorkshopService;
+  private _workshopFeedbackService?: IWorkshopFeedbackService;
   private _mentorProfileService?: IMentorProfileService;
   private _mentorContactService?: IMentorContactService;
   private _mentorFeedbackService?: IMentorFeedbackService;
@@ -153,6 +159,15 @@ class DIContainer {
     return this._workshopRepository;
   }
 
+  get workshopFeedbackRepository(): IWorkshopFeedbackRepository {
+    if (!this._workshopFeedbackRepository) {
+      this._workshopFeedbackRepository = new PrismaWorkshopFeedbackRepository(
+        this._prisma
+      );
+    }
+    return this._workshopFeedbackRepository;
+  }
+
   get appUserRepository(): AppUserRepository {
     if (!this._appUserRepository) {
       this._appUserRepository = new PrismaAppUserRepository(this._prisma);
@@ -187,6 +202,17 @@ class DIContainer {
       );
     }
     return this._workshopService;
+  }
+
+  get workshopFeedbackService(): IWorkshopFeedbackService {
+    if (!this._workshopFeedbackService) {
+      this._workshopFeedbackService = new WorkshopFeedbackService(
+        this.workshopFeedbackRepository,
+        this.workshopRepository,
+        this.mentorRepository
+      );
+    }
+    return this._workshopFeedbackService;
   }
 
   get mentorProfileService(): IMentorProfileService {

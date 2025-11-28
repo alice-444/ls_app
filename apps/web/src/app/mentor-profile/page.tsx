@@ -332,7 +332,6 @@ export default function MentorProfilePage() {
         photoUrl = existingPhotoUrl;
       }
 
-      // Clean up social media links (remove empty strings)
       const socialLinks =
         data.socialMediaLinks &&
         Object.keys(data.socialMediaLinks).some(

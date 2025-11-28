@@ -68,13 +68,18 @@ export default function MentorProfileViewPage() {
     }
   );
 
-  const {
-    data: mentorWorkshopsData,
-    isLoading: isLoadingWorkshops,
-  } = trpc.mentor.getPublicWorkshops.useQuery(
+  const { data: mentorWorkshopsData, isLoading: isLoadingWorkshops } =
+    trpc.mentor.getPublicWorkshops.useQuery(
+      { mentorId },
+      {
+        enabled: !!mentorId && !!session,
+      }
+    );
+
+  const { data: mentorFeedbacks } = trpc.mentor.getFeedbacks.useQuery(
     { mentorId },
     {
-      enabled: !!mentorId && !!session,
+      enabled: !!mentorId,
     }
   );
 
@@ -82,7 +87,8 @@ export default function MentorProfileViewPage() {
     trpc.connection.checkConnectionStatus.useQuery(
       { otherUserId: mentor?.userId || "" },
       {
-        enabled: !!mentor?.userId && !!session && mentor.userId !== session?.user?.id,
+        enabled:
+          !!mentor?.userId && !!session && mentor.userId !== session?.user?.id,
       }
     );
 
@@ -194,6 +200,31 @@ export default function MentorProfileViewPage() {
                 <CardDescription className="text-lg">
                   {mentor.domain}
                 </CardDescription>
+              )}
+              {mentorFeedbacks && (
+                <div className="mt-3 flex items-center gap-2 justify-center">
+                  {mentorFeedbacks.aggregate.totalCount > 0 ? (
+                    <>
+                      <div className="flex items-center gap-1">
+                        <span className="text-2xl font-bold text-yellow-500">
+                          {mentorFeedbacks.aggregate.averageRating.toFixed(1)}
+                        </span>
+                        <span className="text-yellow-500 text-xl">★</span>
+                      </div>
+                      <span className="text-slate-600 dark:text-slate-400 text-sm">
+                        ({mentorFeedbacks.aggregate.totalCount}{" "}
+                        {mentorFeedbacks.aggregate.totalCount === 1
+                          ? "avis"
+                          : "avis"}
+                        )
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-slate-600 dark:text-slate-400 text-sm">
+                      Nouveau mentor
+                    </span>
+                  )}
+                </div>
               )}
             </div>
             {session &&
@@ -412,24 +443,29 @@ export default function MentorProfileViewPage() {
               </div>
             )}
 
-            {mentorWorkshopsData && (mentorWorkshopsData.upcoming.length > 0 || mentorWorkshopsData.past.length > 0) && (
-              <div className="pt-4 border-t">
-                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Calendrier des ateliers
-                </h3>
-                <div className="border rounded-lg overflow-hidden">
-                  <WorkshopCalendar
-                    workshops={[...mentorWorkshopsData.upcoming, ...mentorWorkshopsData.past]}
-                    height="600px"
-                    userRole="MENTOR"
-                    onSelectEvent={(workshop) => {
-                      router.push(`/workshop/${workshop.id}`);
-                    }}
-                  />
+            {mentorWorkshopsData &&
+              (mentorWorkshopsData.upcoming.length > 0 ||
+                mentorWorkshopsData.past.length > 0) && (
+                <div className="pt-4 border-t">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Calendrier des ateliers
+                  </h3>
+                  <div className="border rounded-lg overflow-hidden">
+                    <WorkshopCalendar
+                      workshops={[
+                        ...mentorWorkshopsData.upcoming,
+                        ...mentorWorkshopsData.past,
+                      ]}
+                      height="600px"
+                      userRole="MENTOR"
+                      onSelectEvent={(workshop) => {
+                        router.push(`/workshop/${workshop.id}`);
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </CardContent>
         </Card>
 
@@ -438,7 +474,7 @@ export default function MentorProfileViewPage() {
           mentorName={mentor.name || "Mentor"}
         />
 
-        <MentorFeedbacks mentorId={mentorId} />
+        <MentorFeedbacks mentorId={mentorId} mentorUserId={mentor?.userId} />
       </div>
 
       <ContactMentorDialog

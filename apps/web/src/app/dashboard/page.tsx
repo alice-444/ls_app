@@ -1579,25 +1579,25 @@ export default function Dashboard() {
                 </Button>
               </div>
             )}
-            <div className="flex gap-2">
-              <Button
-                variant={userRole === "apprenant" ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleRoleChange("apprenant")}
-                disabled={
-                  actualUserRole !== "APPRENANT" && actualUserRole !== null
-                }
-              >
-                Apprenant
-              </Button>
-              <Button
-                variant={userRole === "mentor" ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleRoleChange("mentor")}
-                disabled={actualUserRole !== "MENTOR" && actualUserRole !== null}
-              >
-                Mentor
-              </Button>
+          <div className="flex gap-2">
+            <Button
+              variant={userRole === "apprenant" ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleRoleChange("apprenant")}
+              disabled={
+                actualUserRole !== "APPRENANT" && actualUserRole !== null
+              }
+            >
+              Apprenant
+            </Button>
+            <Button
+              variant={userRole === "mentor" ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleRoleChange("mentor")}
+              disabled={actualUserRole !== "MENTOR" && actualUserRole !== null}
+            >
+              Mentor
+            </Button>
             </div>
           </div>
         </div>

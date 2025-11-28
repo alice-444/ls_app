@@ -40,22 +40,31 @@ export class MentorFeedbackService implements IMentorFeedbackService {
       }));
 
       return success({
-        feedbacks: feedbacks.map((f) => ({
-          id: f.id,
-          rating: f.rating,
-          comment: f.comment,
-          isAnonymous: f.isAnonymous,
-          createdAt: f.createdAt,
-          apprentice: f.isAnonymous
-            ? {
-                id: null,
-                name: "Anonyme",
-              }
-            : {
-                id: f.apprentice?.user?.id || null,
-                name: f.apprentice?.user?.name || "Anonyme",
-              },
-        })),
+        feedbacks: feedbacks.map((f) => {
+          const firstName = f.apprentice?.user?.name
+            ? f.apprentice.user.name.split(" ")[0]
+            : null;
+          return {
+            id: f.id,
+            rating: f.rating,
+            comment: f.comment,
+            isAnonymous: f.isAnonymous,
+            createdAt: f.createdAt,
+            apprentice: f.isAnonymous
+              ? {
+                  id: null,
+                  name: "Étudiant anonyme",
+                  firstName: "Étudiant anonyme",
+                  image: null,
+                }
+              : {
+                  id: f.apprentice?.user?.id || null,
+                  name: f.apprentice?.user?.name || "Anonyme",
+                  firstName: firstName || "Anonyme",
+                  image: f.apprentice?.user?.image || null,
+                },
+          };
+        }),
         aggregate: {
           averageRating,
           totalCount: ratingCount,

@@ -1,5 +1,6 @@
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 import { workshopRouter } from "./workshop.router";
+import { workshopFeedbackRouter } from "./workshop-feedback.router";
 import { mentorRouter } from "./mentor.router";
 import { apprenticeRouter } from "./apprentice.router";
 import { connectionRouter } from "./connection.router";
@@ -20,6 +21,7 @@ export const appRouter = router({
     };
   }),
   workshop: workshopRouter,
+  workshopFeedback: workshopFeedbackRouter,
   mentor: mentorRouter,
   apprentice: apprenticeRouter,
   connection: connectionRouter,

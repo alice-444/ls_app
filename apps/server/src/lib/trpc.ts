@@ -61,3 +61,38 @@ export const profProcedure = protectedProcedure
 			},
 		});
 	});
+
+export const adminProcedure = protectedProcedure
+	.use(async ({ ctx, next }) => {
+		const appUser = await (prisma as any).app_user.findUnique({
+			where: { userId: ctx.session.user.id },
+		});
+
+		if (!appUser) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "AppUser not found. Please complete role selection first.",
+			});
+		}
+
+		if (appUser.role !== "ADMIN") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "Only administrators can perform this action",
+			});
+		}
+
+		if (appUser.status !== "ACTIVE") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "User account is not active",
+			});
+		}
+
+		return next({
+			ctx: {
+				...ctx,
+				appUser,
+			},
+		});
+	});
