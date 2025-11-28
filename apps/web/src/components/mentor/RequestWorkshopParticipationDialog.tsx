@@ -22,11 +22,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, BookOpen, Calendar, Clock } from "lucide-react";
+import {
+  Loader2,
+  BookOpen,
+  Calendar,
+  Clock,
+  Coins,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 import type { WorkshopBasic } from "@/types/workshop";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
 
 const requestParticipationSchema = z.object({
   workshopId: z.string().min(1, "Veuillez sélectionner un atelier"),
@@ -49,6 +58,8 @@ interface RequestWorkshopParticipationDialogProps {
   onSuccess?: () => void;
 }
 
+const WORKSHOP_REQUEST_COST = 10;
+
 export function RequestWorkshopParticipationDialog({
   open,
   onOpenChange,
@@ -57,6 +68,7 @@ export function RequestWorkshopParticipationDialog({
   preselectedWorkshopId,
   onSuccess,
 }: RequestWorkshopParticipationDialogProps) {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: workshopsData, isLoading: isLoadingWorkshops } =
@@ -66,6 +78,10 @@ export function RequestWorkshopParticipationDialog({
         enabled: open && !!mentorId,
       }
     );
+
+  const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
+    enabled: open,
+  });
 
   const submitRequest = trpc.mentor.submitWorkshopRequest.useMutation({
     onSuccess: () => {
@@ -120,9 +136,9 @@ export function RequestWorkshopParticipationDialog({
       description: selectedWorkshop.description || null,
       message: data.message || null,
       preferredDate: selectedWorkshop.date
-        ? typeof selectedWorkshop.date === 'string'
+        ? typeof selectedWorkshop.date === "string"
           ? selectedWorkshop.date
-          : new Date(selectedWorkshop.date).toISOString().split('T')[0]
+          : new Date(selectedWorkshop.date).toISOString().split("T")[0]
         : null,
       preferredTime: selectedWorkshop.time || null,
       workshopId: selectedWorkshop.id,
@@ -131,6 +147,8 @@ export function RequestWorkshopParticipationDialog({
 
   const upcomingWorkshops = workshopsData?.upcoming || [];
   const hasWorkshops = upcomingWorkshops.length > 0;
+  const currentBalance = creditBalance?.balance || 0;
+  const hasInsufficientCredits = currentBalance < WORKSHOP_REQUEST_COST;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -237,10 +255,47 @@ export function RequestWorkshopParticipationDialog({
                           </span>
                         )}
                       </div>
+                      <div className="flex items-center gap-2 pt-2 border-t">
+                        <Coins className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">
+                          Coût: {WORKSHOP_REQUEST_COST} crédits
+                        </span>
+                      </div>
                     </>
                   );
                 })()}
               </div>
+            )}
+
+            {hasInsufficientCredits && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-3">
+                    <div>
+                      <p>
+                        Crédits insuffisants. Vous avez {currentBalance} crédit
+                        {currentBalance > 1 ? "s" : ""} mais{" "}
+                        {WORKSHOP_REQUEST_COST} crédits sont requis.
+                      </p>
+                      <p className="text-sm mt-1">
+                        Veuillez acheter plus de crédits pour continuer.
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        onOpenChange(false);
+                        router.push("/buy-credits");
+                      }}
+                      className="w-full"
+                    >
+                      <Coins className="w-4 h-4 mr-2" />
+                      Acheter des crédits
+                    </Button>
+                  </div>
+                </AlertDescription>
+              </Alert>
             )}
 
             <div className="space-y-2">
@@ -270,7 +325,10 @@ export function RequestWorkshopParticipationDialog({
               >
                 Annuler
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || hasInsufficientCredits}
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

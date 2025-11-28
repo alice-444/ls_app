@@ -276,6 +276,11 @@ export default function Dashboard() {
         actualUserRole === "APPRENANT",
     });
 
+  const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
+    enabled: !!session,
+    refetchInterval: 60000,
+  });
+
   const cancelWorkshopMutation = trpc.workshop.cancelConfirmed.useMutation({
     onSuccess: () => {
       toast.success("Inscription annulée avec succès");
@@ -1545,6 +1550,35 @@ export default function Dashboard() {
             </p>
           </div>
 
+          <div className="flex items-center gap-3">
+            {creditBalance !== undefined && (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary font-semibold">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                    />
+                  </svg>
+                  <span>{creditBalance.balance} Credits</span>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => router.push("/buy-credits")}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Acheter
+                </Button>
+              </div>
+            )}
           <div className="flex gap-2">
             <Button
               variant={userRole === "apprenant" ? "default" : "outline"}
@@ -1564,6 +1598,7 @@ export default function Dashboard() {
             >
               Mentor
             </Button>
+            </div>
           </div>
         </div>
       </div>

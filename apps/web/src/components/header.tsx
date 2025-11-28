@@ -10,8 +10,12 @@ import { trpc } from "@/utils/trpc";
 import { useSocket } from "@/lib/socket-client";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "./notification-bell";
+import { Coins, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const queryClient = useQueryClient();
   const socket = useSocket();
@@ -21,6 +25,11 @@ export default function Header() {
       enabled: !!session,
       refetchInterval: 30000,
     });
+
+  const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
+    enabled: !!session,
+    refetchInterval: 60000,
+  });
 
   useEffect(() => {
     if (!socket || !session) return;
@@ -113,7 +122,24 @@ export default function Header() {
             );
           })}
         </nav>
-        <div className="flex items-center gap-2">
+ƒ        <div className="flex items-center gap-3">
+          {session && creditBalance !== undefined && (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary/10 text-primary font-medium text-sm">
+                <Coins className="w-4 h-4" />
+                <span>{creditBalance.balance} Credits</span>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => router.push("/buy-credits")}
+                className="h-8"
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                Acheter
+              </Button>
+            </div>
+          )}
           <NotificationBell />
           <ModeToggle />
           <UserMenu />

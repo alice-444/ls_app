@@ -35,6 +35,10 @@ import {
   Trash2,
   Ban,
   X,
+  Coins,
+  ArrowUpCircle,
+  ArrowDownCircle,
+  History,
 } from "lucide-react";
 import { authClient, customAuthClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -103,7 +107,6 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-8">
-          {/* Section Compte */}
           <Card className="shadow-sm">
             <CardHeader className="pb-6 px-6 sm:px-8">
               <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
@@ -184,7 +187,6 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Section Informations personnelles */}
           <Card className="shadow-sm">
             <CardHeader className="pb-6 px-6 sm:px-8">
               <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
@@ -233,7 +235,8 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Section Utilisateurs bloqués */}
+          <CreditTransactionHistorySection />
+
           <BlockedUsersSection />
 
           {/* Section Paramètres système */}
@@ -562,6 +565,162 @@ function BlockedUsersSection() {
               </Button>
             </div>
           ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function CreditTransactionHistorySection() {
+  const router = useRouter();
+  const { data: transactionHistory, isLoading } =
+    trpc.credits.getTransactionHistory.useQuery({
+      limit: 50,
+      offset: 0,
+    });
+
+  const formatDate = (date: Date | string) => {
+    return new Date(date).toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="shadow-sm">
+        <CardHeader className="pb-6 px-6 sm:px-8">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <History className="h-5 w-5" />
+            Historique des crédits
+          </CardTitle>
+          <CardDescription className="text-sm">
+            Consultez votre historique de transactions de crédits
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-6 sm:px-8 pb-8">
+          <div className="text-center py-8 text-muted-foreground">
+            <p className="text-sm sm:text-base">Chargement...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (
+    !transactionHistory ||
+    !transactionHistory.transactions ||
+    transactionHistory.transactions.length === 0
+  ) {
+    return (
+      <Card className="shadow-sm">
+        <CardHeader className="pb-6 px-6 sm:px-8">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <History className="h-5 w-5" />
+            Historique des crédits
+          </CardTitle>
+          <CardDescription className="text-sm">
+            Consultez votre historique de transactions de crédits
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-6 sm:px-8 pb-8">
+          <div className="text-center py-8 text-muted-foreground">
+            <Coins className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-sm sm:text-base">Aucune transaction pour le moment</p>
+            <p className="text-xs sm:text-sm mt-2 mb-4">
+              Vos transactions de crédits apparaîtront ici
+            </p>
+            <Button
+              size="sm"
+              onClick={() => router.push("/buy-credits")}
+            >
+              <Coins className="w-4 h-4 mr-2" />
+              Acheter des crédits
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="shadow-sm">
+      <CardHeader className="pb-6 px-6 sm:px-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <History className="h-5 w-5" />
+              Historique des crédits
+            </CardTitle>
+            <CardDescription className="text-sm">
+              Consultez votre historique de transactions de crédits (
+              {transactionHistory.total} transaction
+              {transactionHistory.total > 1 ? "s" : ""})
+            </CardDescription>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => router.push("/buy-credits")}
+            className="ml-4"
+          >
+            <Coins className="w-4 h-4 mr-2" />
+            Acheter des crédits
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="px-6 sm:px-8 pb-8">
+        <div className="space-y-3">
+          {transactionHistory.transactions.map((transaction) => {
+            const isPositive =
+              transaction.type === "TOP_UP" || transaction.type === "REFUND";
+            const isNegative = transaction.type === "USAGE";
+            const amount = isPositive
+              ? `+${transaction.amount}`
+              : `-${transaction.amount}`;
+
+            return (
+              <div
+                key={transaction.id}
+                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div
+                    className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                      isPositive
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                        : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {isPositive ? (
+                      <ArrowUpCircle className="h-5 w-5" />
+                    ) : (
+                      <ArrowDownCircle className="h-5 w-5" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm">{transaction.description}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatDate(transaction.createdAt)}
+                    </p>
+                  </div>
+                </div>
+                <div className="ml-4 text-right">
+                  <p
+                    className={`font-semibold text-sm ${
+                      isPositive
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {amount} Credits
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
