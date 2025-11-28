@@ -5,9 +5,13 @@ import { trpc } from "@/utils/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, Filter, X, ThumbsUp, ThumbsDown } from "lucide-react";
-import { formatDate } from "@/lib/workshop-utils";
+import { Star, Filter, X, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 import { renderStars } from "@/lib/rating-utils";
+import { API_BASE_URL } from "@/lib/api-client";
+import { authClient } from "@/lib/auth-client";
+import { ReportFeedbackDialog } from "@/components/workshop/ReportFeedbackDialog";
 import {
   Select,
   SelectContent,
@@ -19,13 +23,21 @@ import {
 interface MentorFeedbacksProps {
   mentorId: string;
   workshops?: Array<{ id: string; title: string }>;
+  mentorUserId?: string;
 }
 
 export function MentorFeedbacks({
   mentorId,
   workshops = [],
+  mentorUserId,
 }: MentorFeedbacksProps) {
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string>("all");
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(
+    null
+  );
+  const { data: session } = authClient.useSession();
+  const isMentorOwner = session?.user?.id === mentorUserId;
 
   const { data: workshopsData } = trpc.mentor.getPublicWorkshops.useQuery(
     { mentorId },
@@ -249,49 +261,121 @@ export function MentorFeedbacks({
                     comment: string | null;
                     isAnonymous: boolean;
                     createdAt: Date | string;
-                    apprentice: { id: string | null; name: string };
-                  }) => (
-                    <div
-                      key={feedback.id}
-                      className={`p-4 rounded-lg border ${
-                        feedback.rating >= 4
-                          ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800"
-                          : feedback.rating <= 2
-                          ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800"
-                          : "bg-gray-50 dark:bg-gray-900/10 border-gray-200 dark:border-gray-800"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          {feedback.rating >= 4 ? (
-                            <ThumbsUp className="h-4 w-4 text-green-600" />
-                          ) : feedback.rating <= 2 ? (
-                            <ThumbsDown className="h-4 w-4 text-red-600" />
-                          ) : null}
-                          <div className="flex items-center">
-                            {renderStars(feedback.rating, "md")}
+                    apprentice: {
+                      id: string | null;
+                      name: string;
+                      firstName?: string;
+                      image?: string | null;
+                    };
+                  }) => {
+                    const avatarUrl = feedback.apprentice.image
+                      ? feedback.apprentice.image.startsWith("http")
+                        ? feedback.apprentice.image
+                        : `${API_BASE_URL}${feedback.apprentice.image}`
+                      : null;
+                    const displayName =
+                      feedback.apprentice.firstName || feedback.apprentice.name;
+                    const initials = displayName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2);
+                    const relativeDate = formatDistanceToNow(
+                      new Date(feedback.createdAt),
+                      {
+                        addSuffix: true,
+                        locale: fr,
+                      }
+                    );
+
+                    return (
+                      <div
+                        key={feedback.id}
+                        className={`p-4 rounded-lg border ${
+                          feedback.rating >= 4
+                            ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800"
+                            : feedback.rating <= 2
+                            ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800"
+                            : "bg-gray-50 dark:bg-gray-900/10 border-gray-200 dark:border-gray-800"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3 mb-2">
+                          {avatarUrl ? (
+                            <img
+                              src={avatarUrl}
+                              alt={displayName}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white text-sm font-semibold">
+                              {initials}
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              {feedback.rating >= 4 ? (
+                                <ThumbsUp className="h-4 w-4 text-green-600" />
+                              ) : feedback.rating <= 2 ? (
+                                <ThumbsDown className="h-4 w-4 text-red-600" />
+                              ) : null}
+                              <div className="flex items-center">
+                                {renderStars(feedback.rating, "md")}
+                              </div>
+                              <span className="text-sm font-medium">
+                                {displayName}
+                              </span>
+                            </div>
+                            {feedback.comment && (
+                              <p className="text-sm text-foreground">
+                                {feedback.comment}
+                              </p>
+                            )}
                           </div>
-                          <span className="text-sm font-medium">
-                            {feedback.apprentice.name}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground whitespace-nowrap">
+                              {relativeDate}
+                            </span>
+                            {isMentorOwner && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedFeedbackId(feedback.id);
+                                  setReportDialogOpen(true);
+                                }}
+                                className="h-8 w-8 p-0"
+                                title="Signaler cet avis"
+                              >
+                                <Flag className="h-4 w-4 text-red-500" />
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatDate(feedback.createdAt)}
-                        </span>
                       </div>
-                      {feedback.comment && (
-                        <p className="text-sm text-foreground mt-2">
-                          {feedback.comment}
-                        </p>
-                      )}
-                    </div>
-                  )
+                    );
+                  }
                 )}
               </div>
             )}
           </div>
         )}
       </CardContent>
+
+      {selectedFeedbackId && (
+        <ReportFeedbackDialog
+          open={reportDialogOpen}
+          onOpenChange={(open: boolean) => {
+            setReportDialogOpen(open);
+            if (!open) {
+              setSelectedFeedbackId(null);
+            }
+          }}
+          feedbackId={selectedFeedbackId}
+          onSuccess={() => {
+          }}
+        />
+      )}
     </Card>
   );
 }

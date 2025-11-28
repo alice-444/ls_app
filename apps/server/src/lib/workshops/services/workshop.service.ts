@@ -38,6 +38,7 @@ import {
   isWorkshopValidForConflictCheck,
   calculateWorkshopTimeRange,
 } from "../utils/workshop-helpers";
+import { container } from "../../di/container";
 
 export const createWorkshopSchema = createWorkshopBackendSchema;
 export const updateWorkshopSchema = updateWorkshopBackendSchema;
@@ -683,12 +684,121 @@ export class WorkshopService implements IWorkshopService {
           hasReason: !!cancellationReason,
         });
 
-        // TODO: Email Alert: WORKSHOP_CANCELLED
-        // Send critical email to mentor when apprentice cancels participation
-        // Event: WORKSHOP_CANCELLED (cancelled by apprentice)
-        // Recipient: cancelledWorkshop.creator.user.email
-        // Data needed: workshopTitle, workshopDate, workshopTime, apprenticeName, cancellationReason, workshopId
-        // Integration point: Add email service call here after Resend implementation
+        try {
+          const cancelledWorkshop = await this.workshopRepository.findById(
+            workshopId
+          );
+          if (cancelledWorkshop?.creator?.user?.id) {
+            const mentorUserId = cancelledWorkshop.creator.user.id;
+            const mentorUser = await container.prisma.user.findUnique({
+              where: { id: mentorUserId },
+              select: { email: true, name: true },
+            });
+
+            if (mentorUser?.email) {
+              const apprenticeName =
+                cancelledWorkshop.apprentice?.user?.name || "un apprenti";
+              const workshopTitle = cancelledWorkshop.title;
+              const workshopDate = cancelledWorkshop.date
+                ? new Date(cancelledWorkshop.date).toLocaleDateString("fr-FR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Date non définie";
+              const workshopTime =
+                cancelledWorkshop.time || "Heure non définie";
+
+              const emailResult = await container.emailService.sendEmail({
+                to: mentorUser.email,
+                subject: `Annulation de participation - ${workshopTitle}`,
+                html: `
+                  <!DOCTYPE html>
+                  <html>
+                    <head>
+                      <meta charset="utf-8">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    </head>
+                    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                      <div style="background-color: #dc2626; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                        <h1 style="color: white; margin: 0;">Participation annulée</h1>
+                      </div>
+                      
+                      <p>Bonjour ${mentorUser.name || "Mentor"},</p>
+                      
+                      <p>Nous vous informons que <strong>${apprenticeName}</strong> a annulé sa participation à votre atelier.</p>
+                      
+                      <div style="background-color: #f1f5f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                        <p style="margin: 0;"><strong>Atelier :</strong> ${workshopTitle}</p>
+                        <p style="margin: 5px 0 0 0;"><strong>Date :</strong> ${workshopDate}</p>
+                        <p style="margin: 5px 0 0 0;"><strong>Heure :</strong> ${workshopTime}</p>
+                        ${
+                          cancellationReason
+                            ? `<p style="margin: 10px 0 0 0;"><strong>Raison de l'annulation :</strong><br>${cancellationReason}</p>`
+                            : ""
+                        }
+                      </div>
+                      
+                      <p>Vous pouvez consulter les détails de l'atelier et gérer les autres demandes depuis votre tableau de bord.</p>
+                      
+                      <div style="text-align: center; margin: 30px 0;">
+                        <a href="${
+                          process.env.NEXT_PUBLIC_APP_URL ||
+                          "http://localhost:3001"
+                        }/workshop/${workshopId}" 
+                           style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                          Voir l'atelier
+                        </a>
+                      </div>
+                      
+                      <p style="margin-top: 30px;">Cordialement,<br>L'équipe LearnSup</p>
+                      
+                      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+                      <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                        Cet email est envoyé automatiquement, merci de ne pas y répondre.
+                      </p>
+                    </body>
+                  </html>
+                `,
+                text: `
+Participation annulée
+
+Bonjour ${mentorUser.name || "Mentor"},
+
+Nous vous informons que ${apprenticeName} a annulé sa participation à votre atelier.
+
+Atelier : ${workshopTitle}
+Date : ${workshopDate}
+Heure : ${workshopTime}
+${cancellationReason ? `Raison de l'annulation : ${cancellationReason}` : ""}
+
+Vous pouvez consulter les détails de l'atelier et gérer les autres demandes depuis votre tableau de bord.
+
+Voir l'atelier : ${
+                  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
+                }/workshop/${workshopId}
+
+Cordialement,
+L'équipe LearnSup
+                `.trim(),
+              });
+
+              if (!emailResult.ok) {
+                logger.error("Failed to send cancellation email", {
+                  mentorUserId,
+                  workshopId,
+                  error: emailResult.error,
+                });
+              }
+            }
+          }
+        } catch (error) {
+          logger.error("Error sending cancellation email", {
+            workshopId,
+            error,
+          });
+        }
 
         return success({ success: true });
       }

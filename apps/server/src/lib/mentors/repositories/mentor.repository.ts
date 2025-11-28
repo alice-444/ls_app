@@ -32,10 +32,7 @@ export class PrismaMentorRepository implements IMentorRepository {
   async findMentorById(id: string): Promise<MentorEntity | null> {
     const mentor = await (this.prisma as any).app_user.findFirst({
       where: {
-        OR: [
-          { id },
-          { userId: id },
-        ],
+        OR: [{ id }, { userId: id }],
       },
       include: {
         user: {
@@ -86,6 +83,9 @@ export class PrismaMentorRepository implements IMentorRepository {
 
     const feedbacks = await (this.prisma as any).mentor_feedback.findMany({
       where,
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         app_user_mentor_feedback_apprenticeIdToapp_user: {
           include: {
@@ -93,6 +93,7 @@ export class PrismaMentorRepository implements IMentorRepository {
               select: {
                 id: true,
                 name: true,
+                image: true,
               },
             },
           },
@@ -104,9 +105,6 @@ export class PrismaMentorRepository implements IMentorRepository {
             date: true,
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
       },
     });
 

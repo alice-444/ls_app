@@ -23,6 +23,8 @@ import { WorkshopCreatorCard } from "@/components/workshop/cards/WorkshopCreator
 import { WorkshopParticipantsCard } from "@/components/workshop/cards/WorkshopParticipantsCard";
 import { WorkshopActionsCard } from "@/components/workshop/cards/WorkshopActionsCard";
 import { WorkshopRequestsCard } from "@/components/workshop/requests/WorkshopRequestsCard";
+import { SubmitFeedbackDialog } from "@/components/workshop/SubmitFeedbackDialog";
+import { WorkshopReviews } from "@/components/workshop/WorkshopReviews";
 
 export default function WorkshopDetailPage() {
   const router = useRouter();
@@ -42,6 +44,7 @@ export default function WorkshopDetailPage() {
   const [selectedApprenticeUserId, setSelectedApprenticeUserId] = useState<
     string | null
   >(null);
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
 
   const utils = trpc.useUtils();
   const getOrCreateConversationMutation =
@@ -181,6 +184,39 @@ export default function WorkshopDetailPage() {
     },
   });
 
+  const isWorkshopPast = (workshopData: typeof workshop): boolean => {
+    if (!workshopData?.date || !workshopData?.time) return false;
+    try {
+      const date =
+        typeof workshopData.date === "string"
+          ? new Date(workshopData.date)
+          : workshopData.date;
+      const [hours, minutes] = workshopData.time.split(":").map(Number);
+      const startTime = new Date(date);
+      startTime.setHours(hours, minutes, 0, 0);
+      const endTime = new Date(startTime);
+      if (workshopData.duration) {
+        endTime.setMinutes(endTime.getMinutes() + workshopData.duration);
+      }
+      return endTime < new Date();
+    } catch {
+      return false;
+    }
+  };
+
+  const { data: canSubmitFeedback } =
+    trpc.workshopFeedback.canSubmitFeedback.useQuery(
+      { workshopId },
+      {
+        enabled:
+          !!workshopId &&
+          !!session?.user?.id &&
+          userRole === "APPRENANT" &&
+          !!workshop &&
+          isWorkshopPast(workshop),
+      }
+    );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -224,26 +260,6 @@ export default function WorkshopDetailPage() {
     workshop?.apprenticeId &&
     upcomingWorkshops?.some((w: any) => w.id === workshop.id);
 
-  const isWorkshopPast = (): boolean => {
-    if (!workshop?.date || !workshop?.time) return false;
-    try {
-      const date =
-        typeof workshop.date === "string"
-          ? new Date(workshop.date)
-          : workshop.date;
-      const [hours, minutes] = workshop.time.split(":").map(Number);
-      const startTime = new Date(date);
-      startTime.setHours(hours, minutes, 0, 0);
-      const endTime = new Date(startTime);
-      if (workshop.duration) {
-        endTime.setMinutes(endTime.getMinutes() + workshop.duration);
-      }
-      return endTime < new Date();
-    } catch {
-      return false;
-    }
-  };
-
   const handleCancelClick = () => {
     setShowCancelDialog(true);
   };
@@ -265,7 +281,7 @@ export default function WorkshopDetailPage() {
   const canReschedule =
     workshop.status === "PUBLISHED" &&
     Boolean(workshop.date) &&
-    !isWorkshopPast();
+    !isWorkshopPast(workshop);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
@@ -307,6 +323,40 @@ export default function WorkshopDetailPage() {
                 setShowApprenticeProfileModal(true);
               }}
             />
+
+            {isApprentice &&
+              isWorkshopPast(workshop) &&
+              canSubmitFeedback?.canSubmit && (
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                    Partagez votre avis
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                    Aidez le mentor à s'améliorer en partageant votre expérience
+                    de cet atelier.
+                  </p>
+                  <Button onClick={() => setShowFeedbackDialog(true)}>
+                    Donner mon avis
+                  </Button>
+                </div>
+              )}
+
+            {isApprentice &&
+              isWorkshopPast(workshop) &&
+              canSubmitFeedback &&
+              !canSubmitFeedback.canSubmit && (
+                <div className="bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {canSubmitFeedback.reason ||
+                      "Vous ne pouvez pas soumettre d'avis pour cet atelier."}
+                  </p>
+                </div>
+              )}
+
+            <WorkshopReviews
+              workshopId={workshop.id}
+              creatorUserId={workshop.creator?.userId}
+            />
           </div>
 
           <div className="space-y-6">
@@ -327,7 +377,7 @@ export default function WorkshopDetailPage() {
             <WorkshopActionsCard
               isRegistered={isRegistered}
               canRequestParticipation={canRequestParticipation}
-              isWorkshopPast={isWorkshopPast()}
+              isWorkshopPast={isWorkshopPast(workshop)}
               onRequestParticipation={() => setShowRequestDialog(true)}
               onCancelRegistration={handleCancelClick}
               onContactMentor={handleContactMentor}
@@ -431,6 +481,19 @@ export default function WorkshopDetailPage() {
             }
           }}
           apprenticeUserId={selectedApprenticeUserId}
+        />
+      )}
+
+      {workshop && (
+        <SubmitFeedbackDialog
+          open={showFeedbackDialog}
+          onOpenChange={setShowFeedbackDialog}
+          workshopId={workshop.id}
+          onSuccess={() => {
+            utils.workshopFeedback.canSubmitFeedback.invalidate({
+              workshopId: workshop.id,
+            });
+          }}
         />
       )}
     </div>
