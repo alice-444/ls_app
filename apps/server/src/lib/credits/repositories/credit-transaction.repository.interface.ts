@@ -21,5 +21,14 @@ export interface ICreditTransactionRepository {
     }
   ): Promise<CreditTransaction[]>;
 
+  findFirstByUserIdAndType(
+    userId: string,
+    type: CreditTransactionType,
+    options?: {
+      descriptionContains?: string;
+      orderBy?: "asc" | "desc";
+    }
+  ): Promise<CreditTransaction | null>;
+
   countByUserId(userId: string): Promise<number>;
 }

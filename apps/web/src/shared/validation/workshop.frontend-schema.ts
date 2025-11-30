@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { WORKSHOP_VALIDATION, WORKSHOP_ERROR_MESSAGES } from "../../../../server/src/shared/validation/workshop.constants";
+import {
+  WORKSHOP_VALIDATION,
+  WORKSHOP_ERROR_MESSAGES,
+} from "../../../../server/src/shared/validation/workshop.constants";
 import { isMinimumTomorrow } from "../../../../server/src/shared/validation/date.validators";
 
 export const createWorkshopFrontendSchema = z.object({
@@ -10,13 +13,19 @@ export const createWorkshopFrontendSchema = z.object({
 
   description: z
     .string()
-    .max(WORKSHOP_VALIDATION.description.max, WORKSHOP_ERROR_MESSAGES.description.max)
+    .max(
+      WORKSHOP_VALIDATION.description.max,
+      WORKSHOP_ERROR_MESSAGES.description.max
+    )
     .optional(),
 
   date: z
     .string()
     .optional()
-    .refine((date) => isMinimumTomorrow(date), WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow),
+    .refine(
+      (date) => isMinimumTomorrow(date),
+      WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow
+    ),
 
   time: z
     .string()
@@ -48,13 +57,22 @@ export const createWorkshopFrontendSchema = z.object({
   maxParticipants: z
     .number()
     .int()
-    .min(WORKSHOP_VALIDATION.maxParticipants.min, WORKSHOP_ERROR_MESSAGES.maxParticipants.range)
-    .max(WORKSHOP_VALIDATION.maxParticipants.max, WORKSHOP_ERROR_MESSAGES.maxParticipants.range)
+    .min(
+      WORKSHOP_VALIDATION.maxParticipants.min,
+      WORKSHOP_ERROR_MESSAGES.maxParticipants.range
+    )
+    .max(
+      WORKSHOP_VALIDATION.maxParticipants.max,
+      WORKSHOP_ERROR_MESSAGES.maxParticipants.range
+    )
     .optional(),
 
   materialsNeeded: z
     .string()
-    .max(WORKSHOP_VALIDATION.materialsNeeded.max, WORKSHOP_ERROR_MESSAGES.materialsNeeded.max)
+    .max(
+      WORKSHOP_VALIDATION.materialsNeeded.max,
+      WORKSHOP_ERROR_MESSAGES.materialsNeeded.max
+    )
     .optional(),
 
   topic: z
@@ -63,11 +81,23 @@ export const createWorkshopFrontendSchema = z.object({
     .max(WORKSHOP_VALIDATION.topic.max, WORKSHOP_ERROR_MESSAGES.topic.max)
     .optional()
     .nullable(),
+
+  creditCost: z
+    .number()
+    .int("Le nombre de crédits doit être un nombre entier")
+    .min(20, "Le nombre minimum de crédits est 20")
+    .max(100, "Le nombre maximum de crédits est 100")
+    .optional()
+    .nullable(),
 });
 
 export const editWorkshopFrontendSchema = createWorkshopFrontendSchema.extend({
   workshopId: z.string().uuid(),
 });
 
-export type CreateWorkshopFrontendData = z.infer<typeof createWorkshopFrontendSchema>;
-export type EditWorkshopFrontendData = z.infer<typeof editWorkshopFrontendSchema>;
+export type CreateWorkshopFrontendData = z.infer<
+  typeof createWorkshopFrontendSchema
+>;
+export type EditWorkshopFrontendData = z.infer<
+  typeof editWorkshopFrontendSchema
+>;

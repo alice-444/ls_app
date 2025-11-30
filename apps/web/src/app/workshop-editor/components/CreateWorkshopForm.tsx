@@ -44,6 +44,7 @@ export function CreateWorkshopForm({
       isVirtual: false,
       durationHours: 0,
       durationMinutes: 0,
+      creditCost: 20,
     },
   });
 
@@ -82,6 +83,7 @@ export function CreateWorkshopForm({
       isVirtual: data.isVirtual,
       maxParticipants: data.maxParticipants || null,
       materialsNeeded: data.materialsNeeded || null,
+      creditCost: data.creditCost ?? 20,
     });
   };
 

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { buildDeletionPlan } from "@/lib/users/services/delete-account.usecase";
+import { buildDeletionPlan } from "@/lib/users/services/account/delete-account.usecase";
 import prisma from "../../../../../prisma";
-import { DeleteUserAccountService } from "@/lib/users/services/delete-account.service";
+import { DeleteUserAccountService } from "@/lib/users/services/account/delete-account.service";
 import {
   PrismaAccountRepository,
   PrismaAppUserRepository,

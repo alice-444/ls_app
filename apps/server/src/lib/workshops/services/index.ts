@@ -15,3 +15,15 @@ export {
   deleteWorkshopSchema,
 } from "./workshop.service";
 
+// Notification service
+export { WorkshopNotificationService } from "./workshop-notification.service";
+
+// Feedback services
+export * from "./feedback";
+
+// Rewards services
+export * from "./rewards";
+
+// Video services
+export * from "./video";
+

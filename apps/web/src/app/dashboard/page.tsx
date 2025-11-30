@@ -75,6 +75,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { RequestBadges } from "@/components/dashboard/RequestBadges";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { MiniProfileModal } from "@/components/apprentice/MiniProfileModal";
+import { SubmitFeedbackDialog } from "@/components/workshop/SubmitFeedbackDialog";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -440,6 +441,47 @@ export default function Dashboard() {
       router.push("/login");
     }
   }, [session, isPending]);
+
+  const { data: eligibleWorkshops } =
+    trpc.workshopFeedback.getEligibleWorkshopsForFeedback.useQuery(undefined, {
+      enabled:
+        !!session?.user?.id &&
+        (userRole === "apprenant" || actualUserRole === "APPRENANT"),
+      refetchInterval: 5000,
+      refetchOnWindowFocus: true,
+    });
+
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+  const [selectedFeedbackWorkshopId, setSelectedFeedbackWorkshopId] = useState<
+    string | null
+  >(null);
+  const [hasShownFeedbackModal, setHasShownFeedbackModal] = useState(false);
+
+  useEffect(() => {
+    if (
+      eligibleWorkshops &&
+      eligibleWorkshops.length > 0 &&
+      !showFeedbackDialog &&
+      !hasShownFeedbackModal &&
+      session?.user?.id
+    ) {
+      const mostRecentWorkshop = eligibleWorkshops[0];
+      if (
+        mostRecentWorkshop &&
+        (mostRecentWorkshop.shouldShowImmediately ||
+          mostRecentWorkshop.hoursSinceEnd >= 1)
+      ) {
+        setSelectedFeedbackWorkshopId(mostRecentWorkshop.workshopId);
+        setShowFeedbackDialog(true);
+        setHasShownFeedbackModal(true);
+      }
+    }
+  }, [
+    eligibleWorkshops,
+    showFeedbackDialog,
+    hasShownFeedbackModal,
+    session?.user?.id,
+  ]);
 
   const handleRoleChange = (role: UserRole) => {
     setUserRole(role);
@@ -938,9 +980,7 @@ export default function Dashboard() {
               <Calendar className="w-5 h-5" />
               Vue calendrier
             </CardTitle>
-            <CardDescription>
-              Visualisez tous vos ateliers
-            </CardDescription>
+            <CardDescription>Visualisez tous vos ateliers</CardDescription>
           </CardHeader>
           <CardContent>
             <WorkshopCalendar
@@ -1352,12 +1392,18 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
               Demandes d'atelier reçues
-              <RequestBadges requests={mentorWorkshopRequests} showPendingBadge={true} />
+              <RequestBadges
+                requests={mentorWorkshopRequests}
+                showPendingBadge={true}
+              />
             </div>
           </CardTitle>
           <CardDescription>
             Les demandes d'atelier que vous avez reçues de la part des apprentis
-            <RequestBadges requests={mentorWorkshopRequests} showAutoUpdateText={true} />
+            <RequestBadges
+              requests={mentorWorkshopRequests}
+              showAutoUpdateText={true}
+            />
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 space-y-3">
@@ -1579,25 +1625,27 @@ export default function Dashboard() {
                 </Button>
               </div>
             )}
-          <div className="flex gap-2">
-            <Button
-              variant={userRole === "apprenant" ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleRoleChange("apprenant")}
-              disabled={
-                actualUserRole !== "APPRENANT" && actualUserRole !== null
-              }
-            >
-              Apprenant
-            </Button>
-            <Button
-              variant={userRole === "mentor" ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleRoleChange("mentor")}
-              disabled={actualUserRole !== "MENTOR" && actualUserRole !== null}
-            >
-              Mentor
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant={userRole === "apprenant" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleRoleChange("apprenant")}
+                disabled={
+                  actualUserRole !== "APPRENANT" && actualUserRole !== null
+                }
+              >
+                Apprenant
+              </Button>
+              <Button
+                variant={userRole === "mentor" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleRoleChange("mentor")}
+                disabled={
+                  actualUserRole !== "MENTOR" && actualUserRole !== null
+                }
+              >
+                Mentor
+              </Button>
             </div>
           </div>
         </div>
@@ -1607,6 +1655,28 @@ export default function Dashboard() {
         {userRole === "apprenant" && renderApprenantDashboard()}
         {userRole === "mentor" && renderMentorDashboard()}
       </div>
+
+      {selectedFeedbackWorkshopId && (
+        <SubmitFeedbackDialog
+          open={showFeedbackDialog}
+          onOpenChange={(open) => {
+            setShowFeedbackDialog(open);
+            if (!open) {
+              setSelectedFeedbackWorkshopId(null);
+              setHasShownFeedbackModal(false);
+            }
+          }}
+          workshopId={selectedFeedbackWorkshopId}
+          onSuccess={() => {
+            queryClient.invalidateQueries({
+              queryKey: [
+                ["workshopFeedback", "getEligibleWorkshopsForFeedback"],
+              ],
+            });
+            setHasShownFeedbackModal(false);
+          }}
+        />
+      )}
 
       {selectedCancellationWorkshop && (
         <CancelWorkshopRegistrationDialog

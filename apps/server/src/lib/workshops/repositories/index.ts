@@ -6,3 +6,5 @@ export type {
   WorkshopEntity,
 } from "./workshop.repository.interface";
 
+// Feedback repository
+export * from "./feedback";

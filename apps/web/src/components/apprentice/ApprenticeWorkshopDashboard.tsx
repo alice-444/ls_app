@@ -53,6 +53,7 @@ interface Workshop {
   location: string | null;
   isVirtual: boolean;
   status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
+  apprenticeAttendanceStatus?: "PENDING" | "PRESENT" | "NO_SHOW" | null;
   creator?: {
     user?: {
       name: string | null;
@@ -169,6 +170,9 @@ export function ApprenticeWorkshopDashboard() {
     if (workshop.status === "CANCELLED") {
       return "Annulé";
     }
+    if (workshop.apprenticeAttendanceStatus === "NO_SHOW") {
+      return "Absent";
+    }
     return "Terminé";
   }
 
@@ -271,6 +275,8 @@ export function ApprenticeWorkshopDashboard() {
                           <Badge
                             variant={
                               finalStatus === "Annulé"
+                                ? "destructive"
+                                : finalStatus === "Absent"
                                 ? "destructive"
                                 : "secondary"
                             }

@@ -29,6 +29,7 @@ import { trpc } from "@/utils/trpc";
 import { customAuthClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { Badge } from "@/components/ui/badge";
 
 export default function ProfilPage() {
   const router = useRouter();
@@ -193,9 +194,19 @@ export default function ProfilPage() {
                 </div>
               )}
               <div className="flex-1">
-                <h3 className="font-semibold text-lg">
-                  {displayName || identityCard?.userName || "Ton prénom"}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-lg">
+                    {displayName || identityCard?.userName || "Ton prénom"}
+                  </h3>
+                  {(() => {
+                    const { data: titleData } = trpc.user.getTitle.useQuery();
+                    return titleData?.title ? (
+                      <Badge variant="secondary" className="text-xs">
+                        {titleData.title}
+                      </Badge>
+                    ) : null;
+                  })()}
+                </div>
                 {(studyDomain || studyProgram) && (
                   <div className="flex flex-col gap-1 mt-1 text-sm text-gray-600">
                     {studyDomain && (

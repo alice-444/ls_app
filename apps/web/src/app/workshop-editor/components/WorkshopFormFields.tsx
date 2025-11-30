@@ -6,7 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Calendar, Clock, MapPin, Users, Package, Tag } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Package,
+  Tag,
+  Coins,
+} from "lucide-react";
 import { WORKSHOP_VALIDATION } from "@/shared/validation";
 
 interface WorkshopFormFieldsProps {
@@ -322,6 +330,33 @@ export function WorkshopFormFields({
         {errors.materialsNeeded?.message && (
           <p className="text-sm text-red-500">
             {String(errors.materialsNeeded.message)}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label
+          htmlFor="creditCost"
+          className="text-base font-semibold flex items-center gap-2"
+        >
+          <Coins className="h-4 w-4" />
+          Nombre de crédits
+        </Label>
+        <Input
+          id="creditCost"
+          type="number"
+          min={20}
+          max={100}
+          placeholder="20"
+          {...register("creditCost", { valueAsNumber: true })}
+          className={errors.creditCost ? "border-red-500" : ""}
+        />
+        <p className="text-xs text-muted-foreground">
+          Le nombre minimum de crédits est 20 et le maximum est 100 (par défaut: 20)
+        </p>
+        {errors.creditCost?.message && (
+          <p className="text-sm text-red-500">
+            {String(errors.creditCost.message)}
           </p>
         )}
       </div>

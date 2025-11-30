@@ -4,12 +4,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 // Repositories
 import { PrismaWorkshopRepository } from "../workshops/repositories/workshop.repository";
-import { PrismaWorkshopFeedbackRepository } from "../workshops/repositories/workshop-feedback.repository";
+import { PrismaWorkshopFeedbackRepository } from "../workshops/repositories/feedback/workshop-feedback.repository";
 import { PrismaAppUserRepository } from "../users/repositories/app-user.repository";
 import { PrismaMentorRepository } from "../mentors/repositories/mentor.repository";
 import { PrismaWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository";
 import type { IWorkshopRepository } from "../workshops/repositories/workshop.repository.interface";
-import type { IWorkshopFeedbackRepository } from "../workshops/repositories/workshop-feedback.repository.interface";
+import type { IWorkshopFeedbackRepository } from "../workshops/repositories/feedback/workshop-feedback.repository.interface";
 import type { AppUserRepository } from "../users/repositories";
 import type { IMentorRepository } from "../mentors/repositories/mentor.repository.interface";
 import type { IWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository.interface";
@@ -17,49 +17,49 @@ import type { IWorkshopRequestRepository } from "../mentors/repositories/worksho
 // Services
 import { WorkshopService } from "../workshops/services/workshop.service";
 import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
-import { WorkshopFeedbackService } from "../workshops/services/workshop-feedback.service";
-import type { IWorkshopFeedbackService } from "../workshops/services/workshop-feedback.service.interface";
-import { MentorProfileService } from "../mentors/services/mentor-profile.service";
-import type { IMentorProfileService } from "../mentors/services/mentor-profile.service.interface";
-import { MentorContactService } from "../mentors/services/mentor-contact.service";
-import type { IMentorContactService } from "../mentors/services/mentor-contact.service.interface";
-import { MentorFeedbackService } from "../mentors/services/mentor-feedback.service";
-import type { IMentorFeedbackService } from "../mentors/services/mentor-feedback.service.interface";
-import { MentorWorkshopService } from "../mentors/services/mentor-workshop.service";
-import type { IMentorWorkshopService } from "../mentors/services/mentor-workshop.service.interface";
-import { WorkshopRequestService } from "../mentors/services/workshop-request.service";
-import type { IWorkshopRequestService } from "../mentors/services/workshop-request.service.interface";
-import { ApprenticeProfileService } from "../users/services/apprentice-profile.service";
-import { UserConnectionService } from "../users/services/user-connection.service";
-import { PrismaUserConnectionRepository } from "../users/repositories/user-connection.repository";
-import type { IUserConnectionRepository } from "../users/repositories/user-connection.repository.interface";
+import { WorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service";
+import type { IWorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service.interface";
+import { MentorProfileService } from "../mentors/services/profile/mentor-profile.service";
+import type { IMentorProfileService } from "../mentors/services/profile/mentor-profile.service.interface";
+import { MentorContactService } from "../mentors/services/contact/mentor-contact.service";
+import type { IMentorContactService } from "../mentors/services/contact/mentor-contact.service.interface";
+import { MentorFeedbackService } from "../mentors/services/feedback/mentor-feedback.service";
+import type { IMentorFeedbackService } from "../mentors/services/feedback/mentor-feedback.service.interface";
+import { MentorWorkshopService } from "../mentors/services/workshops/mentor-workshop.service";
+import type { IMentorWorkshopService } from "../mentors/services/workshops/mentor-workshop.service.interface";
+import { WorkshopRequestService } from "../mentors/services/workshops/workshop-request.service";
+import type { IWorkshopRequestService } from "../mentors/services/workshops/workshop-request.service.interface";
+import { ApprenticeProfileService } from "../users/services/profile/apprentice-profile.service";
+import { UserConnectionService } from "../users/services/connection/user-connection.service";
+import { PrismaUserConnectionRepository } from "../users/repositories/connection/user-connection.repository";
+import type { IUserConnectionRepository } from "../users/repositories/connection/user-connection.repository.interface";
 import { PrismaConversationRepository } from "../messaging/repositories/conversation.repository";
 import { PrismaMessageRepository } from "../messaging/repositories/message.repository";
-import { PrismaMessageReactionRepository } from "../messaging/repositories/message-reaction.repository";
+import { PrismaMessageReactionRepository } from "../messaging/repositories/reactions/message-reaction.repository";
 import type { IConversationRepository } from "../messaging/repositories/conversation.repository.interface";
 import type { IMessageRepository } from "../messaging/repositories/message.repository.interface";
-import type { IMessageReactionRepository } from "../messaging/repositories/message-reaction.repository.interface";
-import { MessagingService } from "../messaging/services/messaging.service";
-import type { IMessagingService } from "../messaging/services/messaging.service.interface";
-import { PresenceService } from "../messaging/services/presence.service";
-import { MessageReactionService } from "../messaging/services/message-reaction.service";
-import { MessageValidationService } from "../messaging/services/message-validation.service";
-import { MessageEnrichmentService } from "../messaging/services/message-enrichment.service";
-import type { IMessageValidationService } from "../messaging/services/message-validation.service.interface";
-import type { IMessageEnrichmentService } from "../messaging/services/message-enrichment.service.interface";
+import type { IMessageReactionRepository } from "../messaging/repositories/reactions/message-reaction.repository.interface";
+import { MessagingService } from "../messaging/services/core/messaging.service";
+import type { IMessagingService } from "../messaging/services/core/messaging.service.interface";
+import { PresenceService } from "../messaging/services/core/presence.service";
+import { MessageReactionService } from "../messaging/services/reactions/message-reaction.service";
+import { MessageValidationService } from "../messaging/services/validation/message-validation.service";
+import { MessageEnrichmentService } from "../messaging/services/enrichment/message-enrichment.service";
+import type { IMessageValidationService } from "../messaging/services/validation/message-validation.service.interface";
+import type { IMessageEnrichmentService } from "../messaging/services/enrichment/message-enrichment.service.interface";
 import { PrismaNotificationRepository } from "../notifications/repositories/notification.repository";
 import type { INotificationRepository } from "../notifications/repositories/notification.repository.interface";
 import { NotificationService } from "../notifications/services/notification.service";
 import type { INotificationService } from "../notifications/services/notification.service.interface";
 import { SocketNotificationEventEmitter } from "../notifications/services/socket-notification-event-emitter";
-import { PrismaUserBlockRepository } from "../users/repositories/user-block.repository";
-import type { IUserBlockRepository } from "../users/repositories/user-block.repository.interface";
-import { PrismaUserReportRepository } from "../users/repositories/user-report.repository";
-import type { IUserReportRepository } from "../users/repositories/user-report.repository.interface";
-import { UserBlockService } from "../users/services/user-block.service";
-import type { IUserBlockService } from "../users/services/user-block.service.interface";
-import { UserReportService } from "../users/services/user-report.service";
-import type { IUserReportService } from "../users/services/user-report.service.interface";
+import { PrismaUserBlockRepository } from "../users/repositories/moderation/user-block.repository";
+import type { IUserBlockRepository } from "../users/repositories/moderation/user-block.repository.interface";
+import { PrismaUserReportRepository } from "../users/repositories/moderation/user-report.repository";
+import type { IUserReportRepository } from "../users/repositories/moderation/user-report.repository.interface";
+import { UserBlockService } from "../users/services/moderation/user-block.service";
+import type { IUserBlockService } from "../users/services/moderation/user-block.service.interface";
+import { UserReportService } from "../users/services/moderation/user-report.service";
+import type { IUserReportService } from "../users/services/moderation/user-report.service.interface";
 import { AuditLogService } from "../common/audit-log.service";
 import type { IAuditLogService } from "../common/audit-log.service";
 import { CreditService } from "../credits/services/credit.service";
@@ -68,6 +68,23 @@ import { StripeService } from "../payment/services/stripe.service";
 import type { IStripeService } from "../payment/services/stripe.service.interface";
 import { ResendEmailService } from "../email/services/resend-email.service";
 import type { IEmailService } from "../email/services/email.service.interface";
+import { DailyService } from "../daily/services/daily.service";
+import type { IDailyService } from "../daily/services/daily.service.interface";
+import type { DailyConfig } from "../daily/config/daily.config.interface";
+import { WorkshopVideoLinkService } from "../workshops/services/video/workshop-video-link.service";
+import type { IWorkshopVideoLinkService } from "../workshops/services/video/workshop-video-link.service.interface";
+import { WorkshopCashbackService } from "../workshops/services/rewards/workshop-cashback.service";
+import type { IWorkshopCashbackService } from "../workshops/services/rewards/workshop-cashback.service.interface";
+import { WorkshopNoShowPenaltyService } from "../workshops/services/rewards/workshop-no-show-penalty.service";
+import type { IWorkshopNoShowPenaltyService } from "../workshops/services/rewards/workshop-no-show-penalty.service.interface";
+import { UserTitleService } from "../users/services/profile/user-title.service";
+import type { IUserTitleService } from "../users/services/profile/user-title.service.interface";
+import { WorkshopTippingService } from "../workshops/services/feedback/workshop-tipping.service";
+import type { IWorkshopTippingService } from "../workshops/services/feedback/workshop-tipping.service.interface";
+import { PrismaCreditTransactionRepository } from "../credits/repositories/credit-transaction.repository";
+import type { ICreditTransactionRepository } from "../credits/repositories/credit-transaction.repository.interface";
+import { PrismaCashbackQueueRepository } from "../workshops/repositories/cashback/cashback-queue.repository";
+import type { ICashbackQueueRepository } from "../workshops/repositories/cashback/cashback-queue.repository.interface";
 
 class DIContainer {
   private static instance: DIContainer;
@@ -84,6 +101,8 @@ class DIContainer {
   private _messageRepository?: IMessageRepository;
   private _messageReactionRepository?: IMessageReactionRepository;
   private _notificationRepository?: INotificationRepository;
+  private _creditTransactionRepository?: ICreditTransactionRepository;
+  private _cashbackQueueRepository?: ICashbackQueueRepository;
 
   // Service instances
   private _workshopService?: IWorkshopService;
@@ -109,6 +128,12 @@ class DIContainer {
   private _creditService?: ICreditService;
   private _stripeService?: IStripeService;
   private _emailService?: IEmailService;
+  private _dailyService?: IDailyService;
+  private _workshopVideoLinkService?: IWorkshopVideoLinkService;
+  private _workshopCashbackService?: IWorkshopCashbackService;
+  private _workshopNoShowPenaltyService?: IWorkshopNoShowPenaltyService;
+  private _userTitleService?: IUserTitleService;
+  private _workshopTippingService?: IWorkshopTippingService;
 
   private constructor() {
     const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
@@ -209,7 +234,8 @@ class DIContainer {
       this._workshopFeedbackService = new WorkshopFeedbackService(
         this.workshopFeedbackRepository,
         this.workshopRepository,
-        this.mentorRepository
+        this.mentorRepository,
+        this.creditService
       );
     }
     return this._workshopFeedbackService;
@@ -451,6 +477,87 @@ class DIContainer {
       this._emailService = new ResendEmailService();
     }
     return this._emailService;
+  }
+
+  get dailyService(): IDailyService {
+    if (!this._dailyService) {
+      const config: DailyConfig = {
+        apiKey: process.env.DAILY_API_KEY || "",
+        apiBaseUrl: process.env.DAILY_API_BASE_URL || "https://api.daily.co/v1",
+        domain: process.env.DAILY_DOMAIN || "",
+      };
+
+      if (!config.apiKey) {
+        throw new Error("DAILY_API_KEY environment variable is required");
+      }
+
+      this._dailyService = new DailyService(config);
+    }
+    return this._dailyService;
+  }
+
+  get workshopVideoLinkService(): IWorkshopVideoLinkService {
+    if (!this._workshopVideoLinkService) {
+      this._workshopVideoLinkService = new WorkshopVideoLinkService(
+        this.workshopRepository
+      );
+    }
+    return this._workshopVideoLinkService;
+  }
+
+  get creditTransactionRepository(): ICreditTransactionRepository {
+    if (!this._creditTransactionRepository) {
+      this._creditTransactionRepository = new PrismaCreditTransactionRepository(
+        this._prisma
+      );
+    }
+    return this._creditTransactionRepository;
+  }
+
+  get cashbackQueueRepository(): ICashbackQueueRepository {
+    if (!this._cashbackQueueRepository) {
+      this._cashbackQueueRepository = new PrismaCashbackQueueRepository(
+        this._prisma
+      );
+    }
+    return this._cashbackQueueRepository;
+  }
+
+  get workshopCashbackService(): IWorkshopCashbackService {
+    if (!this._workshopCashbackService) {
+      this._workshopCashbackService = new WorkshopCashbackService(
+        this.workshopRepository,
+        this.appUserRepository,
+        this.creditTransactionRepository,
+        this.cashbackQueueRepository,
+        this.creditService,
+        this.notificationService
+      );
+    }
+    return this._workshopCashbackService;
+  }
+
+  get workshopNoShowPenaltyService(): IWorkshopNoShowPenaltyService {
+    if (!this._workshopNoShowPenaltyService) {
+      this._workshopNoShowPenaltyService = new WorkshopNoShowPenaltyService();
+    }
+    return this._workshopNoShowPenaltyService;
+  }
+
+  get userTitleService(): IUserTitleService {
+    if (!this._userTitleService) {
+      this._userTitleService = new UserTitleService(this._prisma);
+    }
+    return this._userTitleService;
+  }
+
+  get workshopTippingService(): IWorkshopTippingService {
+    if (!this._workshopTippingService) {
+      this._workshopTippingService = new WorkshopTippingService(
+        this.creditService
+      );
+    }
+    return this._workshopTippingService;
   }
 
   get prisma(): PrismaClient {
