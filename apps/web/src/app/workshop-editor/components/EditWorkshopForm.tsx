@@ -59,6 +59,7 @@ export function EditWorkshopForm({
       isVirtual: workshop.isVirtual || false,
       maxParticipants: workshop.maxParticipants || undefined,
       materialsNeeded: workshop.materialsNeeded || "",
+      creditCost: workshop.creditCost || 20,
     },
   });
 
@@ -97,6 +98,7 @@ export function EditWorkshopForm({
       isVirtual: data.isVirtual,
       maxParticipants: data.maxParticipants || null,
       materialsNeeded: data.materialsNeeded || null,
+      creditCost: data.creditCost ?? null,
     });
   };
 

@@ -79,6 +79,12 @@ export const workshopFieldSchemas = {
     .trim()
     .min(WORKSHOP_VALIDATION.topic.min, WORKSHOP_ERROR_MESSAGES.topic.min)
     .max(WORKSHOP_VALIDATION.topic.max, WORKSHOP_ERROR_MESSAGES.topic.max),
+
+  creditCost: z
+    .number()
+    .int("Le nombre de crédits doit être un nombre entier")
+    .min(20, "Le nombre minimum de crédits est 20")
+    .max(100, "Le nombre maximum de crédits est 100"),
 } as const;
 
 export const createWorkshopBackendSchema = z.object({
@@ -92,6 +98,7 @@ export const createWorkshopBackendSchema = z.object({
   isVirtual: workshopFieldSchemas.isVirtual.optional().default(false),
   maxParticipants: workshopFieldSchemas.maxParticipants.optional().nullable(),
   materialsNeeded: workshopFieldSchemas.materialsNeeded.optional().nullable(),
+  creditCost: workshopFieldSchemas.creditCost.optional().nullable(),
 });
 
 export const updateWorkshopBackendSchema = z.object({
@@ -106,6 +113,7 @@ export const updateWorkshopBackendSchema = z.object({
   isVirtual: workshopFieldSchemas.isVirtual.optional(),
   maxParticipants: workshopFieldSchemas.maxParticipants.optional().nullable(),
   materialsNeeded: workshopFieldSchemas.materialsNeeded.optional().nullable(),
+  creditCost: workshopFieldSchemas.creditCost.optional().nullable(),
 });
 
 export const publishWorkshopSchema = z.object({

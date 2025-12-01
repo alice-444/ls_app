@@ -22,6 +22,7 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         isVirtual: input.isVirtual ?? false,
         maxParticipants: input.maxParticipants,
         materialsNeeded: input.materialsNeeded,
+        creditCost: input.creditCost ?? null,
         creatorId: input.creatorId,
         apprenticeId: input.apprenticeId ?? null,
         requestId: input.requestId ?? null,

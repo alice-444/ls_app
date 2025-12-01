@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -16,7 +16,7 @@ import { trpc } from "@/utils/trpc";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-export default function BuyCreditsPage() {
+function BuyCreditsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, isPending } = authClient.useSession();
@@ -219,5 +219,19 @@ export default function BuyCreditsPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function BuyCreditsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      }
+    >
+      <BuyCreditsContent />
+    </Suspense>
   );
 }

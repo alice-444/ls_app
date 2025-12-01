@@ -21,10 +21,13 @@ import { WorkshopDescription } from "@/components/workshop/cards/WorkshopDescrip
 import { WorkshopDetailsCard } from "@/components/workshop/cards/WorkshopDetailsCard";
 import { WorkshopCreatorCard } from "@/components/workshop/cards/WorkshopCreatorCard";
 import { WorkshopParticipantsCard } from "@/components/workshop/cards/WorkshopParticipantsCard";
+import { AttendanceManagementCard } from "@/components/workshop/cards/AttendanceManagementCard";
 import { WorkshopActionsCard } from "@/components/workshop/cards/WorkshopActionsCard";
 import { WorkshopRequestsCard } from "@/components/workshop/requests/WorkshopRequestsCard";
 import { SubmitFeedbackDialog } from "@/components/workshop/SubmitFeedbackDialog";
 import { WorkshopReviews } from "@/components/workshop/WorkshopReviews";
+import { DailyVideoCall } from "@/components/workshop/DailyVideoCall";
+import { JoinVideoButton } from "@/components/workshop/JoinVideoButton";
 
 export default function WorkshopDetailPage() {
   const router = useRouter();
@@ -323,6 +326,31 @@ export default function WorkshopDetailPage() {
                 setShowApprenticeProfileModal(true);
               }}
             />
+            {isOwner && isWorkshopPast(workshop) && (
+              <AttendanceManagementCard
+                workshopId={workshop.id}
+                isOwner={isOwner}
+              />
+            )}
+
+            {workshop.isVirtual && workshop.status === "PUBLISHED" && (
+              <JoinVideoButton workshop={workshop} />
+            )}
+
+            {workshop.isVirtual &&
+              workshop.status === "PUBLISHED" &&
+              (isOwner || isRegistered) &&
+              workshop.dailyRoomId && (
+                <DailyVideoCall
+                  workshopId={workshop.id}
+                  onLeave={() => {
+                    toast.info("Vous avez quitté la visioconférence", {
+                      description: "Vous pouvez rejoindre à tout moment.",
+                    });
+                    refetch();
+                  }}
+                />
+              )}
 
             {isApprentice &&
               isWorkshopPast(workshop) &&

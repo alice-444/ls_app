@@ -35,6 +35,42 @@ export class PrismaCreditTransactionRepository
     }));
   }
 
+  async findFirstByUserIdAndType(
+    userId: string,
+    type: CreditTransactionType,
+    options?: {
+      descriptionContains?: string;
+      orderBy?: "asc" | "desc";
+    }
+  ): Promise<CreditTransaction | null> {
+    const where: any = {
+      userId,
+      type,
+    };
+
+    if (options?.descriptionContains) {
+      where.description = {
+        contains: options.descriptionContains,
+      };
+    }
+
+    const transaction = await this.prisma.credit_transaction.findFirst({
+      where,
+      orderBy: { createdAt: options?.orderBy || "desc" },
+    });
+
+    if (!transaction) return null;
+
+    return {
+      id: transaction.id,
+      userId: transaction.userId,
+      amount: transaction.amount,
+      type: transaction.type,
+      description: transaction.description,
+      createdAt: transaction.createdAt,
+    };
+  }
+
   async countByUserId(userId: string): Promise<number> {
     return this.prisma.credit_transaction.count({
       where: { userId },

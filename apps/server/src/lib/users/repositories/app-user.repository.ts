@@ -7,6 +7,8 @@ export interface AppUserData {
   status: AppUserStatus;
   createdAt: Date;
   updatedAt: Date;
+  photoUrl?: string | null;
+  deletedAt?: Date | null;
 }
 
 export interface CreateAppUserInput {
@@ -34,6 +36,7 @@ export interface UpdateAppUserInput {
   studyDomain?: string | null;
   studyProgram?: string | null;
   iceBreakerTags?: string[] | null;
+  deletedAt?: Date | null;
 }
 
 export interface AppUserRepository {
@@ -73,18 +76,22 @@ export class PrismaAppUserRepository implements AppUserRepository {
         status: true,
         createdAt: true,
         updatedAt: true,
+        photoUrl: true,
+        deletedAt: true,
       },
     });
 
     if (!appUser) return null;
 
-    const result = {
+    const result: AppUserData = {
       id: appUser.id,
       userId: appUser.userId,
       role: appUser.role as Role | null,
       status: appUser.status,
       createdAt: appUser.createdAt,
       updatedAt: appUser.updatedAt,
+      photoUrl: appUser.photoUrl ?? null,
+      deletedAt: appUser.deletedAt ?? null,
     };
 
     return result;
@@ -167,6 +174,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
         ...(input.studyDomain !== undefined && { studyDomain: input.studyDomain }),
         ...(input.studyProgram !== undefined && { studyProgram: input.studyProgram }),
         ...(input.iceBreakerTags !== undefined && { iceBreakerTags: input.iceBreakerTags as any }),
+        ...(input.deletedAt !== undefined && { deletedAt: input.deletedAt }),
         updatedAt: now,
       },
     });
@@ -178,6 +186,8 @@ export class PrismaAppUserRepository implements AppUserRepository {
       status: appUser.status,
       createdAt: appUser.createdAt,
       updatedAt: appUser.updatedAt,
+      photoUrl: appUser.photoUrl ?? null,
+      deletedAt: appUser.deletedAt ?? null,
     };
   }
 
@@ -217,6 +227,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
         ...(updateInput.studyDomain !== undefined && { studyDomain: updateInput.studyDomain }),
         ...(updateInput.studyProgram !== undefined && { studyProgram: updateInput.studyProgram }),
         ...(updateInput.iceBreakerTags !== undefined && { iceBreakerTags: updateInput.iceBreakerTags as any }),
+        ...(updateInput.deletedAt !== undefined && { deletedAt: updateInput.deletedAt }),
         updatedAt: now,
       },
     });

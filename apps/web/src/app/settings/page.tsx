@@ -45,6 +45,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
+import { UpdateProfileSection } from "@/components/settings/UpdateProfileSection";
+import { ChangePasswordSection } from "@/components/settings/ChangePasswordSection";
+import { ChangeEmailSection } from "@/components/settings/ChangeEmailSection";
+import { DeleteAccountSection } from "@/components/settings/DeleteAccountSection";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -53,9 +57,6 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [privacyMode, setPrivacyMode] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteReason, setDeleteReason] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSignOut = () => {
     authClient.signOut({
@@ -65,33 +66,6 @@ export default function SettingsPage() {
         },
       },
     });
-  };
-
-  const handleDeleteAccount = () => {
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDeleteAccount = async () => {
-    if (!session?.user) {
-      toast.error("Vous devez être connecté pour supprimer votre compte");
-      return;
-    }
-
-    setIsDeleting(true);
-    try {
-      await customAuthClient.deleteAccount(deleteReason || undefined);
-      toast.success("Votre compte a été supprimé avec succès");
-      setTimeout(() => {
-        router.push("/login");
-      }, 1500);
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Une erreur est survenue lors de la suppression du compte"
-      );
-      setIsDeleting(false);
-    }
   };
 
   return (
@@ -107,131 +81,24 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-8">
-          <Card className="shadow-sm">
-            <CardHeader className="pb-6 px-6 sm:px-8">
-              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                <User className="h-5 w-5" />
-                Compte
-              </CardTitle>
-              <CardDescription className="text-sm">
-                Gérez vos informations de compte et sécurité
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6 px-6 sm:px-8 pb-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    defaultValue={session?.user?.email || ""}
-                    disabled
-                    className="w-full h-10"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-sm font-medium">
-                    Nom d'utilisateur
-                  </Label>
-                  <Input
-                    id="username"
-                    defaultValue={session?.user?.name || ""}
-                    disabled
-                    className="w-full h-10"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="space-y-1">
-                    <Label htmlFor="password" className="text-sm font-medium">
-                      Mot de passe
-                    </Label>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Dernière modification il y a 30 jours
-                    </p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full sm:w-auto h-10 px-6"
-                  >
-                    <Lock className="h-4 w-4 mr-2" />
-                    Modifier
-                  </Button>
-                </div>
-                <Separator />
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="space-y-1">
-                    <Label className="text-sm font-medium">
-                      Supprimer le compte
-                    </Label>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Cette action est irréversible et supprimera définitivement
-                      votre compte
-                    </p>
-                  </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={handleDeleteAccount}
-                    className="w-full sm:w-auto h-10 px-6"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Supprimer
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <UpdateProfileSection />
 
           <Card className="shadow-sm">
             <CardHeader className="pb-6 px-6 sm:px-8">
               <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                <User className="h-5 w-5" />
-                Informations personnelles
+                <Lock className="h-5 w-5" />
+                Sécurité du compte
               </CardTitle>
               <CardDescription className="text-sm">
-                Mettez à jour vos informations personnelles
+                Gérez la sécurité de votre compte
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 px-6 sm:px-8 pb-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-sm font-medium">
-                    Prénom
-                  </Label>
-                  <Input
-                    id="firstName"
-                    defaultValue="John"
-                    className="w-full h-10"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-sm font-medium">
-                    Nom
-                  </Label>
-                  <Input
-                    id="lastName"
-                    defaultValue="Doe"
-                    className="w-full h-10"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-medium">
-                    Téléphone
-                  </Label>
-                  <Input id="phone" type="tel" className="w-full h-10" />
-                </div>
-              </div>
-              <Button className="w-full sm:w-auto h-10 px-8">
-                <Mail className="h-4 w-4 mr-2" />
-                Sauvegarder les modifications
-              </Button>
+              <ChangePasswordSection />
+
+              <Separator />
+
+              <ChangeEmailSection />
             </CardContent>
           </Card>
 
@@ -275,10 +142,10 @@ export default function SettingsPage() {
                 </div>
                 <Switch checked={darkMode} onCheckedChange={setDarkMode} />
               </div>
-
-              <Separator />
             </CardContent>
           </Card>
+
+          <DeleteAccountSection />
 
           {/* Section Feedback */}
           <Card className="shadow-sm">
@@ -351,7 +218,6 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Bouton Se déconnecter */}
           <Card className="border-destructive/50 shadow-sm">
             <CardContent className="pt-8 px-6 sm:px-8 pb-8">
               <Button
@@ -366,76 +232,6 @@ export default function SettingsPage() {
           </Card>
         </div>
       </div>
-
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent onClose={() => setDeleteDialogOpen(false)}>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
-              <Trash2 className="h-5 w-5" />
-              Supprimer votre compte
-            </DialogTitle>
-            <DialogDescription>
-              Cette action est irréversible. Toutes vos données seront
-              définitivement supprimées après une période de rétention de 30
-              jours.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="delete-reason" className="text-sm font-medium">
-                Raison de la suppression (optionnel)
-              </Label>
-              <Textarea
-                id="delete-reason"
-                placeholder="Partagez avec nous la raison de votre départ (optionnel)..."
-                value={deleteReason}
-                onChange={(e) => setDeleteReason(e.target.value)}
-                className="min-h-[100px]"
-                disabled={isDeleting}
-              />
-            </div>
-            <div className="rounded-lg bg-destructive/10 p-4 border border-destructive/20">
-              <p className="text-sm text-destructive font-medium mb-2">
-                ⚠️ Attention
-              </p>
-              <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                <li>Votre compte sera immédiatement désactivé</li>
-                <li>Toutes vos données seront supprimées après 30 jours</li>
-                <li>Vous ne pourrez plus vous connecter</li>
-                <li>Cette action ne peut pas être annulée</li>
-              </ul>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDeleteDialogOpen(false);
-                setDeleteReason("");
-              }}
-              disabled={isDeleting}
-            >
-              Annuler
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDeleteAccount}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <span className="mr-2">Suppression...</span>
-                </>
-              ) : (
-                <>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Supprimer définitivement
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
@@ -629,14 +425,13 @@ function CreditTransactionHistorySection() {
         <CardContent className="px-6 sm:px-8 pb-8">
           <div className="text-center py-8 text-muted-foreground">
             <Coins className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="text-sm sm:text-base">Aucune transaction pour le moment</p>
+            <p className="text-sm sm:text-base">
+              Aucune transaction pour le moment
+            </p>
             <p className="text-xs sm:text-sm mt-2 mb-4">
               Vos transactions de crédits apparaîtront ici
             </p>
-            <Button
-              size="sm"
-              onClick={() => router.push("/buy-credits")}
-            >
+            <Button size="sm" onClick={() => router.push("/buy-credits")}>
               <Coins className="w-4 h-4 mr-2" />
               Acheter des crédits
             </Button>
@@ -701,7 +496,9 @@ function CreditTransactionHistorySection() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm">{transaction.description}</p>
+                    <p className="font-medium text-sm">
+                      {transaction.description}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(transaction.createdAt)}
                     </p>
