@@ -108,152 +108,124 @@ export class ServicesContainer {
   ) {}
 
   get workshopService(): IWorkshopService {
-    if (!this._workshopService) {
-      this._workshopService = new WorkshopService(
-        this.repositories.workshopRepository,
-        this.repositories.appUserRepository,
-        this.repositories.workshopRequestRepository,
-        this.notificationService
-      );
-    }
+    this._workshopService ??= new WorkshopService(
+      this.repositories.workshopRepository,
+      this.repositories.appUserRepository,
+      this.repositories.workshopRequestRepository,
+      this.notificationService
+    );
     return this._workshopService;
   }
 
   get workshopFeedbackService(): IWorkshopFeedbackService {
-    if (!this._workshopFeedbackService) {
-      this._workshopFeedbackService = new WorkshopFeedbackService(
-        this.repositories.workshopFeedbackRepository,
-        this.repositories.workshopRepository,
-        this.repositories.mentorRepository,
-        this.creditService
-      );
-    }
+    this._workshopFeedbackService ??= new WorkshopFeedbackService(
+      this.repositories.workshopFeedbackRepository,
+      this.repositories.workshopRepository,
+      this.repositories.mentorRepository,
+      this.creditService
+    );
     return this._workshopFeedbackService;
   }
 
   get mentorProfileService(): IMentorProfileService {
-    if (!this._mentorProfileService) {
-      this._mentorProfileService = new MentorProfileService(
-        this.repositories.mentorRepository
-      );
-    }
+    this._mentorProfileService ??= new MentorProfileService(
+      this.repositories.mentorRepository
+    );
     return this._mentorProfileService;
   }
 
   get mentorContactService(): IMentorContactService {
-    if (!this._mentorContactService) {
-      this._mentorContactService = new MentorContactService(
-        this.repositories.mentorRepository,
-        this.notificationService,
-        this.messagingService
-      );
-    }
+    this._mentorContactService ??= new MentorContactService(
+      this.repositories.mentorRepository,
+      this.notificationService,
+      this.messagingService
+    );
     return this._mentorContactService;
   }
 
   get mentorFeedbackService(): IMentorFeedbackService {
-    if (!this._mentorFeedbackService) {
-      this._mentorFeedbackService = new MentorFeedbackService(
-        this.repositories.mentorRepository
-      );
-    }
+    this._mentorFeedbackService ??= new MentorFeedbackService(
+      this.repositories.mentorRepository
+    );
     return this._mentorFeedbackService;
   }
 
   get mentorWorkshopService(): IMentorWorkshopService {
-    if (!this._mentorWorkshopService) {
-      this._mentorWorkshopService = new MentorWorkshopService(
-        this.repositories.mentorRepository
-      );
-    }
+    this._mentorWorkshopService ??= new MentorWorkshopService(
+      this.repositories.mentorRepository
+    );
     return this._mentorWorkshopService;
   }
 
   get workshopRequestService(): IWorkshopRequestService {
-    if (!this._workshopRequestService) {
-      this._workshopRequestService = new WorkshopRequestService(
-        this.repositories.workshopRequestRepository,
-        this.repositories.mentorRepository,
-        this.repositories.workshopRepository,
-        this.notificationService,
-        this.creditService,
-        this.prisma
-      );
-    }
+    this._workshopRequestService ??= new WorkshopRequestService(
+      this.repositories.workshopRequestRepository,
+      this.repositories.mentorRepository,
+      this.repositories.workshopRepository,
+      this.notificationService,
+      this.creditService,
+      this.prisma
+    );
     return this._workshopRequestService;
   }
 
   get apprenticeProfileService(): ApprenticeProfileService {
-    if (!this._apprenticeProfileService) {
-      this._apprenticeProfileService = new ApprenticeProfileService(
-        this.repositories.appUserRepository,
-        this.repositories.workshopRepository,
-        this.repositories.userConnectionRepository
-      );
-    }
+    this._apprenticeProfileService ??= new ApprenticeProfileService(
+      this.repositories.appUserRepository,
+      this.repositories.workshopRepository,
+      this.repositories.userConnectionRepository
+    );
     return this._apprenticeProfileService;
   }
 
   get userConnectionService(): UserConnectionService {
-    if (!this._userConnectionService) {
-      this._userConnectionService = new UserConnectionService(
-        this.repositories.appUserRepository,
-        this.repositories.userConnectionRepository
-      );
-    }
+    this._userConnectionService ??= new UserConnectionService(
+      this.repositories.appUserRepository,
+      this.repositories.userConnectionRepository
+    );
     return this._userConnectionService;
   }
 
   get messageValidationService(): IMessageValidationService {
-    if (!this._messageValidationService) {
-      this._messageValidationService = new MessageValidationService();
-    }
+    this._messageValidationService ??= new MessageValidationService();
     return this._messageValidationService;
   }
 
   get messageEnrichmentService(): IMessageEnrichmentService {
-    if (!this._messageEnrichmentService) {
-      this._messageEnrichmentService = new MessageEnrichmentService(
-        this.repositories.appUserRepository,
-        this.repositories.messageRepository
-      );
-    }
+    this._messageEnrichmentService ??= new MessageEnrichmentService(
+      this.repositories.appUserRepository,
+      this.repositories.messageRepository
+    );
     return this._messageEnrichmentService;
   }
 
   get messagingService(): IMessagingService {
-    if (!this._messagingService) {
-      this._messagingService = new MessagingService(
-        this.repositories.appUserRepository,
-        this.repositories.conversationRepository,
-        this.repositories.messageRepository,
-        this.messageValidationService,
-        this.messageEnrichmentService,
-        this.userBlockService,
-        this.repositories.workshopRepository,
-        this.prisma
-      );
-    }
+    this._messagingService ??= new MessagingService(
+      this.repositories.appUserRepository,
+      this.repositories.conversationRepository,
+      this.repositories.messageRepository,
+      this.messageValidationService,
+      this.messageEnrichmentService,
+      this.userBlockService,
+      this.repositories.workshopRepository,
+      this.prisma
+    );
     return this._messagingService;
   }
 
   get presenceService(): PresenceService {
-    if (!this._presenceService) {
-      this._presenceService = new PresenceService(
-        this.repositories.appUserRepository
-      );
-    }
+    this._presenceService ??= new PresenceService(
+      this.repositories.appUserRepository
+    );
     return this._presenceService;
   }
 
   get messageReactionService(): MessageReactionService {
-    if (!this._messageReactionService) {
-      this._messageReactionService = new MessageReactionService(
-        this.repositories.messageReactionRepository,
-        this.repositories.messageRepository,
-        this.repositories.appUserRepository
-      );
-    }
+    this._messageReactionService ??= new MessageReactionService(
+      this.repositories.messageReactionRepository,
+      this.repositories.messageRepository,
+      this.repositories.appUserRepository
+    );
     return this._messageReactionService;
   }
 
@@ -271,61 +243,49 @@ export class ServicesContainer {
   }
 
   get auditLogService(): IAuditLogService {
-    if (!this._auditLogService) {
-      this._auditLogService = new AuditLogService();
-    }
+    this._auditLogService ??= new AuditLogService();
     return this._auditLogService;
   }
 
   get userBlockService(): IUserBlockService {
-    if (!this._userBlockService) {
-      this._userBlockService = new UserBlockService(
-        this.repositories.userBlockRepository,
-        this.repositories.appUserRepository,
-        this.auditLogService
-      );
-    }
+    this._userBlockService ??= new UserBlockService(
+      this.repositories.userBlockRepository,
+      this.repositories.appUserRepository,
+      this.auditLogService
+    );
     return this._userBlockService;
   }
 
   get userReportService(): IUserReportService {
-    if (!this._userReportService) {
-      this._userReportService = new UserReportService(
-        this.repositories.userReportRepository,
-        this.repositories.appUserRepository,
-        this.auditLogService
-      );
-    }
+    this._userReportService ??= new UserReportService(
+      this.repositories.userReportRepository,
+      this.repositories.appUserRepository,
+      this.auditLogService
+    );
     return this._userReportService;
   }
 
   get creditService(): ICreditService {
-    if (!this._creditService) {
-      this._creditService = new CreditService(this.prisma);
-    }
+    this._creditService ??= new CreditService(this.prisma);
     return this._creditService;
   }
 
   get stripeService(): IStripeService {
-    if (!this._stripeService) {
-      this._stripeService = new StripeService();
-    }
+    this._stripeService ??= new StripeService();
     return this._stripeService;
   }
 
   get emailService(): IEmailService {
-    if (!this._emailService) {
-      this._emailService = new ResendEmailService();
-    }
+    this._emailService ??= new ResendEmailService();
     return this._emailService;
   }
 
   get dailyService(): IDailyService {
     if (!this._dailyService) {
       const config: DailyConfig = {
-        apiKey: process.env.DAILY_API_KEY || "",
-        apiBaseUrl: process.env.DAILY_API_BASE_URL || "https://api.daily.co/v1",
-        domain: process.env.DAILY_DOMAIN || "",
+        apiKey: process.env.DAILY_API_KEY ?? "",
+        apiBaseUrl: process.env.DAILY_API_BASE_URL ?? "https://api.daily.co/v1",
+        domain: process.env.DAILY_DOMAIN ?? "",
       };
 
       if (!config.apiKey) {
@@ -338,90 +298,75 @@ export class ServicesContainer {
   }
 
   get workshopVideoLinkService(): IWorkshopVideoLinkService {
-    if (!this._workshopVideoLinkService) {
-      this._workshopVideoLinkService = new WorkshopVideoLinkService(
-        this.repositories.workshopRepository
-      );
-    }
+    this._workshopVideoLinkService ??= new WorkshopVideoLinkService(
+      this.repositories.workshopRepository
+    );
     return this._workshopVideoLinkService;
   }
 
   get workshopCashbackService(): IWorkshopCashbackService {
-    if (!this._workshopCashbackService) {
-      this._workshopCashbackService = new WorkshopCashbackService(
-        this.repositories.workshopRepository,
-        this.repositories.appUserRepository,
-        this.repositories.creditTransactionRepository,
-        this.repositories.cashbackQueueRepository,
-        this.creditService,
-        this.notificationService
-      );
-    }
+    this._workshopCashbackService ??= new WorkshopCashbackService(
+      this.repositories.workshopRepository,
+      this.repositories.appUserRepository,
+      this.repositories.creditTransactionRepository,
+      this.repositories.cashbackQueueRepository,
+      this.creditService,
+      this.notificationService
+    );
     return this._workshopCashbackService;
   }
 
   get workshopNoShowPenaltyService(): IWorkshopNoShowPenaltyService {
-    if (!this._workshopNoShowPenaltyService) {
-      this._workshopNoShowPenaltyService = new WorkshopNoShowPenaltyService();
-    }
+    this._workshopNoShowPenaltyService ??= new WorkshopNoShowPenaltyService();
     return this._workshopNoShowPenaltyService;
   }
 
   get userTitleService(): IUserTitleService {
-    if (!this._userTitleService) {
-      this._userTitleService = new UserTitleService(this.prisma);
-    }
+    this._userTitleService ??= new UserTitleService(this.prisma);
     return this._userTitleService;
   }
 
   get workshopTippingService(): IWorkshopTippingService {
-    if (!this._workshopTippingService) {
-      this._workshopTippingService = new WorkshopTippingService(
-        this.creditService
-      );
-    }
+    this._workshopTippingService ??= new WorkshopTippingService(
+      this.creditService
+    );
     return this._workshopTippingService;
   }
 
   get updateProfileService(): IUpdateProfileService {
-    if (!this._updateProfileService) {
-      this._updateProfileService = new UpdateProfileService(
-        this.repositories.authUserRepository,
-        this.repositories.appUserRepository
-      );
-    }
+    this._updateProfileService ??= new UpdateProfileService(
+      this.repositories.authUserRepository,
+      this.repositories.appUserRepository
+    );
     return this._updateProfileService;
   }
 
   get changePasswordService(): IChangePasswordService {
-    if (!this._changePasswordService) {
-      this._changePasswordService = new ChangePasswordService(
-        this.repositories.authUserRepository,
-        this.repositories.accountRepository,
-        new PasswordValidationService(),
-        new BetterAuthService()
-      );
-    }
+    this._changePasswordService ??= new ChangePasswordService(
+      this.repositories.authUserRepository,
+      this.repositories.accountRepository,
+      new PasswordValidationService(),
+      new BetterAuthService(),
+      this.emailService
+    );
     return this._changePasswordService;
   }
 
   get changeEmailService(): IChangeEmailService {
-    if (!this._changeEmailService) {
-      this._changeEmailService = new ChangeEmailService(
-        this.repositories.authUserRepository,
-        this.repositories.verificationRepository,
-        this.emailService,
-        new EmailTemplateService(),
-        new BetterAuthService()
-      );
-    }
+    this._changeEmailService ??= new ChangeEmailService(
+      this.repositories.authUserRepository,
+      this.repositories.verificationRepository,
+      this.emailService,
+      new EmailTemplateService(),
+      new BetterAuthService()
+    );
     return this._changeEmailService;
   }
 
   get forgotPasswordService(): IForgotPasswordService {
     if (!this._forgotPasswordService) {
       const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+        process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
       this._forgotPasswordService = new ForgotPasswordService(
         new PasswordValidationService(),
         new HttpClient(baseUrl)
@@ -431,15 +376,12 @@ export class ServicesContainer {
   }
 
   get deleteAccountEnhancedService(): IDeleteAccountEnhancedService {
-    if (!this._deleteAccountEnhancedService) {
-      this._deleteAccountEnhancedService = new DeleteAccountEnhancedService(
-        this.repositories.appUserRepository,
-        this.repositories.workshopRepository,
-        this.prisma,
-        new LocalFileStorageService()
-      );
-    }
+    this._deleteAccountEnhancedService ??= new DeleteAccountEnhancedService(
+      this.repositories.appUserRepository,
+      this.repositories.workshopRepository,
+      this.prisma,
+      new LocalFileStorageService()
+    );
     return this._deleteAccountEnhancedService;
   }
 }
-

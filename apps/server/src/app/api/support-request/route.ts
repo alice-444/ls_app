@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join, resolve } from "path";
-import { existsSync } from "fs";
-import { randomUUID } from "crypto";
+import { writeFile, mkdir } from "node:fs/promises";
+import { join, resolve } from "node:path";
+import { existsSync } from "node:fs";
+import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/common";
 import { uploadRateLimit } from "@/lib/rate-limit";
 import {
@@ -15,7 +15,7 @@ import { container } from "@/lib/di/container";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_TOTAL_FILES = 5;
-const ALLOWED_MIME_TYPES = [
+const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
   "image/jpg",
   "image/png",
@@ -23,7 +23,7 @@ const ALLOWED_MIME_TYPES = [
   "text/plain",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
+]);
 
 const supportRequestSchema = z.object({
   email: z.string().email(),
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+        if (!ALLOWED_MIME_TYPES.has(file.type)) {
           return NextResponse.json(
             { error: `Type de fichier non autorisé: ${file.name}` },
             { status: 400 }
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       for (const file of files) {
         const fileId = randomUUID();
         const extension = file.name.split(".").pop() || "";
-        const sanitizedExtension = extension.replace(/[^a-zA-Z0-9]/g, "");
+        const sanitizedExtension = extension.replaceAll(/[^a-zA-Z0-9]/, "");
         const filename = `${fileId}.${sanitizedExtension}`;
         const filePath = join(uploadsDir, filename);
 
@@ -140,90 +140,29 @@ export async function POST(req: NextRequest) {
     });
 
     try {
+      const { renderEmailTemplate } = await import(
+        "../../../lib/email/utils/render-email"
+      );
+      const { SupportRequestConfirmation } = await import(
+        "../../../lib/email/templates/SupportRequestConfirmation"
+      );
+      const React = await import("react");
+
+      const emailContent = await renderEmailTemplate(
+        React.createElement(SupportRequestConfirmation, {
+          subject: validation.data.subject,
+          problemType: validation.data.problemType,
+          requestId: supportRequest.id,
+          hasAttachments: attachments.length > 0,
+          attachmentCount: attachments.length,
+        })
+      );
+
       const emailResult = await container.emailService.sendEmail({
         to: validation.data.email,
         subject: `Confirmation de votre demande de support - ${validation.data.subject}`,
-        html: `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            </head>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h1 style="color: #2563eb; margin: 0;">Confirmation de votre demande</h1>
-              </div>
-              
-              <p>Bonjour,</p>
-              
-              <p>Nous avons bien reçu votre demande de support concernant : <strong>${
-                validation.data.subject
-              }</strong></p>
-              
-              <div style="background-color: #f1f5f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                <p style="margin: 0;"><strong>Type de problème :</strong> ${
-                  validation.data.problemType
-                }</p>
-                <p style="margin: 5px 0 0 0;"><strong>Numéro de demande :</strong> ${
-                  supportRequest.id
-                }</p>
-              </div>
-              
-              <p>Notre équipe va examiner votre demande et vous répondra dans les plus brefs délais.</p>
-              
-              ${
-                attachments.length > 0
-                  ? `
-                <p><strong>Pièces jointes :</strong></p>
-                <ul>
-                  ${attachments
-                    .map(
-                      (att) =>
-                        `<li>${att.filename} (${(att.size / 1024).toFixed(
-                          2
-                        )} KB)</li>`
-                    )
-                    .join("")}
-                </ul>
-              `
-                  : ""
-              }
-              
-              <p style="margin-top: 30px;">Cordialement,<br>L'équipe LearnSup</p>
-              
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-              <p style="font-size: 12px; color: #6b7280; text-align: center;">
-                Cet email est envoyé automatiquement, merci de ne pas y répondre.
-              </p>
-            </body>
-          </html>
-        `,
-        text: `
-Confirmation de votre demande de support
-
-Bonjour,
-
-Nous avons bien reçu votre demande de support concernant : ${
-          validation.data.subject
-        }
-
-Type de problème : ${validation.data.problemType}
-Numéro de demande : ${supportRequest.id}
-
-Notre équipe va examiner votre demande et vous répondra dans les plus brefs délais.
-
-${
-  attachments.length > 0
-    ? `Pièces jointes :\n${attachments
-        .map((att) => `- ${att.filename} (${(att.size / 1024).toFixed(2)} KB)`)
-        .join("\n")}`
-    : ""
-}
-
-Cordialement,
-L'équipe LearnSup
-        `.trim(),
+        html: emailContent.html,
+        text: emailContent.text,
       });
 
       if (!emailResult.ok) {

@@ -17,7 +17,7 @@ export async function GET(
 
     const { filename } = await params;
 
-    const sanitizedFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "");
+    const sanitizedFilename = filename.replaceAll(/[^a-zA-Z0-9._-]/, "");
     if (sanitizedFilename !== filename) {
       return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
     }

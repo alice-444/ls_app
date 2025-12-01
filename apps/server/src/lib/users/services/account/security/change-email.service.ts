@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import { randomBytes } from "node:crypto";
 import type {
   IChangeEmailService,
   ChangeEmailInput,
@@ -28,7 +28,7 @@ export class ChangeEmailService implements IChangeEmailService {
   ): Promise<Result<{ success: boolean; message: string }>> {
     try {
       const user = await this.authUserRepository.findById(userId);
-      if (!user || !user.email) {
+      if (!user?.email) {
         return failure("User not found", 404);
       }
 
@@ -68,7 +68,7 @@ export class ChangeEmailService implements IChangeEmailService {
         process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
       }/verify-email-change?token=${token}`;
 
-      const verificationTemplate = this.emailTemplateService.renderEmailChangeVerification({
+      const verificationTemplate = await this.emailTemplateService.renderEmailChangeVerification({
         verificationUrl,
         tokenExpiryHours: this.TOKEN_EXPIRY_HOURS,
       });
@@ -85,7 +85,7 @@ export class ChangeEmailService implements IChangeEmailService {
         return failure("Failed to send verification email", 500);
       }
 
-      const securityAlertTemplate = this.emailTemplateService.renderEmailChangeSecurityAlert({
+      const securityAlertTemplate = await this.emailTemplateService.renderEmailChangeSecurityAlert({
         currentEmail: user.email,
         requestedNewEmail: input.newEmail,
       });

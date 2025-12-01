@@ -2,13 +2,14 @@ import { Resend } from "resend";
 import type {
   IEmailService,
   SendEmailOptions,
-  EmailAttachment,
 } from "./email.service.interface";
 import { failure, success, type Result } from "../../common/types";
+import { logger } from "../../common/logger";
 
 export class ResendEmailService implements IEmailService {
-  private resend: Resend;
-  private defaultFrom: string;
+  private readonly resend: Resend;
+  private readonly defaultFrom: string;
+  private readonly shouldSendEmails: boolean;
 
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
@@ -17,6 +18,8 @@ export class ResendEmailService implements IEmailService {
     }
     this.resend = new Resend(apiKey);
     this.defaultFrom = process.env.RESEND_FROM_EMAIL || "noreply@example.com";
+    // Only send emails if SEND_EMAIL is explicitly set to 'true'
+    this.shouldSendEmails = process.env.SEND_EMAIL === "true";
   }
 
   async sendEmail(
@@ -35,6 +38,27 @@ export class ResendEmailService implements IEmailService {
 
       if (!options.html && !options.text) {
         return failure("Le contenu de l'email (html ou text) est requis", 400);
+      }
+
+      if (!this.shouldSendEmails) {
+        logger.info(
+          "Email not sent (SEND_EMAIL !== 'true') - Email would be sent:",
+          {
+            from: options.from || this.defaultFrom,
+            to: recipients,
+            subject: options.subject,
+            hasHtml: !!options.html,
+            hasText: !!options.text,
+            hasAttachments: !!(
+              options.attachments && options.attachments.length > 0
+            ),
+          }
+        );
+        return success({
+          messageId: `simulated-${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(7)}`,
+        });
       }
 
       const emailOptions: any = {

@@ -13,7 +13,10 @@ export class ChangePasswordService implements IChangePasswordService {
     private readonly authUserRepository: IAuthUserRepository,
     private readonly accountRepository: IAccountRepository,
     private readonly passwordValidation: PasswordValidationService,
-    private readonly authService: IAuthService
+    private readonly authService: IAuthService,
+    private readonly emailService?: {
+      sendEmail: (params: any) => Promise<Result<any>>;
+    }
   ) {}
 
   async changePassword(
@@ -44,7 +47,7 @@ export class ChangePasswordService implements IChangePasswordService {
       }
 
       const user = await this.authUserRepository.findById(userId);
-      if (!user || !user.email) {
+      if (!user?.email) {
         return failure("User not found", 404);
       }
 
@@ -67,6 +70,59 @@ export class ChangePasswordService implements IChangePasswordService {
 
       if (!changeResult.ok) {
         return changeResult;
+      }
+
+      if (this.emailService) {
+        try {
+          const { renderEmailTemplate } = await import(
+            "../../../../email/utils/render-email"
+          );
+          const { PasswordChangeConfirmation } = await import(
+            "../../../../email/templates/PasswordChangeConfirmation"
+          );
+          const React = await import("react");
+
+          const now = new Date();
+          const date = now.toLocaleDateString("fr-FR", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          const time = now.toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          const emailContent = await renderEmailTemplate(
+            React.createElement(PasswordChangeConfirmation, {
+              userName: user.name || undefined,
+              date,
+              time,
+            })
+          );
+
+          const emailResult = await this.emailService.sendEmail({
+            to: user.email,
+            subject: "Confirmation de changement de mot de passe - LearnSup",
+            html: emailContent.html,
+            text: emailContent.text,
+          });
+
+          if (!emailResult.ok) {
+            console.error("Failed to send password change confirmation email", {
+              userId,
+              email: user.email,
+              error: emailResult.error,
+            });
+          }
+        } catch (error) {
+          console.error("Error sending password change confirmation email", {
+            userId,
+            email: user.email,
+            error,
+          });
+        }
       }
 
       return success({ success: true });

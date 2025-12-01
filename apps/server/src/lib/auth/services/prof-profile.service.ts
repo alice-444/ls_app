@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { existsSync } from "fs";
-import { join, resolve } from "path";
+import { existsSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { Result, failure, success, validateInput, prisma } from "../../common";
 import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../../users/repositories";
@@ -70,6 +70,99 @@ export type ProfProfileInput = z.infer<typeof profProfileSchema>;
 export class ProfProfileService {
   constructor(private readonly appUserRepository: AppUserRepository) {}
 
+  private async validatePhotoUrl(
+    photoUrl: string,
+    userId: string
+  ): Promise<Result<string>> {
+    if (!photoUrl.startsWith("/api/profile/photo/")) {
+      return failure(
+        "Invalid photo URL. Must be from /api/profile/photo/ endpoint",
+        400
+      );
+    }
+
+    const fileName = photoUrl.replace("/api/profile/photo/", "");
+    if (!fileName) {
+      return failure("Invalid photo URL format", 400);
+    }
+
+    const sanitizedFileName = fileName.replaceAll(/[^a-zA-Z0-9._-]/, "");
+    if (sanitizedFileName !== fileName) {
+      return failure("Invalid characters in file name", 400);
+    }
+
+    const extensionMatch = sanitizedFileName.match(/\.(jpg|jpeg|png)$/);
+    if (!extensionMatch) {
+      return failure("Invalid file extension", 400);
+    }
+
+    const nameWithoutExt = sanitizedFileName.replace(/\.(jpg|jpeg|png)$/, "");
+    const uuidPattern =
+      /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
+    const match = nameWithoutExt.match(uuidPattern);
+
+    if (!match) {
+      return failure("Invalid file name format. Expected: userId-uuid", 400);
+    }
+
+    const userIdFromFileName = match[1];
+    if (userIdFromFileName !== userId) {
+      return failure("Photo URL does not belong to this user", 403);
+    }
+
+    const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
+    const filePath = join(uploadsDir, sanitizedFileName);
+    const resolvedPath = resolve(filePath);
+
+    if (!resolvedPath.startsWith(resolve(uploadsDir))) {
+      return failure("Invalid file path", 400);
+    }
+
+    if (!existsSync(filePath)) {
+      return failure("Photo file not found", 404);
+    }
+
+    return success(photoUrl);
+  }
+
+  private sanitizeProfileData(data: ProfProfileInput) {
+    return {
+      name: sanitizeString(data.name, { maxLength: 100, trim: true }),
+      bio: sanitizeString(data.bio, { maxLength: 2000, trim: true }),
+      domain: sanitizeString(data.domain, { maxLength: 100, trim: true }),
+      qualifications: data.qualifications
+        ? sanitizeString(data.qualifications, { maxLength: 2000, trim: true })
+        : null,
+      experience: data.experience
+        ? sanitizeString(data.experience, { maxLength: 2000, trim: true })
+        : null,
+    };
+  }
+
+  private buildUpdateData(
+    sanitized: ReturnType<typeof this.sanitizeProfileData>,
+    data: ProfProfileInput,
+    photoUrl?: string
+  ) {
+    const updateData: any = {
+      bio: sanitized.bio,
+      domain: sanitized.domain,
+      qualifications: sanitized.qualifications,
+      experience: sanitized.experience,
+      socialMediaLinks:
+        (data.socialMediaLinks as Record<string, string>) || null,
+      areasOfExpertise: data.areasOfExpertise,
+      mentorshipTopics: data.mentorshipTopics || null,
+      calendlyLink: data.calendlyLink || null,
+    };
+
+    if (photoUrl !== undefined) {
+      updateData.photoUrl = photoUrl;
+    }
+
+    return updateData;
+  }
+
   async saveProfile(
     userId: string,
     input: unknown
@@ -89,125 +182,31 @@ export class ProfProfileService {
       if (!profCheck.ok) {
         return profCheck;
       }
-      const { appUser } = profCheck.data;
 
-      let validatedPhotoUrl: string | null | undefined = undefined;
+      let validatedPhotoUrl: string | undefined = undefined;
       if (validation.data.photoUrl) {
-        const photoUrl = validation.data.photoUrl;
-
-        // Verify that the URL points to the protected API endpoint
-        if (!photoUrl.startsWith("/api/profile/photo/")) {
-          return failure(
-            "Invalid photo URL. Must be from /api/profile/photo/ endpoint",
-            400
-          );
-        }
-
-        // Extract filename from API endpoint
-        const fileName = photoUrl.replace("/api/profile/photo/", "");
-        if (!fileName) {
-          return failure("Invalid photo URL format", 400);
-        }
-
-        const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9._-]/g, "");
-        if (sanitizedFileName !== fileName) {
-          return failure("Invalid characters in file name", 400);
-        }
-
-        // The format is: userId-uuid.extension
-        // UUID v4 always has 36 characters (format: 8-4-4-4-12)
-        // Verify the extension
-        const extensionMatch = sanitizedFileName.match(/\.(jpg|jpeg|png)$/);
-        if (!extensionMatch) {
-          return failure("Invalid file extension", 400);
-        }
-
-        // Remove the extension to get: userId-uuid
-        const nameWithoutExt = sanitizedFileName.replace(
-          /\.(jpg|jpeg|png)$/,
-          ""
+        const photoValidation = await this.validatePhotoUrl(
+          validation.data.photoUrl,
+          userId
         );
-
-        // Verify the UUID format (36 characters with dashes)
-        const uuidPattern =
-          /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
-        const match = nameWithoutExt.match(uuidPattern);
-
-        if (!match) {
-          return failure(
-            "Invalid file name format. Expected: userId-uuid",
-            400
-          );
+        if (!photoValidation.ok) {
+          return photoValidation;
         }
-
-        const userIdFromFileName = match[1]; // Group 1 : userId
-
-        if (userIdFromFileName !== userId) {
-          return failure("Photo URL does not belong to this user", 403);
-        }
-
-        const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
-        const filePath = join(uploadsDir, sanitizedFileName);
-
-        const resolvedPath = resolve(filePath);
-        if (!resolvedPath.startsWith(resolve(uploadsDir))) {
-          return failure("Invalid file path", 400);
-        }
-
-        if (!existsSync(filePath)) {
-          return failure("Photo file not found", 404);
-        }
-
-        validatedPhotoUrl = photoUrl;
+        validatedPhotoUrl = photoValidation.data;
       }
 
-      const sanitizedName = sanitizeString(validation.data.name, {
-        maxLength: 100,
-        trim: true,
-      });
-      const sanitizedBio = sanitizeString(validation.data.bio, {
-        maxLength: 2000,
-        trim: true,
-      });
-      const sanitizedDomain = sanitizeString(validation.data.domain, {
-        maxLength: 100,
-        trim: true,
-      });
-      const sanitizedQualifications = validation.data.qualifications
-        ? sanitizeString(validation.data.qualifications, {
-            maxLength: 2000,
-            trim: true,
-          })
-        : null;
-      const sanitizedExperience = validation.data.experience
-        ? sanitizeString(validation.data.experience, {
-            maxLength: 2000,
-            trim: true,
-          })
-        : null;
+      const sanitized = this.sanitizeProfileData(validation.data);
 
       await (prisma as any).user.update({
         where: { id: userId },
-        data: {
-          name: sanitizedName,
-        },
+        data: { name: sanitized.name },
       });
 
-      const updateData: any = {
-        bio: sanitizedBio,
-        domain: sanitizedDomain,
-        qualifications: sanitizedQualifications,
-        experience: sanitizedExperience,
-        socialMediaLinks:
-          (validation.data.socialMediaLinks as Record<string, string>) || null,
-        areasOfExpertise: validation.data.areasOfExpertise,
-        mentorshipTopics: validation.data.mentorshipTopics || null,
-        calendlyLink: validation.data.calendlyLink || null,
-      };
-
-      if (validatedPhotoUrl !== undefined) {
-        updateData.photoUrl = validatedPhotoUrl;
-      }
+      const updateData = this.buildUpdateData(
+        sanitized,
+        validation.data,
+        validatedPhotoUrl
+      );
 
       await this.appUserRepository.update(userId, updateData);
 

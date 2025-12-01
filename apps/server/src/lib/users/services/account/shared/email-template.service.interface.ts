@@ -16,9 +16,9 @@ export interface EmailTemplateResult {
 export interface IEmailTemplateService {
   renderEmailChangeVerification(
     data: EmailChangeVerificationTemplateData
-  ): EmailTemplateResult;
+  ): Promise<EmailTemplateResult>;
 
   renderEmailChangeSecurityAlert(
     data: EmailChangeSecurityAlertTemplateData
-  ): EmailTemplateResult;
+  ): Promise<EmailTemplateResult>;
 }
