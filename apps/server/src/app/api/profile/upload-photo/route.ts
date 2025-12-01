@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
       await mkdir(uploadsDir, { recursive: true });
     }
 
-    const sanitizedUserId = userId.replace(/[^a-zA-Z0-9_-]/g, "");
+    const sanitizedUserId = userId.replaceAll(/[^a-zA-Z0-9_-]/, "");
     if (!sanitizedUserId || sanitizedUserId !== userId) {
       return NextResponse.json(
         { error: "Invalid user ID format" },

@@ -138,6 +138,7 @@ model user {
   isDisabled      Boolean   @default(false)
   deletedAt       DateTime?
   displayUsername String?
+  title           String?   @default("Explorer")
   account         account[]
   app_user        app_user?
   session         session[]
@@ -171,6 +172,10 @@ model workshop {
   apprenticeId                                           String?
   requestId                                              String?
   topic                                                  String?
+  dailyRoomId                                            String?
+  dailyRoomLastActivityAt                                DateTime?
+  apprenticeAttendanceStatus                             AttendanceStatus?   @default(PENDING)
+  creditCost                                             Int?               // Prix en crédits défini par le mentor (min: 20, max: 100)
   mentor_feedback                                        mentor_feedback[]
   app_user_workshop_apprenticeIdToapp_user               app_user?          @relation("workshop_apprenticeIdToapp_user", fields: [apprenticeId], references: [id])
   app_user_workshop_creatorIdToapp_user                  app_user           @relation("workshop_creatorIdToapp_user", fields: [creatorId], references: [id], onDelete: Cascade)
@@ -183,6 +188,8 @@ model workshop {
   @@index([requestId])
   @@index([status])
   @@index([topic])
+  @@index([dailyRoomId])
+  @@index([dailyRoomLastActivityAt])
 }
 
 model workshop_request {
@@ -234,6 +241,39 @@ enum WorkshopStatus {
   PUBLISHED
   CANCELLED
   COMPLETED
+}
+
+enum AttendanceStatus {
+  PENDING
+  PRESENT
+  NO_SHOW
+}
+
+model workshop_cashback_queue {
+  id                String   @id @map("_id")
+  workshopId        String
+  participantUserId String
+  cashbackAmount    Int
+  workshopEndTime   DateTime
+  status            CashbackStatus @default(PENDING)
+  processedAt       DateTime?
+  retryCount        Int      @default(0)
+  errorMessage      String?
+  lastRetryAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime
+
+  @@index([workshopId])
+  @@index([participantUserId])
+  @@index([status])
+  @@index([workshopEndTime])
+  @@index([retryCount])
+}
+
+enum CashbackStatus {
+  PENDING
+  PROCESSED
+  FAILED
 }
 
 model user_connection {

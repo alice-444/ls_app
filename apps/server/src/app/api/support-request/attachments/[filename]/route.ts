@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "fs/promises";
-import { join, resolve } from "path";
-import { existsSync } from "fs";
+import { readFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
+import { existsSync } from "node:fs";
 import { getAuthenticatedSession } from "@/lib/api-helpers";
 
 export async function GET(
@@ -16,7 +16,7 @@ export async function GET(
 
     const { filename } = await params;
 
-    const sanitizedFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "");
+    const sanitizedFilename = filename.replaceAll(/[^a-zA-Z0-9._-]/, "");
     if (sanitizedFilename !== filename) {
       return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
     }

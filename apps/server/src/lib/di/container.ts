@@ -1,114 +1,14 @@
 import { PrismaClient } from "../../../prisma/generated/client/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-
-// Repositories
-import { PrismaWorkshopRepository } from "../workshops/repositories/workshop.repository";
-import { PrismaWorkshopFeedbackRepository } from "../workshops/repositories/workshop-feedback.repository";
-import { PrismaAppUserRepository } from "../users/repositories/app-user.repository";
-import { PrismaMentorRepository } from "../mentors/repositories/mentor.repository";
-import { PrismaWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository";
-import type { IWorkshopRepository } from "../workshops/repositories/workshop.repository.interface";
-import type { IWorkshopFeedbackRepository } from "../workshops/repositories/workshop-feedback.repository.interface";
-import type { AppUserRepository } from "../users/repositories";
-import type { IMentorRepository } from "../mentors/repositories/mentor.repository.interface";
-import type { IWorkshopRequestRepository } from "../mentors/repositories/workshop-request.repository.interface";
-
-// Services
-import { WorkshopService } from "../workshops/services/workshop.service";
-import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
-import { WorkshopFeedbackService } from "../workshops/services/workshop-feedback.service";
-import type { IWorkshopFeedbackService } from "../workshops/services/workshop-feedback.service.interface";
-import { MentorProfileService } from "../mentors/services/mentor-profile.service";
-import type { IMentorProfileService } from "../mentors/services/mentor-profile.service.interface";
-import { MentorContactService } from "../mentors/services/mentor-contact.service";
-import type { IMentorContactService } from "../mentors/services/mentor-contact.service.interface";
-import { MentorFeedbackService } from "../mentors/services/mentor-feedback.service";
-import type { IMentorFeedbackService } from "../mentors/services/mentor-feedback.service.interface";
-import { MentorWorkshopService } from "../mentors/services/mentor-workshop.service";
-import type { IMentorWorkshopService } from "../mentors/services/mentor-workshop.service.interface";
-import { WorkshopRequestService } from "../mentors/services/workshop-request.service";
-import type { IWorkshopRequestService } from "../mentors/services/workshop-request.service.interface";
-import { ApprenticeProfileService } from "../users/services/apprentice-profile.service";
-import { UserConnectionService } from "../users/services/user-connection.service";
-import { PrismaUserConnectionRepository } from "../users/repositories/user-connection.repository";
-import type { IUserConnectionRepository } from "../users/repositories/user-connection.repository.interface";
-import { PrismaConversationRepository } from "../messaging/repositories/conversation.repository";
-import { PrismaMessageRepository } from "../messaging/repositories/message.repository";
-import { PrismaMessageReactionRepository } from "../messaging/repositories/message-reaction.repository";
-import type { IConversationRepository } from "../messaging/repositories/conversation.repository.interface";
-import type { IMessageRepository } from "../messaging/repositories/message.repository.interface";
-import type { IMessageReactionRepository } from "../messaging/repositories/message-reaction.repository.interface";
-import { MessagingService } from "../messaging/services/messaging.service";
-import type { IMessagingService } from "../messaging/services/messaging.service.interface";
-import { PresenceService } from "../messaging/services/presence.service";
-import { MessageReactionService } from "../messaging/services/message-reaction.service";
-import { MessageValidationService } from "../messaging/services/message-validation.service";
-import { MessageEnrichmentService } from "../messaging/services/message-enrichment.service";
-import type { IMessageValidationService } from "../messaging/services/message-validation.service.interface";
-import type { IMessageEnrichmentService } from "../messaging/services/message-enrichment.service.interface";
-import { PrismaNotificationRepository } from "../notifications/repositories/notification.repository";
-import type { INotificationRepository } from "../notifications/repositories/notification.repository.interface";
-import { NotificationService } from "../notifications/services/notification.service";
-import type { INotificationService } from "../notifications/services/notification.service.interface";
-import { SocketNotificationEventEmitter } from "../notifications/services/socket-notification-event-emitter";
-import { PrismaUserBlockRepository } from "../users/repositories/user-block.repository";
-import type { IUserBlockRepository } from "../users/repositories/user-block.repository.interface";
-import { PrismaUserReportRepository } from "../users/repositories/user-report.repository";
-import type { IUserReportRepository } from "../users/repositories/user-report.repository.interface";
-import { UserBlockService } from "../users/services/user-block.service";
-import type { IUserBlockService } from "../users/services/user-block.service.interface";
-import { UserReportService } from "../users/services/user-report.service";
-import type { IUserReportService } from "../users/services/user-report.service.interface";
-import { AuditLogService } from "../common/audit-log.service";
-import type { IAuditLogService } from "../common/audit-log.service";
-import { CreditService } from "../credits/services/credit.service";
-import type { ICreditService } from "../credits/services/credit.service.interface";
-import { StripeService } from "../payment/services/stripe.service";
-import type { IStripeService } from "../payment/services/stripe.service.interface";
-import { ResendEmailService } from "../email/services/resend-email.service";
-import type { IEmailService } from "../email/services/email.service.interface";
+import { RepositoriesContainer } from "./repositories.container";
+import { ServicesContainer } from "./services.container";
 
 class DIContainer {
   private static instance: DIContainer;
   private readonly _prisma: PrismaClient;
-
-  // Repository instances
-  private _workshopRepository?: IWorkshopRepository;
-  private _workshopFeedbackRepository?: IWorkshopFeedbackRepository;
-  private _appUserRepository?: AppUserRepository;
-  private _mentorRepository?: IMentorRepository;
-  private _workshopRequestRepository?: IWorkshopRequestRepository;
-  private _userConnectionRepository?: IUserConnectionRepository;
-  private _conversationRepository?: IConversationRepository;
-  private _messageRepository?: IMessageRepository;
-  private _messageReactionRepository?: IMessageReactionRepository;
-  private _notificationRepository?: INotificationRepository;
-
-  // Service instances
-  private _workshopService?: IWorkshopService;
-  private _workshopFeedbackService?: IWorkshopFeedbackService;
-  private _mentorProfileService?: IMentorProfileService;
-  private _mentorContactService?: IMentorContactService;
-  private _mentorFeedbackService?: IMentorFeedbackService;
-  private _mentorWorkshopService?: IMentorWorkshopService;
-  private _workshopRequestService?: IWorkshopRequestService;
-  private _apprenticeProfileService?: ApprenticeProfileService;
-  private _userConnectionService?: UserConnectionService;
-  private _messagingService?: IMessagingService;
-  private _presenceService?: PresenceService;
-  private _messageReactionService?: MessageReactionService;
-  private _messageValidationService?: IMessageValidationService;
-  private _messageEnrichmentService?: IMessageEnrichmentService;
-  private _notificationService?: INotificationService;
-  private _userBlockRepository?: IUserBlockRepository;
-  private _userReportRepository?: IUserReportRepository;
-  private _userBlockService?: IUserBlockService;
-  private _userReportService?: IUserReportService;
-  private _auditLogService?: IAuditLogService;
-  private _creditService?: ICreditService;
-  private _stripeService?: IStripeService;
-  private _emailService?: IEmailService;
+  private readonly _repositories: RepositoriesContainer;
+  private readonly _services: ServicesContainer;
 
   private constructor() {
     const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
@@ -142,6 +42,9 @@ class DIContainer {
             : ["error"],
       });
     }
+
+    this._repositories = new RepositoriesContainer(this._prisma);
+    this._services = new ServicesContainer(this._prisma, this._repositories);
   }
 
   public static getInstance(): DIContainer {
@@ -151,306 +54,206 @@ class DIContainer {
     return DIContainer.instance;
   }
 
-  // Getters for repositories
-  get workshopRepository(): IWorkshopRepository {
-    if (!this._workshopRepository) {
-      this._workshopRepository = new PrismaWorkshopRepository(this._prisma);
-    }
-    return this._workshopRepository;
+  // Delegate to repositories container
+  get workshopRepository() {
+    return this._repositories.workshopRepository;
   }
 
-  get workshopFeedbackRepository(): IWorkshopFeedbackRepository {
-    if (!this._workshopFeedbackRepository) {
-      this._workshopFeedbackRepository = new PrismaWorkshopFeedbackRepository(
-        this._prisma
-      );
-    }
-    return this._workshopFeedbackRepository;
+  get workshopFeedbackRepository() {
+    return this._repositories.workshopFeedbackRepository;
   }
 
-  get appUserRepository(): AppUserRepository {
-    if (!this._appUserRepository) {
-      this._appUserRepository = new PrismaAppUserRepository(this._prisma);
-    }
-    return this._appUserRepository;
+  get appUserRepository() {
+    return this._repositories.appUserRepository;
   }
 
-  get mentorRepository(): IMentorRepository {
-    if (!this._mentorRepository) {
-      this._mentorRepository = new PrismaMentorRepository(this._prisma);
-    }
-    return this._mentorRepository;
+  get mentorRepository() {
+    return this._repositories.mentorRepository;
   }
 
-  get workshopRequestRepository(): IWorkshopRequestRepository {
-    if (!this._workshopRequestRepository) {
-      this._workshopRequestRepository = new PrismaWorkshopRequestRepository(
-        this._prisma
-      );
-    }
-    return this._workshopRequestRepository;
+  get workshopRequestRepository() {
+    return this._repositories.workshopRequestRepository;
   }
 
-  // Getters for services
-  get workshopService(): IWorkshopService {
-    if (!this._workshopService) {
-      this._workshopService = new WorkshopService(
-        this.workshopRepository,
-        this.appUserRepository,
-        this.workshopRequestRepository,
-        this.notificationService
-      );
-    }
-    return this._workshopService;
+  get userConnectionRepository() {
+    return this._repositories.userConnectionRepository;
   }
 
-  get workshopFeedbackService(): IWorkshopFeedbackService {
-    if (!this._workshopFeedbackService) {
-      this._workshopFeedbackService = new WorkshopFeedbackService(
-        this.workshopFeedbackRepository,
-        this.workshopRepository,
-        this.mentorRepository
-      );
-    }
-    return this._workshopFeedbackService;
+  get conversationRepository() {
+    return this._repositories.conversationRepository;
   }
 
-  get mentorProfileService(): IMentorProfileService {
-    if (!this._mentorProfileService) {
-      this._mentorProfileService = new MentorProfileService(
-        this.mentorRepository
-      );
-    }
-    return this._mentorProfileService;
+  get messageRepository() {
+    return this._repositories.messageRepository;
   }
 
-  get mentorContactService(): IMentorContactService {
-    if (!this._mentorContactService) {
-      this._mentorContactService = new MentorContactService(
-        this.mentorRepository,
-        this.notificationService,
-        this.messagingService
-      );
-    }
-    return this._mentorContactService;
+  get messageReactionRepository() {
+    return this._repositories.messageReactionRepository;
   }
 
-  get mentorFeedbackService(): IMentorFeedbackService {
-    if (!this._mentorFeedbackService) {
-      this._mentorFeedbackService = new MentorFeedbackService(
-        this.mentorRepository
-      );
-    }
-    return this._mentorFeedbackService;
+  get notificationRepository() {
+    return this._repositories.notificationRepository;
   }
 
-  get mentorWorkshopService(): IMentorWorkshopService {
-    if (!this._mentorWorkshopService) {
-      this._mentorWorkshopService = new MentorWorkshopService(
-        this.mentorRepository
-      );
-    }
-    return this._mentorWorkshopService;
+  get creditTransactionRepository() {
+    return this._repositories.creditTransactionRepository;
   }
 
-  get workshopRequestService(): IWorkshopRequestService {
-    if (!this._workshopRequestService) {
-      this._workshopRequestService = new WorkshopRequestService(
-        this.workshopRequestRepository,
-        this.mentorRepository,
-        this.workshopRepository,
-        this.notificationService,
-        this.creditService,
-        this._prisma
-      );
-    }
-    return this._workshopRequestService;
+  get cashbackQueueRepository() {
+    return this._repositories.cashbackQueueRepository;
   }
 
-  get apprenticeProfileService(): ApprenticeProfileService {
-    if (!this._apprenticeProfileService) {
-      this._apprenticeProfileService = new ApprenticeProfileService(
-        this.appUserRepository,
-        this.workshopRepository,
-        this.userConnectionRepository
-      );
-    }
-    return this._apprenticeProfileService;
+  get authUserRepository() {
+    return this._repositories.authUserRepository;
   }
 
-  get userConnectionRepository(): IUserConnectionRepository {
-    if (!this._userConnectionRepository) {
-      this._userConnectionRepository = new PrismaUserConnectionRepository();
-    }
-    return this._userConnectionRepository;
+  get accountRepository() {
+    return this._repositories.accountRepository;
   }
 
-  get userConnectionService(): UserConnectionService {
-    if (!this._userConnectionService) {
-      this._userConnectionService = new UserConnectionService(
-        this.appUserRepository,
-        this.userConnectionRepository
-      );
-    }
-    return this._userConnectionService;
+  get sessionRepository() {
+    return this._repositories.sessionRepository;
   }
 
-  get conversationRepository(): IConversationRepository {
-    if (!this._conversationRepository) {
-      this._conversationRepository = new PrismaConversationRepository();
-    }
-    return this._conversationRepository;
+  get verificationRepository() {
+    return this._repositories.verificationRepository;
   }
 
-  get messageRepository(): IMessageRepository {
-    if (!this._messageRepository) {
-      this._messageRepository = new PrismaMessageRepository();
-    }
-    return this._messageRepository;
+  get userBlockRepository() {
+    return this._repositories.userBlockRepository;
   }
 
-  get messageValidationService(): IMessageValidationService {
-    if (!this._messageValidationService) {
-      this._messageValidationService = new MessageValidationService();
-    }
-    return this._messageValidationService;
+  get userReportRepository() {
+    return this._repositories.userReportRepository;
   }
 
-  get messageEnrichmentService(): IMessageEnrichmentService {
-    if (!this._messageEnrichmentService) {
-      this._messageEnrichmentService = new MessageEnrichmentService(
-        this.appUserRepository,
-        this.messageRepository
-      );
-    }
-    return this._messageEnrichmentService;
+  // Delegate to services container
+  get workshopService() {
+    return this._services.workshopService;
   }
 
-  get messagingService(): IMessagingService {
-    if (!this._messagingService) {
-      this._messagingService = new MessagingService(
-        this.appUserRepository,
-        this.conversationRepository,
-        this.messageRepository,
-        this.messageValidationService,
-        this.messageEnrichmentService,
-        this.userBlockService,
-        this.workshopRepository,
-        this._prisma
-      );
-    }
-    return this._messagingService;
+  get workshopFeedbackService() {
+    return this._services.workshopFeedbackService;
   }
 
-  get messageReactionRepository(): IMessageReactionRepository {
-    if (!this._messageReactionRepository) {
-      this._messageReactionRepository = new PrismaMessageReactionRepository();
-    }
-    return this._messageReactionRepository;
+  get mentorProfileService() {
+    return this._services.mentorProfileService;
   }
 
-  get presenceService(): PresenceService {
-    if (!this._presenceService) {
-      this._presenceService = new PresenceService(this.appUserRepository);
-    }
-    return this._presenceService;
+  get mentorContactService() {
+    return this._services.mentorContactService;
   }
 
-  get messageReactionService(): MessageReactionService {
-    if (!this._messageReactionService) {
-      this._messageReactionService = new MessageReactionService(
-        this.messageReactionRepository,
-        this.messageRepository,
-        this.appUserRepository
-      );
-    }
-    return this._messageReactionService;
+  get mentorFeedbackService() {
+    return this._services.mentorFeedbackService;
   }
 
-  get notificationRepository(): INotificationRepository {
-    if (!this._notificationRepository) {
-      this._notificationRepository = new PrismaNotificationRepository(
-        this._prisma
-      );
-    }
-    return this._notificationRepository;
+  get mentorWorkshopService() {
+    return this._services.mentorWorkshopService;
   }
 
-  get notificationService(): INotificationService {
-    if (!this._notificationService) {
-      const eventEmitter = new SocketNotificationEventEmitter();
-      this._notificationService = new NotificationService(
-        this.notificationRepository,
-        this.appUserRepository,
-        eventEmitter,
-        this.userBlockService
-      );
-    }
-    return this._notificationService;
+  get workshopRequestService() {
+    return this._services.workshopRequestService;
   }
 
-  get userBlockRepository(): IUserBlockRepository {
-    if (!this._userBlockRepository) {
-      this._userBlockRepository = new PrismaUserBlockRepository();
-    }
-    return this._userBlockRepository;
+  get apprenticeProfileService() {
+    return this._services.apprenticeProfileService;
   }
 
-  get userReportRepository(): IUserReportRepository {
-    if (!this._userReportRepository) {
-      this._userReportRepository = new PrismaUserReportRepository();
-    }
-    return this._userReportRepository;
+  get userConnectionService() {
+    return this._services.userConnectionService;
   }
 
-  get auditLogService(): IAuditLogService {
-    if (!this._auditLogService) {
-      this._auditLogService = new AuditLogService();
-    }
-    return this._auditLogService;
+  get messagingService() {
+    return this._services.messagingService;
   }
 
-  get userBlockService(): IUserBlockService {
-    if (!this._userBlockService) {
-      this._userBlockService = new UserBlockService(
-        this.userBlockRepository,
-        this.appUserRepository,
-        this.auditLogService
-      );
-    }
-    return this._userBlockService;
+  get presenceService() {
+    return this._services.presenceService;
   }
 
-  get userReportService(): IUserReportService {
-    if (!this._userReportService) {
-      this._userReportService = new UserReportService(
-        this.userReportRepository,
-        this.appUserRepository,
-        this.auditLogService
-      );
-    }
-    return this._userReportService;
+  get messageReactionService() {
+    return this._services.messageReactionService;
   }
 
-  get creditService(): ICreditService {
-    if (!this._creditService) {
-      this._creditService = new CreditService(this._prisma);
-    }
-    return this._creditService;
+  get messageValidationService() {
+    return this._services.messageValidationService;
   }
 
-  get stripeService(): IStripeService {
-    if (!this._stripeService) {
-      this._stripeService = new StripeService();
-    }
-    return this._stripeService;
+  get messageEnrichmentService() {
+    return this._services.messageEnrichmentService;
   }
 
-  get emailService(): IEmailService {
-    if (!this._emailService) {
-      this._emailService = new ResendEmailService();
-    }
-    return this._emailService;
+  get notificationService() {
+    return this._services.notificationService;
+  }
+
+  get userBlockService() {
+    return this._services.userBlockService;
+  }
+
+  get userReportService() {
+    return this._services.userReportService;
+  }
+
+  get auditLogService() {
+    return this._services.auditLogService;
+  }
+
+  get creditService() {
+    return this._services.creditService;
+  }
+
+  get stripeService() {
+    return this._services.stripeService;
+  }
+
+  get emailService() {
+    return this._services.emailService;
+  }
+
+  get dailyService() {
+    return this._services.dailyService;
+  }
+
+  get workshopVideoLinkService() {
+    return this._services.workshopVideoLinkService;
+  }
+
+  get workshopCashbackService() {
+    return this._services.workshopCashbackService;
+  }
+
+  get workshopNoShowPenaltyService() {
+    return this._services.workshopNoShowPenaltyService;
+  }
+
+  get userTitleService() {
+    return this._services.userTitleService;
+  }
+
+  get workshopTippingService() {
+    return this._services.workshopTippingService;
+  }
+
+  get updateProfileService() {
+    return this._services.updateProfileService;
+  }
+
+  get changePasswordService() {
+    return this._services.changePasswordService;
+  }
+
+  get changeEmailService() {
+    return this._services.changeEmailService;
+  }
+
+  get forgotPasswordService() {
+    return this._services.forgotPasswordService;
+  }
+
+  get deleteAccountEnhancedService() {
+    return this._services.deleteAccountEnhancedService;
   }
 
   get prisma(): PrismaClient {

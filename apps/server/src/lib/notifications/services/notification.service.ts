@@ -3,7 +3,7 @@ import type { INotificationRepository } from "../repositories/notification.repos
 import type { Result } from "../../common/types";
 import type { AppUserRepository } from "../../users/repositories";
 import type { INotificationEventEmitter } from "./notification-event-emitter.interface";
-import type { IUserBlockService } from "../../users/services/user-block.service.interface";
+import type { IUserBlockService } from "../../users/services/moderation/user-block.service.interface";
 import { success, failure } from "../../common/types";
 import { generateInternalId } from "../../utils/id-generator";
 import { logger } from "../../common/logger";

@@ -176,6 +176,7 @@ export class WorkshopService implements IWorkshopService {
         isVirtual: validation.data.isVirtual,
         maxParticipants: validation.data.maxParticipants,
         materialsNeeded: sanitized.materialsNeeded,
+        creditCost: validation.data.creditCost ?? null,
         creatorId: appUser.id,
       });
 
@@ -245,6 +246,9 @@ export class WorkshopService implements IWorkshopService {
       }
       if (validation.data.topic !== undefined) {
         updateData.topic = validation.data.topic;
+      }
+      if (validation.data.creditCost !== undefined) {
+        updateData.creditCost = validation.data.creditCost;
       }
 
       await this.workshopRepository.update(
@@ -480,7 +484,11 @@ export class WorkshopService implements IWorkshopService {
       if (!workshop) {
         return failure("Atelier non trouvé", 404);
       }
-      return success(workshop);
+
+      const filteredWorkshop =
+        container.workshopVideoLinkService.filterVideoLink(workshop);
+
+      return success(filteredWorkshop);
     } catch (error) {
       return handleError(
         error,

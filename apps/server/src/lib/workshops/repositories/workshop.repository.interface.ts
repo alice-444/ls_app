@@ -6,7 +6,10 @@ export interface IWorkshopRepository {
   findPublished(): Promise<WorkshopEntity[]>;
   update(id: string, input: UpdateWorkshopInput): Promise<WorkshopEntity>;
   delete(id: string): Promise<void>;
-  checkCreatorOwnership(workshopId: string, creatorId: string): Promise<boolean>;
+  checkCreatorOwnership(
+    workshopId: string,
+    creatorId: string
+  ): Promise<boolean>;
   removeApprentice(workshopId: string): Promise<void>;
   findWorkshopBetweenMentorAndApprentice(
     mentorAppUserId: string,
@@ -25,6 +28,7 @@ export interface CreateWorkshopInput {
   isVirtual?: boolean;
   maxParticipants?: number | null;
   materialsNeeded?: string | null;
+  creditCost?: number | null;
   creatorId: string;
   apprenticeId?: string | null;
   requestId?: string | null;
@@ -41,9 +45,13 @@ export interface UpdateWorkshopInput {
   isVirtual?: boolean;
   maxParticipants?: number | null;
   materialsNeeded?: string | null;
+  creditCost?: number | null;
   status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   publishedAt?: Date | null;
   apprenticeId?: string | null;
+  dailyRoomId?: string | null;
+  dailyRoomLastActivityAt?: Date | null;
+  apprenticeAttendanceStatus?: "PENDING" | "PRESENT" | "NO_SHOW" | null;
 }
 
 export interface WorkshopEntity {
@@ -65,7 +73,10 @@ export interface WorkshopEntity {
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
+  dailyRoomId?: string | null;
+  dailyRoomLastActivityAt?: Date | null;
+  apprenticeAttendanceStatus?: "PENDING" | "PRESENT" | "NO_SHOW" | null;
+  creditCost?: number | null;
   creator?: any;
   apprentice?: any;
 }
-

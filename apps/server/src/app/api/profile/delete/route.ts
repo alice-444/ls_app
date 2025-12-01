@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { buildDeletionPlan } from "@/lib/users/services/delete-account.usecase";
+import { buildDeletionPlan } from "@/lib/users/services/account/deletion/delete-account.usecase";
 import prisma from "../../../../../prisma";
-import { DeleteUserAccountService } from "@/lib/users/services/delete-account.service";
+import { DeleteUserAccountService } from "@/lib/users/services/account/deletion/delete-account.service";
 import {
   PrismaAccountRepository,
   PrismaAppUserRepository,
@@ -10,7 +10,7 @@ import {
   PrismaSessionRepository,
   NoopAuditLogRepository,
   NoopJobQueue,
-} from "@/lib/users/services/repositories.prisma";
+} from "@/lib/users/services/account/deletion/repositories.prisma";
 import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
 import { logger } from "@/lib/common/logger";
 

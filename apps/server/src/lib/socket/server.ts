@@ -142,7 +142,7 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
           }
 
           const { MessageEnrichmentService } = await import(
-            "../messaging/services/message-enrichment.service"
+            "../messaging/services/enrichment/message-enrichment.service"
           );
           const enrichmentService = new MessageEnrichmentService(
             container.appUserRepository,
@@ -216,7 +216,7 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
                 : null;
 
               const { MessageEnrichmentService } = await import(
-                "../messaging/services/message-enrichment.service"
+                "../messaging/services/enrichment/message-enrichment.service"
               );
               const enrichmentService = new MessageEnrichmentService(
                 container.appUserRepository,
