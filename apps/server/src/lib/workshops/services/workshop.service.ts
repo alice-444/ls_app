@@ -1,5 +1,5 @@
 import { Result, failure, success, validateInput } from "../../common";
-import type { IWorkshopRepository } from "../../repositories/workshop.repository.interface";
+import type { IWorkshopRepository } from "../repositories/workshop.repository.interface";
 import { sanitizeString } from "../../utils/sanitize";
 import type { AppUserRepository } from "../../users/repositories";
 import type { IWorkshopRequestRepository } from "../../mentors/repositories/workshop-request.repository.interface";
