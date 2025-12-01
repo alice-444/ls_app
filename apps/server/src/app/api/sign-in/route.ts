@@ -1,13 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { SignInService } from "@/lib/auth/services/signin";
+import {
+  parseJsonBodySafe,
+  handleServiceResult,
+  handleRouteError,
+} from "@/lib/api-helpers";
 
 const service = new SignInService();
 
 export async function POST(req: NextRequest) {
-	const body = await req.json().catch(() => ({}));
-	const result = await service.execute(body, req.headers);
-	if (!result.ok) {
-		return NextResponse.json({ error: result.error }, { status: result.status ?? 400 });
-	}
-	return NextResponse.json({ userId: result.data.userId });
+  try {
+    const body = await parseJsonBodySafe(req);
+    const result = await service.execute(body, req.headers);
+    return handleServiceResult(result);
+  } catch (error) {
+    return handleRouteError(error);
+  }
 }

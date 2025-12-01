@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "../../../../../prisma/generated/client/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../../../../prisma";
 
 function isAuthorized(req: NextRequest): boolean {
   const token = req.headers.get("x-cron-token");
@@ -19,11 +17,11 @@ export async function POST(req: NextRequest) {
   });
   for (const job of due) {
     try {
-      await prisma.$transaction(async (tx) => {
-        await (tx as any).session.deleteMany({ where: { userId: job.userId } });
-        await (tx as any).account.deleteMany({ where: { userId: job.userId } });
-        await (tx as any).appUser.deleteMany({ where: { userId: job.userId } });
-        await (tx as any).user.update({
+      await (prisma.$transaction as any)(async (tx: any) => {
+        await tx.session.deleteMany({ where: { userId: job.userId } });
+        await tx.account.deleteMany({ where: { userId: job.userId } });
+        await tx.app_user.deleteMany({ where: { userId: job.userId } });
+        await tx.user.update({
           where: { id: job.userId },
           data: {
             email: `${job.userId}@deleted.local`,
@@ -36,7 +34,7 @@ export async function POST(req: NextRequest) {
             updatedAt: now,
           },
         });
-        await (tx as any).deletionJob.update({
+        await tx.deletionJob.update({
           where: { id: job.id },
           data: { status: "DONE", updatedAt: now },
         });

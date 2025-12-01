@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { buildDeletionPlan } from "@/lib/users/services/delete-account.usecase";
-import { PrismaClient } from "../../../../../prisma/generated/client/client";
-import { DeleteUserAccountService } from "@/lib/users/services/delete-account.service";
+import { buildDeletionPlan } from "@/lib/users/services/account/deletion/delete-account.usecase";
+import prisma from "../../../../../prisma";
+import { DeleteUserAccountService } from "@/lib/users/services/account/deletion/delete-account.service";
 import {
   PrismaAccountRepository,
   PrismaAppUserRepository,
@@ -10,20 +10,20 @@ import {
   PrismaSessionRepository,
   NoopAuditLogRepository,
   NoopJobQueue,
-} from "@/lib/users/services/repositories.prisma";
-
-const prisma = new PrismaClient();
+} from "@/lib/users/services/account/deletion/repositories.prisma";
+import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
+import { logger } from "@/lib/common/logger";
 
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({ headers: req.headers });
-    const user = session?.user;
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await getAuthenticatedSession(req);
+    if (!authResult.ok) {
+      return authResult.response;
     }
+    const { userId } = authResult;
 
     const appUsers = new PrismaAppUserRepository(prisma);
-    const appUser = await appUsers.findByAuthUserId(user.id);
+    const appUser = await appUsers.findByAuthUserId(userId);
     if (!appUser) {
       return NextResponse.json(
         { error: "App user not found" },
@@ -38,7 +38,7 @@ export async function DELETE(req: NextRequest) {
     const reason = url.searchParams.get("reason") ?? undefined;
 
     const planResult = buildDeletionPlan({
-      authUserId: user.id,
+      authUserId: userId,
       appUserId: appUser.id,
       policy: { retentionDays: 30, requireReason: false },
       now: new Date(),
@@ -68,13 +68,14 @@ export async function DELETE(req: NextRequest) {
 
     try {
       await auth.api.signOut({ headers: req.headers });
-    } catch {}
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        logger.error("Unexpected error during signOut", error);
+      }
+    }
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 500 }
-    );
+    return handleRouteError(error);
   }
 }

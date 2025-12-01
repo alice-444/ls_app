@@ -43,8 +43,8 @@ export default function SignUpForm({
 					{
 						onSuccess: () => {
 							setIsSubmitting(false);
-							router.push("/dashboard");
-							toast.success("Account created and signed in successfully!");
+							router.push("/onboarding");
+							toast.success("Compte créé avec succès !");
 						},
 						onError: (error) => {
 							setIsSubmitting(false);

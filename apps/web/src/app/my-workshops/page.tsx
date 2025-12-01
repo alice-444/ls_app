@@ -1,0 +1,844 @@
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
+// @ts-ignore - useRouter is exported from next/navigation, this is a TypeScript resolution issue
+import { useRouter } from "next/navigation";
+import { trpc } from "@/utils/trpc";
+import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import {
+  getStatusBadge,
+  formatDate,
+  formatTime,
+  calculateCountdown,
+  formatCountdown,
+  calculateEndTime,
+} from "@/lib/workshop-utils";
+import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
+import {
+  Calendar,
+  Clock,
+  Users,
+  Plus,
+  Edit,
+  CheckCircle,
+  Search,
+  Trash2,
+  Eye,
+  EyeOff,
+  MapPin,
+  Link as LinkIcon,
+  ArrowRight,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
+import { WorkshopStatsCards } from "@/components/workshop/stats/WorkshopStatsCards";
+import {
+  NextWorkshopCard,
+  EmptyNextWorkshopCard,
+} from "@/components/workshop/cards/NextWorkshopCard";
+import { WorkshopFilters } from "@/components/workshop/filters/WorkshopFilters";
+import { WorkshopListItem } from "@/components/workshop/lists/WorkshopListItem";
+import { UpcomingWorkshopsList } from "@/components/workshop/lists/UpcomingWorkshopsList";
+import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequests";
+
+type SortField = "date" | "title" | "status" | "createdAt";
+type SortOrder = "asc" | "desc";
+type StatusFilter = "all" | "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
+
+export default function MyWorkshopsPage() {
+  const router = useRouter();
+  const { data: session, isPending: isSessionLoading } =
+    authClient.useSession();
+
+  const { data: userRole, isLoading: isLoadingRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortField, setSortField] = useState<SortField>("date");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+
+  const {
+    data: workshops,
+    isLoading,
+    refetch,
+    error: workshopsError,
+  } = trpc.workshop.getMyWorkshops.useQuery(undefined, {
+    enabled: !!session && userRole === "MENTOR",
+    retry: false,
+  });
+
+  const { data: mentorRequests } =
+    trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
+      enabled: !!session,
+    });
+
+  const pendingRequestsCount =
+    mentorRequests?.filter((r: any) => r.status === "PENDING").length || 0;
+
+  const deleteMutation = trpc.workshop.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier supprimé avec succès");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la suppression");
+    },
+  });
+
+  const publishMutation = trpc.workshop.publish.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier publié avec succès");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la publication");
+    },
+  });
+
+  const unpublishMutation = trpc.workshop.unpublish.useMutation({
+    onSuccess: () => {
+      toast.success("Atelier dépublié avec succès");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors de la dépublication");
+    },
+  });
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [requestToReject, setRequestToReject] = useState<string | null>(null);
+  const [expandedWorkshopId, setExpandedWorkshopId] = useState<string | null>(
+    null
+  );
+
+  const utils = trpc.useUtils();
+  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée avec succès");
+      utils.mentor.getWorkshopRequests.invalidate();
+      setShowRejectDialog(false);
+      setRequestToReject(null);
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const handleAcceptRequest = (request: any) => {
+    setSelectedRequest(request);
+    setShowAcceptDialog(true);
+  };
+
+  const handleRejectRequest = (requestId: string) => {
+    setRequestToReject(requestId);
+    setShowRejectDialog(true);
+  };
+
+  const confirmRejectRequest = () => {
+    if (requestToReject) {
+      rejectRequest.mutate({ requestId: requestToReject });
+    }
+  };
+
+  const filteredAndSortedWorkshops = useMemo(() => {
+    if (!workshops) return [];
+
+    let result = [...workshops];
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (workshop) =>
+          workshop.title.toLowerCase().includes(query) ||
+          workshop.description?.toLowerCase().includes(query)
+      );
+    }
+
+    if (statusFilter !== "all") {
+      result = result.filter((workshop) => workshop.status === statusFilter);
+    }
+
+    result.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortField) {
+        case "title":
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case "date":
+          const dateA = a.date ? new Date(a.date).getTime() : 0;
+          const dateB = b.date ? new Date(b.date).getTime() : 0;
+          comparison = dateA - dateB;
+          break;
+        case "status":
+          comparison = a.status.localeCompare(b.status);
+          break;
+        case "createdAt":
+          comparison =
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+      }
+
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+
+    return result;
+  }, [workshops, searchQuery, statusFilter, sortField, sortOrder]);
+
+  const upcomingWorkshops = useMemo(() => {
+    if (!workshops) return [];
+    const now = new Date();
+    const filtered = workshops
+      .filter((w) => {
+        if (w.status !== "PUBLISHED") return false;
+
+        if (!w.date || !w.time) return false;
+
+        const duration = w.duration || 60;
+        const endTime = calculateEndTime(w.date, w.time, duration);
+
+        if (!endTime || endTime <= now) return false;
+
+        return true;
+      })
+      .sort(
+        (a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime()
+      );
+    return filtered;
+  }, [workshops]);
+
+  const nextWorkshop = useMemo(() => {
+    if (!upcomingWorkshops || upcomingWorkshops.length === 0) return null;
+    return upcomingWorkshops[0];
+  }, [upcomingWorkshops]);
+
+  const [countdown, setCountdown] =
+    useState<ReturnType<typeof calculateCountdown>>(null);
+
+  useEffect(() => {
+    if (!nextWorkshop || !nextWorkshop.date || !nextWorkshop.time) {
+      setCountdown(null);
+      return;
+    }
+
+    const initialCountdown = calculateCountdown(
+      nextWorkshop.date,
+      nextWorkshop.time
+    );
+    setCountdown(initialCountdown);
+
+    const interval = setInterval(() => {
+      const newCountdown = calculateCountdown(
+        nextWorkshop.date,
+        nextWorkshop.time
+      );
+      setCountdown(newCountdown);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [nextWorkshop]);
+
+  const handleDelete = (workshopId: string) => {
+    deleteMutation.mutate({ workshopId });
+    setShowDeleteDialog(null);
+  };
+
+  const handlePublish = (workshopId: string) => {
+    publishMutation.mutate({ workshopId });
+  };
+
+  const handleUnpublish = (workshopId: string) => {
+    unpublishMutation.mutate({ workshopId });
+  };
+
+  const handleEdit = (workshopId: string) => {
+    router.push(`/workshop-editor?id=${workshopId}`);
+  };
+
+  const handleViewDetails = (workshopId: string) => {
+    router.push(`/workshop/${workshopId}`);
+  };
+
+  if (isSessionLoading || isLoading || isLoadingRole) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    router.push("/login");
+    return null;
+  }
+
+  if (userRole !== "MENTOR") {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Card className="border-yellow-500">
+            <CardHeader>
+              <CardTitle className="text-yellow-600 dark:text-yellow-400">
+                Accès réservé aux mentors
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
+                Cette page est réservée aux mentors. Votre rôle actuel est :{" "}
+                <strong>{userRole || "Non défini"}</strong>
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-500 mb-4">
+                Si vous devriez avoir accès à cette page, veuillez vérifier
+                votre profil et sélectionner le rôle MENTOR.
+              </p>
+              <Button onClick={() => router.push("/dashboard")}>
+                Retour au dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (workshopsError) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Card className="border-red-500">
+            <CardHeader>
+              <CardTitle className="text-red-600 dark:text-red-400">
+                Erreur d'accès
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
+                {workshopsError.message || "Une erreur est survenue"}
+              </p>
+              <Button onClick={() => router.push("/dashboard")}>
+                Retour au dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                Mes Ateliers
+              </h1>
+              <p className="text-slate-600 dark:text-slate-400">
+                Gérez et organisez vos ateliers de partage de connaissances
+              </p>
+            </div>
+            <Button
+              onClick={() => router.push("/workshop-editor")}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Créer un atelier
+            </Button>
+          </div>
+
+          <WorkshopStatsCards
+            total={workshops?.length || 0}
+            published={
+              workshops?.filter((w) => w.status === "PUBLISHED").length || 0
+            }
+            drafts={workshops?.filter((w) => w.status === "DRAFT").length || 0}
+            completed={
+              workshops?.filter((w) => w.status === "COMPLETED").length || 0
+            }
+            pendingRequests={pendingRequestsCount}
+          />
+        </div>
+
+        {nextWorkshop ? (
+          <Card className="mb-6 bg-linear-to-br from-[#4A90E2] to-[#26547C] text-white border-0 shadow-lg">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-white text-2xl mb-2">
+                    <Calendar className="w-6 h-6" />
+                    Prochaine session
+                  </CardTitle>
+                  <CardDescription className="text-blue-100 text-base">
+                    {countdown && !countdown.isPast
+                      ? `Prochaine session dans ${formatCountdown(countdown)}`
+                      : "Prochaine session"}
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => router.push(`/workshop/${nextWorkshop.id}`)}
+                  className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                >
+                  Voir les détails
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="font-bold text-2xl mb-4">
+                  {nextWorkshop.title}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {nextWorkshop.date && (
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <Calendar className="w-5 h-5" />
+                      <span className="font-medium">
+                        {formatDate(nextWorkshop.date, {
+                          includeWeekday: true,
+                        })}
+                      </span>
+                    </div>
+                  )}
+                  {nextWorkshop.time && (
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <Clock className="w-5 h-5" />
+                      <span className="font-medium">
+                        {formatTime(nextWorkshop.time)}
+                        {nextWorkshop.duration &&
+                          ` • ${nextWorkshop.duration} min`}
+                      </span>
+                    </div>
+                  )}
+                  {nextWorkshop.isVirtual ? (
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <LinkIcon className="w-5 h-5" />
+                      <span className="font-medium">Atelier en ligne</span>
+                    </div>
+                  ) : (
+                    nextWorkshop.location && (
+                      <div className="flex items-center gap-2 text-blue-100">
+                        <MapPin className="w-5 h-5" />
+                        <span className="font-medium">
+                          {nextWorkshop.location}
+                        </span>
+                      </div>
+                    )
+                  )}
+                  <div className="flex items-center gap-2 text-blue-100">
+                    <Users className="w-5 h-5" />
+                    <span className="font-medium">
+                      Inscrits: {nextWorkshop.apprenticeId ? 1 : 0} /{" "}
+                      {nextWorkshop.maxParticipants || "∞"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="mb-6 border-2 border-dashed">
+            <CardContent className="pt-12 pb-12 text-center">
+              <Calendar className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+              <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                Aucun atelier programmé
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">
+                Créez votre premier atelier pour commencer à partager vos
+                connaissances
+              </p>
+              <Button
+                onClick={() => router.push("/workshop-editor")}
+                size="lg"
+                className="gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Créer un atelier
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {upcomingWorkshops.length > 1 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Autres ateliers à venir ({upcomingWorkshops.length - 1})
+              </CardTitle>
+              <CardDescription>
+                Vos prochains ateliers programmés
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {upcomingWorkshops.slice(1).map((workshop) => (
+                  <Card
+                    key={workshop.id}
+                    className="hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => router.push(`/workshop/${workshop.id}`)}
+                  >
+                    <CardHeader>
+                      <CardTitle className="text-lg line-clamp-2">
+                        {workshop.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          {formatDate(workshop.date, { includeWeekday: true })}
+                        </div>
+                        {workshop.time && (
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            {formatTime(workshop.time)}
+                            {workshop.duration && ` • ${workshop.duration} min`}
+                          </div>
+                        )}
+                        {workshop.isVirtual ? (
+                          <div className="flex items-center gap-2">
+                            <LinkIcon className="w-4 h-4" />
+                            <span>En ligne</span>
+                          </div>
+                        ) : (
+                          workshop.location && (
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-4 h-4" />
+                              <span className="truncate">
+                                {workshop.location}
+                              </span>
+                            </div>
+                          )
+                        )}
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4" />
+                          <span>
+                            Inscrits: {workshop.apprenticeId ? 1 : 0} /{" "}
+                            {workshop.maxParticipants || "∞"}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="flex flex-col gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  placeholder="Rechercher un atelier par titre ou description..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-4">
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) =>
+                    setStatusFilter(value as StatusFilter)
+                  }
+                >
+                  <SelectTrigger className="w-full md:w-48">
+                    <SelectValue placeholder="Statut" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    <SelectItem value="DRAFT">Brouillon</SelectItem>
+                    <SelectItem value="PUBLISHED">Publié</SelectItem>
+                    <SelectItem value="CANCELLED">Annulé</SelectItem>
+                    <SelectItem value="COMPLETED">Terminé</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={sortField}
+                  onValueChange={(value) => setSortField(value as SortField)}
+                >
+                  <SelectTrigger className="w-full md:w-48">
+                    <SelectValue placeholder="Trier par" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date">Date</SelectItem>
+                    <SelectItem value="title">Titre</SelectItem>
+                    <SelectItem value="status">Statut</SelectItem>
+                    <SelectItem value="createdAt">Date de création</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                  }
+                  className="w-full md:w-auto"
+                >
+                  {sortOrder === "asc" ? "↑ Croissant" : "↓ Décroissant"}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Tous les ateliers</CardTitle>
+            <CardDescription>
+              {filteredAndSortedWorkshops.length} atelier(s) trouvé(s)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {filteredAndSortedWorkshops.length === 0 ? (
+              <div className="text-center py-12">
+                <Calendar className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+                <h3 className="text-lg font-semibold text-slate-600 mb-2">
+                  Aucun atelier trouvé
+                </h3>
+                <p className="text-slate-500 mb-4">
+                  {searchQuery || statusFilter !== "all"
+                    ? "Essayez de modifier vos filtres de recherche"
+                    : "Commencez par créer votre premier atelier"}
+                </p>
+                {!searchQuery && statusFilter === "all" && (
+                  <Button onClick={() => router.push("/workshop-editor")}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Créer un atelier
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredAndSortedWorkshops.map((workshop) => (
+                  <div
+                    key={workshop.id}
+                    className="border rounded-lg p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start gap-3 mb-2">
+                          <div className="flex-1 min-w-0">
+                            <h3
+                              className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1 truncate cursor-pointer hover:text-blue-600 transition-colors"
+                              onClick={() =>
+                                router.push(`/workshop/${workshop.id}`)
+                              }
+                            >
+                              {workshop.title}
+                            </h3>
+                            {workshop.description && (
+                              <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                                {workshop.description}
+                              </p>
+                            )}
+                          </div>
+                          <div>{getStatusBadge(workshop.status)}</div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-slate-400">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(workshop.date)}
+                          </div>
+                          {workshop.time && (
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {workshop.time}
+                            </div>
+                          )}
+                          {workshop.duration && (
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {workshop.duration} min
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <Users className="w-4 h-4" />
+                            {workshop.status === "PUBLISHED" &&
+                            workshop.apprenticeId
+                              ? 1
+                              : 0}{" "}
+                            / {workshop.maxParticipants || "∞"} participants
+                          </div>
+                        </div>
+                        <WorkshopRequests
+                          workshopId={workshop.id}
+                          workshopStatus={workshop.status}
+                          expandedWorkshopId={expandedWorkshopId}
+                          setExpandedWorkshopId={setExpandedWorkshopId}
+                          onAcceptRequest={handleAcceptRequest}
+                          onRejectRequest={handleRejectRequest}
+                          isRejecting={rejectRequest.isPending}
+                        />
+                      </div>
+
+                      <div className="flex gap-2 lg:flex-col xl:flex-row">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewDetails(workshop.id)}
+                          className="flex-1 lg:flex-none"
+                        >
+                          <Eye className="w-4 h-4 lg:mr-0 xl:mr-2" />
+                          <span className="lg:hidden xl:inline">Détails</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(workshop.id)}
+                          className="flex-1 lg:flex-none"
+                        >
+                          <Edit className="w-4 h-4 lg:mr-0 xl:mr-2" />
+                          <span className="lg:hidden xl:inline">Éditer</span>
+                        </Button>
+                        {workshop.status === "DRAFT" && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handlePublish(workshop.id)}
+                            disabled={publishMutation.isPending}
+                            className="flex-1 lg:flex-none"
+                          >
+                            <CheckCircle className="w-4 h-4 lg:mr-0 xl:mr-2" />
+                            <span className="lg:hidden xl:inline">Publier</span>
+                          </Button>
+                        )}
+                        {workshop.status === "PUBLISHED" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleUnpublish(workshop.id)}
+                            disabled={unpublishMutation.isPending}
+                            className="flex-1 lg:flex-none"
+                          >
+                            <EyeOff className="w-4 h-4 lg:mr-0 xl:mr-2" />
+                            <span className="lg:hidden xl:inline">
+                              Dépublier
+                            </span>
+                          </Button>
+                        )}
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => setShowDeleteDialog(workshop.id)}
+                          disabled={deleteMutation.isPending}
+                          className="flex-1 lg:flex-none"
+                        >
+                          <Trash2 className="w-4 h-4 lg:mr-0 xl:mr-2" />
+                          <span className="lg:hidden xl:inline">Supprimer</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Vue calendrier
+            </CardTitle>
+            <CardDescription>
+              Visualisez tous vos ateliers dans un calendrier
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {workshops && workshops.length > 0 ? (
+              <WorkshopCalendar
+                workshops={workshops}
+                height="600px"
+                userRole="MENTOR"
+                onSelectEvent={(workshop) => {
+                  router.push(`/workshop/${workshop.id}`);
+                }}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <Calendar className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+                <p className="text-slate-500">Aucun atelier à afficher</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <DeleteWorkshopDialog
+          open={showDeleteDialog !== null}
+          onOpenChange={(open) => !open && setShowDeleteDialog(null)}
+          onConfirm={() => showDeleteDialog && handleDelete(showDeleteDialog)}
+          isLoading={deleteMutation.isPending}
+        />
+
+        {selectedRequest && (
+          <AcceptWorkshopRequestDialog
+            open={showAcceptDialog}
+            onOpenChange={(open) => {
+              setShowAcceptDialog(open);
+              if (!open) {
+                setSelectedRequest(null);
+                utils.mentor.getWorkshopRequests.invalidate();
+              }
+            }}
+            requestId={selectedRequest.id}
+            requestTitle={selectedRequest.title}
+            preferredDate={
+              selectedRequest.preferredDate
+                ? new Date(selectedRequest.preferredDate)
+                : null
+            }
+            preferredTime={selectedRequest.preferredTime}
+          />
+        )}
+
+        <RejectWorkshopRequestDialog
+          open={showRejectDialog}
+          onOpenChange={(open) => {
+            setShowRejectDialog(open);
+            if (!open) setRequestToReject(null);
+          }}
+          onConfirm={confirmRejectRequest}
+          isSubmitting={rejectRequest.isPending}
+        />
+      </div>
+    </div>
+  );
+}

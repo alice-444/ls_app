@@ -1,13 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { SignUpService } from "@/lib/auth/services/signup";
+import { PrismaAppUserRepository } from "@/lib/users/repositories";
+import { prisma } from "@/lib/common";
+import {
+  parseJsonBodySafe,
+  handleServiceResult,
+  handleRouteError,
+} from "@/lib/api-helpers";
 
-const service = new SignUpService();
+const appUserRepository = new PrismaAppUserRepository(prisma);
+const service = new SignUpService(appUserRepository);
 
 export async function POST(req: NextRequest) {
-	const body = await req.json().catch(() => ({}));
-	const result = await service.execute(body, req.headers);
-	if (!result.ok) {
-		return NextResponse.json({ error: result.error }, { status: result.status ?? 400 });
-	}
-	return NextResponse.json({ userId: result.data.userId });
+  try {
+    const body = await parseJsonBodySafe(req);
+    const result = await service.execute(body, req.headers);
+    return handleServiceResult(result);
+  } catch (error) {
+    return handleRouteError(error);
+  }
 }
