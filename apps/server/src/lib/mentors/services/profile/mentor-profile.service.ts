@@ -1,6 +1,6 @@
-import type { Result } from "../../common";
-import { failure, success } from "../../common";
-import { handleError, createErrorContext } from "../../common/error-handler";
+import type { Result } from "../../../common";
+import { failure, success } from "../../../common";
+import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { IMentorProfileService } from "./mentor-profile.service.interface";
 import type { IMentorRepository } from "../../repositories/mentor.repository.interface";
 import { verifyMentorAccess } from "../../utils/mentor-helpers";

@@ -2,7 +2,7 @@ import { Result, failure, success } from "../../../common";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { AppUserRepository } from "../../repositories";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
-import type { IUserConnectionRepository } from "../../repositories/user-connection.repository.interface";
+import type { IUserConnectionRepository } from "../../repositories/connection/user-connection.repository.interface";
 import { verifyUserExists } from "../../../auth/services/user-helpers";
 
 export class ApprenticeProfileService {

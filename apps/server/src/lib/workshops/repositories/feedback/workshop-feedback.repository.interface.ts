@@ -1,4 +1,4 @@
-import type { FeedbackStatus } from "../../../../prisma/generated/client/enums";
+import type { FeedbackStatus } from "../../../../../prisma/generated/client/enums";
 
 export interface WorkshopFeedbackEntity {
   id: string;

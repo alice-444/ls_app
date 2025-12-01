@@ -1,4 +1,4 @@
-import type { WorkshopEntity } from "../repositories/workshop.repository.interface";
+import type { WorkshopEntity } from "../../repositories/workshop.repository.interface";
 
 export interface IWorkshopVideoLinkService {
   shouldGenerateLink(workshop: WorkshopEntity, currentTime?: Date): boolean;

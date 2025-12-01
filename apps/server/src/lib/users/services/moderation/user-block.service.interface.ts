@@ -1,5 +1,5 @@
 import type { Result } from "../../../common";
-import type { UserBlockEntity } from "../../repositories/user-block.repository.interface";
+import type { UserBlockEntity } from "../../repositories/moderation/user-block.repository.interface";
 
 export interface IUserBlockService {
   blockUser(

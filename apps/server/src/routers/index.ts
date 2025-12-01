@@ -10,6 +10,7 @@ import { userRouter } from "./users/user.router";
 import { apprenticeRouter } from "./users/apprentice.router";
 import { userBlockRouter } from "./users/moderation/user-block.router";
 import { userReportRouter } from "./users/moderation/user-report.router";
+import { accountSettingsRouter } from "./users/account-settings.router";
 
 // Mentors
 import { mentorRouter } from "./mentors/mentor.router";
@@ -44,6 +45,7 @@ export const appRouter = router({
   credits: creditsRouter,
   user: userRouter,
   cashbackAnalytics: cashbackAnalyticsRouter,
+  accountSettings: accountSettingsRouter,
 });
 
 export type AppRouter = typeof appRouter;

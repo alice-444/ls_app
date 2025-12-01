@@ -1,5 +1,5 @@
 import type { Result } from "../../../common";
-import type { ReportReason } from "../../repositories/user-report.repository.interface";
+import type { ReportReason } from "../../repositories/moderation/user-report.repository.interface";
 
 export interface CreateReportInput {
   reporterUserId: string;

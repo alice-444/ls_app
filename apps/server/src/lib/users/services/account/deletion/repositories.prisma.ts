@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import type { PrismaClient } from "../../../../../../prisma/generated/client/client";
 import {
   AppUserRepository,
   AuthUserRepository,
@@ -7,7 +7,7 @@ import {
   AuditLogRepository,
   JobQueue,
 } from "./delete-account.types";
-import { generateInternalId } from "../../utils/id-generator";
+import { generateInternalId } from "../../../../utils/id-generator";
 
 export class PrismaAppUserRepository implements AppUserRepository {
   constructor(private readonly prisma: any) {}

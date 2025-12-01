@@ -1,0 +1,445 @@
+import type { PrismaClient } from "../../../prisma/generated/client/client";
+import type { RepositoriesContainer } from "./repositories.container";
+import { WorkshopService } from "../workshops/services/workshop.service";
+import { WorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service";
+import { MentorProfileService } from "../mentors/services/profile/mentor-profile.service";
+import { MentorContactService } from "../mentors/services/contact/mentor-contact.service";
+import { MentorFeedbackService } from "../mentors/services/feedback/mentor-feedback.service";
+import { MentorWorkshopService } from "../mentors/services/workshops/mentor-workshop.service";
+import { WorkshopRequestService } from "../mentors/services/workshops/workshop-request.service";
+import { ApprenticeProfileService } from "../users/services/profile/apprentice-profile.service";
+import { UserConnectionService } from "../users/services/connection/user-connection.service";
+import { MessagingService } from "../messaging/services/core/messaging.service";
+import { PresenceService } from "../messaging/services/core/presence.service";
+import { MessageReactionService } from "../messaging/services/reactions/message-reaction.service";
+import { MessageValidationService } from "../messaging/services/validation/message-validation.service";
+import { MessageEnrichmentService } from "../messaging/services/enrichment/message-enrichment.service";
+import { NotificationService } from "../notifications/services/notification.service";
+import { SocketNotificationEventEmitter } from "../notifications/services/socket-notification-event-emitter";
+import { UserBlockService } from "../users/services/moderation/user-block.service";
+import { UserReportService } from "../users/services/moderation/user-report.service";
+import { AuditLogService } from "../common/audit-log.service";
+import { CreditService } from "../credits/services/credit.service";
+import { StripeService } from "../payment/services/stripe.service";
+import { ResendEmailService } from "../email/services/resend-email.service";
+import { DailyService } from "../daily/services/daily.service";
+import { WorkshopVideoLinkService } from "../workshops/services/video/workshop-video-link.service";
+import { WorkshopCashbackService } from "../workshops/services/rewards/workshop-cashback.service";
+import { WorkshopNoShowPenaltyService } from "../workshops/services/rewards/workshop-no-show-penalty.service";
+import { UserTitleService } from "../users/services/profile/user-title.service";
+import { WorkshopTippingService } from "../workshops/services/feedback/workshop-tipping.service";
+import { UpdateProfileService } from "../users/services/account/profile/update-profile.service";
+import { ChangePasswordService } from "../users/services/account/security/change-password.service";
+import { ChangeEmailService } from "../users/services/account/security/change-email.service";
+import { BetterAuthService } from "../users/services/account/shared/auth.service";
+import { LocalFileStorageService } from "../users/services/account/shared/file-storage.service";
+import { ForgotPasswordService } from "../users/services/account/security/forgot-password.service";
+import { PasswordValidationService } from "../users/services/account/security/password-validation.service";
+import { HttpClient } from "../users/services/account/shared/http-client";
+import { DeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service";
+import { EmailTemplateService } from "../users/services/account/shared/email-template.service";
+import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
+import type { IWorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service.interface";
+import type { IMentorProfileService } from "../mentors/services/profile/mentor-profile.service.interface";
+import type { IMentorContactService } from "../mentors/services/contact/mentor-contact.service.interface";
+import type { IMentorFeedbackService } from "../mentors/services/feedback/mentor-feedback.service.interface";
+import type { IMentorWorkshopService } from "../mentors/services/workshops/mentor-workshop.service.interface";
+import type { IWorkshopRequestService } from "../mentors/services/workshops/workshop-request.service.interface";
+import type { IMessagingService } from "../messaging/services/core/messaging.service.interface";
+import type { IMessageValidationService } from "../messaging/services/validation/message-validation.service.interface";
+import type { IMessageEnrichmentService } from "../messaging/services/enrichment/message-enrichment.service.interface";
+import type { INotificationService } from "../notifications/services/notification.service.interface";
+import type { IUserBlockService } from "../users/services/moderation/user-block.service.interface";
+import type { IUserReportService } from "../users/services/moderation/user-report.service.interface";
+import type { IAuditLogService } from "../common/audit-log.service";
+import type { ICreditService } from "../credits/services/credit.service.interface";
+import type { IStripeService } from "../payment/services/stripe.service.interface";
+import type { IEmailService } from "../email/services/email.service.interface";
+import type { IDailyService } from "../daily/services/daily.service.interface";
+import type { IWorkshopVideoLinkService } from "../workshops/services/video/workshop-video-link.service.interface";
+import type { IWorkshopCashbackService } from "../workshops/services/rewards/workshop-cashback.service.interface";
+import type { IWorkshopNoShowPenaltyService } from "../workshops/services/rewards/workshop-no-show-penalty.service.interface";
+import type { IUserTitleService } from "../users/services/profile/user-title.service.interface";
+import type { IWorkshopTippingService } from "../workshops/services/feedback/workshop-tipping.service.interface";
+import type { IUpdateProfileService } from "../users/services/account/profile/update-profile.service.interface";
+import type { IChangePasswordService } from "../users/services/account/security/change-password.service.interface";
+import type { IChangeEmailService } from "../users/services/account/security/change-email.service.interface";
+import type { IForgotPasswordService } from "../users/services/account/security/forgot-password.service.interface";
+import type { IDeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service.interface";
+import type { DailyConfig } from "../daily/config/daily.config.interface";
+
+export class ServicesContainer {
+  private _workshopService?: IWorkshopService;
+  private _workshopFeedbackService?: IWorkshopFeedbackService;
+  private _mentorProfileService?: IMentorProfileService;
+  private _mentorContactService?: IMentorContactService;
+  private _mentorFeedbackService?: IMentorFeedbackService;
+  private _mentorWorkshopService?: IMentorWorkshopService;
+  private _workshopRequestService?: IWorkshopRequestService;
+  private _apprenticeProfileService?: ApprenticeProfileService;
+  private _userConnectionService?: UserConnectionService;
+  private _messagingService?: IMessagingService;
+  private _presenceService?: PresenceService;
+  private _messageReactionService?: MessageReactionService;
+  private _messageValidationService?: IMessageValidationService;
+  private _messageEnrichmentService?: IMessageEnrichmentService;
+  private _notificationService?: INotificationService;
+  private _userBlockService?: IUserBlockService;
+  private _userReportService?: IUserReportService;
+  private _auditLogService?: IAuditLogService;
+  private _creditService?: ICreditService;
+  private _stripeService?: IStripeService;
+  private _emailService?: IEmailService;
+  private _dailyService?: IDailyService;
+  private _workshopVideoLinkService?: IWorkshopVideoLinkService;
+  private _workshopCashbackService?: IWorkshopCashbackService;
+  private _workshopNoShowPenaltyService?: IWorkshopNoShowPenaltyService;
+  private _userTitleService?: IUserTitleService;
+  private _workshopTippingService?: IWorkshopTippingService;
+  private _updateProfileService?: IUpdateProfileService;
+  private _changePasswordService?: IChangePasswordService;
+  private _changeEmailService?: IChangeEmailService;
+  private _forgotPasswordService?: IForgotPasswordService;
+  private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
+
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly repositories: RepositoriesContainer
+  ) {}
+
+  get workshopService(): IWorkshopService {
+    if (!this._workshopService) {
+      this._workshopService = new WorkshopService(
+        this.repositories.workshopRepository,
+        this.repositories.appUserRepository,
+        this.repositories.workshopRequestRepository,
+        this.notificationService
+      );
+    }
+    return this._workshopService;
+  }
+
+  get workshopFeedbackService(): IWorkshopFeedbackService {
+    if (!this._workshopFeedbackService) {
+      this._workshopFeedbackService = new WorkshopFeedbackService(
+        this.repositories.workshopFeedbackRepository,
+        this.repositories.workshopRepository,
+        this.repositories.mentorRepository,
+        this.creditService
+      );
+    }
+    return this._workshopFeedbackService;
+  }
+
+  get mentorProfileService(): IMentorProfileService {
+    if (!this._mentorProfileService) {
+      this._mentorProfileService = new MentorProfileService(
+        this.repositories.mentorRepository
+      );
+    }
+    return this._mentorProfileService;
+  }
+
+  get mentorContactService(): IMentorContactService {
+    if (!this._mentorContactService) {
+      this._mentorContactService = new MentorContactService(
+        this.repositories.mentorRepository,
+        this.notificationService,
+        this.messagingService
+      );
+    }
+    return this._mentorContactService;
+  }
+
+  get mentorFeedbackService(): IMentorFeedbackService {
+    if (!this._mentorFeedbackService) {
+      this._mentorFeedbackService = new MentorFeedbackService(
+        this.repositories.mentorRepository
+      );
+    }
+    return this._mentorFeedbackService;
+  }
+
+  get mentorWorkshopService(): IMentorWorkshopService {
+    if (!this._mentorWorkshopService) {
+      this._mentorWorkshopService = new MentorWorkshopService(
+        this.repositories.mentorRepository
+      );
+    }
+    return this._mentorWorkshopService;
+  }
+
+  get workshopRequestService(): IWorkshopRequestService {
+    if (!this._workshopRequestService) {
+      this._workshopRequestService = new WorkshopRequestService(
+        this.repositories.workshopRequestRepository,
+        this.repositories.mentorRepository,
+        this.repositories.workshopRepository,
+        this.notificationService,
+        this.creditService,
+        this.prisma
+      );
+    }
+    return this._workshopRequestService;
+  }
+
+  get apprenticeProfileService(): ApprenticeProfileService {
+    if (!this._apprenticeProfileService) {
+      this._apprenticeProfileService = new ApprenticeProfileService(
+        this.repositories.appUserRepository,
+        this.repositories.workshopRepository,
+        this.repositories.userConnectionRepository
+      );
+    }
+    return this._apprenticeProfileService;
+  }
+
+  get userConnectionService(): UserConnectionService {
+    if (!this._userConnectionService) {
+      this._userConnectionService = new UserConnectionService(
+        this.repositories.appUserRepository,
+        this.repositories.userConnectionRepository
+      );
+    }
+    return this._userConnectionService;
+  }
+
+  get messageValidationService(): IMessageValidationService {
+    if (!this._messageValidationService) {
+      this._messageValidationService = new MessageValidationService();
+    }
+    return this._messageValidationService;
+  }
+
+  get messageEnrichmentService(): IMessageEnrichmentService {
+    if (!this._messageEnrichmentService) {
+      this._messageEnrichmentService = new MessageEnrichmentService(
+        this.repositories.appUserRepository,
+        this.repositories.messageRepository
+      );
+    }
+    return this._messageEnrichmentService;
+  }
+
+  get messagingService(): IMessagingService {
+    if (!this._messagingService) {
+      this._messagingService = new MessagingService(
+        this.repositories.appUserRepository,
+        this.repositories.conversationRepository,
+        this.repositories.messageRepository,
+        this.messageValidationService,
+        this.messageEnrichmentService,
+        this.userBlockService,
+        this.repositories.workshopRepository,
+        this.prisma
+      );
+    }
+    return this._messagingService;
+  }
+
+  get presenceService(): PresenceService {
+    if (!this._presenceService) {
+      this._presenceService = new PresenceService(
+        this.repositories.appUserRepository
+      );
+    }
+    return this._presenceService;
+  }
+
+  get messageReactionService(): MessageReactionService {
+    if (!this._messageReactionService) {
+      this._messageReactionService = new MessageReactionService(
+        this.repositories.messageReactionRepository,
+        this.repositories.messageRepository,
+        this.repositories.appUserRepository
+      );
+    }
+    return this._messageReactionService;
+  }
+
+  get notificationService(): INotificationService {
+    if (!this._notificationService) {
+      const eventEmitter = new SocketNotificationEventEmitter();
+      this._notificationService = new NotificationService(
+        this.repositories.notificationRepository,
+        this.repositories.appUserRepository,
+        eventEmitter,
+        this.userBlockService
+      );
+    }
+    return this._notificationService;
+  }
+
+  get auditLogService(): IAuditLogService {
+    if (!this._auditLogService) {
+      this._auditLogService = new AuditLogService();
+    }
+    return this._auditLogService;
+  }
+
+  get userBlockService(): IUserBlockService {
+    if (!this._userBlockService) {
+      this._userBlockService = new UserBlockService(
+        this.repositories.userBlockRepository,
+        this.repositories.appUserRepository,
+        this.auditLogService
+      );
+    }
+    return this._userBlockService;
+  }
+
+  get userReportService(): IUserReportService {
+    if (!this._userReportService) {
+      this._userReportService = new UserReportService(
+        this.repositories.userReportRepository,
+        this.repositories.appUserRepository,
+        this.auditLogService
+      );
+    }
+    return this._userReportService;
+  }
+
+  get creditService(): ICreditService {
+    if (!this._creditService) {
+      this._creditService = new CreditService(this.prisma);
+    }
+    return this._creditService;
+  }
+
+  get stripeService(): IStripeService {
+    if (!this._stripeService) {
+      this._stripeService = new StripeService();
+    }
+    return this._stripeService;
+  }
+
+  get emailService(): IEmailService {
+    if (!this._emailService) {
+      this._emailService = new ResendEmailService();
+    }
+    return this._emailService;
+  }
+
+  get dailyService(): IDailyService {
+    if (!this._dailyService) {
+      const config: DailyConfig = {
+        apiKey: process.env.DAILY_API_KEY || "",
+        apiBaseUrl: process.env.DAILY_API_BASE_URL || "https://api.daily.co/v1",
+        domain: process.env.DAILY_DOMAIN || "",
+      };
+
+      if (!config.apiKey) {
+        throw new Error("DAILY_API_KEY environment variable is required");
+      }
+
+      this._dailyService = new DailyService(config);
+    }
+    return this._dailyService;
+  }
+
+  get workshopVideoLinkService(): IWorkshopVideoLinkService {
+    if (!this._workshopVideoLinkService) {
+      this._workshopVideoLinkService = new WorkshopVideoLinkService(
+        this.repositories.workshopRepository
+      );
+    }
+    return this._workshopVideoLinkService;
+  }
+
+  get workshopCashbackService(): IWorkshopCashbackService {
+    if (!this._workshopCashbackService) {
+      this._workshopCashbackService = new WorkshopCashbackService(
+        this.repositories.workshopRepository,
+        this.repositories.appUserRepository,
+        this.repositories.creditTransactionRepository,
+        this.repositories.cashbackQueueRepository,
+        this.creditService,
+        this.notificationService
+      );
+    }
+    return this._workshopCashbackService;
+  }
+
+  get workshopNoShowPenaltyService(): IWorkshopNoShowPenaltyService {
+    if (!this._workshopNoShowPenaltyService) {
+      this._workshopNoShowPenaltyService = new WorkshopNoShowPenaltyService();
+    }
+    return this._workshopNoShowPenaltyService;
+  }
+
+  get userTitleService(): IUserTitleService {
+    if (!this._userTitleService) {
+      this._userTitleService = new UserTitleService(this.prisma);
+    }
+    return this._userTitleService;
+  }
+
+  get workshopTippingService(): IWorkshopTippingService {
+    if (!this._workshopTippingService) {
+      this._workshopTippingService = new WorkshopTippingService(
+        this.creditService
+      );
+    }
+    return this._workshopTippingService;
+  }
+
+  get updateProfileService(): IUpdateProfileService {
+    if (!this._updateProfileService) {
+      this._updateProfileService = new UpdateProfileService(
+        this.repositories.authUserRepository,
+        this.repositories.appUserRepository
+      );
+    }
+    return this._updateProfileService;
+  }
+
+  get changePasswordService(): IChangePasswordService {
+    if (!this._changePasswordService) {
+      this._changePasswordService = new ChangePasswordService(
+        this.repositories.authUserRepository,
+        this.repositories.accountRepository,
+        new PasswordValidationService(),
+        new BetterAuthService()
+      );
+    }
+    return this._changePasswordService;
+  }
+
+  get changeEmailService(): IChangeEmailService {
+    if (!this._changeEmailService) {
+      this._changeEmailService = new ChangeEmailService(
+        this.repositories.authUserRepository,
+        this.repositories.verificationRepository,
+        this.emailService,
+        new EmailTemplateService(),
+        new BetterAuthService()
+      );
+    }
+    return this._changeEmailService;
+  }
+
+  get forgotPasswordService(): IForgotPasswordService {
+    if (!this._forgotPasswordService) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+      this._forgotPasswordService = new ForgotPasswordService(
+        new PasswordValidationService(),
+        new HttpClient(baseUrl)
+      );
+    }
+    return this._forgotPasswordService;
+  }
+
+  get deleteAccountEnhancedService(): IDeleteAccountEnhancedService {
+    if (!this._deleteAccountEnhancedService) {
+      this._deleteAccountEnhancedService = new DeleteAccountEnhancedService(
+        this.repositories.appUserRepository,
+        this.repositories.workshopRepository,
+        this.prisma,
+        new LocalFileStorageService()
+      );
+    }
+    return this._deleteAccountEnhancedService;
+  }
+}
+

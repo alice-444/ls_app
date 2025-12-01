@@ -5,7 +5,7 @@ import type {
 import type {
   IUserReportRepository,
   ReportReason,
-} from "../../repositories/user-report.repository.interface";
+} from "../../repositories/moderation/user-report.repository.interface";
 import type { AppUserRepository } from "../../repositories";
 import type { IAuditLogService } from "../../../common/audit-log.service";
 import { Result, success, failure } from "../../../common";

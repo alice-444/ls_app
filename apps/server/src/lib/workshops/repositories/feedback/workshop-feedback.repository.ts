@@ -1,11 +1,11 @@
-import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import type { PrismaClient } from "../../../../../prisma/generated/client/client";
 import type {
   IWorkshopFeedbackRepository,
   WorkshopFeedbackEntity,
   CreateWorkshopFeedbackInput,
 } from "./workshop-feedback.repository.interface";
-import { generateInternalId } from "../../utils/id-generator";
-import type { FeedbackStatus } from "../../../../prisma/generated/client/enums";
+import { generateInternalId } from "../../../utils/id-generator";
+import type { FeedbackStatus } from "../../../../../prisma/generated/client/enums";
 
 export class PrismaWorkshopFeedbackRepository
   implements IWorkshopFeedbackRepository

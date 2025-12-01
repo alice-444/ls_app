@@ -1,5 +1,5 @@
 import type { IUserBlockService } from "./user-block.service.interface";
-import type { IUserBlockRepository } from "../../repositories/user-block.repository.interface";
+import type { IUserBlockRepository } from "../../repositories/moderation/user-block.repository.interface";
 import type { AppUserRepository } from "../../repositories";
 import type { IAuditLogService } from "../../../common/audit-log.service";
 import { Result, success, failure } from "../../../common";

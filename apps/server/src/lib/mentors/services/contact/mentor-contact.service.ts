@@ -1,5 +1,5 @@
-import type { Result } from "../../common";
-import { success, failure } from "../../common";
+import type { Result } from "../../../common";
+import { success, failure } from "../../../common";
 import type { IMentorContactService } from "./mentor-contact.service.interface";
 import type { IMentorRepository } from "../../repositories/mentor.repository.interface";
 import type { INotificationService } from "../../../notifications/services/notification.service.interface";

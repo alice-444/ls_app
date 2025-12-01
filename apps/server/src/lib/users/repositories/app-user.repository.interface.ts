@@ -52,4 +52,6 @@ export interface AppUserUpdateData {
   calendlyLink?: string | null;
   isPublished?: boolean;
   publishedAt?: Date | null;
+  displayName?: string | null;
+  deletedAt?: Date | null;
 }

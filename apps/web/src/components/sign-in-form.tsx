@@ -143,7 +143,7 @@ export default function SignInForm({
 				</form.Subscribe>
 			</form>
 
-			<div className="mt-4 text-center">
+			<div className="mt-4 space-y-2 text-center">
 				<Button
 					variant="link"
 					onClick={onSwitchToSignUp}
@@ -152,6 +152,16 @@ export default function SignInForm({
 				>
 					Need an account? Sign Up
 				</Button>
+				<div>
+					<Button
+						variant="link"
+						onClick={() => router.push("/forgot-password")}
+						className="text-sm text-muted-foreground hover:text-foreground"
+						disabled={isSubmitting}
+					>
+						Forgot Password?
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
