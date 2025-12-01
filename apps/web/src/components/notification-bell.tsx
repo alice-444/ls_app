@@ -15,13 +15,16 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { authClient } from "@/lib/auth-client";
 
 export function NotificationBell() {
   const router = useRouter();
   const socket = useSocket();
+  const { data: session } = authClient.useSession();
 
   const { data: unreadCount, refetch: refetchUnreadCount } =
     trpc.notification.getUnreadCount.useQuery(undefined, {
+      enabled: !!session,
       refetchInterval: 30000,
     });
 
@@ -29,6 +32,7 @@ export function NotificationBell() {
     trpc.notification.getRecentNotifications.useQuery(
       { limit: 5 },
       {
+        enabled: !!session,
         refetchInterval: 30000,
       }
     );
@@ -41,7 +45,7 @@ export function NotificationBell() {
   });
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !session) return;
 
     const handleNewNotification = () => {
       refetchUnreadCount();
@@ -60,7 +64,7 @@ export function NotificationBell() {
       socket.off("new-notification", handleNewNotification);
       socket.off("notification-updated", handleNotificationUpdate);
     };
-  }, [socket, refetchUnreadCount, refetchRecentNotifications]);
+  }, [socket, session, refetchUnreadCount, refetchRecentNotifications]);
 
   const handleNotificationClick = (notification: {
     id: string;

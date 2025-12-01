@@ -54,6 +54,10 @@ export default function ProfilPage() {
     enabled: !!session && userRole === "APPRENANT",
   });
 
+  const { data: titleData } = trpc.user.getTitle.useQuery(undefined, {
+    enabled: !!session && userRole === "APPRENANT",
+  });
+
   const saveMutation = trpc.apprentice.saveIdentityCard.useMutation({
     onSuccess: () => {
       toast.success("Profil sauvegardé avec succès !");
@@ -198,14 +202,11 @@ export default function ProfilPage() {
                   <h3 className="font-semibold text-lg">
                     {displayName || identityCard?.userName || "Ton prénom"}
                   </h3>
-                  {(() => {
-                    const { data: titleData } = trpc.user.getTitle.useQuery();
-                    return titleData?.title ? (
-                      <Badge variant="secondary" className="text-xs">
-                        {titleData.title}
-                      </Badge>
-                    ) : null;
-                  })()}
+                  {titleData?.title && (
+                    <Badge variant="secondary" className="text-xs">
+                      {titleData.title}
+                    </Badge>
+                  )}
                 </div>
                 {(studyDomain || studyProgram) && (
                   <div className="flex flex-col gap-1 mt-1 text-sm text-gray-600">
