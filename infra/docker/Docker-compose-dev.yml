@@ -6,14 +6,9 @@ services:
       dockerfile: ./infra/docker/front/Dockerfile.dev
     ports:
       - "3001:3001"
-    environment:
-      - NODE_ENV=development
-      - NEXT_TELEMETRY_DISABLED=1
-      - PORT=3001
     volumes:
-      - ../../:/app
+      - ../../front:/app
       - /app/node_modules
-      - /app/apps/web/node_modules
     depends_on:
       - backend
     networks:
@@ -31,59 +26,20 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - PORT=3000
       - DATABASE_URL=${DATABASE_URL}
+      - PRISMA_ACCELERATE_URL=${DATABASE_URL}
       - CORS_ORIGIN=${CORS_ORIGIN}
       - CRON_SECRET=${CRON_SECRET}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     volumes:
-      - ../../:/app
+      # - ../../:/app
       - /app/node_modules
-      - /app/apps/server/node_modules
-    depends_on:
-      - database
     networks:
       - app-network
     env_file:
       - .env
-
-  # Service Base de données PostgreSQL
-  database:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
-    networks:
-      - app-network
-    env_file:
-      - .env
-  prisma-studio:
-    build:
-      context: ../../
-      dockerfile: ./infra/docker/back/Dockerfile.dev
-    ports:
-      - "5555:5555"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - CORS_ORIGIN=${CORS_ORIGIN}
-      - CRON_SECRET=${CRON_SECRET}
-    command: ["pnpm", "db:studio"]
-    depends_on:
-      - database
-    networks:
-      - app-network
-    profiles:
-      - tools
-    env_file:
-      - .env
-
-volumes:
-  postgres_data:
-    driver: local
 
 networks:
   app-network:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "true"
