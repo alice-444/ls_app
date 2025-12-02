@@ -1,21 +1,20 @@
 {
-	"name": "szz",
+	"name": "learnsup_app",
 	"private": true,
 	"workspaces": [
-		"front/*",
-		"back/*"
+		"front",
+		"back"
 	],
 	"scripts": {
 		"dev": "turbo dev",
 		"build": "turbo build",
 		"check-types": "turbo check-types",
-		"dev:native": "turbo -F native dev",
-		"dev:web": "turbo -F web dev",
-		"dev:server": "turbo -F server dev",
-		"db:push": "turbo -F server db:push",
-		"db:studio": "turbo -F server db:studio",
-		"db:generate": "turbo -F server db:generate",
-		"db:migrate": "turbo -F server db:migrate"
+		"dev:front": "turbo -F front dev",
+		"dev:back": "turbo -F back dev",
+		"db:push": "turbo -F back db:push",
+		"db:studio": "turbo -F back db:studio",
+		"db:generate": "turbo -F back db:generate",
+		"db:migrate": "turbo -F back db:migrate"
 	},
 	"devDependencies": {
 		"turbo": "^2.6.1"
