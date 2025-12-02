@@ -44,9 +44,9 @@ function BuyCreditsContent() {
   useEffect(() => {
     const success = searchParams.get("success");
     const canceled = searchParams.get("canceled");
-    const sessionId = searchParams.get("session_id");
+    const checkoutId = searchParams.get("checkout_id") || searchParams.get("session_id");
 
-    if (success === "true" && sessionId) {
+    if (success === "true" && checkoutId) {
       refetchBalance();
     }
   }, [searchParams, refetchBalance]);

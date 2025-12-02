@@ -1,7 +1,6 @@
 import type { Result } from "../../common/types";
-import type Stripe from "stripe";
 
-export interface IStripeService {
+export interface IPolarService {
   createCheckoutSession(
     userId: string,
     credits: number,
@@ -11,5 +10,5 @@ export interface IStripeService {
   verifyWebhookSignature(
     payload: string | Buffer,
     signature: string
-  ): Stripe.Event | null;
+  ): { type: string; data: any } | null;
 }

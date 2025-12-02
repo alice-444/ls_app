@@ -1,23 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { container } from "@/lib/di/container";
-import { StripeService } from "@/lib/payment/services/stripe.service";
+import { PolarService } from "@/lib/payment/services/polar.service";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-    const signature = req.headers.get("stripe-signature");
+    const signature =
+      req.headers.get("polar-signature") ||
+      req.headers.get("x-polar-signature") ||
+      req.headers.get("signature");
 
     if (!signature) {
       return NextResponse.json(
-        { error: "Missing stripe-signature header" },
+        { error: "Missing webhook signature header" },
         { status: 400 }
       );
     }
 
-    const stripeService = new StripeService();
-    const event = stripeService.verifyWebhookSignature(body, signature);
+    const polarService = new PolarService();
+    const event = polarService.verifyWebhookSignature(body, signature);
 
     if (!event) {
       return NextResponse.json(
@@ -26,16 +29,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
+    // Polar.sh webhook event types
+    if (
+      event.type === "checkout.succeeded" ||
+      event.type === "checkout.completed"
+    ) {
+      const checkout = event.data;
 
-      const userId = session.metadata?.userId;
-      const credits = session.metadata?.credits;
+      const userId = checkout.metadata?.userId;
+      const credits = checkout.metadata?.credits;
 
       if (!userId || !credits) {
-        console.error("Missing metadata in Stripe session", {
-          sessionId: session.id,
-          metadata: session.metadata,
+        console.error("Missing metadata in Polar checkout", {
+          checkoutId: checkout.id,
+          metadata: checkout.metadata,
         });
         return NextResponse.json(
           { error: "Missing required metadata" },
@@ -52,10 +59,10 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      if (session.payment_status !== "paid") {
-        console.warn("Session not paid", {
-          sessionId: session.id,
-          paymentStatus: session.payment_status,
+      if (checkout.status !== "paid" && checkout.status !== "succeeded") {
+        console.warn("Checkout not paid", {
+          checkoutId: checkout.id,
+          status: checkout.status,
         });
         return NextResponse.json(
           { error: "Payment not completed" },
@@ -66,7 +73,7 @@ export async function POST(req: NextRequest) {
       const creditResult = await container.creditService.creditCredits(
         userId,
         creditsAmount,
-        `Achat de ${creditsAmount} crédits via Stripe (Session: ${session.id})`
+        `Achat de ${creditsAmount} crédits via Polar.sh (Checkout: ${checkout.id})`
       );
 
       if (!creditResult.ok) {
@@ -85,7 +92,7 @@ export async function POST(req: NextRequest) {
         userId,
         credits: creditsAmount,
         transactionId: creditResult.data.transactionId,
-        sessionId: session.id,
+        checkoutId: checkout.id,
       });
 
       try {
@@ -95,13 +102,17 @@ export async function POST(req: NextRequest) {
         });
 
         if (user?.email) {
-          const amount = session.amount_total
-            ? (session.amount_total / 100).toFixed(2)
-            : "N/A";
-          const currency = session.currency?.toUpperCase() || "EUR";
+          const amount = checkout.amount_total
+            ? (checkout.amount_total / 100).toFixed(2)
+            : checkout.metadata?.amount || "N/A";
+          const currency = checkout.currency?.toUpperCase() || "EUR";
 
-          const { renderEmailTemplate } = await import("../../../../lib/email/utils/render-email");
-          const { CreditPurchaseConfirmation } = await import("../../../../lib/email/templates/CreditPurchaseConfirmation");
+          const { renderEmailTemplate } = await import(
+            "../../../../lib/email/utils/render-email"
+          );
+          const { CreditPurchaseConfirmation } = await import(
+            "../../../../lib/email/templates/CreditPurchaseConfirmation"
+          );
           const React = await import("react");
 
           const emailContent = await renderEmailTemplate(
@@ -111,7 +122,7 @@ export async function POST(req: NextRequest) {
               amount,
               currency,
               transactionId: creditResult.data.transactionId,
-              stripeSessionId: session.id,
+              polarCheckoutId: checkout.id,
               date: new Date().toLocaleDateString("fr-FR", {
                 weekday: "long",
                 year: "numeric",

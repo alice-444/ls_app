@@ -64,7 +64,7 @@ export const creditsRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const result = await container.stripeService.createCheckoutSession(
+      const result = await container.polarService.createCheckoutSession(
         ctx.session.user.id,
         input.credits,
         input.amount
