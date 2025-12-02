@@ -2,8 +2,8 @@
 	"name": "szz",
 	"private": true,
 	"workspaces": [
-		"apps/*",
-		"packages/*"
+		"front/*",
+		"back/*"
 	],
 	"scripts": {
 		"dev": "turbo dev",
