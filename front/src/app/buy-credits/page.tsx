@@ -11,10 +11,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coins, ArrowLeft, Loader2 } from "lucide-react";
+import { Coins, ArrowLeft, Loader2, CheckCircle2, XCircle  } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, XCircle } from "lucide-react";
 
 function BuyCreditsContent() {
   const router = useRouter();
