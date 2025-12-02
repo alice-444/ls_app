@@ -32,6 +32,10 @@ class DIContainer {
         connectionTimeoutMillis: 10000,
         idleTimeoutMillis: 30000,
         max: 20,
+        // Désactive la vérification SSL en développement pour les certificats auto-signés
+        ssl: process.env.NODE_ENV === "development" 
+          ? { rejectUnauthorized: false }
+          : undefined,
       });
       const adapter = new PrismaPg(pool);
       this._prisma = new PrismaClient({
