@@ -6,11 +6,11 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
-COPY ../../front/package.json .
+COPY front/package.json ./front/
 
 RUN pnpm install 
 
-COPY ../../front .
+COPY front ./front
 
 
 
@@ -20,5 +20,7 @@ ENV WATCHPACK_POLLING=true
 ENV CHOKIDAR_USEPOLLING=true
 
 EXPOSE 3001
+
+WORKDIR /app/front
 
 CMD ["pnpm", "run", "dev"]

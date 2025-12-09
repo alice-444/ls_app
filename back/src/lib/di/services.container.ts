@@ -20,7 +20,7 @@ import { UserBlockService } from "../users/services/moderation/user-block.servic
 import { UserReportService } from "../users/services/moderation/user-report.service";
 import { AuditLogService } from "../common/audit-log.service";
 import { CreditService } from "../credits/services/credit.service";
-import { StripeService } from "../payment/services/stripe.service";
+import { PolarService } from "../payment/services/polar.service";
 import { ResendEmailService } from "../email/services/resend-email.service";
 import { DailyService } from "../daily/services/daily.service";
 import { WorkshopVideoLinkService } from "../workshops/services/video/workshop-video-link.service";
@@ -53,7 +53,7 @@ import type { IUserBlockService } from "../users/services/moderation/user-block.
 import type { IUserReportService } from "../users/services/moderation/user-report.service.interface";
 import type { IAuditLogService } from "../common/audit-log.service";
 import type { ICreditService } from "../credits/services/credit.service.interface";
-import type { IStripeService } from "../payment/services/stripe.service.interface";
+import type { IPolarService } from "../payment/services/polar.service.interface";
 import type { IEmailService } from "../email/services/email.service.interface";
 import type { IDailyService } from "../daily/services/daily.service.interface";
 import type { IWorkshopVideoLinkService } from "../workshops/services/video/workshop-video-link.service.interface";
@@ -88,7 +88,7 @@ export class ServicesContainer {
   private _userReportService?: IUserReportService;
   private _auditLogService?: IAuditLogService;
   private _creditService?: ICreditService;
-  private _stripeService?: IStripeService;
+  private _polarService?: IPolarService;
   private _emailService?: IEmailService;
   private _dailyService?: IDailyService;
   private _workshopVideoLinkService?: IWorkshopVideoLinkService;
@@ -270,9 +270,9 @@ export class ServicesContainer {
     return this._creditService;
   }
 
-  get stripeService(): IStripeService {
-    this._stripeService ??= new StripeService();
-    return this._stripeService;
+  get polarService(): IPolarService {
+    this._polarService ??= new PolarService();
+    return this._polarService;
   }
 
   get emailService(): IEmailService {
