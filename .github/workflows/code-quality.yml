@@ -69,7 +69,9 @@ jobs:
         uses: super-linter/super-linter@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          
+          # Validation mode
+          VALIDATE_ALL_CODEBASE: true  # ⚠️ TEMPORAIRE : Force validation for testing
           
           # File exclusions
           FILTER_REGEX_EXCLUDE: ".*/(node_modules|.next|dist|.turbo|build|coverage|.pnpm-store|prisma/generated)/.*|.*\\.min\\.(js|css)$|.*\\.(lock|log)$|.*\\.d\\.ts$"
@@ -90,7 +92,7 @@ jobs:
           VALIDATE_ENV: true
           
           # Logging
-          LOG_LEVEL: VERBOSE
+          LOG_LEVEL: NOTICE
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
@@ -116,7 +118,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm run db:generate
+        run: cd back && pnpm prisma generate --schema=prisma/schema/schema.prisma
         env:
           NODE_ENV: production
 
