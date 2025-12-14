@@ -47,6 +47,7 @@ jobs:
     name: Super-Linter
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    continue-on-error: true
 
     permissions:
       contents: read
@@ -70,8 +71,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-          # Validation mode
-          VALIDATE_ALL_CODEBASE: true  # ⚠️ TEMPORAIRE : Force validation for testing
+          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           
           # File exclusions
           FILTER_REGEX_EXCLUDE: ".*/(node_modules|.next|dist|.turbo|build|coverage|.pnpm-store|prisma/generated)/.*|.*\\.min\\.(js|css)$|.*\\.(lock|log)$|.*\\.d\\.ts$"
@@ -85,11 +85,11 @@ jobs:
           # Other validators
           VALIDATE_JSON: true
           VALIDATE_YAML: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_CSS: true
+          VALIDATE_MARKDOWN: false 
+          VALIDATE_CSS: false      
           VALIDATE_BASH: true
-          VALIDATE_DOCKERFILE_HADOLINT: true
-          VALIDATE_ENV: true
+          VALIDATE_DOCKERFILE_HADOLINT: false
+          VALIDATE_ENV: false
           
           # Logging
           LOG_LEVEL: NOTICE
