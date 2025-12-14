@@ -70,12 +70,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-
+          
           # File exclusions
           FILTER_REGEX_EXCLUDE: ".*/(node_modules|.next|dist|.turbo|build|coverage|.pnpm-store|prisma/generated)/.*|.*\\.min\\.(js|css)$|.*\\.(lock|log)$|.*\\.d\\.ts$"
 
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_JAVASCRIPT_ES: true
+          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
+          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
+          LINTER_RULES_PATH: .github/linters
+          
+          # Other validators
           VALIDATE_JSON: true
           VALIDATE_YAML: true
           VALIDATE_MARKDOWN: true
@@ -83,6 +88,9 @@ jobs:
           VALIDATE_BASH: true
           VALIDATE_DOCKERFILE_HADOLINT: true
           VALIDATE_ENV: true
+          
+          # Logging
+          LOG_LEVEL: VERBOSE
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
