@@ -3,9 +3,74 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Omnes Font Faces */
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes Light.ttf") format("truetype");
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes Light Italic.ttf") format("truetype");
+	font-weight: 300;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes Regular.ttf") format("truetype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes Italic.ttf") format("truetype");
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes Medium.ttf") format("truetype");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes Medium Italic.ttf") format("truetype");
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes SemiBold.ttf") format("truetype");
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Omnes";
+	src: url("/typo/omnes/Omnes SemiBold Italic.ttf") format("truetype");
+	font-weight: 600;
+	font-style: italic;
+	font-display: swap;
+}
+
 @theme {
 	--font-sans:
-		"Inter", "Geist", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+		"Omnes", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
 		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 

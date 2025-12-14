@@ -5,6 +5,7 @@ const baseURL = API_BASE_URL;
 
 export const authClient = createAuthClient({
   baseURL,
+  basePath: "/api/auth",
 });
 
 export const customAuthClient = {

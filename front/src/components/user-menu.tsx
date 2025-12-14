@@ -9,7 +9,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   Settings,
@@ -27,6 +27,7 @@ import { getUserRole } from "@/lib/api-client";
 
 export default function UserMenu() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,6 +43,9 @@ export default function UserMenu() {
   }
 
   if (!session) {
+    if (pathname === "/login") {
+      return null;
+    }
     return (
       <Button variant="outline" asChild>
         <Link href="/login">Sign In</Link>
@@ -125,10 +129,7 @@ export default function UserMenu() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link
-                href="/profil"
-                className="flex items-center gap-2"
-              >
+              <Link href="/profil" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Profil
               </Link>

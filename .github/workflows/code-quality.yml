@@ -8,14 +8,14 @@ on:
       - dev
       - feat/*
     paths:
-      - "apps/**/*.js"
-      - "apps/**/*.ts"
-      - "apps/**/*.jsx"
-      - "apps/**/*.tsx"
-      - "packages/**/*.js"
-      - "packages/**/*.ts"
-      - "packages/**/*.jsx"
-      - "packages/**/*.tsx"
+      - "front/**/*.js"
+      - "front/**/*.ts"
+      - "front/**/*.jsx"
+      - "front/**/*.tsx"
+      - "back/**/*.js"
+      - "back/**/*.ts"
+      - "back/**/*.jsx"
+      - "back/**/*.tsx"
       - "**/package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"

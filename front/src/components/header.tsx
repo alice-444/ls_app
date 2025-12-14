@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Coins, Plus } from "lucide-react";
 
@@ -16,13 +16,11 @@ import { getUserRole } from "@/lib/api-client";
 import { trpc } from "@/utils/trpc";
 import { useSocket } from "@/lib/socket-client";
 
-// Constants
 const REFETCH_INTERVALS = {
   MESSAGES: 30000, // 30 seconds
   CREDITS: 60000, // 60 seconds
 } as const;
 
-// Types
 type NavLink = {
   to: string;
   label: string;
@@ -62,8 +60,12 @@ function formatBadgeCount(count: number): string {
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const socket = useSocket();
+
+  const shouldHideThemeToggle = pathname === "/login";
+  const shouldHideHr = pathname === "/login";
 
   const { data: unreadCount, refetch: refetchUnreadCount } =
     trpc.messaging.getUnreadConversationsCount.useQuery(undefined, {
@@ -156,11 +158,11 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {renderCreditsSection()}
           {session && <NotificationBell />}
-          <ModeToggle />
+          {!shouldHideThemeToggle && <ModeToggle />}
           <UserMenu />
         </div>
       </div>
-      <hr />
+      {!shouldHideHr && <hr />}
     </div>
   );
 }
