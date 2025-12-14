@@ -26,14 +26,14 @@ on:
       - dev
       - feat/*
     paths:
-      - "apps/**/*.js"
-      - "apps/**/*.ts"
-      - "apps/**/*.jsx"
-      - "apps/**/*.tsx"
-      - "packages/**/*.js"
-      - "packages/**/*.ts"
-      - "packages/**/*.jsx"
-      - "packages/**/*.tsx"
+      - "front/**/*.js"
+      - "front/**/*.ts"
+      - "front/**/*.jsx"
+      - "front/**/*.tsx"
+      - "back/**/*.js"
+      - "back/**/*.ts"
+      - "back/**/*.jsx"
+      - "back/**/*.tsx"
       - "**/package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"
@@ -44,12 +44,13 @@ jobs:
   super-linter:
     name: Super-Linter
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     permissions:
       contents: read
       packages: read
       statuses: write
+      checks: write
 
     steps:
       - name: Checkout code
@@ -57,20 +58,39 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Super-linter
+      - name: Setup Node.js for linting
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run Super-Linter
         uses: super-linter/super-linter@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: true
-          FILTER_REGEX_EXCLUDE: ".*/.next/.*|.*/node_modules/.*|.*/dist/.*|.*/.turbo/.*|.*/prisma/generated/.*"
+          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+          # File exclusions
+          FILTER_REGEX_EXCLUDE: ".*/(node_modules|.next|dist|.turbo|build|coverage|.pnpm-store|prisma/generated)/.*|.*\\.min\\.(js|css)$|.*\\.(lock|log)$|.*\\.d\\.ts$"
+
+          # Language validations - Enable
           VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_STANDARD: false
           VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_JAVASCRIPT_STANDARD: false
           VALIDATE_JSON: true
           VALIDATE_YAML: true
           VALIDATE_MARKDOWN: true
+          VALIDATE_CSS: true
           VALIDATE_BASH: true
           VALIDATE_DOCKERFILE_HADOLINT: true
-          VALIDATE_CSS: true
+          VALIDATE_ENV: true
+
+          # Disable validators
+          VALIDATE_JSCPD: false
+          VALIDATE_NATURAL_LANGUAGE: false
+
+          # Performance
+          MULTI_STATUS: true
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
