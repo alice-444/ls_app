@@ -8,14 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { TypingIndicator } from "./TypingIndicator";
-import {
-  BookOpen,
-  X,
-  Search,
-  MoreVertical,
-  Ban,
-  Flag,
-} from "lucide-react";
+import { BookOpen, X, Search, MoreVertical, Ban, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -30,11 +23,13 @@ import { toast } from "sonner";
 import { BlockUserDialog } from "@/components/user/BlockUserDialog";
 import { ReportUserDialog } from "@/components/user/ReportUserDialog";
 
+type DateString = Date | string;
+
 interface ChatWindowProps {
-  conversationId: string;
+  readonly conversationId: string;
 }
 
-export function ChatWindow({ conversationId }: ChatWindowProps) {
+export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
   const socket = useSocket();
@@ -45,11 +40,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       senderName?: string | null;
       senderDisplayName?: string | null;
       content: string;
-      createdAt: Date | string;
-      updatedAt?: Date | string | null;
+      createdAt: DateString;
+      updatedAt?: DateString | null;
       editCount?: number;
       isRead?: boolean;
-      deletedAt?: Date | string | null;
+      deletedAt?: DateString | null;
       replyToMessageId?: string | null;
       replyToMessage?: {
         messageId: string;
@@ -59,7 +54,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       } | null;
       workshopReference?: {
         workshopTitle: string;
-        workshopDate: Date | string | null;
+        workshopDate: DateString | null;
       } | null;
     }>
   >([]);
@@ -103,7 +98,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     onSuccess: (data) => {
       utils.messaging.getUnreadConversationsCount.invalidate();
       refetch();
-      if (socket && socket.connected && data.messageIds.length > 0) {
+      if (socket?.connected && data.messageIds.length > 0) {
         socket.emit("mark-messages-read", {
           conversationId,
           messageIds: data.messageIds,
@@ -185,7 +180,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       } | null;
       workshopReference?: {
         workshopTitle: string;
-        workshopDate: Date | string | null;
+        workshopDate: DateString | null;
       } | null;
     }) => {
       if (message.conversationId === conversationId) {
@@ -196,6 +191,27 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       }
     };
 
+    const updateMessageInList = (
+      messages: typeof localMessages,
+      updatedMessage: {
+        messageId: string;
+        content: string;
+        updatedAt?: DateString | null;
+        editCount?: number;
+      }
+    ) => {
+      return messages.map((msg) =>
+        msg.messageId === updatedMessage.messageId
+          ? {
+              ...msg,
+              content: updatedMessage.content,
+              updatedAt: updatedMessage.updatedAt,
+              editCount: updatedMessage.editCount,
+            }
+          : msg
+      );
+    };
+
     const handleMessageUpdated = (updatedMessage: {
       messageId: string;
       conversationId: string;
@@ -203,24 +219,29 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       senderName?: string | null;
       senderDisplayName?: string | null;
       content: string;
-      createdAt: Date | string;
-      updatedAt?: Date | string | null;
+      createdAt: DateString;
+      updatedAt?: DateString | null;
       editCount?: number;
     }) => {
       if (updatedMessage.conversationId === conversationId) {
         setLocalMessages((prev) =>
-          prev.map((msg) =>
-            msg.messageId === updatedMessage.messageId
-              ? {
-                  ...msg,
-                  content: updatedMessage.content,
-                  updatedAt: updatedMessage.updatedAt,
-                  editCount: updatedMessage.editCount,
-                }
-              : msg
-          )
+          updateMessageInList(prev, {
+            messageId: updatedMessage.messageId,
+            content: updatedMessage.content,
+            updatedAt: updatedMessage.updatedAt,
+            editCount: updatedMessage.editCount,
+          })
         );
       }
+    };
+
+    const markMessagesAsRead = (
+      messages: typeof localMessages,
+      messageIds: string[]
+    ) => {
+      return messages.map((msg) =>
+        messageIds.includes(msg.messageId) ? { ...msg, isRead: true } : msg
+      );
     };
 
     const handleMessagesRead = (data: {
@@ -228,14 +249,17 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       messageIds: string[];
     }) => {
       if (data.conversationId === conversationId) {
-        setLocalMessages((prev) =>
-          prev.map((msg) =>
-            data.messageIds.includes(msg.messageId)
-              ? { ...msg, isRead: true }
-              : msg
-          )
-        );
+        setLocalMessages((prev) => markMessagesAsRead(prev, data.messageIds));
       }
+    };
+
+    const markMessageAsDeleted = (
+      messages: typeof localMessages,
+      messageId: string
+    ) => {
+      return messages.map((msg) =>
+        msg.messageId === messageId ? { ...msg, deletedAt: new Date() } : msg
+      );
     };
 
     const handleMessageDeleted = (data: {
@@ -243,13 +267,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       conversationId: string;
     }) => {
       if (data.conversationId === conversationId) {
-        setLocalMessages((prev) =>
-          prev.map((msg) =>
-            msg.messageId === data.messageId
-              ? { ...msg, deletedAt: new Date() }
-              : msg
-          )
-        );
+        setLocalMessages((prev) => markMessageAsDeleted(prev, data.messageId));
       }
     };
 
@@ -268,20 +286,33 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           otherUser?.otherUserName ||
           "Quelqu'un";
 
-        setTypingUsers((prev) => {
+        const addTypingUser = (prev: Map<string, string>) => {
           const newMap = new Map(prev);
           newMap.set(data.userId, userName);
           return newMap;
-        });
+        };
+
+        setTypingUsers(addTypingUser);
+
+        const removeTypingUser = (prev: Map<string, string>) => {
+          const newMap = new Map(prev);
+          newMap.delete(data.userId);
+          return newMap;
+        };
 
         setTimeout(() => {
-          setTypingUsers((prev) => {
-            const newMap = new Map(prev);
-            newMap.delete(data.userId);
-            return newMap;
-          });
+          setTypingUsers(removeTypingUser);
         }, 3000);
       }
+    };
+
+    const removeTypingUserFromMap = (
+      prev: Map<string, string>,
+      userId: string
+    ) => {
+      const newMap = new Map(prev);
+      newMap.delete(userId);
+      return newMap;
     };
 
     const handleUserStoppedTyping = (data: {
@@ -289,11 +320,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       conversationId: string;
     }) => {
       if (data.conversationId === conversationId) {
-        setTypingUsers((prev) => {
-          const newMap = new Map(prev);
-          newMap.delete(data.userId);
-          return newMap;
-        });
+        setTypingUsers((prev) => removeTypingUserFromMap(prev, data.userId));
       }
     };
 
@@ -367,7 +394,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   });
 
   const handleEditMessage = (messageId: string, newContent: string) => {
-    if (socket && socket.connected) {
+    if (socket?.connected) {
       socket.emit("update-message", {
         messageId,
         content: newContent,
@@ -381,7 +408,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   };
 
   const handleDeleteMessage = (messageId: string) => {
-    if (socket && socket.connected) {
+    if (socket?.connected) {
       socket.emit("delete-message", { messageId });
     } else {
       deleteMessageMutation.mutate({ messageId });
@@ -396,6 +423,27 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
     const currentUserName = session.user.name || null;
 
+    const getReplyToMessage = () => {
+      if (!replyingToMessageId) {
+        return null;
+      }
+
+      const repliedMessage = localMessages.find(
+        (m) => m.messageId === replyingToMessageId
+      );
+
+      if (!repliedMessage) {
+        return null;
+      }
+
+      return {
+        messageId: replyingToMessageId,
+        content: repliedMessage.content || "",
+        senderName: null,
+        senderDisplayName: null,
+      };
+    };
+
     const optimisticMessage = {
       messageId: tempMessageId,
       senderId: session.user.id,
@@ -405,24 +453,36 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       createdAt: new Date(),
       isRead: false,
       replyToMessageId: replyingToMessageId || null,
-      replyToMessage: replyingToMessageId
-        ? localMessages.find((m) => m.messageId === replyingToMessageId)
-          ? {
-              messageId: replyingToMessageId,
-              content:
-                localMessages.find((m) => m.messageId === replyingToMessageId)
-                  ?.content || "",
-              senderName: null,
-              senderDisplayName: null,
-            }
-          : null
-        : null,
+      replyToMessage: getReplyToMessage(),
     };
 
     setLocalMessages((prev) => [...prev, optimisticMessage]);
     setReplyingToMessageId(null);
 
-    if (socket && socket.connected) {
+    const replaceTempMessage = (
+      prev: typeof localMessages,
+      tempId: string,
+      newMessage: {
+        messageId: string;
+        conversationId: string;
+        senderId: string;
+        senderName?: string | null;
+        senderDisplayName?: string | null;
+        content: string;
+        createdAt: Date | string;
+        replyToMessageId?: string | null;
+        replyToMessage?: {
+          messageId: string;
+          content: string;
+          senderName: string | null;
+          senderDisplayName: string | null;
+        } | null;
+      }
+    ) => {
+      return prev.map((msg) => (msg.messageId === tempId ? newMessage : msg));
+    };
+
+    if (socket?.connected) {
       socket.emit("send-message", {
         conversationId,
         content: trimmedContent,
@@ -450,7 +510,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           message.senderId === session.user.id
         ) {
           setLocalMessages((prev) =>
-            prev.map((msg) => (msg.messageId === tempMessageId ? message : msg))
+            replaceTempMessage(prev, tempMessageId, message)
           );
           socket.off("new-message", handleSentMessage);
         }
@@ -572,39 +632,47 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                   </p>
                 ) : (
                   <div className="space-y-1">
-                    {searchResults.map((result) => (
-                      <div
-                        key={result.messageId}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded cursor-pointer text-sm text-[#26547c] dark:text-[#e6e6e6]"
-                        onClick={() => {
-                          const element = document.querySelector(
-                            `[data-message-id="${result.messageId}"]`
-                          );
-                          if (element) {
-                            element.scrollIntoView({ behavior: "smooth" });
-                            element.classList.add("ring-2", "ring-primary");
-                            setTimeout(() => {
-                              element.classList.remove(
-                                "ring-2",
-                                "ring-primary"
-                              );
-                            }, 2000);
-                          }
-                          setShowSearch(false);
-                        }}
-                      >
-                        <p className="font-medium">
-                          {result.senderDisplayName ||
-                            result.senderName ||
-                            "Utilisateur"}
-                        </p>
-                        <p className="text-muted-foreground truncate">
-                          {result.content.length > 100
-                            ? result.content.substring(0, 100) + "..."
-                            : result.content}
-                        </p>
-                      </div>
-                    ))}
+                    {searchResults.map((result) => {
+                      const handleResultClick = () => {
+                        const element = document.querySelector(
+                          `[data-message-id="${result.messageId}"]`
+                        );
+                        if (element) {
+                          element.scrollIntoView({ behavior: "smooth" });
+                          element.classList.add("ring-2", "ring-primary");
+                          setTimeout(() => {
+                            element.classList.remove("ring-2", "ring-primary");
+                          }, 2000);
+                        }
+                        setShowSearch(false);
+                      };
+
+                      return (
+                        <button
+                          key={result.messageId}
+                          type="button"
+                          className="w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded cursor-pointer text-sm text-[#26547c] dark:text-[#e6e6e6] transition-colors"
+                          onClick={handleResultClick}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleResultClick();
+                            }
+                          }}
+                        >
+                          <p className="font-medium">
+                            {result.senderDisplayName ||
+                              result.senderName ||
+                              "Utilisateur"}
+                          </p>
+                          <p className="text-muted-foreground truncate">
+                            {result.content.length > 100
+                              ? result.content.substring(0, 100) + "..."
+                              : result.content}
+                          </p>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
