@@ -1,6 +1,9 @@
 {
 	"name": "back",
 	"private": true,
+	"prisma": {
+		"schema": "./prisma/schema/schema.prisma"
+	},
 	"scripts": {
 		"dev": "tsx watch server.ts",
 		"dev:next": "next dev",

@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -18,10 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { API_BASE_URL } from "@/lib/api-client";
+import { BackButton } from "@/components/back-button";
 
 const supportRequestSchema = z.object({
   email: z.string().email("Adresse e-mail invalide"),
@@ -213,221 +212,266 @@ export default function SupportRequestPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-6xl">
-      <div className="mb-6">
-        <nav className="flex items-center gap-2 text-sm mb-4">
-          <Link href="/help" className="text-primary hover:underline">
-            CENTRE D&apos;AIDE
-          </Link>
-          <span className="text-muted-foreground">/</span>
-          <span className="text-foreground">REMARQUES</span>
-        </nav>
-        <h1 className="text-3xl font-bold mb-2">
-          Comment peut-on t&apos;aider ?
-        </h1>
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+      <BackButton href="/help" label="Retour à l'aide" />
+
+      <div className="mb-6 sm:mb-8">
+        <div className="bg-[#26547c] dark:bg-[#1a1720] text-white inline-block px-8 py-4 rounded-tl-[36px] rounded-br-[36px] rounded-tr-[4px] rounded-bl-[4px] mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black">
+            Contacter le support
+          </h1>
+        </div>
+        <p className="text-base sm:text-xl md:text-2xl text-[#161616] dark:text-[#e6e6e6] mt-4 sm:mt-6">
+          Comment pouvons-nous t'aider aujourd'hui ?
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Décris ton problème</h2>
-            <p className="text-muted-foreground text-sm">
-              Décris le problème que tu rencontres avec autant de détails que
-              possible. Cela nous aidera à comprendre ce qui se passe.
-            </p>
+      <div className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl p-5 sm:p-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <div className="bg-[#FF8C42]/10 dark:bg-[#FF8C42]/5 border border-[#FF8C42]/20 rounded-2xl p-6">
+                <h2 className="text-xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-3">
+                  Décris ton problème
+                </h2>
+                <p className="text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] text-sm leading-relaxed">
+                  Décris le problème que tu rencontres avec autant de détails
+                  que possible. Cela nous aidera à comprendre ce qui se passe et
+                  à te fournir la meilleure solution.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+                >
+                  Ton adresse e-mail <span className="text-[#FF8C42]">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="exemple@email.com"
+                  {...register("email")}
+                  className={cn(
+                    "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl",
+                    errors.email && "border-red-500 dark:border-red-400"
+                  )}
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="subject"
+                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+                >
+                  Objet <span className="text-[#FF8C42]">*</span>
+                </Label>
+                <Input
+                  id="subject"
+                  placeholder="Résumé de ton problème"
+                  maxLength={200}
+                  {...register("subject")}
+                  className={cn(
+                    "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl",
+                    errors.subject && "border-red-500 dark:border-red-400"
+                  )}
+                />
+                <div className="flex justify-between items-center">
+                  {errors.subject && (
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      {errors.subject.message}
+                    </p>
+                  )}
+                  <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] ml-auto">
+                    {watch("subject")?.length || 0}/200
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="description"
+                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+                >
+                  Description <span className="text-[#FF8C42]">*</span>
+                </Label>
+                <Textarea
+                  id="description"
+                  placeholder="Décris ton problème en détail..."
+                  rows={6}
+                  maxLength={5000}
+                  {...register("description")}
+                  className={cn(
+                    "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl resize-none",
+                    errors.description && "border-red-500 dark:border-red-400"
+                  )}
+                />
+                <div className="flex justify-between items-center">
+                  {errors.description && (
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      {errors.description.message}
+                    </p>
+                  )}
+                  <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] ml-auto">
+                    {watch("description")?.length || 0}/5000
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="problemType"
+                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+                >
+                  Type de problème <span className="text-[#FF8C42]">*</span>
+                </Label>
+                <Select
+                  value={problemType}
+                  onValueChange={(value) => setValue("problemType", value)}
+                >
+                  <SelectTrigger
+                    id="problemType"
+                    className={cn(
+                      "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl",
+                      errors.problemType && "border-red-500 dark:border-red-400"
+                    )}
+                  >
+                    <SelectValue placeholder="Sélectionne une option..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-[#1a1720] border-[#d6dae4]">
+                    {problemTypes.map((type) => (
+                      <SelectItem
+                        key={type}
+                        value={type}
+                        className="text-[#26547c] dark:text-[#e6e6e6]"
+                      >
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.problemType && (
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {errors.problemType.message}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                Ton adresse e-mail <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="exemple@email.com"
-                {...register("email")}
-                className={cn(errors.email && "border-destructive")}
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive">
-                  {errors.email.message}
-                </p>
+          <div className="space-y-3">
+            <Label
+              htmlFor="attachments"
+              className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+            >
+              Pièces jointes{" "}
+              <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] font-normal">
+                (max {MAX_TOTAL_FILES} fichiers, 10 MB chacun)
+              </span>
+            </Label>
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              className={cn(
+                "border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-200",
+                isDragging
+                  ? "border-[#FF8C42] bg-[#FF8C42]/5"
+                  : "border-[#d6dae4] dark:border-[#d6dae4] hover:border-[#FF8C42]/50"
               )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="subject">
-                Objet <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="subject"
-                placeholder="Résumé de ton problème"
-                maxLength={200}
-                {...register("subject")}
-                className={cn(errors.subject && "border-destructive")}
+            >
+              <input
+                id="attachments"
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+                accept=".jpg,.jpeg,.png,.pdf,.txt,.doc,.docx"
               />
-              <div className="flex justify-between items-center">
-                {errors.subject && (
-                  <p className="text-sm text-destructive">
-                    {errors.subject.message}
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground ml-auto">
-                  {watch("subject")?.length || 0}/200
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">
-                Description <span className="text-destructive">*</span>
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="Décris ton problème en détail..."
-                rows={5}
-                maxLength={5000}
-                {...register("description")}
-                className={cn(errors.description && "border-destructive")}
-              />
-              <div className="flex justify-between items-center">
-                {errors.description && (
-                  <p className="text-sm text-destructive">
-                    {errors.description.message}
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground ml-auto">
-                  {watch("description")?.length || 0}/5000
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="problemType">
-                Type de problème <span className="text-destructive">*</span>
-              </Label>
-              <Select
-                value={problemType}
-                onValueChange={(value) => setValue("problemType", value)}
+              <label
+                htmlFor="attachments"
+                className="cursor-pointer flex flex-col items-center gap-3"
               >
-                <SelectTrigger
-                  id="problemType"
-                  className={cn(errors.problemType && "border-destructive")}
-                >
-                  <SelectValue placeholder="SÉLECTIONNE UNE OPTION..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {problemTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.problemType && (
-                <p className="text-sm text-destructive">
-                  {errors.problemType.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="attachments">
-                Pièces jointes{" "}
-                <span className="text-xs text-muted-foreground font-normal">
-                  (max {MAX_TOTAL_FILES} fichiers, 10 MB chacun)
-                </span>
-              </Label>
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                className={cn(
-                  "border-2 border-dashed rounded-md p-6 text-center transition-colors",
-                  isDragging
-                    ? "border-primary bg-primary/5"
-                    : "border-muted-foreground/25"
-                )}
-              >
-                <input
-                  id="attachments"
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept=".jpg,.jpeg,.png,.pdf,.txt,.doc,.docx"
-                />
-                <label
-                  htmlFor="attachments"
-                  className="cursor-pointer flex flex-col items-center gap-2"
-                >
-                  <Upload className="w-6 h-6 text-primary" />
-                  <span className="text-primary text-sm font-medium">
+                <div className="w-16 h-16 rounded-full bg-[#FF8C42]/10 dark:bg-[#FF8C42]/20 flex items-center justify-center">
+                  <Upload className="w-8 h-8 text-[#FF8C42]" />
+                </div>
+                <div>
+                  <span className="text-[#26547c] dark:text-[#e6e6e6] text-base font-semibold block mb-1">
                     Ajoute des fichiers ou fais-les glisser ici
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                     JPG, PNG, PDF, TXT, DOC, DOCX
                   </span>
-                </label>
-              </div>
-              {fileErrors.length > 0 && (
-                <div className="space-y-1">
-                  {fileErrors.map((error, index) => (
-                    <p key={index} className="text-sm text-destructive">
-                      {error}
-                    </p>
-                  ))}
                 </div>
-              )}
-              {files.length > 0 && (
-                <p className="text-xs text-muted-foreground">
+              </label>
+            </div>
+            {fileErrors.length > 0 && (
+              <div className="space-y-1">
+                {fileErrors.map((error, index) => (
+                  <p
+                    key={index}
+                    className="text-sm text-red-600 dark:text-red-400"
+                  >
+                    {error}
+                  </p>
+                ))}
+              </div>
+            )}
+            {files.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                   {files.length}/{MAX_TOTAL_FILES} fichier(s) sélectionné(s)
                 </p>
-              )}
-              {files.length > 0 && (
-                <div className="mt-2 space-y-2">
-                  {files.map((file, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-2 bg-muted rounded text-sm"
+                {files.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-[rgba(214,218,228,0.16)] dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] dark:border-[#d6dae4] rounded-xl text-sm"
+                  >
+                    <span className="truncate flex-1 text-[#26547c] dark:text-[#e6e6e6]">
+                      {file.name}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeFile(index)}
+                      className="ml-2 h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400"
                     >
-                      <span className="truncate flex-1">{file.name}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFile(index)}
-                        className="ml-2 h-6 px-2"
-                      >
-                        ×
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 flex justify-end">
-          <Button
-            type="submit"
-            size="lg"
-            disabled={isSubmitting}
-            className="uppercase"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Envoi en cours...
-              </>
-            ) : (
-              "Envoyer"
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             )}
-          </Button>
-        </div>
-      </form>
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isSubmitting}
+              className="bg-[#FF8C42] hover:bg-[#FF8C42]/90 text-white font-bold px-12 py-6 text-base shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 rounded-xl"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Envoi en cours...
+                </>
+              ) : (
+                "Envoyer la demande"
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

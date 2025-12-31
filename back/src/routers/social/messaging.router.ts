@@ -332,4 +332,38 @@ export const messagingRouter = router({
       }
       return result.data;
     }),
+
+  pinConversation: protectedProcedure
+    .input(z.object({ conversationId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.messagingService.pinConversation(
+        ctx.session.user.id,
+        input.conversationId
+      );
+      if (!result.ok) {
+        logger.error("pinConversation error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+        });
+        throw new Error(getSafeErrorMessage(result.error));
+      }
+      return result.data;
+    }),
+
+  unpinConversation: protectedProcedure
+    .input(z.object({ conversationId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.messagingService.unpinConversation(
+        ctx.session.user.id,
+        input.conversationId
+      );
+      if (!result.ok) {
+        logger.error("unpinConversation error", result.error, {
+          userId: ctx.session.user.id,
+          conversationId: input.conversationId,
+        });
+        throw new Error(getSafeErrorMessage(result.error));
+      }
+      return result.data;
+    }),
 });

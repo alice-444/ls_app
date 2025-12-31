@@ -397,6 +397,7 @@ export const ModelName = {
   workshop_cashback_queue: 'workshop_cashback_queue',
   user_connection: 'user_connection',
   conversation: 'conversation',
+  conversation_pin: 'conversation_pin',
   message: 'message',
   message_reaction: 'message_reaction',
   notification: 'notification',
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "app_user" | "audit_log" | "deletion_job" | "mentor_feedback" | "session" | "user" | "verification" | "workshop" | "workshop_request" | "workshop_cashback_queue" | "user_connection" | "conversation" | "message" | "message_reaction" | "notification" | "user_block" | "user_report" | "support_request" | "credit_transaction"
+    modelProps: "account" | "app_user" | "audit_log" | "deletion_job" | "mentor_feedback" | "session" | "user" | "verification" | "workshop" | "workshop_request" | "workshop_cashback_queue" | "user_connection" | "conversation" | "conversation_pin" | "message" | "message_reaction" | "notification" | "user_block" | "user_report" | "support_request" | "credit_transaction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1385,6 +1386,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    conversation_pin: {
+      payload: Prisma.$conversation_pinPayload<ExtArgs>
+      fields: Prisma.conversation_pinFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.conversation_pinFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.conversation_pinFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>
+        }
+        findFirst: {
+          args: Prisma.conversation_pinFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.conversation_pinFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>
+        }
+        findMany: {
+          args: Prisma.conversation_pinFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>[]
+        }
+        create: {
+          args: Prisma.conversation_pinCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>
+        }
+        createMany: {
+          args: Prisma.conversation_pinCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.conversation_pinCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>[]
+        }
+        delete: {
+          args: Prisma.conversation_pinDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>
+        }
+        update: {
+          args: Prisma.conversation_pinUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>
+        }
+        deleteMany: {
+          args: Prisma.conversation_pinDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.conversation_pinUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.conversation_pinUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>[]
+        }
+        upsert: {
+          args: Prisma.conversation_pinUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$conversation_pinPayload>
+        }
+        aggregate: {
+          args: Prisma.Conversation_pinAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConversation_pin>
+        }
+        groupBy: {
+          args: Prisma.conversation_pinGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Conversation_pinGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.conversation_pinCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Conversation_pinCountAggregateOutputType> | number
+        }
+      }
+    }
     message: {
       payload: Prisma.$messagePayload<ExtArgs>
       fields: Prisma.messageFieldRefs
@@ -2168,6 +2243,16 @@ export const ConversationScalarFieldEnum = {
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
 
 
+export const Conversation_pinScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  appUserId: 'appUserId',
+  createdAt: 'createdAt'
+} as const
+
+export type Conversation_pinScalarFieldEnum = (typeof Conversation_pinScalarFieldEnum)[keyof typeof Conversation_pinScalarFieldEnum]
+
+
 export const MessageScalarFieldEnum = {
   id: 'id',
   conversationId: 'conversationId',
@@ -2664,6 +2749,7 @@ export type GlobalOmitConfig = {
   workshop_cashback_queue?: Prisma.workshop_cashback_queueOmit
   user_connection?: Prisma.user_connectionOmit
   conversation?: Prisma.conversationOmit
+  conversation_pin?: Prisma.conversation_pinOmit
   message?: Prisma.messageOmit
   message_reaction?: Prisma.message_reactionOmit
   notification?: Prisma.notificationOmit

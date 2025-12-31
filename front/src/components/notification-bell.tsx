@@ -84,12 +84,15 @@ export function NotificationBell() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
+        <Button
+          variant="ghost"
+          className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <Bell className="h-12 w-12" strokeWidth={2.5} />
           {count > 0 && (
             <Badge
               variant="destructive"
-              className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center px-1.5 text-xs"
+              className="absolute top-0 right-0 h-5 min-w-5 flex items-center justify-center px-1.5 text-xs font-bold animate-pulse"
             >
               {count > 9 ? "9+" : count}
             </Badge>
@@ -113,19 +116,20 @@ export function NotificationBell() {
             {recentNotifications && recentNotifications.length > 0 ? (
               <div className="divide-y">
                 {recentNotifications.map((notification) => (
-                  <div
+                  <button
                     key={notification.id}
-                    className={`p-4 cursor-pointer hover:bg-accent transition-colors ${
-                      !notification.isRead ? "bg-primary/5" : ""
+                    type="button"
+                    className={`w-full p-4 text-left cursor-pointer hover:bg-accent transition-colors ${
+                      notification.isRead ? "" : "bg-primary/5"
                     }`}
                     onClick={() => handleNotificationClick(notification)}
                   >
                     <div className="flex flex-col gap-1">
                       <p
                         className={`text-sm font-medium ${
-                          !notification.isRead
-                            ? "text-foreground"
-                            : "text-muted-foreground"
+                          notification.isRead
+                            ? "text-muted-foreground"
+                            : "text-foreground"
                         }`}
                       >
                         {notification.title}
@@ -140,7 +144,7 @@ export function NotificationBell() {
                         })}
                       </p>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             ) : (

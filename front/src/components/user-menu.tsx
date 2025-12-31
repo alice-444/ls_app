@@ -75,20 +75,31 @@ export default function UserMenu() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
-            <User className="h-3 w-3 text-primary" />
+        <div className="flex items-center gap-3 cursor-pointer">
+          <div className="relative h-10 w-10 rounded-full border-2 border-[#FFB647] overflow-hidden bg-gray-200 dark:bg-gray-700">
+            {session.user.image ? (
+              <img
+                src={session.user.image}
+                alt={session.user.name || "User"}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center">
+                <User className="h-5 w-5 text-gray-500" />
+              </div>
+            )}
           </div>
-          {session.user.name}
-          <ChevronDown
-            className={`h-4 w-4 transition-transform duration-200 ${
-              isOpen ? "rotate-180" : ""
-            }`}
-          />
-        </Button>
+          <button className="flex items-center justify-center">
+            <ChevronDown
+              className={`h-6 w-6 text-gray-700 dark:text-gray-300 transition-transform duration-200 ${
+                isOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-card">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>{session.user.email}</DropdownMenuItem>
         <DropdownMenuSeparator />
