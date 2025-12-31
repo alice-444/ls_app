@@ -4,7 +4,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, ArrowRight, Search, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Search,
+  Users,
+  GraduationCap,
+  History,
+  Inbox,
+  Calendar,
+  Coins,
+} from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import {
   formatWorkshopDate,
@@ -47,47 +56,57 @@ export function MentorDashboard({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-[16px]">
-        <div className="flex flex-col gap-[16px] w-full lg:w-[300px] shrink-0">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-[16px]">
+        <div className="flex flex-col gap-4 sm:gap-[16px] w-full lg:w-[300px] shrink-0">
           <Card className="relative overflow-hidden bg-linear-to-br from-[#26547c] to-[#4A90E2] border-0 text-white rounded-[16px]">
-            <CardContent className="p-8">
-              <p className="text-base font-semibold mb-4 text-white">
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+            </div>
+            <CardContent className="p-4 sm:p-6 lg:p-8 relative z-10">
+              <p className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-white">
                 Crédits gagnés
               </p>
-              <div className="flex items-end gap-4 mb-6">
-                <p className="text-[32px] font-medium leading-none">
+              <div className="flex items-end gap-2 sm:gap-4 mb-4 sm:mb-6">
+                <p className="text-2xl sm:text-[28px] lg:text-[32px] font-medium leading-none">
                   {mentorStats?.creditsEarned || 0}{" "}
-                  <span className="text-[18px]">crédits</span>
+                  <span className="text-sm sm:text-base lg:text-[18px]">
+                    crédits
+                  </span>
                 </p>
-                <div className="flex items-center gap-1">
-                  <div className="w-6 h-6 bg-white/20 rounded-full" />
-                  <div className="w-6 h-6 bg-white/20 rounded-full" />
+                <div className="relative flex items-center h-[33px] w-[33.5px]">
+                  <div className="absolute left-0 top-[calc(50%+4.5px)] -translate-y-1/2 w-[24px] h-[24px]">
+                    <Coins className="w-6 h-6 text-white/80" />
+                  </div>
+                  <div className="absolute left-[28.36%] top-[calc(50%-4.5px)] -translate-y-1/2 w-[24px] h-[24px]">
+                    <Coins className="w-6 h-6 text-white/60" />
+                  </div>
                 </div>
               </div>
               <Button
                 variant="secondary"
-                className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-[32px] h-10 px-4 py-2 text-base font-semibold flex items-center justify-center gap-2 border border-[#d6dae4]"
+                className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-[#d6dae4]"
                 onClick={() => router.push("/my-workshops")}
               >
                 Voir mes ateliers
-                <ArrowRight className="h-[18px] w-[18px] ml-2" />
+                <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2" />
               </Button>
             </CardContent>
           </Card>
 
           {mentorStats && mentorStats.studentsHelped > 0 && (
-            <Card className="border border-[#d6dae4] rounded-[16px] bg-white">
-              <CardContent className="p-8">
-                <div className="flex flex-col gap-[32px]">
-                  <div className="flex items-center gap-[7.5px]">
-                    <BookOpen className="h-8 w-8 text-[#26547c]" />
-                    <h3 className="text-2xl font-semibold text-[#26547c]">
+            <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+              <CardContent className="p-4 sm:p-6 lg:p-8">
+                <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
+                  <div className="flex items-center gap-2 sm:gap-[7.5px]">
+                    <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
                       {mentorStats.studentsHelped} apprenant
                       {mentorStats.studentsHelped > 1 ? "s" : ""} aidé(s)
                       {mentorStats.studentsHelped > 1 ? "s" : ""}
                     </h3>
                   </div>
-                  <div className="flex flex-col gap-[16px]">
+                  <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
                     {Array.from({
                       length: Math.ceil(mentorStats.studentsHelped / 4),
                     }).map((_, rowIndex) => {
@@ -100,8 +119,8 @@ export function MentorDashboard({
 
                       return (
                         <div
-                          key={rowIndex}
-                          className="flex items-center justify-center -space-x-2 w-[236px] h-[64px]"
+                          key={`student-row-${startIndex}-${endIndex}`}
+                          className="flex items-center justify-center -space-x-2 w-full sm:w-[236px] h-[56px] sm:h-[64px]"
                         >
                           {Array.from({ length: avatarsInRow }).map(
                             (_, avatarIndex) => {
@@ -116,8 +135,8 @@ export function MentorDashboard({
 
                               return (
                                 <div
-                                  key={avatarIndex}
-                                  className={`w-16 h-16 rounded-full ${colors[colorIndex]} border-[3.2px] border-white shrink-0`}
+                                  key={`student-avatar-${globalIndex}`}
+                                  className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full ${colors[colorIndex]} border-[2.4px] sm:border-[3.2px] border-white shrink-0`}
                                 />
                               );
                             }
@@ -128,11 +147,11 @@ export function MentorDashboard({
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full border border-[#d6dae4] rounded-[32px] h-10 px-4 py-2 text-base font-semibold text-[#26547c] flex items-center justify-center gap-2 bg-white"
+                    className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir mes ateliers
-                    <ArrowRight className="h-[18px] w-[18px]" />
+                    <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
                   </Button>
                 </div>
               </CardContent>
@@ -140,31 +159,31 @@ export function MentorDashboard({
           )}
 
           {pastWorkshops && pastWorkshops.length > 0 && (
-            <Card className="border border-[#d6dae4] rounded-[16px] bg-white">
-              <CardContent className="p-8">
-                <div className="flex flex-col gap-[32px]">
-                  <div className="flex items-center gap-[7.5px]">
-                    <BookOpen className="h-8 w-8 text-[#26547c]" />
-                    <h3 className="text-2xl font-semibold text-[#26547c]">
+            <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+              <CardContent className="p-4 sm:p-6 lg:p-8">
+                <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
+                  <div className="flex items-center gap-2 sm:gap-[7.5px]">
+                    <History className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
                       Ateliers passés
                     </h3>
                   </div>
-                  <div className="flex flex-col gap-[16px]">
+                  <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
                     {pastWorkshops
                       .slice(0, 3)
                       .map((workshop: any, index: number) => (
                         <div
                           key={workshop.id}
-                          className={`border-b border-[#d6dae4] pb-4 ${
+                          className={`border-b border-[#d6dae4] dark:border-[#d6dae4] pb-3 sm:pb-4 ${
                             index === pastWorkshops.slice(0, 3).length - 1
                               ? "border-b-0 pb-0"
                               : ""
                           }`}
                         >
-                          <p className="text-base font-semibold text-[#26547c] mb-2">
+                          <p className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] mb-1 sm:mb-2">
                             {workshop.title}
                           </p>
-                          <p className="text-base text-[rgba(38,84,124,0.64)]">
+                          <p className="text-xs sm:text-sm lg:text-base text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                             {formatWorkshopDate(workshop.date)}
                           </p>
                         </div>
@@ -172,11 +191,11 @@ export function MentorDashboard({
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full border border-[#d6dae4] rounded-[32px] h-10 px-4 py-2 text-base font-semibold text-[#26547c] flex items-center justify-center gap-2 bg-white"
+                    className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir les ateliers
-                    <ArrowRight className="h-[18px] w-[18px]" />
+                    <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
                   </Button>
                 </div>
               </CardContent>
@@ -184,17 +203,17 @@ export function MentorDashboard({
           )}
 
           {acceptedConnections && acceptedConnections.length > 0 && (
-            <Card className="border border-[#d6dae4] rounded-[16px] bg-white">
-              <CardContent className="p-8">
-                <div className="flex flex-col gap-[32px]">
-                  <div className="flex items-center gap-[7.5px]">
-                    <Users className="h-8 w-8 text-[#26547c]" />
-                    <h3 className="text-2xl font-semibold text-[#26547c]">
+            <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+              <CardContent className="p-4 sm:p-6 lg:p-8">
+                <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
+                  <div className="flex items-center gap-2 sm:gap-[7.5px]">
+                    <Users className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
                       {acceptedConnections.length} connexion(s)
                       {acceptedConnections.length > 1 ? "s" : ""}
                     </h3>
                   </div>
-                  <div className="flex flex-col gap-[16px]">
+                  <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
                     {acceptedConnections
                       .slice(0, 12)
                       .map((conn: any, index: number) => {
@@ -205,8 +224,10 @@ export function MentorDashboard({
                           );
                           return (
                             <div
-                              key={index}
-                              className="flex items-center justify-center -space-x-2 w-[236px] h-[64px]"
+                              key={`connection-row-${rowConnections
+                                .map((c: any) => c.connectionId)
+                                .join("-")}`}
+                              className="flex items-center justify-center -space-x-2 w-full sm:w-[236px] h-[56px] sm:h-[64px]"
                             >
                               {rowConnections.map((c: any, i: number) => {
                                 const getConnectionColorClass = (
@@ -227,7 +248,7 @@ export function MentorDashboard({
                                 return (
                                   <div
                                     key={c.connectionId}
-                                    className={`w-16 h-16 rounded-full border-[3.2px] border-white shrink-0 ${getConnectionColorClass(
+                                    className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full border-[2.4px] sm:border-[3.2px] border-white shrink-0 ${getConnectionColorClass(
                                       i
                                     )}`}
                                     style={
@@ -250,11 +271,11 @@ export function MentorDashboard({
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full border border-[#d6dae4] rounded-[32px] h-10 px-4 py-2 text-base font-semibold text-[#26547c] flex items-center justify-center gap-2 bg-white"
+                    className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
                     onClick={() => router.push("/network")}
                   >
                     Voir les connexions
-                    <ArrowRight className="h-[18px] w-[18px]" />
+                    <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
                   </Button>
                 </div>
               </CardContent>
@@ -262,28 +283,28 @@ export function MentorDashboard({
           )}
         </div>
 
-        <div className="flex flex-col gap-[16px] flex-1">
-          <Card className="border border-[#d6dae4] rounded-[16px] bg-white">
-            <CardContent className="p-8">
-              <div className="flex flex-col gap-[32px]">
-                <div className="flex flex-col gap-[16px]">
-                  <div className="flex items-center gap-[7.5px]">
-                    <BookOpen className="h-8 w-8 text-[#26547c]" />
-                    <h3 className="text-2xl font-semibold text-[#26547c]">
+        <div className="flex flex-col gap-4 sm:gap-[16px] flex-1">
+          <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+            <CardContent className="p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
+                <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
+                  <div className="flex items-center gap-2 sm:gap-[7.5px]">
+                    <Inbox className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
                       Demande(s) reçue(s)
                     </h3>
                   </div>
-                  <p className="text-base text-[#26547c] tracking-[-0.8px]">
+                  <p className="text-sm sm:text-base text-[#26547c] dark:text-[#e6e6e6] tracking-[-0.8px]">
                     Les demandes d'ateliers que vous avez reçues
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex-1 border border-[#d6dae4] rounded-[32px] h-10 px-4 py-2 flex items-center gap-2 bg-white">
-                    <span className="text-base font-semibold text-[#26547c]">
+                <div className="flex items-center justify-between gap-3 sm:gap-4">
+                  <div className="flex-1 border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 flex items-center gap-2 bg-white dark:bg-[rgba(255,255,255,0.08)]">
+                    <span className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]">
                       Rechercher...
                     </span>
-                    <Search className="h-[18px] w-[18px] text-[#26547c]" />
+                    <Search className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-[#26547c] dark:text-[#e6e6e6]" />
                   </div>
                 </div>
 
@@ -296,41 +317,45 @@ export function MentorDashboard({
                         .map((request: any) => (
                           <div
                             key={request.id}
-                            className="bg-white border border-[#d6dae4] rounded-[16px] h-[126px] px-5 py-2 flex items-center justify-between"
+                            className="bg-white dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] min-h-[126px] px-3 sm:px-4 lg:px-5 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
                           >
-                            <div className="flex flex-col gap-[8px] justify-center">
-                              <p className="text-base font-bold text-[#26547c]">
+                            <div className="flex flex-col gap-2 sm:gap-[8px] justify-center flex-1 min-w-0">
+                              <p className="text-sm sm:text-base font-bold text-[#26547c] dark:text-[#e6e6e6] truncate">
                                 {request.title}
                               </p>
-                              <p className="text-base text-[#161616]">
+                              <p className="text-xs sm:text-sm lg:text-base text-[#161616] dark:text-[#e6e6e6] line-clamp-2">
                                 {request.description ||
                                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit"}
                               </p>
-                              <p className="text-base text-[rgba(38,84,124,0.64)]">
+                              <p className="text-xs sm:text-sm lg:text-base text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                                 {formatWorkshopDate(request.preferredDate)}
                               </p>
                             </div>
-                            {request.status === "ACCEPTED" ||
-                            request.status === "PENDING" ||
-                            request.status === "REJECTED" ? (
-                              <StatusBadge status={request.status} />
-                            ) : null}
+                            <div className="shrink-0">
+                              {request.status === "ACCEPTED" ||
+                              request.status === "PENDING" ||
+                              request.status === "REJECTED" ? (
+                                <StatusBadge status={request.status} />
+                              ) : null}
+                            </div>
                           </div>
                         ))}
                       {mentorWorkshopRequests.length > 3 && (
                         <Button
                           variant="outline"
-                          className="w-full border border-[#d6dae4] rounded-[32px] h-10 px-4 py-2 text-base font-semibold text-[#26547c] flex items-center justify-center gap-2 bg-white"
+                          className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
                           onClick={() => setShowAllRequestsDialog(true)}
                         >
-                          Voir toutes les demandes (
-                          {mentorWorkshopRequests.length})
-                          <ArrowRight className="h-[18px] w-[18px]" />
+                          <span className="truncate">
+                            Voir toutes les demandes (
+                            {mentorWorkshopRequests.length})
+                          </span>
+                          <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] shrink-0" />
                         </Button>
                       )}
                     </>
                   ) : (
-                    <div className="text-center py-8 text-[rgba(38,84,124,0.64)]">
+                    <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                       <p>Aucune demande reçue pour le moment</p>
                     </div>
                   )}
@@ -339,27 +364,27 @@ export function MentorDashboard({
             </CardContent>
           </Card>
 
-          <Card className="border border-[#d6dae4] rounded-[16px] bg-white">
-            <CardContent className="p-8">
-              <div className="flex flex-col gap-[32px]">
-                <div className="flex flex-col gap-[16px]">
-                  <div className="flex items-center gap-[7.5px]">
-                    <BookOpen className="h-8 w-8 text-[#26547c]" />
-                    <h3 className="text-2xl font-semibold text-[#26547c]">
+          <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+            <CardContent className="p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
+                <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
+                  <div className="flex items-center gap-2 sm:gap-[7.5px]">
+                    <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
                       Calendrier de mes ateliers
                     </h3>
                   </div>
-                  <p className="text-base text-[#26547c] tracking-[-0.8px]">
+                  <p className="text-sm sm:text-base text-[#26547c] dark:text-[#e6e6e6] tracking-[-0.8px]">
                     Vue d'ensemble de vos ateliers
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-[#d6dae4] rounded-[32px] h-10 px-4 text-base font-semibold text-[#26547c]"
+                      className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]"
                       onClick={() => navigateCalendar("today")}
                     >
                       Aujourd'hui
@@ -367,7 +392,7 @@ export function MentorDashboard({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-[#d6dae4] rounded-[32px] h-10 px-4 text-base font-semibold text-[#26547c]"
+                      className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]"
                       onClick={() => navigateCalendar("prev")}
                     >
                       Précédent
@@ -375,13 +400,13 @@ export function MentorDashboard({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-[#d6dae4] rounded-[32px] h-10 px-4 text-base font-semibold text-[#26547c]"
+                      className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]"
                       onClick={() => navigateCalendar("next")}
                     >
                       Suivant
                     </Button>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center flex-wrap gap-0">
                     <Button
                       variant={
                         mentorCalendarView === "month" ? "default" : "outline"
@@ -389,9 +414,9 @@ export function MentorDashboard({
                       size="sm"
                       className={`${
                         mentorCalendarView === "month"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-white"
-                          : "border border-[#ffb647] text-[#ffb647]"
-                      } rounded-l-[8px] rounded-r-0 h-10 px-4 text-sm font-semibold`}
+                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                      } rounded-l-[8px] rounded-r-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold`}
                       onClick={() => setMentorCalendarView("month")}
                     >
                       Mois
@@ -403,9 +428,9 @@ export function MentorDashboard({
                       size="sm"
                       className={`${
                         mentorCalendarView === "week"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-white"
-                          : "border border-[#ffb647] text-[#ffb647]"
-                      } rounded-none h-10 px-4 text-sm`}
+                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                      } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
                       onClick={() => setMentorCalendarView("week")}
                     >
                       Semaine
@@ -417,9 +442,9 @@ export function MentorDashboard({
                       size="sm"
                       className={`${
                         mentorCalendarView === "day"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-white"
-                          : "border border-[#ffb647] text-[#ffb647]"
-                      } rounded-none h-10 px-4 text-sm`}
+                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                      } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
                       onClick={() => setMentorCalendarView("day")}
                     >
                       Jour
@@ -431,9 +456,9 @@ export function MentorDashboard({
                       size="sm"
                       className={`${
                         mentorCalendarView === "agenda"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-white"
-                          : "border border-[#ffb647] text-[#ffb647]"
-                      } rounded-r-[8px] rounded-l-0 h-10 px-4 text-sm`}
+                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                      } rounded-r-[8px] rounded-l-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
                       onClick={() => setMentorCalendarView("agenda")}
                     >
                       Agenda
@@ -441,33 +466,35 @@ export function MentorDashboard({
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <p className="text-base font-semibold text-[#26547c]">
+                <div className="mb-3 sm:mb-4">
+                  <p className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]">
                     {formatCalendarMonthYear(mentorCalendarDate)}
                   </p>
                 </div>
 
-                <WorkshopCalendar
-                  workshops={mentorWorkshops || []}
-                  height="600px"
-                  userRole="MENTOR"
-                  controlledDate={mentorCalendarDate}
-                  controlledView={mentorCalendarView}
-                  onDateChange={setMentorCalendarDate}
-                  onViewChange={(view) => {
-                    if (
-                      view === "month" ||
-                      view === "week" ||
-                      view === "day" ||
-                      view === "agenda"
-                    ) {
-                      setMentorCalendarView(view);
-                    }
-                  }}
-                  onSelectEvent={(workshop) => {
-                    router.push(`/workshop/${workshop.id}`);
-                  }}
-                />
+                <div className="overflow-x-auto">
+                  <WorkshopCalendar
+                    workshops={mentorWorkshops || []}
+                    height="400px"
+                    userRole="MENTOR"
+                    controlledDate={mentorCalendarDate}
+                    controlledView={mentorCalendarView}
+                    onDateChange={setMentorCalendarDate}
+                    onViewChange={(view) => {
+                      if (
+                        view === "month" ||
+                        view === "week" ||
+                        view === "day" ||
+                        view === "agenda"
+                      ) {
+                        setMentorCalendarView(view);
+                      }
+                    }}
+                    onSelectEvent={(workshop) => {
+                      router.push(`/workshop/${workshop.id}`);
+                    }}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

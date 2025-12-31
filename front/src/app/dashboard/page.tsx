@@ -504,32 +504,32 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12">
-        <div className="relative mb-10">
-          <div className="relative h-[75px]">
-            <div className="absolute left-0 top-0 h-[75px] w-[461px]">
-              <div className="absolute left-[163px] top-0 h-[31px] w-[31px] opacity-20">
+      <div className="w-full max-w-[1127px] mx-auto py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-12">
+        <div className="relative mb-6 sm:mb-8 lg:mb-10">
+          <div className="relative h-[60px] sm:h-[70px] lg:h-[75px]">
+            <div className="absolute left-0 top-0 h-[60px] sm:h-[70px] lg:h-[75px] w-full sm:w-[350px] lg:w-[461px]">
+              <div className="absolute left-[120px] sm:left-[140px] lg:left-[163px] top-0 h-[24px] sm:h-[28px] lg:h-[31px] w-[24px] sm:w-[28px] lg:w-[31px] opacity-20">
                 <div className="h-full w-full bg-[#26547c] rounded" />
               </div>
-              <div className="absolute left-[116px] top-[38px] h-[31px] w-[31px] opacity-20">
+              <div className="absolute left-[85px] sm:left-[100px] lg:left-[116px] top-[30px] sm:top-[35px] lg:top-[38px] h-[24px] sm:h-[28px] lg:h-[31px] w-[24px] sm:w-[28px] lg:w-[31px] opacity-20">
                 <div className="h-full w-full bg-[#26547c] rounded" />
               </div>
-              <div className="absolute left-0 top-[-27px] h-[45px] w-[45px]">
+              <div className="absolute left-0 top-[-20px] sm:top-[-24px] lg:top-[-27px] h-[36px] sm:h-[40px] lg:h-[45px] w-[36px] sm:w-[40px] lg:w-[45px]">
                 <div className="h-full w-full bg-[#26547c] rounded-full opacity-20" />
               </div>
-              <div className="absolute left-[56px] top-[2px] h-[66px] w-[405px]">
-                <div className="absolute right-[138px] top-[-8px] h-[80px] w-[320px] rotate-[359.6deg]">
-                  <div className="h-[78px] w-[320px] bg-[#26547c] border-2 border-white rounded-tl-[36px] rounded-tr-[36px] rounded-bl-[4px] rounded-br-[4px]" />
+              <div className="absolute left-[40px] sm:left-[48px] lg:left-[56px] top-[2px] h-[52px] sm:h-[60px] lg:h-[66px] w-[280px] sm:w-[320px] lg:w-[405px]">
+                <div className="absolute right-[100px] sm:right-[120px] lg:right-[138px] top-[-6px] sm:top-[-7px] lg:top-[-8px] h-[64px] sm:h-[72px] lg:h-[80px] w-[240px] sm:w-[280px] lg:w-[320px] rotate-[359.6deg]">
+                  <div className="h-[62px] sm:h-[70px] lg:h-[78px] w-[240px] sm:w-[280px] lg:w-[320px] bg-[#26547c] border-2 border-white rounded-tl-[28px] sm:rounded-tl-[32px] lg:rounded-tl-[36px] rounded-tr-[28px] sm:rounded-tr-[32px] lg:rounded-tr-[36px] rounded-bl-[4px] rounded-br-[4px]" />
                 </div>
               </div>
             </div>
-            <div className="relative z-10 pt-4">
-              <h1 className="text-[44px] font-black text-white leading-[75px] whitespace-nowrap">
+            <div className="relative z-10 pt-2 sm:pt-3 lg:pt-4">
+              <h1 className="text-[28px] sm:text-[36px] lg:text-[44px] font-black text-white leading-[1.2] sm:leading-[1.3] lg:leading-[75px] whitespace-nowrap">
                 Tableau de bord
               </h1>
             </div>
           </div>
-          <p className="text-[24px] text-[#161616] dark:text-[#e6e6e6] mt-6">
+          <p className="text-base sm:text-lg lg:text-[24px] text-[#161616] dark:text-[#e6e6e6] mt-4 sm:mt-5 lg:mt-6">
             Planifiez, hiérarchisez et accomplissez vos tâches en toute
             simplicité
           </p>
@@ -615,11 +615,11 @@ export default function Dashboard() {
             <Button
               onClick={() => router.push("/workshop-editor")}
               size="lg"
-              className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 h-16 w-16 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-200 flex items-center justify-center p-0 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-lg dark:shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center p-0 bg-linear-to-br from-[#26547c] to-[#4A90E2] hover:from-[#1e4260] hover:to-[#3a7bc4] dark:from-[#26547c] dark:to-[#4A90E2] dark:hover:from-[#1e4260] dark:hover:to-[#3a7bc4] text-white border-0"
               aria-label="Créer un atelier"
               title="Créer un atelier"
             >
-              <Plus className="w-7 h-7" />
+              <Plus className="w-5 h-5 sm:w-7 sm:h-7" />
             </Button>
           )}
       </div>
