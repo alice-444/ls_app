@@ -58,10 +58,10 @@ export function WorkshopRequestCard({
 
   const containerClass =
     variant === "compact"
-      ? "bg-slate-50 dark:bg-slate-900 rounded-lg p-3 border"
+      ? "bg-white dark:bg-[rgba(255,255,255,0.08)] rounded-[16px] p-3 sm:p-4 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]"
       : variant === "dashboard"
-      ? "flex items-center justify-between p-3 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-      : "border rounded-lg p-4 bg-slate-50 dark:bg-slate-900";
+      ? "p-3 sm:p-4 rounded-[16px] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+      : "border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] p-3 sm:p-4 bg-white dark:bg-[rgba(255,255,255,0.08)]";
 
   const nameClass =
     variant === "compact"
@@ -136,32 +136,36 @@ export function WorkshopRequestCard({
   if (variant === "dashboard") {
     return (
       <div className={containerClass}>
-        {content}
-        <div className="flex items-center gap-2">
-          <Badge className={`text-xs ${statusColor}`}>{statusLabel}</Badge>
-          {isPending && onAccept && onReject && (
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant="default"
-                className="text-xs px-2"
-                onClick={() => onAccept(request)}
-              >
-                <Check className="w-3 h-3 mr-1" />
-                Accepter
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs px-2 text-red-600 hover:text-red-700"
-                onClick={() => onReject(request.id)}
-                disabled={isRejecting}
-              >
-                <X className="w-3 h-3 mr-1" />
-                Refuser
-              </Button>
-            </div>
-          )}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          {content}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+            <Badge className={`text-xs ${statusColor} self-start sm:self-auto`}>
+              {statusLabel}
+            </Badge>
+            {isPending && onAccept && onReject && (
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
+                  onClick={() => onAccept(request)}
+                >
+                  <Check className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
+                  Accepter
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-700 rounded-[32px]"
+                  onClick={() => onReject(request.id)}
+                  disabled={isRejecting}
+                >
+                  <X className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
+                  Refuser
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -170,32 +174,34 @@ export function WorkshopRequestCard({
   return (
     <div className={containerClass}>
       <div
-        className={`flex items-start justify-between ${
-          variant === "compact" ? "gap-2" : "gap-3"
+        className={`flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 ${
+          variant === "compact" ? "gap-2" : ""
         }`}
       >
         {content}
-        <div className="flex items-center gap-2">
-          <Badge className={`text-xs ${statusColor}`}>{statusLabel}</Badge>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2 w-full sm:w-auto">
+          <Badge className={`text-xs ${statusColor} self-start sm:self-auto`}>
+            {statusLabel}
+          </Badge>
           {isPending && onAccept && onReject && (
-            <div className="flex gap-1">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 size="sm"
                 variant="default"
-                className="text-xs px-2 h-7"
+                className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
                 onClick={() => onAccept(request)}
               >
-                <Check className="w-3 h-3 mr-1" />
+                <Check className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
                 Accepter
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                className="text-xs px-2 h-7 text-red-600 hover:text-red-700"
+                className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-700 rounded-[32px]"
                 onClick={() => onReject(request.id)}
                 disabled={isRejecting}
               >
-                <X className="w-3 h-3 mr-1" />
+                <X className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
                 Refuser
               </Button>
             </div>
