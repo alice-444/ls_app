@@ -56,7 +56,7 @@ export default function ConversationPage() {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-3 max-w-7xl h-[calc(100vh-160px)] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
-ƒ      <BackButton href="/inbox" label="Retour aux conversations" />
+      <BackButton href="/inbox" label="Retour aux conversations" />
 
       <div className="flex-1 bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-0">
         <ChatWindow conversationId={conversationId} />

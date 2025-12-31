@@ -41,6 +41,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 type SettingsSection =
   | "profil"
@@ -98,36 +100,11 @@ export default function SettingsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12">
-        <div className="relative mb-10">
-          <div className="relative h-[75px]">
-            <div className="absolute left-0 top-0 h-[75px] w-[461px]">
-              <div className="absolute left-[163px] top-0 h-[31px] w-[31px] opacity-20">
-                <div className="h-full w-full bg-[#26547c] rounded" />
-              </div>
-              <div className="absolute left-[116px] top-[38px] h-[31px] w-[31px] opacity-20">
-                <div className="h-full w-full bg-[#26547c] rounded" />
-              </div>
-              <div className="absolute left-0 top-[-27px] h-[45px] w-[45px]">
-                <div className="h-full w-full bg-[#26547c] rounded-full opacity-20" />
-              </div>
-              <div className="absolute left-[56px] top-[2px] h-[66px] w-[405px]">
-                <div className="absolute right-[138px] top-[-8px] h-[80px] w-[320px] rotate-[359.6deg]">
-                  <div className="h-[78px] w-[320px] bg-[#26547c] border-2 border-white rounded-tl-[36px] rounded-tr-[36px] rounded-bl-[4px] rounded-br-[4px]" />
-                </div>
-              </div>
-            </div>
-            <div className="relative z-10 pt-4">
-              <h1 className="text-[44px] font-black text-white leading-[75px] whitespace-nowrap">
-                Paramètres
-              </h1>
-            </div>
-          </div>
-          <p className="text-[24px] text-[#161616] dark:text-[#e6e6e6] mt-6">
-            Gère tes préférences et paramètres de compte
-          </p>
-        </div>
+    <PageContainer>
+      <PageHeader
+        title="Paramètres"
+        subtitle="Gère tes préférences et paramètres de compte"
+      />
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8">
           <div className="w-full lg:w-[300px] mb-6 lg:mb-0">
@@ -186,8 +163,7 @@ export default function SettingsPage() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </PageContainer>
   );
 }
 
