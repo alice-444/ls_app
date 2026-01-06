@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import type { View } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
+import { format, parse, getDay } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Calendar as CalendarIcon } from "lucide-react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./WorkshopCalendar.css";
 import type { WorkshopBasic } from "@/types/workshop";
@@ -26,11 +25,15 @@ const localizer = dateFnsLocalizer({
 });
 
 interface WorkshopCalendarProps {
-  workshops: WorkshopBasic[];
-  height?: string;
-  onSelectEvent: (workshop: WorkshopBasic) => void;
-  showOnlyConfirmed?: boolean;
-  userRole?: "MENTOR" | "APPRENANT";
+  readonly workshops: readonly WorkshopBasic[];
+  readonly height?: string;
+  readonly onSelectEvent: (workshop: WorkshopBasic) => void;
+  readonly showOnlyConfirmed?: boolean;
+  readonly userRole?: "MENTOR" | "APPRENANT";
+  readonly controlledDate?: Date;
+  readonly controlledView?: View;
+  readonly onDateChange?: (date: Date) => void;
+  readonly onViewChange?: (view: View) => void;
 }
 
 export function WorkshopCalendar({
@@ -39,9 +42,16 @@ export function WorkshopCalendar({
   onSelectEvent,
   showOnlyConfirmed = false,
   userRole,
+  controlledDate,
+  controlledView,
+  onDateChange,
+  onViewChange,
 }: WorkshopCalendarProps) {
-  const [view, setView] = useState<View>("month");
-  const [date, setDate] = useState(new Date());
+  const [internalView, setInternalView] = useState<View>("month");
+  const [internalDate, setInternalDate] = useState(new Date());
+
+  const view = controlledView ?? internalView;
+  const date = controlledDate ?? internalDate;
 
   const events = useMemo(() => {
     return workshops
@@ -65,7 +75,7 @@ export function WorkshopCalendar({
 
           const dateValue = date instanceof Date ? date : new Date(date);
 
-          if (isNaN(dateValue.getTime())) {
+          if (Number.isNaN(dateValue.getTime())) {
             console.warn(`Date invalide pour l'atelier ${workshop.id}:`, date);
             return null;
           }
@@ -81,7 +91,7 @@ export function WorkshopCalendar({
           }
 
           const [hours, minutes] = timeParts.map(Number);
-          if (isNaN(hours) || isNaN(minutes)) {
+          if (Number.isNaN(hours) || Number.isNaN(minutes)) {
             console.warn(`Heure invalide pour l'atelier ${workshop.id}:`, time);
             return null;
           }
@@ -112,13 +122,7 @@ export function WorkshopCalendar({
 
   const eventStyleGetter = (event: any) => {
     const workshop = event.resource as WorkshopBasic;
-    let backgroundColor = "#26547C";
-
-    if (workshop.isVirtual) {
-      backgroundColor = "#4A90E2";
-    } else {
-      backgroundColor = "#26547C";
-    }
+    let backgroundColor = workshop.isVirtual ? "#4A90E2" : "#26547C";
 
     if (userRole === "APPRENANT") {
       backgroundColor = "#10B981";
@@ -144,11 +148,19 @@ export function WorkshopCalendar({
   };
 
   const handleNavigate = (newDate: Date) => {
-    setDate(newDate);
+    if (onDateChange) {
+      onDateChange(newDate);
+    } else {
+      setInternalDate(newDate);
+    }
   };
 
   const handleViewChange = (newView: View) => {
-    setView(newView);
+    if (onViewChange) {
+      onViewChange(newView);
+    } else {
+      setInternalView(newView);
+    }
   };
 
   return (
@@ -176,12 +188,15 @@ export function WorkshopCalendar({
           date: "Date",
           time: "Heure",
           event: "Événement",
-          noEventsInRange:
-            events.length === 0
-              ? workshops.length === 0
-                ? "Aucun atelier disponible"
-                : "Les ateliers disponibles n'ont pas de date/heure programmée ou ne sont pas publiés"
-              : "Aucun atelier programmé pour cette période",
+          noEventsInRange: (() => {
+            if (events.length === 0) {
+              if (workshops.length === 0) {
+                return "Aucun atelier disponible";
+              }
+              return "Les ateliers disponibles n'ont pas de date/heure programmée ou ne sont pas publiés";
+            }
+            return "Aucun atelier programmé pour cette période";
+          })(),
           showMore: (total: number) => `+ ${total} autres`,
         }}
         culture="fr"

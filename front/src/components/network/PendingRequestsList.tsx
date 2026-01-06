@@ -41,13 +41,13 @@ export function PendingRequestsList({
   }
 
   return (
-    <Card>
+    <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
           <UserCheck className="h-5 w-5" />
           Demandes en attente
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
           Vous avez {requests.length} demande(s) de connexion en attente
         </CardDescription>
       </CardHeader>

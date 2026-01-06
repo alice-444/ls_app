@@ -25,10 +25,10 @@ model account {
 }
 
 model app_user {
-  id                                                       String             @id @map("_id")
-  userId                                                   String             @unique
+  id                                                       String               @id @map("_id")
+  userId                                                   String               @unique
   role                                                     Role?
-  status                                                   AppUserStatus      @default(PENDING)
+  status                                                   AppUserStatus        @default(PENDING)
   createdAt                                                DateTime
   updatedAt                                                DateTime
   deletedAt                                                DateTime?
@@ -40,7 +40,7 @@ model app_user {
   areasOfExpertise                                         Json?
   calendlyLink                                             String?
   experience                                               String?
-  isPublished                                              Boolean            @default(false)
+  isPublished                                              Boolean              @default(false)
   mentorshipTopics                                         Json?
   publishedAt                                              DateTime?
   qualifications                                           String?
@@ -50,23 +50,24 @@ model app_user {
   studyDomain                                              String?
   studyProgram                                             String?
   lastSeen                                                 DateTime?
-  isOnline                                                 Boolean            @default(false)
-  creditBalance                                            Int                @default(0)
-  user                                                     user               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isOnline                                                 Boolean              @default(false)
+  creditBalance                                            Int                  @default(0)
+  user                                                     user                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   credit_transactions                                      credit_transaction[]
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user   mentor_feedback[]  @relation("mentor_feedback_apprenticeIdToapp_user")
-  mentor_feedback_mentor_feedback_mentorIdToapp_user       mentor_feedback[]  @relation("mentor_feedback_mentorIdToapp_user")
-  workshop_workshop_apprenticeIdToapp_user                 workshop[]         @relation("workshop_apprenticeIdToapp_user")
-  workshop_workshop_creatorIdToapp_user                    workshop[]         @relation("workshop_creatorIdToapp_user")
-  workshop_request_workshop_request_apprenticeIdToapp_user workshop_request[] @relation("workshop_request_apprenticeIdToapp_user")
-  workshop_request_workshop_request_mentorIdToapp_user     workshop_request[] @relation("workshop_request_mentorIdToapp_user")
-  user_connection_requester                                user_connection[]  @relation("user_connection_requester")
-  user_connection_receiver                                 user_connection[]  @relation("user_connection_receiver")
-  conversation_participant1                                conversation[]     @relation("conversation_participant1")
-  conversation_participant2                                conversation[]     @relation("conversation_participant2")
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user   mentor_feedback[]    @relation("mentor_feedback_apprenticeIdToapp_user")
+  mentor_feedback_mentor_feedback_mentorIdToapp_user       mentor_feedback[]    @relation("mentor_feedback_mentorIdToapp_user")
+  workshop_workshop_apprenticeIdToapp_user                 workshop[]           @relation("workshop_apprenticeIdToapp_user")
+  workshop_workshop_creatorIdToapp_user                    workshop[]           @relation("workshop_creatorIdToapp_user")
+  workshop_request_workshop_request_apprenticeIdToapp_user workshop_request[]   @relation("workshop_request_apprenticeIdToapp_user")
+  workshop_request_workshop_request_mentorIdToapp_user     workshop_request[]   @relation("workshop_request_mentorIdToapp_user")
+  user_connection_requester                                user_connection[]    @relation("user_connection_requester")
+  user_connection_receiver                                 user_connection[]    @relation("user_connection_receiver")
+  conversation_participant1                                conversation[]       @relation("conversation_participant1")
+  conversation_participant2                                conversation[]       @relation("conversation_participant2")
+  pinned_conversations                                     conversation_pin[]   @relation("conversation_pin")
   notifications                                            notification[]
-  user_block_blocker                                       user_block[]       @relation("user_block_blocker")
-  user_block_blocked                                       user_block[]       @relation("user_block_blocked")
+  user_block_blocker                                       user_block[]         @relation("user_block_blocker")
+  user_block_blocked                                       user_block[]         @relation("user_block_blocked")
 }
 
 model audit_log {
@@ -299,22 +300,37 @@ enum ConnectionStatus {
 }
 
 model conversation {
-  id             String    @id @map("_id")
+  id             String              @id @map("_id")
   participant1Id String
   participant2Id String
   workshopId     String?
-  createdAt      DateTime  @default(now())
+  createdAt      DateTime            @default(now())
   updatedAt      DateTime
-  participant1   app_user  @relation("conversation_participant1", fields: [participant1Id], references: [id], onDelete: Cascade)
-  participant2   app_user  @relation("conversation_participant2", fields: [participant2Id], references: [id], onDelete: Cascade)
-  workshop       workshop? @relation(fields: [workshopId], references: [id], onDelete: SetNull)
+  participant1   app_user            @relation("conversation_participant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2   app_user            @relation("conversation_participant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  workshop       workshop?           @relation(fields: [workshopId], references: [id], onDelete: SetNull)
   messages       message[]
+  pinned_by      conversation_pin[]
 
   @@unique([participant1Id, participant2Id])
   @@index([participant1Id])
   @@index([participant2Id])
   @@index([workshopId])
   @@index([updatedAt])
+}
+
+model conversation_pin {
+  id             String       @id @map("_id")
+  conversationId String
+  appUserId      String
+  createdAt      DateTime     @default(now())
+  conversation   conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  app_user       app_user     @relation("conversation_pin", fields: [appUserId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, appUserId])
+  @@index([conversationId])
+  @@index([appUserId])
+  @@index([createdAt])
 }
 
 model message {

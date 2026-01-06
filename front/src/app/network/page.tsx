@@ -29,7 +29,7 @@ export default function NetworkPage() {
     refetch: refetchPending,
   } = trpc.connection.getPendingRequestsReceived.useQuery(undefined, {
     enabled: !!session,
-  });
+  } as any);
 
   const {
     data: acceptedConnections,
@@ -37,61 +37,31 @@ export default function NetworkPage() {
     refetch: refetchConnections,
   } = trpc.connection.getAcceptedConnections.useQuery(undefined, {
     enabled: !!session,
-  });
+  } as any);
 
-  const acceptMutation = trpc.connection.acceptConnectionRequest.useMutation({
-    onSuccess: () => {
-      toast.success("Demande acceptée");
-      refetchPending();
-      refetchConnections();
-    },
-    onError: (error) => {
-      toast.error("Erreur lors de l'acceptation", {
-        description: error.message,
-      });
-    },
-  });
+  const acceptMutation = trpc.connection.acceptConnectionRequest.useMutation();
 
-  const rejectMutation = trpc.connection.rejectConnectionRequest.useMutation({
-    onSuccess: () => {
-      toast.success("Demande refusée");
-      refetchPending();
-    },
-    onError: (error) => {
-      toast.error("Erreur lors du refus", {
-        description: error.message,
-      });
-    },
-  });
+  const rejectMutation = trpc.connection.rejectConnectionRequest.useMutation();
 
-  const removeConnectionMutation = trpc.connection.removeConnection.useMutation(
-    {
-      onSuccess: () => {
-        toast.success("Connexion supprimée");
-        refetchConnections();
-      },
-      onError: (error) => {
-        toast.error("Erreur lors de la suppression", {
-          description: error.message,
-        });
-      },
-    }
-  );
+  const removeConnectionMutation = trpc.connection.removeConnection.useMutation();
 
   const getOrCreateConversationMutation =
-    trpc.messaging.getOrCreateConversation.useMutation({
-      onSuccess: (data) => {
-        router.push(`/inbox/${data.conversationId}`);
-      },
-      onError: (error) => {
-        toast.error("Erreur lors de l'ouverture de la conversation", {
-          description: error.message,
-        });
-      },
-    });
+    trpc.messaging.getOrCreateConversation.useMutation();
 
   const handleMessage = (otherUserId: string) => {
-    getOrCreateConversationMutation.mutate({ otherUserId });
+    getOrCreateConversationMutation.mutate(
+      { otherUserId },
+      {
+        onSuccess: (data: { conversationId: string }) => {
+          router.push(`/inbox/${data.conversationId}`);
+        },
+        onError: (error: { message: string }) => {
+          toast.error("Erreur lors de l'ouverture de la conversation", {
+            description: error.message,
+          });
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -125,63 +95,132 @@ export default function NetworkPage() {
 
   const confirmRemoveConnection = () => {
     if (userToRemove) {
-      removeConnectionMutation.mutate({
-        otherUserId: userToRemove,
-      });
-      setShowRemoveConfirmDialog(false);
-      setUserToRemove(null);
+      removeConnectionMutation.mutate(
+        {
+          otherUserId: userToRemove,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Connexion supprimée");
+            refetchConnections();
+            setShowRemoveConfirmDialog(false);
+            setUserToRemove(null);
+          },
+          onError: (error: { message: string }) => {
+            toast.error("Erreur lors de la suppression", {
+              description: error.message,
+            });
+          },
+        }
+      );
     }
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Mon Réseau</h1>
-      </div>
+    <div className="min-h-screen bg-background">
+      <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12">
+        <div className="relative mb-6 sm:mb-8 lg:mb-10">
+          <div className="relative h-[60px] sm:h-[70px] lg:h-[75px]">
+            <div className="absolute left-0 top-0 h-[60px] sm:h-[70px] lg:h-[75px] w-full sm:w-[350px] lg:w-[461px]">
+              <div className="absolute left-[120px] sm:left-[140px] lg:left-[163px] top-0 h-[24px] sm:h-[28px] lg:h-[31px] w-[24px] sm:w-[28px] lg:w-[31px] opacity-20">
+                <div className="h-full w-full bg-[#26547c] rounded" />
+              </div>
+              <div className="absolute left-[85px] sm:left-[100px] lg:left-[116px] top-[30px] sm:top-[35px] lg:top-[38px] h-[24px] sm:h-[28px] lg:h-[31px] w-[24px] sm:w-[28px] lg:w-[31px] opacity-20">
+                <div className="h-full w-full bg-[#26547c] rounded" />
+              </div>
+              <div className="absolute left-0 top-[-20px] sm:top-[-24px] lg:top-[-27px] h-[36px] sm:h-[40px] lg:h-[45px] w-[36px] sm:w-[40px] lg:w-[45px]">
+                <div className="h-full w-full bg-[#26547c] rounded-full opacity-20" />
+              </div>
+              <div className="absolute left-[40px] sm:left-[48px] lg:left-[56px] top-[2px] h-[52px] sm:h-[60px] lg:h-[66px] w-[280px] sm:w-[320px] lg:w-[405px]">
+                <div className="absolute right-[100px] sm:right-[120px] lg:right-[138px] top-[-6px] sm:top-[-7px] lg:top-[-8px] h-[64px] sm:h-[72px] lg:h-[80px] w-[240px] sm:w-[280px] lg:w-[320px] rotate-[359.6deg]">
+                  <div className="h-[62px] sm:h-[70px] lg:h-[78px] w-[240px] sm:w-[280px] lg:w-[320px] bg-[#26547c] border-2 border-white rounded-tl-[28px] sm:rounded-tl-[32px] lg:rounded-tl-[36px] rounded-tr-[28px] sm:rounded-tr-[32px] lg:rounded-tr-[36px] rounded-bl-[4px] rounded-br-[4px]" />
+                </div>
+              </div>
+            </div>
+            <div className="relative z-10 pt-2 sm:pt-3 lg:pt-4">
+              <h1 className="text-[28px] sm:text-[36px] lg:text-[44px] font-black text-white leading-[1.2] sm:leading-[1.3] lg:leading-[75px] whitespace-nowrap">
+                Mon Réseau
+              </h1>
+            </div>
+          </div>
+          <p className="text-[20px] sm:text-[22px] lg:text-[24px] text-[#161616] dark:text-[#e6e6e6] mt-4 sm:mt-5 lg:mt-6">
+            Gère tes connexions et ton réseau
+          </p>
+        </div>
 
-      {pendingRequests && pendingRequests.length > 0 && (
-        <PendingRequestsList
-          requests={pendingRequests}
-          onViewProfile={(request) => {
-            const role = (request as any).requesterRole;
-            const appId = (request as any).requesterAppId;
-            handleViewProfile(request.requesterUserId, role, appId);
-          }}
-          onAccept={(connectionId) => {
-            acceptMutation.mutate({ connectionId });
-          }}
-          onReject={(connectionId) => {
-            rejectMutation.mutate({ connectionId });
-          }}
-          isProcessing={acceptMutation.isPending || rejectMutation.isPending}
+        <div className="space-y-4 sm:space-y-6">
+          {pendingRequests && pendingRequests.length > 0 && (
+            <PendingRequestsList
+              requests={pendingRequests}
+              onViewProfile={(request) => {
+                const role = (request as any).requesterRole;
+                const appId = (request as any).requesterAppId;
+                handleViewProfile(request.requesterUserId, role, appId);
+              }}
+              onAccept={(connectionId) => {
+                acceptMutation.mutate(
+                  { connectionId },
+                  {
+                    onSuccess: () => {
+                      toast.success("Demande acceptée");
+                      refetchPending();
+                      refetchConnections();
+                    },
+                    onError: (error: { message: string }) => {
+                      toast.error("Erreur lors de l'acceptation", {
+                        description: error.message,
+                      });
+                    },
+                  }
+                );
+              }}
+              onReject={(connectionId) => {
+                rejectMutation.mutate(
+                  { connectionId },
+                  {
+                    onSuccess: () => {
+                      toast.success("Demande refusée");
+                      refetchPending();
+                    },
+                    onError: (error: { message: string }) => {
+                      toast.error("Erreur lors du refus", {
+                        description: error.message,
+                      });
+                    },
+                  }
+                );
+              }}
+              isProcessing={acceptMutation.isPending || rejectMutation.isPending}
+            />
+          )}
+
+          <AcceptedConnectionsList
+            connections={acceptedConnections || []}
+            onViewProfile={(connection) => {
+              const role = (connection as any).otherUserRole;
+              const appId = (connection as any).otherUserAppId;
+              handleViewProfile(connection.otherUserId, role, appId);
+            }}
+            onRemove={handleRemoveConnection}
+            onMessage={handleMessage}
+            isRemoving={removeConnectionMutation.isPending}
+          />
+        </div>
+
+        <ProfileModalManager
+          open={showProfileModal}
+          onOpenChange={setShowProfileModal}
+          userId={selectedUserId}
+          userRole={selectedUserRole}
         />
-      )}
 
-      <AcceptedConnectionsList
-        connections={acceptedConnections || []}
-        onViewProfile={(connection) => {
-          const role = (connection as any).otherUserRole;
-          const appId = (connection as any).otherUserAppId;
-          handleViewProfile(connection.otherUserId, role, appId);
-        }}
-        onRemove={handleRemoveConnection}
-        onMessage={handleMessage}
-        isRemoving={removeConnectionMutation.isPending}
-      />
-
-      <ProfileModalManager
-        open={showProfileModal}
-        onOpenChange={setShowProfileModal}
-        userId={selectedUserId}
-        userRole={selectedUserRole}
-      />
-
-      <RemoveConnectionDialog
-        open={showRemoveConfirmDialog}
-        onOpenChange={setShowRemoveConfirmDialog}
-        onConfirm={confirmRemoveConnection}
-        isRemoving={removeConnectionMutation.isPending}
-      />
+        <RemoveConnectionDialog
+          open={showRemoveConfirmDialog}
+          onOpenChange={setShowRemoveConfirmDialog}
+          onConfirm={confirmRemoveConnection}
+          isRemoving={removeConnectionMutation.isPending}
+        />
+      </div>
     </div>
   );
 }

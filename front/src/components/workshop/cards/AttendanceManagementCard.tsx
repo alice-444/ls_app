@@ -113,15 +113,15 @@ export function AttendanceManagementCard({
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
             <Users className="w-5 h-5" />
             Gestion de la présence
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Chargement...</p>
+          <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">Chargement...</p>
         </CardContent>
       </Card>
     );
@@ -129,20 +129,20 @@ export function AttendanceManagementCard({
 
   return (
     <>
-      <Card>
+      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
             <Users className="w-5 h-5" />
             Gestion de la présence
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
             Marquez les participants comme présents
           </CardDescription>
         </CardHeader>
         <CardContent>
           {!hasParticipants ? (
-            <div className="text-center py-8 text-slate-500">
-              <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+            <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+              <Users className="w-12 h-12 mx-auto mb-3 text-[rgba(38,84,124,0.32)] dark:text-[rgba(230,230,230,0.32)]" />
               <p>Aucun participant inscrit</p>
             </div>
           ) : (
@@ -157,7 +157,7 @@ export function AttendanceManagementCard({
                   return (
                     <div
                       key={participant.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
+                      className="flex items-center justify-between p-3 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] bg-white dark:bg-[rgba(255,255,255,0.08)]"
                     >
                       <div className="flex items-center gap-3 flex-1">
                         <Checkbox
@@ -176,7 +176,7 @@ export function AttendanceManagementCard({
                         />
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm">
+                            <p className="font-medium text-sm text-[#26547c] dark:text-[#e6e6e6]">
                               {participant.name || "Participant"}
                             </p>
                             {participant.title && (
@@ -189,7 +189,7 @@ export function AttendanceManagementCard({
                             )}
                           </div>
                           {participant.email && (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                               {participant.email}
                             </p>
                           )}
@@ -228,14 +228,14 @@ export function AttendanceManagementCard({
               </div>
 
               {hasUnsavedChanges && (
-                <div className="flex gap-2 pt-2 border-t">
+                <div className="flex gap-2 pt-2 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
                   <Button
                     onClick={handleSave}
                     disabled={
                       updateAttendanceMutation.isPending ||
                       confirmAttendanceMutation.isPending
                     }
-                    className="flex-1"
+                    className="flex-1 bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
                     size="sm"
                   >
                     <Save className="w-4 h-4 mr-2" />
@@ -244,7 +244,7 @@ export function AttendanceManagementCard({
                 </div>
               )}
 
-              <div className="pt-2 border-t">
+              <div className="pt-2 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
                 <Button
                   onClick={handleConfirm}
                   disabled={
@@ -252,7 +252,7 @@ export function AttendanceManagementCard({
                     confirmAttendanceMutation.isPending ||
                     hasUnsavedChanges
                   }
-                  className="w-full"
+                  className="w-full bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
                   variant="default"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />

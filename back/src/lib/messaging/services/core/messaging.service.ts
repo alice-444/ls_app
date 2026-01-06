@@ -206,6 +206,11 @@ export class MessagingService implements IMessagingService {
               );
           }
 
+          const isPinned = await this.isConversationPinned(
+            appUser.id,
+            conversation.id
+          );
+
           return {
             conversationId: conversation.id,
             otherUserId: otherAppUser.userId,
@@ -224,6 +229,7 @@ export class MessagingService implements IMessagingService {
             workshopId: conversation.workshopId,
             workshopTitle,
             workshopDate,
+            isPinned,
           };
         })
       );
@@ -792,6 +798,145 @@ export class MessagingService implements IMessagingService {
         createErrorContext("deleteMessage", {
           userId,
           resourceId: messageId,
+        })
+      );
+    }
+  }
+
+  private async isConversationPinned(
+    appUserId: string,
+    conversationId: string
+  ): Promise<boolean> {
+    try {
+      const client = this.prismaClient || prisma;
+      const pin = await client.conversation_pin.findUnique({
+        where: {
+          conversationId_appUserId: {
+            conversationId,
+            appUserId,
+          },
+        },
+      });
+      return !!pin;
+    } catch (error) {
+      logger.error("Error checking if conversation is pinned", {
+        appUserId,
+        conversationId,
+        error,
+      });
+      return false;
+    }
+  }
+
+  async pinConversation(
+    userId: string,
+    conversationId: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const userResult = await this.validateUserAndGetAppUser(userId);
+      if (!userResult.ok) {
+        return userResult;
+      }
+
+      const appUser = userResult.data.appUser;
+
+      // Verify conversation exists and user is a participant
+      const conversation = await this.conversationRepository.findById(
+        conversationId
+      );
+      if (!conversation) {
+        return failure("Conversation not found", 404);
+      }
+
+      if (
+        conversation.participant1Id !== appUser.id &&
+        conversation.participant2Id !== appUser.id
+      ) {
+        return failure("You are not a participant of this conversation", 403);
+      }
+
+      const client = this.prismaClient || prisma;
+
+      // Check if already pinned
+      const existingPin = await client.conversation_pin.findUnique({
+        where: {
+          conversationId_appUserId: {
+            conversationId,
+            appUserId: appUser.id,
+          },
+        },
+      });
+
+      if (existingPin) {
+        return success({ success: true });
+      }
+
+      // Create pin
+      await client.conversation_pin.create({
+        data: {
+          id: generateInternalId(),
+          conversationId,
+          appUserId: appUser.id,
+          createdAt: new Date(),
+        },
+      });
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("pinConversation", {
+          userId,
+          resourceId: conversationId,
+        })
+      );
+    }
+  }
+
+  async unpinConversation(
+    userId: string,
+    conversationId: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const userResult = await this.validateUserAndGetAppUser(userId);
+      if (!userResult.ok) {
+        return userResult;
+      }
+
+      const appUser = userResult.data.appUser;
+
+      // Verify conversation exists and user is a participant
+      const conversation = await this.conversationRepository.findById(
+        conversationId
+      );
+      if (!conversation) {
+        return failure("Conversation not found", 404);
+      }
+
+      if (
+        conversation.participant1Id !== appUser.id &&
+        conversation.participant2Id !== appUser.id
+      ) {
+        return failure("You are not a participant of this conversation", 403);
+      }
+
+      const client = this.prismaClient || prisma;
+
+      // Delete pin if it exists
+      await client.conversation_pin.deleteMany({
+        where: {
+          conversationId,
+          appUserId: appUser.id,
+        },
+      });
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("unpinConversation", {
+          userId,
+          resourceId: conversationId,
         })
       );
     }

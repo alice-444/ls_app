@@ -14,20 +14,20 @@ export function WorkshopDescription({
 }: WorkshopDescriptionProps) {
   return (
     <>
-      <Card>
+      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
             <FileText className="w-5 h-5" />
             Description
           </CardTitle>
         </CardHeader>
         <CardContent>
           {description ? (
-            <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+            <p className="text-[#161616] dark:text-[#e6e6e6] whitespace-pre-wrap">
               {description}
             </p>
           ) : (
-            <p className="text-slate-500 italic">
+            <p className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] italic">
               Aucune description disponible
             </p>
           )}
@@ -35,15 +35,15 @@ export function WorkshopDescription({
       </Card>
 
       {materialsNeeded && (
-        <Card>
+        <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
               <FileText className="w-5 h-5" />
               Matériel nécessaire
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+            <p className="text-[#161616] dark:text-[#e6e6e6] whitespace-pre-wrap">
               {materialsNeeded}
             </p>
           </CardContent>

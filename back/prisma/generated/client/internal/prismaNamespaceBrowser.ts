@@ -64,6 +64,7 @@ export const ModelName = {
   workshop_cashback_queue: 'workshop_cashback_queue',
   user_connection: 'user_connection',
   conversation: 'conversation',
+  conversation_pin: 'conversation_pin',
   message: 'message',
   message_reaction: 'message_reaction',
   notification: 'notification',
@@ -313,6 +314,16 @@ export const ConversationScalarFieldEnum = {
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
+
+
+export const Conversation_pinScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  appUserId: 'appUserId',
+  createdAt: 'createdAt'
+} as const
+
+export type Conversation_pinScalarFieldEnum = (typeof Conversation_pinScalarFieldEnum)[keyof typeof Conversation_pinScalarFieldEnum]
 
 
 export const MessageScalarFieldEnum = {

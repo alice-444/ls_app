@@ -75,15 +75,15 @@ pnpm dev
 
 Créez les fichiers `.env` :
 
-**`apps/server/.env`**
+**`apps/back/.env`**
 ```env
-DATABASE_URL="prisma+postgresql://..."
+DATABASE_URL="postgresql://..."
 BETTER_AUTH_SECRET="your-secret-key-min-32-chars"
 CORS_ORIGIN="http://localhost:3001"
 CRON_SECRET="your-secret-key-min-32-chars"
 ```
 
-**`apps/web/.env`**
+**`apps/front/.env`**
 ```env
 NEXT_PUBLIC_API_URL="http://localhost:3000"
 ```
@@ -94,9 +94,9 @@ NEXT_PUBLIC_API_URL="http://localhost:3000"
 
 | Script | Description |
 |--------|-------------|
-| `pnpm dev` | Démarre tous les services (web + server) |
-| `pnpm dev:web` | Démarre uniquement le frontend |
-| `pnpm dev:server` | Démarre uniquement le backend |
+| `pnpm dev` | Démarre tous les services (front + back) |
+| `pnpm dev:front` | Démarre uniquement le frontend |
+| `pnpm dev:back` | Démarre uniquement le backend |
 | `pnpm build` | Build toutes les applications |
 | `pnpm check-types` | Vérifie les types TypeScript |
 | `pnpm db:push` | Synchronise le schéma Prisma (dev) |
@@ -151,12 +151,10 @@ learnsup/
 ```
 
 Pour plus de détails, consultez les README de chaque application :
-- [Documentation Frontend](./apps/web/README.md)
-- [Documentation Backend](./apps/server/README.md)
+- [Documentation Frontend](./apps/front/README.md)
+- [Documentation Backend](./apps/back/README.md)
 
 ---
-
-
 
 ## Workflow de Développement
 
@@ -188,7 +186,6 @@ Le projet utilise **GitHub Actions** avec 3 workflows :
 5. Ouvrez une Pull Request
 
 ---
-
 
 <div align="center">
 

@@ -83,6 +83,11 @@ export type user_connection = Prisma.user_connectionModel
  */
 export type conversation = Prisma.conversationModel
 /**
+ * Model conversation_pin
+ * 
+ */
+export type conversation_pin = Prisma.conversation_pinModel
+/**
  * Model message
  * 
  */

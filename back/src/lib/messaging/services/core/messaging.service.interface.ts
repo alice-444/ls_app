@@ -16,6 +16,7 @@ export interface ConversationListItem {
   workshopId: string | null;
   workshopTitle: string | null;
   workshopDate: Date | null;
+  isPinned: boolean;
 }
 
 export interface MessageItem {
@@ -106,4 +107,14 @@ export interface IMessagingService {
     userId: string,
     messageId: string
   ): Promise<Result<{ success: boolean; conversationId: string }>>;
+
+  pinConversation(
+    userId: string,
+    conversationId: string
+  ): Promise<Result<{ success: boolean }>>;
+
+  unpinConversation(
+    userId: string,
+    conversationId: string
+  ): Promise<Result<{ success: boolean }>>;
 }
