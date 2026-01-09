@@ -23,19 +23,10 @@ import {
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { WORKSHOP_VALIDATION, isMinimumTomorrow } from "@/shared/validation";
+import type { WorkshopBasic } from "@/types/workshop";
 
 interface PublishWorkshopDialogProps {
-  workshop: {
-    id: string;
-    title: string;
-    description: string | null;
-    date: Date | null;
-    time: string | null;
-    duration: number | null;
-    location: string | null;
-    isVirtual: boolean;
-    maxParticipants: number | null;
-  } | null;
+  workshop: (Omit<WorkshopBasic, "date"> & { date: Date | null }) | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
@@ -64,9 +55,9 @@ export function PublishWorkshopDialog({
       onOpenChange(false);
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error("Erreur lors de la publication", {
-        description: error.message,
+        description: error.message || "Une erreur est survenue",
       });
       setIsPublishing(false);
     },

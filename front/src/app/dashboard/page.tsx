@@ -168,7 +168,7 @@ export default function Dashboard() {
       refetchConfirmedWorkshops();
       setShowCancelDialog(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de l'annulation");
     },
   });
@@ -262,7 +262,7 @@ export default function Dashboard() {
       utils.workshop.getMyWorkshops.invalidate();
       setShowDeleteDialog(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la suppression");
     },
   });
@@ -273,7 +273,7 @@ export default function Dashboard() {
       utils.workshop.getMyWorkshops.invalidate();
       setShowRescheduleDialog(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la reprogrammation");
     },
   });
@@ -285,7 +285,7 @@ export default function Dashboard() {
       utils.workshop.getAvailableWorkshops.invalidate();
       refetchApprenticeRequests();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de l'annulation de la demande");
     },
   });
@@ -298,7 +298,7 @@ export default function Dashboard() {
       setShowRejectDialog(false);
       setRequestToReject(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(`Erreur: ${error.message}`);
     },
   });

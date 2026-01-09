@@ -7,11 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Video, VideoOff, Mic, MicOff, Phone, PhoneOff } from "lucide-react";
 import { Loader2 } from "lucide-react";
-
-interface DailyVideoCallProps {
-  workshopId: string;
-  onLeave?: () => void;
-}
+import type { DailyVideoCallProps, DailyCallFrame } from "@/types/workshop-components";
 
 export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +15,7 @@ export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
   const [isJoined, setIsJoined] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [isAudioOn, setIsAudioOn] = useState(true);
-  const callFrameRef = useRef<any>(null);
+  const callFrameRef = useRef<DailyCallFrame | null>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: tokenData, isLoading: isLoadingToken } =
@@ -63,7 +59,7 @@ export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
           }
         });
 
-        callFrame.on("error", (error: any) => {
+        callFrame.on("error", (error: { errorMsg?: string }) => {
           console.error("Daily.co error:", error);
           setError(error?.errorMsg || "Une erreur est survenue");
           setIsLoading(false);
@@ -74,9 +70,13 @@ export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
           token: tokenData.token,
           userName: "User",
         });
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error initializing Daily.co:", err);
-        setError(err?.message || "Impossible de rejoindre la visioconférence");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Impossible de rejoindre la visioconférence"
+        );
         setIsLoading(false);
       }
     };

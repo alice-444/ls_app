@@ -25,7 +25,7 @@ function BuyCreditsContent() {
     });
 
   const createCheckoutSession = trpc.credits.createCheckoutSession.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       if (data?.url) {
         window.location.href = data.url;
       }

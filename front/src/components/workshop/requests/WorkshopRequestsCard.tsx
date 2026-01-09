@@ -9,27 +9,7 @@ import {
 } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
 import { WorkshopRequestCard } from "./WorkshopRequestCard";
-
-interface WorkshopRequest {
-  id: string;
-  status: string;
-  title?: string | null;
-  description?: string | null;
-  message?: string | null;
-  preferredDate?: Date | string | null;
-  preferredTime?: string | null;
-  createdAt: Date | string;
-  apprentice?: {
-    user?: {
-      name: string | null;
-    };
-  };
-  mentor?: {
-    user?: {
-      name: string | null;
-    };
-  };
-}
+import type { WorkshopRequest } from "@/types/workshop";
 
 interface WorkshopRequestsCardProps {
   requests: WorkshopRequest[];

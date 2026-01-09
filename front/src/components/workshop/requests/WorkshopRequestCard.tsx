@@ -7,37 +7,7 @@ import {
   getWorkshopRequestStatusLabel,
   getWorkshopRequestStatusColor,
 } from "@/lib/workshop-request-utils";
-
-interface WorkshopRequestCardProps {
-  request: {
-    id: string;
-    status: string;
-    title?: string | null;
-    description?: string | null;
-    message?: string | null;
-    preferredDate?: Date | string | null;
-    preferredTime?: string | null;
-    createdAt: Date | string;
-    apprentice?: {
-      user?: {
-        name: string | null;
-      };
-    };
-    mentor?: {
-      user?: {
-        name: string | null;
-      };
-    };
-  };
-  onAccept?: (request: any) => void;
-  onReject?: (requestId: string) => void;
-  isRejecting?: boolean;
-  variant?: "default" | "compact" | "dashboard";
-  showTitle?: boolean;
-  showDescription?: boolean;
-  showPreferredDate?: boolean;
-  showMentor?: boolean;
-}
+import type { WorkshopRequestCardProps } from "@/types/workshop-components";
 
 export function WorkshopRequestCard({
   request,

@@ -2,8 +2,8 @@ import { z } from "zod";
 import {
   WORKSHOP_VALIDATION,
   WORKSHOP_ERROR_MESSAGES,
-} from "../../../../back/src/shared/validation/workshop.constants";
-import { isMinimumTomorrow } from "../../../../back/src/shared/validation/date.validators";
+} from "./workshop.constants";
+import { isMinimumTomorrow } from "./date.validators";
 
 export const createWorkshopFrontendSchema = z.object({
   title: z

@@ -42,7 +42,7 @@ export function DeleteAccountSection() {
         },
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la suppression du compte");
       setIsDeleting(false);
     },

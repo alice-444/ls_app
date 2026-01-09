@@ -5,12 +5,10 @@ import next from "next";
 import { initializeSocketServer } from "./src/lib/socket/server";
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = process.env.HOSTNAME || "localhost";
-const port = parseInt(process.env.PORT || "3002", 10);
-// const hostname = process.env.HOSTNAME || "0.0.0.0";
-// const port = parseInt(process.env.PORT || "3000", 10);
+const hostname = process.env.HOSTNAME_BACKEND;
+const port = parseInt(process.env.PORT_BACKEND || "4500", 10);
 
-const app = next({ dev, hostname, port });
+const app = next({ hostname,dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -25,15 +23,16 @@ app.prepare().then(() => {
     }
   });
 
-  initializeSocketServer(httpServer);
+  const io = initializeSocketServer(httpServer);
+  console.log("Socket.IO initialized on path /socket.io");
 
   httpServer
     .once("error", (err) => {
       console.error(err);
       process.exit(1);
     })
-    .listen(port, () => {
-      // .listen(port, hostname, () => {
+    .listen(port, hostname, () => {
       console.log(`> Ready on http://${hostname}:${port}`);
+      console.log(`> Socket.IO available at ws://${hostname}:${port}/socket.io`);
     });
 });

@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Edit, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
+import type { EditWorkshopRequestDialogProps } from "@/types/workshop-components";
 
 const editRequestSchema = z.object({
   title: z
@@ -41,26 +42,6 @@ const editRequestSchema = z.object({
 
 type EditRequestFormData = z.infer<typeof editRequestSchema>;
 
-interface EditWorkshopRequestDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  request: {
-    id: string;
-    title: string;
-    description?: string | null;
-    message?: string | null;
-    preferredDate?: Date | string | null;
-    preferredTime?: string | null;
-    mentorId: string;
-    mentor?: {
-      user?: {
-        name: string | null;
-      };
-    };
-  };
-  onSuccess?: () => void;
-}
-
 export function EditWorkshopRequestDialog({
   open,
   onOpenChange,
@@ -76,7 +57,7 @@ export function EditWorkshopRequestDialog({
       form.reset();
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error(
         error.message || "Erreur lors de la modification de la demande"
       );
@@ -114,7 +95,13 @@ export function EditWorkshopRequestDialog({
   const onSubmit = async (data: EditRequestFormData) => {
     setIsSubmitting(true);
 
-    const updateData: any = {
+    const updateData: {
+      title: string;
+      description: string | null;
+      message: string | null;
+      preferredDate: string | null;
+      preferredTime: string | null;
+    } = {
       title: data.title,
       description: data.description || null,
       message: data.message || null,

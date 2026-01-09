@@ -7,16 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/utils/trpc";
-
-interface JoinVideoButtonProps {
-  workshop: {
-    id: string;
-    date: Date | string | null;
-    time: string | null;
-    isVirtual: boolean;
-    dailyRoomId: string | null;
-  };
-}
+import type { JoinVideoButtonProps } from "@/types/workshop-components";
 
 export function JoinVideoButton({ workshop }: JoinVideoButtonProps) {
   const [timeUntilAvailable, setTimeUntilAvailable] = useState<number | null>(
@@ -71,7 +62,7 @@ export function JoinVideoButton({ workshop }: JoinVideoButtonProps) {
     logLinkClickMutation.mutate(
       { workshopId: workshop.id },
       {
-        onError: (error) => {
+        onError: (error: { message?: string }) => {
           console.error("Failed to log video link click:", error);
         },
       }

@@ -35,7 +35,7 @@ export default function ResetPasswordPage() {
         router.push("/login");
       }, 2000);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(
         error.message || "Erreur lors de la réinitialisation du mot de passe"
       );

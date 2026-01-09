@@ -5,16 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { WorkshopRequestCard } from "./WorkshopRequestCard";
-
-interface WorkshopRequestsProps {
-  workshopId: string;
-  workshopStatus: string;
-  expandedWorkshopId: string | null;
-  setExpandedWorkshopId: (id: string | null) => void;
-  onAcceptRequest: (request: any) => void;
-  onRejectRequest: (requestId: string) => void;
-  isRejecting: boolean;
-}
+import type { WorkshopRequest } from "@/types/workshop";
+import type { WorkshopRequestsProps } from "@/types/workshop-components";
 
 export function WorkshopRequests({
   workshopId,
@@ -35,7 +27,7 @@ export function WorkshopRequests({
   );
 
   const pendingRequests =
-    requests?.filter((r: any) => r.status === "PENDING") || [];
+    (requests?.filter((r: WorkshopRequest) => r.status === "PENDING") as WorkshopRequest[]) || [];
 
   const displayRequests = pendingRequests;
   const isExpanded = expandedWorkshopId === workshopId;
@@ -78,7 +70,7 @@ export function WorkshopRequests({
       </div>
       {isExpanded && displayRequests.length > 0 && (
         <div className="space-y-3 mt-3">
-          {displayRequests.map((request: any) => (
+          {displayRequests.map((request) => (
             <WorkshopRequestCard
               key={request.id}
               request={request}

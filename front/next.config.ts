@@ -2,11 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  outputFileTracingRoot: '../../',
-  typescript: {
-    // Ignore TypeScript errors during build (for monorepo cross-imports)
-    ignoreBuildErrors: true,
-  },
+  turbopack: {},
+  // Removed outputFileTracingRoot to avoid nested standalone structure in Docker
+  // The backend files are already copied in the Dockerfile, so this isn't needed
 };
 
 export default nextConfig;

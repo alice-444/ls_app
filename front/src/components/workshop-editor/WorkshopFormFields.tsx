@@ -16,11 +16,16 @@ import {
   Coins,
 } from "lucide-react";
 import { WORKSHOP_VALIDATION } from "@/shared/validation";
+import type {
+  CreateWorkshopFrontendData,
+  EditWorkshopFrontendData,
+} from "@/shared/validation";
 
-interface WorkshopFormFieldsProps {
-  register: UseFormRegister<any>;
-  control: Control<any>;
-  errors: FieldErrors<any>;
+
+interface WorkshopFormFieldsProps<T extends CreateWorkshopFrontendData = CreateWorkshopFrontendData> {
+  register: UseFormRegister<T>;
+  control: Control<T>;
+  errors: FieldErrors<T>;
   isVirtual: boolean;
   description: string;
 }

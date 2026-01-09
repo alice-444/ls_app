@@ -16,13 +16,7 @@ import { Star, Loader2, Coins, CheckCircle2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { TippingModal } from "./TippingModal";
-
-interface SubmitFeedbackDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  workshopId: string;
-  onSuccess?: () => void;
-}
+import type { SubmitFeedbackDialogProps } from "@/types/workshop-components";
 
 export function SubmitFeedbackDialog({
   open,
@@ -39,7 +33,7 @@ export function SubmitFeedbackDialog({
   const [mentorUserId, setMentorUserId] = useState<string | null>(null);
 
   const submitMutation = trpc.workshopFeedback.submitFeedback.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: { mentorUserId?: string }) => {
       setShowSuccessAnimation(true);
 
       setTimeout(() => {
@@ -59,7 +53,7 @@ export function SubmitFeedbackDialog({
         }
       }, 2000);
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });

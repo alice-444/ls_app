@@ -45,7 +45,7 @@ export function UpdateProfileSection() {
       setIsSaving(false);
       refetchProfile();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Failed to update profile");
       setIsSaving(false);
     },

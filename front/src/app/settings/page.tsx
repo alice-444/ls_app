@@ -295,7 +295,7 @@ function EmailChangeButton() {
 
   const requestEmailChangeMutation =
     trpc.accountSettings.requestEmailChange.useMutation({
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         toast.success(
           data.message ||
             "Un lien de vérification a été envoyé à votre nouvelle adresse email"
@@ -304,7 +304,7 @@ function EmailChangeButton() {
         setNewEmail("");
         setCurrentPassword("");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error(
           error.message || "Erreur lors de la demande de changement d'email"
         );
@@ -472,7 +472,7 @@ function DeleteAccountButton() {
         },
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la suppression du compte");
     },
   });
@@ -860,7 +860,7 @@ function PersonalInformationSection() {
       setIsSaving(false);
       refetchProfile();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la mise à jour");
       setIsSaving(false);
     },

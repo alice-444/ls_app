@@ -63,7 +63,7 @@ export default function ProfilPage() {
       toast.success("Profil sauvegardé avec succès !");
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la sauvegarde");
     },
   });

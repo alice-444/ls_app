@@ -22,10 +22,10 @@ import {
   Trash2,
   Rocket,
 } from "lucide-react";
-import { CreateWorkshopForm } from "./components/CreateWorkshopForm";
-import { EditWorkshopForm } from "./components/EditWorkshopForm";
-import { DeleteWorkshopDialog } from "./components/DeleteWorkshopDialog";
-import { PublishWorkshopDialog } from "./components/PublishWorkshopDialog";
+import { CreateWorkshopForm } from "@/components/workshop-editor/CreateWorkshopForm";
+import { EditWorkshopForm } from "@/components/workshop-editor/EditWorkshopForm";
+import { DeleteWorkshopDialog } from "@/components/workshop-editor/DeleteWorkshopDialog";
+import { PublishWorkshopDialog } from "@/components/workshop-editor/PublishWorkshopDialog";
 import { trpc } from "@/utils/trpc";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -36,16 +36,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BackButton } from "@/components/back-button";
-type Workshop = {
-  id: string;
-  title: string;
-  description: string | null;
-  date: Date | string | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  maxParticipants: number | null;
+import type { WorkshopBasic } from "@/types/workshop";
+
+type Workshop = WorkshopBasic & {
   status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 };
 
@@ -192,6 +185,7 @@ export default function WorkshopEditorPage() {
   }
 
   const hasWorkshops = workshops && workshops.length > 0;
+  const workshopsList: Workshop[] = workshops || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -240,7 +234,7 @@ export default function WorkshopEditorPage() {
 
         {hasWorkshops ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {workshops.map((workshop: Workshop) => {
+            {workshopsList.map((workshop) => {
               let badgeVariant: "default" | "secondary" | "outline" = "outline";
               if (workshop.status === "PUBLISHED") {
                 badgeVariant = "default";
@@ -358,13 +352,20 @@ export default function WorkshopEditorPage() {
                           </span>
                         </div>
                       )}
-                      {workshop.location && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-[#26547c] dark:text-[#e6e6e6]" />
-                          <span className="line-clamp-1">
-                            {workshop.location}
-                          </span>
+                      {workshop.isVirtual ? (
+                        <div className="flex items-center gap-2 text-[#4A90E2] dark:text-[#4A90E2]">
+                          <MapPin className="h-4 w-4" />
+                          <span className="line-clamp-1">Atelier virtuel</span>
                         </div>
+                      ) : (
+                        workshop.location && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-[#26547c] dark:text-[#e6e6e6]" />
+                            <span className="line-clamp-1">
+                              {workshop.location}
+                            </span>
+                          </div>
+                        )
                       )}
                     </div>
                   </CardContent>

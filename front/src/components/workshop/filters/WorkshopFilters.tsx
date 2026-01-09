@@ -11,21 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
-
-type SortField = "date" | "title" | "status" | "createdAt";
-type SortOrder = "asc" | "desc";
-type StatusFilter = "all" | "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-
-interface WorkshopFiltersProps {
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  statusFilter: StatusFilter;
-  onStatusFilterChange: (filter: StatusFilter) => void;
-  sortField: SortField;
-  onSortFieldChange: (field: SortField) => void;
-  sortOrder: SortOrder;
-  onSortOrderChange: (order: SortOrder) => void;
-}
+import type {
+  WorkshopFiltersProps,
+  SortField,
+  SortOrder,
+  StatusFilter,
+} from "@/types/workshop-components";
 
 export function WorkshopFilters({
   searchQuery,
