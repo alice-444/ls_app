@@ -76,6 +76,6 @@ services:
     networks:
       - web
 
-  networks:
-    web:
-      external: true
+networks:
+  web:
+    external: true
