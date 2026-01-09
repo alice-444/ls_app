@@ -15,11 +15,8 @@ import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { LevelUpModal } from "@/components/user/LevelUpModal";
-
-interface AttendanceManagementCardProps {
-  workshopId: string;
-  isOwner: boolean;
-}
+import type { WorkshopParticipant } from "@/types/workshop";
+import type { AttendanceManagementCardProps } from "@/types/workshop-components";
 
 export function AttendanceManagementCard({
   workshopId,
@@ -40,19 +37,19 @@ export function AttendanceManagementCard({
     );
 
   const updateAttendanceMutation = trpc.workshop.updateAttendance.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: { titleChanged?: boolean; newTitle?: string }) => {
       toast.success("Présence mise à jour");
       refetch();
       setAttendanceUpdates({});
 
       // Show Level Up modal if title changed
-      if (data.titleChanged && "newTitle" in data && data.newTitle) {
+      if (data.titleChanged && data.newTitle) {
         setNewTitle(data.newTitle);
         setLevelUpModalOpen(true);
       }
     },
-    onError: (error) => {
-      toast.error(`Erreur: ${error.message}`);
+    onError: (error: { message?: string }) => {
+      toast.error(`Erreur: ${error.message || "Une erreur est survenue"}`);
     },
   });
 
@@ -63,8 +60,8 @@ export function AttendanceManagementCard({
         refetch();
         setAttendanceUpdates({});
       },
-      onError: (error) => {
-        toast.error(`Erreur: ${error.message}`);
+      onError: (error: { message?: string }) => {
+        toast.error(`Erreur: ${error.message || "Une erreur est survenue"}`);
       },
     }
   );
@@ -104,7 +101,7 @@ export function AttendanceManagementCard({
     if (attendanceUpdates[participantId]) {
       return attendanceUpdates[participantId];
     }
-    const participant = participants.find((p) => p.id === participantId);
+    const participant = participants.find((p: WorkshopParticipant) => p.id === participantId);
     return (
       (participant?.attendanceStatus as "PENDING" | "PRESENT" | "NO_SHOW") ||
       "PENDING"
@@ -148,7 +145,7 @@ export function AttendanceManagementCard({
           ) : (
             <div className="space-y-4">
               <div className="space-y-3">
-                {participants.map((participant) => {
+                {participants.map((participant: WorkshopParticipant) => {
                   const currentStatus = getAttendanceStatus(participant.id);
                   const isPresent = currentStatus === "PRESENT";
                   const isNoShow = currentStatus === "NO_SHOW";

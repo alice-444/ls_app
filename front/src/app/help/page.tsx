@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { faqConfig } from "@/lib/faq-config";
 import { FAQAccordion } from "@/components/faq/FAQAccordion";
 import { BackButton } from "@/components/back-button";
-import { useMemo } from "react";
+import { useMemo, Suspense } from "react";
 
-export default function HelpCenterPage() {
+function HelpCenterContent() {
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("category");
 
@@ -211,5 +211,23 @@ export default function HelpCenterPage() {
         })}
       </div>
     </div>
+  );
+}
+
+export default function HelpCenterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-[#26547c] dark:text-[#e6e6e6] text-lg">
+              Chargement...
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <HelpCenterContent />
+    </Suspense>
   );
 }

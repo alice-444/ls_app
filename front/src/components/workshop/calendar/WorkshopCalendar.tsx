@@ -9,6 +9,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./WorkshopCalendar.css";
 import type { WorkshopBasic } from "@/types/workshop";
 import { calculateEndTime } from "@/lib/workshop-utils";
+import type { WorkshopCalendarProps } from "@/types/workshop-components";
 
 const locales = {
   fr: fr,
@@ -23,18 +24,6 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
-
-interface WorkshopCalendarProps {
-  readonly workshops: readonly WorkshopBasic[];
-  readonly height?: string;
-  readonly onSelectEvent: (workshop: WorkshopBasic) => void;
-  readonly showOnlyConfirmed?: boolean;
-  readonly userRole?: "MENTOR" | "APPRENANT";
-  readonly controlledDate?: Date;
-  readonly controlledView?: View;
-  readonly onDateChange?: (date: Date) => void;
-  readonly onViewChange?: (view: View) => void;
-}
 
 export function WorkshopCalendar({
   workshops,
@@ -120,7 +109,7 @@ export function WorkshopCalendar({
       .filter((event): event is NonNullable<typeof event> => event !== null);
   }, [workshops, showOnlyConfirmed, userRole]);
 
-  const eventStyleGetter = (event: any) => {
+  const eventStyleGetter = (event: { resource?: WorkshopBasic }) => {
     const workshop = event.resource as WorkshopBasic;
     let backgroundColor = workshop.isVirtual ? "#4A90E2" : "#26547C";
 
@@ -141,7 +130,7 @@ export function WorkshopCalendar({
     };
   };
 
-  const handleSelectEvent = (event: any) => {
+  const handleSelectEvent = (event: { resource?: WorkshopBasic }) => {
     if (event.resource) {
       onSelectEvent(event.resource);
     }

@@ -95,7 +95,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
 
   const utils = trpc.useUtils();
   const markAsReadMutation = trpc.messaging.markMessagesAsRead.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       utils.messaging.getUnreadConversationsCount.invalidate();
       refetch();
       if (socket?.connected && data.messageIds.length > 0) {
@@ -115,7 +115,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
   );
 
   const conversation = conversations?.find(
-    (c) => c.conversationId === conversationId
+    (c: any) => c.conversationId === conversationId
   );
 
   const { data: conversationDetails, refetch: refetchConversationDetails } =
@@ -366,7 +366,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
       refetch();
       setReplyingToMessageId(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error sending message:", error);
     },
   });
@@ -375,7 +375,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
     onSuccess: () => {
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors de la modification", {
         description: error.message,
       });
@@ -386,7 +386,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
     onSuccess: () => {
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors de la suppression", {
         description: error.message,
       });
@@ -632,7 +632,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
                   </p>
                 ) : (
                   <div className="space-y-1">
-                    {searchResults.map((result) => {
+                    {searchResults.map((result: any) => {
                       const handleResultClick = () => {
                         const element = document.querySelector(
                           `[data-message-id="${result.messageId}"]`

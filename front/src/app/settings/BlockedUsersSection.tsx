@@ -16,7 +16,7 @@ export function BlockedUsersSection() {
       utils.userBlock.getBlockedUsers.invalidate();
       utils.messaging.getConversations.invalidate();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors du déblocage", {
         description: error.message,
       });
@@ -79,7 +79,7 @@ export function BlockedUsersSection() {
       </p>
 
       <div className="space-y-3">
-        {blockedUsers.map((blockedUser) => (
+        {blockedUsers.map((blockedUser: any) => (
           <div
             key={blockedUser.userId}
             className="flex items-center justify-between p-4 border border-[#d6dae4] rounded-lg hover:bg-muted/50 transition-colors"

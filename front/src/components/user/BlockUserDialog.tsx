@@ -39,7 +39,7 @@ export function BlockUserDialog({
       onOpenChange(false);
       onBlocked?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors du blocage", {
         description: error.message,
       });

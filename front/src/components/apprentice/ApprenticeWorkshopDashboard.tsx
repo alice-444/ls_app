@@ -115,7 +115,7 @@ export function ApprenticeWorkshopDashboard() {
       utils.workshop.getUpcomingWorkshops.invalidate();
       setCancelDialogWorkshop(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de l'annulation");
     },
   });

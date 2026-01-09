@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (session && !isPending) {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
   }, [session, isPending, router]);
 
@@ -23,7 +23,7 @@ export default function LoginPage() {
   }
 
   if (session) {
-    return null;
+    return <Loader />;
   }
 
   return showSignIn ? (

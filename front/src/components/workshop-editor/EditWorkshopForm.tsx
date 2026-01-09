@@ -22,9 +22,10 @@ import {
   convertDurationToMinutes,
   extractDurationParts,
 } from "./WorkshopFormFields";
+import type { WorkshopBasic } from "@/types/workshop";
 
 interface EditWorkshopFormProps {
-  workshop: any;
+  workshop: WorkshopBasic;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -66,16 +67,19 @@ export function EditWorkshopForm({
   const isVirtual = watch("isVirtual");
   const description = watch("description") || "";
 
+  const utils = trpc.useUtils();
   const updateMutation = trpc.workshop.update.useMutation({
     onSuccess: () => {
       toast.success("Atelier modifié avec succès!", {
         description: "Les modifications ont été enregistrées.",
       });
+      // Invalidate queries to refresh the data
+      utils.workshop.getMyWorkshops.invalidate();
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error("Erreur lors de la modification", {
-        description: error.message,
+        description: error.message || "Une erreur est survenue",
       });
     },
   });
@@ -94,7 +98,7 @@ export function EditWorkshopForm({
       date: data.date || undefined,
       time: data.time || undefined,
       duration: duration || undefined,
-      location: data.location || null,
+      location: data.isVirtual ? null : (data.location || null),
       isVirtual: data.isVirtual,
       maxParticipants: data.maxParticipants || null,
       materialsNeeded: data.materialsNeeded || null,
@@ -113,9 +117,9 @@ export function EditWorkshopForm({
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <WorkshopFormFields
-            register={register}
-            control={control}
-            errors={errors}
+            register={register as any}
+            control={control as any}
+            errors={errors as any}
             isVirtual={isVirtual}
             description={description}
           />

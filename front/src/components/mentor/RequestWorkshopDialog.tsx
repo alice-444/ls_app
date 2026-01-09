@@ -85,7 +85,7 @@ export function RequestWorkshopDialog({
       onOpenChange(false);
       setIsSubmitting(false);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(
         error.message ||
           "Erreur lors de l'envoi de la demande. Veuillez réessayer plus tard."

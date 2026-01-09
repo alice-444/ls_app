@@ -59,9 +59,9 @@ export function CreateWorkshopForm({
       reset();
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error("Erreur lors de la création", {
-        description: error.message,
+        description: error.message || "Une erreur est survenue",
       });
     },
   });

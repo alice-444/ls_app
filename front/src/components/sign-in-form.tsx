@@ -49,7 +49,7 @@ export default function SignInForm({
 						router.push("/dashboard");
 						toast.success("Sign in successful");
 					},
-					onError: (error) => {
+					onError: (error: any) => {
 						setIsSubmitting(false);
 						toast.error(error.error.message || error.error.statusText);
 					},

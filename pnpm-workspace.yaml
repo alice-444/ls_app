@@ -1,3 +1,7 @@
 packages:
-  - "front"
-  - "back"
+  - front
+  - back
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - prisma

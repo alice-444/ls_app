@@ -31,6 +31,10 @@ export const WORKSHOP_VALIDATION = {
   materialsNeeded: {
     max: 500,
   },
+  topic: {
+    min: 2,
+    max: 50,
+  },
 } as const;
 
 export const WORKSHOP_ERROR_MESSAGES = {
@@ -69,5 +73,9 @@ export const WORKSHOP_ERROR_MESSAGES = {
   },
   materialsNeeded: {
     max: `Le matériel nécessaire ne peut pas dépasser ${WORKSHOP_VALIDATION.materialsNeeded.max} caractères`,
+  },
+  topic: {
+    min: `Le sujet doit contenir au moins ${WORKSHOP_VALIDATION.topic.min} caractères`,
+    max: `Le sujet ne peut pas dépasser ${WORKSHOP_VALIDATION.topic.max} caractères`,
   },
 } as const;

@@ -105,7 +105,8 @@ export default function UserMenu() {
   const filteredMenuLinks = useMemo(() => {
     return menuLinks.filter((link) => {
       if (!link.roles) return true;
-      return link.roles.includes(userRole || null);
+      if (!userRole) return false;
+      return link.roles.includes(userRole);
     });
   }, [menuLinks, userRole]);
 

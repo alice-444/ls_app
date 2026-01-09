@@ -15,34 +15,7 @@ import {
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 import { getStatusBadge } from "@/lib/workshop-utils";
 import { WorkshopRequests } from "../requests/WorkshopRequests";
-
-interface WorkshopListItemProps {
-  workshop: {
-    id: string;
-    title: string;
-    description?: string | null;
-    status: string;
-    date?: Date | string | null;
-    time?: string | null;
-    duration?: number | null;
-    maxParticipants?: number | null;
-    apprenticeId?: string | null;
-    createdAt: Date | string;
-  };
-  expandedWorkshopId: string | null;
-  onExpand: (id: string | null) => void;
-  onViewDetails: (id: string) => void;
-  onEdit: (id: string) => void;
-  onPublish: (id: string) => void;
-  onUnpublish: (id: string) => void;
-  onDelete: (id: string) => void;
-  onAcceptRequest: (request: any) => void;
-  onRejectRequest: (requestId: string) => void;
-  isPublishing: boolean;
-  isUnpublishing: boolean;
-  isDeleting: boolean;
-  isRejecting: boolean;
-}
+import type { WorkshopListItemProps } from "@/types/workshop-components";
 
 export function WorkshopListItem({
   workshop,

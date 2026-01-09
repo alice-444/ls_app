@@ -42,9 +42,9 @@ export function DeleteWorkshopDialog({
       onOpenChange(false);
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error("Erreur lors de la suppression", {
-        description: error.message,
+        description: error.message || "Une erreur est survenue",
       });
       setIsDeleting(false);
     },

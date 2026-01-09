@@ -93,7 +93,7 @@ export function AcceptWorkshopRequestDialog({
       setIsSubmitting(false);
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(
         error.message ||
           "Erreur lors de l'acceptation de la demande. Veuillez réessayer."

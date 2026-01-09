@@ -71,11 +71,11 @@ export function ConversationList() {
 
   const getOrCreateConversationMutation =
     trpc.messaging.getOrCreateConversation.useMutation({
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         router.push(`/inbox/${data.conversationId}`);
         setShowNewConversationDialog(false);
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error("Erreur lors de l'ouverture de la conversation", {
           description: error.message,
         });
@@ -92,7 +92,7 @@ export function ConversationList() {
       refetch();
       utils.messaging.getUnreadConversationsCount.invalidate();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors de la suppression", {
         description: error.message,
       });
@@ -108,7 +108,7 @@ export function ConversationList() {
       refetch();
       toast.success("Conversation épinglée");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors de l'épinglage", {
         description: error.message,
       });
@@ -121,7 +121,7 @@ export function ConversationList() {
         refetch();
         toast.success("Conversation désépinglée");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error("Erreur lors du désépinglage", {
           description: error.message,
         });
@@ -156,9 +156,9 @@ export function ConversationList() {
     const handleConversationUpdate = (
       updatedConversation: NonNullable<typeof conversations>[0]
     ) => {
-      setLocalConversations((prev) => {
+      setLocalConversations((prev: any) => {
         const index = prev.findIndex(
-          (c) => c.conversationId === updatedConversation.conversationId
+          (c: any) => c.conversationId === updatedConversation.conversationId
         );
 
         if (index >= 0) {
@@ -228,7 +228,7 @@ export function ConversationList() {
   }
 
   // Filter conversations based on search and pin status
-  const filteredConversations = localConversations.filter((conv) => {
+  const filteredConversations = localConversations.filter((conv: any) => {
     const displayName = conv.otherUserDisplayName || conv.otherUserName || "";
     const matchesSearch = displayName
       .toLowerCase()
@@ -255,7 +255,7 @@ export function ConversationList() {
   );
 
   const filteredConnections = (acceptedConnections || []).filter(
-    (connection) => {
+    (connection: any) => {
       if (!searchQuery) return true;
       const query = searchQuery.toLowerCase();
       const name =
@@ -265,10 +265,10 @@ export function ConversationList() {
   );
 
   const existingConversationUserIds = new Set(
-    localConversations.map((c) => c.otherUserId)
+    localConversations.map((c: any) => c.otherUserId)
   );
   const availableConnections = filteredConnections.filter(
-    (connection) => !existingConversationUserIds.has(connection.otherUserId)
+    (connection: any) => !existingConversationUserIds.has(connection.otherUserId)
   );
 
   return (
@@ -331,7 +331,7 @@ export function ConversationList() {
                 "Utilisateur";
               const initials = displayName
                 .split(" ")
-                .map((n) => n[0])
+                .map((n: any) => n[0])
                 .join("")
                 .toUpperCase()
                 .slice(0, 2);
@@ -617,14 +617,14 @@ export function ConversationList() {
                           : "Toutes vos connexions ont déjà une conversation active"}
                       </div>
                     ) : (
-                      availableConnections.map((connection) => {
+                      availableConnections.map((connection: any) => {
                         const displayName =
                           connection.otherUserDisplayName ||
                           connection.otherUserName ||
                           "Utilisateur";
                         const initials = displayName
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: any) => n[0])
                           .join("")
                           .toUpperCase()
                           .slice(0, 2);

@@ -56,7 +56,7 @@ export default function ApprenticeProfilePage() {
       onSuccess: () => {
         toast.success("Demande d'invitation envoyée");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error("Erreur lors de l'envoi", {
           description: error.message,
         });
@@ -69,7 +69,7 @@ export default function ApprenticeProfilePage() {
         toast.success("Connexion supprimée");
         router.refresh();
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error("Erreur lors de la suppression", {
           description: error.message,
         });
@@ -233,7 +233,7 @@ export default function ApprenticeProfilePage() {
                           Tags
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                          {profile.iceBreakerTags.map((tag, index) => (
+                          {profile.iceBreakerTags.map((tag: string, index: number) => (
                             <span
                               key={index}
                               className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-sm"
