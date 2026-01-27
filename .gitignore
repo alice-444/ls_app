@@ -1,5 +1,4 @@
 cypress.config.js
-sonar-project.properties
 .DS_Store
 node_modules
 .turbo
