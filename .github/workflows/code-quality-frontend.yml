@@ -1,0 +1,71 @@
+name: Code Quality - Frontend
+on:
+  push:
+    branches:
+      - ci/cd
+    paths:
+      - "front/**"
+  pull_request:
+    branches:
+      - main
+      - prod
+      - dev
+      - feat/*
+    paths:
+      - "front/**"
+    types: [opened]
+
+jobs:
+  # super-linter:
+  #   name: Super-Linter
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+
+  #   permissions:
+  #     contents: read
+  #     packages: read
+  #     statuses: write
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Super-linter
+  #       uses: super-linter/super-linter@v8.3.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         VALIDATE_ALL_CODEBASE: true
+  #         FILTER_REGEX_EXCLUDE: ".*/.next/.*|.*/node_modules/.*|.*/dist/.*|.*/.turbo/.*|.*/prisma/generated/.*"
+  #         VALIDATE_TYPESCRIPT_ES: true
+  #         VALIDATE_JAVASCRIPT_ES: true
+  #         VALIDATE_JSON: true
+  #         VALIDATE_YAML: true
+  #         VALIDATE_MARKDOWN: true
+  #         VALIDATE_BASH: true
+  #         VALIDATE_DOCKERFILE_HADOLINT: true
+  #         VALIDATE_CSS: true
+        
+  sonarqube:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v7.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: alice-444_ls_app
+          SONAR_ORGANIZATION: hola-solar
+        with:
+          projectBaseDir: front
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: "fs"
+          scan-ref: "front"
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
