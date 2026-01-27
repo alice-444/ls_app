@@ -1,0 +1,29 @@
+services:
+  # Service Frontend
+  frontend:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/front/Dockerfile.prod
+    ports:
+      - "3001:3001"
+    environment:
+      - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
+
+  # Service Backend
+  backend:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/back/Dockerfile.prod
+    ports:
+      - "4500:4500"
+    environment:
+      # - PORT=3000
+      - DATABASE_URL=${DATABASE_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - CRON_SECRET=${CRON_SECRET}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    volumes:
+      # - ../../:/app
+      - /app/node_modules
+    env_file:
+      - .env

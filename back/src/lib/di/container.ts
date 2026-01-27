@@ -208,8 +208,8 @@ class DIContainer {
     return this._services.creditService;
   }
 
-  get stripeService() {
-    return this._services.stripeService;
+  get polarService() {
+    return this._services.polarService;
   }
 
   get emailService() {

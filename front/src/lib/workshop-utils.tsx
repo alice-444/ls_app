@@ -2,37 +2,56 @@ import { Badge } from "@/components/ui/badge";
 import { Edit, CheckCircle, XCircle } from "lucide-react";
 import { WORKSHOP_VALIDATION } from "@/shared/validation/workshop.constants";
 
-export const getStatusBadge = (status: string) => {
+export const getStatusBadge = (status: string, size: "sm" | "md" | "lg" = "sm") => {
+  const iconSizes = {
+    sm: "w-3 h-3",
+    md: "w-4 h-4",
+    lg: "w-5 h-5",
+  };
+  const textSizes = {
+    sm: "text-xs",
+    md: "text-sm",
+    lg: "text-base",
+  };
+  const paddingSizes = {
+    sm: "px-2 py-1",
+    md: "px-3 py-1.5",
+    lg: "px-4 py-2",
+  };
+
   const variants: Record<
     string,
-    { variant: any; label: string; icon: React.ReactNode }
+    { variant: any; label: string; icon: (size: string) => React.ReactNode }
   > = {
     DRAFT: {
       variant: "secondary",
       label: "Brouillon",
-      icon: <Edit className="w-3 h-3 mr-1" />,
+      icon: (iconSize) => <Edit className={`${iconSize} mr-1.5`} />,
     },
     PUBLISHED: {
       variant: "default",
       label: "Publié",
-      icon: <CheckCircle className="w-3 h-3 mr-1" />,
+      icon: (iconSize) => <CheckCircle className={`${iconSize} mr-1.5`} />,
     },
     CANCELLED: {
       variant: "destructive",
       label: "Annulé",
-      icon: <XCircle className="w-3 h-3 mr-1" />,
+      icon: (iconSize) => <XCircle className={`${iconSize} mr-1.5`} />,
     },
     COMPLETED: {
       variant: "outline",
       label: "Terminé",
-      icon: <CheckCircle className="w-3 h-3 mr-1" />,
+      icon: (iconSize) => <CheckCircle className={`${iconSize} mr-1.5`} />,
     },
   };
 
   const config = variants[status] || variants.DRAFT;
   return (
-    <Badge variant={config.variant} className="flex items-center w-fit">
-      {config.icon}
+    <Badge
+      variant={config.variant}
+      className={`flex items-center w-fit ${textSizes[size]} ${paddingSizes[size]}`}
+    >
+      {config.icon(iconSizes[size])}
       {config.label}
     </Badge>
   );

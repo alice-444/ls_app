@@ -8,7 +8,7 @@ interface CreditPurchaseConfirmationProps {
   readonly amount: string;
   readonly currency: string;
   readonly transactionId: string;
-  readonly stripeSessionId: string;
+  readonly polarCheckoutId: string;
   readonly date: string;
 }
 
@@ -18,7 +18,7 @@ export function CreditPurchaseConfirmation({
   amount,
   currency,
   transactionId,
-  stripeSessionId,
+  polarCheckoutId,
   date,
 }: CreditPurchaseConfirmationProps) {
   return (
@@ -44,7 +44,7 @@ export function CreditPurchaseConfirmation({
           <strong>N° de transaction :</strong> {transactionId}
         </Text>
         <Text style={infoText}>
-          <strong>N° de session Stripe :</strong> {stripeSessionId}
+          <strong>N° de checkout Polar.sh :</strong> {polarCheckoutId}
         </Text>
         <Text style={infoText}>
           <strong>Date :</strong> {date}

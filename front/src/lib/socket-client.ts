@@ -26,7 +26,7 @@ export function useSocket(): Socket | null {
     }
 
     const serverUrl =
-      process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3002";
 
     socketInstance = io(serverUrl, {
       path: "/socket.io",

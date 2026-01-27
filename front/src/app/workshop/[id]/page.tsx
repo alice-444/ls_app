@@ -51,47 +51,40 @@ export default function WorkshopDetailPage() {
 
   const utils = trpc.useUtils();
   const getOrCreateConversationMutation =
-    trpc.messaging.getOrCreateConversation.useMutation({
-      onSuccess: (data) => {
-        utils.messaging.getConversationDetails.invalidate({
-          conversationId: data.conversationId,
-        });
-        utils.messaging.getConversations.invalidate();
-        router.push(`/inbox/${data.conversationId}`);
-      },
-      onError: (error) => {
-        toast.error("Erreur lors de l'ouverture de la conversation", {
-          description: error.message,
-        });
-      },
-    });
+    trpc.messaging.getOrCreateConversation.useMutation();
 
   const handleContactMentor = () => {
     if (workshop?.creator?.userId) {
-      getOrCreateConversationMutation.mutate({
-        otherUserId: workshop.creator.userId,
-        workshopId: workshop.id,
-      });
+      getOrCreateConversationMutation.mutate(
+        {
+          otherUserId: workshop.creator.userId,
+          workshopId: workshop.id,
+        },
+        {
+          onSuccess: (data: { conversationId: string }) => {
+            utils.messaging.getConversationDetails.invalidate({
+              conversationId: data.conversationId,
+            });
+            utils.messaging.getConversations.invalidate();
+            router.push(`/inbox/${data.conversationId}`);
+          },
+          onError: (error: { message: string }) => {
+            toast.error("Erreur lors de l'ouverture de la conversation", {
+              description: error.message,
+            });
+          },
+        }
+      );
     }
   };
 
-  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation({
-    onSuccess: () => {
-      toast.success("Demande refusée avec succès");
-      utils.mentor.getWorkshopRequests.invalidate();
-      setShowRejectDialog(false);
-      setRequestToReject(null);
-    },
-    onError: (error) => {
-      toast.error(`Erreur: ${error.message}`);
-    },
-  });
+  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation();
 
   const { data: workshopRequests } = trpc.mentor.getWorkshopRequests.useQuery(
     { workshopId },
     {
       enabled: !!workshopId && !!session?.user?.id,
-    }
+    } as any
   );
 
   const handleAcceptRequest = (request: any) => {
@@ -106,7 +99,20 @@ export default function WorkshopDetailPage() {
 
   const confirmRejectRequest = () => {
     if (requestToReject) {
-      rejectRequest.mutate({ requestId: requestToReject });
+      rejectRequest.mutate(
+        { requestId: requestToReject },
+        {
+          onSuccess: () => {
+            toast.success("Demande refusée avec succès");
+            utils.mentor.getWorkshopRequests.invalidate();
+            setShowRejectDialog(false);
+            setRequestToReject(null);
+          },
+          onError: (error: { message: string }) => {
+            toast.error(`Erreur: ${error.message}`);
+          },
+        }
+      );
     }
   };
 
@@ -118,32 +124,26 @@ export default function WorkshopDetailPage() {
     { workshopId },
     {
       enabled: !!workshopId,
-    }
+    } as any
   );
 
-  const deleteMutation = trpc.workshop.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Atelier supprimé avec succès");
-      router.push("/my-workshops");
-    },
-    onError: (error) => {
-      toast.error(error.message || "Erreur lors de la suppression");
-    },
-  });
-
-  const unpublishMutation = trpc.workshop.unpublish.useMutation({
-    onSuccess: () => {
-      toast.success("Atelier dépublié avec succès");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Erreur lors de la dépublication");
-    },
-  });
+  const deleteMutation = trpc.workshop.delete.useMutation();
+  const unpublishMutation = trpc.workshop.unpublish.useMutation();
 
   const handleDelete = () => {
-    deleteMutation.mutate({ workshopId });
-    setShowDeleteDialog(false);
+    deleteMutation.mutate(
+      { workshopId },
+      {
+        onSuccess: () => {
+          toast.success("Atelier supprimé avec succès");
+          router.push("/my-workshops");
+          setShowDeleteDialog(false);
+        },
+        onError: (error: { message: string }) => {
+          toast.error(error.message || "Erreur lors de la suppression");
+        },
+      }
+    );
   };
 
   const handleEdit = () => {
@@ -151,7 +151,18 @@ export default function WorkshopDetailPage() {
   };
 
   const handleUnpublish = () => {
-    unpublishMutation.mutate({ workshopId });
+    unpublishMutation.mutate(
+      { workshopId },
+      {
+        onSuccess: () => {
+          toast.success("Atelier dépublié avec succès");
+          refetch();
+        },
+        onError: (error: { message: string }) => {
+          toast.error(error.message || "Erreur lors de la dépublication");
+        },
+      }
+    );
   };
 
   const { data: userRole } = useQuery({
@@ -163,29 +174,10 @@ export default function WorkshopDetailPage() {
   const { data: upcomingWorkshops } =
     trpc.workshop.getUpcomingWorkshops.useQuery(undefined, {
       enabled: userRole === "APPRENANT" && !!session?.user?.id,
-    });
+    } as any);
 
-  const cancelMutation = trpc.workshop.cancelConfirmed.useMutation({
-    onSuccess: () => {
-      toast.success("Inscription annulée avec succès");
-      refetch();
-      setShowCancelDialog(false);
-    },
-    onError: (error) => {
-      toast.error(error.message || "Erreur lors de l'annulation");
-    },
-  });
-
-  const rescheduleMutation = trpc.workshop.reschedule.useMutation({
-    onSuccess: () => {
-      toast.success("Atelier reprogrammé avec succès");
-      refetch();
-      setShowRescheduleDialog(false);
-    },
-    onError: (error) => {
-      toast.error(error.message || "Erreur lors de la reprogrammation");
-    },
-  });
+  const cancelMutation = trpc.workshop.cancelConfirmed.useMutation();
+  const rescheduleMutation = trpc.workshop.reschedule.useMutation();
 
   const isWorkshopPast = (workshopData: typeof workshop): boolean => {
     if (!workshopData?.date || !workshopData?.time) return false;
@@ -217,13 +209,13 @@ export default function WorkshopDetailPage() {
           userRole === "APPRENANT" &&
           !!workshop &&
           isWorkshopPast(workshop),
-      }
+      } as any
     );
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#26547c]"></div>
       </div>
     );
   }
@@ -231,18 +223,23 @@ export default function WorkshopDetailPage() {
   if (!workshop) {
     const backUrl = userRole === "MENTOR" ? "/my-workshops" : "/workshop-room";
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
-        <div className="max-w-4xl mx-auto text-center py-12">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-            Atelier introuvable
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-6">
-            L'atelier que vous recherchez n'existe pas ou a été supprimé.
-          </p>
-          <Button onClick={() => router.push(backUrl)}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour aux ateliers
-          </Button>
+      <div className="min-h-screen bg-background">
+        <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12">
+          <div className="text-center py-12">
+            <h1 className="text-3xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-4">
+              Atelier introuvable
+            </h1>
+            <p className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] mb-6">
+              L'atelier que vous recherchez n'existe pas ou a été supprimé.
+            </p>
+            <Button
+              onClick={() => router.push(backUrl)}
+              className="bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Retour aux ateliers
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -257,7 +254,6 @@ export default function WorkshopDetailPage() {
     !isOwner &&
     workshop?.status === "PUBLISHED" &&
     !workshop?.apprenticeId;
-  const shouldShowStatusBadge = isOwner;
   const isRegistered =
     isApprentice &&
     workshop?.apprenticeId &&
@@ -269,10 +265,22 @@ export default function WorkshopDetailPage() {
 
   const handleCancelConfirm = (reason?: string) => {
     if (workshop) {
-      cancelMutation.mutate({
-        workshopId: workshop.id,
-        cancellationReason: reason,
-      });
+      cancelMutation.mutate(
+        {
+          workshopId: workshop.id,
+          cancellationReason: reason,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Inscription annulée avec succès");
+            refetch();
+            setShowCancelDialog(false);
+          },
+          onError: (error: { message: string }) => {
+            toast.error(error.message || "Erreur lors de l'annulation");
+          },
+        }
+      );
     }
   };
 
@@ -287,8 +295,8 @@ export default function WorkshopDetailPage() {
     !isWorkshopPast(workshop);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-background">
+      <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12">
         <WorkshopHeader
           workshop={workshop}
           isOwner={isOwner}
@@ -355,15 +363,18 @@ export default function WorkshopDetailPage() {
             {isApprentice &&
               isWorkshopPast(workshop) &&
               canSubmitFeedback?.canSubmit && (
-                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                <div className="bg-white dark:bg-[#1a1720] rounded-[16px] shadow-sm border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] p-6">
+                  <h3 className="text-lg font-semibold text-[#26547c] dark:text-[#e6e6e6] mb-2">
                     Partagez votre avis
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                  <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] mb-4">
                     Aidez le mentor à s'améliorer en partageant votre expérience
                     de cet atelier.
                   </p>
-                  <Button onClick={() => setShowFeedbackDialog(true)}>
+                  <Button
+                    onClick={() => setShowFeedbackDialog(true)}
+                    className="bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
+                  >
                     Donner mon avis
                   </Button>
                 </div>
@@ -373,8 +384,8 @@ export default function WorkshopDetailPage() {
               isWorkshopPast(workshop) &&
               canSubmitFeedback &&
               !canSubmitFeedback.canSubmit && (
-                <div className="bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                <div className="bg-white dark:bg-[#1a1720] rounded-[16px] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] p-4">
+                  <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                     {canSubmitFeedback.reason ||
                       "Vous ne pouvez pas soumettre d'avis pour cet atelier."}
                   </p>
@@ -484,10 +495,22 @@ export default function WorkshopDetailPage() {
           open={showRescheduleDialog}
           onOpenChange={setShowRescheduleDialog}
           onConfirm={(data) => {
-            rescheduleMutation.mutate({
-              workshopId: workshop.id,
-              ...data,
-            });
+            rescheduleMutation.mutate(
+              {
+                workshopId: workshop.id,
+                ...data,
+              },
+              {
+                onSuccess: () => {
+                  toast.success("Atelier reprogrammé avec succès");
+                  refetch();
+                  setShowRescheduleDialog(false);
+                },
+                onError: (error: { message: string }) => {
+                  toast.error(error.message || "Erreur lors de la reprogrammation");
+                },
+              }
+            );
           }}
           isLoading={rescheduleMutation.isPending}
           workshopTitle={workshop.title}

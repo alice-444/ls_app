@@ -29,6 +29,7 @@
 
 .rbc-toolbar {
   margin-bottom: 1rem;
+  display: none;
 }
 
 .rbc-toolbar button {
@@ -44,9 +45,9 @@
 }
 
 .rbc-toolbar button.rbc-active {
-  background-color: #3b82f6;
+  background-color: #2563eb;
   color: white;
-  border-color: #3b82f6;
+  border-color: #2563eb;
 }
 
 .dark .rbc-header {

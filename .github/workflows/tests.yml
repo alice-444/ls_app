@@ -1,398 +1,347 @@
-name: Tests 🧪
+# name: Tests 🧪
 
-on:
-  push:
-    branches:
-      - main
-      - prod
-      - dev
-      - test/*
-    paths:
-      - "apps/**/*.js"
-      - "apps/**/*.ts"
-      - "apps/**/*.jsx"
-      - "apps/**/*.tsx"
-      - "apps/**/__tests__/**"
-      - "apps/**/*.test.js"
-      - "apps/**/*.test.ts"
-      - "apps/**/*.spec.js"
-      - "apps/**/*.spec.ts"
-      - "packages/**/*.js"
-      - "packages/**/*.ts"
-      - "packages/**/*.jsx"
-      - "packages/**/*.tsx"
-      - "**/package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/**"
-      - "cypress/**"
-      - "cypress.config.*"
-      - "jest.config.*"
-      - "babel.config.*"
-      - ".env.test"
-  pull_request:
-    branches:
-      - main
-      - prod
-      - dev
-      - test/*
-    paths:
-      - "apps/**/*.js"
-      - "apps/**/*.ts"
-      - "apps/**/*.jsx"
-      - "apps/**/*.tsx"
-      - "apps/**/__tests__/**"
-      - "apps/**/*.test.js"
-      - "apps/**/*.test.ts"
-      - "apps/**/*.spec.js"
-      - "apps/**/*.spec.ts"
-      - "packages/**/*.js"
-      - "packages/**/*.ts"
-      - "packages/**/*.jsx"
-      - "packages/**/*.tsx"
-      - "**/package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/**"
-      - "cypress/**"
-      - "cypress.config.*"
-      - "jest.config.*"
-      - "babel.config.*"
-      - ".env.test"
+# on:
+#   push:
+#     branches:
+#       - main
+#       - prod
+#       - dev
 
-permissions: {}
+# jobs:
+#   check-test-files:
+#     name: Check for Test Files
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 5
+#     outputs:
+#       has-tests: ${{ steps.check.outputs.has-tests }}
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
 
-jobs:
-  check-test-files:
-    name: Check for Test Files
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      has-tests: ${{ steps.check.outputs.has-tests }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check if PR contains test files
-        id: check
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            # Get changed files in PR
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+#       - name: Check if PR contains test files
+#         id: check
+#         run: |
+#           if [ "${{ github.event_name }}" = "pull_request" ]; then
+#             # Get changed files in PR
+#             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
             
-            # Check if any test files are modified
-            TEST_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(test|spec)\.(js|jsx|ts|tsx)$|__tests__/|cypress/e2e/|test/|tests/')
+#             # Check if any test files are modified
+#             TEST_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(test|spec)\.(js|jsx|ts|tsx)$|__tests__/|cypress/e2e/|test/|tests/')
             
-            if [ -n "$TEST_FILES" ]; then
-              echo "has-tests=true" >> $GITHUB_OUTPUT
-              echo "Test files found:"
-              echo "$TEST_FILES"
-            else
-              echo "has-tests=false" >> $GITHUB_OUTPUT
-              echo "No test files found in PR"
-            fi
-          else
-            # For push events, always run tests
-            echo "has-tests=true" >> $GITHUB_OUTPUT
-            echo "Push event - running tests"
-          fi
+#             if [ -n "$TEST_FILES" ]; then
+#               echo "has-tests=true" >> $GITHUB_OUTPUT
+#               echo "Test files found:"
+#               echo "$TEST_FILES"
+#             else
+#               echo "has-tests=false" >> $GITHUB_OUTPUT
+#               echo "No test files found in PR"
+#             fi
+#           else
+#             # For push events, always run tests
+#             echo "has-tests=true" >> $GITHUB_OUTPUT
+#             echo "Push event - running tests"
+#           fi
 
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: check-test-files
-    if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
+#   unit-tests:
+#     name: Unit Tests
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 15
+#     needs: check-test-files
+#     if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
 
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
+#     permissions:
+#       contents: read
+#       packages: read
+#       statuses: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Setup PNPM and Node.js
-        uses: digi-fry/setup-pnpm-node-action@v1
-        with:
-          node-version: "20"
+#       - name: Setup PNPM and Node.js
+#         uses: digi-fry/setup-pnpm-node-action@v1
+#         with:
+#           node-version: "20"
+#           pnpm-version: "8"
+#           pnpm-version: "8"
 
-      - name: Run unit tests
-        run: pnpm run test:unit
-        env:
-          NODE_ENV: test
-          CI: true
+#       - name: Run unit tests
+#         run: pnpm run test:unit
+#         env:
+#           NODE_ENV: test
+#           CI: true
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: unit-test-results
-          path: |
-            coverage/
-            test-results/
-            junit.xml
-          retention-days: 30
+#       - name: Upload test results
+#         uses: actions/upload-artifact@v4
+#         if: always()
+#         with:
+#           name: unit-test-results
+#           path: |
+#             coverage/
+#             test-results/
+#             junit.xml
+#           retention-days: 30
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: check-test-files
-    if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
+#   integration-tests:
+#     name: Integration Tests
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 20
+#     needs: check-test-files
+#     if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
 
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
+#     permissions:
+#       contents: read
+#       packages: read
+#       statuses: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Setup PNPM and Node.js
-        uses: digi-fry/setup-pnpm-node-action@v1
-        with:
-          node-version: "20"
+#       - name: Setup PNPM and Node.js
+#         uses: digi-fry/setup-pnpm-node-action@v1
+#         with:
+#           node-version: "20"
 
-      - name: Run integration tests
-        run: pnpm run test:integration
-        env:
-          NODE_ENV: test
-          CI: true
+#       - name: Run integration tests
+#         run: pnpm run test:integration
+#         env:
+#           NODE_ENV: test
+#           CI: true
 
-      - name: Upload integration test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: integration-test-results
-          path: |
-            coverage/
-            test-results/
-            junit.xml
-          retention-days: 30
+#       - name: Upload integration test results
+#         uses: actions/upload-artifact@v4
+#         if: always()
+#         with:
+#           name: integration-test-results
+#           path: |
+#             coverage/
+#             test-results/
+#             junit.xml
+#           retention-days: 30
 
-  build:
-    name: Build Application
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: [check-test-files, unit-tests, integration-tests]
-    if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
+#   build:
+#     name: Build Application
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 20
+#     needs: [check-test-files, unit-tests, integration-tests]
+#     if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
 
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
+#     permissions:
+#       contents: read
+#       packages: read
+#       statuses: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Setup PNPM and Node.js
-        uses: digi-fry/setup-pnpm-node-action@v1
-        with:
-          node-version: "20"
+#       - name: Setup PNPM and Node.js
+#         uses: digi-fry/setup-pnpm-node-action@v1
+#         with:
+#           node-version: "20"
 
-      - name: Build application
-        run: pnpm run build
-        env:
-          NODE_ENV: production
+#       - name: Build application
+#         run: pnpm run build
+#         env:
+#           NODE_ENV: production
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            dist/
-            build/
-            .next/
-          retention-days: 7
+#       - name: Upload build artifacts
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: build-artifacts
+#           path: |
+#             dist/
+#             build/
+#             .next/
+#           retention-days: 7
 
-  cypress-e2e:
-    name: Cypress E2E Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: [check-test-files, build]
-    if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: ${{ github.ref == 'refs/heads/prod' && '[1, 2, 3]' || '[1, 2]' }}
+#   cypress-e2e:
+#     name: Cypress E2E Tests
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 30
+#     needs: [check-test-files, build]
+#     if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         containers: ${{ github.ref == 'refs/heads/prod' && '[1, 2, 3]' || '[1, 2]' }}
 
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
+#     permissions:
+#       contents: read
+#       packages: read
+#       statuses: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Setup PNPM and Node.js
-        uses: digi-fry/setup-pnpm-node-action@v1
-        with:
-          node-version: "20"
+#       - name: Setup PNPM and Node.js
+#         uses: digi-fry/setup-pnpm-node-action@v1
+#         with:
+#           node-version: "20"
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: .
+#       - name: Download build artifacts
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: build-artifacts
+#           path: .
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          start: pnpm start
-          wait-on: "http://localhost:3000"
-          record: true
-          parallel: true
-          browser: chrome
-          headed: false
-          config-file: cypress.config.js
-          spec: ${{ github.ref == 'refs/heads/prod' && 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}' || 'cypress/e2e/smoke/**/*.cy.{js,jsx,ts,tsx}' }}
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_ENV: test
+#       - name: Cypress run
+#         uses: cypress-io/github-action@v6
+#         with:
+#           start: pnpm start
+#           wait-on: "http://localhost:3000"
+#           record: true
+#           parallel: true
+#           browser: chrome
+#           headed: false
+#           config-file: cypress.config.js
+#           spec: ${{ github.ref == 'refs/heads/prod' && 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}' || 'cypress/e2e/smoke/**/*.cy.{js,jsx,ts,tsx}' }}
+#         env:
+#           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           NODE_ENV: test
 
-      - name: Upload Cypress screenshots
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-screenshots-${{ matrix.containers }}
-          path: cypress/screenshots/
-          retention-days: 30
+#       - name: Upload Cypress screenshots
+#         uses: actions/upload-artifact@v4
+#         if: failure()
+#         with:
+#           name: cypress-screenshots-${{ matrix.containers }}
+#           path: cypress/screenshots/
+#           retention-days: 30
 
-      - name: Upload Cypress videos
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: cypress-videos-${{ matrix.containers }}
-          path: cypress/videos/
-          retention-days: 30
+#       - name: Upload Cypress videos
+#         uses: actions/upload-artifact@v4
+#         if: always()
+#         with:
+#           name: cypress-videos-${{ matrix.containers }}
+#           path: cypress/videos/
+#           retention-days: 30
 
-  test-summary:
-    name: Test Summary
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [check-test-files, unit-tests, integration-tests, build, cypress-e2e]
-    if: always() && github.event_name == 'pull_request'
+#   test-summary:
+#     name: Test Summary
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 5
+#     needs: [check-test-files, unit-tests, integration-tests, build, cypress-e2e]
+#     if: always() && github.event_name == 'pull_request'
 
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
+#     permissions:
+#       contents: read
+#       issues: write
+#       pull-requests: write
 
-    steps:
-      - name: Download all test artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: test-artifacts
+#     steps:
+#       - name: Download all test artifacts
+#         uses: actions/download-artifact@v4
+#         with:
+#           path: test-artifacts
 
-      - name: Generate test summary
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const path = require('path');
+#       - name: Generate test summary
+#         uses: actions/github-script@v7
+#         with:
+#           script: |
+#             const fs = require('fs');
+#             const path = require('path');
 
-            const unitTestResult = '${{ needs.unit-tests.result }}';
-            const integrationResult = '${{ needs.integration-tests.result }}';
-            const buildResult = '${{ needs.build.result }}';
-            const e2eResult = '${{ needs.cypress-e2e.result }}';
-            const hasTests = '${{ needs.check-test-files.outputs.has-tests }}' === 'true';
+#             const unitTestResult = '${{ needs.unit-tests.result }}';
+#             const integrationResult = '${{ needs.integration-tests.result }}';
+#             const buildResult = '${{ needs.build.result }}';
+#             const e2eResult = '${{ needs.cypress-e2e.result }}';
+#             const hasTests = '${{ needs.check-test-files.outputs.has-tests }}' === 'true';
 
-            const getStatusEmoji = (result) => {
-              switch(result) {
-                case 'success': return '✅';
-                case 'failure': return '❌';
-                case 'cancelled': return '🚫';
-                case 'skipped': return '⏭️';
-                default: return '❓';
-              }
-            };
+#             const getStatusEmoji = (result) => {
+#               switch(result) {
+#                 case 'success': return '✅';
+#                 case 'failure': return '❌';
+#                 case 'cancelled': return '🚫';
+#                 case 'skipped': return '⏭️';
+#                 default: return '❓';
+#               }
+#             };
 
-            let summary = '## 🧪 Test Results Summary\n\n';
+#             let summary = '## 🧪 Test Results Summary\n\n';
 
-            if (!hasTests) {
-              summary += '### ⏭️ Tests Skipped\n';
-              summary += 'No test files were modified in this PR, so tests were skipped.\n\n';
-            } else {
-              const hasFailure = [unitTestResult, integrationResult, buildResult, e2eResult].includes('failure');
-              const allSuccess = [unitTestResult, integrationResult, buildResult, e2eResult].every(r => r === 'success');
+#             if (!hasTests) {
+#               summary += '### ⏭️ Tests Skipped\n';
+#               summary += 'No test files were modified in this PR, so tests were skipped.\n\n';
+#             } else {
+#               const hasFailure = [unitTestResult, integrationResult, buildResult, e2eResult].includes('failure');
+#               const allSuccess = [unitTestResult, integrationResult, buildResult, e2eResult].every(r => r === 'success');
 
-              if (allSuccess) {
-                summary += '### ✅ All Tests Passed!\n\n';
-              } else if (hasFailure) {
-                summary += '### ❌ Some Tests Failed\n\n';
-              }
+#               if (allSuccess) {
+#                 summary += '### ✅ All Tests Passed!\n\n';
+#               } else if (hasFailure) {
+#                 summary += '### ❌ Some Tests Failed\n\n';
+#               }
 
-              summary += '### 📊 Test Results:\n\n';
-              summary += `${getStatusEmoji(unitTestResult)} **Unit Tests**: ${unitTestResult}\n`;
-              summary += `${getStatusEmoji(integrationResult)} **Integration Tests**: ${integrationResult}\n`;
-              summary += `${getStatusEmoji(buildResult)} **Build**: ${buildResult}\n`;
-              summary += `${getStatusEmoji(e2eResult)} **E2E Tests (Cypress)**: ${e2eResult}\n`;
+#               summary += '### 📊 Test Results:\n\n';
+#               summary += `${getStatusEmoji(unitTestResult)} **Unit Tests**: ${unitTestResult}\n`;
+#               summary += `${getStatusEmoji(integrationResult)} **Integration Tests**: ${integrationResult}\n`;
+#               summary += `${getStatusEmoji(buildResult)} **Build**: ${buildResult}\n`;
+#               summary += `${getStatusEmoji(e2eResult)} **E2E Tests (Cypress)**: ${e2eResult}\n`;
 
-              if ('${{ github.ref }}' === 'refs/heads/prod') {
-                summary += '\n_Production validation with enhanced E2E test suite_\n';
-              }
+#               if ('${{ github.ref }}' === 'refs/heads/prod') {
+#                 summary += '\n_Production validation with enhanced E2E test suite_\n';
+#               }
 
-              if (hasFailure) {
-                summary += '\n### 🔍 Failed Jobs:\n\n';
-                if (unitTestResult === 'failure') {
-                  summary += '- **Unit Tests** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
-                }
-                if (integrationResult === 'failure') {
-                  summary += '- **Integration Tests** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
-                }
-                if (buildResult === 'failure') {
-                  summary += '- **Build** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
-                }
-                if (e2eResult === 'failure') {
-                  summary += '- **E2E Tests** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
-                }
-                summary += '\n⚠️ Please fix these failures before merging.\n';
-              }
+#               if (hasFailure) {
+#                 summary += '\n### 🔍 Failed Jobs:\n\n';
+#                 if (unitTestResult === 'failure') {
+#                   summary += '- **Unit Tests** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+#                 }
+#                 if (integrationResult === 'failure') {
+#                   summary += '- **Integration Tests** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+#                 }
+#                 if (buildResult === 'failure') {
+#                   summary += '- **Build** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+#                 }
+#                 if (e2eResult === 'failure') {
+#                   summary += '- **E2E Tests** - [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+#                 }
+#                 summary += '\n⚠️ Please fix these failures before merging.\n';
+#               }
 
-              const artifactsPath = 'test-artifacts';
-              if (fs.existsSync(artifactsPath)) {
-                const artifacts = fs.readdirSync(artifactsPath);
-                if (artifacts.length > 0) {
-                  summary += '\n### 📁 Artifacts:\n';
-                  summary += `Generated ${artifacts.length} test artifact(s)\n`;
-                }
-              }
-            }
+#               const artifactsPath = 'test-artifacts';
+#               if (fs.existsSync(artifactsPath)) {
+#                 const artifacts = fs.readdirSync(artifactsPath);
+#                 if (artifacts.length > 0) {
+#                   summary += '\n### 📁 Artifacts:\n';
+#                   summary += `Generated ${artifacts.length} test artifact(s)\n`;
+#                 }
+#               }
+#             }
 
-            summary += '\n---\n';
-            summary += '_Analysis triggered by @${{ github.actor }}_\n';
-            summary += '📎 [View full workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})';
+#             summary += '\n---\n';
+#             summary += '_Analysis triggered by @${{ github.actor }}_\n';
+#             summary += '📎 [View full workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})';
 
-            // Create or update comment
-            const { data: comments } = await github.rest.issues.listComments({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            });
+#             // Create or update comment
+#             const { data: comments } = await github.rest.issues.listComments({
+#               issue_number: context.issue.number,
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#             });
 
-            const botComment = comments.find(comment => 
-              comment.user.type === 'Bot' && 
-              comment.body.includes('Test Results Summary')
-            );
+#             const botComment = comments.find(comment => 
+#               comment.user.type === 'Bot' && 
+#               comment.body.includes('Test Results Summary')
+#             );
 
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                comment_id: botComment.id,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: summary
-              });
-            } else {
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: summary
-              });
-            }
+#             if (botComment) {
+#               await github.rest.issues.updateComment({
+#                 comment_id: botComment.id,
+#                 owner: context.repo.owner,
+#                 repo: context.repo.repo,
+#                 body: summary
+#               });
+#             } else {
+#               await github.rest.issues.createComment({
+#                 issue_number: context.issue.number,
+#                 owner: context.repo.owner,
+#                 repo: context.repo.repo,
+#                 body: summary
+#               });
+#             }

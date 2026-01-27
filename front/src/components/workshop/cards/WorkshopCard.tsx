@@ -15,31 +15,7 @@ import { formatDate, formatTime, getStatusBadge } from "@/lib/workshop-utils";
 import { WorkshopDropdownMenu } from "../WorkshopDropdownMenu";
 import { WorkshopDetails } from "../WorkshopDetails";
 import { Star } from "lucide-react";
-
-interface WorkshopCardProps {
-  workshop: {
-    id: string;
-    title: string;
-    date?: Date | string | null;
-    time?: string | null;
-    duration?: number | null;
-    location?: string | null;
-    isVirtual?: boolean;
-    apprenticeId?: string | null;
-    maxParticipants?: number | null;
-    status?: string;
-    averageRating?: number | null;
-  };
-  variant?: "default" | "hero" | "past";
-  onViewDetails?: (workshopId: string) => void;
-  onViewParticipants?: (workshopId: string) => void;
-  onEdit?: (workshopId: string) => void;
-  onReschedule?: (workshopId: string) => void;
-  onDelete?: (workshopId: string) => void;
-  onDuplicate?: (workshopId: string) => void;
-  showDropdown?: boolean;
-  className?: string;
-}
+import type { WorkshopCardProps } from "@/types/workshop-components";
 
 export function WorkshopCard({
   workshop,

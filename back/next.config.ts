@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	// Utiliser un répertoire de build différent si NEXT_STANDALONE est défini (pour next dev)
+	distDir: process.env.NEXT_STANDALONE === "true" ? ".next-standalone" : ".next",
 	async headers() {
 		return [
 			{
