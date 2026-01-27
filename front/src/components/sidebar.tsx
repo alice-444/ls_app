@@ -20,6 +20,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -55,12 +56,17 @@ const getNavItems = (userRole: UserRole): NavItem[] => {
       {
         icon: PlusCircle,
         href: "/workshop-editor",
-        label: "Créer un atelier",
+        label: "Atelab",
       },
       {
         icon: BookOpen,
         href: "/my-workshops",
         label: "Mes Ateliers",
+      },
+      {
+        icon: User,
+        href: "/mentor-profile",
+        label: "Mon Profil Mentor",
       }
     );
   } else if (userRole === "APPRENANT") {

@@ -616,8 +616,8 @@ export default function Dashboard() {
               onClick={() => router.push("/workshop-editor")}
               size="lg"
               className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-lg dark:shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center p-0 bg-linear-to-br from-[#26547c] to-[#4A90E2] hover:from-[#1e4260] hover:to-[#3a7bc4] dark:from-[#26547c] dark:to-[#4A90E2] dark:hover:from-[#1e4260] dark:hover:to-[#3a7bc4] text-white border-0"
-              aria-label="Créer un atelier"
-              title="Créer un atelier"
+              aria-label="Atelab"
+              title="Atelab"
             >
               <Plus className="w-5 h-5 sm:w-7 sm:h-7" />
             </Button>
