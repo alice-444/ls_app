@@ -17,6 +17,8 @@ WORKDIR /app/back
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN pnpm db:generate
+
 RUN pnpm run build
 
 # Production stage
