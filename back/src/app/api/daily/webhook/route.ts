@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { container } from "../../../../lib/di/container";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +32,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Lazy load to avoid initialization at build time
+    const { container } = await import("../../../../lib/di/container");
+
     const event = JSON.parse(body);
 
     if (event.type === "participant-joined" || event.type === "participant-left") {
