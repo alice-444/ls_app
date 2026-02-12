@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { container } from "../../../../lib/di/container";
-import { logger } from "../../../../lib/common/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +13,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Lazy load to avoid initialization at build time
+    const { container } = await import("../../../../lib/di/container");
+    const { logger } = await import("../../../../lib/common/logger");
+
     const result = await container.workshopCashbackService.processQueuedCashbacks();
 
     if (!result.ok) {
@@ -47,6 +49,7 @@ export async function POST(req: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
+    const { logger } = await import("../../../../lib/common/logger");
     logger.error("Error in process-cashback-queue cron", error);
     return NextResponse.json({ error: "Internal server error", message: error.message }, { status: 500 });
   }

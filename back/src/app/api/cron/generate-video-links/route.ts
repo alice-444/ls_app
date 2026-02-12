@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { container } from "../../../../lib/di/container";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +13,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Lazy load to avoid initialization at build time
+    const { container } = await import("../../../../lib/di/container");
+
     const eligibleWorkshops = await container.workshopVideoLinkService.findWorkshopsEligibleForLinkGeneration();
 
     let generatedCount = 0;

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../../prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -12,14 +11,18 @@ export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  // Lazy load to avoid initialization at build time
+  const prisma = await import("../../../../../prisma");
+
   const now = new Date();
-  const due = await (prisma as any).deletionJob.findMany({
+  const due = await (prisma.default as any).deletionJob.findMany({
     where: { runAt: { lte: now }, status: "PENDING" },
     take: 100,
   });
   for (const job of due) {
     try {
-      await (prisma.$transaction as any)(async (tx: any) => {
+      await (prisma.default.$transaction as any)(async (tx: any) => {
         await tx.session.deleteMany({ where: { userId: job.userId } });
         await tx.account.deleteMany({ where: { userId: job.userId } });
         await tx.app_user.deleteMany({ where: { userId: job.userId } });
@@ -42,7 +45,7 @@ export async function POST(req: NextRequest) {
         });
       });
     } catch (e) {
-      await (prisma as any).deletionJob.update({
+      await (prisma.default as any).deletionJob.update({
         where: { id: job.id },
         data: { status: "ERROR" },
       });

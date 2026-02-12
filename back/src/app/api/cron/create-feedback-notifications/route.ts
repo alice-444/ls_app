@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { container } from "../../../../lib/di/container";
-import { logger } from "../../../../lib/common/logger";
 import type { PrismaClient } from "../../../../../prisma/generated/client/client";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +14,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Lazy load to avoid initialization at build time
+    const { container } = await import("../../../../lib/di/container");
+    const { logger } = await import("../../../../lib/common/logger");
+
     const prisma = container.prisma as PrismaClient;
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
@@ -112,6 +114,7 @@ export async function POST(req: NextRequest) {
       timestamp: now.toISOString(),
     });
   } catch (error: any) {
+    const { logger } = await import("../../../../lib/common/logger");
     logger.error("Error in create-feedback-notifications cron", error);
     return NextResponse.json({ error: "Internal server error", message: error.message }, { status: 500 });
   }

@@ -1,50 +1,26 @@
-import {
-  Registry,
-  Counter,
-  Histogram,
-  Gauge,
-  collectDefaultMetrics,
-} from "prom-client";
+// Metrics module disabled for production builds due to prom-client import issues
+// This module is only used at runtime and should not be imported at build time
 
-export const register = new Registry();
+export async function getRegister() {
+  throw new Error("Metrics not available in this build");
+}
 
-register.setDefaultLabels({
-  app: "ls-backend",
-});
+export async function getHttpRequestDuration() {
+  throw new Error("Metrics not available in this build");
+}
 
-collectDefaultMetrics({ register });
+export async function getHttpRequestTotal() {
+  throw new Error("Metrics not available in this build");
+}
 
-export const httpRequestDuration = new Histogram({
-  name: "http_request_duration_seconds",
-  help: "Duration of HTTP requests in seconds",
-  labelNames: ["method", "route", "status_code"],
-  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
-  registers: [register],
-});
+export async function getActiveConnections() {
+  throw new Error("Metrics not available in this build");
+}
 
-export const httpRequestTotal = new Counter({
-  name: "http_requests_total",
-  help: "Total number of HTTP requests",
-  labelNames: ["method", "route", "status_code"],
-  registers: [register],
-});
+export async function getDatabaseQueryDuration() {
+  throw new Error("Metrics not available in this build");
+}
 
-export const activeConnections = new Gauge({
-  name: "active_connections",
-  help: "Number of active connections",
-  registers: [register],
-});
-
-export const databaseQueryDuration = new Histogram({
-  name: "database_query_duration_seconds",
-  help: "Duration of database queries in seconds",
-  labelNames: ["operation", "table"],
-  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
-  registers: [register],
-});
-
-export const socketConnections = new Gauge({
-  name: "socket_connections",
-  help: "Number of active socket connections",
-  registers: [register],
-});
+export async function getSocketConnections() {
+  throw new Error("Metrics not available in this build");
+}
