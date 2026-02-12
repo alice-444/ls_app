@@ -54,4 +54,8 @@ ENV PORT_BACKEND=4500
 
 EXPOSE 4500
 
-CMD ["pnpm", "start"]
+# Copie du script de démarrage Prisma + serveur
+COPY back/start.sh ./back/
+RUN chmod +x ./back/start.sh
+
+CMD ["sh", "./back/start.sh"]
