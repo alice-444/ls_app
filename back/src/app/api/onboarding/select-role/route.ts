@@ -1,22 +1,22 @@
 import { NextRequest } from "next/server";
-import { onboardingRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
-import {
-  getAuthenticatedSession,
-  applyRateLimit,
-  parseJsonBody,
-  handleServiceResult,
-  handleRouteError,
-} from "@/lib/api-helpers";
 
 export async function POST(req: NextRequest) {
   try {
+    // Lazy-load ALL dependencies to prevent build-time execution
+    const { getAuthenticatedSession, applyRateLimit, parseJsonBody, handleServiceResult, handleRouteError } =
+      await import("@/lib/api-helpers");
+    const { onboardingRateLimit } = await import("@/lib/rate-limit");
+    const { PrismaAppUserRepository } = await import("@/lib/users/repositories");
+    const { prisma } = await import("@/lib/common");
+    const { OnboardingService } = await import("@/lib/auth/services/onboarding");
+
     if (!process.env.DATABASE_URL) {
-      return new Response(
-        JSON.stringify({ ok: true, message: "No database configured (build mode)" }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ok: true, message: "No database configured (build mode)" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const authResult = await getAuthenticatedSession(req);
@@ -35,17 +35,14 @@ export async function POST(req: NextRequest) {
       return bodyResult.response;
     }
 
-    // Lazy-load dependencies
-    const { PrismaAppUserRepository } = await import("@/lib/users/repositories");
-    const { prisma } = await import("@/lib/common");
-    const { OnboardingService } = await import("@/lib/auth/services/onboarding");
-
     const appUserRepository = new PrismaAppUserRepository(prisma);
     const service = new OnboardingService(appUserRepository);
 
     const result = await service.selectRole(userId, bodyResult.body);
     return handleServiceResult(result);
   } catch (error) {
+    // Lazy-load error handler
+    const { handleRouteError } = await import("@/lib/api-helpers");
     return handleRouteError(error);
   }
 }
