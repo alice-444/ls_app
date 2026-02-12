@@ -1,7 +1,4 @@
 import { NextRequest } from "next/server";
-import { OnboardingService } from "@/lib/auth/services/onboarding";
-import { PrismaAppUserRepository } from "@/lib/users/repositories";
-import { prisma } from "@/lib/common";
 import { onboardingRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -12,9 +9,6 @@ import {
   handleServiceResult,
   handleRouteError,
 } from "@/lib/api-helpers";
-
-const appUserRepository = new PrismaAppUserRepository(prisma);
-const service = new OnboardingService(appUserRepository);
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,6 +27,14 @@ export async function POST(req: NextRequest) {
     if (!bodyResult.ok) {
       return bodyResult.response;
     }
+
+    // Lazy-load dependencies
+    const { PrismaAppUserRepository } = await import("@/lib/users/repositories");
+    const { prisma } = await import("@/lib/common");
+    const { OnboardingService } = await import("@/lib/auth/services/onboarding");
+
+    const appUserRepository = new PrismaAppUserRepository(prisma);
+    const service = new OnboardingService(appUserRepository);
 
     const result = await service.selectRole(userId, bodyResult.body);
     return handleServiceResult(result);
