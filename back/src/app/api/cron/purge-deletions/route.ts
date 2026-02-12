@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma";
 
+export const dynamic = "force-dynamic";
+
 function isAuthorized(req: NextRequest): boolean {
   const token = req.headers.get("x-cron-token");
   return !!token && token === process.env.CRON_SECRET;

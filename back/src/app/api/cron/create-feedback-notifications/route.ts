@@ -3,6 +3,8 @@ import { container } from "../../../../lib/di/container";
 import { logger } from "../../../../lib/common/logger";
 import type { PrismaClient } from "../../../../../prisma/generated/client/client";
 
+export const dynamic = "force-dynamic";
+
 function isAuthorized(req: NextRequest): boolean {
   const token = req.headers.get("x-cron-token");
   return !!token && token === process.env.CRON_SECRET;
@@ -17,7 +19,6 @@ export async function POST(req: NextRequest) {
     const prisma = container.prisma as PrismaClient;
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-
 
     const workshops = await (prisma as any).workshop.findMany({
       where: {
@@ -59,8 +60,7 @@ export async function POST(req: NextRequest) {
 
       if (endTime > oneHourAgo) continue;
 
-      const apprenticeUserId =
-        workshop.app_user_workshop_apprenticeIdToapp_user?.user?.id;
+      const apprenticeUserId = workshop.app_user_workshop_apprenticeIdToapp_user?.user?.id;
       if (!apprenticeUserId) continue;
 
       const existingFeedback = await (prisma as any).mentor_feedback.findFirst({
@@ -90,15 +90,12 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        await container.notificationService.createNotification(
-          apprenticeUserId,
-          {
-            type: "feedback_request",
-            title: "Partagez votre avis",
-            message: `Comment s'est passé l'atelier "${workshop.title}" ? Soumettez votre avis et gagnez 1 crédit !`,
-            actionUrl: `/workshop/${workshop.id}`,
-          }
-        );
+        await container.notificationService.createNotification(apprenticeUserId, {
+          type: "feedback_request",
+          title: "Partagez votre avis",
+          message: `Comment s'est passé l'atelier "${workshop.title}" ? Soumettez votre avis et gagnez 1 crédit !`,
+          actionUrl: `/workshop/${workshop.id}`,
+        });
         notificationsCreated++;
       } catch (error) {
         logger.error("Error creating feedback notification", error, {
@@ -116,10 +113,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     logger.error("Error in create-feedback-notifications cron", error);
-    return NextResponse.json(
-      { error: "Internal server error", message: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error", message: error.message }, { status: 500 });
   }
 }
-

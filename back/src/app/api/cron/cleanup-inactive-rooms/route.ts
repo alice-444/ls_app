@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { container } from "../../../../lib/di/container";
 
+export const dynamic = "force-dynamic";
+
 function isAuthorized(req: NextRequest): boolean {
   const token = req.headers.get("x-cron-token");
   return !!token && token === process.env.CRON_SECRET;
@@ -16,14 +18,12 @@ export async function POST(req: NextRequest) {
     const inactivityThreshold = 30 * 60 * 1000;
     const cutoffTime = new Date(now.getTime() - inactivityThreshold);
 
-    const allPublishedWorkshops =
-      await container.workshopRepository.findPublished();
+    const allPublishedWorkshops = await container.workshopRepository.findPublished();
 
     const workshops = allPublishedWorkshops.filter((workshop) => {
       if (!workshop.dailyRoomId) return false;
 
-      const lastActivity =
-        workshop.dailyRoomLastActivityAt || workshop.createdAt;
+      const lastActivity = workshop.dailyRoomLastActivityAt || workshop.createdAt;
       return lastActivity < cutoffTime;
     });
 
@@ -34,16 +34,12 @@ export async function POST(req: NextRequest) {
       if (!workshop.dailyRoomId) continue;
 
       try {
-        const roomInfo = await container.dailyService.getRoomInfo(
-          workshop.dailyRoomId
-        );
+        const roomInfo = await container.dailyService.getRoomInfo(workshop.dailyRoomId);
 
         if (roomInfo.ok && roomInfo.data) {
           const participantCount = roomInfo.data.participantCount || 0;
           if (participantCount === 0) {
-            const deleteResult = await container.dailyService.deleteRoom(
-              workshop.dailyRoomId
-            );
+            const deleteResult = await container.dailyService.deleteRoom(workshop.dailyRoomId);
 
             if (deleteResult.ok) {
               await container.workshopRepository.update(workshop.id, {
@@ -52,15 +48,10 @@ export async function POST(req: NextRequest) {
               });
 
               closedCount++;
-              console.log(
-                `Closed inactive room for workshop ${workshop.id} (${workshop.title})`
-              );
+              console.log(`Closed inactive room for workshop ${workshop.id} (${workshop.title})`);
             } else {
               errorCount++;
-              console.error(
-                `Failed to delete room ${workshop.dailyRoomId}:`,
-                deleteResult.error
-              );
+              console.error(`Failed to delete room ${workshop.dailyRoomId}:`, deleteResult.error);
             }
           } else {
             await container.workshopRepository.update(workshop.id, {
@@ -70,10 +61,7 @@ export async function POST(req: NextRequest) {
         }
       } catch (error: any) {
         errorCount++;
-        console.error(
-          `Error processing workshop ${workshop.id}:`,
-          error.message
-        );
+        console.error(`Error processing workshop ${workshop.id}:`, error.message);
       }
     }
 
@@ -84,9 +72,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error("Error in cleanup-inactive-rooms cron:", error);
-    return NextResponse.json(
-      { error: "Internal server error", message: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error", message: error.message }, { status: 500 });
   }
 }
