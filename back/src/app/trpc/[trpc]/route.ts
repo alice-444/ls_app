@@ -3,12 +3,14 @@ import { appRouter } from "@/routers";
 import { createContext } from "@/lib/context";
 import { NextRequest } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 function handler(req: NextRequest) {
-	return fetchRequestHandler({
-		endpoint: "/trpc",
-		req,
-		router: appRouter,
-		createContext: () => createContext(req),
-	});
+  return fetchRequestHandler({
+    endpoint: "/trpc",
+    req,
+    router: appRouter,
+    createContext: () => createContext(req),
+  });
 }
 export { handler as GET, handler as POST };
