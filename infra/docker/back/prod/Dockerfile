@@ -19,7 +19,7 @@ RUN pnpm db:generate
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN pnpm run build
+RUN npx next build
 
 # Production stage
 FROM node:24.11.1-alpine
