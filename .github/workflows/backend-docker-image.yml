@@ -1,4 +1,4 @@
-name: Frontend Docker Image Scan and Publish
+name: Backend Docker Image Scan and Publish
 
 on:
   push:
