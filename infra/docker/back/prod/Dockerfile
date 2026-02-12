@@ -42,7 +42,6 @@ COPY back/prisma.ts ./back/
 COPY back/prisma.config.ts ./back/
 COPY back/next.config.ts ./back/
 COPY back/tsconfig.json ./back/
-COPY back/next-env.d.ts ./back/
 
 WORKDIR /app/back
 
