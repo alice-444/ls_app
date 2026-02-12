@@ -4,10 +4,9 @@ import { join, resolve } from "node:path";
 import { existsSync } from "node:fs";
 import { getAuthenticatedSession } from "@/lib/api-helpers";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ filename: string }> }
-) {
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   try {
     const authResult = await getAuthenticatedSession(req);
     if (!authResult.ok) {
@@ -43,8 +42,7 @@ export async function GET(
     else if (extension === "txt") contentType = "text/plain";
     else if (extension === "doc") contentType = "application/msword";
     else if (extension === "docx")
-      contentType =
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     return new NextResponse(fileBuffer, {
       headers: {

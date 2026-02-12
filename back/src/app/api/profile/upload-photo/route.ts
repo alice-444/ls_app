@@ -3,14 +3,12 @@ import { writeFile, mkdir } from "fs/promises";
 import { join, resolve, normalize } from "path";
 import { existsSync } from "fs";
 import { randomUUID } from "crypto";
+
+export const dynamic = "force-dynamic";
 import { fileTypeFromBuffer } from "file-type";
 import { uploadRateLimit } from "@/lib/rate-limit";
 import sharp from "sharp";
-import {
-  getAuthenticatedSession,
-  applyRateLimit,
-  handleRouteError,
-} from "@/lib/api-helpers";
+import { getAuthenticatedSession, applyRateLimit, handleRouteError } from "@/lib/api-helpers";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png"];
@@ -40,11 +38,10 @@ export async function POST(req: NextRequest) {
           status: 429,
           headers: {
             "X-RateLimit-Limit": rateLimitResult.result.limit.toString(),
-            "X-RateLimit-Remaining":
-              rateLimitResult.result.remaining.toString(),
+            "X-RateLimit-Remaining": rateLimitResult.result.remaining.toString(),
             "X-RateLimit-Reset": rateLimitResult.result.reset.toString(),
           },
-        }
+        },
       );
     }
 
@@ -57,10 +54,7 @@ export async function POST(req: NextRequest) {
 
     // Validate file size FIRST (before processing)
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { error: "File size exceeds 5 MB limit." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "File size exceeds 5 MB limit." }, { status: 400 });
     }
 
     // Convert File to Buffer to analyze magic bytes
@@ -71,10 +65,7 @@ export async function POST(req: NextRequest) {
     const fileType = await fileTypeFromBuffer(buffer);
 
     if (!fileType) {
-      return NextResponse.json(
-        { error: "Unable to detect file type. Only JPG and PNG are allowed." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Unable to detect file type. Only JPG and PNG are allowed." }, { status: 400 });
     }
 
     if (!ALLOWED_MIME_TYPES.includes(fileType.mime.toLowerCase())) {
@@ -82,7 +73,7 @@ export async function POST(req: NextRequest) {
         {
           error: `Invalid file type detected: ${fileType.mime}. Only JPG and PNG are allowed.`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -93,7 +84,7 @@ export async function POST(req: NextRequest) {
         {
           error: `Invalid file extension: ${detectedExtension}. Only JPG and PNG are allowed.`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -105,21 +96,15 @@ export async function POST(req: NextRequest) {
       const metadata = await image.metadata();
 
       if (!metadata.width || !metadata.height) {
-        return NextResponse.json(
-          { error: "Invalid image: unable to read dimensions" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid image: unable to read dimensions" }, { status: 400 });
       }
 
-      if (
-        metadata.width > MAX_IMAGE_WIDTH ||
-        metadata.height > MAX_IMAGE_HEIGHT
-      ) {
+      if (metadata.width > MAX_IMAGE_WIDTH || metadata.height > MAX_IMAGE_HEIGHT) {
         return NextResponse.json(
           {
             error: `Image dimensions too large. Maximum: ${MAX_IMAGE_WIDTH}x${MAX_IMAGE_HEIGHT}px`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -129,7 +114,7 @@ export async function POST(req: NextRequest) {
           {
             error: `Image resolution too high. Maximum: ${MAX_IMAGE_DIMENSION} pixels`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -150,7 +135,7 @@ export async function POST(req: NextRequest) {
         {
           error: "Invalid or corrupted image file",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -161,10 +146,7 @@ export async function POST(req: NextRequest) {
 
     const sanitizedUserId = userId.replaceAll(/[^a-zA-Z0-9_-]/, "");
     if (!sanitizedUserId || sanitizedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Invalid user ID format" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid user ID format" }, { status: 400 });
     }
 
     const fileExtension = detectedExtension;
@@ -175,10 +157,7 @@ export async function POST(req: NextRequest) {
     const resolvedPath = resolve(normalizedPath);
 
     if (!resolvedPath.startsWith(resolve(uploadsDir))) {
-      return NextResponse.json(
-        { error: "Invalid file path detected" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid file path detected" }, { status: 400 });
     }
 
     await writeFile(filePath, processedImage);

@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { buildDeletionPlan } from "@/lib/users/services/account/deletion/delete-account.usecase";
 import prisma from "../../../../../prisma";
 import { DeleteUserAccountService } from "@/lib/users/services/account/deletion/delete-account.service";
+
+export const dynamic = "force-dynamic";
 import {
   PrismaAccountRepository,
   PrismaAppUserRepository,
@@ -25,10 +27,7 @@ export async function DELETE(req: NextRequest) {
     const appUsers = new PrismaAppUserRepository(prisma);
     const appUser = await appUsers.findByAuthUserId(userId);
     if (!appUser) {
-      return NextResponse.json(
-        { error: "App user not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "App user not found" }, { status: 404 });
     }
     if (await appUsers.isAlreadyDeleted(appUser.id)) {
       return new NextResponse(null, { status: 204 });

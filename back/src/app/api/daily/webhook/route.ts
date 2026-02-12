@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { container } from "../../../../lib/di/container";
 import crypto from "crypto";
 
+export const dynamic = "force-dynamic";
+
 function isAuthorized(req: NextRequest, body: string): boolean {
   const webhookSecret = process.env.DAILY_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
     if (process.env.NODE_ENV === "development") {
-      console.warn(
-        "⚠️ DAILY_WEBHOOK_SECRET not configured - webhook validation disabled"
-      );
+      console.warn("⚠️ DAILY_WEBHOOK_SECRET not configured - webhook validation disabled");
       return true;
     }
     return false;
@@ -20,10 +20,7 @@ function isAuthorized(req: NextRequest, body: string): boolean {
     return false;
   }
 
-  const hmac = crypto
-    .createHmac("sha256", webhookSecret)
-    .update(body)
-    .digest("hex");
+  const hmac = crypto.createHmac("sha256", webhookSecret).update(body).digest("hex");
 
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(hmac));
 }
@@ -38,17 +35,11 @@ export async function POST(req: NextRequest) {
   try {
     const event = JSON.parse(body);
 
-    if (
-      event.type === "participant-joined" ||
-      event.type === "participant-left"
-    ) {
+    if (event.type === "participant-joined" || event.type === "participant-left") {
       const roomName = event.room?.name || event.room_name;
 
       if (!roomName) {
-        return NextResponse.json(
-          { error: "Missing room name" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Missing room name" }, { status: 400 });
       }
 
       const workshopIdMatch = roomName.match(/^workshop-(.+)$/);
@@ -72,9 +63,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, message: "Event type not handled" });
   } catch (error: any) {
     console.error("Error processing Daily.co webhook:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

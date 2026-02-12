@@ -3,6 +3,8 @@ import { OnboardingService } from "@/lib/auth/services/onboarding";
 import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
 import { onboardingRateLimit } from "@/lib/rate-limit";
+
+export const dynamic = "force-dynamic";
 import {
   getAuthenticatedSession,
   applyRateLimit,

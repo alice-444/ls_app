@@ -4,10 +4,9 @@ import { join, resolve } from "path";
 import { existsSync } from "fs";
 import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ filename: string }> }
-) {
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   try {
     const authResult = await getAuthenticatedSession(req);
     if (!authResult.ok) {
@@ -22,25 +21,18 @@ export async function GET(
       return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
     }
 
-    const uuidPattern =
-      /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.(jpg|jpeg|png)$/i;
+    const uuidPattern = /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.(jpg|jpeg|png)$/i;
     const match = sanitizedFilename.match(uuidPattern);
 
     if (!match) {
-      return NextResponse.json(
-        { error: "Invalid file name format" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid file name format" }, { status: 400 });
     }
 
     const userIdFromFilename = match[1];
     const extension = match[3].toLowerCase();
 
     if (userIdFromFilename !== userId) {
-      return NextResponse.json(
-        { error: "Access denied. This file does not belong to you." },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Access denied. This file does not belong to you." }, { status: 403 });
     }
 
     // Construct file path

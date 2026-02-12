@@ -3,37 +3,27 @@ import { container } from "@/lib/di/container";
 import { PolarService } from "@/lib/payment/services/polar.service";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
     const signature =
-      req.headers.get("polar-signature") ||
-      req.headers.get("x-polar-signature") ||
-      req.headers.get("signature");
+      req.headers.get("polar-signature") || req.headers.get("x-polar-signature") || req.headers.get("signature");
 
     if (!signature) {
-      return NextResponse.json(
-        { error: "Missing webhook signature header" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing webhook signature header" }, { status: 400 });
     }
 
     const polarService = new PolarService();
     const event = polarService.verifyWebhookSignature(body, signature);
 
     if (!event) {
-      return NextResponse.json(
-        { error: "Invalid webhook signature" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
     }
 
     // Polar.sh webhook event types
-    if (
-      event.type === "checkout.succeeded" ||
-      event.type === "checkout.completed"
-    ) {
+    if (event.type === "checkout.succeeded" || event.type === "checkout.completed") {
       const checkout = event.data;
 
       const userId = checkout.metadata?.userId;
@@ -44,19 +34,13 @@ export async function POST(req: NextRequest) {
           checkoutId: checkout.id,
           metadata: checkout.metadata,
         });
-        return NextResponse.json(
-          { error: "Missing required metadata" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Missing required metadata" }, { status: 400 });
       }
 
       const creditsAmount = Number.parseInt(credits, 10);
       if (Number.isNaN(creditsAmount) || creditsAmount <= 0) {
         console.error("Invalid credits amount", { credits });
-        return NextResponse.json(
-          { error: "Invalid credits amount" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid credits amount" }, { status: 400 });
       }
 
       if (checkout.status !== "paid" && checkout.status !== "succeeded") {
@@ -64,16 +48,13 @@ export async function POST(req: NextRequest) {
           checkoutId: checkout.id,
           status: checkout.status,
         });
-        return NextResponse.json(
-          { error: "Payment not completed" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Payment not completed" }, { status: 400 });
       }
 
       const creditResult = await container.creditService.creditCredits(
         userId,
         creditsAmount,
-        `Achat de ${creditsAmount} crédits via Polar.sh (Checkout: ${checkout.id})`
+        `Achat de ${creditsAmount} crédits via Polar.sh (Checkout: ${checkout.id})`,
       );
 
       if (!creditResult.ok) {
@@ -82,10 +63,7 @@ export async function POST(req: NextRequest) {
           credits: creditsAmount,
           error: creditResult.error,
         });
-        return NextResponse.json(
-          { error: "Failed to credit credits" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to credit credits" }, { status: 500 });
       }
 
       console.log("Credits credited successfully", {
@@ -107,12 +85,9 @@ export async function POST(req: NextRequest) {
             : checkout.metadata?.amount || "N/A";
           const currency = checkout.currency?.toUpperCase() || "EUR";
 
-          const { renderEmailTemplate } = await import(
-            "../../../../lib/email/utils/render-email"
-          );
-          const { CreditPurchaseConfirmation } = await import(
-            "../../../../lib/email/templates/CreditPurchaseConfirmation"
-          );
+          const { renderEmailTemplate } = await import("../../../../lib/email/utils/render-email");
+          const { CreditPurchaseConfirmation } =
+            await import("../../../../lib/email/templates/CreditPurchaseConfirmation");
           const React = await import("react");
 
           const emailContent = await renderEmailTemplate(
@@ -131,7 +106,7 @@ export async function POST(req: NextRequest) {
                 hour: "2-digit",
                 minute: "2-digit",
               }),
-            })
+            }),
           );
 
           const emailResult = await container.emailService.sendEmail({
@@ -166,9 +141,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error("Webhook error:", error);
-    return NextResponse.json(
-      { error: "Webhook handler failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }

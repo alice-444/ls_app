@@ -1,10 +1,9 @@
 import { NextRequest } from "next/server";
 import { SignInService } from "@/lib/auth/services/signin";
-import {
-  parseJsonBodySafe,
-  handleServiceResult,
-  handleRouteError,
-} from "@/lib/api-helpers";
+
+export const dynamic = "force-dynamic";
+
+import { parseJsonBodySafe, handleServiceResult, handleRouteError } from "@/lib/api-helpers";
 
 const service = new SignInService();
 

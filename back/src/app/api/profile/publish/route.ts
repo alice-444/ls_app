@@ -3,12 +3,9 @@ import { ProfProfileService } from "@/lib/auth/services/prof-profile.service";
 import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
 import { profileRateLimit } from "@/lib/rate-limit";
-import {
-  getAuthenticatedSession,
-  applyRateLimit,
-  handleServiceResult,
-  handleRouteError,
-} from "@/lib/api-helpers";
+
+export const dynamic = "force-dynamic";
+import { getAuthenticatedSession, applyRateLimit, handleServiceResult, handleRouteError } from "@/lib/api-helpers";
 
 const appUserRepository = new PrismaAppUserRepository(prisma);
 const service = new ProfProfileService(appUserRepository);

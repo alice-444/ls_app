@@ -3,6 +3,8 @@ import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
 import { getAuthenticatedSession, handleRouteError } from "@/lib/api-helpers";
 
+export const dynamic = "force-dynamic";
+
 const appUserRepository = new PrismaAppUserRepository(prisma);
 
 export async function GET(req: NextRequest) {

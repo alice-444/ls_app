@@ -2,11 +2,10 @@ import { NextRequest } from "next/server";
 import { SignUpService } from "@/lib/auth/services/signup";
 import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
-import {
-  parseJsonBodySafe,
-  handleServiceResult,
-  handleRouteError,
-} from "@/lib/api-helpers";
+
+export const dynamic = "force-dynamic";
+
+import { parseJsonBodySafe, handleServiceResult, handleRouteError } from "@/lib/api-helpers";
 
 const appUserRepository = new PrismaAppUserRepository(prisma);
 const service = new SignUpService(appUserRepository);

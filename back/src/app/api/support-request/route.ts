@@ -5,11 +5,10 @@ import { existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/common";
 import { uploadRateLimit } from "@/lib/rate-limit";
-import {
-  getAuthenticatedSession,
-  applyRateLimit,
-  handleRouteError,
-} from "@/lib/api-helpers";
+
+export const dynamic = "force-dynamic";
+
+import { getAuthenticatedSession, applyRateLimit, handleRouteError } from "@/lib/api-helpers";
 import { z } from "zod";
 import { container } from "@/lib/di/container";
 
@@ -37,8 +36,7 @@ export async function POST(req: NextRequest) {
     const authResult = await getAuthenticatedSession(req);
     const userId = authResult.ok ? authResult.userId : null;
 
-    const identifier =
-      userId || req.headers.get("x-forwarded-for") || "unknown";
+    const identifier = userId || req.headers.get("x-forwarded-for") || "unknown";
     const rateLimitResult = await applyRateLimit(uploadRateLimit, identifier);
     if (!rateLimitResult.ok) {
       return rateLimitResult.response;
@@ -59,20 +57,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (!validation.success) {
-      return NextResponse.json(
-        { error: "Données invalides", details: validation.error.issues },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Données invalides", details: validation.error.issues }, { status: 400 });
     }
 
     const files: File[] = [];
     const fileCount = formData.getAll("attachments").length;
 
     if (fileCount > MAX_TOTAL_FILES) {
-      return NextResponse.json(
-        { error: `Maximum ${MAX_TOTAL_FILES} fichiers autorisés` },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: `Maximum ${MAX_TOTAL_FILES} fichiers autorisés` }, { status: 400 });
     }
 
     for (let i = 0; i < fileCount; i++) {
@@ -83,23 +75,19 @@ export async function POST(req: NextRequest) {
             {
               error: `Le fichier ${file.name} dépasse la taille maximale de 10 MB`,
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         if (!ALLOWED_MIME_TYPES.has(file.type)) {
-          return NextResponse.json(
-            { error: `Type de fichier non autorisé: ${file.name}` },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: `Type de fichier non autorisé: ${file.name}` }, { status: 400 });
         }
 
         files.push(file);
       }
     }
 
-    const attachments: Array<{ filename: string; url: string; size: number }> =
-      [];
+    const attachments: Array<{ filename: string; url: string; size: number }> = [];
 
     if (files.length > 0) {
       const uploadsDir = resolve(process.cwd(), "uploads", "support");
@@ -140,12 +128,8 @@ export async function POST(req: NextRequest) {
     });
 
     try {
-      const { renderEmailTemplate } = await import(
-        "../../../lib/email/utils/render-email"
-      );
-      const { SupportRequestConfirmation } = await import(
-        "../../../lib/email/templates/SupportRequestConfirmation"
-      );
+      const { renderEmailTemplate } = await import("../../../lib/email/utils/render-email");
+      const { SupportRequestConfirmation } = await import("../../../lib/email/templates/SupportRequestConfirmation");
       const React = await import("react");
 
       const emailContent = await renderEmailTemplate(
@@ -155,7 +139,7 @@ export async function POST(req: NextRequest) {
           requestId: supportRequest.id,
           hasAttachments: attachments.length > 0,
           attachmentCount: attachments.length,
-        })
+        }),
       );
 
       const emailResult = await container.emailService.sendEmail({
@@ -184,7 +168,7 @@ export async function POST(req: NextRequest) {
         id: supportRequest.id,
         message: "Votre demande a été envoyée avec succès",
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return handleRouteError(error);
