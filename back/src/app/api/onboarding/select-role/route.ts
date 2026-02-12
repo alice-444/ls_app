@@ -12,6 +12,13 @@ import {
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return new Response(JSON.stringify({ error: "DATABASE_URL is not set" }), {
+        status: 503,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const authResult = await getAuthenticatedSession(req);
     if (!authResult.ok) {
       return authResult.response;
