@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { container } from "@/lib/di/container";
-import { PolarService } from "@/lib/payment/services/polar.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL && !process.env.PRISMA_ACCELERATE_URL) {
+      return NextResponse.json({ received: true }, { status: 200 });
+    }
+
+    // Lazy-load dependencies
+    const { container } = await import("@/lib/di/container");
+    const { PolarService } = await import("@/lib/payment/services/polar.service");
+
     const body = await req.text();
     const signature =
       req.headers.get("polar-signature") || req.headers.get("x-polar-signature") || req.headers.get("signature");

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { buildDeletionPlan } from "@/lib/users/services/account/deletion/delete-account.usecase";
-import prisma from "../../../../../prisma";
 import { DeleteUserAccountService } from "@/lib/users/services/account/deletion/delete-account.service";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +17,13 @@ import { logger } from "@/lib/common/logger";
 
 export async function DELETE(req: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL && !process.env.PRISMA_ACCELERATE_URL) {
+      return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+    }
+
+    // Lazy-load Prisma
+    const prisma = (await import("../../../../../prisma")).default;
+
     const authResult = await getAuthenticatedSession(req);
     if (!authResult.ok) {
       return authResult.response;

@@ -3,14 +3,12 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { prisma } from "@/lib/common";
 import { uploadRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 import { getAuthenticatedSession, applyRateLimit, handleRouteError } from "@/lib/api-helpers";
 import { z } from "zod";
-import { container } from "@/lib/di/container";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_TOTAL_FILES = 5;
@@ -33,6 +31,14 @@ const supportRequestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL && !process.env.PRISMA_ACCELERATE_URL) {
+      return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+    }
+
+    // Lazy-load dependencies
+    const { prisma } = await import("@/lib/common");
+    const { container } = await import("@/lib/di/container");
+
     const authResult = await getAuthenticatedSession(req);
     const userId = authResult.ok ? authResult.userId : null;
 
