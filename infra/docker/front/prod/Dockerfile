@@ -28,7 +28,7 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-COPY front/package.json ./front/
+COPY package.json .
 
 COPY --from=base /app/node_modules ./node_modules
 COPY --from=base /app/front/node_modules ./front/node_modules

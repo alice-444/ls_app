@@ -6,9 +6,7 @@ on:
       - "[0-9]+.[0-9]+.[0-9]+"
     branches:
       - main
-  pull_request:
-      branches:
-        - dev
+      - ci/cd
 
 jobs:
   build:
