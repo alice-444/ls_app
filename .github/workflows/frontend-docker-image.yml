@@ -33,5 +33,6 @@ jobs:
           name: miho11/front_ls
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          workdir: infra/docker/front/prod
+          workdir: ./
+          dockerfile: infra/docker/front/prod/Dockerfile
           tags: ${{ env.REF_NAME }}
