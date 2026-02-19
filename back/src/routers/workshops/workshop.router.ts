@@ -392,6 +392,20 @@ export const workshopRouter = router({
         workshop.apprenticeId &&
         workshop.apprentice?.user?.id === input.participantId
       ) {
+        // Anti-abus: ne permettre de marquer PRESENT qu'après la fin de l'atelier
+        if (input.attendanceStatus === "PRESENT" && workshop.date && workshop.time && workshop.duration) {
+          const endTime = calculateWorkshopEndTime(
+            workshop.date,
+            workshop.time,
+            workshop.duration
+          );
+          if (endTime && endTime > new Date()) {
+            throw new Error(
+              "La présence ne peut être confirmée qu'après la fin de l'atelier"
+            );
+          }
+        }
+
         const previousStatus = workshop.apprenticeAttendanceStatus;
         const shouldProcessCashback =
           input.attendanceStatus === "PRESENT" &&

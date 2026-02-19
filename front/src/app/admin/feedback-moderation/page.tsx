@@ -59,7 +59,7 @@ export default function FeedbackModerationPage() {
       setActionType(null);
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });
@@ -71,7 +71,7 @@ export default function FeedbackModerationPage() {
       setActionType(null);
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });
@@ -83,7 +83,7 @@ export default function FeedbackModerationPage() {
       setActionType(null);
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });

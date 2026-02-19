@@ -39,15 +39,15 @@ export function WorkshopReviews({
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
             <Star className="h-5 w-5" />
             Avis des participants
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
             Chargement...
           </div>
         </CardContent>
@@ -57,15 +57,15 @@ export function WorkshopReviews({
 
   if (!feedbackData || feedbackData.feedbacks.length === 0) {
     return (
-      <Card>
+      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
             <Star className="h-5 w-5" />
             Avis des participants
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
             Aucun avis pour le moment.
           </div>
         </CardContent>
@@ -74,12 +74,12 @@ export function WorkshopReviews({
   }
 
   return (
-    <Card>
+    <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
           <Star className="h-5 w-5" />
           Avis des participants
-          <span className="text-base font-normal text-muted-foreground">
+          <span className="text-base font-normal text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
             ({feedbackData.feedbacks.length})
           </span>
         </CardTitle>

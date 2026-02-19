@@ -107,6 +107,10 @@ export function ApprenticeWorkshopDashboard() {
       refetchOnWindowFocus: true,
     });
 
+  const { data: titleData } = trpc.user.getTitle.useQuery(undefined, {
+    enabled: !!session && userRole === "APPRENANT",
+  });
+
   const utils = trpc.useUtils();
 
   const cancelMutation = trpc.workshop.cancelConfirmed.useMutation({
@@ -115,7 +119,7 @@ export function ApprenticeWorkshopDashboard() {
       utils.workshop.getUpcomingWorkshops.invalidate();
       setCancelDialogWorkshop(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de l'annulation");
     },
   });
@@ -241,8 +245,8 @@ export function ApprenticeWorkshopDashboard() {
               </div>
               <div className="mt-4 pt-4 border-t">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Niveau actuel</span>
-                  <span className="font-medium">Débutant</span>
+                  <span className="text-muted-foreground">Titre selon ta progression</span>
+                  <span className="font-medium">{titleData?.title ?? "Explorer"}</span>
                 </div>
                 <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div className="h-full bg-indigo-500 w-[25%] rounded-full"></div>

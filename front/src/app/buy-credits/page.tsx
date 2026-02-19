@@ -11,10 +11,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coins, ArrowLeft, Loader2 } from "lucide-react";
+import { Coins, ArrowLeft, Loader2, CheckCircle2, XCircle  } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, XCircle } from "lucide-react";
 
 function BuyCreditsContent() {
   const router = useRouter();
@@ -26,7 +25,7 @@ function BuyCreditsContent() {
     });
 
   const createCheckoutSession = trpc.credits.createCheckoutSession.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       if (data?.url) {
         window.location.href = data.url;
       }
@@ -44,9 +43,9 @@ function BuyCreditsContent() {
   useEffect(() => {
     const success = searchParams.get("success");
     const canceled = searchParams.get("canceled");
-    const sessionId = searchParams.get("session_id");
+    const checkoutId = searchParams.get("checkout_id") || searchParams.get("session_id");
 
-    if (success === "true" && sessionId) {
+    if (success === "true" && checkoutId) {
       refetchBalance();
     }
   }, [searchParams, refetchBalance]);

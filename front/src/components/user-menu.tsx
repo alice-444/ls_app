@@ -9,7 +9,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   Settings,
@@ -20,13 +20,27 @@ import {
   GraduationCap,
   ChevronDown,
   BookOpen,
+  PenTool,
+  Calendar,
+  UserCircle,
+  LogIn,
+  type LucideIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 
+interface MenuLink {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  roles?: ("MENTOR" | "APPRENANT")[];
+  separatorBefore?: boolean;
+}
+
 export default function UserMenu() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,14 +51,85 @@ export default function UserMenu() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const menuLinks: MenuLink[] = useMemo(
+    () => [
+      {
+        href: "/dashboard",
+        label: "Tableau de bord",
+        icon: LayoutDashboard,
+      },
+      {
+        href: "/my-workshops",
+        label: "Mes Ateliers",
+        icon: Calendar,
+        roles: ["MENTOR"],
+      },
+      {
+        href: "/workshop-editor",
+        label: "Atelab",
+        icon: PenTool,
+        roles: ["MENTOR"],
+      },
+      {
+        href: "/mentor-profile",
+        label: "Mon Profil Mentor",
+        icon: User,
+        roles: ["MENTOR"],
+      },
+      {
+        href: "/workshop-room",
+        label: "e-Atelier",
+        icon: BookOpen,
+        roles: ["APPRENANT"],
+      },
+      {
+        href: "/profil",
+        label: "Profil",
+        icon: UserCircle,
+        roles: ["APPRENANT"],
+      },
+      {
+        href: "/notifications",
+        label: "Notifications",
+        icon: Bell,
+        separatorBefore: true,
+      },
+      {
+        href: "/settings",
+        label: "Paramètres",
+        icon: Settings,
+      },
+    ],
+    []
+  );
+
+  const filteredMenuLinks = useMemo(() => {
+    return menuLinks.filter((link) => {
+      if (!link.roles) return true;
+      if (!userRole) return false;
+      return link.roles.includes(userRole);
+    });
+  }, [menuLinks, userRole]);
+
   if (isPending) {
     return <Skeleton className="h-9 w-24" />;
   }
 
   if (!session) {
+    if (pathname === "/login") {
+      return null;
+    }
     return (
-      <Button variant="outline" asChild>
-        <Link href="/login">Sign In</Link>
+      <Button
+        variant="outline"
+        asChild
+        size="sm"
+        className="group/btn h-9 sm:h-10 px-4 sm:px-5 border-2 border-(--primary-orange) text-(--primary-orange-dark) dark:text-(--primary-orange) bg-white/80 dark:bg-white/5 backdrop-blur-md hover:bg-(--primary-orange)/15 dark:hover:bg-(--primary-orange)/20 hover:border-(--primary-orange) hover:shadow-lg hover:shadow-(--primary-orange)/25 dark:hover:shadow-(--primary-orange)/20 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 focus-visible:ring-2 focus-visible:ring-(--primary-orange) focus-visible:ring-offset-2 transition-all duration-200 ease-out rounded-full font-semibold"
+      >
+        <Link href="/login?mode=signin" className="inline-flex items-center gap-2">
+          <LogIn className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-0.5" />
+          <span>Se connecter</span>
+        </Link>
       </Button>
     );
   }
@@ -65,101 +150,70 @@ export default function UserMenu() {
     return role === "MENTOR" ? "Mentor" : "Apprenant";
   };
 
-  const isMentor = userRole === "MENTOR";
-  const isApprenant = userRole === "APPRENANT";
-
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
-            <User className="h-3 w-3 text-primary" />
+        <button className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-[#FFB647] focus:ring-offset-2 rounded-full p-1">
+          <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-[#FFB647] overflow-hidden bg-white dark:bg-[#1a1720] shadow-sm">
+            {session.user.image ? (
+              <img
+                src={session.user.image}
+                alt={session.user.name || "User"}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center bg-[#26547c]/10 dark:bg-[#26547c]/20">
+                <User className="h-5 w-5 text-[#26547c] dark:text-[#e6e6e6]" />
+              </div>
+            )}
           </div>
-          {session.user.name}
           <ChevronDown
-            className={`h-4 w-4 transition-transform duration-200 ${
+            className={`h-5 w-5 sm:h-6 sm:w-6 text-[#26547c] dark:text-[#e6e6e6] transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
-        </Button>
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-card">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>{session.user.email}</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <LayoutDashboard className="h-4 w-4" />
-            Tableau de bord
-          </Link>
+      <DropdownMenuContent className="w-64 bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] shadow-lg p-2">
+        <DropdownMenuLabel className="px-3 py-2 text-[#26547c] dark:text-[#e6e6e6] font-semibold text-sm">
+          Mon Compte
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
+        <DropdownMenuItem className="px-3 py-2 text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] cursor-default focus:bg-transparent">
+          {session.user.email}
         </DropdownMenuItem>
-        {isMentor && (
-          <>
-            <DropdownMenuItem asChild>
-              <Link href="/my-workshops" className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Mes Ateliers
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/workshop-editor" className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Atelab
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/mentor-profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Mon Profil Mentor
-              </Link>
-            </DropdownMenuItem>
-          </>
-        )}
-        {isApprenant && (
-          <>
-            <DropdownMenuItem asChild>
-              <Link href="/workshop-room" className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                e-Atelier
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/profil"
-                className="flex items-center gap-2"
+        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
+        {filteredMenuLinks.map((link, index) => {
+          const Icon = link.icon;
+          return (
+            <div key={link.href}>
+              {link.separatorBefore && index > 0 && (
+                <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
+              )}
+              <DropdownMenuItem
+                asChild
+                className="px-3 py-2 text-sm text-[#26547c] dark:text-[#e6e6e6] rounded-[8px] hover:bg-[#ffb647]/10 dark:hover:bg-[#ffb647]/20 focus:bg-[#ffb647]/10 dark:focus:bg-[#ffb647]/20 transition-colors"
               >
-                <User className="h-4 w-4" />
-                Profil
-              </Link>
-            </DropdownMenuItem>
-          </>
-        )}
-        <DropdownMenuSeparator />
+                <Link href={link.href}>
+                  <Icon className="h-4 w-4" />
+                  {link.label}
+                </Link>
+              </DropdownMenuItem>
+            </div>
+          );
+        })}
+        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
         {userRole && (
-          <DropdownMenuItem className="flex items-center gap-2 cursor-default">
+          <DropdownMenuItem className="px-3 py-2 text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] cursor-default focus:bg-transparent">
             {getRoleIcon(userRole)}
             <span>Rôle : {getRoleLabel(userRole)}</span>
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/notifications" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
-            Notifications
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Paramètres
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
+        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
+        <div className="px-2 py-1">
           <Button
             variant="destructive"
-            className="w-full"
+            className="w-full h-9 rounded-[8px] text-sm font-semibold bg-[#f44336] hover:bg-[#d32f2f] dark:bg-[#f44336]/80 dark:hover:bg-[#d32f2f]/90 text-white border-0 shadow-sm"
             onClick={() => {
               authClient.signOut({
                 fetchOptions: {
@@ -172,7 +226,7 @@ export default function UserMenu() {
           >
             Se déconnecter
           </Button>
-        </DropdownMenuItem>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

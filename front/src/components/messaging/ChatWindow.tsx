@@ -8,18 +8,8 @@ import { authClient } from "@/lib/auth-client";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { TypingIndicator } from "./TypingIndicator";
-import {
-  ArrowLeft,
-  BookOpen,
-  X,
-  Search,
-  MoreVertical,
-  Ban,
-  Flag,
-} from "lucide-react";
+import { BookOpen, X, Search, MoreVertical, Ban, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,11 +23,13 @@ import { toast } from "sonner";
 import { BlockUserDialog } from "@/components/user/BlockUserDialog";
 import { ReportUserDialog } from "@/components/user/ReportUserDialog";
 
+type DateString = Date | string;
+
 interface ChatWindowProps {
-  conversationId: string;
+  readonly conversationId: string;
 }
 
-export function ChatWindow({ conversationId }: ChatWindowProps) {
+export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
   const socket = useSocket();
@@ -48,11 +40,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       senderName?: string | null;
       senderDisplayName?: string | null;
       content: string;
-      createdAt: Date | string;
-      updatedAt?: Date | string | null;
+      createdAt: DateString;
+      updatedAt?: DateString | null;
       editCount?: number;
       isRead?: boolean;
-      deletedAt?: Date | string | null;
+      deletedAt?: DateString | null;
       replyToMessageId?: string | null;
       replyToMessage?: {
         messageId: string;
@@ -62,7 +54,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       } | null;
       workshopReference?: {
         workshopTitle: string;
-        workshopDate: Date | string | null;
+        workshopDate: DateString | null;
       } | null;
     }>
   >([]);
@@ -103,10 +95,10 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   const utils = trpc.useUtils();
   const markAsReadMutation = trpc.messaging.markMessagesAsRead.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       utils.messaging.getUnreadConversationsCount.invalidate();
       refetch();
-      if (socket && socket.connected && data.messageIds.length > 0) {
+      if (socket?.connected && data.messageIds.length > 0) {
         socket.emit("mark-messages-read", {
           conversationId,
           messageIds: data.messageIds,
@@ -123,7 +115,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   );
 
   const conversation = conversations?.find(
-    (c) => c.conversationId === conversationId
+    (c: any) => c.conversationId === conversationId
   );
 
   const { data: conversationDetails, refetch: refetchConversationDetails } =
@@ -188,7 +180,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       } | null;
       workshopReference?: {
         workshopTitle: string;
-        workshopDate: Date | string | null;
+        workshopDate: DateString | null;
       } | null;
     }) => {
       if (message.conversationId === conversationId) {
@@ -199,6 +191,27 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       }
     };
 
+    const updateMessageInList = (
+      messages: typeof localMessages,
+      updatedMessage: {
+        messageId: string;
+        content: string;
+        updatedAt?: DateString | null;
+        editCount?: number;
+      }
+    ) => {
+      return messages.map((msg) =>
+        msg.messageId === updatedMessage.messageId
+          ? {
+              ...msg,
+              content: updatedMessage.content,
+              updatedAt: updatedMessage.updatedAt,
+              editCount: updatedMessage.editCount,
+            }
+          : msg
+      );
+    };
+
     const handleMessageUpdated = (updatedMessage: {
       messageId: string;
       conversationId: string;
@@ -206,24 +219,29 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       senderName?: string | null;
       senderDisplayName?: string | null;
       content: string;
-      createdAt: Date | string;
-      updatedAt?: Date | string | null;
+      createdAt: DateString;
+      updatedAt?: DateString | null;
       editCount?: number;
     }) => {
       if (updatedMessage.conversationId === conversationId) {
         setLocalMessages((prev) =>
-          prev.map((msg) =>
-            msg.messageId === updatedMessage.messageId
-              ? {
-                  ...msg,
-                  content: updatedMessage.content,
-                  updatedAt: updatedMessage.updatedAt,
-                  editCount: updatedMessage.editCount,
-                }
-              : msg
-          )
+          updateMessageInList(prev, {
+            messageId: updatedMessage.messageId,
+            content: updatedMessage.content,
+            updatedAt: updatedMessage.updatedAt,
+            editCount: updatedMessage.editCount,
+          })
         );
       }
+    };
+
+    const markMessagesAsRead = (
+      messages: typeof localMessages,
+      messageIds: string[]
+    ) => {
+      return messages.map((msg) =>
+        messageIds.includes(msg.messageId) ? { ...msg, isRead: true } : msg
+      );
     };
 
     const handleMessagesRead = (data: {
@@ -231,14 +249,17 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       messageIds: string[];
     }) => {
       if (data.conversationId === conversationId) {
-        setLocalMessages((prev) =>
-          prev.map((msg) =>
-            data.messageIds.includes(msg.messageId)
-              ? { ...msg, isRead: true }
-              : msg
-          )
-        );
+        setLocalMessages((prev) => markMessagesAsRead(prev, data.messageIds));
       }
+    };
+
+    const markMessageAsDeleted = (
+      messages: typeof localMessages,
+      messageId: string
+    ) => {
+      return messages.map((msg) =>
+        msg.messageId === messageId ? { ...msg, deletedAt: new Date() } : msg
+      );
     };
 
     const handleMessageDeleted = (data: {
@@ -246,13 +267,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       conversationId: string;
     }) => {
       if (data.conversationId === conversationId) {
-        setLocalMessages((prev) =>
-          prev.map((msg) =>
-            msg.messageId === data.messageId
-              ? { ...msg, deletedAt: new Date() }
-              : msg
-          )
-        );
+        setLocalMessages((prev) => markMessageAsDeleted(prev, data.messageId));
       }
     };
 
@@ -271,20 +286,33 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           otherUser?.otherUserName ||
           "Quelqu'un";
 
-        setTypingUsers((prev) => {
+        const addTypingUser = (prev: Map<string, string>) => {
           const newMap = new Map(prev);
           newMap.set(data.userId, userName);
           return newMap;
-        });
+        };
+
+        setTypingUsers(addTypingUser);
+
+        const removeTypingUser = (prev: Map<string, string>) => {
+          const newMap = new Map(prev);
+          newMap.delete(data.userId);
+          return newMap;
+        };
 
         setTimeout(() => {
-          setTypingUsers((prev) => {
-            const newMap = new Map(prev);
-            newMap.delete(data.userId);
-            return newMap;
-          });
+          setTypingUsers(removeTypingUser);
         }, 3000);
       }
+    };
+
+    const removeTypingUserFromMap = (
+      prev: Map<string, string>,
+      userId: string
+    ) => {
+      const newMap = new Map(prev);
+      newMap.delete(userId);
+      return newMap;
     };
 
     const handleUserStoppedTyping = (data: {
@@ -292,11 +320,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       conversationId: string;
     }) => {
       if (data.conversationId === conversationId) {
-        setTypingUsers((prev) => {
-          const newMap = new Map(prev);
-          newMap.delete(data.userId);
-          return newMap;
-        });
+        setTypingUsers((prev) => removeTypingUserFromMap(prev, data.userId));
       }
     };
 
@@ -342,7 +366,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       refetch();
       setReplyingToMessageId(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error sending message:", error);
     },
   });
@@ -351,7 +375,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     onSuccess: () => {
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors de la modification", {
         description: error.message,
       });
@@ -362,7 +386,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     onSuccess: () => {
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors de la suppression", {
         description: error.message,
       });
@@ -370,7 +394,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   });
 
   const handleEditMessage = (messageId: string, newContent: string) => {
-    if (socket && socket.connected) {
+    if (socket?.connected) {
       socket.emit("update-message", {
         messageId,
         content: newContent,
@@ -384,7 +408,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   };
 
   const handleDeleteMessage = (messageId: string) => {
-    if (socket && socket.connected) {
+    if (socket?.connected) {
       socket.emit("delete-message", { messageId });
     } else {
       deleteMessageMutation.mutate({ messageId });
@@ -399,7 +423,27 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
     const currentUserName = session.user.name || null;
 
-    // TODO: Optimistic update: add message immediately to local state
+    const getReplyToMessage = () => {
+      if (!replyingToMessageId) {
+        return null;
+      }
+
+      const repliedMessage = localMessages.find(
+        (m) => m.messageId === replyingToMessageId
+      );
+
+      if (!repliedMessage) {
+        return null;
+      }
+
+      return {
+        messageId: replyingToMessageId,
+        content: repliedMessage.content || "",
+        senderName: null,
+        senderDisplayName: null,
+      };
+    };
+
     const optimisticMessage = {
       messageId: tempMessageId,
       senderId: session.user.id,
@@ -409,24 +453,36 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       createdAt: new Date(),
       isRead: false,
       replyToMessageId: replyingToMessageId || null,
-      replyToMessage: replyingToMessageId
-        ? localMessages.find((m) => m.messageId === replyingToMessageId)
-          ? {
-              messageId: replyingToMessageId,
-              content:
-                localMessages.find((m) => m.messageId === replyingToMessageId)
-                  ?.content || "",
-              senderName: null,
-              senderDisplayName: null,
-            }
-          : null
-        : null,
+      replyToMessage: getReplyToMessage(),
     };
 
     setLocalMessages((prev) => [...prev, optimisticMessage]);
     setReplyingToMessageId(null);
 
-    if (socket && socket.connected) {
+    const replaceTempMessage = (
+      prev: typeof localMessages,
+      tempId: string,
+      newMessage: {
+        messageId: string;
+        conversationId: string;
+        senderId: string;
+        senderName?: string | null;
+        senderDisplayName?: string | null;
+        content: string;
+        createdAt: Date | string;
+        replyToMessageId?: string | null;
+        replyToMessage?: {
+          messageId: string;
+          content: string;
+          senderName: string | null;
+          senderDisplayName: string | null;
+        } | null;
+      }
+    ) => {
+      return prev.map((msg) => (msg.messageId === tempId ? newMessage : msg));
+    };
+
+    if (socket?.connected) {
       socket.emit("send-message", {
         conversationId,
         content: trimmedContent,
@@ -454,7 +510,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           message.senderId === session.user.id
         ) {
           setLocalMessages((prev) =>
-            prev.map((msg) => (msg.messageId === tempMessageId ? message : msg))
+            replaceTempMessage(prev, tempMessageId, message)
           );
           socket.off("new-message", handleSentMessage);
         }
@@ -480,29 +536,20 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="py-8">
-          <div className="text-center text-muted-foreground">
-            Chargement des messages...
-          </div>
-        </CardContent>
-      </Card>
+      <div className="py-8">
+        <div className="text-center text-muted-foreground dark:text-[#e6e6e6]">
+          Chargement des messages...
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-200px)]">
-      <CardHeader className="shrink-0 border-b">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/inbox")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
+    <div className="flex flex-col h-full">
+      <div className="shrink-0 border-b border-[#d6dae4] dark:border-[#d6dae4] p-4 bg-white dark:bg-[#1a1720]">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-bold text-[#26547c] dark:text-[#e6e6e6]">
               {conversation?.otherUserDisplayName ||
                 conversation?.otherUserName ||
                 "Conversation"}
@@ -513,28 +560,36 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
               variant="ghost"
               size="icon"
               onClick={() => setShowSearch(!showSearch)}
+              className="hover:bg-gray-100 dark:hover:bg-white/10"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-4 w-4 text-gray-600 dark:text-[#e6e6e6]" />
             </Button>
             {conversation?.otherUserId && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreVertical className="h-4 w-4" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-gray-100 dark:hover:bg-white/10"
+                  >
+                    <MoreVertical className="h-4 w-4 text-gray-600 dark:text-[#e6e6e6]" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent
+                  align="end"
+                  className="bg-white dark:bg-[#1a1720] border border-[#d6dae4]"
+                >
                   <DropdownMenuItem
                     onClick={() => setShowBlockDialog(true)}
-                    className="text-destructive focus:text-destructive"
+                    className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
                   >
                     <Ban className="h-4 w-4 mr-2" />
                     Bloquer l'utilisateur
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className="bg-[#d6dae4]" />
                   <DropdownMenuItem
                     onClick={() => setShowReportDialog(true)}
-                    className="text-destructive focus:text-destructive"
+                    className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
                   >
                     <Flag className="h-4 w-4 mr-2" />
                     Signaler l'utilisateur
@@ -547,13 +602,13 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         {showSearch && (
           <div className="mt-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-600 dark:text-[rgba(230,230,230,0.64)]" />
               <input
                 type="text"
                 placeholder="Rechercher dans la conversation..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full pl-10 pr-10 py-2 border border-[#d6dae4] rounded-lg bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] placeholder:text-gray-500 dark:placeholder:text-[rgba(230,230,230,0.64)] focus:outline-none focus:ring-2 focus:ring-[#26547c] dark:focus:ring-[#e6e6e6]"
               />
               {searchQuery && (
                 <Button
@@ -572,52 +627,60 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
             {searchQuery && searchResults && (
               <div className="mt-2 max-h-48 overflow-y-auto">
                 {searchResults.length === 0 ? (
-                  <p className="text-sm text-muted-foreground p-2">
+                  <p className="text-sm text-gray-600 dark:text-[rgba(230,230,230,0.64)] p-2">
                     Aucun résultat trouvé
                   </p>
                 ) : (
                   <div className="space-y-1">
-                    {searchResults.map((result) => (
-                      <div
-                        key={result.messageId}
-                        className="p-2 hover:bg-muted rounded cursor-pointer text-sm"
-                        onClick={() => {
-                          const element = document.querySelector(
-                            `[data-message-id="${result.messageId}"]`
-                          );
-                          if (element) {
-                            element.scrollIntoView({ behavior: "smooth" });
-                            element.classList.add("ring-2", "ring-primary");
-                            setTimeout(() => {
-                              element.classList.remove(
-                                "ring-2",
-                                "ring-primary"
-                              );
-                            }, 2000);
-                          }
-                          setShowSearch(false);
-                        }}
-                      >
-                        <p className="font-medium">
-                          {result.senderDisplayName ||
-                            result.senderName ||
-                            "Utilisateur"}
-                        </p>
-                        <p className="text-muted-foreground truncate">
-                          {result.content.length > 100
-                            ? result.content.substring(0, 100) + "..."
-                            : result.content}
-                        </p>
-                      </div>
-                    ))}
+                    {searchResults.map((result: any) => {
+                      const handleResultClick = () => {
+                        const element = document.querySelector(
+                          `[data-message-id="${result.messageId}"]`
+                        );
+                        if (element) {
+                          element.scrollIntoView({ behavior: "smooth" });
+                          element.classList.add("ring-2", "ring-primary");
+                          setTimeout(() => {
+                            element.classList.remove("ring-2", "ring-primary");
+                          }, 2000);
+                        }
+                        setShowSearch(false);
+                      };
+
+                      return (
+                        <button
+                          key={result.messageId}
+                          type="button"
+                          className="w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded cursor-pointer text-sm text-[#26547c] dark:text-[#e6e6e6] transition-colors"
+                          onClick={handleResultClick}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleResultClick();
+                            }
+                          }}
+                        >
+                          <p className="font-medium">
+                            {result.senderDisplayName ||
+                              result.senderName ||
+                              "Utilisateur"}
+                          </p>
+                          <p className="text-muted-foreground truncate">
+                            {result.content.length > 100
+                              ? result.content.substring(0, 100) + "..."
+                              : result.content}
+                          </p>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
             )}
           </div>
         )}
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+      </div>
+      <div className="flex-1 flex flex-col p-0 overflow-hidden bg-white dark:bg-[#1a1720]">
         <div className="flex-1 overflow-y-auto p-4">
           <MessageList
             messages={localMessages}
@@ -634,7 +697,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           )}
           <div ref={messagesEndRef} />
         </div>
-        <div className="border-t p-4 shrink-0">
+        <div className="border-t border-[#d6dae4] dark:border-[#d6dae4] p-4 shrink-0 bg-white dark:bg-[#1a1720]">
           {replyingToMessageId &&
             (() => {
               const replyingToMessage = localMessages.find(
@@ -644,21 +707,21 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
               if (!replyingToMessage) return null;
 
               return (
-                <div className="mb-2 p-2 bg-muted rounded-lg flex items-center justify-between">
+                <div className="mb-2 p-2 bg-gray-100 dark:bg-white/10 rounded-lg flex items-center justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground mb-1">
+                    <p className="text-xs text-gray-600 dark:text-[rgba(230,230,230,0.64)] mb-1">
                       Répondre à:
                     </p>
                     {replyingToMessage.workshopReference ? (
-                      <div className="flex items-center gap-2 text-sm">
-                        <BookOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      <div className="flex items-center gap-2 text-sm text-[#26547c] dark:text-[#e6e6e6]">
+                        <BookOpen className="h-3.5 w-3.5 shrink-0 text-gray-600 dark:text-[rgba(230,230,230,0.64)]" />
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate">
                             {replyingToMessage.workshopReference
                               .workshopTitle || "Atelier"}
                           </p>
                           {replyingToMessage.workshopReference.workshopDate && (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-gray-600 dark:text-[rgba(230,230,230,0.64)]">
                               {format(
                                 new Date(
                                   replyingToMessage.workshopReference.workshopDate
@@ -671,7 +734,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm truncate">
+                      <p className="text-sm truncate text-[#26547c] dark:text-[#e6e6e6]">
                         {replyingToMessage.content}
                       </p>
                     )}
@@ -692,7 +755,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
             conversationId={conversationId}
           />
         </div>
-      </CardContent>
+      </div>
       {conversation?.otherUserId && (
         <>
           <BlockUserDialog
@@ -716,6 +779,6 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           />
         </>
       )}
-    </Card>
+    </div>
   );
 }

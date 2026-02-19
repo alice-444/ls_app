@@ -1,4 +1,0 @@
-# Ignore node_modules - it will be reinstalled in the container
-**/node_modules
-/prisma/generated
-.next

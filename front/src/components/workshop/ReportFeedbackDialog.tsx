@@ -14,13 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Flag, Loader2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
-
-interface ReportFeedbackDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  feedbackId: string;
-  onSuccess?: () => void;
-}
+import type { ReportFeedbackDialogProps } from "@/types/workshop-components";
 
 export function ReportFeedbackDialog({
   open,
@@ -39,7 +33,7 @@ export function ReportFeedbackDialog({
       onOpenChange(false);
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });

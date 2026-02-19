@@ -12,13 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Coins, Loader2, Heart } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
-
-interface TippingModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  mentorUserId: string;
-  onSuccess?: () => void;
-}
+import type { TippingModalProps } from "@/types/workshop-components";
 
 export function TippingModal({
   open,
@@ -29,13 +23,13 @@ export function TippingModal({
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   const sendTipMutation = trpc.workshopFeedback.sendTip.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Pourboire envoyé. Votre mentor vous remercie !");
       setSelectedAmount(null);
       onOpenChange(false);
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: { message?: string }) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });

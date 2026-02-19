@@ -2,6 +2,7 @@
 dist/
 /build
 /out/
+/.next-standalone/
 
 # dev
 .yarn/
@@ -52,7 +53,4 @@ lerna-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-prisma/generated/
-prisma/migrations/
-prisma/schema/schema.prisma
+.cursor
