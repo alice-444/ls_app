@@ -2,6 +2,7 @@
 dist/
 /build
 /out/
+/.next-standalone/
 
 # dev
 .yarn/
@@ -51,3 +52,5 @@ lerna-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.cursor

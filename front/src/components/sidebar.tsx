@@ -10,7 +10,6 @@ import { useState } from "react";
 import {
   Home,
   LayoutDashboard,
-  UserSearch,
   PlusCircle,
   BookOpen,
   Users,
@@ -21,6 +20,7 @@ import {
   ChevronRight,
   ChevronLeft,
   User,
+  UserSearch,
 } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -72,11 +72,6 @@ const getNavItems = (userRole: UserRole): NavItem[] => {
   } else if (userRole === "APPRENANT") {
     items.push({
       icon: UserSearch,
-      href: "/mentors",
-      label: "Mentors",
-    });
-    items.push({
-      icon: BookOpen,
       href: "/workshop-room",
       label: "e-Atelier",
     });
@@ -232,9 +227,8 @@ export default function Sidebar() {
                 )}
                 {hasBadge && (
                   <Badge
-                    variant="destructive"
                     className={cn(
-                      "h-5 min-w-5 flex items-center justify-center px-1.5 text-xs animate-pulse",
+                      "h-5 min-w-5 flex items-center justify-center px-1.5 text-xs font-medium border-0 bg-[#e69a2f] text-white shadow-sm",
                       isExpanded ? "ml-auto" : "absolute -top-1 -right-1"
                     )}
                   >

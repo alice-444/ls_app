@@ -1,6 +1,6 @@
 # LearnSup
 
-...
+Application d’accompagnement pédagogique (tuteurs, apprenants, ateliers). Monorepo TypeScript avec frontend Next.js et backend API.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
@@ -36,8 +36,8 @@
 
 Ce projet est géré en monorepo :
 
-- **[apps/web](./apps/web)** - Application Next.js (Frontend)
-- **[apps/server](./apps/server)** - API Next.js (Backend)
+- **[front](./front)** – Application Next.js
+- **[back](./back)** – API et serveur Next.js
 
 ---
 
@@ -53,8 +53,8 @@ Ce projet est géré en monorepo :
 
 ```bash
 # Cloner et installer
-git clone https://github.com/votre-org/learnsup.git
-cd learnsup
+git clone https://github.com/votre-org/ls_app.git
+cd ls_app
 pnpm install
 
 # Configurer la base de données
@@ -73,9 +73,9 @@ pnpm dev
 
 ## ⚙️ Configuration
 
-Créez les fichiers `.env` :
+Créer les fichiers `.env` à la racine des packages :
 
-**`apps/back/.env`**
+**`back/.env`**
 ```env
 DATABASE_URL="postgresql://..."
 BETTER_AUTH_SECRET="your-secret-key-min-32-chars"
@@ -83,7 +83,7 @@ CORS_ORIGIN="http://localhost:3001"
 CRON_SECRET="your-secret-key-min-32-chars"
 ```
 
-**`apps/front/.env`**
+**`front/.env`**
 ```env
 NEXT_PUBLIC_API_URL="http://localhost:3000"
 ```
@@ -109,57 +109,60 @@ NEXT_PUBLIC_API_URL="http://localhost:3000"
 ## 🛠 Stack Technique
 
 ### Core
-- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
-- **[Next.js 16](https://nextjs.org/)** - Framework React full-stack
-- **[Prisma](https://www.prisma.io/)** - ORM TypeScript-first
-- **[PostgreSQL](https://www.postgresql.org/)** - Base de données
-- **[Turborepo](https://turbo.build/)** - Monorepo build system
+- **[TypeScript](https://www.typescriptlang.org/)** – Typage statique
+- **[Next.js](https://nextjs.org/)** – Framework React full-stack
+- **[Prisma](https://www.prisma.io/)** – ORM TypeScript
+- **[PostgreSQL](https://www.postgresql.org/)** – Base de données
+- **[Turborepo](https://turbo.build/)** – Build et tâches du monorepo
 
 ### Frontend
-- **[TailwindCSS](https://tailwindcss.com/)** - Styling
-- **[shadcn/ui](https://ui.shadcn.com/)** - Composants UI
-- **[TanStack Query](https://tanstack.com/query)** - State management
-- **[tRPC](https://trpc.io/)** - API type-safe
+- **[Tailwind CSS](https://tailwindcss.com/)** – Styles
+- **[shadcn/ui](https://ui.shadcn.com/)** – Composants UI (Radix)
+- **[TanStack Query](https://tanstack.com/query)** – Données serveur et cache
+- **[tRPC](https://trpc.io/)** – API type-safe
+- **[Better Auth](https://www.better-auth.com/)** – Authentification (client)
 
 ### Backend
-- **[Better Auth](https://www.better-auth.com/)** - Authentification
-- **[Zod](https://zod.dev/)** - Validation
-- **[Sharp](https://sharp.pixelplumbing.com/)** - Traitement d'images
+- **[Better Auth](https://www.better-auth.com/)** – Authentification
+- **[Zod](https://zod.dev/)** – Validation
+- **[Sharp](https://sharp.pixelplumbing.com/)** – Traitement d’images (si utilisé)
+- **[Resend](https://resend.com/)** – Envoi d’emails
+- **[Daily.co](https://www.daily.co/)** – Visioconférence (intégration)
 
 ### DevOps
-- **[pnpm](https://pnpm.io/)** - Package manager
-- **[GitHub Actions](https://github.com/features/actions)** - CI/CD
-- **[Docker](https://www.docker.com/)** - Conteneurisation
-- **[Cypress](https://www.cypress.io/)** - Tests E2E
+- **[pnpm](https://pnpm.io/)** – Gestion des paquets
+- **[GitHub Actions](https://github.com/features/actions)** – CI/CD
+- **[Docker](https://www.docker.com/)** – Conteneurisation (infra)
+- **[Cypress](https://www.cypress.io/)** – Tests E2E
+- **SonarQube** – Qualité de code
 
 ---
 
 ## 📁 Structure
 
 ```
-learnsup/
-├── apps/
-│   ├── web/           # Frontend Next.js
-│   └── server/        # Backend API
+ls_app/
+├── front/              # Frontend Next.js
+├── back/               # Backend (serveur custom + Next.js, Prisma)
 ├── infra/
-│   └── docker/        # Configuration Docker
+│   └── docker/         # Configuration Docker
+├── docs/               # Documentation
 ├── .github/
-│   └── workflows/     # CI/CD pipelines
-├── package.json       # Scripts racine
+│   └── workflows/      # Pipelines CI/CD
+├── package.json        # Scripts racine et workspaces
 ├── pnpm-workspace.yaml
-└── turbo.json         # Configuration Turborepo
+├── turbo.json          # Configuration Turborepo
+└── sonar-project.properties
 ```
 
-Pour plus de détails, consultez les README de chaque application :
-- [Documentation Frontend](./apps/front/README.md)
-- [Documentation Backend](./apps/back/README.md)
+Documentation complémentaire : [docs/README.md](./docs/README.md).
 
 ---
 
 ## Workflow de Développement
 
 ### Convention de Commits
-Suivez [Conventional Commits](https://www.conventionalcommits.org/) :
+Suivre [Conventional Commits](https://www.conventionalcommits.org/) :
 - `feat:` Nouvelle fonctionnalité
 - `fix:` Correction de bug
 - `docs:` Documentation
@@ -170,25 +173,25 @@ Suivez [Conventional Commits](https://www.conventionalcommits.org/) :
 - `ci:` CI/CD
 
 ### CI/CD
-Le projet utilise **GitHub Actions** avec 3 workflows :
-- 🔍 **Code Quality** : Linting + SonarQube
-- 🧪 **Tests** : Unit, Integration, E2E
-- 🚀 **Deployment** : Build et release automatique
+Le projet utilise **GitHub Actions** avec des workflows pour :
+- 🔍 **Qualité de code** : Linting et SonarQube
+- 🧪 **Tests** : Unitaires, intégration, E2E
+- 🚀 **Déploiement** : Build et release
 
 ---
 
 ## 🤝 Contribution
 
 1. Fork le projet
-2. Créez une branche (`git checkout -b feat/amazing-feature`)
-3. Committez (`git commit -m 'feat: add amazing feature'`)
-4. Push (`git push origin feat/amazing-feature`)
-5. Ouvrez une Pull Request
+2. Créer une branche (`git checkout -b feat/amazing-feature`)
+3. Committer (`git commit -m 'feat: add amazing feature'`)
+4. Pousser (`git push origin feat/amazing-feature`)
+5. Ouvrir une Pull Request
 
 ---
 
 <div align="center">
 
-**[⬆ Retour en haut](#-learnsup)**
+**[⬆ Retour en haut](#learnsup)**
 
 </div>

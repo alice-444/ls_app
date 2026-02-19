@@ -70,6 +70,24 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // Idempotence: éviter de créditer deux fois si Polar renvoie le même webhook
+      const appUser = await container.appUserRepository.findByUserId(userId);
+      if (appUser) {
+        const existingTopUp =
+          await container.creditTransactionRepository.findFirstByUserIdAndType(
+            appUser.id,
+            "TOP_UP",
+            { descriptionContains: checkout.id, orderBy: "desc" }
+          );
+        if (existingTopUp) {
+          return NextResponse.json({
+            success: true,
+            credits: creditsAmount,
+            alreadyProcessed: true,
+          });
+        }
+      }
+
       const creditResult = await container.creditService.creditCredits(
         userId,
         creditsAmount,

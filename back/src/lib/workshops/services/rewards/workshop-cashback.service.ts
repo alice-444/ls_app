@@ -107,6 +107,24 @@ export class WorkshopCashbackService implements IWorkshopCashbackService {
     try {
       const now = new Date();
 
+      // Anti-abus: vérifier que le participant est bien l'apprenti de l'atelier et marqué PRÉSENT
+      const workshop = await this.workshopRepository.findById(workshopId);
+      if (!workshop) {
+        return failure("Atelier introuvable", 404);
+      }
+      if (!workshop.apprenticeId || !workshop.apprentice) {
+        return failure("Aucun participant inscrit à cet atelier", 400);
+      }
+      if (workshop.apprentice.user?.id !== participantUserId) {
+        return failure("L'utilisateur n'est pas le participant de cet atelier", 403);
+      }
+      if (workshop.apprenticeAttendanceStatus !== "PRESENT") {
+        return failure(
+          "Le cashback n'est attribué qu'après confirmation de présence par le mentor",
+          400
+        );
+      }
+
       const existingQueue =
         await this.cashbackQueueRepository.findFirstByWorkshopAndUser(
           workshopId,

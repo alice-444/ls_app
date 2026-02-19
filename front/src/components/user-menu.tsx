@@ -23,6 +23,7 @@ import {
   PenTool,
   Calendar,
   UserCircle,
+  LogIn,
   type LucideIcon,
 } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -119,8 +120,16 @@ export default function UserMenu() {
       return null;
     }
     return (
-      <Button variant="outline" asChild>
-        <Link href="/login">Sign In</Link>
+      <Button
+        variant="outline"
+        asChild
+        size="sm"
+        className="group/btn h-9 sm:h-10 px-4 sm:px-5 border-2 border-(--primary-orange) text-(--primary-orange-dark) dark:text-(--primary-orange) bg-white/80 dark:bg-white/5 backdrop-blur-md hover:bg-(--primary-orange)/15 dark:hover:bg-(--primary-orange)/20 hover:border-(--primary-orange) hover:shadow-lg hover:shadow-(--primary-orange)/25 dark:hover:shadow-(--primary-orange)/20 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 focus-visible:ring-2 focus-visible:ring-(--primary-orange) focus-visible:ring-offset-2 transition-all duration-200 ease-out rounded-full font-semibold"
+      >
+        <Link href="/login?mode=signin" className="inline-flex items-center gap-2">
+          <LogIn className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-0.5" />
+          <span>Se connecter</span>
+        </Link>
       </Button>
     );
   }

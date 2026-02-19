@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, Linkedin, Youtube } from "lucide-react";
+import { Instagram, Linkedin } from "lucide-react";
 
 const footerLinks = [
   { href: "/legal", label: "Mentions" },
@@ -12,18 +12,13 @@ const footerLinks = [
 const socialLinks = [
   {
     name: "Instagram",
-    href: "https://instagram.com",
+    href: "https://www.instagram.com/learn_sup/",
     Icon: Instagram,
   },
   {
     name: "LinkedIn",
-    href: "https://linkedin.com",
+    href: "https://www.linkedin.com/company/learnsup/",
     Icon: Linkedin,
-  },
-  {
-    name: "YouTube",
-    href: "https://youtube.com",
-    Icon: Youtube,
   },
 ];
 
@@ -48,9 +43,10 @@ export function Footer() {
                   <div key={link.href + link.label} className="flex items-center gap-3 sm:gap-6">
                     <Link
                       href={link.href}
-                      className="text-[#26547c] dark:text-[#e6e6e6] hover:underline transition-colors"
+                      className="group relative text-[#26547c] dark:text-[#e6e6e6] transition-all duration-300 hover:text-[#FF8C42] dark:hover:text-[#FF8C42] font-medium"
                     >
-                      {link.label}
+                      <span className="relative z-10">{link.label}</span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-[#FF8C42] to-[#FFB647] transition-all duration-300 group-hover:w-full"></span>
                     </Link>
                     {index < footerLinks.length - 1 && (
                       <span className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
@@ -70,10 +66,13 @@ export function Footer() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#26547c] dark:text-[#e6e6e6] hover:text-[#FF8C42] transition-colors"
+                      className="group relative text-[#26547c] dark:text-[#e6e6e6] transition-all duration-300 hover:text-[#FF8C42] dark:hover:text-[#FF8C42]"
                       aria-label={social.name}
                     >
-                      <IconComponent className="w-6 h-6" />
+                      <div className="relative p-2 rounded-full transition-all duration-300 group-hover:bg-[#FF8C42]/10 group-hover:scale-110 group-hover:rotate-6">
+                        <IconComponent className="w-6 h-6 transition-all duration-300 group-hover:scale-110" />
+                        <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF8C42] to-[#FFB647] opacity-0 group-hover:opacity-20 blur-sm transition-opacity duration-300"></span>
+                      </div>
                     </a>
                   );
                 })}

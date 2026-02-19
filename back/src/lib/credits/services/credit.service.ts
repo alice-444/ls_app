@@ -9,6 +9,9 @@ import { generateInternalId } from "../../utils/id-generator";
 import type { PrismaClient } from "../../../../prisma/generated/client/client";
 import type { Prisma } from "../../../../prisma/generated/client/client";
 
+/** Plafond par opération de crédit pour limiter les abus et erreurs. */
+const MAX_CREDIT_AMOUNT_PER_OPERATION = 100_000;
+
 export class CreditService implements ICreditService {
   constructor(private readonly prisma: PrismaClient) {}
 
@@ -215,6 +218,12 @@ export class CreditService implements ICreditService {
     try {
       if (amount <= 0) {
         return failure("Le montant à créditer doit être positif", 400);
+      }
+      if (amount > MAX_CREDIT_AMOUNT_PER_OPERATION) {
+        return failure(
+          `Le montant à créditer ne peut pas dépasser ${MAX_CREDIT_AMOUNT_PER_OPERATION} par opération`,
+          400
+        );
       }
 
       const result = await this.prisma.$transaction(async (tx) => {

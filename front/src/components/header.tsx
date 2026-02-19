@@ -32,7 +32,7 @@ export default function Header() {
 
     return (
       <div className="flex items-center gap-2 md:gap-4">
-        <div className="flex items-center gap-1.5 md:gap-2 h-8 md:h-10 px-2 md:px-4 py-1 md:py-2 rounded-full bg-[#26547c]/10 border border-[#26547c] dark:bg-[#26547c]/20 dark:border-[#4a90e2]">
+        <div className="flex items-center gap-1.5 md:gap-2 h-8 md:h-10 px-2 md:px-4 py-1 md:py-2 rounded-full bg-[#26547c]/10 backdrop-blur-md border border-[#26547c]/40 dark:bg-[#26547c]/15 dark:backdrop-blur-lg dark:border-[#4a90e2]/50 shadow-sm transition-all duration-200 ease-out hover:bg-[#26547c]/18 hover:border-[#26547c]/55 hover:shadow hover:-translate-y-px dark:hover:bg-[#26547c]/22 dark:hover:border-[#4a90e2]/65">
           <span className="text-[#26547c] dark:text-[#5ba3ff] text-[10px] md:text-xs font-semibold whitespace-nowrap">
             {creditBalance.balance}
             <span className="hidden sm:inline"> crédits</span>
@@ -42,25 +42,25 @@ export default function Header() {
         <Button
           variant="outline"
           onClick={() => router.push("/buy-credits")}
-          className="group h-8 md:h-10 px-2 md:px-4 py-1 md:py-2 rounded-full border-2 border-[#26547c] bg-white hover:bg-[#26547c] dark:bg-gray-900 dark:border-[#4a90e2] dark:hover:bg-[#4a90e2] dark:text-[#e0e0e0] transition-all duration-200 hover:shadow-lg"
+          className="group h-8 md:h-10 px-2 md:px-4 py-1 md:py-2 rounded-full border border-[#26547c]/50 bg-white/80 backdrop-blur-md dark:bg-white/10 dark:backdrop-blur-lg dark:border-[#4a90e2]/50 dark:text-[#e0e0e0] transition-all duration-200 ease-out hover:bg-[#26547c] hover:border-[#26547c] hover:shadow-md hover:-translate-y-px active:translate-y-0 dark:hover:bg-[#4a90e2] dark:hover:border-[#4a90e2]"
           title="Acheter des crédits"
         >
-          <span className="hidden lg:inline text-[#26547c] group-hover:text-white dark:text-[#e0e0e0] dark:group-hover:text-white text-xs font-semibold transition-colors">
+          <span className="hidden lg:inline text-[#26547c] group-hover:text-white dark:text-[#e0e0e0] dark:group-hover:text-white text-xs font-semibold transition-colors duration-200">
             Acheter des crédits
           </span>
-          <ShoppingCart className="w-4 lg:w-[18px] h-4 lg:h-[18px] text-[#26547c] group-hover:text-white dark:text-[#e0e0e0] dark:group-hover:text-white lg:ml-2 transition-colors" />
+          <ShoppingCart className="w-4 lg:w-[18px] h-4 lg:h-[18px] text-[#26547c] group-hover:text-white dark:text-[#e0e0e0] dark:group-hover:text-white lg:ml-2 transition-transform duration-200 group-hover:translate-x-0.5" />
         </Button>
 
         <Button
           onClick={() => router.push("/premium")}
-          className="hidden md:flex h-8 md:h-10 px-2 md:px-4 py-1 md:py-2 rounded-full bg-[#FFB647] hover:bg-[#ff9f1a] border-2 border-[#FFB647] text-black dark:bg-[#FFB647] dark:hover:bg-[#ff9f1a] dark:text-black transition-all shadow-md hover:shadow-lg"
+          className="group hidden md:flex h-8 md:h-10 px-2 md:px-4 py-1 md:py-2 rounded-full bg-[#FFB647]/90 backdrop-blur-md border border-[#FFB647]/60 dark:bg-[#FFB647]/80 dark:backdrop-blur-lg dark:border-[#FFB647]/50 text-black transition-all duration-200 ease-out shadow-md hover:bg-[#ff9f1a] hover:border-[#FFB647]/80 hover:shadow-md hover:-translate-y-px active:translate-y-0 dark:hover:bg-[#ff9f1a] dark:hover:border-[#FFB647]/80"
           title="Obtenir la version Premium"
         >
           <span className="hidden lg:inline text-xs font-semibold">
             Obtenir la version Premium
           </span>
           <span className="lg:hidden text-xs font-semibold">Premium</span>
-          <Crown className="w-4 lg:w-[18px] h-4 lg:h-[18px] ml-1 lg:ml-2" />
+          <Crown className="w-4 lg:w-[18px] h-4 lg:h-[18px] ml-1 lg:ml-2 transition-transform duration-200 group-hover:translate-y-[-2px]" />
         </Button>
       </div>
     );

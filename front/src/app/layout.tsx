@@ -4,6 +4,7 @@ import Providers from "@/components/providers";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import { Footer } from "@/components/footer";
+import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 
 export const metadata: Metadata = {
   title: "LearnSup",
@@ -26,6 +27,7 @@ export default function RootLayout({
               <Header />
               <main className="flex-1 overflow-auto">{children}</main>
               <Footer />
+              <ScrollToTopButton />
             </div>
           </div>
         </Providers>
