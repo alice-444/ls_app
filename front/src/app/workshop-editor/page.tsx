@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -43,6 +44,7 @@ type Workshop = WorkshopBasic & {
 };
 
 export default function WorkshopEditorPage() {
+  const searchParams = useSearchParams();
   const [showForm, setShowForm] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
   const [deletingWorkshop, setDeletingWorkshop] = useState<Workshop | null>(null);
@@ -56,6 +58,21 @@ export default function WorkshopEditorPage() {
     error,
     refetch,
   } = trpc.workshop.getMyWorkshops.useQuery(undefined);
+
+  // Open form automatically if "new" query parameter is present
+  useEffect(() => {
+    const newParam = searchParams.get("new");
+    const editId = searchParams.get("id");
+    
+    if (newParam === "true" || newParam === "1") {
+      setShowForm(true);
+    } else if (editId && workshops) {
+      const workshopToEdit = workshops.find((w: any) => w.id === editId);
+      if (workshopToEdit) {
+        setEditingWorkshop(workshopToEdit as Workshop);
+      }
+    }
+  }, [searchParams, workshops]);
 
   if (showForm) {
     return (

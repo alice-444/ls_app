@@ -3,14 +3,20 @@
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode");
   const { data: session, isPending } = authClient.useSession();
-  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignIn, setShowSignIn] = useState(mode === "signin");
+
+  useEffect(() => {
+    setShowSignIn(mode === "signin");
+  }, [mode]);
 
   useEffect(() => {
     if (session && !isPending) {

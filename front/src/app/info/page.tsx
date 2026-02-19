@@ -2,26 +2,34 @@
 
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 
 export default function InfoPage() {
+  const { data: session } = authClient.useSession();
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
   const infoLinks = [
-    {
-      title: "Foire aux questions",
-      href: "/help",
-    },
-    {
-      title: "Conditions d'utilisation générales",
-      href: "/terms",
-    },
-    {
-      title: "Mentions légales",
-      href: "/legal",
-    },
+    { title: "Foire aux questions", href: "/help" },
+    { title: "Conditions d'utilisation générales", href: "/terms" },
+    { title: "Mentions légales", href: "/legal" },
     {
       title: "Politique de confidentialité et gestion des cookies",
       href: "/privacy",
     },
   ];
+
+  const subtitle =
+    userRole === "APPRENANT"
+      ? "Retrouvez les informations utiles pour votre parcours d'apprenant : e-Atelier, crédits, connexions aux mentors."
+      : userRole === "MENTOR"
+        ? "Retrouvez les informations utiles pour votre activité de mentor : ateliers, demandes, crédits."
+        : "Retrouvez l'ensemble des informations sur l'application";
 
   return (
     <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
@@ -32,7 +40,7 @@ export default function InfoPage() {
           </h1>
         </div>
         <p className="text-base sm:text-xl md:text-2xl text-[#161616] dark:text-[#e6e6e6] mt-4 sm:mt-6">
-          Retrouvez l'ensemble des informations sur l'application
+          {subtitle}
         </p>
       </div>
 

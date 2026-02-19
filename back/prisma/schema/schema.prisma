@@ -109,9 +109,8 @@ model mentor_feedback {
 
   @@unique([apprenticeId, workshopId])
   @@index([apprenticeId])
-  @@index([createdAt])
-  @@index([mentorId])
-  @@index([workshopId])
+  @@index([mentorId, createdAt])
+  @@index([workshopId, createdAt])
   @@index([status])
 }
 
@@ -184,13 +183,11 @@ model workshop {
   workshop_request_workshop_request_workshopIdToworkshop workshop_request[] @relation("workshop_request_workshopIdToworkshop")
   conversation                                           conversation[]
 
-  @@index([apprenticeId])
-  @@index([creatorId])
   @@index([requestId])
-  @@index([status])
-  @@index([topic])
-  @@index([dailyRoomId])
-  @@index([dailyRoomLastActivityAt])
+  @@index([status, date])
+  @@index([creatorId, status, date])
+  @@index([creatorId, createdAt])
+  @@index([apprenticeId, date])
 }
 
 model workshop_request {
@@ -211,11 +208,9 @@ model workshop_request {
   app_user_workshop_request_mentorIdToapp_user     app_user              @relation("workshop_request_mentorIdToapp_user", fields: [mentorId], references: [id], onDelete: Cascade)
   workshop_workshop_request_workshopIdToworkshop   workshop?             @relation("workshop_request_workshopIdToworkshop", fields: [workshopId], references: [id])
 
-  @@index([apprenticeId])
-  @@index([createdAt])
-  @@index([mentorId])
-  @@index([status])
-  @@index([workshopId])
+  @@index([mentorId, createdAt])
+  @@index([apprenticeId, createdAt])
+  @@index([workshopId, createdAt])
 }
 
 enum AppUserStatus {
@@ -288,9 +283,8 @@ model user_connection {
   app_user_receiver  app_user         @relation("user_connection_receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@unique([requesterId, receiverId])
-  @@index([requesterId])
-  @@index([receiverId])
-  @@index([status])
+  @@index([requesterId, status])
+  @@index([receiverId, status])
 }
 
 enum ConnectionStatus {
@@ -313,10 +307,8 @@ model conversation {
   pinned_by      conversation_pin[]
 
   @@unique([participant1Id, participant2Id])
-  @@index([participant1Id])
-  @@index([participant2Id])
-  @@index([workshopId])
-  @@index([updatedAt])
+  @@index([participant1Id, updatedAt])
+  @@index([participant2Id, updatedAt])
 }
 
 model conversation_pin {
@@ -330,7 +322,6 @@ model conversation_pin {
   @@unique([conversationId, appUserId])
   @@index([conversationId])
   @@index([appUserId])
-  @@index([createdAt])
 }
 
 model message {
@@ -347,12 +338,8 @@ model message {
   conversation     conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   reactions        message_reaction[]
 
-  @@index([conversationId])
-  @@index([senderId])
-  @@index([createdAt])
-  @@index([isRead])
-  @@index([replyToMessageId])
-  @@index([deletedAt])
+  @@index([conversationId, deletedAt, createdAt])
+  @@index([conversationId, isRead])
 }
 
 model message_reaction {
@@ -379,9 +366,8 @@ model notification {
   actionUrl String?
   app_user  app_user @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([isRead])
-  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([userId, isRead, createdAt])
 }
 
 model user_block {
@@ -393,9 +379,8 @@ model user_block {
   blocked   app_user @relation("user_block_blocked", fields: [blockedId], references: [id], onDelete: Cascade)
 
   @@unique([blockerId, blockedId])
-  @@index([blockerId])
-  @@index([blockedId])
-  @@index([createdAt])
+  @@index([blockerId, createdAt])
+  @@index([blockedId, createdAt])
 }
 
 model user_report {
@@ -414,8 +399,7 @@ model user_report {
 
   @@index([reporterId])
   @@index([reportedId])
-  @@index([status])
-  @@index([createdAt])
+  @@index([status, createdAt])
 }
 
 enum ReportReason {
@@ -466,9 +450,8 @@ model credit_transaction {
   createdAt   DateTime              @default(now())
   app_user    app_user              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([createdAt])
-  @@index([type])
+  @@index([userId, createdAt])
+  @@index([userId, type, createdAt])
 }
 
 enum CreditTransactionType {

@@ -8,6 +8,15 @@ services:
       - "3001:3001"
     environment:
       - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(${NEXT_PUBLIC_SERVER_URL})"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3001"
+      - "traefik.docker.network=web"
 
   # Service Backend
   backend:
@@ -23,7 +32,50 @@ services:
       - CRON_SECRET=${CRON_SECRET}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     volumes:
-      # - ../../:/app
       - /app/node_modules
-    env_file:
-      - .env
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(${NEXT_PUBLIC_SERVER_URL})"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.services.backend.loadbalancer.server.port=4500"
+      - "traefik.docker.network=web"
+
+  traefik:
+    image: traefik:v3.2.1
+    container_name: traefik_reverse_proxy
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.watch=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.websecure.address=:443"
+      # Activation du /ping pour le healthcheck
+      - "--ping=true"
+      - "--ping.entrypoint=web"
+      # Activation des logs
+      - "--log=true"
+      - "--log.level=DEBUG"
+      # Activation des access logs au format json
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      # On ne garde que les erreurs et on log les headers
+      - "--accesslog.filters.statuscodes=400-499,500-599"
+      - "--accesslog.fields.headers.defaultMode=keep"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=carole.bouchel@my-digital-school.org"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

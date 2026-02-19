@@ -91,8 +91,7 @@ export function NotificationBell() {
           <Bell className="h-12 w-12" strokeWidth={2.5} />
           {count > 0 && (
             <Badge
-              variant="destructive"
-              className="absolute top-0 right-0 h-5 min-w-5 flex items-center justify-center px-1.5 text-xs font-bold animate-pulse"
+              className="absolute top-0 right-0 h-5 min-w-5 flex items-center justify-center px-1.5 text-xs font-medium border-0 bg-[#FF8C42] text-white shadow-sm"
             >
               {count > 9 ? "9+" : count}
             </Badge>

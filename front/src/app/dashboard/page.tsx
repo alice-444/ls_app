@@ -612,16 +612,309 @@ export default function Dashboard() {
 
         {(userRole === "mentor" || userRole === "both") &&
           actualUserRole === "MENTOR" && (
-            <Button
-              onClick={() => router.push("/workshop-editor")}
-              size="lg"
-              className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-lg dark:shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center p-0 bg-linear-to-br from-[#26547c] to-[#4A90E2] hover:from-[#1e4260] hover:to-[#3a7bc4] dark:from-[#26547c] dark:to-[#4A90E2] dark:hover:from-[#1e4260] dark:hover:to-[#3a7bc4] text-white border-0"
-              aria-label="Créer un atelier"
-              title="Créer un atelier"
-            >
-              <Plus className="w-5 h-5 sm:w-7 sm:h-7" />
-            </Button>
+            <>
+              <style>{`
+                @keyframes float {
+                  0%, 100% {
+                    transform: translateY(0px);
+                  }
+                  50% {
+                    transform: translateY(-10px);
+                  }
+                }
+                @keyframes fadeInUp {
+                  from {
+                    opacity: 0;
+                    transform: translateY(20px) scale(0.8);
+                  }
+                  to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                  }
+                }
+                @keyframes pulse-glow {
+                  0% {
+                    box-shadow: 0 0 0 0 rgba(255, 140, 66, 0.7),
+                                0 0 0 0 rgba(255, 182, 71, 0.7),
+                                0 0 20px rgba(255, 140, 66, 0.5);
+                  }
+                  50% {
+                    box-shadow: 0 0 0 15px rgba(255, 140, 66, 0),
+                                0 0 0 25px rgba(255, 182, 71, 0),
+                                0 0 40px rgba(255, 140, 66, 0.8);
+                  }
+                  100% {
+                    box-shadow: 0 0 0 0 rgba(255, 140, 66, 0.7),
+                                0 0 0 0 rgba(255, 182, 71, 0.7),
+                                0 0 20px rgba(255, 140, 66, 0.5);
+                  }
+                }
+                @keyframes rotate-gradient {
+                  0% {
+                    background-position: 0% 50%;
+                  }
+                  50% {
+                    background-position: 100% 50%;
+                  }
+                  100% {
+                    background-position: 0% 50%;
+                  }
+                }
+                @keyframes shimmer {
+                  0% {
+                    background-position: -200% center;
+                  }
+                  100% {
+                    background-position: 200% center;
+                  }
+                }
+                @keyframes icon-bounce {
+                  0%, 100% {
+                    transform: scale(1) rotate(0deg);
+                  }
+                  25% {
+                    transform: scale(1.15) rotate(5deg);
+                  }
+                  50% {
+                    transform: scale(1.1) rotate(-5deg);
+                  }
+                  75% {
+                    transform: scale(1.15) rotate(5deg);
+                  }
+                }
+                .floating-add-button {
+                  animation: float 3s ease-in-out infinite, fadeInUp 0.6s ease-out;
+                  background: linear-gradient(135deg, #FF8C42 0%, #FFB647 50%, #FF8C42 100%);
+                  background-size: 200% 200%;
+                  position: fixed !important;
+                  overflow: visible;
+                  will-change: transform;
+                }
+                .floating-add-button::before {
+                  content: '';
+                  position: absolute;
+                  inset: -4px;
+                  border-radius: 50%;
+                  background: linear-gradient(45deg, #FFB647, #FF8C42, #FFB647, #FF8C42);
+                  background-size: 400% 400%;
+                  animation: rotate-gradient 3s ease infinite;
+                  opacity: 0.6;
+                  z-index: -1;
+                  filter: blur(8px);
+                }
+                .floating-add-button::after {
+                  content: '';
+                  position: absolute;
+                  inset: 0;
+                  border-radius: 50%;
+                  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                  background-size: 200% 100%;
+                  animation: shimmer 2s infinite;
+                  opacity: 0;
+                  transition: opacity 0.3s;
+                }
+                .floating-add-button:hover {
+                  animation: float 3s ease-in-out infinite, pulse-glow 1.5s ease-in-out infinite;
+                }
+                .floating-add-button:hover::after {
+                  opacity: 1;
+                }
+                .floating-add-button:hover::before {
+                  opacity: 0.9;
+                  filter: blur(12px);
+                }
+                .floating-add-button:active {
+                  animation: float 4s ease-in-out infinite, pulse-glow 0.5s ease-in-out infinite;
+                  transform: scale(0.9);
+                }
+                .icon-plus {
+                  animation: icon-bounce 2s ease-in-out infinite;
+                }
+                .floating-add-button:hover .icon-plus {
+                  animation: icon-bounce 0.6s ease-in-out infinite;
+                }
+                @keyframes particle-float-1 {
+                  0% {
+                    transform: translate(0, 0) scale(0);
+                    opacity: 0;
+                  }
+                  10% {
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translate(60px, -80px) scale(1);
+                    opacity: 0;
+                  }
+                }
+                @keyframes particle-float-2 {
+                  0% {
+                    transform: translate(0, 0) scale(0);
+                    opacity: 0;
+                  }
+                  10% {
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translate(-70px, -60px) scale(1);
+                    opacity: 0;
+                  }
+                }
+                @keyframes particle-float-3 {
+                  0% {
+                    transform: translate(0, 0) scale(0);
+                    opacity: 0;
+                  }
+                  10% {
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translate(50px, 70px) scale(1);
+                    opacity: 0;
+                  }
+                }
+                @keyframes particle-float-4 {
+                  0% {
+                    transform: translate(0, 0) scale(0);
+                    opacity: 0;
+                  }
+                  10% {
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translate(-50px, 80px) scale(1);
+                    opacity: 0;
+                  }
+                }
+                @keyframes particle-float-5 {
+                  0% {
+                    transform: translate(0, 0) scale(0);
+                    opacity: 0;
+                  }
+                  10% {
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translate(80px, 20px) scale(1);
+                    opacity: 0;
+                  }
+                }
+                @keyframes particle-float-6 {
+                  0% {
+                    transform: translate(0, 0) scale(0);
+                    opacity: 0;
+                  }
+                  10% {
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translate(-80px, 30px) scale(1);
+                    opacity: 0;
+                  }
+                }
+                .particle {
+                  position: absolute;
+                  width: 6px;
+                  height: 6px;
+                  border-radius: 50%;
+                  pointer-events: none;
+                  z-index: -1;
+                }
+                .particle-1 {
+                  background: radial-gradient(circle, rgba(255, 140, 66, 0.9), rgba(255, 140, 66, 0.3));
+                  box-shadow: 0 0 10px rgba(255, 140, 66, 0.6);
+                  animation: particle-float-1 3s ease-in-out infinite;
+                  top: 50%;
+                  left: 50%;
+                }
+                .particle-2 {
+                  background: radial-gradient(circle, rgba(255, 182, 71, 0.9), rgba(255, 182, 71, 0.3));
+                  box-shadow: 0 0 10px rgba(255, 182, 71, 0.6);
+                  animation: particle-float-2 3.5s ease-in-out infinite;
+                  top: 50%;
+                  left: 50%;
+                }
+                .particle-3 {
+                  background: radial-gradient(circle, rgba(255, 140, 66, 0.8), rgba(255, 140, 66, 0.2));
+                  box-shadow: 0 0 8px rgba(255, 140, 66, 0.5);
+                  animation: particle-float-3 4s ease-in-out infinite;
+                  top: 50%;
+                  left: 50%;
+                }
+                .particle-4 {
+                  background: radial-gradient(circle, rgba(255, 182, 71, 0.8), rgba(255, 182, 71, 0.2));
+                  box-shadow: 0 0 8px rgba(255, 182, 71, 0.5);
+                  animation: particle-float-4 3.8s ease-in-out infinite;
+                  top: 50%;
+                  left: 50%;
+                }
+                .particle-5 {
+                  background: radial-gradient(circle, rgba(255, 140, 66, 0.7), rgba(255, 140, 66, 0.1));
+                  box-shadow: 0 0 6px rgba(255, 140, 66, 0.4);
+                  animation: particle-float-5 4.2s ease-in-out infinite;
+                  top: 50%;
+                  left: 50%;
+                }
+                .particle-6 {
+                  background: radial-gradient(circle, rgba(255, 182, 71, 0.7), rgba(255, 182, 71, 0.1));
+                  box-shadow: 0 0 6px rgba(255, 182, 71, 0.4);
+                  animation: particle-float-6 3.6s ease-in-out infinite;
+                  top: 50%;
+                  left: 50%;
+                }
+                .floating-add-button:hover .particle {
+                  animation-duration: 1.5s;
+                  width: 8px;
+                  height: 8px;
+                }
+                .particle-container {
+                  position: fixed;
+                  bottom: 1.5rem;
+                  right: 1.5rem;
+                  z-index: 100;
+                  width: 64px;
+                  height: 64px;
+                  pointer-events: none;
+                }
+                @media (min-width: 768px) {
+                  .particle-container {
+                    bottom: 2rem;
+                    right: 2rem;
+                    width: 72px;
+                    height: 72px;
+                  }
+                }
+              `}</style>
+              <div className="particle-container">
+                <div className="particle particle-1"></div>
+                <div className="particle particle-2"></div>
+                <div className="particle particle-3"></div>
+                <div className="particle particle-4"></div>
+                <div className="particle particle-5"></div>
+                <div className="particle particle-6"></div>
+              </div>
+              <Button
+                onClick={() => router.push("/workshop-editor?new=true")}
+                size="lg"
+                className="group floating-add-button fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[100] h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl dark:shadow-2xl transition-all duration-500 flex items-center justify-center p-0 text-white border-0 hover:scale-125 active:scale-90"
+                style={{
+                  position: 'fixed',
+                  bottom: '1.5rem',
+                  right: '1.5rem',
+                  zIndex: 100,
+                }}
+                aria-label="Atelab"
+                title="Atelab"
+              >
+                <Plus
+                  className="icon-plus w-5 h-5 sm:w-7 sm:h-7 transition-all duration-500 group-hover:rotate-180 group-hover:scale-125 relative z-10"
+                  style={{
+                    filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3)) drop-shadow(0 0 10px rgba(255, 140, 66, 0.6))",
+                  }}
+                />
+              </Button>
+            </>
           )}
+
       </div>
     </div>
   );

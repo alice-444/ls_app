@@ -6,6 +6,7 @@ on:
       - main
       - prod
       - dev
+      - test/*
     paths:
       - "apps/**/*.js"
       - "front/**/*.ts"
@@ -20,16 +21,25 @@ on:
       - ".github/workflows/**"
       - "cypress/**"
       - "cypress.config.*"
+      - "jest.config.*"
+      - "babel.config.*"
+      - ".env.test"
   pull_request:
     branches:
       - main
       - prod
       - dev
+      - test/*
     paths:
       - "apps/**/*.js"
       - "apps/**/*.ts"
       - "apps/**/*.jsx"
       - "apps/**/*.tsx"
+      - "apps/**/__tests__/**"
+      - "apps/**/*.test.js"
+      - "apps/**/*.test.ts"
+      - "apps/**/*.spec.js"
+      - "apps/**/*.spec.ts"
       - "packages/**/*.js"
       - "packages/**/*.ts"
       - "packages/**/*.jsx"
@@ -39,6 +49,9 @@ on:
       - ".github/workflows/**"
       - "cypress/**"
       - "cypress.config.*"
+      - "jest.config.*"
+      - "babel.config.*"
+      - ".env.test"
 
 permissions: {}
 
