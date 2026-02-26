@@ -7,12 +7,12 @@ import { toast } from "sonner";
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       // Ignore authentication errors - they're expected when user is not logged in
       const isAuthError =
         error.message === "Authentication required" ||
         error.message?.includes("Authentication required") ||
-        (error as any)?.data?.code === "UNAUTHORIZED";
+        (error as { data?: { code?: string } })?.data?.code === "UNAUTHORIZED";
 
       // Don't show toast for auth errors on login/sign-up pages
       if (isAuthError) {
@@ -35,7 +35,7 @@ export const queryClient = new QueryClient({
   }),
 });
 
-// @ts-expect-error - AppRouter type stub may not match exactly, but works at runtime
+// @ts-expect-error - AppRouter type stub doesn't satisfy Router constraint; real types come from backend
 export const trpc = createTRPCReact<AppRouter>() as any;
 
 export const trpcClient = trpc.createClient({

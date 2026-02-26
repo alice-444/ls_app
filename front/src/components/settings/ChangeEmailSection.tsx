@@ -35,7 +35,7 @@ export function ChangeEmailSection() {
 
   const requestEmailChangeMutation =
     trpc.accountSettings.requestEmailChange.useMutation({
-      onSuccess: (data: any) => {
+      onSuccess: (data: { message?: string }) => {
         toast.success(
           data.message ||
             "Un lien de vérification a été envoyé à votre nouvelle adresse email"
@@ -44,7 +44,7 @@ export function ChangeEmailSection() {
         setNewEmail("");
         setCurrentPassword("");
       },
-      onError: (error: any) => {
+      onError: (error: { message?: string }) => {
         toast.error(
           error.message || "Erreur lors de la demande de changement d'email"
         );

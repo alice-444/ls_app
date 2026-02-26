@@ -7,14 +7,14 @@ import { BackButton } from "@/components/back-button";
 import { PageHeader, PageContainer, SectionSidebar } from "@/components/layout";
 import Loader from "@/components/loader";
 
-import { PREDEFINED_TOPICS, SIDEBAR_ITEMS } from "./constants";
-import { useMentorProfile } from "./hooks/useMentorProfile";
+import { PREDEFINED_TOPICS, SIDEBAR_ITEMS } from "@/components/mentor-profile/constants";
+import { useMentorProfile } from "@/hooks/useMentorProfile";
 import {
   BasicInformationSection,
   TagListSection,
   SocialMediaSection,
   PublicationSection,
-} from "./components";
+} from "@/components/mentor-profile";
 
 export default function MentorProfilePage() {
   const {

@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { SortField, SortOrder, StatusFilter } from "../hooks/useMyWorkshops";
+import type { SortField, SortOrder, StatusFilter } from "@/hooks/useMyWorkshops";
 
 interface WorkshopFiltersBarProps {
   readonly searchQuery: string;

@@ -71,7 +71,7 @@ export function ReportUserDialog({
       setShowBlockDialog(true);
       onReported?.();
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error("Erreur lors du signalement", {
         description: error.message,
       });

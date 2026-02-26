@@ -35,12 +35,12 @@ import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequest
 import { PageHeader, PageContainer } from "@/components/layout";
 import type { WorkshopBasic } from "@/types/workshop";
 
-import { useMyWorkshops } from "./hooks/useMyWorkshops";
+import { useMyWorkshops } from "@/hooks/useMyWorkshops";
 import {
   NextWorkshopBanner,
   WorkshopFiltersBar,
   CalendarSection,
-} from "./components";
+} from "@/components/my-workshops";
 
 export default function MyWorkshopsPage() {
   const {

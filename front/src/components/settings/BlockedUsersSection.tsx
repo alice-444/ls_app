@@ -16,7 +16,7 @@ export function BlockedUsersSection() {
       utils.userBlock.getBlockedUsers.invalidate();
       utils.messaging.getConversations.invalidate();
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error("Erreur lors du déblocage", {
         description: error.message,
       });
@@ -27,12 +27,12 @@ export function BlockedUsersSection() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
-          <Ban className="h-8 w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-          <h2 className="text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+          <Ban className="h-8 w-8 text-ls-heading" />
+          <h2 className="text-2xl font-semibold text-ls-heading">
             Utilisateurs bloqués
           </h2>
         </div>
-        <p className="text-base text-[#26547c] dark:text-[#e6e6e6]">
+        <p className="text-base text-ls-heading">
           Gérez les utilisateurs que vous avez bloqués
         </p>
         <div className="text-center py-8 text-muted-foreground">
@@ -46,12 +46,12 @@ export function BlockedUsersSection() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
-          <Ban className="h-8 w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-          <h2 className="text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+          <Ban className="h-8 w-8 text-ls-heading" />
+          <h2 className="text-2xl font-semibold text-ls-heading">
             Utilisateurs bloqués
           </h2>
         </div>
-        <p className="text-base text-[#26547c] dark:text-[#e6e6e6]">
+        <p className="text-base text-ls-heading">
           Gérez les utilisateurs que vous avez bloqués
         </p>
         <div className="text-center py-8 text-muted-foreground">
@@ -69,20 +69,20 @@ export function BlockedUsersSection() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-2">
-        <Ban className="h-8 w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-        <h2 className="text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+        <Ban className="h-8 w-8 text-ls-heading" />
+        <h2 className="text-2xl font-semibold text-ls-heading">
           Utilisateurs bloqués
         </h2>
       </div>
-      <p className="text-base text-[#26547c] dark:text-[#e6e6e6]">
+      <p className="text-base text-ls-heading">
         Gérez les utilisateurs que vous avez bloqués ({blockedUsers.length})
       </p>
 
       <div className="space-y-3">
-        {blockedUsers.map((blockedUser: any) => (
+        {blockedUsers.map((blockedUser: { userId: string; photoUrl?: string; displayName?: string; name?: string; blockedAt: string }) => (
           <div
             key={blockedUser.userId}
-            className="flex items-center justify-between p-4 border border-[#d6dae4] rounded-lg hover:bg-muted/50 transition-colors"
+            className="flex items-center justify-between p-4 border border-ls-border rounded-lg hover:bg-muted/50 transition-colors"
           >
             <div className="flex items-center gap-3 flex-1 min-w-0">
               {blockedUser.photoUrl ? (

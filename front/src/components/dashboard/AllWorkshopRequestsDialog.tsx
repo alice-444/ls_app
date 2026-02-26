@@ -10,10 +10,18 @@ import {
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";
 
+interface WorkshopRequest {
+  id: string;
+  title: string;
+  description?: string;
+  status: string;
+  preferredDate: string | Date | null;
+}
+
 interface AllWorkshopRequestsDialogProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
-  readonly requests: any[] | undefined;
+  readonly requests: WorkshopRequest[] | undefined;
 }
 
 export function AllWorkshopRequestsDialog({
@@ -34,7 +42,7 @@ export function AllWorkshopRequestsDialog({
         </DialogHeader>
         <div className="flex flex-col gap-[16px] mt-4">
           {requests && requests.length > 0 ? (
-            requests.map((request: any) => (
+            requests.map((request) => (
               <div
                 key={request.id}
                 className="bg-white border border-[#d6dae4] rounded-[16px] h-[126px] px-5 py-2 flex items-center justify-between"

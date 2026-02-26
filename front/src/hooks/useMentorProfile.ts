@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient, customAuthClient } from "@/lib/auth-client";
 import { API_BASE_URL } from "@/lib/api-client";
 import { toast } from "sonner";
-import { mentorProfileSchema, type MentorProfileFormData } from "../schema";
-import type { ProfileSection } from "../constants";
+import { mentorProfileSchema, type MentorProfileFormData } from "@/components/mentor-profile/schema";
+import type { ProfileSection } from "@/components/mentor-profile/constants";
 
 function parseStringOrArray(value: unknown): string[] {
   if (Array.isArray(value)) return value;

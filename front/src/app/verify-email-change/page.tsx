@@ -33,7 +33,7 @@ function VerifyEmailChangeContent() {
           router.push("/settings");
         }, 3000);
       },
-      onError: (error: any) => {
+      onError: (error: { message?: string }) => {
         setStatus("error");
         setErrorMessage(error.message || "Erreur lors de la vérification");
         toast.error(error.message || "Erreur lors de la vérification");

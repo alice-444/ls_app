@@ -6,8 +6,8 @@ import { ApprenantDashboard } from "@/components/dashboard/ApprenantDashboard";
 import { MentorDashboard } from "@/components/dashboard/MentorDashboard";
 import { PageHeader, PageContainer } from "@/components/layout";
 
-import { useDashboard } from "./hooks/useDashboard";
-import { FloatingAddButton } from "./components/FloatingAddButton";
+import { useDashboard } from "@/hooks/useDashboard";
+import { FloatingAddButton } from "@/components/dashboard/FloatingAddButton";
 
 export default function Dashboard() {
   const {

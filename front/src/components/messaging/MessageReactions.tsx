@@ -42,7 +42,7 @@ export function MessageReactions({
       refetch();
       setIsPickerOpen(false);
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error("Erreur", {
         description: error.message,
       });
@@ -65,7 +65,7 @@ export function MessageReactions({
 
   const handleReactionClick = (emoji: string) => {
     const userReaction = reactions?.find(
-      (r: any) => r.emoji === emoji && r.userReacted
+      (r: { emoji: string; userReacted: boolean; count: number }) => r.emoji === emoji && r.userReacted
     );
 
     if (userReaction) {
@@ -94,7 +94,7 @@ export function MessageReactions({
     <div className="flex items-center gap-1 mt-1 flex-wrap">
       {reactions && reactions.length > 0 && (
         <div className="flex items-center gap-1">
-          {reactions.map((reaction: any) => (
+          {reactions.map((reaction: { emoji: string; userReacted: boolean; count: number }) => (
             <Button
               key={reaction.emoji}
               size="sm"

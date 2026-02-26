@@ -24,14 +24,14 @@ export default function ForgotPasswordPage() {
 
   const requestPasswordResetMutation =
     trpc.accountSettings.requestPasswordReset.useMutation({
-      onSuccess: (data: any) => {
+      onSuccess: (data: { message?: string }) => {
         toast.success(
           data.message ||
             "Si un compte existe pour cet email, un lien de réinitialisation a été envoyé."
         );
         setIsSubmitted(true);
       },
-      onError: (error: any) => {
+      onError: (error: { message?: string }) => {
         toast.error(
           error.message || "Erreur lors de la demande de réinitialisation"
         );

@@ -4,7 +4,7 @@ import { Linkedin, Twitter, Youtube, Github, Share2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { UseFormRegister } from "react-hook-form";
-import type { MentorProfileFormData } from "../schema";
+import type { MentorProfileFormData } from "./schema";
 
 const SOCIAL_FIELDS = [
   {

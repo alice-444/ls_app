@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 import { PageHeader, PageContainer, SectionSidebar } from "@/components/layout";
-import { BlockedUsersSection } from "./BlockedUsersSection";
-import { SIDEBAR_ITEMS, type SettingsSection } from "./constants";
+import { BlockedUsersSection } from "@/components/settings/BlockedUsersSection";
+import { SIDEBAR_ITEMS, type SettingsSection } from "@/components/settings/constants";
 import {
   AccountSection,
   PersonalInformationSection,
@@ -14,7 +14,7 @@ import {
   FeedbackSection,
   AboutSection,
   HelpCenterSection,
-} from "./components";
+} from "@/components/settings";
 
 export default function SettingsPage() {
   const { data: session } = authClient.useSession();
