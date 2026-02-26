@@ -83,12 +83,26 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 ## Structure des dossiers
 
 - **`src/app/`** — Routes (App Router). Chaque route = un dossier avec `page.tsx` ; `layout.tsx` à la racine enveloppe toute l’app (Providers, Sidebar, Header, Footer, ScrollToTopButton). Pages d’erreur : `not-found.tsx` (404), `error.tsx` (500), `forbidden.tsx` (403), `405/page.tsx` (405).
-- **`src/components/`** — Composants : `ui/` (design system shadcn), `layout/` (PageContainer, PageHeader), `header.tsx`, `sidebar.tsx`, `footer.tsx`, composants métier (workshop, messaging, dashboard, mentor, settings, etc.).
+- **`src/components/`** — Composants organisés par domaine :
+  - `ui/` — Design system shadcn (boutons, cartes, dialogs, inputs, etc.).
+  - `layout/` — PageContainer, PageHeader, SectionSidebar.
+  - `header.tsx`, `sidebar.tsx`, `footer.tsx` — Shell de l'app.
+  - `apprentice/` — Dashboard et ateliers apprenant (ApprenticeSidebar, UpcomingWorkshopsCard, AvailableWorkshopsGrid, ApprenticeWorkshopDashboard).
+  - `dashboard/` — Dashboards (ApprenantDashboard, ApprenantDashboardSidebar, MentorDashboard, FloatingAddButton).
+  - `messaging/` — Messagerie (ChatWindow, ChatHeader, ConversationList, ConversationRow, NewConversationDialog, ReplyPreview, MessageReactions).
+  - `mentor/` — Dialogues et feedbacks mentor (ContactMentorDialog, RequestWorkshopDialog, MentorFeedbacks).
+  - `mentor-profile/` — Formulaire profil mentor (BasicInformationSection, SocialMediaSection, TagListSection, PublicationSection, schema/constantes).
+  - `profil/` — Formulaire profil apprenant (ProfilePhotoUpload, ProfilePreviewCard, IceBreakerTagsSection).
+  - `settings/` — Sections paramètres (PersonalInformationSection, ChangePasswordSection, ChangeEmailSection, BlockedUsersSection, DeleteAccountSection, NotificationsSection, SystemSettingsSection, etc.).
+  - `my-workshops/` — Gestion ateliers mentor (CalendarSection, NextWorkshopBanner, WorkshopFiltersBar).
+  - `workshop/`, `workshop-editor/` — Détail et éditeur d'atelier.
+  - `user/` — Composants transversaux (BlockUserDialog, ReportUserDialog).
+  - `network/`, `faq/` — Réseau et FAQ.
 - **`src/lib/`** — Clients et config : `auth-client.ts` (Better Auth + customAuthClient pour sign-up, onboarding, profil prof, upload photo, suppression de compte), `api-client.ts` (API_BASE_URL, authenticatedFetch, getProfProfile, getUserRole), `utils.ts` (cn, etc.).
 - **`src/utils/trpc.ts`** — Création du client tRPC et du QueryClient (gestion des erreurs auth, toasts).
 - **`src/components/providers.tsx`** — ThemeProvider, TRPCProvider, QueryClientProvider, Toaster.
 - **`src/shared/`** — Validation et constantes partagées avec le back (Zod, password, workshop, file, date).
-- **`src/hooks/`** — Hooks React (ex. use-password-form).
+- **`src/hooks/`** — Hooks React : `useDashboard` (données dashboard apprenant), `useMentorProfile` (formulaire profil mentor), `useMyWorkshops` (gestion ateliers mentor), `useChatSocket` (socket.io messagerie), `use-password-form`, `use-photo-upload`.
 - **`src/types/`** — Types TS (workshop, trpc-router stub).
 
 ---
