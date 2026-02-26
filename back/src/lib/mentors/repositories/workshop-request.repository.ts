@@ -5,6 +5,31 @@ import type {
   UpdateWorkshopRequestInput,
 } from "./workshop-request.repository.interface";
 
+const WORKSHOP_REQUEST_INCLUDE = {
+  app_user_workshop_request_apprenticeIdToapp_user: {
+    include: {
+      user: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+  },
+  app_user_workshop_request_mentorIdToapp_user: {
+    include: {
+      user: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+  },
+} as const;
+
+function mapToEntity(raw: any): WorkshopRequestEntity {
+  return {
+    ...raw,
+    apprentice: raw.app_user_workshop_request_apprenticeIdToapp_user,
+    mentor: raw.app_user_workshop_request_mentorIdToapp_user,
+  } as WorkshopRequestEntity;
+}
+
 export class PrismaWorkshopRequestRepository
   implements IWorkshopRequestRepository
 {
@@ -14,7 +39,7 @@ export class PrismaWorkshopRequestRepository
     input: CreateWorkshopRequestInput
   ): Promise<WorkshopRequestEntity> {
     const now = new Date();
-    const workshopRequest = await (this.prisma as any).workshop_request.create({
+    const raw = await (this.prisma as any).workshop_request.create({
       data: {
         id: crypto.randomUUID(),
         title: input.title,
@@ -28,297 +53,82 @@ export class PrismaWorkshopRequestRepository
         createdAt: now,
         updatedAt: now,
       },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      include: WORKSHOP_REQUEST_INCLUDE,
     });
-
-    return {
-      ...workshopRequest,
-      apprentice:
-        workshopRequest.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: workshopRequest.app_user_workshop_request_mentorIdToapp_user,
-    } as WorkshopRequestEntity;
+    return mapToEntity(raw);
   }
 
   async findById(id: string): Promise<WorkshopRequestEntity | null> {
-    const workshopRequest = await (
-      this.prisma as any
-    ).workshop_request.findUnique({
+    const raw = await (this.prisma as any).workshop_request.findUnique({
       where: { id },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      include: WORKSHOP_REQUEST_INCLUDE,
     });
-
-    if (!workshopRequest) return null;
-    return {
-      ...workshopRequest,
-      apprentice:
-        workshopRequest.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: workshopRequest.app_user_workshop_request_mentorIdToapp_user,
-    } as WorkshopRequestEntity;
+    if (!raw) return null;
+    return mapToEntity(raw);
   }
 
   async findByIdWithLock(
     id: string,
     tx?: any
   ): Promise<WorkshopRequestEntity | null> {
-    const prismaClient = tx || this.prisma;
-
-    const fullRequest = await (prismaClient as any).workshop_request.findFirst({
+    const client = tx || this.prisma;
+    const raw = await (client as any).workshop_request.findFirst({
       where: { id },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      include: WORKSHOP_REQUEST_INCLUDE,
     });
-
-    if (!fullRequest) return null;
-    return {
-      ...fullRequest,
-      apprentice: fullRequest.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: fullRequest.app_user_workshop_request_mentorIdToapp_user,
-    } as WorkshopRequestEntity;
+    if (!raw) return null;
+    return mapToEntity(raw);
   }
 
   async findByApprenticeId(
     apprenticeId: string
   ): Promise<WorkshopRequestEntity[]> {
-    const workshopRequests = await (
-      this.prisma as any
-    ).workshop_request.findMany({
+    const results = await (this.prisma as any).workshop_request.findMany({
       where: { apprenticeId },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      include: WORKSHOP_REQUEST_INCLUDE,
       orderBy: { createdAt: "desc" },
     });
-
-    return workshopRequests.map((wr: any) => ({
-      ...wr,
-      apprentice: wr.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: wr.app_user_workshop_request_mentorIdToapp_user,
-    })) as WorkshopRequestEntity[];
+    return results.map(mapToEntity);
   }
 
   async findByMentorId(mentorId: string): Promise<WorkshopRequestEntity[]> {
-    const workshopRequests = await (
-      this.prisma as any
-    ).workshop_request.findMany({
+    const results = await (this.prisma as any).workshop_request.findMany({
       where: { mentorId },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      include: WORKSHOP_REQUEST_INCLUDE,
       orderBy: { createdAt: "desc" },
     });
-
-    return workshopRequests.map((wr: any) => ({
-      ...wr,
-      apprentice: wr.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: wr.app_user_workshop_request_mentorIdToapp_user,
-    })) as WorkshopRequestEntity[];
+    return results.map(mapToEntity);
   }
 
   async findByWorkshopId(workshopId: string): Promise<WorkshopRequestEntity[]> {
-    const workshopRequests = await (
-      this.prisma as any
-    ).workshop_request.findMany({
+    const results = await (this.prisma as any).workshop_request.findMany({
       where: { workshopId },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      include: WORKSHOP_REQUEST_INCLUDE,
       orderBy: { createdAt: "desc" },
     });
-
-    return workshopRequests.map((wr: any) => ({
-      ...wr,
-      apprentice: wr.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: wr.app_user_workshop_request_mentorIdToapp_user,
-    })) as WorkshopRequestEntity[];
+    return results.map(mapToEntity);
   }
 
   async countAcceptedByWorkshopId(
     workshopId: string,
     tx?: any
   ): Promise<number> {
-    const prismaClient = tx || this.prisma;
-    const count = await (prismaClient as any).workshop_request.count({
-      where: {
-        workshopId,
-        status: "ACCEPTED",
-      },
+    const client = tx || this.prisma;
+    return (client as any).workshop_request.count({
+      where: { workshopId, status: "ACCEPTED" },
     });
-    return count;
   }
 
   async update(
     id: string,
     input: UpdateWorkshopRequestInput
   ): Promise<WorkshopRequestEntity> {
-    const workshopRequest = await (this.prisma as any).workshop_request.update({
+    const raw = await (this.prisma as any).workshop_request.update({
       where: { id },
-      data: {
-        ...input,
-        updatedAt: new Date(),
-      },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      data: { ...input, updatedAt: new Date() },
+      include: WORKSHOP_REQUEST_INCLUDE,
     });
-
-    return {
-      ...workshopRequest,
-      apprentice:
-        workshopRequest.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: workshopRequest.app_user_workshop_request_mentorIdToapp_user,
-    } as WorkshopRequestEntity;
+    return mapToEntity(raw);
   }
 
   async updateWithTransaction(
@@ -326,43 +136,11 @@ export class PrismaWorkshopRequestRepository
     input: UpdateWorkshopRequestInput,
     tx: any
   ): Promise<WorkshopRequestEntity> {
-    const workshopRequest = await (tx as any).workshop_request.update({
+    const raw = await (tx as any).workshop_request.update({
       where: { id },
-      data: {
-        ...input,
-        updatedAt: new Date(),
-      },
-      include: {
-        app_user_workshop_request_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        app_user_workshop_request_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
+      data: { ...input, updatedAt: new Date() },
+      include: WORKSHOP_REQUEST_INCLUDE,
     });
-
-    return {
-      ...workshopRequest,
-      apprentice:
-        workshopRequest.app_user_workshop_request_apprenticeIdToapp_user,
-      mentor: workshopRequest.app_user_workshop_request_mentorIdToapp_user,
-    } as WorkshopRequestEntity;
+    return mapToEntity(raw);
   }
 }

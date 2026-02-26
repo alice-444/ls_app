@@ -6,16 +6,29 @@ import type { IWorkshopFeedbackRepository } from "../../repositories/feedback/wo
 import type { IWorkshopRepository } from "../../repositories/workshop.repository.interface";
 import type { IMentorRepository } from "../../../mentors/repositories/mentor.repository.interface";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
+import type { IEmailService } from "../../../email/services/email.service.interface";
+import { FeedbackModerationService } from "./feedback-moderation.service";
+import type { IFeedbackModerationService } from "./feedback-moderation.service";
 import { container } from "../../../di/container";
 import { logger } from "../../../common/logger";
 
 export class WorkshopFeedbackService implements IWorkshopFeedbackService {
+  private readonly moderationService: IFeedbackModerationService;
+
   constructor(
     private readonly feedbackRepository: IWorkshopFeedbackRepository,
     private readonly workshopRepository: IWorkshopRepository,
     private readonly mentorRepository: IMentorRepository,
-    private readonly creditService?: ICreditService
-  ) {}
+    private readonly creditService?: ICreditService,
+    emailService?: IEmailService
+  ) {
+    const resolvedEmailService = emailService ?? container.emailService;
+    this.moderationService = new FeedbackModerationService(
+      feedbackRepository,
+      mentorRepository,
+      resolvedEmailService
+    );
+  }
 
   async canSubmitFeedback(
     userId: string,
@@ -27,9 +40,8 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
         return success({ canSubmit: false, reason: "Atelier introuvable" });
       }
 
-      const apprentice = await this.mentorRepository.findApprenticeByUserId(
-        userId
-      );
+      const apprentice =
+        await this.mentorRepository.findApprenticeByUserId(userId);
       if (!apprentice) {
         return success({
           canSubmit: false,
@@ -124,9 +136,8 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
         return failure("La note doit être entre 1 et 5", 400);
       }
 
-      const apprentice = await this.mentorRepository.findApprenticeByUserId(
-        userId
-      );
+      const apprentice =
+        await this.mentorRepository.findApprenticeByUserId(userId);
       if (!apprentice) {
         return failure("Apprenti introuvable", 404);
       }
@@ -160,12 +171,12 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
         }
       }
 
-      const mentorAppUser = await (container.prisma as any).app_user.findUnique(
-        {
-          where: { id: workshop.creatorId },
-          select: { userId: true },
-        }
-      );
+      const mentorAppUser = await (
+        container.prisma as any
+      ).app_user.findUnique({
+        where: { id: workshop.creatorId },
+        select: { userId: true },
+      });
 
       return success({
         feedbackId: feedback.id,
@@ -204,11 +215,7 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
           isAnonymous: feedback.isAnonymous,
           createdAt: feedback.createdAt,
           apprentice: feedback.isAnonymous
-            ? {
-                id: null,
-                name: "Étudiant anonyme",
-                image: null,
-              }
+            ? { id: null, name: "Étudiant anonyme", image: null }
             : {
                 id: feedback.apprentice?.user?.id || null,
                 name: feedback.apprentice?.user?.name || "Anonyme",
@@ -226,257 +233,31 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
     }
   }
 
-  async reportFeedback(
+  reportFeedback(
     userId: string,
     feedbackId: string,
     reason: string
   ): Promise<Result<{ success: boolean }>> {
-    try {
-      const feedback = await this.feedbackRepository.findById(feedbackId);
-      if (!feedback) {
-        return failure("Avis introuvable", 404);
-      }
-
-      const mentor = await this.mentorRepository.findMentorById(userId);
-      if (!mentor) {
-        return failure("Mentor introuvable", 404);
-      }
-
-      if (feedback.mentorId !== mentor.id) {
-        return failure("Vous n'êtes pas autorisé à signaler cet avis", 403);
-      }
-
-      if (feedback.status === "UNDER_REVIEW") {
-        return failure("Cet avis est déjà en cours de modération", 400);
-      }
-
-      if (feedback.status === "DELETED") {
-        return failure("Cet avis a déjà été supprimé", 400);
-      }
-
-      await this.feedbackRepository.updateStatus(
-        feedbackId,
-        "UNDER_REVIEW",
-        userId,
-        reason
-      );
-
-      return success({ success: true });
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("reportFeedback", {
-          userId,
-          resourceId: feedbackId,
-        })
-      );
-    }
+    return this.moderationService.reportFeedback(userId, feedbackId, reason);
   }
 
-  async getModerationQueue(options?: {
+  getModerationQueue(options?: {
     limit?: number;
     offset?: number;
   }): Promise<Result<any>> {
-    try {
-      const [feedbacks, total] = await Promise.all([
-        this.feedbackRepository.findUnderReview(options),
-        this.feedbackRepository.countUnderReview(),
-      ]);
-
-      return success({
-        feedbacks: feedbacks.map((feedback: any) => ({
-          id: feedback.id,
-          rating: feedback.rating,
-          comment: feedback.comment,
-          isAnonymous: feedback.isAnonymous,
-          status: feedback.status,
-          reportedAt: feedback.reportedAt,
-          reportedBy: feedback.reportedBy,
-          reportReason: feedback.reportReason,
-          createdAt: feedback.createdAt,
-          publicName: feedback.isAnonymous
-            ? "Étudiant anonyme"
-            : feedback.apprentice?.user?.name || "Anonyme",
-          realName: feedback.apprentice?.user?.name || null,
-          realEmail: feedback.apprentice?.user?.email || null,
-          apprenticeId: feedback.apprenticeId,
-          mentorId: feedback.mentorId,
-          mentorName: feedback.mentor?.user?.name || null,
-          workshopId: feedback.workshopId,
-          workshopTitle: feedback.workshop?.title || null,
-        })),
-        total,
-      });
-    } catch (error) {
-      return handleError(error, createErrorContext("getModerationQueue", {}));
-    }
+    return this.moderationService.getModerationQueue(options);
   }
 
-  async dismissReport(
-    feedbackId: string
-  ): Promise<Result<{ success: boolean }>> {
-    try {
-      const feedback = await this.feedbackRepository.findById(feedbackId);
-      if (!feedback) {
-        return failure("Avis introuvable", 404);
-      }
-
-      if (feedback.status !== "UNDER_REVIEW") {
-        return failure("Cet avis n'est pas en cours de modération", 400);
-      }
-
-      await this.feedbackRepository.updateStatus(feedbackId, "ACTIVE");
-
-      return success({ success: true });
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("dismissReport", {
-          resourceId: feedbackId,
-        })
-      );
-    }
+  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>> {
+    return this.moderationService.dismissReport(feedbackId);
   }
 
-  async deleteFeedback(
-    feedbackId: string
-  ): Promise<Result<{ success: boolean }>> {
-    try {
-      const feedback = await this.feedbackRepository.findById(feedbackId);
-      if (!feedback) {
-        return failure("Avis introuvable", 404);
-      }
-
-      await this.feedbackRepository.updateStatus(feedbackId, "DELETED");
-
-      return success({ success: true });
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("deleteFeedback", {
-          resourceId: feedbackId,
-        })
-      );
-    }
+  deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>> {
+    return this.moderationService.deleteFeedback(feedbackId);
   }
 
-  async warnUser(feedbackId: string): Promise<Result<{ success: boolean }>> {
-    try {
-      const feedback = await this.feedbackRepository.findById(feedbackId);
-      if (!feedback) {
-        return failure("Avis introuvable", 404);
-      }
-
-      if (!feedback.apprentice?.user?.email) {
-        return failure("Email de l'utilisateur introuvable", 404);
-      }
-
-      const apprenticeName = feedback.apprentice.user.name || "Utilisateur";
-      const mentorName = feedback.mentor?.user?.name || "le mentor";
-      const workshopTitle = feedback.workshop?.title || "l'atelier";
-
-      const emailResult = await container.emailService.sendEmail({
-        to: feedback.apprentice.user.email,
-        subject: "Avertissement - Avis signalé",
-        html: `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            </head>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background-color: #dc2626; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                <h1 style="color: white; margin: 0;">Avertissement officiel</h1>
-              </div>
-              
-              <p>Bonjour ${apprenticeName},</p>
-              
-              <p>Nous vous informons qu'un avis que vous avez laissé pour l'atelier <strong>"${workshopTitle}"</strong> avec ${mentorName} a été signalé et examiné par notre équipe de modération.</p>
-              
-              <div style="background-color: #fef3c7; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                <p style="margin: 0; font-weight: bold;">⚠️ Avertissement</p>
-                <p style="margin: 5px 0 0 0;">Votre avis a été jugé inapproprié et ne respecte pas nos règles de communauté. Nous vous rappelons que tous les avis doivent être respectueux et constructifs.</p>
-              </div>
-              
-              <div style="background-color: #f1f5f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                <p style="margin: 0; font-weight: bold;">📋 Règles de la communauté :</p>
-                <ul style="margin: 5px 0 0 0; padding-left: 20px;">
-                  <li>Respectez les autres membres de la communauté</li>
-                  <li>Fournissez des avis constructifs et honnêtes</li>
-                  <li>Évitez les propos injurieux, discriminatoires ou diffamatoires</li>
-                  <li>Ne publiez pas de contenu spam ou trompeur</li>
-                </ul>
-              </div>
-              
-              <p>Nous vous encourageons à réfléchir à votre comportement et à respecter nos règles à l'avenir. En cas de récidive, des mesures supplémentaires pourront être prises.</p>
-              
-              <p style="margin-top: 30px;">Cordialement,<br>L'équipe de modération LearnSup</p>
-              
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-              <p style="font-size: 12px; color: #6b7280; text-align: center;">
-                Cet email est envoyé automatiquement, merci de ne pas y répondre.
-              </p>
-            </body>
-          </html>
-        `,
-        text: `
-Avertissement officiel
-
-Bonjour ${apprenticeName},
-
-Nous vous informons qu'un avis que vous avez laissé pour l'atelier "${workshopTitle}" avec ${mentorName} a été signalé et examiné par notre équipe de modération.
-
-⚠️ Avertissement
-Votre avis a été jugé inapproprié et ne respecte pas nos règles de communauté. Nous vous rappelons que tous les avis doivent être respectueux et constructifs.
-
-📋 Règles de la communauté :
-- Respectez les autres membres de la communauté
-- Fournissez des avis constructifs et honnêtes
-- Évitez les propos injurieux, discriminatoires ou diffamatoires
-- Ne publiez pas de contenu spam ou trompeur
-
-Nous vous encourageons à réfléchir à votre comportement et à respecter nos règles à l'avenir. En cas de récidive, des mesures supplémentaires pourront être prises.
-
-Cordialement,
-L'équipe de modération LearnSup
-        `.trim(),
-      });
-
-      if (!emailResult.ok) {
-        return failure("Erreur lors de l'envoi de l'email", 500);
-      }
-
-      return success({ success: true });
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("warnUser", {
-          resourceId: feedbackId,
-        })
-      );
-    }
-  }
-
-  private calculateWorkshopEndTime(
-    date: Date | string,
-    time: string,
-    duration: number | null
-  ): Date {
-    const workshopDate =
-      typeof date === "string" ? new Date(date) : new Date(date);
-    const [hours, minutes] = time.split(":").map(Number);
-    const startTime = new Date(workshopDate);
-    startTime.setHours(hours, minutes, 0, 0);
-
-    const endTime = new Date(startTime);
-    if (duration) {
-      endTime.setMinutes(endTime.getMinutes() + duration);
-    } else {
-      endTime.setHours(endTime.getHours() + 1);
-    }
-
-    return endTime;
+  warnUser(feedbackId: string): Promise<Result<{ success: boolean }>> {
+    return this.moderationService.warnUser(feedbackId);
   }
 
   async getEligibleWorkshopsForFeedback(userId: string): Promise<
@@ -491,15 +272,13 @@ L'équipe de modération LearnSup
     >
   > {
     try {
-      const apprentice = await this.mentorRepository.findApprenticeByUserId(
-        userId
-      );
+      const apprentice =
+        await this.mentorRepository.findApprenticeByUserId(userId);
       if (!apprentice) {
         return success([]);
       }
 
       const now = new Date();
-      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
       const workshops = await this.workshopRepository.findByApprenticeId(
         apprentice.id
@@ -523,7 +302,6 @@ L'équipe de modération LearnSup
         );
 
         if (workshopEndTime > now) continue;
-
         if (workshop.apprenticeAttendanceStatus !== "PRESENT") continue;
 
         const existingFeedback =
@@ -539,7 +317,8 @@ L'équipe de modération LearnSup
 
         const oneHourInMs = 60 * 60 * 1000;
         const shouldShowImmediately =
-          now >= workshopEndTime && now < new Date(workshopEndTime.getTime() + oneHourInMs);
+          now >= workshopEndTime &&
+          now < new Date(workshopEndTime.getTime() + oneHourInMs);
 
         eligibleWorkshops.push({
           workshopId: workshop.id,
@@ -558,10 +337,29 @@ L'équipe de modération LearnSup
     } catch (error) {
       return handleError(
         error,
-        createErrorContext("getEligibleWorkshopsForFeedback", {
-          userId,
-        })
+        createErrorContext("getEligibleWorkshopsForFeedback", { userId })
       );
     }
+  }
+
+  private calculateWorkshopEndTime(
+    date: Date | string,
+    time: string,
+    duration: number | null
+  ): Date {
+    const workshopDate =
+      typeof date === "string" ? new Date(date) : new Date(date);
+    const [hours, minutes] = time.split(":").map(Number);
+    const startTime = new Date(workshopDate);
+    startTime.setHours(hours, minutes, 0, 0);
+
+    const endTime = new Date(startTime);
+    if (duration) {
+      endTime.setMinutes(endTime.getMinutes() + duration);
+    } else {
+      endTime.setHours(endTime.getHours() + 1);
+    }
+
+    return endTime;
   }
 }

@@ -7,6 +7,26 @@ import type {
 import { generateInternalId } from "../../../utils/id-generator";
 import type { FeedbackStatus } from "../../../../../prisma/generated/client/enums";
 
+const FEEDBACK_INCLUDE = {
+  app_user_mentor_feedback_apprenticeIdToapp_user: {
+    include: {
+      user: {
+        select: { id: true, name: true, email: true, image: true },
+      },
+    },
+  },
+  app_user_mentor_feedback_mentorIdToapp_user: {
+    include: {
+      user: {
+        select: { id: true, name: true },
+      },
+    },
+  },
+  workshop: {
+    select: { id: true, title: true, date: true, time: true, duration: true },
+  },
+} as const;
+
 export class PrismaWorkshopFeedbackRepository
   implements IWorkshopFeedbackRepository
 {
@@ -29,39 +49,7 @@ export class PrismaWorkshopFeedbackRepository
         createdAt: now,
         updatedAt: now,
       },
-      include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-          },
-        },
-        app_user_mentor_feedback_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        workshop: {
-          select: {
-            id: true,
-            title: true,
-            date: true,
-            time: true,
-            duration: true,
-          },
-        },
-      },
+      include: FEEDBACK_INCLUDE,
     });
 
     return this.mapToEntity(feedback);
@@ -73,44 +61,9 @@ export class PrismaWorkshopFeedbackRepository
   ): Promise<WorkshopFeedbackEntity | null> {
     const feedback = await (this.prisma as any).mentor_feedback.findUnique({
       where: {
-        apprenticeId_workshopId: {
-          apprenticeId,
-          workshopId,
-        },
+        apprenticeId_workshopId: { apprenticeId, workshopId },
       },
-      include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-          },
-        },
-        app_user_mentor_feedback_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        workshop: {
-          select: {
-            id: true,
-            title: true,
-            date: true,
-            time: true,
-            duration: true,
-          },
-        },
-      },
+      include: FEEDBACK_INCLUDE,
     });
 
     return feedback ? this.mapToEntity(feedback) : null;
@@ -124,60 +77,12 @@ export class PrismaWorkshopFeedbackRepository
       includeDeleted?: boolean;
     }
   ): Promise<WorkshopFeedbackEntity[]> {
-    const limit = options?.limit || 50;
-    const offset = options?.offset || 0;
-    const includeDeleted = options?.includeDeleted || false;
-
-    const where: any = {
-      mentorId,
-    };
-
-    if (!includeDeleted) {
-      where.status = {
-        not: "DELETED",
-      };
-    }
-
     const feedbacks = await (this.prisma as any).mentor_feedback.findMany({
-      where,
-      take: limit,
-      skip: offset,
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-          },
-        },
-        app_user_mentor_feedback_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        workshop: {
-          select: {
-            id: true,
-            title: true,
-            date: true,
-            time: true,
-            duration: true,
-          },
-        },
-      },
+      where: this.buildStatusFilter({ mentorId }, options?.includeDeleted),
+      take: options?.limit || 50,
+      skip: options?.offset || 0,
+      orderBy: { createdAt: "desc" },
+      include: FEEDBACK_INCLUDE,
     });
 
     return feedbacks.map((f: any) => this.mapToEntity(f));
@@ -191,60 +96,12 @@ export class PrismaWorkshopFeedbackRepository
       includeDeleted?: boolean;
     }
   ): Promise<WorkshopFeedbackEntity[]> {
-    const limit = options?.limit || 50;
-    const offset = options?.offset || 0;
-    const includeDeleted = options?.includeDeleted || false;
-
-    const where: any = {
-      workshopId,
-    };
-
-    if (!includeDeleted) {
-      where.status = {
-        not: "DELETED",
-      };
-    }
-
     const feedbacks = await (this.prisma as any).mentor_feedback.findMany({
-      where,
-      take: limit,
-      skip: offset,
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-          },
-        },
-        app_user_mentor_feedback_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        workshop: {
-          select: {
-            id: true,
-            title: true,
-            date: true,
-            time: true,
-            duration: true,
-          },
-        },
-      },
+      where: this.buildStatusFilter({ workshopId }, options?.includeDeleted),
+      take: options?.limit || 50,
+      skip: options?.offset || 0,
+      orderBy: { createdAt: "desc" },
+      include: FEEDBACK_INCLUDE,
     });
 
     return feedbacks.map((f: any) => this.mapToEntity(f));
@@ -253,39 +110,7 @@ export class PrismaWorkshopFeedbackRepository
   async findById(id: string): Promise<WorkshopFeedbackEntity | null> {
     const feedback = await (this.prisma as any).mentor_feedback.findUnique({
       where: { id },
-      include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-          },
-        },
-        app_user_mentor_feedback_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        workshop: {
-          select: {
-            id: true,
-            title: true,
-            date: true,
-            time: true,
-            duration: true,
-          },
-        },
-      },
+      include: FEEDBACK_INCLUDE,
     });
 
     return feedback ? this.mapToEntity(feedback) : null;
@@ -311,39 +136,7 @@ export class PrismaWorkshopFeedbackRepository
     const feedback = await (this.prisma as any).mentor_feedback.update({
       where: { id },
       data: updateData,
-      include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-          },
-        },
-        app_user_mentor_feedback_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        workshop: {
-          select: {
-            id: true,
-            title: true,
-            date: true,
-            time: true,
-            duration: true,
-          },
-        },
-      },
+      include: FEEDBACK_INCLUDE,
     });
 
     return this.mapToEntity(feedback);
@@ -353,68 +146,21 @@ export class PrismaWorkshopFeedbackRepository
     mentorId: string,
     includeDeleted = false
   ): Promise<number> {
-    const where: any = {
-      mentorId,
-    };
-
-    if (!includeDeleted) {
-      where.status = {
-        not: "DELETED",
-      };
-    }
-
-    return (this.prisma as any).mentor_feedback.count({ where });
+    return (this.prisma as any).mentor_feedback.count({
+      where: this.buildStatusFilter({ mentorId }, includeDeleted),
+    });
   }
 
   async findUnderReview(options?: {
     limit?: number;
     offset?: number;
   }): Promise<WorkshopFeedbackEntity[]> {
-    const limit = options?.limit || 50;
-    const offset = options?.offset || 0;
-
     const feedbacks = await (this.prisma as any).mentor_feedback.findMany({
-      where: {
-        status: "UNDER_REVIEW",
-      },
-      take: limit,
-      skip: offset,
-      orderBy: {
-        reportedAt: "desc",
-      },
-      include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-          },
-        },
-        app_user_mentor_feedback_mentorIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        workshop: {
-          select: {
-            id: true,
-            title: true,
-            date: true,
-            time: true,
-            duration: true,
-          },
-        },
-      },
+      where: { status: "UNDER_REVIEW" },
+      take: options?.limit || 50,
+      skip: options?.offset || 0,
+      orderBy: { reportedAt: "desc" },
+      include: FEEDBACK_INCLUDE,
     });
 
     return feedbacks.map((f: any) => this.mapToEntity(f));
@@ -422,13 +168,23 @@ export class PrismaWorkshopFeedbackRepository
 
   async countUnderReview(): Promise<number> {
     return (this.prisma as any).mentor_feedback.count({
-      where: {
-        status: "UNDER_REVIEW",
-      },
+      where: { status: "UNDER_REVIEW" },
     });
   }
 
+  private buildStatusFilter(
+    baseFilter: Record<string, string>,
+    includeDeleted?: boolean
+  ): Record<string, any> {
+    if (includeDeleted) return baseFilter;
+    return { ...baseFilter, status: { not: "DELETED" } };
+  }
+
   private mapToEntity(feedback: any): WorkshopFeedbackEntity {
+    const apprenticeRaw =
+      feedback.app_user_mentor_feedback_apprenticeIdToapp_user;
+    const mentorRaw = feedback.app_user_mentor_feedback_mentorIdToapp_user;
+
     return {
       id: feedback.id,
       mentorId: feedback.mentorId,
@@ -443,34 +199,26 @@ export class PrismaWorkshopFeedbackRepository
       reportReason: feedback.reportReason,
       createdAt: feedback.createdAt,
       updatedAt: feedback.updatedAt,
-      apprentice: feedback.app_user_mentor_feedback_apprenticeIdToapp_user
+      apprentice: apprenticeRaw
         ? {
-            id: feedback.app_user_mentor_feedback_apprenticeIdToapp_user.id,
-            user: feedback.app_user_mentor_feedback_apprenticeIdToapp_user.user
+            id: apprenticeRaw.id,
+            user: apprenticeRaw.user
               ? {
-                  id: feedback.app_user_mentor_feedback_apprenticeIdToapp_user
-                    .user.id,
-                  name: feedback.app_user_mentor_feedback_apprenticeIdToapp_user
-                    .user.name,
-                  email:
-                    feedback.app_user_mentor_feedback_apprenticeIdToapp_user
-                      .user.email,
-                  image:
-                    feedback.app_user_mentor_feedback_apprenticeIdToapp_user
-                      .user.image,
+                  id: apprenticeRaw.user.id,
+                  name: apprenticeRaw.user.name,
+                  email: apprenticeRaw.user.email,
+                  image: apprenticeRaw.user.image,
                 }
               : undefined,
           }
         : undefined,
-      mentor: feedback.app_user_mentor_feedback_mentorIdToapp_user
+      mentor: mentorRaw
         ? {
-            id: feedback.app_user_mentor_feedback_mentorIdToapp_user.id,
-            user: feedback.app_user_mentor_feedback_mentorIdToapp_user.user
+            id: mentorRaw.id,
+            user: mentorRaw.user
               ? {
-                  id: feedback.app_user_mentor_feedback_mentorIdToapp_user.user
-                    .id,
-                  name: feedback.app_user_mentor_feedback_mentorIdToapp_user
-                    .user.name,
+                  id: mentorRaw.user.id,
+                  name: mentorRaw.user.name,
                 }
               : undefined,
           }

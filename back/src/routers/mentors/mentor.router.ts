@@ -1,20 +1,18 @@
 import { publicProcedure, protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
+import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
 
 export const mentorRouter = router({
   getById: publicProcedure
     .input(z.object({ mentorId: z.string() }))
-    .query(async ({ input }) => {
-      const result =
+    .query(async ({ input }) =>
+      unwrapResult(
         await container.mentorProfileService.getPublishedMentorById(
           input.mentorId
-        );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+        )
+      )
+    ),
 
   sendContactRequest: protectedProcedure
     .input(
@@ -27,18 +25,16 @@ export const mentorRouter = router({
         subject: z.string().max(100).optional(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const result = await container.mentorContactService.sendContactRequest(
-        ctx.session.user.id,
-        input.mentorId,
-        input.message,
-        input.subject
-      );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
+        await container.mentorContactService.sendContactRequest(
+          ctx.session.user.id,
+          input.mentorId,
+          input.message,
+          input.subject
+        )
+      )
+    ),
 
   getFeedbacks: publicProcedure
     .input(
@@ -47,31 +43,24 @@ export const mentorRouter = router({
         workshopId: z.string().optional(),
       })
     )
-    .query(async ({ input }) => {
-      const result = await container.mentorFeedbackService.getMentorFeedbacks(
-        input.mentorId,
-        {
-          workshopId: input.workshopId,
-        }
-      );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+    .query(async ({ input }) =>
+      unwrapResult(
+        await container.mentorFeedbackService.getMentorFeedbacks(
+          input.mentorId,
+          { workshopId: input.workshopId }
+        )
+      )
+    ),
 
   getPublicWorkshops: protectedProcedure
     .input(z.object({ mentorId: z.string() }))
-    .query(async ({ input }) => {
-      const result =
+    .query(async ({ input }) =>
+      unwrapResult(
         await container.mentorWorkshopService.getMentorPublicWorkshops(
           input.mentorId
-        );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+        )
+      )
+    ),
 
   submitWorkshopRequest: protectedProcedure
     .input(
@@ -96,49 +85,40 @@ export const mentorRouter = router({
         workshopId: z.string().optional().nullable(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const result =
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
         await container.workshopRequestService.submitWorkshopRequest(
           ctx.session.user.id,
           input
-        );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+        )
+      )
+    ),
 
-  getMyWorkshopRequests: protectedProcedure.query(async ({ ctx }) => {
-    const result = await container.workshopRequestService.getApprenticeRequests(
-      ctx.session.user.id
-    );
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  getMyWorkshopRequests: protectedProcedure.query(async ({ ctx }) =>
+    unwrapResult(
+      await container.workshopRequestService.getApprenticeRequests(
+        ctx.session.user.id
+      )
+    )
+  ),
 
-  getMentorWorkshopRequests: protectedProcedure.query(async ({ ctx }) => {
-    const result = await container.workshopRequestService.getMentorRequests(
-      ctx.session.user.id
-    );
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
-  }),
+  getMentorWorkshopRequests: protectedProcedure.query(async ({ ctx }) =>
+    unwrapResult(
+      await container.workshopRequestService.getMentorRequests(
+        ctx.session.user.id
+      )
+    )
+  ),
 
   getWorkshopRequests: protectedProcedure
     .input(z.object({ workshopId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const result = await container.workshopRequestService.getWorkshopRequests(
-        input.workshopId
-      );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+    .query(async ({ input }) =>
+      unwrapResult(
+        await container.workshopRequestService.getWorkshopRequests(
+          input.workshopId
+        )
+      )
+    ),
 
   acceptWorkshopRequest: protectedProcedure
     .input(
@@ -152,8 +132,8 @@ export const mentorRouter = router({
         maxParticipants: z.number().int().min(1).optional().nullable(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const result =
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
         await container.workshopRequestService.acceptWorkshopRequest(
           ctx.session.user.id,
           input.requestId,
@@ -165,40 +145,32 @@ export const mentorRouter = router({
             isVirtual: input.isVirtual ?? false,
             maxParticipants: input.maxParticipants ?? null,
           }
-        );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+        )
+      )
+    ),
 
   rejectWorkshopRequest: protectedProcedure
     .input(z.object({ requestId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const result =
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
         await container.workshopRequestService.rejectWorkshopRequest(
           ctx.session.user.id,
           input.requestId
-        );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+        )
+      )
+    ),
 
   cancelWorkshopRequest: protectedProcedure
     .input(z.object({ requestId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const result =
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
         await container.workshopRequestService.cancelWorkshopRequest(
           ctx.session.user.id,
           input.requestId
-        );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
-    }),
+        )
+      )
+    ),
+
   updateWorkshopRequest: protectedProcedure
     .input(
       z.object({
@@ -225,15 +197,12 @@ export const mentorRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const { requestId, ...updateData } = input;
-      const result =
+      return unwrapResult(
         await container.workshopRequestService.updateWorkshopRequest(
           ctx.session.user.id,
           requestId,
           updateData
-        );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+        )
+      );
     }),
 });

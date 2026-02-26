@@ -59,6 +59,47 @@ export interface AppUserRepository {
   findUserNameByUserId(userId: string): Promise<string | null>;
 }
 
+const UPDATABLE_FIELDS = [
+  "role", "status", "bio", "domain", "photoUrl", "qualifications",
+  "experience", "socialMediaLinks", "areasOfExpertise", "mentorshipTopics",
+  "calendlyLink", "isPublished", "publishedAt", "displayName",
+  "studyDomain", "studyProgram", "iceBreakerTags", "deletedAt",
+] as const;
+
+function buildPrismaUpdateData(input: UpdateAppUserInput): Record<string, unknown> {
+  const data: Record<string, unknown> = { updatedAt: new Date() };
+  for (const field of UPDATABLE_FIELDS) {
+    if ((input as Record<string, unknown>)[field] !== undefined) {
+      data[field] = (input as Record<string, unknown>)[field];
+    }
+  }
+  return data;
+}
+
+function mapToAppUserData(raw: any): AppUserData {
+  return {
+    id: raw.id,
+    userId: raw.userId,
+    role: raw.role as Role | null,
+    status: raw.status,
+    createdAt: raw.createdAt,
+    updatedAt: raw.updatedAt,
+    photoUrl: raw.photoUrl ?? null,
+    deletedAt: raw.deletedAt ?? null,
+  };
+}
+
+const APP_USER_BASE_SELECT = {
+  id: true,
+  userId: true,
+  role: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+  photoUrl: true,
+  deletedAt: true,
+} as const;
+
 export class PrismaAppUserRepository implements AppUserRepository {
   constructor(private readonly prisma: any) {}
 
@@ -69,32 +110,10 @@ export class PrismaAppUserRepository implements AppUserRepository {
 
     const appUser = await (this.prisma as any).app_user.findUnique({
       where: { userId },
-      select: {
-        id: true,
-        userId: true,
-        role: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        photoUrl: true,
-        deletedAt: true,
-      },
+      select: APP_USER_BASE_SELECT,
     });
 
-    if (!appUser) return null;
-
-    const result: AppUserData = {
-      id: appUser.id,
-      userId: appUser.userId,
-      role: appUser.role as Role | null,
-      status: appUser.status,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      photoUrl: appUser.photoUrl ?? null,
-      deletedAt: appUser.deletedAt ?? null,
-    };
-
-    return result;
+    return appUser ? mapToAppUserData(appUser) : null;
   }
 
   async findByAppUserId(appUserId: string): Promise<AppUserData | null> {
@@ -104,26 +123,10 @@ export class PrismaAppUserRepository implements AppUserRepository {
 
     const appUser = await (this.prisma as any).app_user.findUnique({
       where: { id: appUserId },
-      select: {
-        id: true,
-        userId: true,
-        role: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: APP_USER_BASE_SELECT,
     });
 
-    if (!appUser) return null;
-
-    return {
-      id: appUser.id,
-      userId: appUser.userId,
-      role: appUser.role as Role | null,
-      status: appUser.status,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-    };
+    return appUser ? mapToAppUserData(appUser) : null;
   }
 
   async create(input: CreateAppUserInput): Promise<AppUserData> {
@@ -139,56 +142,19 @@ export class PrismaAppUserRepository implements AppUserRepository {
       },
     });
 
-    return {
-      id: appUser.id,
-      userId: appUser.userId,
-      role: appUser.role as Role | null,
-      status: appUser.status,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-    };
+    return mapToAppUserData(appUser);
   }
 
   async update(
     userId: string,
     input: UpdateAppUserInput
   ): Promise<AppUserData> {
-    const now = new Date();
     const appUser = await (this.prisma as any).app_user.update({
       where: { userId },
-      data: {
-        ...(input.role !== undefined && { role: input.role as any }),
-        ...(input.status !== undefined && { status: input.status }),
-        ...(input.bio !== undefined && { bio: input.bio }),
-        ...(input.domain !== undefined && { domain: input.domain }),
-        ...(input.photoUrl !== undefined && { photoUrl: input.photoUrl }),
-        ...(input.qualifications !== undefined && { qualifications: input.qualifications }),
-        ...(input.experience !== undefined && { experience: input.experience }),
-        ...(input.socialMediaLinks !== undefined && { socialMediaLinks: input.socialMediaLinks as any }),
-        ...(input.areasOfExpertise !== undefined && { areasOfExpertise: input.areasOfExpertise as any }),
-        ...(input.mentorshipTopics !== undefined && { mentorshipTopics: input.mentorshipTopics as any }),
-        ...(input.calendlyLink !== undefined && { calendlyLink: input.calendlyLink }),
-        ...(input.isPublished !== undefined && { isPublished: input.isPublished }),
-        ...(input.publishedAt !== undefined && { publishedAt: input.publishedAt }),
-        ...(input.displayName !== undefined && { displayName: input.displayName }),
-        ...(input.studyDomain !== undefined && { studyDomain: input.studyDomain }),
-        ...(input.studyProgram !== undefined && { studyProgram: input.studyProgram }),
-        ...(input.iceBreakerTags !== undefined && { iceBreakerTags: input.iceBreakerTags as any }),
-        ...(input.deletedAt !== undefined && { deletedAt: input.deletedAt }),
-        updatedAt: now,
-      },
+      data: buildPrismaUpdateData(input),
     });
 
-    return {
-      id: appUser.id,
-      userId: appUser.userId,
-      role: appUser.role as Role | null,
-      status: appUser.status,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      photoUrl: appUser.photoUrl ?? null,
-      deletedAt: appUser.deletedAt ?? null,
-    };
+    return mapToAppUserData(appUser);
   }
 
   async upsert(
@@ -207,39 +173,10 @@ export class PrismaAppUserRepository implements AppUserRepository {
         createdAt: now,
         updatedAt: now,
       },
-      update: {
-        ...(updateInput.role !== undefined && {
-          role: updateInput.role as any,
-        }),
-        ...(updateInput.status !== undefined && { status: updateInput.status }),
-        ...(updateInput.bio !== undefined && { bio: updateInput.bio }),
-        ...(updateInput.domain !== undefined && { domain: updateInput.domain }),
-        ...(updateInput.photoUrl !== undefined && { photoUrl: updateInput.photoUrl }),
-        ...(updateInput.qualifications !== undefined && { qualifications: updateInput.qualifications }),
-        ...(updateInput.experience !== undefined && { experience: updateInput.experience }),
-        ...(updateInput.socialMediaLinks !== undefined && { socialMediaLinks: updateInput.socialMediaLinks as any }),
-        ...(updateInput.areasOfExpertise !== undefined && { areasOfExpertise: updateInput.areasOfExpertise as any }),
-        ...(updateInput.mentorshipTopics !== undefined && { mentorshipTopics: updateInput.mentorshipTopics as any }),
-        ...(updateInput.calendlyLink !== undefined && { calendlyLink: updateInput.calendlyLink }),
-        ...(updateInput.isPublished !== undefined && { isPublished: updateInput.isPublished }),
-        ...(updateInput.publishedAt !== undefined && { publishedAt: updateInput.publishedAt }),
-        ...(updateInput.displayName !== undefined && { displayName: updateInput.displayName }),
-        ...(updateInput.studyDomain !== undefined && { studyDomain: updateInput.studyDomain }),
-        ...(updateInput.studyProgram !== undefined && { studyProgram: updateInput.studyProgram }),
-        ...(updateInput.iceBreakerTags !== undefined && { iceBreakerTags: updateInput.iceBreakerTags as any }),
-        ...(updateInput.deletedAt !== undefined && { deletedAt: updateInput.deletedAt }),
-        updatedAt: now,
-      },
+      update: buildPrismaUpdateData(updateInput),
     });
 
-    return {
-      id: appUser.id,
-      userId: appUser.userId,
-      role: appUser.role as Role | null,
-      status: appUser.status,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-    };
+    return mapToAppUserData(appUser);
   }
 
   async findIdentityCardByUserId(userId: string): Promise<{
@@ -274,9 +211,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
   async findUserNameByUserId(userId: string): Promise<string | null> {
     const user = await (this.prisma as any).user.findUnique({
       where: { id: userId },
-      select: {
-        name: true,
-      },
+      select: { name: true },
     });
 
     return user?.name || null;

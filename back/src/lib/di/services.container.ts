@@ -7,6 +7,7 @@ import { MentorContactService } from "../mentors/services/contact/mentor-contact
 import { MentorFeedbackService } from "../mentors/services/feedback/mentor-feedback.service";
 import { MentorWorkshopService } from "../mentors/services/workshops/mentor-workshop.service";
 import { WorkshopRequestService } from "../mentors/services/workshops/workshop-request.service";
+import { WorkshopRequestNotificationService } from "../mentors/services/workshops/workshop-request-notification.service";
 import { ApprenticeProfileService } from "../users/services/profile/apprentice-profile.service";
 import { UserConnectionService } from "../users/services/connection/user-connection.service";
 import { MessagingService } from "../messaging/services/core/messaging.service";
@@ -67,6 +68,8 @@ import type { IChangeEmailService } from "../users/services/account/security/cha
 import type { IForgotPasswordService } from "../users/services/account/security/forgot-password.service.interface";
 import type { IDeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service.interface";
 import type { DailyConfig } from "../daily/config/daily.config.interface";
+import { WorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service";
+import type { IWorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service.interface";
 
 export class ServicesContainer {
   private _workshopService?: IWorkshopService;
@@ -101,6 +104,7 @@ export class ServicesContainer {
   private _changeEmailService?: IChangeEmailService;
   private _forgotPasswordService?: IForgotPasswordService;
   private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
+  private _workshopAttendanceService?: IWorkshopAttendanceService;
 
   constructor(
     private readonly prisma: PrismaClient,
@@ -112,7 +116,9 @@ export class ServicesContainer {
       this.repositories.workshopRepository,
       this.repositories.appUserRepository,
       this.repositories.workshopRequestRepository,
-      this.notificationService
+      this.notificationService,
+      this.workshopVideoLinkService,
+      this.emailService
     );
     return this._workshopService;
   }
@@ -162,7 +168,12 @@ export class ServicesContainer {
       this.repositories.workshopRequestRepository,
       this.repositories.mentorRepository,
       this.repositories.workshopRepository,
-      this.notificationService,
+      new WorkshopRequestNotificationService(
+        this.repositories.workshopRequestRepository,
+        this.repositories.workshopRepository,
+        this.notificationService,
+        this.emailService
+      ),
       this.creditService,
       this.prisma
     );
@@ -373,6 +384,18 @@ export class ServicesContainer {
       );
     }
     return this._forgotPasswordService;
+  }
+
+  get workshopAttendanceService(): IWorkshopAttendanceService {
+    this._workshopAttendanceService ??= new WorkshopAttendanceService(
+      this.workshopService,
+      this.repositories.workshopRepository,
+      this.userTitleService,
+      this.workshopCashbackService,
+      this.workshopNoShowPenaltyService,
+      this.prisma
+    );
+    return this._workshopAttendanceService;
   }
 
   get deleteAccountEnhancedService(): IDeleteAccountEnhancedService {
