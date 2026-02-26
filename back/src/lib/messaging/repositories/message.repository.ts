@@ -4,26 +4,30 @@ import type {
   MessageEntity,
 } from "./message.repository.interface";
 
+function mapToEntity(raw: any): MessageEntity {
+  return {
+    id: raw.id,
+    conversationId: raw.conversationId,
+    senderId: raw.senderId,
+    content: raw.content,
+    isRead: raw.isRead,
+    createdAt: raw.createdAt,
+    updatedAt: raw.updatedAt || null,
+    editCount: raw.editCount || 0,
+    replyToMessageId: raw.replyToMessageId || null,
+    deletedAt: raw.deletedAt || null,
+  };
+}
+
+const NOT_DELETED = { deletedAt: null } as const;
+
 export class PrismaMessageRepository implements IMessageRepository {
   async findById(messageId: string): Promise<MessageEntity | null> {
     const message = await (prisma as any).message.findUnique({
       where: { id: messageId },
     });
 
-    if (!message) return null;
-
-    return {
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      content: message.content,
-      isRead: message.isRead,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt || null,
-      editCount: message.editCount || 0,
-      replyToMessageId: message.replyToMessageId || null,
-      deletedAt: message.deletedAt || null,
-    };
+    return message ? mapToEntity(message) : null;
   }
 
   async findMessagesForConversation(
@@ -32,54 +36,24 @@ export class PrismaMessageRepository implements IMessageRepository {
     offset?: number
   ): Promise<MessageEntity[]> {
     const messages = await (prisma as any).message.findMany({
-      where: {
-        conversationId,
-        deletedAt: null,
-      },
+      where: { conversationId, ...NOT_DELETED },
       orderBy: { createdAt: "desc" },
       take: limit,
       skip: offset,
     });
 
-    return messages.map((message: any) => ({
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      content: message.content,
-      isRead: message.isRead,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt || null,
-      editCount: message.editCount || 0,
-      replyToMessageId: message.replyToMessageId || null,
-      deletedAt: message.deletedAt || null,
-    }));
+    return messages.map(mapToEntity);
   }
 
   async findLastMessageForConversation(
     conversationId: string
   ): Promise<MessageEntity | null> {
     const message = await (prisma as any).message.findFirst({
-      where: {
-        conversationId,
-        deletedAt: null,
-      },
+      where: { conversationId, ...NOT_DELETED },
       orderBy: { createdAt: "desc" },
     });
 
-    if (!message) return null;
-
-    return {
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      content: message.content,
-      isRead: message.isRead,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt || null,
-      editCount: message.editCount || 0,
-      replyToMessageId: message.replyToMessageId || null,
-      deletedAt: message.deletedAt || null,
-    };
+    return message ? mapToEntity(message) : null;
   }
 
   async countUnreadMessagesForUser(
@@ -92,16 +66,14 @@ export class PrismaMessageRepository implements IMessageRepository {
 
     if (!conversation) return 0;
 
-    const count = await (prisma as any).message.count({
+    return (prisma as any).message.count({
       where: {
         conversationId,
         senderId: { not: userId },
         isRead: false,
-        deletedAt: null,
+        ...NOT_DELETED,
       },
     });
-
-    return count;
   }
 
   async create(data: {
@@ -121,31 +93,22 @@ export class PrismaMessageRepository implements IMessageRepository {
       },
     });
 
-    return {
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      content: message.content,
-      isRead: message.isRead,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt || null,
-      editCount: message.editCount || 0,
-      replyToMessageId: message.replyToMessageId || null,
-      deletedAt: message.deletedAt || null,
-    };
+    return mapToEntity(message);
   }
 
   async markMessagesAsRead(
     conversationId: string,
     userId: string
   ): Promise<string[]> {
+    const unreadFilter = {
+      conversationId,
+      senderId: { not: userId },
+      isRead: false,
+      ...NOT_DELETED,
+    };
+
     const messages = await (prisma as any).message.findMany({
-      where: {
-        conversationId,
-        senderId: { not: userId },
-        isRead: false,
-        deletedAt: null,
-      },
+      where: unreadFilter,
       select: { id: true },
     });
 
@@ -154,15 +117,8 @@ export class PrismaMessageRepository implements IMessageRepository {
     }
 
     await (prisma as any).message.updateMany({
-      where: {
-        conversationId,
-        senderId: { not: userId },
-        isRead: false,
-        deletedAt: null,
-      },
-      data: {
-        isRead: true,
-      },
+      where: unreadFilter,
+      data: { isRead: true },
     });
 
     return messages.map((m: any) => m.id);
@@ -185,18 +141,7 @@ export class PrismaMessageRepository implements IMessageRepository {
       },
     });
 
-    return {
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      content: message.content,
-      isRead: message.isRead,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt || null,
-      editCount: message.editCount || 0,
-      replyToMessageId: message.replyToMessageId || null,
-      deletedAt: message.deletedAt || null,
-    };
+    return mapToEntity(message);
   }
 
   async searchMessages(
@@ -208,49 +153,22 @@ export class PrismaMessageRepository implements IMessageRepository {
     const messages = await (prisma as any).message.findMany({
       where: {
         conversationId,
-        content: {
-          contains: query,
-          mode: "insensitive",
-        },
-        deletedAt: null,
+        content: { contains: query, mode: "insensitive" },
+        ...NOT_DELETED,
       },
       orderBy: { createdAt: "desc" },
       take: limit,
     });
 
-    return messages.map((message: any) => ({
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      content: message.content,
-      isRead: message.isRead,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt || null,
-      editCount: message.editCount || 0,
-      replyToMessageId: message.replyToMessageId || null,
-      deletedAt: message.deletedAt || null,
-    }));
+    return messages.map(mapToEntity);
   }
 
   async delete(messageId: string): Promise<MessageEntity> {
     const message = await (prisma as any).message.update({
       where: { id: messageId },
-      data: {
-        deletedAt: new Date(),
-      },
+      data: { deletedAt: new Date() },
     });
 
-    return {
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      content: message.content,
-      isRead: message.isRead,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt || null,
-      editCount: message.editCount || 0,
-      replyToMessageId: message.replyToMessageId || null,
-      deletedAt: message.deletedAt || null,
-    };
+    return mapToEntity(message);
   }
 }

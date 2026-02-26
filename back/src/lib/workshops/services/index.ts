@@ -15,6 +15,14 @@ export {
   deleteWorkshopSchema,
 } from "./workshop.service";
 
+// Sub-services (SRP)
+export * from "./lifecycle";
+export * from "./scheduling";
+export * from "./query";
+export { WorkshopAccessGuard } from "./guards/workshop-access.guard";
+export type { IWorkshopAccessGuard } from "./guards/workshop-access.guard";
+export { WorkshopEmailTemplates } from "./email/workshop-email.templates";
+
 // Notification service
 export { WorkshopNotificationService } from "./workshop-notification.service";
 
