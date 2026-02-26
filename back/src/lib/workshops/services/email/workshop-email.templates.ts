@@ -168,6 +168,55 @@ L'équipe LearnSup`,
     };
   }
 
+  static feedbackWarning(data: {
+    recipientName: string;
+    mentorName: string;
+    workshopTitle: string;
+  }): EmailTemplate {
+    return {
+      subject: "Avertissement - Avis signalé",
+      html: wrapHtml(
+        "#dc2626",
+        "Avertissement officiel",
+        `<p>Bonjour ${data.recipientName},</p>
+        <p>Nous vous informons qu'un avis que vous avez laissé pour l'atelier <strong>"${data.workshopTitle}"</strong> avec ${data.mentorName} a été signalé et examiné par notre équipe de modération.</p>
+        <div style="background-color: #fef3c7; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+          <p style="margin: 0; font-weight: bold;">⚠️ Avertissement</p>
+          <p style="margin: 5px 0 0 0;">Votre avis a été jugé inapproprié et ne respecte pas nos règles de communauté. Nous vous rappelons que tous les avis doivent être respectueux et constructifs.</p>
+        </div>
+        <div style="background-color: #f1f5f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p style="margin: 0; font-weight: bold;">📋 Règles de la communauté :</p>
+          <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+            <li>Respectez les autres membres de la communauté</li>
+            <li>Fournissez des avis constructifs et honnêtes</li>
+            <li>Évitez les propos injurieux, discriminatoires ou diffamatoires</li>
+            <li>Ne publiez pas de contenu spam ou trompeur</li>
+          </ul>
+        </div>
+        <p>Nous vous encourageons à réfléchir à votre comportement et à respecter nos règles à l'avenir. En cas de récidive, des mesures supplémentaires pourront être prises.</p>`
+      ),
+      text: `Avertissement officiel
+
+Bonjour ${data.recipientName},
+
+Nous vous informons qu'un avis que vous avez laissé pour l'atelier "${data.workshopTitle}" avec ${data.mentorName} a été signalé et examiné par notre équipe de modération.
+
+⚠️ Avertissement
+Votre avis a été jugé inapproprié et ne respecte pas nos règles de communauté. Nous vous rappelons que tous les avis doivent être respectueux et constructifs.
+
+📋 Règles de la communauté :
+- Respectez les autres membres de la communauté
+- Fournissez des avis constructifs et honnêtes
+- Évitez les propos injurieux, discriminatoires ou diffamatoires
+- Ne publiez pas de contenu spam ou trompeur
+
+Nous vous encourageons à réfléchir à votre comportement et à respecter nos règles à l'avenir. En cas de récidive, des mesures supplémentaires pourront être prises.
+
+Cordialement,
+L'équipe LearnSup`,
+    };
+  }
+
   static requestRejected(data: {
     recipientName: string;
     mentorName: string;

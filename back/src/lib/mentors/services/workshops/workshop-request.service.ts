@@ -4,8 +4,7 @@ import type { IWorkshopRequestService } from "./workshop-request.service.interfa
 import type { IWorkshopRequestRepository } from "../../repositories/workshop-request.repository.interface";
 import type { IMentorRepository } from "../../repositories/mentor.repository.interface";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
-import type { INotificationService } from "../../../notifications/services/notification.service.interface";
-import type { IEmailService } from "../../../email/services/email.service.interface";
+import type { IWorkshopRequestNotificationService } from "./workshop-request-notification.service";
 import { sanitizeString } from "../../../utils/sanitize";
 import { sanitizeLocation } from "../../../workshops/utils/workshop-helpers";
 import { logger } from "../../../common/logger";
@@ -13,7 +12,6 @@ import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
 import type { PrismaClient } from "../../../../../prisma/generated/client/client";
 import { generateInternalId } from "../../../utils/id-generator";
-import { WorkshopEmailTemplates } from "../../../workshops/services/email/workshop-email.templates";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   private readonly WORKSHOP_REQUEST_COST = 10;
@@ -22,10 +20,9 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     private readonly workshopRequestRepository: IWorkshopRequestRepository,
     private readonly mentorRepository: IMentorRepository,
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly notificationService?: INotificationService,
+    private readonly notificationService: IWorkshopRequestNotificationService,
     private readonly creditService?: ICreditService,
-    private readonly prisma?: PrismaClient,
-    private readonly emailService?: IEmailService
+    private readonly prisma?: PrismaClient
   ) {}
 
   async submitWorkshopRequest(
@@ -73,26 +70,27 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         ? sanitizeString(input.message, { maxLength: 1000, trim: true })
         : null;
 
-      const workshopRequest = this.prisma && this.creditService
-        ? await this.submitWithCredits(
-            userId,
-            apprentice,
-            mentor,
-            sanitizedTitle,
-            sanitizedDescription,
-            sanitizedMessage,
-            input
-          )
-        : await this.submitWithoutCredits(
-            apprentice,
-            mentor,
-            sanitizedTitle,
-            sanitizedDescription,
-            sanitizedMessage,
-            input
-          );
+      const workshopRequest =
+        this.prisma && this.creditService
+          ? await this.submitWithCredits(
+              userId,
+              apprentice,
+              mentor,
+              sanitizedTitle,
+              sanitizedDescription,
+              sanitizedMessage,
+              input
+            )
+          : await this.submitWithoutCredits(
+              apprentice,
+              mentor,
+              sanitizedTitle,
+              sanitizedDescription,
+              sanitizedMessage,
+              input
+            );
 
-      await this.notifyMentorOfNewRequest(
+      await this.notificationService.notifyMentorOfNewRequest(
         workshopRequest,
         userId,
         sanitizedTitle
@@ -148,10 +146,14 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         },
         include: {
           app_user_workshop_request_apprenticeIdToapp_user: {
-            include: { user: { select: { id: true, name: true, email: true } } },
+            include: {
+              user: { select: { id: true, name: true, email: true } },
+            },
           },
           app_user_workshop_request_mentorIdToapp_user: {
-            include: { user: { select: { id: true, name: true, email: true } } },
+            include: {
+              user: { select: { id: true, name: true, email: true } },
+            },
           },
         },
       });
@@ -205,44 +207,16 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     return workshopRequest;
   }
 
-  private async notifyMentorOfNewRequest(
-    workshopRequest: any,
-    userId: string,
-    sanitizedTitle: string
-  ): Promise<void> {
-    if (!this.notificationService) return;
-
-    const requestWithRelations =
-      workshopRequest.mentor?.user?.id
-        ? workshopRequest
-        : await this.workshopRequestRepository.findById(workshopRequest.id);
-
-    if (requestWithRelations?.mentor?.user?.id) {
-      const apprenticeName =
-        requestWithRelations.apprentice?.user?.name || "un apprenti";
-      await this.notificationService.createNotification(
-        requestWithRelations.mentor.user.id,
-        {
-          type: "workshop",
-          title: "Nouvelle demande d'atelier",
-          message: `${apprenticeName} vous a envoyé une demande pour l'atelier "${sanitizedTitle}".`,
-          actionUrl: `/dashboard/workshop-requests`,
-        },
-        userId
-      );
-    }
-  }
-
   async getApprenticeRequests(userId: string): Promise<Result<Array<any>>> {
     try {
-      const apprentice = await this.mentorRepository.findApprenticeByUserId(userId);
+      const apprentice =
+        await this.mentorRepository.findApprenticeByUserId(userId);
       if (!apprentice) {
         return failure("Utilisateur introuvable", 404);
       }
 
-      const requests = await this.workshopRequestRepository.findByApprenticeId(
-        apprentice.id
-      );
+      const requests =
+        await this.workshopRequestRepository.findByApprenticeId(apprentice.id);
       return success(requests);
     } catch (error) {
       return handleError(
@@ -259,9 +233,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Mentor introuvable", 404);
       }
 
-      const requests = await this.workshopRequestRepository.findByMentorId(
-        mentor.id
-      );
+      const requests =
+        await this.workshopRequestRepository.findByMentorId(mentor.id);
       return success(requests);
     } catch (error) {
       return handleError(
@@ -273,9 +246,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
   async getWorkshopRequests(workshopId: string): Promise<Result<Array<any>>> {
     try {
-      const requests = await this.workshopRequestRepository.findByWorkshopId(
-        workshopId
-      );
+      const requests =
+        await this.workshopRequestRepository.findByWorkshopId(workshopId);
       return success(requests);
     } catch (error) {
       return handleError(
@@ -324,7 +296,10 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       const result = await this.prisma.$transaction(
         async (tx) => {
           const lockedRequest =
-            await this.workshopRequestRepository.findByIdWithLock(requestId, tx);
+            await this.workshopRequestRepository.findByIdWithLock(
+              requestId,
+              tx
+            );
 
           if (!lockedRequest) {
             throw new Error("Demande d'atelier introuvable");
@@ -402,17 +377,11 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         apprenticeId: updatedRequest.apprenticeId,
       });
 
-      await this.notifyApprenticeOfAcceptance(
+      await this.notificationService.notifyAndEmailAcceptance(
         requestId,
         workshop.data.id,
         request.title,
         userId
-      );
-
-      await this.sendAcceptanceEmail(
-        requestId,
-        workshop.data.id,
-        request.title
       );
 
       return success({
@@ -434,102 +403,6 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     }
   }
 
-  private async notifyApprenticeOfAcceptance(
-    requestId: string,
-    workshopId: string,
-    requestTitle: string,
-    userId: string
-  ): Promise<void> {
-    if (!this.notificationService) {
-      logger.warn("Notification service not available", { requestId });
-      return;
-    }
-
-    const requestWithRelations =
-      await this.workshopRequestRepository.findById(requestId);
-
-    if (!requestWithRelations?.apprentice?.user?.id) {
-      logger.warn("Cannot create notification: apprentice user not found", {
-        requestId,
-      });
-      return;
-    }
-
-    const workshopDetails = await this.workshopRepository.findById(workshopId);
-    const mentorName = requestWithRelations.mentor?.user?.name || "le mentor";
-    const workshopTitle = workshopDetails?.title || requestTitle;
-
-    const notificationResult =
-      await this.notificationService.createNotification(
-        requestWithRelations.apprentice.user.id,
-        {
-          type: "workshop",
-          title: "Demande d'atelier acceptée",
-          message: `${mentorName} a accepté votre demande pour l'atelier "${workshopTitle}".`,
-          actionUrl: `/workshop/${workshopId}`,
-        },
-        userId
-      );
-
-    if (!notificationResult.ok) {
-      logger.error("Failed to create notification", notificationResult.error, {
-        workshopId,
-      });
-    }
-  }
-
-  private async sendAcceptanceEmail(
-    requestId: string,
-    workshopId: string,
-    requestTitle: string
-  ): Promise<void> {
-    if (!this.emailService) return;
-
-    try {
-      const requestWithRelations =
-        await this.workshopRequestRepository.findById(requestId);
-
-      if (!requestWithRelations?.apprentice?.user?.id) return;
-
-      const { container } = await import("../../../di/container");
-      const apprenticeUser = await container.prisma.user.findUnique({
-        where: { id: requestWithRelations.apprentice.user.id },
-        select: { email: true, name: true },
-      });
-
-      if (!apprenticeUser?.email) return;
-
-      const workshopDetails = await this.workshopRepository.findById(workshopId);
-      const mentorName = requestWithRelations.mentor?.user?.name || "le mentor";
-
-      const template = WorkshopEmailTemplates.requestAccepted({
-        recipientName: apprenticeUser.name || "Apprenti",
-        mentorName,
-        workshopTitle: workshopDetails?.title || requestTitle,
-        workshopDate: workshopDetails?.date || null,
-        workshopTime: workshopDetails?.time || null,
-        workshopDuration: workshopDetails?.duration || null,
-        workshopLocation: workshopDetails?.location || null,
-        isVirtual: workshopDetails?.isVirtual || false,
-        workshopId,
-      });
-
-      const emailResult = await this.emailService.sendEmail({
-        to: apprenticeUser.email,
-        ...template,
-      });
-
-      if (!emailResult.ok) {
-        logger.error("Failed to send acceptance email", {
-          workshopId,
-          error: emailResult.error,
-        });
-      }
-    } catch (error) {
-      logger.error("Error sending acceptance email", { requestId, error });
-    }
-  }
-
   private async createOrUpdateWorkshopForRequest(
     request: any,
     mentorId: string,
@@ -544,7 +417,12 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     tx?: any
   ): Promise<Result<{ id: string }>> {
     if (request.workshopId) {
-      return this.updateExistingWorkshopForRequest(request, mentorId, input, tx);
+      return this.updateExistingWorkshopForRequest(
+        request,
+        mentorId,
+        input,
+        tx
+      );
     }
     return this.createNewWorkshopForRequest(request, mentorId, input);
   }
@@ -663,13 +541,17 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Mentor introuvable", 404);
       }
 
-      const request = await this.workshopRequestRepository.findById(requestId);
+      const request =
+        await this.workshopRequestRepository.findById(requestId);
       if (!request) {
         return failure("Demande d'atelier introuvable", 404);
       }
 
       if (request.mentorId !== mentor.id) {
-        return failure("Vous n'êtes pas autorisé à rejeter cette demande", 403);
+        return failure(
+          "Vous n'êtes pas autorisé à rejeter cette demande",
+          403
+        );
       }
 
       if (request.status !== "PENDING") {
@@ -689,8 +571,11 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         apprenticeId: request.apprenticeId,
       });
 
-      await this.notifyApprenticeOfRejection(requestId, request.title, userId);
-      await this.sendRejectionEmail(requestId, request.title);
+      await this.notificationService.notifyAndEmailRejection(
+        requestId,
+        request.title,
+        userId
+      );
 
       return success({ success: true });
     } catch (error) {
@@ -704,93 +589,29 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     }
   }
 
-  private async notifyApprenticeOfRejection(
-    requestId: string,
-    requestTitle: string,
-    userId: string
-  ): Promise<void> {
-    if (!this.notificationService) return;
-
-    const requestWithRelations =
-      await this.workshopRequestRepository.findById(requestId);
-
-    if (requestWithRelations?.apprentice?.user?.id) {
-      const mentorName = requestWithRelations.mentor?.user?.name || "le mentor";
-      await this.notificationService.createNotification(
-        requestWithRelations.apprentice.user.id,
-        {
-          type: "workshop",
-          title: "Demande d'atelier rejetée",
-          message: `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}".`,
-          actionUrl: `/workshop-room`,
-        },
-        userId
-      );
-    }
-  }
-
-  private async sendRejectionEmail(
-    requestId: string,
-    requestTitle: string
-  ): Promise<void> {
-    if (!this.emailService) return;
-
-    try {
-      const requestWithRelations =
-        await this.workshopRequestRepository.findById(requestId);
-
-      if (!requestWithRelations?.apprentice?.user?.id) return;
-
-      const { container } = await import("../../../di/container");
-      const apprenticeUser = await container.prisma.user.findUnique({
-        where: { id: requestWithRelations.apprentice.user.id },
-        select: { email: true, name: true },
-      });
-
-      if (!apprenticeUser?.email) return;
-
-      const mentorName = requestWithRelations.mentor?.user?.name || "le mentor";
-
-      const template = WorkshopEmailTemplates.requestRejected({
-        recipientName: apprenticeUser.name || "Apprenti",
-        mentorName,
-        workshopTitle: requestTitle,
-      });
-
-      const emailResult = await this.emailService.sendEmail({
-        to: apprenticeUser.email,
-        ...template,
-      });
-
-      if (!emailResult.ok) {
-        logger.error("Failed to send rejection email", {
-          requestId,
-          error: emailResult.error,
-        });
-      }
-    } catch (error) {
-      logger.error("Error sending rejection email", { requestId, error });
-    }
-  }
-
   async cancelWorkshopRequest(
     userId: string,
     requestId: string
   ): Promise<Result<{ success: boolean }>> {
     try {
-      const request = await this.workshopRequestRepository.findById(requestId);
+      const request =
+        await this.workshopRequestRepository.findById(requestId);
       if (!request) {
         return failure("Demande d'atelier introuvable", 404);
       }
 
-      const apprentice = await this.mentorRepository.findApprenticeByUserId(userId);
+      const apprentice =
+        await this.mentorRepository.findApprenticeByUserId(userId);
       const mentor = await this.mentorRepository.findMentorById(userId);
 
       const isApprentice = apprentice?.id === request.apprenticeId;
       const isMentor = mentor?.id === request.mentorId;
 
       if (!isApprentice && !isMentor) {
-        return failure("Vous n'êtes pas autorisé à annuler cette demande", 403);
+        return failure(
+          "Vous n'êtes pas autorisé à annuler cette demande",
+          403
+        );
       }
 
       if (request.status === "CANCELLED") {
@@ -814,7 +635,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         userId,
       });
 
-      await this.notifyCancellation(
+      await this.notificationService.notifyCancellation(
         requestId,
         request.title,
         userId,
@@ -833,46 +654,6 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     }
   }
 
-  private async notifyCancellation(
-    requestId: string,
-    requestTitle: string,
-    userId: string,
-    isApprentice: boolean
-  ): Promise<void> {
-    if (!this.notificationService) return;
-
-    const requestWithRelations =
-      await this.workshopRequestRepository.findById(requestId);
-
-    if (isApprentice && requestWithRelations?.mentor?.user?.id) {
-      const apprenticeName =
-        requestWithRelations.apprentice?.user?.name || "un apprenti";
-      await this.notificationService.createNotification(
-        requestWithRelations.mentor.user.id,
-        {
-          type: "workshop",
-          title: "Demande d'atelier annulée",
-          message: `${apprenticeName} a annulé sa demande pour l'atelier "${requestTitle}".`,
-          actionUrl: `/dashboard/workshop-requests`,
-        },
-        userId
-      );
-    } else if (!isApprentice && requestWithRelations?.apprentice?.user?.id) {
-      const mentorName =
-        requestWithRelations.mentor?.user?.name || "le mentor";
-      await this.notificationService.createNotification(
-        requestWithRelations.apprentice.user.id,
-        {
-          type: "workshop",
-          title: "Demande d'atelier annulée",
-          message: `${mentorName} a annulé votre demande pour l'atelier "${requestTitle}".`,
-          actionUrl: `/workshop-room`,
-        },
-        userId
-      );
-    }
-  }
-
   async updateWorkshopRequest(
     userId: string,
     requestId: string,
@@ -886,12 +667,14 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     }
   ): Promise<Result<{ requestId: string }>> {
     try {
-      const request = await this.workshopRequestRepository.findById(requestId);
+      const request =
+        await this.workshopRequestRepository.findById(requestId);
       if (!request) {
         return failure("Demande d'atelier introuvable", 404);
       }
 
-      const apprentice = await this.mentorRepository.findApprenticeByUserId(userId);
+      const apprentice =
+        await this.mentorRepository.findApprenticeByUserId(userId);
       if (!apprentice || apprentice.id !== request.apprenticeId) {
         return failure(
           "Vous n'êtes pas autorisé à modifier cette demande",
@@ -937,7 +720,12 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         changes: Object.keys(updateData).filter((key) => key !== "status"),
       });
 
-      await this.notifyMentorOfUpdate(requestId, request, input, userId);
+      await this.notificationService.notifyMentorOfUpdate(
+        requestId,
+        request,
+        input,
+        userId
+      );
 
       return success({ requestId });
     } catch (error) {
@@ -949,47 +737,5 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         })
       );
     }
-  }
-
-  private async notifyMentorOfUpdate(
-    requestId: string,
-    request: any,
-    input: any,
-    userId: string
-  ): Promise<void> {
-    if (!this.notificationService) return;
-
-    const requestWithRelations =
-      await this.workshopRequestRepository.findById(requestId);
-
-    if (!requestWithRelations?.mentor?.user?.id) return;
-
-    const apprenticeName =
-      requestWithRelations.apprentice?.user?.name || "un apprenti";
-
-    const changes: string[] = [];
-    if (input.title !== undefined) changes.push("le titre");
-    if (input.description !== undefined) changes.push("la description");
-    if (input.message !== undefined) changes.push("le message");
-    if (input.preferredDate !== undefined) changes.push("la date préférée");
-    if (input.preferredTime !== undefined) changes.push("l'heure préférée");
-    if (input.mentorId && input.mentorId !== request.mentorId)
-      changes.push("le mentor");
-
-    const changesText =
-      changes.length > 0
-        ? ` a modifié ${changes.join(", ")}`
-        : " a mis à jour";
-
-    await this.notificationService.createNotification(
-      requestWithRelations.mentor.user.id,
-      {
-        type: "workshop",
-        title: "Demande d'atelier modifiée",
-        message: `${apprenticeName}${changesText} de sa demande pour l'atelier "${requestWithRelations.title || request.title}".`,
-        actionUrl: `/dashboard/workshop-requests`,
-      },
-      userId
-    );
   }
 }

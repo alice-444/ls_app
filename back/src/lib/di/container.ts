@@ -256,6 +256,10 @@ class DIContainer {
     return this._services.forgotPasswordService;
   }
 
+  get workshopAttendanceService() {
+    return this._services.workshopAttendanceService;
+  }
+
   get deleteAccountEnhancedService() {
     return this._services.deleteAccountEnhancedService;
   }

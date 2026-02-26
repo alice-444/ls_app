@@ -14,89 +14,33 @@ import type { Result } from "../../../common";
 import { success, failure } from "../../../common";
 import { generateInternalId } from "../../../utils/id-generator";
 import { logger } from "../../../common/logger";
+import { CashbackCalculator } from "./cashback-calculator";
+import type { ICashbackCalculator } from "./cashback-calculator";
+import { CashbackQueueProcessor } from "./cashback-queue-processor";
+import type { ICashbackQueueProcessor } from "./cashback-queue-processor";
 
 export class WorkshopCashbackService implements IWorkshopCashbackService {
-  private readonly CASHBACK_PERCENTAGE = 0.05;
-  private readonly MIN_CASHBACK = 1;
-  private readonly MAX_RETRIES = 3;
-  private readonly RETRY_DELAY_MINUTES = 30;
-  private readonly DEFAULT_WORKSHOP_PRICE = 20;
-  private readonly MIN_WORKSHOP_PRICE = 20;
+  private readonly calculator: ICashbackCalculator;
+  private readonly queueProcessor: ICashbackQueueProcessor;
 
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly appUserRepository: AppUserRepository,
-    private readonly creditTransactionRepository: ICreditTransactionRepository,
+    appUserRepository: AppUserRepository,
+    creditTransactionRepository: ICreditTransactionRepository,
     private readonly cashbackQueueRepository: ICashbackQueueRepository,
     private readonly creditService: ICreditService,
     private readonly notificationService?: INotificationService
-  ) {}
-
-  private async getWorkshopPrice(
-    workshopId: string,
-    participantUserId: string
-  ): Promise<number> {
-    const priceFromWorkshop = await this.getPriceFromWorkshop(workshopId);
-    if (priceFromWorkshop !== null) {
-      return priceFromWorkshop;
-    }
-
-    const priceFromTransaction = await this.getPriceFromCreditTransaction(
-      workshopId,
-      participantUserId
+  ) {
+    this.calculator = new CashbackCalculator(
+      workshopRepository,
+      appUserRepository,
+      creditTransactionRepository
     );
-    if (priceFromTransaction !== null) {
-      return priceFromTransaction;
-    }
-
-    return this.DEFAULT_WORKSHOP_PRICE;
-  }
-
-  private async getPriceFromWorkshop(
-    workshopId: string
-  ): Promise<number | null> {
-    const workshop = await this.workshopRepository.findById(workshopId);
-
-    if (workshop?.creditCost && workshop.creditCost > 0) {
-      return Math.max(this.MIN_WORKSHOP_PRICE, workshop.creditCost);
-    }
-
-    return null;
-  }
-
-  private async getPriceFromCreditTransaction(
-    workshopId: string,
-    participantUserId: string
-  ): Promise<number | null> {
-    const appUser = await this.appUserRepository.findByUserId(
-      participantUserId
+    this.queueProcessor = new CashbackQueueProcessor(
+      cashbackQueueRepository,
+      creditService,
+      notificationService
     );
-
-    if (!appUser) {
-      return null;
-    }
-
-    const creditTransaction =
-      await this.creditTransactionRepository.findFirstByUserIdAndType(
-        appUser.id,
-        "USAGE",
-        {
-          descriptionContains: workshopId,
-          orderBy: "desc",
-        }
-      );
-
-    if (creditTransaction && creditTransaction.amount > 0) {
-      const transactionAmount = Math.abs(creditTransaction.amount);
-      return Math.max(this.MIN_WORKSHOP_PRICE, transactionAmount);
-    }
-
-    return null;
-  }
-
-  private calculateCashbackAmount(workshopPrice: number): number {
-    const calculatedAmount = workshopPrice * this.CASHBACK_PERCENTAGE;
-    return Math.max(this.MIN_CASHBACK, Math.floor(calculatedAmount));
   }
 
   async processCashback(
@@ -105,25 +49,11 @@ export class WorkshopCashbackService implements IWorkshopCashbackService {
     workshopEndTime: Date
   ): Promise<Result<{ queued: boolean; cashbackAmount: number }>> {
     try {
-      const now = new Date();
-
-      // Anti-abus: vérifier que le participant est bien l'apprenti de l'atelier et marqué PRÉSENT
-      const workshop = await this.workshopRepository.findById(workshopId);
-      if (!workshop) {
-        return failure("Atelier introuvable", 404);
-      }
-      if (!workshop.apprenticeId || !workshop.apprentice) {
-        return failure("Aucun participant inscrit à cet atelier", 400);
-      }
-      if (workshop.apprentice.user?.id !== participantUserId) {
-        return failure("L'utilisateur n'est pas le participant de cet atelier", 403);
-      }
-      if (workshop.apprenticeAttendanceStatus !== "PRESENT") {
-        return failure(
-          "Le cashback n'est attribué qu'après confirmation de présence par le mentor",
-          400
-        );
-      }
+      const validationResult = await this.validateCashbackEligibility(
+        workshopId,
+        participantUserId
+      );
+      if (!validationResult.ok) return validationResult;
 
       const existingQueue =
         await this.cashbackQueueRepository.findFirstByWorkshopAndUser(
@@ -143,109 +73,32 @@ export class WorkshopCashbackService implements IWorkshopCashbackService {
         });
       }
 
+      const now = new Date();
       const isWorkshopFinished = now >= workshopEndTime;
 
-      const workshopPrice = await this.getWorkshopPrice(
+      const workshopPrice = await this.calculator.getWorkshopPrice(
         workshopId,
         participantUserId
       );
-      const cashbackAmount = this.calculateCashbackAmount(workshopPrice);
+      const cashbackAmount =
+        this.calculator.calculateCashbackAmount(workshopPrice);
 
       if (isWorkshopFinished) {
-        if (existingQueue && existingQueue.status === "PENDING") {
-          const creditResult = await this.creditService.creditCredits(
-            participantUserId,
-            existingQueue.cashbackAmount,
-            `Cashback de présence (5%) - Atelier ${workshopId}`
-          );
-
-          if (!creditResult.ok) {
-            logger.error("Failed to credit queued cashback", {
-              workshopId,
-              participantUserId,
-              queueId: existingQueue.id,
-              cashbackAmount: existingQueue.cashbackAmount,
-              error: creditResult.error,
-            });
-            return failure(
-              `Erreur lors du crédit du cashback: ${creditResult.error}`,
-              500
-            );
-          }
-
-          await this.cashbackQueueRepository.update(existingQueue.id, {
-            status: "PROCESSED",
-            processedAt: now,
-            updatedAt: now,
-          });
-
-          if (this.notificationService) {
-            await this.notificationService.createNotification(
-              participantUserId,
-              {
-                type: "cashback",
-                title: "Cashback de présence",
-                message: `Atelier terminé ! Présence vérifiée : Vous avez récupéré ${
-                  existingQueue.cashbackAmount
-                } crédit${existingQueue.cashbackAmount > 1 ? "s" : ""}.`,
-                actionUrl: `/workshop/${workshopId}`,
-              }
-            );
-          }
-
-          return success({
-            queued: false,
-            cashbackAmount: existingQueue.cashbackAmount,
-          });
-        }
-
-        const creditResult = await this.creditService.creditCredits(
+        return this.processImmediateCashback(
+          workshopId,
           participantUserId,
           cashbackAmount,
-          `Cashback de présence (5%) - Atelier ${workshopId}`
+          existingQueue
         );
-
-        if (!creditResult.ok) {
-          logger.error("Failed to credit cashback", {
-            workshopId,
-            participantUserId,
-            cashbackAmount,
-            error: creditResult.error,
-          });
-          return failure(
-            `Erreur lors du crédit du cashback: ${creditResult.error}`,
-            500
-          );
-        }
-
-        if (this.notificationService) {
-          await this.notificationService.createNotification(participantUserId, {
-            type: "cashback",
-            title: "Cashback de présence",
-            message: `Atelier terminé ! Présence vérifiée : Vous avez récupéré ${cashbackAmount} crédit${
-              cashbackAmount > 1 ? "s" : ""
-            }.`,
-            actionUrl: `/workshop/${workshopId}`,
-          });
-        }
-
-        return success({ queued: false, cashbackAmount });
-      } else {
-        if (!existingQueue || existingQueue.status !== "PENDING") {
-          await this.cashbackQueueRepository.create({
-            id: generateInternalId(),
-            workshopId,
-            participantUserId,
-            cashbackAmount,
-            workshopEndTime,
-            status: "PENDING",
-            createdAt: now,
-            updatedAt: now,
-          });
-        }
-
-        return success({ queued: true, cashbackAmount });
       }
+
+      return this.queueCashback(
+        workshopId,
+        participantUserId,
+        cashbackAmount,
+        workshopEndTime,
+        existingQueue
+      );
     } catch (error) {
       logger.error("Error processing cashback", error, {
         workshopId,
@@ -260,134 +113,16 @@ export class WorkshopCashbackService implements IWorkshopCashbackService {
     }
   }
 
-  async processQueuedCashbacks(): Promise<
+  processQueuedCashbacks(): Promise<
     Result<{ processed: number; failed: number }>
   > {
-    try {
-      const now = new Date();
+    return this.queueProcessor.processQueuedCashbacks();
+  }
 
-      const queuedTransactions =
-        await this.cashbackQueueRepository.findPendingDue(
-          now,
-          this.RETRY_DELAY_MINUTES
-        );
-
-      let processed = 0;
-      let failed = 0;
-
-      for (const transaction of queuedTransactions) {
-        try {
-          const creditResult = await this.creditService.creditCredits(
-            transaction.participantUserId,
-            transaction.cashbackAmount,
-            `Cashback de présence (5%) - Atelier ${transaction.workshopId}`
-          );
-
-          if (creditResult.ok) {
-            await this.cashbackQueueRepository.update(transaction.id, {
-              status: "PROCESSED",
-              processedAt: now,
-              updatedAt: now,
-            });
-
-            if (this.notificationService) {
-              await this.notificationService.createNotification(
-                transaction.participantUserId,
-                {
-                  type: "cashback",
-                  title: "Cashback de présence",
-                  message: `Atelier terminé ! Présence vérifiée : Vous avez récupéré ${
-                    transaction.cashbackAmount
-                  } crédit${transaction.cashbackAmount > 1 ? "s" : ""}.`,
-                  actionUrl: `/workshop/${transaction.workshopId}`,
-                }
-              );
-            }
-
-            processed++;
-          } else {
-            const newRetryCount = (transaction.retryCount || 0) + 1;
-
-            if (newRetryCount < this.MAX_RETRIES) {
-              await this.cashbackQueueRepository.update(transaction.id, {
-                status: "PENDING",
-                retryCount: newRetryCount,
-                errorMessage: creditResult.error,
-                lastRetryAt: now,
-                updatedAt: now,
-              });
-              logger.warn("Cashback processing failed, will retry", {
-                transactionId: transaction.id,
-                retryCount: newRetryCount,
-                maxRetries: this.MAX_RETRIES,
-                error: creditResult.error,
-              });
-            } else {
-              await this.cashbackQueueRepository.update(transaction.id, {
-                status: "FAILED",
-                retryCount: newRetryCount,
-                errorMessage: creditResult.error,
-                lastRetryAt: now,
-                updatedAt: now,
-              });
-              failed++;
-              logger.error("Cashback processing failed after max retries", {
-                transactionId: transaction.id,
-                retryCount: newRetryCount,
-                error: creditResult.error,
-              });
-            }
-          }
-        } catch (error) {
-          const newRetryCount = (transaction.retryCount || 0) + 1;
-          const errorMessage =
-            error instanceof Error ? error.message : "Unknown error";
-
-          if (newRetryCount < this.MAX_RETRIES) {
-            await this.cashbackQueueRepository.update(transaction.id, {
-              status: "PENDING",
-              retryCount: newRetryCount,
-              errorMessage,
-              lastRetryAt: now,
-              updatedAt: now,
-            });
-            logger.warn("Error processing cashback transaction, will retry", {
-              transactionId: transaction.id,
-              retryCount: newRetryCount,
-              maxRetries: this.MAX_RETRIES,
-              error: errorMessage,
-            });
-          } else {
-            await this.cashbackQueueRepository.update(transaction.id, {
-              status: "FAILED",
-              retryCount: newRetryCount,
-              errorMessage,
-              lastRetryAt: now,
-              updatedAt: now,
-            });
-            failed++;
-            logger.error(
-              "Error processing cashback transaction after max retries",
-              error,
-              {
-                transactionId: transaction.id,
-                retryCount: newRetryCount,
-              }
-            );
-          }
-        }
-      }
-
-      return success({ processed, failed });
-    } catch (error) {
-      logger.error("Error processing queued cashbacks", error);
-      return failure(
-        error instanceof Error
-          ? error.message
-          : "Erreur lors du traitement des cashbacks en queue",
-        500
-      );
-    }
+  retryFailedCashbacks(): Promise<
+    Result<{ retried: number; stillFailed: number }>
+  > {
+    return this.queueProcessor.retryFailedCashbacks();
   }
 
   async getProcessingDelays(options?: {
@@ -530,125 +265,115 @@ export class WorkshopCashbackService implements IWorkshopCashbackService {
     }
   }
 
-  async retryFailedCashbacks(): Promise<
-    Result<{ retried: number; stillFailed: number }>
-  > {
-    try {
-      const now = new Date();
-
-      const failedTransactions =
-        await this.cashbackQueueRepository.findFailedRetriable(
-          this.MAX_RETRIES,
-          this.RETRY_DELAY_MINUTES
-        );
-
-      let retried = 0;
-      let stillFailed = 0;
-
-      for (const transaction of failedTransactions) {
-        try {
-          await this.cashbackQueueRepository.update(transaction.id, {
-            status: "PENDING",
-            lastRetryAt: now,
-            updatedAt: now,
-          });
-
-          const creditResult = await this.creditService.creditCredits(
-            transaction.participantUserId,
-            transaction.cashbackAmount,
-            `Cashback de présence (5%) - Atelier ${transaction.workshopId} (retry)`
-          );
-
-          if (creditResult.ok) {
-            await this.cashbackQueueRepository.update(transaction.id, {
-              status: "PROCESSED",
-              processedAt: now,
-              updatedAt: now,
-            });
-
-            if (this.notificationService) {
-              await this.notificationService.createNotification(
-                transaction.participantUserId,
-                {
-                  type: "cashback",
-                  title: "Cashback de présence",
-                  message: `Atelier terminé ! Présence vérifiée : Vous avez récupéré ${
-                    transaction.cashbackAmount
-                  } crédit${transaction.cashbackAmount > 1 ? "s" : ""}.`,
-                  actionUrl: `/workshop/${transaction.workshopId}`,
-                }
-              );
-            }
-
-            retried++;
-          } else {
-            const newRetryCount = (transaction.retryCount || 0) + 1;
-
-            if (newRetryCount >= this.MAX_RETRIES) {
-              await this.cashbackQueueRepository.update(transaction.id, {
-                status: "FAILED",
-                retryCount: newRetryCount,
-                errorMessage: creditResult.error,
-                lastRetryAt: now,
-                updatedAt: now,
-              });
-              stillFailed++;
-            } else {
-              await this.cashbackQueueRepository.update(transaction.id, {
-                status: "PENDING",
-                retryCount: newRetryCount,
-                errorMessage: creditResult.error,
-                lastRetryAt: now,
-                updatedAt: now,
-              });
-            }
-
-            logger.warn("Retry failed for cashback transaction", {
-              transactionId: transaction.id,
-              retryCount: newRetryCount,
-              error: creditResult.error,
-            });
-          }
-        } catch (error) {
-          const newRetryCount = (transaction.retryCount || 0) + 1;
-          const errorMessage =
-            error instanceof Error ? error.message : "Unknown error";
-
-          if (newRetryCount >= this.MAX_RETRIES) {
-            await this.cashbackQueueRepository.update(transaction.id, {
-              status: "FAILED",
-              retryCount: newRetryCount,
-              errorMessage,
-              lastRetryAt: now,
-              updatedAt: now,
-            });
-            stillFailed++;
-          } else {
-            await this.cashbackQueueRepository.update(transaction.id, {
-              status: "PENDING",
-              retryCount: newRetryCount,
-              errorMessage,
-              lastRetryAt: now,
-              updatedAt: now,
-            });
-          }
-
-          logger.error("Error retrying failed cashback transaction", error, {
-            transactionId: transaction.id,
-            retryCount: newRetryCount,
-          });
-        }
-      }
-
-      return success({ retried, stillFailed });
-    } catch (error) {
-      logger.error("Error retrying failed cashbacks", error);
+  private async validateCashbackEligibility(
+    workshopId: string,
+    participantUserId: string
+  ): Promise<Result<{ queued: boolean; cashbackAmount: number }>> {
+    const workshop = await this.workshopRepository.findById(workshopId);
+    if (!workshop) {
+      return failure("Atelier introuvable", 404);
+    }
+    if (!workshop.apprenticeId || !workshop.apprentice) {
+      return failure("Aucun participant inscrit à cet atelier", 400);
+    }
+    if (workshop.apprentice.user?.id !== participantUserId) {
       return failure(
-        error instanceof Error
-          ? error.message
-          : "Erreur lors du retry des cashbacks échoués",
+        "L'utilisateur n'est pas le participant de cet atelier",
+        403
+      );
+    }
+    if (workshop.apprenticeAttendanceStatus !== "PRESENT") {
+      return failure(
+        "Le cashback n'est attribué qu'après confirmation de présence par le mentor",
+        400
+      );
+    }
+    return success({ queued: false, cashbackAmount: 0 });
+  }
+
+  private async processImmediateCashback(
+    workshopId: string,
+    participantUserId: string,
+    cashbackAmount: number,
+    existingQueue: any
+  ): Promise<Result<{ queued: boolean; cashbackAmount: number }>> {
+    const amount = existingQueue?.status === "PENDING"
+      ? existingQueue.cashbackAmount
+      : cashbackAmount;
+
+    const creditResult = await this.creditService.creditCredits(
+      participantUserId,
+      amount,
+      `Cashback de présence (5%) - Atelier ${workshopId}`
+    );
+
+    if (!creditResult.ok) {
+      logger.error("Failed to credit cashback", {
+        workshopId,
+        participantUserId,
+        cashbackAmount: amount,
+        error: creditResult.error,
+      });
+      return failure(
+        `Erreur lors du crédit du cashback: ${creditResult.error}`,
         500
       );
     }
+
+    if (existingQueue) {
+      const now = new Date();
+      await this.cashbackQueueRepository.update(existingQueue.id, {
+        status: "PROCESSED",
+        processedAt: now,
+        updatedAt: now,
+      });
+    }
+
+    await this.sendCashbackNotification(
+      participantUserId,
+      amount,
+      workshopId
+    );
+
+    return success({ queued: false, cashbackAmount: amount });
+  }
+
+  private async queueCashback(
+    workshopId: string,
+    participantUserId: string,
+    cashbackAmount: number,
+    workshopEndTime: Date,
+    existingQueue: any
+  ): Promise<Result<{ queued: boolean; cashbackAmount: number }>> {
+    if (!existingQueue || existingQueue.status !== "PENDING") {
+      const now = new Date();
+      await this.cashbackQueueRepository.create({
+        id: generateInternalId(),
+        workshopId,
+        participantUserId,
+        cashbackAmount,
+        workshopEndTime,
+        status: "PENDING",
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    return success({ queued: true, cashbackAmount });
+  }
+
+  private async sendCashbackNotification(
+    participantUserId: string,
+    cashbackAmount: number,
+    workshopId: string
+  ): Promise<void> {
+    if (!this.notificationService) return;
+
+    await this.notificationService.createNotification(participantUserId, {
+      type: "cashback",
+      title: "Cashback de présence",
+      message: `Atelier terminé ! Présence vérifiée : Vous avez récupéré ${cashbackAmount} crédit${cashbackAmount > 1 ? "s" : ""}.`,
+      actionUrl: `/workshop/${workshopId}`,
+    });
   }
 }
