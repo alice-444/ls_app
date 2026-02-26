@@ -5,6 +5,8 @@ import type { IWorkshopAccessGuard } from "../guards/workshop-access.guard";
 import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import type { IEmailService } from "../../../email/services/email.service.interface";
 import { WorkshopNotificationService } from "../workshop-notification.service";
+import { SchedulingConflictChecker } from "./scheduling-conflict-checker";
+import type { ISchedulingConflictChecker } from "./scheduling-conflict-checker";
 import { sanitizeString } from "../../../utils/sanitize";
 import { WORKSHOP_VALIDATION, isMinimumTomorrow } from "../../../../shared/validation";
 import { logger } from "../../../common/logger";
@@ -12,18 +14,12 @@ import {
   handleError,
   createErrorContext,
 } from "../../../common/error-handler";
-import {
-  isValidTimeFormat,
-  doTimeRangesOverlap,
-  calculateWorkshopStartTime,
-  calculateWorkshopEndTime,
-  isWorkshopValidForConflictCheck,
-  calculateWorkshopTimeRange,
-} from "../../utils/workshop-helpers";
+import { isValidTimeFormat } from "../../utils/workshop-helpers";
 import { WorkshopEmailTemplates } from "../email/workshop-email.templates";
 
 export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   private readonly workshopNotificationService: WorkshopNotificationService;
+  private readonly conflictChecker: ISchedulingConflictChecker;
 
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
@@ -37,6 +33,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       this.dbNotificationService,
       appUserRepository
     );
+    this.conflictChecker = new SchedulingConflictChecker(this.workshopRepository);
   }
 
   private sanitizeLocation(location: string | null | undefined): string | null {
@@ -92,28 +89,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       await this.workshopRepository.update(workshopId, updateData);
 
       if (isMentor && this.dbNotificationService) {
-        const updatedWorkshop = await this.workshopRepository.findById(workshopId);
-        if (updatedWorkshop?.apprentice?.user?.id) {
-          const changes: string[] = [];
-          if (input.date !== undefined) changes.push("la date");
-          if (input.time !== undefined) changes.push("l'heure");
-          if (input.duration !== undefined) changes.push("la durée");
-          if (input.location !== undefined) changes.push("le lieu");
-
-          if (changes.length > 0) {
-            const mentorName = updatedWorkshop.creator?.user?.name || "le mentor";
-            await this.dbNotificationService.createNotification(
-              updatedWorkshop.apprentice.user.id,
-              {
-                type: "workshop",
-                title: "Modification de l'atelier",
-                message: `${mentorName} a modifié ${changes.join(", ")} de l'atelier "${updatedWorkshop.title}".`,
-                actionUrl: `/workshop/${workshopId}`,
-              },
-              userId
-            );
-          }
-        }
+        await this.notifySchedulingChange(workshopId, userId, input);
       }
 
       logger.info("Workshop scheduling updated", {
@@ -130,6 +106,35 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
           userId,
           resourceId: workshopId,
         })
+      );
+    }
+  }
+
+  private async notifySchedulingChange(
+    workshopId: string,
+    userId: string,
+    input: { date?: Date | null; time?: string | null; duration?: number | null; location?: string | null }
+  ): Promise<void> {
+    const updatedWorkshop = await this.workshopRepository.findById(workshopId);
+    if (!updatedWorkshop?.apprentice?.user?.id) return;
+
+    const changes: string[] = [];
+    if (input.date !== undefined) changes.push("la date");
+    if (input.time !== undefined) changes.push("l'heure");
+    if (input.duration !== undefined) changes.push("la durée");
+    if (input.location !== undefined) changes.push("le lieu");
+
+    if (changes.length > 0) {
+      const mentorName = updatedWorkshop.creator?.user?.name || "le mentor";
+      await this.dbNotificationService!.createNotification(
+        updatedWorkshop.apprentice.user.id,
+        {
+          type: "workshop",
+          title: "Modification de l'atelier",
+          message: `${mentorName} a modifié ${changes.join(", ")} de l'atelier "${updatedWorkshop.title}".`,
+          actionUrl: `/workshop/${workshopId}`,
+        },
+        userId
       );
     }
   }
@@ -354,7 +359,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       }
 
       const duration = input.duration ?? workshop.duration ?? 60;
-      const conflictCheck = await this.checkResourceConflicts(
+      const conflictCheck = await this.conflictChecker.checkResourceConflicts(
         workshop.creatorId,
         workshopId,
         input.date,
@@ -433,118 +438,6 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
 
     if (!isValidTimeFormat(input.time)) {
       return failure("Format d'heure invalide (HH:MM requis)", 400);
-    }
-
-    return null;
-  }
-
-  private async checkResourceConflicts(
-    mentorId: string,
-    workshopId: string,
-    newDate: Date,
-    newTime: string,
-    newDuration: number,
-    newLocation: string | null,
-    isVirtual: boolean
-  ): Promise<Result<{ hasConflict: boolean; conflictMessage?: string }>> {
-    try {
-      const newStartTime = calculateWorkshopStartTime(newDate, newTime);
-      const newEndTime = calculateWorkshopEndTime(newDate, newTime, newDuration);
-
-      if (!newStartTime || !newEndTime) {
-        return failure("Impossible de calculer les horaires", 400);
-      }
-
-      const mentorConflict = await this.checkMentorTimeConflict(
-        mentorId,
-        workshopId,
-        newStartTime,
-        newEndTime
-      );
-
-      if (mentorConflict) {
-        return mentorConflict;
-      }
-
-      if (!isVirtual && newLocation) {
-        const locationConflict = await this.checkLocationConflict(
-          workshopId,
-          newLocation,
-          newStartTime,
-          newEndTime
-        );
-
-        if (locationConflict) {
-          return locationConflict;
-        }
-      }
-
-      return success({ hasConflict: false });
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("checkResourceConflicts", {
-          resourceId: workshopId,
-          details: { mentorId, newDate, newTime },
-        })
-      );
-    }
-  }
-
-  private async checkMentorTimeConflict(
-    mentorId: string,
-    workshopId: string,
-    newStartTime: Date,
-    newEndTime: Date
-  ): Promise<Result<{ hasConflict: boolean; conflictMessage?: string }> | null> {
-    const mentorWorkshops = await this.workshopRepository.findByCreatorId(mentorId);
-
-    for (const workshop of mentorWorkshops) {
-      if (!isWorkshopValidForConflictCheck(workshop, workshopId)) {
-        continue;
-      }
-
-      const { startTime, endTime } = calculateWorkshopTimeRange(workshop);
-      if (!startTime || !endTime) continue;
-
-      if (doTimeRangesOverlap(newStartTime, newEndTime, startTime, endTime)) {
-        return success({
-          hasConflict: true,
-          conflictMessage: `Vous avez déjà un atelier prévu à cette date/heure : "${workshop.title}"`,
-        });
-      }
-    }
-
-    return null;
-  }
-
-  private async checkLocationConflict(
-    workshopId: string,
-    newLocation: string,
-    newStartTime: Date,
-    newEndTime: Date
-  ): Promise<Result<{ hasConflict: boolean; conflictMessage?: string }> | null> {
-    const publishedWorkshops = await this.workshopRepository.findPublished();
-
-    for (const workshop of publishedWorkshops) {
-      if (
-        !isWorkshopValidForConflictCheck(workshop, workshopId) ||
-        workshop.isVirtual ||
-        !workshop.location ||
-        workshop.location.toLowerCase().trim() !== newLocation.toLowerCase().trim()
-      ) {
-        continue;
-      }
-
-      const { startTime, endTime } = calculateWorkshopTimeRange(workshop);
-      if (!startTime || !endTime) continue;
-
-      if (doTimeRangesOverlap(newStartTime, newEndTime, startTime, endTime)) {
-        return success({
-          hasConflict: true,
-          conflictMessage: `Le lieu "${newLocation}" est déjà réservé à cette date/heure pour l'atelier "${workshop.title}"`,
-        });
-      }
     }
 
     return null;

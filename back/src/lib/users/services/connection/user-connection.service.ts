@@ -5,12 +5,17 @@ import type { AppUserRepository } from "../../repositories";
 import type { IUserConnectionRepository } from "../../repositories/connection/user-connection.repository.interface";
 import { verifyUserExists } from "../../../auth/services/user-helpers";
 import type { IUserConnectionService } from "./user-connection.service.interface";
+import { UserInfoEnricher } from "./user-info-enricher";
 
 export class UserConnectionService implements IUserConnectionService {
+  private readonly enricher: UserInfoEnricher;
+
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly userConnectionRepository: IUserConnectionRepository
-  ) {}
+  ) {
+    this.enricher = new UserInfoEnricher(appUserRepository);
+  }
 
   async sendConnectionRequest(
     requesterUserId: string,
@@ -22,14 +27,10 @@ export class UserConnectionService implements IUserConnectionService {
       }
 
       const requesterCheck = await verifyUserExists(requesterUserId);
-      if (!requesterCheck.ok) {
-        return requesterCheck;
-      }
+      if (!requesterCheck.ok) return requesterCheck;
 
       const receiverCheck = await verifyUserExists(receiverUserId);
-      if (!receiverCheck.ok) {
-        return receiverCheck;
-      }
+      if (!receiverCheck.ok) return receiverCheck;
 
       const requesterAppUser = await this.appUserRepository.findByUserId(
         requesterUserId
@@ -83,22 +84,13 @@ export class UserConnectionService implements IUserConnectionService {
   ): Promise<Result<{ success: boolean }>> {
     try {
       const userCheck = await verifyUserExists(userId);
-      if (!userCheck.ok) {
-        return userCheck;
-      }
+      if (!userCheck.ok) return userCheck;
 
       const appUser = await this.appUserRepository.findByUserId(userId);
-      if (!appUser) {
-        return failure("User not found", 404);
-      }
+      if (!appUser) return failure("User not found", 404);
 
-      const connection = await this.userConnectionRepository.findById(
-        connectionId
-      );
-
-      if (!connection) {
-        return failure("Connection request not found", 404);
-      }
+      const connection = await this.userConnectionRepository.findById(connectionId);
+      if (!connection) return failure("Connection request not found", 404);
 
       if (connection.receiverId !== appUser.id) {
         return failure(
@@ -134,22 +126,13 @@ export class UserConnectionService implements IUserConnectionService {
   ): Promise<Result<{ success: boolean }>> {
     try {
       const userCheck = await verifyUserExists(userId);
-      if (!userCheck.ok) {
-        return userCheck;
-      }
+      if (!userCheck.ok) return userCheck;
 
       const appUser = await this.appUserRepository.findByUserId(userId);
-      if (!appUser) {
-        return failure("User not found", 404);
-      }
+      if (!appUser) return failure("User not found", 404);
 
-      const connection = await this.userConnectionRepository.findById(
-        connectionId
-      );
-
-      if (!connection) {
-        return failure("Connection request not found", 404);
-      }
+      const connection = await this.userConnectionRepository.findById(connectionId);
+      if (!connection) return failure("Connection request not found", 404);
 
       if (connection.receiverId !== appUser.id) {
         return failure(
@@ -185,14 +168,10 @@ export class UserConnectionService implements IUserConnectionService {
   ): Promise<Result<{ success: boolean }>> {
     try {
       const userCheck = await verifyUserExists(userId);
-      if (!userCheck.ok) {
-        return userCheck;
-      }
+      if (!userCheck.ok) return userCheck;
 
       const appUser = await this.appUserRepository.findByUserId(userId);
-      const otherAppUser = await this.appUserRepository.findByUserId(
-        otherUserId
-      );
+      const otherAppUser = await this.appUserRepository.findByUserId(otherUserId);
 
       if (!appUser || !otherAppUser) {
         return failure("One or both users not found", 404);
@@ -270,9 +249,7 @@ export class UserConnectionService implements IUserConnectionService {
   > {
     try {
       const appUser = await this.appUserRepository.findByUserId(userId);
-      if (!appUser) {
-        return failure("User not found", 404);
-      }
+      if (!appUser) return failure("User not found", 404);
 
       const connections =
         await this.userConnectionRepository.findPendingRequestsReceivedBy(
@@ -281,40 +258,27 @@ export class UserConnectionService implements IUserConnectionService {
 
       const requestsWithUserInfo = await Promise.all(
         connections.map(async (connection) => {
-          const requesterAppUser = await this.appUserRepository.findByAppUserId(
-            connection.requesterId
-          );
-          if (!requesterAppUser) {
-            return null;
-          }
-
-          const requesterName =
-            await this.appUserRepository.findUserNameByUserId(
-              requesterAppUser.userId
-            );
-          const identityCard =
-            await this.appUserRepository.findIdentityCardByUserId(
-              requesterAppUser.userId
-            );
+          const info = await this.enricher.enrichByAppUserId(connection.requesterId);
+          if (!info) return null;
 
           return {
             connectionId: connection.id,
-            requesterUserId: requesterAppUser.userId,
-            requesterName,
-            requesterDisplayName: identityCard?.displayName || null,
-            requesterPhotoUrl: identityCard?.photoUrl || null,
-            requesterRole: requesterAppUser.role,
-            requesterAppId: requesterAppUser.id,
+            requesterUserId: info.userId,
+            requesterName: info.name,
+            requesterDisplayName: info.displayName,
+            requesterPhotoUrl: info.photoUrl,
+            requesterRole: info.role,
+            requesterAppId: info.appId,
             createdAt: connection.createdAt,
           };
         })
       );
 
-      const validRequests = requestsWithUserInfo.filter(
-        (req): req is NonNullable<typeof req> => req !== null
+      return success(
+        requestsWithUserInfo.filter(
+          (req): req is NonNullable<typeof req> => req !== null
+        )
       );
-
-      return success(validRequests);
     } catch (error) {
       return handleError(
         error,
@@ -340,9 +304,7 @@ export class UserConnectionService implements IUserConnectionService {
   > {
     try {
       const appUser = await this.appUserRepository.findByUserId(userId);
-      if (!appUser) {
-        return failure("User not found", 404);
-      }
+      if (!appUser) return failure("User not found", 404);
 
       const connections =
         await this.userConnectionRepository.findAcceptedConnectionsFor(
@@ -356,41 +318,28 @@ export class UserConnectionService implements IUserConnectionService {
               ? connection.receiverId
               : connection.requesterId;
 
-          const otherAppUser = await this.appUserRepository.findByAppUserId(
-            otherAppUserId
-          );
-          if (!otherAppUser) {
-            return null;
-          }
-
-          const otherUserName =
-            await this.appUserRepository.findUserNameByUserId(
-              otherAppUser.userId
-            );
-          const identityCard =
-            await this.appUserRepository.findIdentityCardByUserId(
-              otherAppUser.userId
-            );
+          const info = await this.enricher.enrichByAppUserId(otherAppUserId);
+          if (!info) return null;
 
           return {
             connectionId: connection.id,
-            otherUserId: otherAppUser.userId,
-            otherUserName,
-            otherUserDisplayName: identityCard?.displayName || null,
-            otherUserPhotoUrl: identityCard?.photoUrl || null,
-            otherUserRole: otherAppUser.role,
-            otherUserAppId: otherAppUser.id,
+            otherUserId: info.userId,
+            otherUserName: info.name,
+            otherUserDisplayName: info.displayName,
+            otherUserPhotoUrl: info.photoUrl,
+            otherUserRole: info.role,
+            otherUserAppId: info.appId,
             createdAt: connection.createdAt,
             updatedAt: connection.updatedAt,
           };
         })
       );
 
-      const validConnections = connectionsWithUserInfo.filter(
-        (conn): conn is NonNullable<typeof conn> => conn !== null
+      return success(
+        connectionsWithUserInfo.filter(
+          (conn): conn is NonNullable<typeof conn> => conn !== null
+        )
       );
-
-      return success(validConnections);
     } catch (error) {
       return handleError(
         error,

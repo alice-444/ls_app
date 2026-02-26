@@ -13,8 +13,12 @@ import type { IUserBlockService } from "../../../users/services/moderation/user-
 import type { PrismaClient } from "../../../../../prisma/generated/client/client";
 import { prisma } from "../../../common";
 import { logger } from "../../../common/logger";
+import { ConversationPinService } from "./conversation-pin.service";
+import type { IConversationPinService } from "./conversation-pin.service";
 
 export class ConversationService implements IConversationService {
+  private readonly pinService: IConversationPinService;
+
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly conversationRepository: IConversationRepository,
@@ -23,7 +27,12 @@ export class ConversationService implements IConversationService {
     private readonly userBlockService: IUserBlockService,
     private readonly workshopRepository?: IWorkshopRepository,
     private readonly prismaClient?: PrismaClient
-  ) {}
+  ) {
+    this.pinService = new ConversationPinService(
+      conversationRepository,
+      prismaClient
+    );
+  }
 
   private async validateUserAndGetAppUser(userId: string): Promise<
     Result<{
@@ -63,7 +72,6 @@ export class ConversationService implements IConversationService {
       if (!userResult.ok) return userResult;
 
       const appUser = userResult.data.appUser;
-
       const blockedAppUserIds = await this.getBlockedAppUserIds(appUser);
 
       const conversations =
@@ -137,7 +145,7 @@ export class ConversationService implements IConversationService {
         this.messageRepository.findLastMessageForConversation(conversation.id),
         this.messageRepository.countUnreadMessagesForUser(conversation.id, appUser.id),
         this.enrichWithWorkshopInfo(conversation.workshopId),
-        this.isConversationPinned(appUser.id, conversation.id),
+        this.pinService.isConversationPinned(appUser.id, conversation.id),
       ]);
 
     let formattedLastMessageContent: string | null = null;
@@ -412,107 +420,17 @@ export class ConversationService implements IConversationService {
     userId: string,
     conversationId: string
   ): Promise<Result<{ success: boolean }>> {
-    try {
-      const userResult = await this.validateUserAndGetAppUser(userId);
-      if (!userResult.ok) return userResult;
-
-      const appUser = userResult.data.appUser;
-      const conversation = await this.conversationRepository.findById(conversationId);
-      if (!conversation) return failure("Conversation not found", 404);
-
-      if (
-        conversation.participant1Id !== appUser.id &&
-        conversation.participant2Id !== appUser.id
-      ) {
-        return failure("You are not a participant of this conversation", 403);
-      }
-
-      const client = this.prismaClient || prisma;
-
-      const existingPin = await client.conversation_pin.findUnique({
-        where: {
-          conversationId_appUserId: { conversationId, appUserId: appUser.id },
-        },
-      });
-
-      if (existingPin) return success({ success: true });
-
-      await client.conversation_pin.create({
-        data: {
-          id: generateInternalId(),
-          conversationId,
-          appUserId: appUser.id,
-          createdAt: new Date(),
-        },
-      });
-
-      return success({ success: true });
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("pinConversation", {
-          userId,
-          resourceId: conversationId,
-        })
-      );
-    }
+    const userResult = await this.validateUserAndGetAppUser(userId);
+    if (!userResult.ok) return userResult;
+    return this.pinService.pinConversation(userResult.data.appUser.id, conversationId);
   }
 
   async unpinConversation(
     userId: string,
     conversationId: string
   ): Promise<Result<{ success: boolean }>> {
-    try {
-      const userResult = await this.validateUserAndGetAppUser(userId);
-      if (!userResult.ok) return userResult;
-
-      const appUser = userResult.data.appUser;
-      const conversation = await this.conversationRepository.findById(conversationId);
-      if (!conversation) return failure("Conversation not found", 404);
-
-      if (
-        conversation.participant1Id !== appUser.id &&
-        conversation.participant2Id !== appUser.id
-      ) {
-        return failure("You are not a participant of this conversation", 403);
-      }
-
-      const client = this.prismaClient || prisma;
-      await client.conversation_pin.deleteMany({
-        where: { conversationId, appUserId: appUser.id },
-      });
-
-      return success({ success: true });
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("unpinConversation", {
-          userId,
-          resourceId: conversationId,
-        })
-      );
-    }
-  }
-
-  private async isConversationPinned(
-    appUserId: string,
-    conversationId: string
-  ): Promise<boolean> {
-    try {
-      const client = this.prismaClient || prisma;
-      const pin = await client.conversation_pin.findUnique({
-        where: {
-          conversationId_appUserId: { conversationId, appUserId },
-        },
-      });
-      return !!pin;
-    } catch (error) {
-      logger.error("Error checking if conversation is pinned", {
-        appUserId,
-        conversationId,
-        error,
-      });
-      return false;
-    }
+    const userResult = await this.validateUserAndGetAppUser(userId);
+    if (!userResult.ok) return userResult;
+    return this.pinService.unpinConversation(userResult.data.appUser.id, conversationId);
   }
 }

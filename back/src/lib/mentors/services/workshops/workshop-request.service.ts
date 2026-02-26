@@ -5,8 +5,11 @@ import type { IWorkshopRequestRepository } from "../../repositories/workshop-req
 import type { IMentorRepository } from "../../repositories/mentor.repository.interface";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IWorkshopRequestNotificationService } from "./workshop-request-notification.service";
+import type { IWorkshopRequestQueryService } from "./workshop-request-query.service";
+import type { IWorkshopForRequestFactory } from "./workshop-for-request.factory";
+import { WorkshopRequestQueryService } from "./workshop-request-query.service";
+import { WorkshopForRequestFactory } from "./workshop-for-request.factory";
 import { sanitizeString } from "../../../utils/sanitize";
-import { sanitizeLocation } from "../../../workshops/utils/workshop-helpers";
 import { logger } from "../../../common/logger";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
@@ -15,6 +18,8 @@ import { generateInternalId } from "../../../utils/id-generator";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
   private readonly WORKSHOP_REQUEST_COST = 10;
+  private readonly queryService: IWorkshopRequestQueryService;
+  private readonly workshopFactory: IWorkshopForRequestFactory;
 
   constructor(
     private readonly workshopRequestRepository: IWorkshopRequestRepository,
@@ -23,7 +28,16 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     private readonly notificationService: IWorkshopRequestNotificationService,
     private readonly creditService?: ICreditService,
     private readonly prisma?: PrismaClient
-  ) {}
+  ) {
+    this.queryService = new WorkshopRequestQueryService(
+      workshopRequestRepository,
+      mentorRepository
+    );
+    this.workshopFactory = new WorkshopForRequestFactory(
+      workshopRepository,
+      workshopRequestRepository
+    );
+  }
 
   async submitWorkshopRequest(
     userId: string,
@@ -207,54 +221,16 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     return workshopRequest;
   }
 
-  async getApprenticeRequests(userId: string): Promise<Result<Array<any>>> {
-    try {
-      const apprentice =
-        await this.mentorRepository.findApprenticeByUserId(userId);
-      if (!apprentice) {
-        return failure("Utilisateur introuvable", 404);
-      }
-
-      const requests =
-        await this.workshopRequestRepository.findByApprenticeId(apprentice.id);
-      return success(requests);
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("getApprenticeRequests", { userId })
-      );
-    }
+  getApprenticeRequests(userId: string): Promise<Result<Array<any>>> {
+    return this.queryService.getApprenticeRequests(userId);
   }
 
-  async getMentorRequests(userId: string): Promise<Result<Array<any>>> {
-    try {
-      const mentor = await this.mentorRepository.findMentorById(userId);
-      if (!mentor) {
-        return failure("Mentor introuvable", 404);
-      }
-
-      const requests =
-        await this.workshopRequestRepository.findByMentorId(mentor.id);
-      return success(requests);
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("getMentorRequests", { userId })
-      );
-    }
+  getMentorRequests(userId: string): Promise<Result<Array<any>>> {
+    return this.queryService.getMentorRequests(userId);
   }
 
-  async getWorkshopRequests(workshopId: string): Promise<Result<Array<any>>> {
-    try {
-      const requests =
-        await this.workshopRequestRepository.findByWorkshopId(workshopId);
-      return success(requests);
-    } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("getWorkshopRequests", { resourceId: workshopId })
-      );
-    }
+  getWorkshopRequests(workshopId: string): Promise<Result<Array<any>>> {
+    return this.queryService.getWorkshopRequests(workshopId);
   }
 
   async acceptWorkshopRequest(
@@ -347,12 +323,13 @@ export class WorkshopRequestService implements IWorkshopRequestService {
             }
           }
 
-          const workshop = await this.createOrUpdateWorkshopForRequest(
-            lockedRequest,
-            mentor.id,
-            input,
-            tx
-          );
+          const workshop =
+            await this.workshopFactory.createOrUpdateWorkshopForRequest(
+              lockedRequest,
+              mentor.id,
+              input,
+              tx
+            );
 
           if (!workshop.ok) {
             throw new Error(workshop.error);
@@ -401,134 +378,6 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         })
       );
     }
-  }
-
-  private async createOrUpdateWorkshopForRequest(
-    request: any,
-    mentorId: string,
-    input: {
-      date: Date;
-      time: string;
-      duration?: number | null;
-      location?: string | null;
-      isVirtual?: boolean;
-      maxParticipants?: number | null;
-    },
-    tx?: any
-  ): Promise<Result<{ id: string }>> {
-    if (request.workshopId) {
-      return this.updateExistingWorkshopForRequest(
-        request,
-        mentorId,
-        input,
-        tx
-      );
-    }
-    return this.createNewWorkshopForRequest(request, mentorId, input);
-  }
-
-  private async updateExistingWorkshopForRequest(
-    request: any,
-    mentorId: string,
-    input: {
-      date: Date;
-      time: string;
-      duration?: number | null;
-      location?: string | null;
-      isVirtual?: boolean;
-      maxParticipants?: number | null;
-    },
-    tx?: any
-  ): Promise<Result<{ id: string }>> {
-    const existingWorkshop = await this.workshopRepository.findById(
-      request.workshopId
-    );
-
-    if (!existingWorkshop) {
-      return failure("L'atelier référencé n'existe pas", 404);
-    }
-
-    if (existingWorkshop.creatorId !== mentorId) {
-      return failure(
-        "Vous n'êtes pas autorisé à accepter cette demande pour cet atelier",
-        403
-      );
-    }
-
-    const maxParticipants =
-      input.maxParticipants ?? existingWorkshop.maxParticipants;
-
-    if (maxParticipants !== null && maxParticipants > 0) {
-      const acceptedCount =
-        await this.workshopRequestRepository.countAcceptedByWorkshopId(
-          request.workshopId,
-          tx
-        );
-
-      if (acceptedCount + 1 > maxParticipants) {
-        return failure(
-          `Cet atelier est complet. Nombre maximum de participants atteint (${acceptedCount + 1}/${maxParticipants}).`,
-          400
-        );
-      }
-    }
-
-    const sanitizedLocation = sanitizeLocation(
-      input.location ?? existingWorkshop.location
-    );
-
-    const updateData: any = {
-      date: input.date,
-      time: input.time,
-      duration: input.duration ?? existingWorkshop.duration ?? undefined,
-      location: sanitizedLocation,
-      isVirtual: input.isVirtual ?? existingWorkshop.isVirtual,
-      maxParticipants:
-        input.maxParticipants ?? existingWorkshop.maxParticipants ?? undefined,
-    };
-
-    if (!existingWorkshop.apprenticeId) {
-      updateData.apprenticeId = request.apprenticeId;
-    }
-
-    const workshop = await this.workshopRepository.update(
-      request.workshopId,
-      updateData
-    );
-
-    return success({ id: workshop.id });
-  }
-
-  private async createNewWorkshopForRequest(
-    request: any,
-    mentorId: string,
-    input: {
-      date: Date;
-      time: string;
-      duration?: number | null;
-      location?: string | null;
-      isVirtual?: boolean;
-      maxParticipants?: number | null;
-    }
-  ): Promise<Result<{ id: string }>> {
-    const sanitizedLocation = sanitizeLocation(input.location);
-
-    const workshop = await this.workshopRepository.create({
-      title: request.title,
-      description: request.description,
-      date: input.date,
-      time: input.time,
-      duration: input.duration ?? null,
-      location: sanitizedLocation,
-      isVirtual: input.isVirtual ?? false,
-      maxParticipants: input.maxParticipants ?? null,
-      materialsNeeded: null,
-      creatorId: mentorId,
-      apprenticeId: request.apprenticeId,
-      requestId: request.id,
-    });
-
-    return success({ id: workshop.id });
   }
 
   async rejectWorkshopRequest(
