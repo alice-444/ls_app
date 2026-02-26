@@ -1,0 +1,133 @@
+"use client";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "lucide-react";
+import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
+import { formatCalendarMonthYear } from "@/lib/dashboard-utils";
+import type { WorkshopBasic } from "@/types/workshop";
+
+type CalendarView = "month" | "week" | "day" | "agenda";
+
+interface CalendarSectionProps {
+  readonly workshops: readonly WorkshopBasic[];
+  readonly calendarDate: Date;
+  readonly calendarView: CalendarView;
+  readonly onDateChange: (date: Date) => void;
+  readonly onViewChange: (view: CalendarView) => void;
+  readonly onNavigate: (action: "prev" | "next" | "today") => void;
+  readonly onSelectEvent: (workshop: WorkshopBasic) => void;
+}
+
+const VIEW_OPTIONS: { value: CalendarView; label: string }[] = [
+  { value: "month", label: "Mois" },
+  { value: "week", label: "Semaine" },
+  { value: "day", label: "Jour" },
+  { value: "agenda", label: "Agenda" },
+];
+
+export function CalendarSection({
+  workshops,
+  calendarDate,
+  calendarView,
+  onDateChange,
+  onViewChange,
+  onNavigate,
+  onSelectEvent,
+}: CalendarSectionProps) {
+  return (
+    <Card className="mb-6 bg-ls-surface border border-ls-border rounded-[16px]">
+      <CardHeader>
+        <div className="flex flex-col gap-4 sm:gap-[16px]">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-ls-heading">
+              <Calendar className="w-5 h-5" />
+              Vue calendrier
+            </CardTitle>
+            <CardDescription className="text-ls-muted">
+              Visualisez tous vos ateliers dans un calendrier
+            </CardDescription>
+          </div>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex flex-wrap gap-2">
+              {(["today", "prev", "next"] as const).map((action) => (
+                <Button
+                  key={action}
+                  variant="outline"
+                  size="sm"
+                  className="border border-ls-border rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading"
+                  onClick={() => onNavigate(action)}
+                >
+                  {action === "today"
+                    ? "Aujourd'hui"
+                    : action === "prev"
+                    ? "Précédent"
+                    : "Suivant"}
+                </Button>
+              ))}
+            </div>
+            <div className="flex items-center">
+              {VIEW_OPTIONS.map(({ value, label }, idx) => (
+                <Button
+                  key={value}
+                  variant={calendarView === value ? "default" : "outline"}
+                  size="sm"
+                  className={`${
+                    calendarView === value
+                      ? "bg-brand border border-brand text-[#161616]"
+                      : "border border-brand text-brand"
+                  } ${
+                    idx === 0
+                      ? "rounded-l-[8px] rounded-r-0"
+                      : idx === VIEW_OPTIONS.length - 1
+                      ? "rounded-r-[8px] rounded-l-0"
+                      : "rounded-none"
+                  } h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold`}
+                  onClick={() => onViewChange(value)}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="mb-3 sm:mb-4">
+            <p className="text-sm sm:text-base font-semibold text-ls-heading">
+              {formatCalendarMonthYear(calendarDate)}
+            </p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {workshops.length > 0 ? (
+          <div className="overflow-x-auto">
+            <WorkshopCalendar
+              workshops={workshops}
+              height="600px"
+              userRole="MENTOR"
+              controlledDate={calendarDate}
+              controlledView={calendarView}
+              onDateChange={onDateChange}
+              onViewChange={(view) => {
+                if (["month", "week", "day", "agenda"].includes(view)) {
+                  onViewChange(view as CalendarView);
+                }
+              }}
+              onSelectEvent={onSelectEvent}
+            />
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <Calendar className="w-16 h-16 mx-auto text-ls-muted mb-4" />
+            <p className="text-ls-muted">Aucun atelier à afficher</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
