@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-// @ts-ignore - useRouter is exported from next/navigation, this is a TypeScript resolution issue
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
@@ -81,7 +80,7 @@ export default function MyProfilePage() {
       const data = await getProfProfile();
       setIsPublished(data.isPublished || false);
       if (data.profile) {
-        setProfile(data.profile);
+        setProfile(data.profile as unknown as MentorProfile);
       }
     } catch (error) {
       console.error("Could not load profile:", error);
@@ -189,7 +188,6 @@ export default function MyProfilePage() {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Unpublish button clicked in my-profile");
                   handleUnpublish();
                 }}
                 disabled={isUnpublishing}

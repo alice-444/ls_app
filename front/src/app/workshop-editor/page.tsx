@@ -67,7 +67,7 @@ export default function WorkshopEditorPage() {
     if (newParam === "true" || newParam === "1") {
       setShowForm(true);
     } else if (editId && workshops) {
-      const workshopToEdit = workshops.find((w: any) => w.id === editId);
+      const workshopToEdit = workshops.find((w: { id: string }) => w.id === editId);
       if (workshopToEdit) {
         setEditingWorkshop(workshopToEdit as Workshop);
       }

@@ -21,7 +21,7 @@ export const getStatusBadge = (status: string, size: "sm" | "md" | "lg" = "sm") 
 
   const variants: Record<
     string,
-    { variant: any; label: string; icon: (size: string) => React.ReactNode }
+    { variant: "secondary" | "default" | "outline" | "destructive"; label: string; icon: (size: string) => React.ReactNode }
   > = {
     DRAFT: {
       variant: "secondary",

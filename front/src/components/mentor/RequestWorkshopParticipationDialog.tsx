@@ -92,7 +92,7 @@ export function RequestWorkshopParticipationDialog({
         onSuccess();
       }
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error.message || "Erreur lors de l'envoi de la demande");
       setIsSubmitting(false);
     },

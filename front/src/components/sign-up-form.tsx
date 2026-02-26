@@ -46,9 +46,9 @@ export default function SignUpForm({
 							router.push("/onboarding");
 							toast.success("Compte créé avec succès !");
 						},
-						onError: (error: any) => {
-							setIsSubmitting(false);
-							toast.error("Account created but sign in failed. Please sign in manually.");
+					onError: () => {
+						setIsSubmitting(false);
+						toast.error("Account created but sign in failed. Please sign in manually.");
 							router.push("/login");
 						},
 					},

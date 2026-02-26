@@ -56,7 +56,7 @@ export default function ApprenticeProfilePage() {
       onSuccess: () => {
         toast.success("Demande d'invitation envoyée");
       },
-      onError: (error: any) => {
+      onError: (error: { message?: string }) => {
         toast.error("Erreur lors de l'envoi", {
           description: error.message,
         });
@@ -69,7 +69,7 @@ export default function ApprenticeProfilePage() {
         toast.success("Connexion supprimée");
         router.refresh();
       },
-      onError: (error: any) => {
+      onError: (error: { message?: string }) => {
         toast.error("Erreur lors de la suppression", {
           description: error.message,
         });

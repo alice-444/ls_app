@@ -52,6 +52,9 @@ flowchart TB
   appRouter --> credits[credits]
   appRouter --> user[user]
   appRouter --> accountSettings[accountSettings]
+
+  workshop -.- wSub["workshop-attendance\nworkshop-video"]
+  messaging -.- mSub["messaging-conversation\nmessaging-message\nmessaging-presence\nmessaging-reaction"]
 ```
 
 ## Stack
@@ -149,8 +152,17 @@ sequenceDiagram
   - `**api/daily/webhook**` — Webhook Daily.co.
   - `**api/polar/webhook**` — Webhook Polar (paiement).
   - `**api/metrics**` — Métriques Prometheus.
-- `**src/routers/**` — Routers tRPC : `index.ts` (appRouter) agrège healthCheck, privateData, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, messaging, notification, userBlock, userReport, credits, user, accountSettings.
-- `**src/lib/**` — Services métier, repositories, auth (Better Auth config, signin, user-helpers), email (templates, render), Daily, Socket (server), rate-limit, DI (container), Prisma client commun, validation, logger, métriques.
+- `**src/routers/**` — Routers tRPC : `index.ts` (appRouter) agrège healthCheck, privateData, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, messaging, notification, userBlock, userReport, credits, user, accountSettings. Certains routers sont découpés en sous-fichiers :
+  - `workshops/` — `workshop.router.ts` (CRUD principal), `workshop-attendance.router.ts` (présence), `workshop-video.router.ts` (liens visio), `workshop-feedback.router.ts`.
+  - `social/` — `messaging.router.ts` (agrégation), `messaging-conversation.router.ts`, `messaging-message.router.ts`, `messaging-presence.router.ts`, `messaging-reaction.router.ts`.
+  - `shared/router-helpers.ts` — Utilitaires partagés entre routers.
+- `**src/lib/**` — Services métier, repositories, DI. Organisation modulaire :
+  - `workshops/services/` — Découpé en sous-domaines : `lifecycle/` (création, publication, annulation), `query/` (recherche, listing), `scheduling/` (planification, détection de conflits), `attendance/` (présence, check-in), `feedback/` (feedbacks, modération), `rewards/` (cashback, calcul, file de traitement, pénalités no-show), `guards/` (contrôle d'accès), `email/` (templates d'emails atelier), `video/` (liens visio Daily).
+  - `messaging/services/` — Découpé en : `core/` (conversation, message-operations, conversation-pin, presence), `enrichment/` (enrichissement des messages), `reactions/` (réactions aux messages), `validation/` (validation des messages).
+  - `mentors/services/workshops/` — `workshop-request.service.ts`, `workshop-request-query.service.ts`, `workshop-request-notification.service.ts`, `workshop-for-request.factory.ts`.
+  - `users/services/connection/` — `user-connection.service.ts`, `user-info-enricher.ts`.
+  - `socket/handlers/` — `message.handler.ts` (handler Socket.IO dédié messagerie).
+  - `auth/`, `email/`, `daily/`, `di/`, `rate-limit/`, `logger/`, `metrics/` — Inchangés.
 - `**src/shared/**` — Schémas et validation partagés avec le front (Zod, workshop, password, date, etc.).
 - `**prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, user, session, app_user, workshop, workshop_request, mentor_feedback, workshop_cashback_queue, user_connection, conversation, message, message_reaction, conversation_pin, notification, user_block, user_report, support_request, credit_transaction, audit_log, deletion_job, verification.
 
@@ -158,13 +170,19 @@ sequenceDiagram
 
 ## Routers tRPC (API)
 
-- **workshop** — Ateliers (CRUD, publication, inscriptions, demandes).
-- **workshopFeedback** — Feedbacks ateliers.
+- **workshop** — Ateliers (CRUD, publication, inscriptions, demandes). Découpé en sous-routers :
+  - `workshop-attendance` — Gestion de la présence (check-in, statut).
+  - `workshop-video` — Liens visio Daily (génération, accès).
+- **workshopFeedback** — Feedbacks ateliers (soumission, modération).
 - **cashbackAnalytics** — Analytics cashback.
 - **mentor** — Profils mentors, catalogue, demandes.
 - **apprentice** — Données apprenant.
 - **connection** — Réseau (connexions entre utilisateurs).
-- **messaging** — Conversations, messages, non-lus.
+- **messaging** — Conversations, messages, non-lus. Découpé en sous-routers :
+  - `messaging-conversation` — CRUD conversations, épingles.
+  - `messaging-message` — Envoi, édition, suppression de messages.
+  - `messaging-presence` — Indicateurs de présence et de frappe.
+  - `messaging-reaction` — Réactions aux messages.
 - **notification** — Notifications in-app.
 - **userBlock** / **userReport** — Modération (blocage, signalements).
 - **credits** — Crédits, transactions.

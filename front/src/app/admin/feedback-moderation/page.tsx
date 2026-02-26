@@ -31,9 +31,26 @@ import { renderStars } from "@/lib/rating-utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+interface ModerationFeedback {
+  id: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  status: string;
+  moderationReason?: string;
+  reportReason?: string;
+  mentorName?: string;
+  workshopTitle?: string;
+  publicName?: string;
+  realName?: string;
+  realEmail?: string;
+  workshop?: { title: string };
+  apprentice?: { user?: { name?: string } };
+}
+
 export default function FeedbackModerationPage() {
   const router = useRouter();
-  const [selectedFeedback, setSelectedFeedback] = useState<any | null>(null);
+  const [selectedFeedback, setSelectedFeedback] = useState<ModerationFeedback | null>(null);
   const [actionType, setActionType] = useState<
     "dismiss" | "delete" | "warn" | null
   >(null);
@@ -59,7 +76,7 @@ export default function FeedbackModerationPage() {
       setActionType(null);
       refetch();
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });
@@ -71,7 +88,7 @@ export default function FeedbackModerationPage() {
       setActionType(null);
       refetch();
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });
@@ -83,7 +100,7 @@ export default function FeedbackModerationPage() {
       setActionType(null);
       refetch();
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error.message || "Une erreur est survenue");
     },
   });
@@ -113,8 +130,8 @@ export default function FeedbackModerationPage() {
     );
   }
 
-  const feedbacks = data?.feedbacks || [];
-  const total = data?.total || 0;
+  const feedbacks: ModerationFeedback[] = data?.feedbacks || [];
+  const total: number = data?.total || 0;
   const totalPages = Math.ceil(total / limit);
 
   return (
@@ -149,7 +166,7 @@ export default function FeedbackModerationPage() {
             </div>
 
             <div className="space-y-4">
-              {feedbacks.map((feedback: any) => (
+              {feedbacks.map((feedback) => (
                 <Card key={feedback.id}>
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

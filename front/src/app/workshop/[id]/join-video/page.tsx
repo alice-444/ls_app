@@ -48,7 +48,7 @@ export default function JoinVideoPage() {
           router.push(`/workshop/${workshopId}`);
         });
 
-        callFrame.on("error", (error: any) => {
+        callFrame.on("error", (error) => {
           console.error("Daily.co error:", error);
         });
 
@@ -57,7 +57,7 @@ export default function JoinVideoPage() {
           token: tokenData.token,
           userName: "User",
         });
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error initializing Daily.co:", err);
       }
     };

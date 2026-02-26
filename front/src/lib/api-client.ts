@@ -23,7 +23,7 @@ export async function authenticatedFetch(
 }
 
 export async function getProfProfile(): Promise<{
-  profile?: any;
+  profile?: Record<string, unknown>;
   isPublished?: boolean;
 }> {
   const response = await authenticatedFetch(
