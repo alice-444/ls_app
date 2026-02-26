@@ -22,3 +22,10 @@ export function handleRouterResult<T>(
   }
   return result.data;
 }
+
+export function unwrapResult<T>(result: Result<T>): T {
+  if (!result.ok) {
+    throw new Error(result.error);
+  }
+  return result.data;
+}

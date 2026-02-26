@@ -112,7 +112,9 @@ export class ServicesContainer {
       this.repositories.workshopRepository,
       this.repositories.appUserRepository,
       this.repositories.workshopRequestRepository,
-      this.notificationService
+      this.notificationService,
+      this.workshopVideoLinkService,
+      this.emailService
     );
     return this._workshopService;
   }
@@ -164,7 +166,8 @@ export class ServicesContainer {
       this.repositories.workshopRepository,
       this.notificationService,
       this.creditService,
-      this.prisma
+      this.prisma,
+      this.emailService
     );
     return this._workshopRequestService;
   }
