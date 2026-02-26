@@ -87,7 +87,7 @@ export default function WorkshopDetailPage() {
     } as any
   );
 
-  const handleAcceptRequest = (request: any) => {
+  const handleAcceptRequest = (request: { id: string; title: string; preferredDate?: Date | string | null; preferredTime?: string | null }) => {
     setSelectedRequest(request);
     setShowAcceptDialog(true);
   };
@@ -257,7 +257,7 @@ export default function WorkshopDetailPage() {
   const isRegistered =
     isApprentice &&
     workshop?.apprenticeId &&
-    upcomingWorkshops?.some((w: any) => w.id === workshop.id);
+    upcomingWorkshops?.some((w: { id: string }) => w.id === workshop.id);
 
   const handleCancelClick = () => {
     setShowCancelDialog(true);

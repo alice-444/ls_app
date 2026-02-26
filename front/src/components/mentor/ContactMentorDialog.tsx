@@ -73,7 +73,7 @@ export function ContactMentorDialog({
       onOpenChange(false);
       setIsSubmitting(false);
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(
         error.message ||
           "Erreur lors de l'envoi du message. Veuillez réessayer plus tard."

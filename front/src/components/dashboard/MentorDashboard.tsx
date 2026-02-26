@@ -23,15 +23,45 @@ import {
 import { AllWorkshopRequestsDialog } from "./AllWorkshopRequestsDialog";
 import { StatusBadge } from "./StatusBadge";
 
+interface Connection {
+  connectionId: string;
+  otherUserId: string;
+  otherUserName?: string;
+  otherUserDisplayName?: string;
+  otherUserPhotoUrl?: string;
+  otherUserRole?: string;
+}
+
+interface WorkshopItem {
+  id: string;
+  title: string;
+  description: string | null;
+  date: string | Date | null;
+  time: string | null;
+  duration: number | null;
+  location: string | null;
+  isVirtual: boolean;
+  maxParticipants: number | null;
+  status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
+}
+
+interface WorkshopRequest {
+  id: string;
+  title: string;
+  description?: string;
+  status: string;
+  preferredDate: string | Date | null;
+}
+
 interface MentorDashboardProps {
   readonly mentorStats: {
     readonly creditsEarned: number;
     readonly studentsHelped: number;
   };
-  readonly pastWorkshops: any[];
-  readonly acceptedConnections: any[] | undefined;
-  readonly mentorWorkshopRequests: any[] | undefined;
-  readonly mentorWorkshops: any[] | undefined;
+  readonly pastWorkshops: WorkshopItem[];
+  readonly acceptedConnections: Connection[] | undefined;
+  readonly mentorWorkshopRequests: WorkshopRequest[] | undefined;
+  readonly mentorWorkshops: WorkshopItem[] | undefined;
 }
 
 export function MentorDashboard({
@@ -171,7 +201,7 @@ export function MentorDashboard({
                   <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
                     {pastWorkshops
                       .slice(0, 3)
-                      .map((workshop: any, index: number) => (
+                      .map((workshop, index: number) => (
                         <div
                           key={workshop.id}
                           className={`border-b border-[#d6dae4] dark:border-[#d6dae4] pb-3 sm:pb-4 ${
@@ -216,7 +246,7 @@ export function MentorDashboard({
                   <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
                     {acceptedConnections
                       .slice(0, 12)
-                      .map((conn: any, index: number) => {
+                      .map((conn: Connection, index: number) => {
                         if (index % 4 === 0) {
                           const rowConnections = acceptedConnections.slice(
                             index,
@@ -225,11 +255,11 @@ export function MentorDashboard({
                           return (
                             <div
                               key={`connection-row-${rowConnections
-                                .map((c: any) => c.connectionId)
+                                .map((c) => c.connectionId)
                                 .join("-")}`}
                               className="flex items-center justify-center -space-x-2 w-full sm:w-[236px] h-[56px] sm:h-[64px]"
                             >
-                              {rowConnections.map((c: any, i: number) => {
+                              {rowConnections.map((c, i: number) => {
                                 const getConnectionColorClass = (
                                   index: number
                                 ) => {
@@ -314,7 +344,7 @@ export function MentorDashboard({
                     <>
                       {mentorWorkshopRequests
                         .slice(0, 3)
-                        .map((request: any) => (
+                        .map((request) => (
                           <div
                             key={request.id}
                             className="bg-white dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] min-h-[126px] px-3 sm:px-4 lg:px-5 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"

@@ -49,9 +49,9 @@ export default function SignInForm({
 						router.push("/dashboard");
 						toast.success("Sign in successful");
 					},
-					onError: (error: any) => {
+					onError: (ctx: { error: { message?: string; statusText?: string } }) => {
 						setIsSubmitting(false);
-						toast.error(error.error.message || error.error.statusText);
+						toast.error(ctx.error.message || ctx.error.statusText);
 					},
 				},
 			);

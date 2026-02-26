@@ -53,7 +53,7 @@ export function MentorFeedbacks({
       ...(workshopsData.upcoming || []),
       ...(workshopsData.past || []),
     ];
-    return allWorkshops.map((w: any) => ({ id: w.id, title: w.title }));
+    return allWorkshops.map((w: { id: string; title: string }) => ({ id: w.id, title: w.title }));
   }, [workshops, workshopsData]);
 
   const {

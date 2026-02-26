@@ -32,7 +32,7 @@ export function ChangePasswordSection() {
         setIsDialogOpen(false);
         passwordForm.reset();
       },
-      onError: (error: any) => {
+      onError: (error: { message?: string }) => {
         toast.error(
           error.message || "Erreur lors de la modification du mot de passe"
         );
