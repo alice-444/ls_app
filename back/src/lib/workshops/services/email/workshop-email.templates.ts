@@ -217,6 +217,71 @@ L'équipe LearnSup`,
     };
   }
 
+  static reschedule(data: {
+    recipientName: string;
+    workshopTitle: string;
+    oldDate: Date | null;
+    oldTime: string | null;
+    newDate: Date;
+    newTime: string;
+    workshopLocation: string;
+    workshopDuration: number | null;
+    workshopId: string;
+  }): EmailTemplate {
+    const oldDateFormatted = formatDateFr(data.oldDate);
+    const newDateFormatted = formatDateFr(data.newDate);
+    const duration = formatDuration(data.workshopDuration);
+
+    return {
+      subject: `Changement d'horaire - ${data.workshopTitle}`,
+      html: wrapHtml(
+        "#3b82f6",
+        "Changement d'horaire",
+        `<p>Bonjour ${data.recipientName},</p>
+        <p>Nous vous informons que l'atelier <strong>"${data.workshopTitle}"</strong> a été reprogrammé.</p>
+        <div style="background-color: #f1f5f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p style="margin: 0; color: #dc2626; font-weight: bold;">📅 Ancien horaire :</p>
+          <p style="margin: 5px 0 0 0;">${oldDateFormatted} à ${data.oldTime || "Heure non définie"}</p>
+        </div>
+        <div style="background-color: #dbeafe; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+          <p style="margin: 0; color: #2563eb; font-weight: bold;">📅 Nouvel horaire :</p>
+          <p style="margin: 5px 0 0 0;">${newDateFormatted} à ${data.newTime}</p>
+        </div>
+        <div style="background-color: #f9fafb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p style="margin: 0;"><strong>📍 Lieu :</strong> ${data.workshopLocation}</p>
+          <p style="margin: 5px 0 0 0;"><strong>⏱️ Durée :</strong> ${duration}</p>
+        </div>
+        <div style="background-color: #fef3c7; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+          <p style="margin: 0; font-weight: bold;">⚠️ Action requise</p>
+          <p style="margin: 5px 0 0 0;">Votre participation est maintenue par défaut. Si le nouvel horaire ne vous convient pas, vous pouvez annuler votre inscription depuis votre tableau de bord.</p>
+        </div>
+        ${ctaButton(`${APP_URL}/workshop/${data.workshopId}`, "Voir les détails de l'atelier")}`
+      ),
+      text: `Changement d'horaire
+
+Bonjour ${data.recipientName},
+
+Nous vous informons que l'atelier "${data.workshopTitle}" a été reprogrammé.
+
+📅 Ancien horaire :
+${oldDateFormatted} à ${data.oldTime || "Heure non définie"}
+
+📅 Nouvel horaire :
+${newDateFormatted} à ${data.newTime}
+
+📍 Lieu : ${data.workshopLocation}
+⏱️ Durée : ${duration}
+
+⚠️ Action requise
+Votre participation est maintenue par défaut. Si le nouvel horaire ne vous convient pas, vous pouvez annuler votre inscription depuis votre tableau de bord.
+
+Voir les détails de l'atelier : ${APP_URL}/workshop/${data.workshopId}
+
+Cordialement,
+L'équipe LearnSup`,
+    };
+  }
+
   static requestRejected(data: {
     recipientName: string;
     mentorName: string;

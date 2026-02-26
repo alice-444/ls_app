@@ -7,6 +7,7 @@ import { formatDateTime } from "../utils/date-formatters";
 import { logger } from "../../common/logger";
 import { handleError, createErrorContext } from "../../common/error-handler";
 import { container } from "../../di/container";
+import { WorkshopEmailTemplates } from "./email/workshop-email.templates";
 
 export interface WorkshopRescheduleNotificationData {
   workshopId: string;
@@ -120,155 +121,59 @@ export class WorkshopNotificationService {
       }
     }
 
+    await this.sendRescheduleEmail(data);
+  }
+
+  private async sendRescheduleEmail(
+    data: WorkshopRescheduleNotificationData
+  ): Promise<void> {
     try {
       let apprenticeEmail = data.apprenticeEmail;
 
       if (!apprenticeEmail && data.apprenticeUserId) {
         const apprenticeUser = await container.prisma.user.findUnique({
           where: { id: data.apprenticeUserId },
-          select: { email: true, name: true },
+          select: { email: true },
         });
         apprenticeEmail = apprenticeUser?.email || null;
       }
 
-      if (apprenticeEmail) {
-        const workshop = await this.workshopRepository.findById(
-          data.workshopId
-        );
-        const workshopLocation = workshop?.location || "Non spécifié";
-        const workshopDuration = workshop?.duration
-          ? `${Math.floor(workshop.duration / 60)}h${
-              workshop.duration % 60 !== 0
-                ? (workshop.duration % 60).toString().padStart(2, "0")
-                : ""
-            }`
-          : "Non spécifié";
-
-        const oldDateFormatted = data.oldDate
-          ? new Date(data.oldDate).toLocaleDateString("fr-FR", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
-          : "Date non définie";
-        const newDateFormatted = new Date(data.newDate).toLocaleDateString(
-          "fr-FR",
-          {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }
-        );
-
-        const emailResult = await container.emailService.sendEmail({
-          to: apprenticeEmail,
-          subject: `Changement d'horaire - ${data.workshopTitle}`,
-          html: `
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              </head>
-              <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="background-color: #3b82f6; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                  <h1 style="color: white; margin: 0;">Changement d'horaire</h1>
-                </div>
-                
-                <p>Bonjour ${data.apprenticeName || "Participant"},</p>
-                
-                <p>Nous vous informons que l'atelier <strong>"${
-                  data.workshopTitle
-                }"</strong> a été reprogrammé.</p>
-                
-                <div style="background-color: #f1f5f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                  <p style="margin: 0; color: #dc2626; font-weight: bold;">📅 Ancien horaire :</p>
-                  <p style="margin: 5px 0 0 0;">${oldDateFormatted} à ${
-            data.oldTime || "Heure non définie"
-          }</p>
-                </div>
-                
-                <div style="background-color: #dbeafe; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-                  <p style="margin: 0; color: #2563eb; font-weight: bold;">📅 Nouvel horaire :</p>
-                  <p style="margin: 5px 0 0 0;">${newDateFormatted} à ${
-            data.newTime
-          }</p>
-                </div>
-                
-                <div style="background-color: #f9fafb; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                  <p style="margin: 0;"><strong>📍 Lieu :</strong> ${workshopLocation}</p>
-                  <p style="margin: 5px 0 0 0;"><strong>⏱️ Durée :</strong> ${workshopDuration}</p>
-                </div>
-                
-                <div style="background-color: #fef3c7; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                  <p style="margin: 0; font-weight: bold;">⚠️ Action requise</p>
-                  <p style="margin: 5px 0 0 0;">Votre participation est maintenue par défaut. Si le nouvel horaire ne vous convient pas, vous pouvez annuler votre inscription depuis votre tableau de bord.</p>
-                </div>
-                
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${
-                    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
-                  }/workshop/${data.workshopId}" 
-                     style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                    Voir les détails de l'atelier
-                  </a>
-                </div>
-                
-                <p style="margin-top: 30px;">Cordialement,<br>L'équipe LearnSup</p>
-                
-                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-                <p style="font-size: 12px; color: #6b7280; text-align: center;">
-                  Cet email est envoyé automatiquement, merci de ne pas y répondre.
-                </p>
-              </body>
-            </html>
-          `,
-          text: `
-Changement d'horaire
-
-Bonjour ${data.apprenticeName || "Participant"},
-
-Nous vous informons que l'atelier "${data.workshopTitle}" a été reprogrammé.
-
-📅 Ancien horaire :
-${oldDateFormatted} à ${data.oldTime || "Heure non définie"}
-
-📅 Nouvel horaire :
-${newDateFormatted} à ${data.newTime}
-
-📍 Lieu : ${workshopLocation}
-⏱️ Durée : ${workshopDuration}
-
-⚠️ Action requise
-Votre participation est maintenue par défaut. Si le nouvel horaire ne vous convient pas, vous pouvez annuler votre inscription depuis votre tableau de bord.
-
-Voir les détails de l'atelier : ${
-            process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
-          }/workshop/${data.workshopId}
-
-Cordialement,
-L'équipe LearnSup
-          `.trim(),
-        });
-
-        if (!emailResult.ok) {
-          logger.error("Failed to send reschedule email", {
-            workshopId: data.workshopId,
-            apprenticeEmail,
-            error: emailResult.error,
-          });
-        }
-      } else {
+      if (!apprenticeEmail) {
         logger.warn(
           "Cannot send reschedule email: apprentice email not available",
           {
             workshopId: data.workshopId,
             apprenticeUserId: data.apprenticeUserId,
-            apprenticeEmail: data.apprenticeEmail,
           }
         );
+        return;
+      }
+
+      const workshop = await this.workshopRepository.findById(data.workshopId);
+
+      const emailTemplate = WorkshopEmailTemplates.reschedule({
+        recipientName: data.apprenticeName || "Participant",
+        workshopTitle: data.workshopTitle,
+        oldDate: data.oldDate,
+        oldTime: data.oldTime,
+        newDate: data.newDate,
+        newTime: data.newTime,
+        workshopLocation: workshop?.location || "Non spécifié",
+        workshopDuration: workshop?.duration ?? null,
+        workshopId: data.workshopId,
+      });
+
+      const emailResult = await container.emailService.sendEmail({
+        to: apprenticeEmail,
+        ...emailTemplate,
+      });
+
+      if (!emailResult.ok) {
+        logger.error("Failed to send reschedule email", {
+          workshopId: data.workshopId,
+          apprenticeEmail,
+          error: emailResult.error,
+        });
       }
     } catch (error) {
       logger.error("Error sending reschedule email", {
@@ -283,33 +188,6 @@ L'équipe LearnSup
     oldDateTime: string,
     newDateTime: string
   ): void {
-    const separator = "=".repeat(80);
-    const emailContent = [
-      separator,
-      "📧 EMAIL NOTIFICATION - Workshop Rescheduled",
-      separator,
-      `To: ${data.apprenticeEmail || "Email non disponible"}`,
-      `Subject: Changement d'horaire : ${data.workshopTitle}`,
-      "",
-      `Bonjour ${data.apprenticeName || "Participant"},`,
-      "",
-      `L'atelier "${data.workshopTitle}" a été reprogrammé.`,
-      "",
-      "📅 Ancien horaire:",
-      `   ${oldDateTime}`,
-      "",
-      "📅 Nouvel horaire:",
-      `   ${newDateTime}`,
-      "",
-      "Actions disponibles:",
-      "  ✅ Garder ma place (par défaut)",
-      "  ❌ Le nouvel horaire ne me convient pas - Annuler mon inscription",
-      "",
-      `Workshop ID: ${data.workshopId}`,
-      `Apprentice ID: ${data.apprenticeId}`,
-      separator,
-    ].join("\n");
-
     logger.debug("Workshop reschedule notification sent", {
       workshopId: data.workshopId,
       apprenticeId: data.apprenticeId,
