@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vitest/config";
 import path from "path";
 
@@ -8,6 +9,7 @@ export default defineConfig({
     include: [
       "__tests__/units/**/*.test.ts",
       "__tests__/api/**/*.test.ts",
+      "__tests__/trpc/**/*.test.ts",
     ],
     env: {
       DATABASE_URL:
