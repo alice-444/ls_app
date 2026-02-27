@@ -23,6 +23,7 @@ on:
       - "cypress.config.*"
       - "jest.config.*"
       - "babel.config.*"
+      - "vitest.config.*"
       - ".env.test"
   pull_request:
     branches:
@@ -51,6 +52,7 @@ on:
       - "cypress.config.*"
       - "jest.config.*"
       - "babel.config.*"
+      - "vitest.config.*"
       - ".env.test"
 
 permissions: {}
