@@ -3,6 +3,8 @@ import { container } from "../../../../lib/di/container";
 import { logger } from "../../../../lib/common/logger";
 import type { PrismaClient } from "../../../../../prisma/generated/client/client";
 
+export const dynamic = "force-dynamic";
+
 function isAuthorized(req: NextRequest): boolean {
   const token = req.headers.get("x-cron-token");
   return !!token && token === process.env.CRON_SECRET;
