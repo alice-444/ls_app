@@ -9,6 +9,8 @@
 		"dev": "turbo dev",
 		"build": "turbo build",
 		"check-types": "turbo check-types",
+		"test:unit": "turbo test",
+		"test:integration": "turbo test",
 		"dev:front": "turbo -F front dev",
 		"dev:back": "turbo -F back dev",
 		"db:push": "turbo -F back db:push",

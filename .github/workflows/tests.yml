@@ -124,6 +124,7 @@ jobs:
         env:
           NODE_ENV: test
           CI: true
+          DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -162,6 +163,7 @@ jobs:
         env:
           NODE_ENV: test
           CI: true
+          DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
 
       - name: Upload integration test results
         uses: actions/upload-artifact@v4
@@ -199,6 +201,7 @@ jobs:
         run: pnpm run build
         env:
           NODE_ENV: production
+          DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

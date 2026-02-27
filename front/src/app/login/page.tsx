@@ -2,12 +2,12 @@
 
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
@@ -36,5 +36,13 @@ export default function LoginPage() {
     <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
   ) : (
     <SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <LoginContent />
+    </Suspense>
   );
 }
