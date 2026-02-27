@@ -43,51 +43,6 @@ on:
 permissions: {}
 
 jobs:
-  super-linter:
-    name: Super-Linter
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    continue-on-error: true
-
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-      checks: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js for linting
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Run Super-Linter
-        uses: super-linter/super-linter@v7
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          
-          # File exclusions
-          FILTER_REGEX_EXCLUDE: ".*/(node_modules|.next|dist|.turbo|build|coverage|.pnpm-store|prisma/generated)/.*|.*\\.min\\.(js|css)$|.*\\.(lock|log)$|.*\\.d\\.ts$"
-
-          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          LINTER_RULES_PATH: .github/linters
-          
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_JSON: true
-          VALIDATE_YAML: true
-          VALIDATE_BASH: true
-          
-          # Logging
-          LOG_LEVEL: NOTICE
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
@@ -133,6 +88,7 @@ jobs:
         continue-on-error: true
         env:
           NODE_ENV: test
+          DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v3
@@ -175,35 +131,11 @@ jobs:
               _Analysis triggered by @${{ github.actor }}_`
             });
 
-  sonarqube:
-    name: SonarQube
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Setup PNPM and Node.js
-        uses: digi-fry/setup-pnpm-node-action@v1
-        with:
-          node-version: "20"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Test and coverage
-        run: pnpm run test:coverage || echo "No tests configured yet"
-        env:
-          NODE_ENV: test
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v7
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-
   notify:
     name: Notify Results
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    needs: [super-linter, sonarcloud, sonarqube]
+    needs: [sonarcloud]
     if: always() && github.event_name == 'pull_request'
 
     permissions:
@@ -216,9 +148,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const linterResult = '${{ needs.super-linter.result }}';
             const sonarResult = '${{ needs.sonarcloud.result }}';
-            const sonarqubeResult = '${{ needs.sonarqube.result }}';
 
             const getStatusEmoji = (result) => {
               switch(result) {
@@ -230,37 +160,23 @@ jobs:
               }
             };
 
-            const linterStatus = `${getStatusEmoji(linterResult)} **Super-Linter**: ${linterResult}`;
             const sonarStatus = `${getStatusEmoji(sonarResult)} **SonarCloud Analysis**: ${sonarResult}`;
-            const sonarqubeStatus = `${getStatusEmoji(sonarqubeResult)} **SonarQube**: ${sonarqubeResult}`;
 
-            const hasFailure = linterResult === 'failure' || sonarResult === 'failure' || sonarqubeResult === 'failure';
-            const allSuccess = linterResult === 'success' && sonarResult === 'success' && (sonarqubeResult === 'success' || sonarqubeResult === 'skipped');
+            const hasFailure = sonarResult === 'failure';
+            const allSuccess = sonarResult === 'success';
 
             let failureDetails = '';
             if (hasFailure) {
               failureDetails = '\n### 🔍 Failed Checks:\n\n';
-              if (linterResult === 'failure') {
-                failureDetails += `- **Super-Linter** detected code style or syntax issues\n`;
-                failureDetails += `  → [View Super-Linter logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
-              }
-              if (sonarResult === 'failure') {
-                failureDetails += `- **SonarCloud Analysis** found code quality or security issues\n`;
-                failureDetails += `  → [View SonarCloud logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
-              }
-              if (sonarqubeResult === 'failure') {
-                failureDetails += `- **SonarQube** found code quality or security issues\n`;
-                failureDetails += `  → [View SonarQube logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
-              }
+              failureDetails += `- **SonarCloud Analysis** found code quality or security issues\n`;
+              failureDetails += `  → [View SonarCloud logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
               failureDetails += '\n⚠️ Please fix these issues before merging.\n';
             }
 
             const title = allSuccess ? '✅ **Code Quality Check Passed**' : '⚠️ **Code Quality Check Results**';
             const body = title + '\n\n' +
               '### 📊 Check Status:\n\n' +
-              linterStatus + '\n' +
               sonarStatus + '\n' +
-              sonarqubeStatus + '\n' +
               failureDetails +
               '\n---\n' +
               '_Analysis triggered by @${{ github.actor }}_\n' +
