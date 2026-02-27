@@ -62,6 +62,9 @@ jobs:
     timeout-minutes: 5
     outputs:
       has-tests: ${{ steps.check.outputs.has-tests }}
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -70,27 +73,30 @@ jobs:
 
       - name: Check if PR contains test files
         id: check
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            # Get changed files in PR
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            
-            # Check if any test files are modified
-            TEST_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(test|spec)\.(js|jsx|ts|tsx)$|__tests__/|cypress/e2e/|test/|tests/')
-            
-            if [ -n "$TEST_FILES" ]; then
-              echo "has-tests=true" >> $GITHUB_OUTPUT
-              echo "Test files found:"
-              echo "$TEST_FILES"
-            else
-              echo "has-tests=false" >> $GITHUB_OUTPUT
-              echo "No test files found in PR"
-            fi
-          else
-            # For push events, always run tests
-            echo "has-tests=true" >> $GITHUB_OUTPUT
-            echo "Push event - running tests"
-          fi
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.eventName === 'pull_request') {
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+              });
+              const changedFiles = files.map(f => f.filename);
+              const testPattern = /\.(test|spec)\.(js|jsx|ts|tsx)$|__tests__\/|cypress\/e2e\/|test\/|tests\//;
+              const testFiles = changedFiles.filter(f => testPattern.test(f));
+              const hasTests = testFiles.length > 0;
+              core.setOutput('has-tests', hasTests.toString());
+              if (hasTests) {
+                console.log('Test files found:');
+                testFiles.forEach(f => console.log(f));
+              } else {
+                console.log('No test files found in PR');
+              }
+            } else {
+              core.setOutput('has-tests', 'true');
+              console.log('Push event - running tests');
+            }
 
   unit-tests:
     name: Unit Tests

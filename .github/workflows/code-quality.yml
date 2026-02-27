@@ -151,8 +151,8 @@ jobs:
               repo: context.repo.repo,
             });
 
-            const botComment = comments.find(comment => 
-              comment.user.type === 'Bot' && 
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
               comment.body.includes('SonarCloud')
             );
 
@@ -169,17 +169,41 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `🔍 **SonarCloud Analysis Complete**
-              
+
               The code quality analysis has been completed.
-              
+
               _Analysis triggered by @${{ github.actor }}_`
             });
+
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Setup PNPM and Node.js
+        uses: digi-fry/setup-pnpm-node-action@v1
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Test and coverage
+        run: pnpm run test:coverage || echo "No tests configured yet"
+        env:
+          NODE_ENV: test
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
   notify:
     name: Notify Results
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    needs: [super-linter, sonarcloud]
+    needs: [super-linter, sonarcloud, sonarqube]
     if: always() && github.event_name == 'pull_request'
 
     permissions:
@@ -194,6 +218,7 @@ jobs:
           script: |
             const linterResult = '${{ needs.super-linter.result }}';
             const sonarResult = '${{ needs.sonarcloud.result }}';
+            const sonarqubeResult = '${{ needs.sonarqube.result }}';
 
             const getStatusEmoji = (result) => {
               switch(result) {
@@ -207,9 +232,10 @@ jobs:
 
             const linterStatus = `${getStatusEmoji(linterResult)} **Super-Linter**: ${linterResult}`;
             const sonarStatus = `${getStatusEmoji(sonarResult)} **SonarCloud Analysis**: ${sonarResult}`;
+            const sonarqubeStatus = `${getStatusEmoji(sonarqubeResult)} **SonarQube**: ${sonarqubeResult}`;
 
-            const hasFailure = linterResult === 'failure' || sonarResult === 'failure';
-            const allSuccess = linterResult === 'success' && sonarResult === 'success';
+            const hasFailure = linterResult === 'failure' || sonarResult === 'failure' || sonarqubeResult === 'failure';
+            const allSuccess = linterResult === 'success' && sonarResult === 'success' && (sonarqubeResult === 'success' || sonarqubeResult === 'skipped');
 
             let failureDetails = '';
             if (hasFailure) {
@@ -222,6 +248,10 @@ jobs:
                 failureDetails += `- **SonarCloud Analysis** found code quality or security issues\n`;
                 failureDetails += `  → [View SonarCloud logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
               }
+              if (sonarqubeResult === 'failure') {
+                failureDetails += `- **SonarQube** found code quality or security issues\n`;
+                failureDetails += `  → [View SonarQube logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
+              }
               failureDetails += '\n⚠️ Please fix these issues before merging.\n';
             }
 
@@ -230,6 +260,7 @@ jobs:
               '### 📊 Check Status:\n\n' +
               linterStatus + '\n' +
               sonarStatus + '\n' +
+              sonarqubeStatus + '\n' +
               failureDetails +
               '\n---\n' +
               '_Analysis triggered by @${{ github.actor }}_\n' +
