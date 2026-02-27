@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Card,
@@ -43,7 +43,7 @@ type Workshop = WorkshopBasic & {
   status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 };
 
-export default function WorkshopEditorPage() {
+function WorkshopEditorContent() {
   const searchParams = useSearchParams();
   const [showForm, setShowForm] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
@@ -458,5 +458,26 @@ export default function WorkshopEditorPage() {
         }}
       />
     </div>
+  );
+}
+
+export default function WorkshopEditorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background">
+          <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12 flex items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+              <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-[#26547c]" />
+              <p className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                Chargement...
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <WorkshopEditorContent />
+    </Suspense>
   );
 }
