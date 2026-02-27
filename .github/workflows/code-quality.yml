@@ -178,6 +178,7 @@ jobs:
   sonarqube:
     name: SonarQube
     runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -195,6 +196,7 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v7
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
   notify:
@@ -233,7 +235,7 @@ jobs:
             const sonarqubeStatus = `${getStatusEmoji(sonarqubeResult)} **SonarQube**: ${sonarqubeResult}`;
 
             const hasFailure = linterResult === 'failure' || sonarResult === 'failure' || sonarqubeResult === 'failure';
-            const allSuccess = linterResult === 'success' && sonarResult === 'success' && sonarqubeResult === 'success';
+            const allSuccess = linterResult === 'success' && sonarResult === 'success' && (sonarqubeResult === 'success' || sonarqubeResult === 'skipped');
 
             let failureDetails = '';
             if (hasFailure) {
