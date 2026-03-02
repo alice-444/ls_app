@@ -53,25 +53,20 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   account: 'account',
   app_user: 'app_user',
+  credit_transaction: 'credit_transaction',
+  support_request: 'support_request',
   audit_log: 'audit_log',
-  deletion_job: 'deletion_job',
-  mentor_feedback: 'mentor_feedback',
-  session: 'session',
-  user: 'user',
-  verification: 'verification',
+  user_report: 'user_report',
+  user_block: 'user_block',
+  user_connection: 'user_connection',
   workshop: 'workshop',
   workshop_request: 'workshop_request',
-  workshop_cashback_queue: 'workshop_cashback_queue',
-  user_connection: 'user_connection',
+  mentor_feedback: 'mentor_feedback',
   conversation: 'conversation',
-  conversation_pin: 'conversation_pin',
   message: 'message',
   message_reaction: 'message_reaction',
   notification: 'notification',
-  user_block: 'user_block',
-  user_report: 'user_report',
-  support_request: 'support_request',
-  credit_transaction: 'credit_transaction'
+  magic_link_token: 'magic_link_token'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -93,17 +88,20 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const AccountScalarFieldEnum = {
   id: 'id',
   accountId: 'accountId',
-  providerId: 'providerId',
-  userId: 'userId',
-  accessToken: 'accessToken',
-  refreshToken: 'refreshToken',
-  idToken: 'idToken',
-  accessTokenExpiresAt: 'accessTokenExpiresAt',
-  refreshTokenExpiresAt: 'refreshTokenExpiresAt',
-  scope: 'scope',
+  email: 'email',
+  isEmailVerified: 'isEmailVerified',
   password: 'password',
+  failedLoginAttempts: 'failedLoginAttempts',
+  isLocked: 'isLocked',
+  lockoutTime: 'lockoutTime',
+  lastLogin: 'lastLogin',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  emailChangeToken: 'emailChangeToken',
+  emailChangeNewEmail: 'emailChangeNewEmail',
+  emailChangeTimestamp: 'emailChangeTimestamp',
+  passwordResetToken: 'passwordResetToken',
+  passwordResetTimestamp: 'passwordResetTimestamp'
 } as const
 
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
@@ -112,57 +110,142 @@ export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeo
 export const App_userScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  name: 'name',
+  email: 'email',
+  onboardingStep: 'onboardingStep',
   role: 'role',
   status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt',
-  deletionRequestedAt: 'deletionRequestedAt',
   deletionReason: 'deletionReason',
+  photoUrl: 'photoUrl',
+  displayName: 'displayName',
   bio: 'bio',
   domain: 'domain',
-  photoUrl: 'photoUrl',
   areasOfExpertise: 'areasOfExpertise',
-  calendlyLink: 'calendlyLink',
-  experience: 'experience',
-  isPublished: 'isPublished',
   mentorshipTopics: 'mentorshipTopics',
-  publishedAt: 'publishedAt',
   qualifications: 'qualifications',
+  experience: 'experience',
   socialMediaLinks: 'socialMediaLinks',
-  displayName: 'displayName',
-  iceBreakerTags: 'iceBreakerTags',
-  studyDomain: 'studyDomain',
-  studyProgram: 'studyProgram',
-  lastSeen: 'lastSeen',
-  isOnline: 'isOnline',
-  creditBalance: 'creditBalance'
+  calendlyLink: 'calendlyLink',
+  isPublished: 'isPublished',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type App_userScalarFieldEnum = (typeof App_userScalarFieldEnum)[keyof typeof App_userScalarFieldEnum]
 
 
+export const Credit_transactionScalarFieldEnum = {
+  id: 'id',
+  appUserId: 'appUserId',
+  amount: 'amount',
+  description: 'description',
+  type: 'type',
+  createdAt: 'createdAt'
+} as const
+
+export type Credit_transactionScalarFieldEnum = (typeof Credit_transactionScalarFieldEnum)[keyof typeof Credit_transactionScalarFieldEnum]
+
+
+export const Support_requestScalarFieldEnum = {
+  id: 'id',
+  appUserId: 'appUserId',
+  subject: 'subject',
+  message: 'message',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type Support_requestScalarFieldEnum = (typeof Support_requestScalarFieldEnum)[keyof typeof Support_requestScalarFieldEnum]
+
+
 export const Audit_logScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  type: 'type',
-  meta: 'meta',
+  action: 'action',
+  adminId: 'adminId',
+  targetId: 'targetId',
+  details: 'details',
   createdAt: 'createdAt'
 } as const
 
 export type Audit_logScalarFieldEnum = (typeof Audit_logScalarFieldEnum)[keyof typeof Audit_logScalarFieldEnum]
 
 
-export const Deletion_jobScalarFieldEnum = {
+export const User_reportScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  runAt: 'runAt',
+  reporterUserId: 'reporterUserId',
+  reportedUserId: 'reportedUserId',
+  reason: 'reason',
+  details: 'details',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type Deletion_jobScalarFieldEnum = (typeof Deletion_jobScalarFieldEnum)[keyof typeof Deletion_jobScalarFieldEnum]
+export type User_reportScalarFieldEnum = (typeof User_reportScalarFieldEnum)[keyof typeof User_reportScalarFieldEnum]
+
+
+export const User_blockScalarFieldEnum = {
+  id: 'id',
+  blockerId: 'blockerId',
+  blockedId: 'blockedId',
+  createdAt: 'createdAt'
+} as const
+
+export type User_blockScalarFieldEnum = (typeof User_blockScalarFieldEnum)[keyof typeof User_blockScalarFieldEnum]
+
+
+export const User_connectionScalarFieldEnum = {
+  id: 'id',
+  requesterId: 'requesterId',
+  receiverId: 'receiverId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type User_connectionScalarFieldEnum = (typeof User_connectionScalarFieldEnum)[keyof typeof User_connectionScalarFieldEnum]
+
+
+export const WorkshopScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  title: 'title',
+  description: 'description',
+  domain: 'domain',
+  isPublished: 'isPublished',
+  maxParticipants: 'maxParticipants',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  date: 'date',
+  time: 'time',
+  duration: 'duration',
+  location: 'location',
+  isVirtual: 'isVirtual',
+  apprenticeId: 'apprenticeId',
+  apprenticeAttendanceStatus: 'apprenticeAttendanceStatus'
+} as const
+
+export type WorkshopScalarFieldEnum = (typeof WorkshopScalarFieldEnum)[keyof typeof WorkshopScalarFieldEnum]
+
+
+export const Workshop_requestScalarFieldEnum = {
+  id: 'id',
+  apprenticeId: 'apprenticeId',
+  mentorId: 'mentorId',
+  title: 'title',
+  description: 'description',
+  message: 'message',
+  preferredDate: 'preferredDate',
+  preferredTime: 'preferredTime',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type Workshop_requestScalarFieldEnum = (typeof Workshop_requestScalarFieldEnum)[keyof typeof Workshop_requestScalarFieldEnum]
 
 
 export const Mentor_feedbackScalarFieldEnum = {
@@ -184,146 +267,15 @@ export const Mentor_feedbackScalarFieldEnum = {
 export type Mentor_feedbackScalarFieldEnum = (typeof Mentor_feedbackScalarFieldEnum)[keyof typeof Mentor_feedbackScalarFieldEnum]
 
 
-export const SessionScalarFieldEnum = {
-  id: 'id',
-  expiresAt: 'expiresAt',
-  token: 'token',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  ipAddress: 'ipAddress',
-  userAgent: 'userAgent',
-  userId: 'userId'
-} as const
-
-export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
-
-
-export const UserScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  username: 'username',
-  email: 'email',
-  emailVerified: 'emailVerified',
-  image: 'image',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  isDisabled: 'isDisabled',
-  deletedAt: 'deletedAt',
-  displayUsername: 'displayUsername',
-  title: 'title'
-} as const
-
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
-
-
-export const VerificationScalarFieldEnum = {
-  id: 'id',
-  identifier: 'identifier',
-  value: 'value',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
-
-
-export const WorkshopScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  date: 'date',
-  time: 'time',
-  location: 'location',
-  isVirtual: 'isVirtual',
-  maxParticipants: 'maxParticipants',
-  materialsNeeded: 'materialsNeeded',
-  status: 'status',
-  creatorId: 'creatorId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  publishedAt: 'publishedAt',
-  duration: 'duration',
-  apprenticeId: 'apprenticeId',
-  requestId: 'requestId',
-  topic: 'topic',
-  dailyRoomId: 'dailyRoomId',
-  dailyRoomLastActivityAt: 'dailyRoomLastActivityAt',
-  apprenticeAttendanceStatus: 'apprenticeAttendanceStatus',
-  creditCost: 'creditCost'
-} as const
-
-export type WorkshopScalarFieldEnum = (typeof WorkshopScalarFieldEnum)[keyof typeof WorkshopScalarFieldEnum]
-
-
-export const Workshop_requestScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  message: 'message',
-  preferredDate: 'preferredDate',
-  preferredTime: 'preferredTime',
-  status: 'status',
-  apprenticeId: 'apprenticeId',
-  mentorId: 'mentorId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  workshopId: 'workshopId'
-} as const
-
-export type Workshop_requestScalarFieldEnum = (typeof Workshop_requestScalarFieldEnum)[keyof typeof Workshop_requestScalarFieldEnum]
-
-
-export const Workshop_cashback_queueScalarFieldEnum = {
-  id: 'id',
-  workshopId: 'workshopId',
-  participantUserId: 'participantUserId',
-  cashbackAmount: 'cashbackAmount',
-  workshopEndTime: 'workshopEndTime',
-  status: 'status',
-  processedAt: 'processedAt',
-  retryCount: 'retryCount',
-  errorMessage: 'errorMessage',
-  lastRetryAt: 'lastRetryAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type Workshop_cashback_queueScalarFieldEnum = (typeof Workshop_cashback_queueScalarFieldEnum)[keyof typeof Workshop_cashback_queueScalarFieldEnum]
-
-
-export const User_connectionScalarFieldEnum = {
-  id: 'id',
-  requesterId: 'requesterId',
-  receiverId: 'receiverId',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type User_connectionScalarFieldEnum = (typeof User_connectionScalarFieldEnum)[keyof typeof User_connectionScalarFieldEnum]
-
-
 export const ConversationScalarFieldEnum = {
   id: 'id',
   participant1Id: 'participant1Id',
   participant2Id: 'participant2Id',
-  workshopId: 'workshopId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
-
-
-export const Conversation_pinScalarFieldEnum = {
-  id: 'id',
-  conversationId: 'conversationId',
-  appUserId: 'appUserId',
-  createdAt: 'createdAt'
-} as const
-
-export type Conversation_pinScalarFieldEnum = (typeof Conversation_pinScalarFieldEnum)[keyof typeof Conversation_pinScalarFieldEnum]
 
 
 export const MessageScalarFieldEnum = {
@@ -332,11 +284,9 @@ export const MessageScalarFieldEnum = {
   senderId: 'senderId',
   content: 'content',
   isRead: 'isRead',
+  readAt: 'readAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  editCount: 'editCount',
-  replyToMessageId: 'replyToMessageId',
-  deletedAt: 'deletedAt'
+  updatedAt: 'updatedAt'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
@@ -356,71 +306,28 @@ export type Message_reactionScalarFieldEnum = (typeof Message_reactionScalarFiel
 export const NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  senderId: 'senderId',
   type: 'type',
   title: 'title',
   message: 'message',
+  actionUrl: 'actionUrl',
   isRead: 'isRead',
   createdAt: 'createdAt',
-  actionUrl: 'actionUrl'
+  updatedAt: 'updatedAt'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
-export const User_blockScalarFieldEnum = {
+export const Magic_link_tokenScalarFieldEnum = {
   id: 'id',
-  blockerId: 'blockerId',
-  blockedId: 'blockedId',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
   createdAt: 'createdAt'
 } as const
 
-export type User_blockScalarFieldEnum = (typeof User_blockScalarFieldEnum)[keyof typeof User_blockScalarFieldEnum]
-
-
-export const User_reportScalarFieldEnum = {
-  id: 'id',
-  reporterId: 'reporterId',
-  reportedId: 'reportedId',
-  reason: 'reason',
-  details: 'details',
-  messageId: 'messageId',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  reviewedAt: 'reviewedAt',
-  reviewedBy: 'reviewedBy',
-  adminNotes: 'adminNotes'
-} as const
-
-export type User_reportScalarFieldEnum = (typeof User_reportScalarFieldEnum)[keyof typeof User_reportScalarFieldEnum]
-
-
-export const Support_requestScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  email: 'email',
-  subject: 'subject',
-  description: 'description',
-  problemType: 'problemType',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  attachments: 'attachments'
-} as const
-
-export type Support_requestScalarFieldEnum = (typeof Support_requestScalarFieldEnum)[keyof typeof Support_requestScalarFieldEnum]
-
-
-export const Credit_transactionScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  amount: 'amount',
-  type: 'type',
-  description: 'description',
-  createdAt: 'createdAt'
-} as const
-
-export type Credit_transactionScalarFieldEnum = (typeof Credit_transactionScalarFieldEnum)[keyof typeof Credit_transactionScalarFieldEnum]
+export type Magic_link_tokenScalarFieldEnum = (typeof Magic_link_tokenScalarFieldEnum)[keyof typeof Magic_link_tokenScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -437,6 +344,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

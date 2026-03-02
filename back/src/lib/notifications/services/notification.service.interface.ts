@@ -35,4 +35,10 @@ export interface INotificationService {
     notificationId: string,
     userId: string
   ): Promise<Result<void>>;
+
+  notifyAdmin(
+    type: "NEW_REPORT" | "NEW_FEEDBACK_MODERATION" | "NEW_SUPPORT_REQUEST",
+    message: string,
+    actionUrl?: string
+  ): Promise<Result<void>>;
 }

@@ -26,50 +26,41 @@ export type AggregateSupport_request = {
 
 export type Support_requestMinAggregateOutputType = {
   id: string | null
-  userId: string | null
-  email: string | null
+  appUserId: string | null
   subject: string | null
-  description: string | null
-  problemType: string | null
-  status: $Enums.SupportRequestStatus | null
+  message: string | null
+  status: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type Support_requestMaxAggregateOutputType = {
   id: string | null
-  userId: string | null
-  email: string | null
+  appUserId: string | null
   subject: string | null
-  description: string | null
-  problemType: string | null
-  status: $Enums.SupportRequestStatus | null
+  message: string | null
+  status: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type Support_requestCountAggregateOutputType = {
   id: number
-  userId: number
-  email: number
+  appUserId: number
   subject: number
-  description: number
-  problemType: number
+  message: number
   status: number
   createdAt: number
   updatedAt: number
-  attachments: number
   _all: number
 }
 
 
 export type Support_requestMinAggregateInputType = {
   id?: true
-  userId?: true
-  email?: true
+  appUserId?: true
   subject?: true
-  description?: true
-  problemType?: true
+  message?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -77,11 +68,9 @@ export type Support_requestMinAggregateInputType = {
 
 export type Support_requestMaxAggregateInputType = {
   id?: true
-  userId?: true
-  email?: true
+  appUserId?: true
   subject?: true
-  description?: true
-  problemType?: true
+  message?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -89,15 +78,12 @@ export type Support_requestMaxAggregateInputType = {
 
 export type Support_requestCountAggregateInputType = {
   id?: true
-  userId?: true
-  email?: true
+  appUserId?: true
   subject?: true
-  description?: true
-  problemType?: true
+  message?: true
   status?: true
   createdAt?: true
   updatedAt?: true
-  attachments?: true
   _all?: true
 }
 
@@ -175,15 +161,12 @@ export type support_requestGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type Support_requestGroupByOutputType = {
   id: string
-  userId: string | null
-  email: string
+  appUserId: string
   subject: string
-  description: string
-  problemType: string
-  status: $Enums.SupportRequestStatus
+  message: string
+  status: string
   createdAt: Date
   updatedAt: Date
-  attachments: runtime.JsonValue | null
   _count: Support_requestCountAggregateOutputType | null
   _min: Support_requestMinAggregateOutputType | null
   _max: Support_requestMaxAggregateOutputType | null
@@ -209,28 +192,24 @@ export type support_requestWhereInput = {
   OR?: Prisma.support_requestWhereInput[]
   NOT?: Prisma.support_requestWhereInput | Prisma.support_requestWhereInput[]
   id?: Prisma.StringFilter<"support_request"> | string
-  userId?: Prisma.StringNullableFilter<"support_request"> | string | null
-  email?: Prisma.StringFilter<"support_request"> | string
+  appUserId?: Prisma.StringFilter<"support_request"> | string
   subject?: Prisma.StringFilter<"support_request"> | string
-  description?: Prisma.StringFilter<"support_request"> | string
-  problemType?: Prisma.StringFilter<"support_request"> | string
-  status?: Prisma.EnumSupportRequestStatusFilter<"support_request"> | $Enums.SupportRequestStatus
+  message?: Prisma.StringFilter<"support_request"> | string
+  status?: Prisma.StringFilter<"support_request"> | string
   createdAt?: Prisma.DateTimeFilter<"support_request"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"support_request"> | Date | string
-  attachments?: Prisma.JsonNullableFilter<"support_request">
+  app_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
 }
 
 export type support_requestOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  email?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   subject?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  problemType?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  attachments?: Prisma.SortOrderInput | Prisma.SortOrder
+  app_user?: Prisma.app_userOrderByWithRelationInput
 }
 
 export type support_requestWhereUniqueInput = Prisma.AtLeast<{
@@ -238,28 +217,23 @@ export type support_requestWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.support_requestWhereInput | Prisma.support_requestWhereInput[]
   OR?: Prisma.support_requestWhereInput[]
   NOT?: Prisma.support_requestWhereInput | Prisma.support_requestWhereInput[]
-  userId?: Prisma.StringNullableFilter<"support_request"> | string | null
-  email?: Prisma.StringFilter<"support_request"> | string
+  appUserId?: Prisma.StringFilter<"support_request"> | string
   subject?: Prisma.StringFilter<"support_request"> | string
-  description?: Prisma.StringFilter<"support_request"> | string
-  problemType?: Prisma.StringFilter<"support_request"> | string
-  status?: Prisma.EnumSupportRequestStatusFilter<"support_request"> | $Enums.SupportRequestStatus
+  message?: Prisma.StringFilter<"support_request"> | string
+  status?: Prisma.StringFilter<"support_request"> | string
   createdAt?: Prisma.DateTimeFilter<"support_request"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"support_request"> | Date | string
-  attachments?: Prisma.JsonNullableFilter<"support_request">
+  app_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
 }, "id">
 
 export type support_requestOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  email?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   subject?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  problemType?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  attachments?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.support_requestCountOrderByAggregateInput
   _max?: Prisma.support_requestMaxOrderByAggregateInput
   _min?: Prisma.support_requestMinOrderByAggregateInput
@@ -270,128 +244,108 @@ export type support_requestScalarWhereWithAggregatesInput = {
   OR?: Prisma.support_requestScalarWhereWithAggregatesInput[]
   NOT?: Prisma.support_requestScalarWhereWithAggregatesInput | Prisma.support_requestScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"support_request"> | string
-  userId?: Prisma.StringNullableWithAggregatesFilter<"support_request"> | string | null
-  email?: Prisma.StringWithAggregatesFilter<"support_request"> | string
+  appUserId?: Prisma.StringWithAggregatesFilter<"support_request"> | string
   subject?: Prisma.StringWithAggregatesFilter<"support_request"> | string
-  description?: Prisma.StringWithAggregatesFilter<"support_request"> | string
-  problemType?: Prisma.StringWithAggregatesFilter<"support_request"> | string
-  status?: Prisma.EnumSupportRequestStatusWithAggregatesFilter<"support_request"> | $Enums.SupportRequestStatus
+  message?: Prisma.StringWithAggregatesFilter<"support_request"> | string
+  status?: Prisma.StringWithAggregatesFilter<"support_request"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"support_request"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"support_request"> | Date | string
-  attachments?: Prisma.JsonNullableWithAggregatesFilter<"support_request">
 }
 
 export type support_requestCreateInput = {
-  id: string
-  userId?: string | null
-  email: string
+  id?: string
   subject: string
-  description: string
-  problemType: string
-  status?: $Enums.SupportRequestStatus
+  message: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  app_user: Prisma.app_userCreateNestedOneWithoutSupportRequestsInput
 }
 
 export type support_requestUncheckedCreateInput = {
-  id: string
-  userId?: string | null
-  email: string
+  id?: string
+  appUserId: string
   subject: string
-  description: string
-  problemType: string
-  status?: $Enums.SupportRequestStatus
+  message: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type support_requestUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  problemType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumSupportRequestStatusFieldUpdateOperationsInput | $Enums.SupportRequestStatus
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  app_user?: Prisma.app_userUpdateOneRequiredWithoutSupportRequestsNestedInput
 }
 
 export type support_requestUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  appUserId?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  problemType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumSupportRequestStatusFieldUpdateOperationsInput | $Enums.SupportRequestStatus
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type support_requestCreateManyInput = {
-  id: string
-  userId?: string | null
-  email: string
+  id?: string
+  appUserId: string
   subject: string
-  description: string
-  problemType: string
-  status?: $Enums.SupportRequestStatus
+  message: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type support_requestUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  problemType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumSupportRequestStatusFieldUpdateOperationsInput | $Enums.SupportRequestStatus
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type support_requestUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  appUserId?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  problemType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumSupportRequestStatusFieldUpdateOperationsInput | $Enums.SupportRequestStatus
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
+export type Support_requestListRelationFilter = {
+  every?: Prisma.support_requestWhereInput
+  some?: Prisma.support_requestWhereInput
+  none?: Prisma.support_requestWhereInput
+}
+
+export type support_requestOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type support_requestCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   subject?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  problemType?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  attachments?: Prisma.SortOrder
 }
 
 export type support_requestMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   subject?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  problemType?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -399,90 +353,218 @@ export type support_requestMaxOrderByAggregateInput = {
 
 export type support_requestMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   subject?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  problemType?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type EnumSupportRequestStatusFieldUpdateOperationsInput = {
-  set?: $Enums.SupportRequestStatus
+export type support_requestCreateNestedManyWithoutApp_userInput = {
+  create?: Prisma.XOR<Prisma.support_requestCreateWithoutApp_userInput, Prisma.support_requestUncheckedCreateWithoutApp_userInput> | Prisma.support_requestCreateWithoutApp_userInput[] | Prisma.support_requestUncheckedCreateWithoutApp_userInput[]
+  connectOrCreate?: Prisma.support_requestCreateOrConnectWithoutApp_userInput | Prisma.support_requestCreateOrConnectWithoutApp_userInput[]
+  createMany?: Prisma.support_requestCreateManyApp_userInputEnvelope
+  connect?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+}
+
+export type support_requestUncheckedCreateNestedManyWithoutApp_userInput = {
+  create?: Prisma.XOR<Prisma.support_requestCreateWithoutApp_userInput, Prisma.support_requestUncheckedCreateWithoutApp_userInput> | Prisma.support_requestCreateWithoutApp_userInput[] | Prisma.support_requestUncheckedCreateWithoutApp_userInput[]
+  connectOrCreate?: Prisma.support_requestCreateOrConnectWithoutApp_userInput | Prisma.support_requestCreateOrConnectWithoutApp_userInput[]
+  createMany?: Prisma.support_requestCreateManyApp_userInputEnvelope
+  connect?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+}
+
+export type support_requestUpdateManyWithoutApp_userNestedInput = {
+  create?: Prisma.XOR<Prisma.support_requestCreateWithoutApp_userInput, Prisma.support_requestUncheckedCreateWithoutApp_userInput> | Prisma.support_requestCreateWithoutApp_userInput[] | Prisma.support_requestUncheckedCreateWithoutApp_userInput[]
+  connectOrCreate?: Prisma.support_requestCreateOrConnectWithoutApp_userInput | Prisma.support_requestCreateOrConnectWithoutApp_userInput[]
+  upsert?: Prisma.support_requestUpsertWithWhereUniqueWithoutApp_userInput | Prisma.support_requestUpsertWithWhereUniqueWithoutApp_userInput[]
+  createMany?: Prisma.support_requestCreateManyApp_userInputEnvelope
+  set?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  disconnect?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  delete?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  connect?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  update?: Prisma.support_requestUpdateWithWhereUniqueWithoutApp_userInput | Prisma.support_requestUpdateWithWhereUniqueWithoutApp_userInput[]
+  updateMany?: Prisma.support_requestUpdateManyWithWhereWithoutApp_userInput | Prisma.support_requestUpdateManyWithWhereWithoutApp_userInput[]
+  deleteMany?: Prisma.support_requestScalarWhereInput | Prisma.support_requestScalarWhereInput[]
+}
+
+export type support_requestUncheckedUpdateManyWithoutApp_userNestedInput = {
+  create?: Prisma.XOR<Prisma.support_requestCreateWithoutApp_userInput, Prisma.support_requestUncheckedCreateWithoutApp_userInput> | Prisma.support_requestCreateWithoutApp_userInput[] | Prisma.support_requestUncheckedCreateWithoutApp_userInput[]
+  connectOrCreate?: Prisma.support_requestCreateOrConnectWithoutApp_userInput | Prisma.support_requestCreateOrConnectWithoutApp_userInput[]
+  upsert?: Prisma.support_requestUpsertWithWhereUniqueWithoutApp_userInput | Prisma.support_requestUpsertWithWhereUniqueWithoutApp_userInput[]
+  createMany?: Prisma.support_requestCreateManyApp_userInputEnvelope
+  set?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  disconnect?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  delete?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  connect?: Prisma.support_requestWhereUniqueInput | Prisma.support_requestWhereUniqueInput[]
+  update?: Prisma.support_requestUpdateWithWhereUniqueWithoutApp_userInput | Prisma.support_requestUpdateWithWhereUniqueWithoutApp_userInput[]
+  updateMany?: Prisma.support_requestUpdateManyWithWhereWithoutApp_userInput | Prisma.support_requestUpdateManyWithWhereWithoutApp_userInput[]
+  deleteMany?: Prisma.support_requestScalarWhereInput | Prisma.support_requestScalarWhereInput[]
+}
+
+export type support_requestCreateWithoutApp_userInput = {
+  id?: string
+  subject: string
+  message: string
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type support_requestUncheckedCreateWithoutApp_userInput = {
+  id?: string
+  subject: string
+  message: string
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type support_requestCreateOrConnectWithoutApp_userInput = {
+  where: Prisma.support_requestWhereUniqueInput
+  create: Prisma.XOR<Prisma.support_requestCreateWithoutApp_userInput, Prisma.support_requestUncheckedCreateWithoutApp_userInput>
+}
+
+export type support_requestCreateManyApp_userInputEnvelope = {
+  data: Prisma.support_requestCreateManyApp_userInput | Prisma.support_requestCreateManyApp_userInput[]
+  skipDuplicates?: boolean
+}
+
+export type support_requestUpsertWithWhereUniqueWithoutApp_userInput = {
+  where: Prisma.support_requestWhereUniqueInput
+  update: Prisma.XOR<Prisma.support_requestUpdateWithoutApp_userInput, Prisma.support_requestUncheckedUpdateWithoutApp_userInput>
+  create: Prisma.XOR<Prisma.support_requestCreateWithoutApp_userInput, Prisma.support_requestUncheckedCreateWithoutApp_userInput>
+}
+
+export type support_requestUpdateWithWhereUniqueWithoutApp_userInput = {
+  where: Prisma.support_requestWhereUniqueInput
+  data: Prisma.XOR<Prisma.support_requestUpdateWithoutApp_userInput, Prisma.support_requestUncheckedUpdateWithoutApp_userInput>
+}
+
+export type support_requestUpdateManyWithWhereWithoutApp_userInput = {
+  where: Prisma.support_requestScalarWhereInput
+  data: Prisma.XOR<Prisma.support_requestUpdateManyMutationInput, Prisma.support_requestUncheckedUpdateManyWithoutApp_userInput>
+}
+
+export type support_requestScalarWhereInput = {
+  AND?: Prisma.support_requestScalarWhereInput | Prisma.support_requestScalarWhereInput[]
+  OR?: Prisma.support_requestScalarWhereInput[]
+  NOT?: Prisma.support_requestScalarWhereInput | Prisma.support_requestScalarWhereInput[]
+  id?: Prisma.StringFilter<"support_request"> | string
+  appUserId?: Prisma.StringFilter<"support_request"> | string
+  subject?: Prisma.StringFilter<"support_request"> | string
+  message?: Prisma.StringFilter<"support_request"> | string
+  status?: Prisma.StringFilter<"support_request"> | string
+  createdAt?: Prisma.DateTimeFilter<"support_request"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"support_request"> | Date | string
+}
+
+export type support_requestCreateManyApp_userInput = {
+  id?: string
+  subject: string
+  message: string
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type support_requestUpdateWithoutApp_userInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type support_requestUncheckedUpdateWithoutApp_userInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type support_requestUncheckedUpdateManyWithoutApp_userInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type support_requestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
-  email?: boolean
+  appUserId?: boolean
   subject?: boolean
-  description?: boolean
-  problemType?: boolean
+  message?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  attachments?: boolean
+  app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["support_request"]>
 
 export type support_requestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
-  email?: boolean
+  appUserId?: boolean
   subject?: boolean
-  description?: boolean
-  problemType?: boolean
+  message?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  attachments?: boolean
+  app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["support_request"]>
 
 export type support_requestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
-  email?: boolean
+  appUserId?: boolean
   subject?: boolean
-  description?: boolean
-  problemType?: boolean
+  message?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  attachments?: boolean
+  app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["support_request"]>
 
 export type support_requestSelectScalar = {
   id?: boolean
-  userId?: boolean
-  email?: boolean
+  appUserId?: boolean
   subject?: boolean
-  description?: boolean
-  problemType?: boolean
+  message?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  attachments?: boolean
 }
 
-export type support_requestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "email" | "subject" | "description" | "problemType" | "status" | "createdAt" | "updatedAt" | "attachments", ExtArgs["result"]["support_request"]>
+export type support_requestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appUserId" | "subject" | "message" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["support_request"]>
+export type support_requestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+}
+export type support_requestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+}
+export type support_requestIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+}
 
 export type $support_requestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "support_request"
-  objects: {}
+  objects: {
+    app_user: Prisma.$app_userPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    userId: string | null
-    email: string
+    appUserId: string
     subject: string
-    description: string
-    problemType: string
-    status: $Enums.SupportRequestStatus
+    message: string
+    status: string
     createdAt: Date
     updatedAt: Date
-    attachments: runtime.JsonValue | null
   }, ExtArgs["result"]["support_request"]>
   composites: {}
 }
@@ -877,6 +959,7 @@ readonly fields: support_requestFieldRefs;
  */
 export interface Prisma__support_requestClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  app_user<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -907,15 +990,12 @@ export interface Prisma__support_requestClient<T, Null = never, ExtArgs extends 
  */
 export interface support_requestFieldRefs {
   readonly id: Prisma.FieldRef<"support_request", 'String'>
-  readonly userId: Prisma.FieldRef<"support_request", 'String'>
-  readonly email: Prisma.FieldRef<"support_request", 'String'>
+  readonly appUserId: Prisma.FieldRef<"support_request", 'String'>
   readonly subject: Prisma.FieldRef<"support_request", 'String'>
-  readonly description: Prisma.FieldRef<"support_request", 'String'>
-  readonly problemType: Prisma.FieldRef<"support_request", 'String'>
-  readonly status: Prisma.FieldRef<"support_request", 'SupportRequestStatus'>
+  readonly message: Prisma.FieldRef<"support_request", 'String'>
+  readonly status: Prisma.FieldRef<"support_request", 'String'>
   readonly createdAt: Prisma.FieldRef<"support_request", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"support_request", 'DateTime'>
-  readonly attachments: Prisma.FieldRef<"support_request", 'Json'>
 }
     
 
@@ -932,6 +1012,10 @@ export type support_requestFindUniqueArgs<ExtArgs extends runtime.Types.Extensio
    * Omit specific fields from the support_request
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
   /**
    * Filter, which support_request to fetch.
    */
@@ -951,6 +1035,10 @@ export type support_requestFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.E
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
+  /**
    * Filter, which support_request to fetch.
    */
   where: Prisma.support_requestWhereUniqueInput
@@ -968,6 +1056,10 @@ export type support_requestFindFirstArgs<ExtArgs extends runtime.Types.Extension
    * Omit specific fields from the support_request
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
   /**
    * Filter, which support_request to fetch.
    */
@@ -1017,6 +1109,10 @@ export type support_requestFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
+  /**
    * Filter, which support_request to fetch.
    */
   where?: Prisma.support_requestWhereInput
@@ -1065,6 +1161,10 @@ export type support_requestFindManyArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
+  /**
    * Filter, which support_requests to fetch.
    */
   where?: Prisma.support_requestWhereInput
@@ -1108,6 +1208,10 @@ export type support_requestCreateArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
+  /**
    * The data needed to create a support_request.
    */
   data: Prisma.XOR<Prisma.support_requestCreateInput, Prisma.support_requestUncheckedCreateInput>
@@ -1141,6 +1245,10 @@ export type support_requestCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    */
   data: Prisma.support_requestCreateManyInput | Prisma.support_requestCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1155,6 +1263,10 @@ export type support_requestUpdateArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the support_request
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
   /**
    * The data needed to update a support_request.
    */
@@ -1207,6 +1319,10 @@ export type support_requestUpdateManyAndReturnArgs<ExtArgs extends runtime.Types
    * Limit how many support_requests to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1221,6 +1337,10 @@ export type support_requestUpsertArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the support_request
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
   /**
    * The filter to search for the support_request to update in case it exists.
    */
@@ -1247,6 +1367,10 @@ export type support_requestDeleteArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the support_request
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
   /**
    * Filter which support_request to delete.
    */
@@ -1279,4 +1403,8 @@ export type support_requestDefaultArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the support_request
    */
   omit?: Prisma.support_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
 }

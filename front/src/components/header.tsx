@@ -9,6 +9,8 @@ import { NotificationBell } from "./notification-bell";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 
 const REFETCH_INTERVALS = {
   CREDITS: 60000, // 60 seconds
@@ -19,16 +21,22 @@ export default function Header() {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
 
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
   const shouldHideThemeToggle = pathname === "/login";
 
   const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
-    enabled: !!session,
+    enabled: !!session && userRole !== "ADMIN",
     refetchInterval: REFETCH_INTERVALS.CREDITS,
     trpc: {},
   });
 
   const renderCreditsSection = () => {
-    if (!session || creditBalance === undefined) return null;
+    if (!session || creditBalance === undefined || userRole === "ADMIN") return null;
 
     return (
       <div className="flex items-center gap-2 md:gap-4">

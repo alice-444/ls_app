@@ -221,14 +221,14 @@ export type user_blockScalarWhereWithAggregatesInput = {
 }
 
 export type user_blockCreateInput = {
-  id: string
+  id?: string
   createdAt?: Date | string
-  blocker: Prisma.app_userCreateNestedOneWithoutUser_block_blockerInput
-  blocked: Prisma.app_userCreateNestedOneWithoutUser_block_blockedInput
+  blocker: Prisma.app_userCreateNestedOneWithoutBlocked_byInput
+  blocked: Prisma.app_userCreateNestedOneWithoutBlockingInput
 }
 
 export type user_blockUncheckedCreateInput = {
-  id: string
+  id?: string
   blockerId: string
   blockedId: string
   createdAt?: Date | string
@@ -237,8 +237,8 @@ export type user_blockUncheckedCreateInput = {
 export type user_blockUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  blocker?: Prisma.app_userUpdateOneRequiredWithoutUser_block_blockerNestedInput
-  blocked?: Prisma.app_userUpdateOneRequiredWithoutUser_block_blockedNestedInput
+  blocker?: Prisma.app_userUpdateOneRequiredWithoutBlocked_byNestedInput
+  blocked?: Prisma.app_userUpdateOneRequiredWithoutBlockingNestedInput
 }
 
 export type user_blockUncheckedUpdateInput = {
@@ -249,7 +249,7 @@ export type user_blockUncheckedUpdateInput = {
 }
 
 export type user_blockCreateManyInput = {
-  id: string
+  id?: string
   blockerId: string
   blockedId: string
   createdAt?: Date | string
@@ -388,13 +388,13 @@ export type user_blockUncheckedUpdateManyWithoutBlockedNestedInput = {
 }
 
 export type user_blockCreateWithoutBlockerInput = {
-  id: string
+  id?: string
   createdAt?: Date | string
-  blocked: Prisma.app_userCreateNestedOneWithoutUser_block_blockedInput
+  blocked: Prisma.app_userCreateNestedOneWithoutBlockingInput
 }
 
 export type user_blockUncheckedCreateWithoutBlockerInput = {
-  id: string
+  id?: string
   blockedId: string
   createdAt?: Date | string
 }
@@ -410,13 +410,13 @@ export type user_blockCreateManyBlockerInputEnvelope = {
 }
 
 export type user_blockCreateWithoutBlockedInput = {
-  id: string
+  id?: string
   createdAt?: Date | string
-  blocker: Prisma.app_userCreateNestedOneWithoutUser_block_blockerInput
+  blocker: Prisma.app_userCreateNestedOneWithoutBlocked_byInput
 }
 
 export type user_blockUncheckedCreateWithoutBlockedInput = {
-  id: string
+  id?: string
   blockerId: string
   createdAt?: Date | string
 }
@@ -474,13 +474,13 @@ export type user_blockUpdateManyWithWhereWithoutBlockedInput = {
 }
 
 export type user_blockCreateManyBlockerInput = {
-  id: string
+  id?: string
   blockedId: string
   createdAt?: Date | string
 }
 
 export type user_blockCreateManyBlockedInput = {
-  id: string
+  id?: string
   blockerId: string
   createdAt?: Date | string
 }
@@ -488,7 +488,7 @@ export type user_blockCreateManyBlockedInput = {
 export type user_blockUpdateWithoutBlockerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  blocked?: Prisma.app_userUpdateOneRequiredWithoutUser_block_blockedNestedInput
+  blocked?: Prisma.app_userUpdateOneRequiredWithoutBlockingNestedInput
 }
 
 export type user_blockUncheckedUpdateWithoutBlockerInput = {
@@ -506,7 +506,7 @@ export type user_blockUncheckedUpdateManyWithoutBlockerInput = {
 export type user_blockUpdateWithoutBlockedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  blocker?: Prisma.app_userUpdateOneRequiredWithoutUser_block_blockerNestedInput
+  blocker?: Prisma.app_userUpdateOneRequiredWithoutBlocked_byNestedInput
 }
 
 export type user_blockUncheckedUpdateWithoutBlockedInput = {

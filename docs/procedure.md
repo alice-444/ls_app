@@ -26,6 +26,7 @@ Voir [README principal](../README.md) pour le détail des variables.
 ## Base de données
 
 - **Dev (schéma à jour)** : `pnpm db:push` — applique le schéma Prisma sans créer de migration.
+- **Changements récents** : modèle `user` remplacé par `account` + `app_user` (Better Auth) ; suppression de `session`, `conversation_pin`, `deletion_job`, `verification`, `workshop_cashback_queue` ; ajout de `magic_link_token` ; `audit_log` avec adminId/action/targetId/details.
 - **Prod / migrations** : `pnpm db:migrate` — crée ou applique les migrations.
 - **Régénérer le client Prisma** : `pnpm db:generate` (utile après modification du schéma).
 - **Explorer les données** : `pnpm db:studio` — ouvre Prisma Studio.
@@ -40,7 +41,7 @@ Schéma et migrations : `back/prisma/schema/schema.prisma`.
 - **Front** : `NEXT_PUBLIC_SERVER_URL` doit pointer vers le back. Le client utilise `/api/auth` sur cette URL.
 - **CORS** : `CORS_ORIGIN` côté back doit inclure l’origine du front (ex. `http://localhost:3001`).
 
-Rôles (MENTOR / APPRENANT) : choisis à l’onboarding via `/api/onboarding/select-role` ; utilisés côté front pour la nav et l’affichage.
+Rôles (MENTOR / APPRENANT / ADMIN) : choisis à l’onboarding via `/api/onboarding/select-role` pour MENTOR et APPRENANT ; ADMIN est attribué manuellement. Utilisés côté front pour la nav et l’affichage (ADMIN → interface `/admin`).
 
 ---
 
@@ -52,8 +53,10 @@ Exemples de routes :
 - `generate-video-links` — génération des liens visio (Daily).
 - `cleanup-inactive-rooms` — nettoyage des salles inactives.
 - `process-cashback-queue` — traitement de la file cashback.
+- `retry-failed-cashbacks` — nouvelle tentative des cashbacks en échec.
 - `create-feedback-notifications` — créations de notifs feedback.
 - `purge-deletions` — purge des comptes en cours de suppression.
+- `check-cashback-integrity` — vérification de l’intégrité des cashbacks.
 
 ---
 

@@ -114,7 +114,7 @@ export function NotificationBell() {
           <div className="max-h-[400px] overflow-y-auto">
             {recentNotifications && recentNotifications.length > 0 ? (
               <div className="divide-y">
-                {recentNotifications.map((notification: { id: string; isRead: boolean; title?: string; message?: string; createdAt: string; type?: string; link?: string }) => (
+                {recentNotifications.map((notification: { id: string; isRead: boolean; title?: string; message?: string; createdAt: string; type?: string; actionUrl?: string | null }) => (
                   <button
                     key={notification.id}
                     type="button"

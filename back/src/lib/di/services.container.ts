@@ -39,6 +39,7 @@ import { PasswordValidationService } from "../users/services/account/security/pa
 import { HttpClient } from "../users/services/account/shared/http-client";
 import { DeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service";
 import { EmailTemplateService } from "../users/services/account/shared/email-template.service";
+import { MagicLinkService } from "../auth/services/magic-link/magic-link.service";
 import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
 import type { IWorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service.interface";
 import type { IMentorProfileService } from "../mentors/services/profile/mentor-profile.service.interface";
@@ -70,8 +71,17 @@ import type { IDeleteAccountEnhancedService } from "../users/services/account/de
 import type { DailyConfig } from "../daily/config/daily.config.interface";
 import { WorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service";
 import type { IWorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service.interface";
+import { AdminService } from "../admin/services/admin.service";
+import type { IAdminService } from "../admin/services/admin.service.interface";
+import { SupportRequestService } from "../support/services/support-request.service";
+import type { ISupportRequestService } from "../support/services/support-request.service.interface";
+import type { IMagicLinkService } from "../auth/services/magic-link/magic-link.service.interface";
 
 export class ServicesContainer {
+  private _adminService?: IAdminService;
+  private _supportRequestService?: ISupportRequestService;
+  private _magicLinkService?: IMagicLinkService;
+
   private _workshopService?: IWorkshopService;
   private _workshopFeedbackService?: IWorkshopFeedbackService;
   private _mentorProfileService?: IMentorProfileService;
@@ -110,6 +120,15 @@ export class ServicesContainer {
     private readonly prisma: PrismaClient,
     private readonly repositories: RepositoriesContainer
   ) {}
+  
+  get magicLinkService(): IMagicLinkService {
+    this._magicLinkService ??= new MagicLinkService(
+      this.prisma,
+      this.repositories.appUserRepository,
+      this.emailService
+    );
+    return this._magicLinkService;
+  }
 
   get workshopService(): IWorkshopService {
     this._workshopService ??= new WorkshopService(
@@ -128,6 +147,7 @@ export class ServicesContainer {
       this.repositories.workshopFeedbackRepository,
       this.repositories.workshopRepository,
       this.repositories.mentorRepository,
+      this.notificationService,
       this.creditService
     );
     return this._workshopFeedbackService;
@@ -247,7 +267,8 @@ export class ServicesContainer {
         this.repositories.notificationRepository,
         this.repositories.appUserRepository,
         eventEmitter,
-        this.userBlockService
+        this.userBlockService,
+        this.prisma
       );
     }
     return this._notificationService;
@@ -271,7 +292,8 @@ export class ServicesContainer {
     this._userReportService ??= new UserReportService(
       this.repositories.userReportRepository,
       this.repositories.appUserRepository,
-      this.auditLogService
+      this.auditLogService,
+      this.notificationService
     );
     return this._userReportService;
   }
@@ -406,5 +428,18 @@ export class ServicesContainer {
       new LocalFileStorageService()
     );
     return this._deleteAccountEnhancedService;
+  }
+
+  get adminService(): IAdminService {
+    this._adminService ??= new AdminService(this.prisma);
+    return this._adminService;
+  }
+
+  get supportRequestService(): ISupportRequestService {
+    this._supportRequestService ??= new SupportRequestService(
+      this.repositories.supportRequestRepository,
+      this.notificationService
+    );
+    return this._supportRequestService;
   }
 }

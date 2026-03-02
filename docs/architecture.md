@@ -83,15 +83,15 @@ Vue simplifiée (ASCII) :
 
 ## Fonctionnalités métier
 
-- **Authentification** : Better Auth (email/mot de passe, sessions, cookies). Routes custom pour sign-up, onboarding (rôle MENTOR / APPRENANT), profil prof (photo, bio, publication).
+- **Authentification** : Better Auth (email/mot de passe, magic link, sessions, cookies). Routes custom pour sign-up, onboarding (rôle MENTOR / APPRENANT), profil prof (photo, bio, publication). Magic link : envoi d’un lien par email via tRPC `auth.requestMagicLink`, callback `/api/auth/magic-link-callback`.
 - **Ateliers (workshops)** : création, édition, publication, inscriptions, demandes, feedbacks, cashback, analytics. Visio via Daily.co (liens générés côté back, webhooks).
 - **Mentors / Apprenants** : profils mentors, catalogue, demandes d’ateliers, historique, connexions (réseau).
-- **Messagerie** : conversations, messages, réactions, épingles. Temps réel via Socket.IO.
+- **Messagerie** : conversations, messages, réactions. Temps réel via Socket.IO.
 - **Notifications** : notifs in-app, lien avec Socket.IO et routers tRPC dédiés.
 - **Crédits / Paiement** : crédits, achats (Polar), transactions. Webhook Polar côté back.
 - **Modération** : blocage d’utilisateurs, signalements (user block, user report). Côté back : routers tRPC + éventuels crons.
 - **Support** : formulaire de demande de support, pièces jointes, envoi d’emails (Resend).
-- **Admin** : modération des feedbacks (page dédiée front, API back).
+- **Admin** : modération des feedbacks, signalements, support, onboarding, audit logs, notifications, paramètres (interface dédiée `/admin`, rôle ADMIN).
 - **Métriques** : endpoint Prometheus (`/api/metrics`) pour monitoring.
 
 ---
@@ -143,30 +143,26 @@ Schéma relationnel simplifié (principales entités et relations) :
 
 ```mermaid
 erDiagram
-  user ||--o{ account : has
-  user ||--o| session : has
-  user ||--o| app_user : has
+  account ||--o| app_user : has
   app_user }o--o{ workshop : "mentor crée"
   workshop ||--o{ workshop_request : has
   workshop ||--o{ mentor_feedback : has
-  workshop ||--o{ workshop_cashback_queue : has
   app_user ||--o{ user_connection : "from"
   app_user ||--o{ user_connection : "to"
   app_user ||--o{ conversation : participates
   conversation ||--o{ message : has
   message ||--o{ message_reaction : has
-  conversation ||--o{ conversation_pin : has
   app_user ||--o{ notification : receives
   app_user ||--o{ user_block : "blocker"
   app_user ||--o{ user_block : "blocked"
   app_user ||--o{ user_report : "reporter"
   app_user ||--o{ support_request : creates
   app_user ||--o{ credit_transaction : has
-  user {
-    string id
+  app_user ||--o{ audit_log : "admin"
+  account {
+    string accountId
     string email
-    string name
-    string image
+    string password
   }
   app_user {
     string id
@@ -180,14 +176,14 @@ erDiagram
   workshop {
     string id
     string title
-    string mentorId
+    string creatorId
     string status
-    datetime scheduledAt
+    datetime date
   }
   workshop_request {
     string id
-    string workshopId
-    string apprenantId
+    string mentorId
+    string apprenticeId
     string status
   }
   conversation {
@@ -201,7 +197,7 @@ erDiagram
   }
 ```
 
-Liste des modèles : `user`, `account`, `session`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `workshop_cashback_queue`, `user_connection`, `conversation`, `message`, `message_reaction`, `conversation_pin`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `deletion_job`, `verification`. Détails dans `back/prisma/schema/schema.prisma`.
+Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`. Détails dans `back/prisma/schema/schema.prisma`.
 
 ---
 

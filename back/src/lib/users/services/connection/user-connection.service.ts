@@ -347,4 +347,58 @@ export class UserConnectionService implements IUserConnectionService {
       );
     }
   }
+
+  async getPendingRequestsSent(userId: string): Promise<
+    Result<
+      Array<{
+        connectionId: string;
+        receiverUserId: string;
+        receiverName: string | null;
+        receiverDisplayName: string | null;
+        receiverPhotoUrl: string | null;
+        receiverRole: "MENTOR" | "APPRENANT" | "ADMIN" | null;
+        receiverAppId: string;
+        createdAt: Date;
+      }>
+    >
+  > {
+    try {
+      const appUser = await this.appUserRepository.findByUserId(userId);
+      if (!appUser) return failure("User not found", 404);
+
+      const connections =
+        await this.userConnectionRepository.findPendingRequestsSentBy(
+          appUser.id
+        );
+
+      const requestsWithUserInfo = await Promise.all(
+        connections.map(async (connection) => {
+          const info = await this.enricher.enrichByAppUserId(connection.receiverId);
+          if (!info) return null;
+
+          return {
+            connectionId: connection.id,
+            receiverUserId: info.userId,
+            receiverName: info.name,
+            receiverDisplayName: info.displayName,
+            receiverPhotoUrl: info.photoUrl,
+            receiverRole: info.role,
+            receiverAppId: info.appId,
+            createdAt: connection.createdAt,
+          };
+        })
+      );
+
+      return success(
+        requestsWithUserInfo.filter(
+          (req): req is NonNullable<typeof req> => req !== null
+        )
+      );
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("getPendingRequestsSent", { userId })
+      );
+    }
+  }
 }

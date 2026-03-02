@@ -23,4 +23,6 @@ export interface IUserReportService {
       }>
     >
   >;
+  getAdminReportQueue(params?: { limit?: number; offset?: number }): Promise<any>;
+  reviewReport(reportId: string, status: "RESOLVED" | "DISMISSED", adminNotes?: string): Promise<any>;
 }

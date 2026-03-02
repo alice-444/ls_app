@@ -1,15 +1,17 @@
-import { prisma } from "../../common";
+import type { PrismaClient } from "../../../../prisma/generated/client/client";
 import type {
   IConversationRepository,
   ConversationEntity,
 } from "./conversation.repository.interface";
 
 export class PrismaConversationRepository implements IConversationRepository {
+  constructor(private readonly prisma: PrismaClient) {}
+
   async findConversationBetweenUsers(
     appUserId1: string,
     appUserId2: string
   ): Promise<ConversationEntity | null> {
-    const conversation = await (prisma as any).conversation.findFirst({
+    const conversation = await this.prisma.conversation.findFirst({
       where: {
         OR: [
           {
@@ -41,7 +43,7 @@ export class PrismaConversationRepository implements IConversationRepository {
     appUserId2: string,
     tx: any
   ): Promise<ConversationEntity | null> {
-    const conversation = await (tx as any).conversation.findFirst({
+    const conversation = await tx.conversation.findFirst({
       where: {
         OR: [
           {
@@ -69,7 +71,7 @@ export class PrismaConversationRepository implements IConversationRepository {
   }
 
   async findById(conversationId: string): Promise<ConversationEntity | null> {
-    const conversation = await (prisma as any).conversation.findUnique({
+    const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
     });
 
@@ -88,7 +90,7 @@ export class PrismaConversationRepository implements IConversationRepository {
   async findConversationsForUser(
     appUserId: string
   ): Promise<ConversationEntity[]> {
-    const conversations = await (prisma as any).conversation.findMany({
+    const conversations = await this.prisma.conversation.findMany({
       where: {
         OR: [{ participant1Id: appUserId }, { participant2Id: appUserId }],
       },
@@ -114,7 +116,7 @@ export class PrismaConversationRepository implements IConversationRepository {
     workshopId?: string | null;
     updatedAt: Date;
   }): Promise<ConversationEntity> {
-    const conversation = await (prisma as any).conversation.create({
+    const conversation = await this.prisma.conversation.create({
       data,
     });
 
@@ -138,7 +140,7 @@ export class PrismaConversationRepository implements IConversationRepository {
     },
     tx: any
   ): Promise<ConversationEntity> {
-    const conversation = await (tx as any).conversation.create({
+    const conversation = await tx.conversation.create({
       data,
     });
 
@@ -159,7 +161,7 @@ export class PrismaConversationRepository implements IConversationRepository {
       updatedAt: Date;
     }
   ): Promise<ConversationEntity> {
-    const conversation = await (prisma as any).conversation.update({
+    const conversation = await this.prisma.conversation.update({
       where: { id: conversationId },
       data,
     });
@@ -182,7 +184,7 @@ export class PrismaConversationRepository implements IConversationRepository {
     },
     tx: any
   ): Promise<ConversationEntity> {
-    const conversation = await (tx as any).conversation.update({
+    const conversation = await tx.conversation.update({
       where: { id: conversationId },
       data,
     });
@@ -198,7 +200,7 @@ export class PrismaConversationRepository implements IConversationRepository {
   }
 
   async delete(conversationId: string): Promise<void> {
-    await (prisma as any).conversation.delete({
+    await this.prisma.conversation.delete({
       where: { id: conversationId },
     });
   }

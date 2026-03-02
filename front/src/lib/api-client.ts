@@ -40,7 +40,7 @@ export async function getProfProfile(): Promise<{
   return response.json();
 }
 
-export async function getUserRole(): Promise<"MENTOR" | "APPRENANT" | null> {
+export async function getUserRole(): Promise<"MENTOR" | "APPRENANT" | "ADMIN" | null> {
   try {
     const response = await authenticatedFetch(
       `${API_BASE_URL}/api/profile/role`,

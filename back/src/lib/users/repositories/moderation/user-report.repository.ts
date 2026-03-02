@@ -5,11 +5,13 @@ import type {
   ReportStatus,
 } from "./user-report.repository.interface";
 import { generateInternalId } from "../../../utils/id-generator";
-import { prisma } from "../../../common";
+import type { PrismaClient } from "../../../../../prisma/generated/client/client";
 
 export class PrismaUserReportRepository implements IUserReportRepository {
+  constructor(private readonly prisma: PrismaClient) {}
+  
   async create(input: CreateUserReportInput): Promise<UserReportEntity> {
-    const report = await (prisma as any).user_report.create({
+    const report = await this.prisma.user_report.create({
       data: {
         id: generateInternalId(),
         reporterId: input.reporterId,
@@ -27,7 +29,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
   }
 
   async findById(id: string): Promise<UserReportEntity | null> {
-    const report = await (prisma as any).user_report.findUnique({
+    const report = await this.prisma.user_report.findUnique({
       where: { id },
     });
 
@@ -37,7 +39,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
   }
 
   async findByReporter(reporterId: string): Promise<UserReportEntity[]> {
-    const reports = await (prisma as any).user_report.findMany({
+    const reports = await this.prisma.user_report.findMany({
       where: { reporterId },
       orderBy: { createdAt: "desc" },
     });
@@ -46,7 +48,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
   }
 
   async findByReported(reportedId: string): Promise<UserReportEntity[]> {
-    const reports = await (prisma as any).user_report.findMany({
+    const reports = await this.prisma.user_report.findMany({
       where: { reportedId },
       orderBy: { createdAt: "desc" },
     });
@@ -55,7 +57,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
   }
 
   async findByStatus(status: ReportStatus): Promise<UserReportEntity[]> {
-    const reports = await (prisma as any).user_report.findMany({
+    const reports = await this.prisma.user_report.findMany({
       where: { status },
       orderBy: { createdAt: "desc" },
     });
@@ -85,12 +87,29 @@ export class PrismaUserReportRepository implements IUserReportRepository {
       updateData.adminNotes = adminNotes;
     }
 
-    const report = await (prisma as any).user_report.update({
+    const report = await this.prisma.user_report.update({
       where: { id },
       data: updateData,
     });
 
     return this.mapToEntity(report);
+  }
+
+  async findMany(params?: {
+    skip?: number;
+    take?: number;
+    where?: any;
+    orderBy?: any;
+    include?: any;
+  }): Promise<any[]> {
+    return this.prisma.user_report.findMany(params);
+  }
+
+  async update(params: {
+    where: { id: string };
+    data: any;
+  }): Promise<any> {
+    return this.prisma.user_report.update(params);
   }
 
   private mapToEntity(report: any): UserReportEntity {
