@@ -392,6 +392,8 @@ export type app_userWhereInput = {
   notifications?: Prisma.NotificationListRelationFilter
   user_block_blocker?: Prisma.User_blockListRelationFilter
   user_block_blocked?: Prisma.User_blockListRelationFilter
+  reports_made?: Prisma.User_reportListRelationFilter
+  reports_received?: Prisma.User_reportListRelationFilter
 }
 
 export type app_userOrderByWithRelationInput = {
@@ -438,6 +440,8 @@ export type app_userOrderByWithRelationInput = {
   notifications?: Prisma.notificationOrderByRelationAggregateInput
   user_block_blocker?: Prisma.user_blockOrderByRelationAggregateInput
   user_block_blocked?: Prisma.user_blockOrderByRelationAggregateInput
+  reports_made?: Prisma.user_reportOrderByRelationAggregateInput
+  reports_received?: Prisma.user_reportOrderByRelationAggregateInput
 }
 
 export type app_userWhereUniqueInput = Prisma.AtLeast<{
@@ -487,6 +491,8 @@ export type app_userWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   user_block_blocker?: Prisma.User_blockListRelationFilter
   user_block_blocked?: Prisma.User_blockListRelationFilter
+  reports_made?: Prisma.User_reportListRelationFilter
+  reports_received?: Prisma.User_reportListRelationFilter
 }, "id" | "userId">
 
 export type app_userOrderByWithAggregationInput = {
@@ -600,6 +606,8 @@ export type app_userCreateInput = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateInput = {
@@ -645,6 +653,8 @@ export type app_userUncheckedCreateInput = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUpdateInput = {
@@ -690,6 +700,8 @@ export type app_userUpdateInput = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateInput = {
@@ -735,6 +747,8 @@ export type app_userUncheckedUpdateInput = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateManyInput = {
@@ -1176,6 +1190,34 @@ export type app_userUpdateOneRequiredWithoutUser_block_blockedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutUser_block_blockedInput, Prisma.app_userUpdateWithoutUser_block_blockedInput>, Prisma.app_userUncheckedUpdateWithoutUser_block_blockedInput>
 }
 
+export type app_userCreateNestedOneWithoutReports_madeInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutReports_madeInput, Prisma.app_userUncheckedCreateWithoutReports_madeInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutReports_madeInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userCreateNestedOneWithoutReports_receivedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutReports_receivedInput, Prisma.app_userUncheckedCreateWithoutReports_receivedInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutReports_receivedInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutReports_madeNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutReports_madeInput, Prisma.app_userUncheckedCreateWithoutReports_madeInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutReports_madeInput
+  upsert?: Prisma.app_userUpsertWithoutReports_madeInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutReports_madeInput, Prisma.app_userUpdateWithoutReports_madeInput>, Prisma.app_userUncheckedUpdateWithoutReports_madeInput>
+}
+
+export type app_userUpdateOneRequiredWithoutReports_receivedNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutReports_receivedInput, Prisma.app_userUncheckedCreateWithoutReports_receivedInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutReports_receivedInput
+  upsert?: Prisma.app_userUpsertWithoutReports_receivedInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutReports_receivedInput, Prisma.app_userUpdateWithoutReports_receivedInput>, Prisma.app_userUncheckedUpdateWithoutReports_receivedInput>
+}
+
 export type app_userCreateNestedOneWithoutCredit_transactionsInput = {
   create?: Prisma.XOR<Prisma.app_userCreateWithoutCredit_transactionsInput, Prisma.app_userUncheckedCreateWithoutCredit_transactionsInput>
   connectOrCreate?: Prisma.app_userCreateOrConnectWithoutCredit_transactionsInput
@@ -1232,6 +1274,8 @@ export type app_userCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToa
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
@@ -1276,6 +1320,8 @@ export type app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_appren
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
@@ -1325,6 +1371,8 @@ export type app_userCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_u
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
@@ -1369,6 +1417,8 @@ export type app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_mentor
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
@@ -1429,6 +1479,8 @@ export type app_userUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToa
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
@@ -1473,6 +1525,8 @@ export type app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_appren
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUpsertWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
@@ -1528,6 +1582,8 @@ export type app_userUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_u
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
@@ -1572,6 +1628,8 @@ export type app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_mentor
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutUserInput = {
@@ -1616,6 +1674,8 @@ export type app_userCreateWithoutUserInput = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutUserInput = {
@@ -1660,6 +1720,8 @@ export type app_userUncheckedCreateWithoutUserInput = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutUserInput = {
@@ -1720,6 +1782,8 @@ export type app_userUpdateWithoutUserInput = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutUserInput = {
@@ -1764,6 +1828,8 @@ export type app_userUncheckedUpdateWithoutUserInput = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
@@ -1808,6 +1874,8 @@ export type app_userCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput =
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
@@ -1852,6 +1920,8 @@ export type app_userUncheckedCreateWithoutWorkshop_workshop_apprenticeIdToapp_us
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
@@ -1901,6 +1971,8 @@ export type app_userCreateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
@@ -1945,6 +2017,8 @@ export type app_userUncheckedCreateWithoutWorkshop_workshop_creatorIdToapp_userI
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutWorkshop_workshop_creatorIdToapp_userInput = {
@@ -2005,6 +2079,8 @@ export type app_userUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput =
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
@@ -2049,6 +2125,8 @@ export type app_userUncheckedUpdateWithoutWorkshop_workshop_apprenticeIdToapp_us
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUpsertWithoutWorkshop_workshop_creatorIdToapp_userInput = {
@@ -2104,6 +2182,8 @@ export type app_userUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
@@ -2148,6 +2228,8 @@ export type app_userUncheckedUpdateWithoutWorkshop_workshop_creatorIdToapp_userI
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
@@ -2192,6 +2274,8 @@ export type app_userCreateWithoutWorkshop_request_workshop_request_apprenticeIdT
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
@@ -2236,6 +2320,8 @@ export type app_userUncheckedCreateWithoutWorkshop_request_workshop_request_appr
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
@@ -2285,6 +2371,8 @@ export type app_userCreateWithoutWorkshop_request_workshop_request_mentorIdToapp
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
@@ -2329,6 +2417,8 @@ export type app_userUncheckedCreateWithoutWorkshop_request_workshop_request_ment
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
@@ -2389,6 +2479,8 @@ export type app_userUpdateWithoutWorkshop_request_workshop_request_apprenticeIdT
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
@@ -2433,6 +2525,8 @@ export type app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_appr
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUpsertWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
@@ -2488,6 +2582,8 @@ export type app_userUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
@@ -2532,6 +2628,8 @@ export type app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_ment
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutUser_connection_requesterInput = {
@@ -2576,6 +2674,8 @@ export type app_userCreateWithoutUser_connection_requesterInput = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutUser_connection_requesterInput = {
@@ -2620,6 +2720,8 @@ export type app_userUncheckedCreateWithoutUser_connection_requesterInput = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutUser_connection_requesterInput = {
@@ -2669,6 +2771,8 @@ export type app_userCreateWithoutUser_connection_receiverInput = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutUser_connection_receiverInput = {
@@ -2713,6 +2817,8 @@ export type app_userUncheckedCreateWithoutUser_connection_receiverInput = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutUser_connection_receiverInput = {
@@ -2773,6 +2879,8 @@ export type app_userUpdateWithoutUser_connection_requesterInput = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutUser_connection_requesterInput = {
@@ -2817,6 +2925,8 @@ export type app_userUncheckedUpdateWithoutUser_connection_requesterInput = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUpsertWithoutUser_connection_receiverInput = {
@@ -2872,6 +2982,8 @@ export type app_userUpdateWithoutUser_connection_receiverInput = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutUser_connection_receiverInput = {
@@ -2916,6 +3028,8 @@ export type app_userUncheckedUpdateWithoutUser_connection_receiverInput = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutConversation_participant1Input = {
@@ -2960,6 +3074,8 @@ export type app_userCreateWithoutConversation_participant1Input = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutConversation_participant1Input = {
@@ -3004,6 +3120,8 @@ export type app_userUncheckedCreateWithoutConversation_participant1Input = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutConversation_participant1Input = {
@@ -3053,6 +3171,8 @@ export type app_userCreateWithoutConversation_participant2Input = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutConversation_participant2Input = {
@@ -3097,6 +3217,8 @@ export type app_userUncheckedCreateWithoutConversation_participant2Input = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutConversation_participant2Input = {
@@ -3157,6 +3279,8 @@ export type app_userUpdateWithoutConversation_participant1Input = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutConversation_participant1Input = {
@@ -3201,6 +3325,8 @@ export type app_userUncheckedUpdateWithoutConversation_participant1Input = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUpsertWithoutConversation_participant2Input = {
@@ -3256,6 +3382,8 @@ export type app_userUpdateWithoutConversation_participant2Input = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutConversation_participant2Input = {
@@ -3300,6 +3428,8 @@ export type app_userUncheckedUpdateWithoutConversation_participant2Input = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutPinned_conversationsInput = {
@@ -3344,6 +3474,8 @@ export type app_userCreateWithoutPinned_conversationsInput = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutPinned_conversationsInput = {
@@ -3388,6 +3520,8 @@ export type app_userUncheckedCreateWithoutPinned_conversationsInput = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutPinned_conversationsInput = {
@@ -3448,6 +3582,8 @@ export type app_userUpdateWithoutPinned_conversationsInput = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutPinned_conversationsInput = {
@@ -3492,6 +3628,8 @@ export type app_userUncheckedUpdateWithoutPinned_conversationsInput = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutNotificationsInput = {
@@ -3536,6 +3674,8 @@ export type app_userCreateWithoutNotificationsInput = {
   pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutNotificationsInput = {
@@ -3580,6 +3720,8 @@ export type app_userUncheckedCreateWithoutNotificationsInput = {
   pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutNotificationsInput = {
@@ -3640,6 +3782,8 @@ export type app_userUpdateWithoutNotificationsInput = {
   pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutNotificationsInput = {
@@ -3684,6 +3828,8 @@ export type app_userUncheckedUpdateWithoutNotificationsInput = {
   pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userCreateWithoutUser_block_blockerInput = {
@@ -3728,6 +3874,8 @@ export type app_userCreateWithoutUser_block_blockerInput = {
   pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutUser_block_blockerInput = {
@@ -3772,6 +3920,8 @@ export type app_userUncheckedCreateWithoutUser_block_blockerInput = {
   pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutUser_block_blockerInput = {
@@ -3821,6 +3971,8 @@ export type app_userCreateWithoutUser_block_blockedInput = {
   pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutUser_block_blockedInput = {
@@ -3865,6 +4017,8 @@ export type app_userUncheckedCreateWithoutUser_block_blockedInput = {
   pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutUser_block_blockedInput = {
@@ -3925,6 +4079,8 @@ export type app_userUpdateWithoutUser_block_blockerInput = {
   pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutUser_block_blockerInput = {
@@ -3969,6 +4125,8 @@ export type app_userUncheckedUpdateWithoutUser_block_blockerInput = {
   pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUpsertWithoutUser_block_blockedInput = {
@@ -4024,6 +4182,8 @@ export type app_userUpdateWithoutUser_block_blockedInput = {
   pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutUser_block_blockedInput = {
@@ -4068,6 +4228,408 @@ export type app_userUncheckedUpdateWithoutUser_block_blockedInput = {
   pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+}
+
+export type app_userCreateWithoutReports_madeInput = {
+  id: string
+  role?: $Enums.Role | null
+  status?: $Enums.AppUserStatus
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  deletionRequestedAt?: Date | string | null
+  deletionReason?: string | null
+  bio?: string | null
+  domain?: string | null
+  photoUrl?: string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  experience?: string | null
+  isPublished?: boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Date | string | null
+  qualifications?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: string | null
+  studyProgram?: string | null
+  lastSeen?: Date | string | null
+  isOnline?: boolean
+  creditBalance?: number
+  user: Prisma.userCreateNestedOneWithoutApp_userInput
+  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
+  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
+  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
+  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
+  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+}
+
+export type app_userUncheckedCreateWithoutReports_madeInput = {
+  id: string
+  userId: string
+  role?: $Enums.Role | null
+  status?: $Enums.AppUserStatus
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  deletionRequestedAt?: Date | string | null
+  deletionReason?: string | null
+  bio?: string | null
+  domain?: string | null
+  photoUrl?: string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  experience?: string | null
+  isPublished?: boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Date | string | null
+  qualifications?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: string | null
+  studyProgram?: string | null
+  lastSeen?: Date | string | null
+  isOnline?: boolean
+  creditBalance?: number
+  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
+  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
+  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
+  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
+  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+}
+
+export type app_userCreateOrConnectWithoutReports_madeInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutReports_madeInput, Prisma.app_userUncheckedCreateWithoutReports_madeInput>
+}
+
+export type app_userCreateWithoutReports_receivedInput = {
+  id: string
+  role?: $Enums.Role | null
+  status?: $Enums.AppUserStatus
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  deletionRequestedAt?: Date | string | null
+  deletionReason?: string | null
+  bio?: string | null
+  domain?: string | null
+  photoUrl?: string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  experience?: string | null
+  isPublished?: boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Date | string | null
+  qualifications?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: string | null
+  studyProgram?: string | null
+  lastSeen?: Date | string | null
+  isOnline?: boolean
+  creditBalance?: number
+  user: Prisma.userCreateNestedOneWithoutApp_userInput
+  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
+  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
+  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
+  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
+  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+}
+
+export type app_userUncheckedCreateWithoutReports_receivedInput = {
+  id: string
+  userId: string
+  role?: $Enums.Role | null
+  status?: $Enums.AppUserStatus
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  deletionRequestedAt?: Date | string | null
+  deletionReason?: string | null
+  bio?: string | null
+  domain?: string | null
+  photoUrl?: string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  experience?: string | null
+  isPublished?: boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Date | string | null
+  qualifications?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: string | null
+  studyProgram?: string | null
+  lastSeen?: Date | string | null
+  isOnline?: boolean
+  creditBalance?: number
+  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
+  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
+  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
+  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
+  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+}
+
+export type app_userCreateOrConnectWithoutReports_receivedInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutReports_receivedInput, Prisma.app_userUncheckedCreateWithoutReports_receivedInput>
+}
+
+export type app_userUpsertWithoutReports_madeInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutReports_madeInput, Prisma.app_userUncheckedUpdateWithoutReports_madeInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutReports_madeInput, Prisma.app_userUncheckedCreateWithoutReports_madeInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutReports_madeInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutReports_madeInput, Prisma.app_userUncheckedUpdateWithoutReports_madeInput>
+}
+
+export type app_userUpdateWithoutReports_madeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
+  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
+  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
+  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
+  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
+  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutReports_madeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
+  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
+  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
+  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
+  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+}
+
+export type app_userUpsertWithoutReports_receivedInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutReports_receivedInput, Prisma.app_userUncheckedUpdateWithoutReports_receivedInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutReports_receivedInput, Prisma.app_userUncheckedCreateWithoutReports_receivedInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutReports_receivedInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutReports_receivedInput, Prisma.app_userUncheckedUpdateWithoutReports_receivedInput>
+}
+
+export type app_userUpdateWithoutReports_receivedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
+  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
+  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
+  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
+  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
+  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutReports_receivedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
+  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
+  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
+  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
+  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
+  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
+  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
+  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
+  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
+  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
 }
 
 export type app_userCreateWithoutCredit_transactionsInput = {
@@ -4112,6 +4674,8 @@ export type app_userCreateWithoutCredit_transactionsInput = {
   notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
 }
 
 export type app_userUncheckedCreateWithoutCredit_transactionsInput = {
@@ -4156,6 +4720,8 @@ export type app_userUncheckedCreateWithoutCredit_transactionsInput = {
   notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
   user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
   user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
 }
 
 export type app_userCreateOrConnectWithoutCredit_transactionsInput = {
@@ -4216,6 +4782,8 @@ export type app_userUpdateWithoutCredit_transactionsInput = {
   notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutCredit_transactionsInput = {
@@ -4260,6 +4828,8 @@ export type app_userUncheckedUpdateWithoutCredit_transactionsInput = {
   notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
   user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
   user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
 }
 
 
@@ -4283,6 +4853,8 @@ export type App_userCountOutputType = {
   notifications: number
   user_block_blocker: number
   user_block_blocked: number
+  reports_made: number
+  reports_received: number
 }
 
 export type App_userCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4301,6 +4873,8 @@ export type App_userCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   notifications?: boolean | App_userCountOutputTypeCountNotificationsArgs
   user_block_blocker?: boolean | App_userCountOutputTypeCountUser_block_blockerArgs
   user_block_blocked?: boolean | App_userCountOutputTypeCountUser_block_blockedArgs
+  reports_made?: boolean | App_userCountOutputTypeCountReports_madeArgs
+  reports_received?: boolean | App_userCountOutputTypeCountReports_receivedArgs
 }
 
 /**
@@ -4418,6 +4992,20 @@ export type App_userCountOutputTypeCountUser_block_blockedArgs<ExtArgs extends r
   where?: Prisma.user_blockWhereInput
 }
 
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountReports_madeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.user_reportWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountReports_receivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.user_reportWhereInput
+}
+
 
 export type app_userSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4463,6 +5051,8 @@ export type app_userSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   notifications?: boolean | Prisma.app_user$notificationsArgs<ExtArgs>
   user_block_blocker?: boolean | Prisma.app_user$user_block_blockerArgs<ExtArgs>
   user_block_blocked?: boolean | Prisma.app_user$user_block_blockedArgs<ExtArgs>
+  reports_made?: boolean | Prisma.app_user$reports_madeArgs<ExtArgs>
+  reports_received?: boolean | Prisma.app_user$reports_receivedArgs<ExtArgs>
   _count?: boolean | Prisma.App_userCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["app_user"]>
 
@@ -4576,6 +5166,8 @@ export type app_userInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   notifications?: boolean | Prisma.app_user$notificationsArgs<ExtArgs>
   user_block_blocker?: boolean | Prisma.app_user$user_block_blockerArgs<ExtArgs>
   user_block_blocked?: boolean | Prisma.app_user$user_block_blockedArgs<ExtArgs>
+  reports_made?: boolean | Prisma.app_user$reports_madeArgs<ExtArgs>
+  reports_received?: boolean | Prisma.app_user$reports_receivedArgs<ExtArgs>
   _count?: boolean | Prisma.App_userCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type app_userIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4604,6 +5196,8 @@ export type $app_userPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     notifications: Prisma.$notificationPayload<ExtArgs>[]
     user_block_blocker: Prisma.$user_blockPayload<ExtArgs>[]
     user_block_blocked: Prisma.$user_blockPayload<ExtArgs>[]
+    reports_made: Prisma.$user_reportPayload<ExtArgs>[]
+    reports_received: Prisma.$user_reportPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5043,6 +5637,8 @@ export interface Prisma__app_userClient<T, Null = never, ExtArgs extends runtime
   notifications<T extends Prisma.app_user$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$notificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user_block_blocker<T extends Prisma.app_user$user_block_blockerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$user_block_blockerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_blockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user_block_blocked<T extends Prisma.app_user$user_block_blockedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$user_block_blockedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_blockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reports_made<T extends Prisma.app_user$reports_madeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$reports_madeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_reportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reports_received<T extends Prisma.app_user$reports_receivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$reports_receivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_reportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5852,6 +6448,54 @@ export type app_user$user_block_blockedArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.User_blockScalarFieldEnum | Prisma.User_blockScalarFieldEnum[]
+}
+
+/**
+ * app_user.reports_made
+ */
+export type app_user$reports_madeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the user_report
+   */
+  select?: Prisma.user_reportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the user_report
+   */
+  omit?: Prisma.user_reportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.user_reportInclude<ExtArgs> | null
+  where?: Prisma.user_reportWhereInput
+  orderBy?: Prisma.user_reportOrderByWithRelationInput | Prisma.user_reportOrderByWithRelationInput[]
+  cursor?: Prisma.user_reportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.User_reportScalarFieldEnum | Prisma.User_reportScalarFieldEnum[]
+}
+
+/**
+ * app_user.reports_received
+ */
+export type app_user$reports_receivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the user_report
+   */
+  select?: Prisma.user_reportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the user_report
+   */
+  omit?: Prisma.user_reportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.user_reportInclude<ExtArgs> | null
+  where?: Prisma.user_reportWhereInput
+  orderBy?: Prisma.user_reportOrderByWithRelationInput | Prisma.user_reportOrderByWithRelationInput[]
+  cursor?: Prisma.user_reportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.User_reportScalarFieldEnum | Prisma.User_reportScalarFieldEnum[]
 }
 
 /**

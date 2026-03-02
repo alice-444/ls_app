@@ -70,8 +70,15 @@ import type { IDeleteAccountEnhancedService } from "../users/services/account/de
 import type { DailyConfig } from "../daily/config/daily.config.interface";
 import { WorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service";
 import type { IWorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service.interface";
+import { AdminService } from "../admin/services/admin.service";
+import type { IAdminService } from "../admin/services/admin.service.interface";
+import { SupportRequestService } from "../support/services/support-request.service";
+import type { ISupportRequestService } from "../support/services/support-request.service.interface";
 
 export class ServicesContainer {
+  private _adminService?: IAdminService;
+  private _supportRequestService?: ISupportRequestService;
+
   private _workshopService?: IWorkshopService;
   private _workshopFeedbackService?: IWorkshopFeedbackService;
   private _mentorProfileService?: IMentorProfileService;
@@ -128,6 +135,7 @@ export class ServicesContainer {
       this.repositories.workshopFeedbackRepository,
       this.repositories.workshopRepository,
       this.repositories.mentorRepository,
+      this.notificationService,
       this.creditService
     );
     return this._workshopFeedbackService;
@@ -247,7 +255,8 @@ export class ServicesContainer {
         this.repositories.notificationRepository,
         this.repositories.appUserRepository,
         eventEmitter,
-        this.userBlockService
+        this.userBlockService,
+        this.prisma
       );
     }
     return this._notificationService;
@@ -271,7 +280,8 @@ export class ServicesContainer {
     this._userReportService ??= new UserReportService(
       this.repositories.userReportRepository,
       this.repositories.appUserRepository,
-      this.auditLogService
+      this.auditLogService,
+      this.notificationService
     );
     return this._userReportService;
   }
@@ -406,5 +416,18 @@ export class ServicesContainer {
       new LocalFileStorageService()
     );
     return this._deleteAccountEnhancedService;
+  }
+
+  get adminService(): IAdminService {
+    this._adminService ??= new AdminService(this.prisma);
+    return this._adminService;
+  }
+
+  get supportRequestService(): ISupportRequestService {
+    this._supportRequestService ??= new SupportRequestService(
+      this.repositories.supportRequestRepository,
+      this.notificationService
+    );
+    return this._supportRequestService;
   }
 }

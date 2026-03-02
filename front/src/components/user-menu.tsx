@@ -24,6 +24,7 @@ import {
   Calendar,
   UserCircle,
   LogIn,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -34,7 +35,7 @@ interface MenuLink {
   href: string;
   label: string;
   icon: LucideIcon;
-  roles?: ("MENTOR" | "APPRENANT")[];
+  roles?: ("MENTOR" | "APPRENANT" | "ADMIN")[];
   separatorBefore?: boolean;
 }
 
@@ -54,9 +55,28 @@ export default function UserMenu() {
   const menuLinks: MenuLink[] = useMemo(
     () => [
       {
+        href: "/admin",
+        label: "Dashboard Admin",
+        icon: ShieldCheck,
+        roles: ["ADMIN"],
+      },
+      {
+        href: "/admin/notifications",
+        label: "Notifications",
+        icon: Bell,
+        roles: ["ADMIN"],
+      },
+      {
+        href: "/admin/settings",
+        label: "Paramètres",
+        icon: Settings,
+        roles: ["ADMIN"],
+      },
+      {
         href: "/dashboard",
         label: "Tableau de bord",
         icon: LayoutDashboard,
+        roles: ["MENTOR", "APPRENANT"],
       },
       {
         href: "/my-workshops",
@@ -93,11 +113,13 @@ export default function UserMenu() {
         label: "Notifications",
         icon: Bell,
         separatorBefore: true,
+        roles: ["MENTOR", "APPRENANT"],
       },
       {
         href: "/settings",
         label: "Paramètres",
         icon: Settings,
+        roles: ["MENTOR", "APPRENANT"],
       },
     ],
     []
@@ -138,7 +160,8 @@ export default function UserMenu() {
     return <Skeleton className="h-9 w-24" />;
   }
 
-  const getRoleIcon = (role: "MENTOR" | "APPRENANT" | null) => {
+  const getRoleIcon = (role: "MENTOR" | "APPRENANT" | "ADMIN" | null) => {
+    if (role === "ADMIN") return <ShieldCheck className="h-4 w-4 text-primary" />;
     return role === "MENTOR" ? (
       <Users className="h-4 w-4" />
     ) : (
@@ -146,7 +169,8 @@ export default function UserMenu() {
     );
   };
 
-  const getRoleLabel = (role: "MENTOR" | "APPRENANT" | null) => {
+  const getRoleLabel = (role: "MENTOR" | "APPRENANT" | "ADMIN" | null) => {
+    if (role === "ADMIN") return "Administrateur";
     return role === "MENTOR" ? "Mentor" : "Apprenant";
   };
 

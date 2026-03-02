@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 import {
   Users,
   BookOpen,
@@ -26,6 +28,20 @@ const highlights = [
 
 export default function Home() {
   const { data: session, isPending } = authClient.useSession();
+
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const getDashboardHref = () => {
+    if (userRole === "ADMIN") {
+      return "/admin";
+    }
+    return "/dashboard";
+  };
 
   return (
     <div className="min-h-[85vh] flex flex-col items-center justify-center relative overflow-hidden">
@@ -87,7 +103,7 @@ export default function Home() {
                     size="lg"
                     className="bg-(--primary-orange) text-white hover:bg-(--primary-orange-dark) dark:hover:bg-(--primary-orange) dark:hover:brightness-110 hover:shadow-xl hover:shadow-(--primary-orange)/40 dark:hover:shadow-(--primary-orange)/30 transition-all duration-200 ease-out hover:scale-[1.02] hover:-translate-y-1 active:scale-[0.98] active:translate-y-0 text-base px-8 py-6 rounded-full"
                   >
-                    <Link href="/dashboard">
+                    <Link href={getDashboardHref()}>
                       Accéder au tableau de bord
                       <ChevronRight className="ml-1.5 h-5 w-5" />
                     </Link>

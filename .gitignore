@@ -8,3 +8,4 @@ node_modules
 .turbo
 .cursor
 .pnpm-store
+.agents

@@ -7,18 +7,52 @@ import type { IUserBlockService } from "../../users/services/moderation/user-blo
 import { success, failure } from "../../common/types";
 import { generateInternalId } from "../../utils/id-generator";
 import { logger } from "../../common/logger";
+import { PrismaClient } from "@prisma/client";
 
 export class NotificationService implements INotificationService {
   constructor(
     private readonly notificationRepository: INotificationRepository,
     private readonly appUserRepository: AppUserRepository,
     private readonly eventEmitter: INotificationEventEmitter,
-    private readonly userBlockService?: IUserBlockService
+    private readonly userBlockService: IUserBlockService | undefined,
+    private readonly prisma: PrismaClient
   ) {}
 
   private async getAppUserId(userId: string): Promise<string | null> {
     const appUser = await this.appUserRepository.findByUserId(userId);
     return appUser?.id ?? null;
+  }
+
+  async notifyAdmin(
+    type: "NEW_REPORT" | "NEW_FEEDBACK_MODERATION" | "NEW_SUPPORT_REQUEST",
+    message: string,
+    actionUrl?: string
+  ): Promise<Result<void>> {
+    try {
+      const adminUsers = await this.prisma.app_user.findMany({
+        where: { role: "ADMIN" },
+        select: { userId: true },
+      });
+
+      for (const admin of adminUsers) {
+        if (admin.userId) {
+          await this.createNotification(
+            admin.userId,
+            {
+              type,
+              title: "Notification Admin",
+              message,
+              actionUrl,
+            },
+            "system" // System sender
+          );
+        }
+      }
+      return success(undefined);
+    } catch (error) {
+      logger.error("Failed to notify admins", error, { type, message, actionUrl });
+      return failure("Failed to notify admins", 500);
+    }
   }
 
   async createNotification(

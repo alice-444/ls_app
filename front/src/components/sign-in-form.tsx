@@ -9,6 +9,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { getUserRole } from "@/lib/api-client";
 
 export default function SignInForm({
 	onSwitchToSignUp,
@@ -16,7 +17,7 @@ export default function SignInForm({
 	onSwitchToSignUp: () => void;
 }) {
 	const router = useRouter();
-	const { data: session, isPending } = authClient.useSession();
+	const { isPending } = authClient.useSession();
 	const queryClient = useQueryClient();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,7 +28,6 @@ export default function SignInForm({
 		},
 		onSubmit: async ({ value }) => {
 			const { email, password } = value;
-			
 			setIsSubmitting(true);
 			
 			authClient.signIn.email(
@@ -37,16 +37,19 @@ export default function SignInForm({
 				},
 				{
 					onSuccess: async () => {
-						setIsSubmitting(false);
-						await new Promise(resolve => setTimeout(resolve, 200));
-						await queryClient.invalidateQueries({ 
-							queryKey: ["userRole"] 
-						});
-						await queryClient.refetchQueries({ 
-							queryKey: ["userRole"] 
-						});
-						router.refresh();
-						router.push("/dashboard");
+						// 1. Recharger le rôle immédiatement après login
+						const role = await getUserRole();
+						
+						// 2. Invalider les caches
+						await queryClient.invalidateQueries({ queryKey: ["userRole"] });
+						
+						// 3. Redirection forcée AVANT tout le reste
+						if (role === "ADMIN") {
+							window.location.href = "/admin"; // Force full reload to /admin
+						} else {
+							router.push("/dashboard");
+						}
+						
 						toast.success("Sign in successful");
 					},
 					onError: (ctx: { error: { message?: string; statusText?: string } }) => {

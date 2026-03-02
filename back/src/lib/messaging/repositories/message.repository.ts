@@ -1,4 +1,4 @@
-import { prisma } from "../../common";
+import { PrismaClient } from "@prisma/client";
 import type {
   IMessageRepository,
   MessageEntity,
@@ -22,8 +22,10 @@ function mapToEntity(raw: any): MessageEntity {
 const NOT_DELETED = { deletedAt: null } as const;
 
 export class PrismaMessageRepository implements IMessageRepository {
+  constructor(private readonly prisma: PrismaClient) {}
+
   async findById(messageId: string): Promise<MessageEntity | null> {
-    const message = await (prisma as any).message.findUnique({
+    const message = await this.prisma.message.findUnique({
       where: { id: messageId },
     });
 
@@ -35,7 +37,7 @@ export class PrismaMessageRepository implements IMessageRepository {
     limit?: number,
     offset?: number
   ): Promise<MessageEntity[]> {
-    const messages = await (prisma as any).message.findMany({
+    const messages = await this.prisma.message.findMany({
       where: { conversationId, ...NOT_DELETED },
       orderBy: { createdAt: "desc" },
       take: limit,
@@ -48,7 +50,7 @@ export class PrismaMessageRepository implements IMessageRepository {
   async findLastMessageForConversation(
     conversationId: string
   ): Promise<MessageEntity | null> {
-    const message = await (prisma as any).message.findFirst({
+    const message = await this.prisma.message.findFirst({
       where: { conversationId, ...NOT_DELETED },
       orderBy: { createdAt: "desc" },
     });
@@ -60,13 +62,13 @@ export class PrismaMessageRepository implements IMessageRepository {
     conversationId: string,
     userId: string
   ): Promise<number> {
-    const conversation = await (prisma as any).conversation.findUnique({
+    const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
     });
 
     if (!conversation) return 0;
 
-    return (prisma as any).message.count({
+    return this.prisma.message.count({
       where: {
         conversationId,
         senderId: { not: userId },
@@ -83,7 +85,7 @@ export class PrismaMessageRepository implements IMessageRepository {
     content: string;
     replyToMessageId?: string | null;
   }): Promise<MessageEntity> {
-    const message = await (prisma as any).message.create({
+    const message = await this.prisma.message.create({
       data: {
         id: data.id,
         conversationId: data.conversationId,
@@ -107,7 +109,7 @@ export class PrismaMessageRepository implements IMessageRepository {
       ...NOT_DELETED,
     };
 
-    const messages = await (prisma as any).message.findMany({
+    const messages = await this.prisma.message.findMany({
       where: unreadFilter,
       select: { id: true },
     });
@@ -116,7 +118,7 @@ export class PrismaMessageRepository implements IMessageRepository {
       return [];
     }
 
-    await (prisma as any).message.updateMany({
+    await this.prisma.message.updateMany({
       where: unreadFilter,
       data: { isRead: true },
     });
@@ -132,7 +134,7 @@ export class PrismaMessageRepository implements IMessageRepository {
       editCount: number;
     }
   ): Promise<MessageEntity> {
-    const message = await (prisma as any).message.update({
+    const message = await this.prisma.message.update({
       where: { id: messageId },
       data: {
         content: data.content,
@@ -150,7 +152,7 @@ export class PrismaMessageRepository implements IMessageRepository {
     query: string,
     limit: number = 50
   ): Promise<MessageEntity[]> {
-    const messages = await (prisma as any).message.findMany({
+    const messages = await this.prisma.message.findMany({
       where: {
         conversationId,
         content: { contains: query, mode: "insensitive" },
@@ -164,7 +166,7 @@ export class PrismaMessageRepository implements IMessageRepository {
   }
 
   async delete(messageId: string): Promise<MessageEntity> {
-    const message = await (prisma as any).message.update({
+    const message = await this.prisma.message.update({
       where: { id: messageId },
       data: { deletedAt: new Date() },
     });

@@ -5,6 +5,7 @@ import type { IWorkshopFeedbackRepository } from "../../repositories/feedback/wo
 import type { IMentorRepository } from "../../../mentors/repositories/mentor.repository.interface";
 import type { IEmailService } from "../../../email/services/email.service.interface";
 import { WorkshopEmailTemplates } from "../email/workshop-email.templates";
+import { INotificationService } from "../../../notifications/services/notification.service.interface";
 
 export interface IFeedbackModerationService {
   reportFeedback(
@@ -29,7 +30,8 @@ export class FeedbackModerationService implements IFeedbackModerationService {
   constructor(
     private readonly feedbackRepository: IWorkshopFeedbackRepository,
     private readonly mentorRepository: IMentorRepository,
-    private readonly emailService: IEmailService
+    private readonly emailService: IEmailService,
+    private readonly notificationService: INotificationService
   ) {}
 
   async reportFeedback(
@@ -65,6 +67,13 @@ export class FeedbackModerationService implements IFeedbackModerationService {
         "UNDER_REVIEW",
         userId,
         reason
+      );
+
+      // Notify admins
+      await this.notificationService.notifyAdmin(
+        "NEW_FEEDBACK_MODERATION",
+        `Un avis sur l'atelier "${feedback.workshop?.title || 'N/A'}" a été signalé pour modération par le mentor ${mentor.user?.name || userId}.`,
+        `/admin/feedback-moderation?feedbackId=${feedbackId}`
       );
 
       return success({ success: true });

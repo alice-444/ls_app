@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../../../lib/trpc";
+import { router, protectedProcedure, adminProcedure } from "../../../lib/trpc";
 import { container } from "../../../lib/di/container";
 import { handleRouterResult } from "../../shared/router-helpers";
+
 
 const ReportReasonSchema = z.enum([
   "HARASSMENT",
@@ -44,4 +45,31 @@ export const userReportRouter = router({
       userId: ctx.session.user.id,
     });
   }),
+
+  getAdminReportQueue: adminProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(50).optional(),
+        offset: z.number().min(0).default(0).optional(),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      return await container.userReportService.getAdminReportQueue(input);
+    }),
+
+  reviewReport: adminProcedure
+    .input(
+      z.object({
+        reportId: z.string(),
+        status: z.enum(["RESOLVED", "DISMISSED"]),
+        adminNotes: z.string().optional().nullable(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await container.userReportService.reviewReport(
+        input.reportId,
+        input.status,
+        input.adminNotes ?? undefined
+      );
+    }),
 });
