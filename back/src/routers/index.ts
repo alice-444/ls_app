@@ -23,6 +23,9 @@ import { notificationRouter } from "./social/notification.router";
 // Credits
 import { creditsRouter } from "./credits/credits.router";
 
+// Admin
+import { adminRouter } from "./admin/admin.router";
+
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
     return "OK";
@@ -46,6 +49,7 @@ export const appRouter = router({
   user: userRouter,
   cashbackAnalytics: cashbackAnalyticsRouter,
   accountSettings: accountSettingsRouter,
+  admin: adminRouter,
 });
 
 export type AppRouter = typeof appRouter;

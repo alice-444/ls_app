@@ -264,6 +264,10 @@ class DIContainer {
     return this._services.deleteAccountEnhancedService;
   }
 
+  get adminService() {
+    return this._services.adminService;
+  }
+
   get prisma(): PrismaClient {
     return this._prisma;
   }

@@ -70,6 +70,8 @@ import type { IDeleteAccountEnhancedService } from "../users/services/account/de
 import type { DailyConfig } from "../daily/config/daily.config.interface";
 import { WorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service";
 import type { IWorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service.interface";
+import { AdminService } from "../admin/services/admin.service";
+import type { IAdminService } from "../admin/services/admin.service.interface";
 
 export class ServicesContainer {
   private _workshopService?: IWorkshopService;
@@ -105,6 +107,7 @@ export class ServicesContainer {
   private _forgotPasswordService?: IForgotPasswordService;
   private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
   private _workshopAttendanceService?: IWorkshopAttendanceService;
+  private _adminService?: IAdminService;
 
   constructor(
     private readonly prisma: PrismaClient,
@@ -406,5 +409,10 @@ export class ServicesContainer {
       new LocalFileStorageService()
     );
     return this._deleteAccountEnhancedService;
+  }
+
+  get adminService(): IAdminService {
+    this._adminService ??= new AdminService(this.prisma);
+    return this._adminService;
   }
 }
