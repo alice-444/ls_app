@@ -10,6 +10,7 @@ import { PendingRequestsList } from "@/components/network/PendingRequestsList";
 import { AcceptedConnectionsList } from "@/components/network/AcceptedConnectionsList";
 import { RemoveConnectionDialog } from "@/components/network/RemoveConnectionDialog";
 import { ProfileModalManager } from "@/components/network/ProfileModalManager";
+import { SentRequestsList } from "@/components/network/SentRequestsList";
 
 export default function NetworkPage() {
   const router = useRouter();
@@ -29,7 +30,15 @@ export default function NetworkPage() {
     refetch: refetchPending,
   } = trpc.connection.getPendingRequestsReceived.useQuery(undefined, {
     enabled: !!session,
-  } as any);
+  });
+
+  const {
+    data: sentRequests,
+    isLoading: isLoadingSent,
+    refetch: refetchSent,
+  } = trpc.connection.getPendingRequestsSent.useQuery(undefined, {
+    enabled: !!session,
+  });
 
   const {
     data: acceptedConnections,
@@ -37,13 +46,12 @@ export default function NetworkPage() {
     refetch: refetchConnections,
   } = trpc.connection.getAcceptedConnections.useQuery(undefined, {
     enabled: !!session,
-  } as any);
+  });
 
   const acceptMutation = trpc.connection.acceptConnectionRequest.useMutation();
-
   const rejectMutation = trpc.connection.rejectConnectionRequest.useMutation();
-
   const removeConnectionMutation = trpc.connection.removeConnection.useMutation();
+  const cancelSentRequestMutation = trpc.connection.removeConnection.useMutation(); 
 
   const getOrCreateConversationMutation =
     trpc.messaging.getOrCreateConversation.useMutation();
@@ -70,7 +78,7 @@ export default function NetworkPage() {
     }
   }, [session, isSessionPending, router]);
 
-  if (isSessionPending || isLoadingPending || isLoadingConnections) {
+  if (isSessionPending || isLoadingPending || isLoadingConnections || isLoadingSent) {
     return <Loader />;
   }
 
@@ -165,6 +173,7 @@ export default function NetworkPage() {
                       toast.success("Demande acceptée");
                       refetchPending();
                       refetchConnections();
+                      refetchSent();
                     },
                     onError: (error: { message: string }) => {
                       toast.error("Erreur lors de l'acceptation", {
@@ -191,6 +200,31 @@ export default function NetworkPage() {
                 );
               }}
               isProcessing={acceptMutation.isPending || rejectMutation.isPending}
+            />
+          )}
+
+          {sentRequests && sentRequests.length > 0 && (
+            <SentRequestsList
+              requests={sentRequests}
+              onCancel={(connectionId) => {
+                  // Note: The logic for canceling a sent request is the same as rejecting it
+                  // from the receiver's side, or removing it.
+                  rejectMutation.mutate(
+                    { connectionId },
+                    {
+                        onSuccess: () => {
+                            toast.success("Demande annulée");
+                            refetchSent();
+                        },
+                        onError: (error) => {
+                            toast.error("Erreur lors de l'annulation", {
+                                description: error.message,
+                            });
+                        }
+                    }
+                  )
+              }}
+              isCanceling={rejectMutation.isPending}
             />
           )}
 
