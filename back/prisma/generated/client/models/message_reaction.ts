@@ -183,6 +183,7 @@ export type message_reactionWhereInput = {
   emoji?: Prisma.StringFilter<"message_reaction"> | string
   createdAt?: Prisma.DateTimeFilter<"message_reaction"> | Date | string
   message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.messageWhereInput>
+  user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
 }
 
 export type message_reactionOrderByWithRelationInput = {
@@ -192,6 +193,7 @@ export type message_reactionOrderByWithRelationInput = {
   emoji?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   message?: Prisma.messageOrderByWithRelationInput
+  user?: Prisma.app_userOrderByWithRelationInput
 }
 
 export type message_reactionWhereUniqueInput = Prisma.AtLeast<{
@@ -205,6 +207,7 @@ export type message_reactionWhereUniqueInput = Prisma.AtLeast<{
   emoji?: Prisma.StringFilter<"message_reaction"> | string
   createdAt?: Prisma.DateTimeFilter<"message_reaction"> | Date | string
   message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.messageWhereInput>
+  user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
 }, "id" | "messageId_userId_emoji">
 
 export type message_reactionOrderByWithAggregationInput = {
@@ -230,15 +233,15 @@ export type message_reactionScalarWhereWithAggregatesInput = {
 }
 
 export type message_reactionCreateInput = {
-  id: string
-  userId: string
+  id?: string
   emoji: string
   createdAt?: Date | string
   message: Prisma.messageCreateNestedOneWithoutReactionsInput
+  user: Prisma.app_userCreateNestedOneWithoutMessageReactionsInput
 }
 
 export type message_reactionUncheckedCreateInput = {
-  id: string
+  id?: string
   messageId: string
   userId: string
   emoji: string
@@ -247,10 +250,10 @@ export type message_reactionUncheckedCreateInput = {
 
 export type message_reactionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   emoji?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   message?: Prisma.messageUpdateOneRequiredWithoutReactionsNestedInput
+  user?: Prisma.app_userUpdateOneRequiredWithoutMessageReactionsNestedInput
 }
 
 export type message_reactionUncheckedUpdateInput = {
@@ -262,7 +265,7 @@ export type message_reactionUncheckedUpdateInput = {
 }
 
 export type message_reactionCreateManyInput = {
-  id: string
+  id?: string
   messageId: string
   userId: string
   emoji: string
@@ -271,7 +274,6 @@ export type message_reactionCreateManyInput = {
 
 export type message_reactionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   emoji?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -324,6 +326,48 @@ export type message_reactionMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type message_reactionCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.message_reactionCreateWithoutUserInput, Prisma.message_reactionUncheckedCreateWithoutUserInput> | Prisma.message_reactionCreateWithoutUserInput[] | Prisma.message_reactionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.message_reactionCreateOrConnectWithoutUserInput | Prisma.message_reactionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.message_reactionCreateManyUserInputEnvelope
+  connect?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+}
+
+export type message_reactionUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.message_reactionCreateWithoutUserInput, Prisma.message_reactionUncheckedCreateWithoutUserInput> | Prisma.message_reactionCreateWithoutUserInput[] | Prisma.message_reactionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.message_reactionCreateOrConnectWithoutUserInput | Prisma.message_reactionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.message_reactionCreateManyUserInputEnvelope
+  connect?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+}
+
+export type message_reactionUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.message_reactionCreateWithoutUserInput, Prisma.message_reactionUncheckedCreateWithoutUserInput> | Prisma.message_reactionCreateWithoutUserInput[] | Prisma.message_reactionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.message_reactionCreateOrConnectWithoutUserInput | Prisma.message_reactionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.message_reactionUpsertWithWhereUniqueWithoutUserInput | Prisma.message_reactionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.message_reactionCreateManyUserInputEnvelope
+  set?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  disconnect?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  delete?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  connect?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  update?: Prisma.message_reactionUpdateWithWhereUniqueWithoutUserInput | Prisma.message_reactionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.message_reactionUpdateManyWithWhereWithoutUserInput | Prisma.message_reactionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.message_reactionScalarWhereInput | Prisma.message_reactionScalarWhereInput[]
+}
+
+export type message_reactionUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.message_reactionCreateWithoutUserInput, Prisma.message_reactionUncheckedCreateWithoutUserInput> | Prisma.message_reactionCreateWithoutUserInput[] | Prisma.message_reactionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.message_reactionCreateOrConnectWithoutUserInput | Prisma.message_reactionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.message_reactionUpsertWithWhereUniqueWithoutUserInput | Prisma.message_reactionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.message_reactionCreateManyUserInputEnvelope
+  set?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  disconnect?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  delete?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  connect?: Prisma.message_reactionWhereUniqueInput | Prisma.message_reactionWhereUniqueInput[]
+  update?: Prisma.message_reactionUpdateWithWhereUniqueWithoutUserInput | Prisma.message_reactionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.message_reactionUpdateManyWithWhereWithoutUserInput | Prisma.message_reactionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.message_reactionScalarWhereInput | Prisma.message_reactionScalarWhereInput[]
+}
+
 export type message_reactionCreateNestedManyWithoutMessageInput = {
   create?: Prisma.XOR<Prisma.message_reactionCreateWithoutMessageInput, Prisma.message_reactionUncheckedCreateWithoutMessageInput> | Prisma.message_reactionCreateWithoutMessageInput[] | Prisma.message_reactionUncheckedCreateWithoutMessageInput[]
   connectOrCreate?: Prisma.message_reactionCreateOrConnectWithoutMessageInput | Prisma.message_reactionCreateOrConnectWithoutMessageInput[]
@@ -366,15 +410,66 @@ export type message_reactionUncheckedUpdateManyWithoutMessageNestedInput = {
   deleteMany?: Prisma.message_reactionScalarWhereInput | Prisma.message_reactionScalarWhereInput[]
 }
 
-export type message_reactionCreateWithoutMessageInput = {
-  id: string
-  userId: string
+export type message_reactionCreateWithoutUserInput = {
+  id?: string
+  emoji: string
+  createdAt?: Date | string
+  message: Prisma.messageCreateNestedOneWithoutReactionsInput
+}
+
+export type message_reactionUncheckedCreateWithoutUserInput = {
+  id?: string
+  messageId: string
   emoji: string
   createdAt?: Date | string
 }
 
+export type message_reactionCreateOrConnectWithoutUserInput = {
+  where: Prisma.message_reactionWhereUniqueInput
+  create: Prisma.XOR<Prisma.message_reactionCreateWithoutUserInput, Prisma.message_reactionUncheckedCreateWithoutUserInput>
+}
+
+export type message_reactionCreateManyUserInputEnvelope = {
+  data: Prisma.message_reactionCreateManyUserInput | Prisma.message_reactionCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type message_reactionUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.message_reactionWhereUniqueInput
+  update: Prisma.XOR<Prisma.message_reactionUpdateWithoutUserInput, Prisma.message_reactionUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.message_reactionCreateWithoutUserInput, Prisma.message_reactionUncheckedCreateWithoutUserInput>
+}
+
+export type message_reactionUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.message_reactionWhereUniqueInput
+  data: Prisma.XOR<Prisma.message_reactionUpdateWithoutUserInput, Prisma.message_reactionUncheckedUpdateWithoutUserInput>
+}
+
+export type message_reactionUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.message_reactionScalarWhereInput
+  data: Prisma.XOR<Prisma.message_reactionUpdateManyMutationInput, Prisma.message_reactionUncheckedUpdateManyWithoutUserInput>
+}
+
+export type message_reactionScalarWhereInput = {
+  AND?: Prisma.message_reactionScalarWhereInput | Prisma.message_reactionScalarWhereInput[]
+  OR?: Prisma.message_reactionScalarWhereInput[]
+  NOT?: Prisma.message_reactionScalarWhereInput | Prisma.message_reactionScalarWhereInput[]
+  id?: Prisma.StringFilter<"message_reaction"> | string
+  messageId?: Prisma.StringFilter<"message_reaction"> | string
+  userId?: Prisma.StringFilter<"message_reaction"> | string
+  emoji?: Prisma.StringFilter<"message_reaction"> | string
+  createdAt?: Prisma.DateTimeFilter<"message_reaction"> | Date | string
+}
+
+export type message_reactionCreateWithoutMessageInput = {
+  id?: string
+  emoji: string
+  createdAt?: Date | string
+  user: Prisma.app_userCreateNestedOneWithoutMessageReactionsInput
+}
+
 export type message_reactionUncheckedCreateWithoutMessageInput = {
-  id: string
+  id?: string
   userId: string
   emoji: string
   createdAt?: Date | string
@@ -406,19 +501,36 @@ export type message_reactionUpdateManyWithWhereWithoutMessageInput = {
   data: Prisma.XOR<Prisma.message_reactionUpdateManyMutationInput, Prisma.message_reactionUncheckedUpdateManyWithoutMessageInput>
 }
 
-export type message_reactionScalarWhereInput = {
-  AND?: Prisma.message_reactionScalarWhereInput | Prisma.message_reactionScalarWhereInput[]
-  OR?: Prisma.message_reactionScalarWhereInput[]
-  NOT?: Prisma.message_reactionScalarWhereInput | Prisma.message_reactionScalarWhereInput[]
-  id?: Prisma.StringFilter<"message_reaction"> | string
-  messageId?: Prisma.StringFilter<"message_reaction"> | string
-  userId?: Prisma.StringFilter<"message_reaction"> | string
-  emoji?: Prisma.StringFilter<"message_reaction"> | string
-  createdAt?: Prisma.DateTimeFilter<"message_reaction"> | Date | string
+export type message_reactionCreateManyUserInput = {
+  id?: string
+  messageId: string
+  emoji: string
+  createdAt?: Date | string
+}
+
+export type message_reactionUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  emoji?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  message?: Prisma.messageUpdateOneRequiredWithoutReactionsNestedInput
+}
+
+export type message_reactionUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  emoji?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type message_reactionUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  emoji?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type message_reactionCreateManyMessageInput = {
-  id: string
+  id?: string
   userId: string
   emoji: string
   createdAt?: Date | string
@@ -426,9 +538,9 @@ export type message_reactionCreateManyMessageInput = {
 
 export type message_reactionUpdateWithoutMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   emoji?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.app_userUpdateOneRequiredWithoutMessageReactionsNestedInput
 }
 
 export type message_reactionUncheckedUpdateWithoutMessageInput = {
@@ -454,6 +566,7 @@ export type message_reactionSelect<ExtArgs extends runtime.Types.Extensions.Inte
   emoji?: boolean
   createdAt?: boolean
   message?: boolean | Prisma.messageDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message_reaction"]>
 
 export type message_reactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -463,6 +576,7 @@ export type message_reactionSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   emoji?: boolean
   createdAt?: boolean
   message?: boolean | Prisma.messageDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message_reaction"]>
 
 export type message_reactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -472,6 +586,7 @@ export type message_reactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   emoji?: boolean
   createdAt?: boolean
   message?: boolean | Prisma.messageDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message_reaction"]>
 
 export type message_reactionSelectScalar = {
@@ -485,18 +600,22 @@ export type message_reactionSelectScalar = {
 export type message_reactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "messageId" | "userId" | "emoji" | "createdAt", ExtArgs["result"]["message_reaction"]>
 export type message_reactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   message?: boolean | Prisma.messageDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }
 export type message_reactionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   message?: boolean | Prisma.messageDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }
 export type message_reactionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   message?: boolean | Prisma.messageDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }
 
 export type $message_reactionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "message_reaction"
   objects: {
     message: Prisma.$messagePayload<ExtArgs>
+    user: Prisma.$app_userPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -899,6 +1018,7 @@ readonly fields: message_reactionFieldRefs;
 export interface Prisma__message_reactionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   message<T extends Prisma.messageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.messageDefaultArgs<ExtArgs>>): Prisma.Prisma__messageClient<runtime.Types.Result.GetResult<Prisma.$messagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

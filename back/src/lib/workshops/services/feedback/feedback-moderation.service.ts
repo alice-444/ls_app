@@ -19,7 +19,7 @@ export interface IFeedbackModerationService {
     offset?: number;
   }): Promise<Result<any>>;
 
-  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>>;
+  approveFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 
   deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 
@@ -127,7 +127,7 @@ export class FeedbackModerationService implements IFeedbackModerationService {
     }
   }
 
-  async dismissReport(
+  async approveFeedback(
     feedbackId: string
   ): Promise<Result<{ success: boolean }>> {
     try {
@@ -146,7 +146,7 @@ export class FeedbackModerationService implements IFeedbackModerationService {
     } catch (error) {
       return handleError(
         error,
-        createErrorContext("dismissReport", {
+        createErrorContext("approveFeedback", {
           resourceId: feedbackId,
         })
       );

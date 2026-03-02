@@ -27,185 +27,165 @@ export type AggregateApp_user = {
 }
 
 export type App_userAvgAggregateOutputType = {
-  creditBalance: number | null
+  onboardingStep: number | null
 }
 
 export type App_userSumAggregateOutputType = {
-  creditBalance: number | null
+  onboardingStep: number | null
 }
 
 export type App_userMinAggregateOutputType = {
   id: string | null
   userId: string | null
-  role: $Enums.Role | null
-  status: $Enums.AppUserStatus | null
+  name: string | null
+  email: string | null
+  onboardingStep: number | null
+  role: string | null
+  status: string | null
+  deletionReason: string | null
+  photoUrl: string | null
+  displayName: string | null
+  bio: string | null
+  domain: string | null
+  qualifications: string | null
+  experience: string | null
+  calendlyLink: string | null
+  isPublished: boolean | null
+  publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
-  deletionRequestedAt: Date | null
-  deletionReason: string | null
-  bio: string | null
-  domain: string | null
-  photoUrl: string | null
-  calendlyLink: string | null
-  experience: string | null
-  isPublished: boolean | null
-  publishedAt: Date | null
-  qualifications: string | null
-  displayName: string | null
-  studyDomain: string | null
-  studyProgram: string | null
-  lastSeen: Date | null
-  isOnline: boolean | null
-  creditBalance: number | null
 }
 
 export type App_userMaxAggregateOutputType = {
   id: string | null
   userId: string | null
-  role: $Enums.Role | null
-  status: $Enums.AppUserStatus | null
+  name: string | null
+  email: string | null
+  onboardingStep: number | null
+  role: string | null
+  status: string | null
+  deletionReason: string | null
+  photoUrl: string | null
+  displayName: string | null
+  bio: string | null
+  domain: string | null
+  qualifications: string | null
+  experience: string | null
+  calendlyLink: string | null
+  isPublished: boolean | null
+  publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
-  deletionRequestedAt: Date | null
-  deletionReason: string | null
-  bio: string | null
-  domain: string | null
-  photoUrl: string | null
-  calendlyLink: string | null
-  experience: string | null
-  isPublished: boolean | null
-  publishedAt: Date | null
-  qualifications: string | null
-  displayName: string | null
-  studyDomain: string | null
-  studyProgram: string | null
-  lastSeen: Date | null
-  isOnline: boolean | null
-  creditBalance: number | null
 }
 
 export type App_userCountAggregateOutputType = {
   id: number
   userId: number
+  name: number
+  email: number
+  onboardingStep: number
   role: number
   status: number
+  deletionReason: number
+  photoUrl: number
+  displayName: number
+  bio: number
+  domain: number
+  areasOfExpertise: number
+  mentorshipTopics: number
+  qualifications: number
+  experience: number
+  socialMediaLinks: number
+  calendlyLink: number
+  isPublished: number
+  publishedAt: number
   createdAt: number
   updatedAt: number
   deletedAt: number
-  deletionRequestedAt: number
-  deletionReason: number
-  bio: number
-  domain: number
-  photoUrl: number
-  areasOfExpertise: number
-  calendlyLink: number
-  experience: number
-  isPublished: number
-  mentorshipTopics: number
-  publishedAt: number
-  qualifications: number
-  socialMediaLinks: number
-  displayName: number
-  iceBreakerTags: number
-  studyDomain: number
-  studyProgram: number
-  lastSeen: number
-  isOnline: number
-  creditBalance: number
   _all: number
 }
 
 
 export type App_userAvgAggregateInputType = {
-  creditBalance?: true
+  onboardingStep?: true
 }
 
 export type App_userSumAggregateInputType = {
-  creditBalance?: true
+  onboardingStep?: true
 }
 
 export type App_userMinAggregateInputType = {
   id?: true
   userId?: true
+  name?: true
+  email?: true
+  onboardingStep?: true
   role?: true
   status?: true
+  deletionReason?: true
+  photoUrl?: true
+  displayName?: true
+  bio?: true
+  domain?: true
+  qualifications?: true
+  experience?: true
+  calendlyLink?: true
+  isPublished?: true
+  publishedAt?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
-  deletionRequestedAt?: true
-  deletionReason?: true
-  bio?: true
-  domain?: true
-  photoUrl?: true
-  calendlyLink?: true
-  experience?: true
-  isPublished?: true
-  publishedAt?: true
-  qualifications?: true
-  displayName?: true
-  studyDomain?: true
-  studyProgram?: true
-  lastSeen?: true
-  isOnline?: true
-  creditBalance?: true
 }
 
 export type App_userMaxAggregateInputType = {
   id?: true
   userId?: true
+  name?: true
+  email?: true
+  onboardingStep?: true
   role?: true
   status?: true
+  deletionReason?: true
+  photoUrl?: true
+  displayName?: true
+  bio?: true
+  domain?: true
+  qualifications?: true
+  experience?: true
+  calendlyLink?: true
+  isPublished?: true
+  publishedAt?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
-  deletionRequestedAt?: true
-  deletionReason?: true
-  bio?: true
-  domain?: true
-  photoUrl?: true
-  calendlyLink?: true
-  experience?: true
-  isPublished?: true
-  publishedAt?: true
-  qualifications?: true
-  displayName?: true
-  studyDomain?: true
-  studyProgram?: true
-  lastSeen?: true
-  isOnline?: true
-  creditBalance?: true
 }
 
 export type App_userCountAggregateInputType = {
   id?: true
   userId?: true
+  name?: true
+  email?: true
+  onboardingStep?: true
   role?: true
   status?: true
+  deletionReason?: true
+  photoUrl?: true
+  displayName?: true
+  bio?: true
+  domain?: true
+  areasOfExpertise?: true
+  mentorshipTopics?: true
+  qualifications?: true
+  experience?: true
+  socialMediaLinks?: true
+  calendlyLink?: true
+  isPublished?: true
+  publishedAt?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
-  deletionRequestedAt?: true
-  deletionReason?: true
-  bio?: true
-  domain?: true
-  photoUrl?: true
-  areasOfExpertise?: true
-  calendlyLink?: true
-  experience?: true
-  isPublished?: true
-  mentorshipTopics?: true
-  publishedAt?: true
-  qualifications?: true
-  socialMediaLinks?: true
-  displayName?: true
-  iceBreakerTags?: true
-  studyDomain?: true
-  studyProgram?: true
-  lastSeen?: true
-  isOnline?: true
-  creditBalance?: true
   _all?: true
 }
 
@@ -298,31 +278,27 @@ export type app_userGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type App_userGroupByOutputType = {
   id: string
   userId: string
-  role: $Enums.Role | null
-  status: $Enums.AppUserStatus
+  name: string
+  email: string
+  onboardingStep: number
+  role: string | null
+  status: string
+  deletionReason: string | null
+  photoUrl: string | null
+  displayName: string | null
+  bio: string | null
+  domain: string | null
+  areasOfExpertise: string[]
+  mentorshipTopics: string[]
+  qualifications: string | null
+  experience: string | null
+  socialMediaLinks: runtime.JsonValue | null
+  calendlyLink: string | null
+  isPublished: boolean
+  publishedAt: Date | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
-  deletionRequestedAt: Date | null
-  deletionReason: string | null
-  bio: string | null
-  domain: string | null
-  photoUrl: string | null
-  areasOfExpertise: runtime.JsonValue | null
-  calendlyLink: string | null
-  experience: string | null
-  isPublished: boolean
-  mentorshipTopics: runtime.JsonValue | null
-  publishedAt: Date | null
-  qualifications: string | null
-  socialMediaLinks: runtime.JsonValue | null
-  displayName: string | null
-  iceBreakerTags: runtime.JsonValue | null
-  studyDomain: string | null
-  studyProgram: string | null
-  lastSeen: Date | null
-  isOnline: boolean
-  creditBalance: number
   _count: App_userCountAggregateOutputType | null
   _avg: App_userAvgAggregateOutputType | null
   _sum: App_userSumAggregateOutputType | null
@@ -351,178 +327,168 @@ export type app_userWhereInput = {
   NOT?: Prisma.app_userWhereInput | Prisma.app_userWhereInput[]
   id?: Prisma.StringFilter<"app_user"> | string
   userId?: Prisma.StringFilter<"app_user"> | string
-  role?: Prisma.EnumRoleNullableFilter<"app_user"> | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFilter<"app_user"> | $Enums.AppUserStatus
+  name?: Prisma.StringFilter<"app_user"> | string
+  email?: Prisma.StringFilter<"app_user"> | string
+  onboardingStep?: Prisma.IntFilter<"app_user"> | number
+  role?: Prisma.StringNullableFilter<"app_user"> | string | null
+  status?: Prisma.StringFilter<"app_user"> | string
+  deletionReason?: Prisma.StringNullableFilter<"app_user"> | string | null
+  photoUrl?: Prisma.StringNullableFilter<"app_user"> | string | null
+  displayName?: Prisma.StringNullableFilter<"app_user"> | string | null
+  bio?: Prisma.StringNullableFilter<"app_user"> | string | null
+  domain?: Prisma.StringNullableFilter<"app_user"> | string | null
+  areasOfExpertise?: Prisma.StringNullableListFilter<"app_user">
+  mentorshipTopics?: Prisma.StringNullableListFilter<"app_user">
+  qualifications?: Prisma.StringNullableFilter<"app_user"> | string | null
+  experience?: Prisma.StringNullableFilter<"app_user"> | string | null
+  socialMediaLinks?: Prisma.JsonNullableFilter<"app_user">
+  calendlyLink?: Prisma.StringNullableFilter<"app_user"> | string | null
+  isPublished?: Prisma.BoolFilter<"app_user"> | boolean
+  publishedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"app_user"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"app_user"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  deletionRequestedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  deletionReason?: Prisma.StringNullableFilter<"app_user"> | string | null
-  bio?: Prisma.StringNullableFilter<"app_user"> | string | null
-  domain?: Prisma.StringNullableFilter<"app_user"> | string | null
-  photoUrl?: Prisma.StringNullableFilter<"app_user"> | string | null
-  areasOfExpertise?: Prisma.JsonNullableFilter<"app_user">
-  calendlyLink?: Prisma.StringNullableFilter<"app_user"> | string | null
-  experience?: Prisma.StringNullableFilter<"app_user"> | string | null
-  isPublished?: Prisma.BoolFilter<"app_user"> | boolean
-  mentorshipTopics?: Prisma.JsonNullableFilter<"app_user">
-  publishedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  qualifications?: Prisma.StringNullableFilter<"app_user"> | string | null
-  socialMediaLinks?: Prisma.JsonNullableFilter<"app_user">
-  displayName?: Prisma.StringNullableFilter<"app_user"> | string | null
-  iceBreakerTags?: Prisma.JsonNullableFilter<"app_user">
-  studyDomain?: Prisma.StringNullableFilter<"app_user"> | string | null
-  studyProgram?: Prisma.StringNullableFilter<"app_user"> | string | null
-  lastSeen?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  isOnline?: Prisma.BoolFilter<"app_user"> | boolean
-  creditBalance?: Prisma.IntFilter<"app_user"> | number
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
-  credit_transactions?: Prisma.Credit_transactionListRelationFilter
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.Mentor_feedbackListRelationFilter
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.Mentor_feedbackListRelationFilter
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.WorkshopListRelationFilter
-  workshop_workshop_creatorIdToapp_user?: Prisma.WorkshopListRelationFilter
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.Workshop_requestListRelationFilter
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.Workshop_requestListRelationFilter
-  user_connection_requester?: Prisma.User_connectionListRelationFilter
-  user_connection_receiver?: Prisma.User_connectionListRelationFilter
-  conversation_participant1?: Prisma.ConversationListRelationFilter
-  conversation_participant2?: Prisma.ConversationListRelationFilter
-  pinned_conversations?: Prisma.Conversation_pinListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
-  user_block_blocker?: Prisma.User_blockListRelationFilter
-  user_block_blocked?: Prisma.User_blockListRelationFilter
+  account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.accountWhereInput>
   reports_made?: Prisma.User_reportListRelationFilter
   reports_received?: Prisma.User_reportListRelationFilter
+  blocked_by?: Prisma.User_blockListRelationFilter
+  blocking?: Prisma.User_blockListRelationFilter
+  sent_requests?: Prisma.User_connectionListRelationFilter
+  received_requests?: Prisma.User_connectionListRelationFilter
+  workshop_requests_as_apprentice?: Prisma.Workshop_requestListRelationFilter
+  workshop_requests_as_mentor?: Prisma.Workshop_requestListRelationFilter
+  feedback_as_mentor?: Prisma.Mentor_feedbackListRelationFilter
+  feedback_as_apprentice?: Prisma.Mentor_feedbackListRelationFilter
+  conversations_as_participant1?: Prisma.ConversationListRelationFilter
+  conversations_as_participant2?: Prisma.ConversationListRelationFilter
+  creditTransactions?: Prisma.Credit_transactionListRelationFilter
+  supportRequests?: Prisma.Support_requestListRelationFilter
+  auditLogs?: Prisma.Audit_logListRelationFilter
+  workshops?: Prisma.WorkshopListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
+  messageReactions?: Prisma.Message_reactionListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
 }
 
 export type app_userOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
   role?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayName?: Prisma.SortOrderInput | Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
+  domain?: Prisma.SortOrderInput | Prisma.SortOrder
+  areasOfExpertise?: Prisma.SortOrder
+  mentorshipTopics?: Prisma.SortOrder
+  qualifications?: Prisma.SortOrderInput | Prisma.SortOrder
+  experience?: Prisma.SortOrderInput | Prisma.SortOrder
+  socialMediaLinks?: Prisma.SortOrderInput | Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  deletionRequestedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  deletionReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  bio?: Prisma.SortOrderInput | Prisma.SortOrder
-  domain?: Prisma.SortOrderInput | Prisma.SortOrder
-  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  areasOfExpertise?: Prisma.SortOrderInput | Prisma.SortOrder
-  calendlyLink?: Prisma.SortOrderInput | Prisma.SortOrder
-  experience?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  mentorshipTopics?: Prisma.SortOrderInput | Prisma.SortOrder
-  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  qualifications?: Prisma.SortOrderInput | Prisma.SortOrder
-  socialMediaLinks?: Prisma.SortOrderInput | Prisma.SortOrder
-  displayName?: Prisma.SortOrderInput | Prisma.SortOrder
-  iceBreakerTags?: Prisma.SortOrderInput | Prisma.SortOrder
-  studyDomain?: Prisma.SortOrderInput | Prisma.SortOrder
-  studyProgram?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastSeen?: Prisma.SortOrderInput | Prisma.SortOrder
-  isOnline?: Prisma.SortOrder
-  creditBalance?: Prisma.SortOrder
-  user?: Prisma.userOrderByWithRelationInput
-  credit_transactions?: Prisma.credit_transactionOrderByRelationAggregateInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackOrderByRelationAggregateInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackOrderByRelationAggregateInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopOrderByRelationAggregateInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopOrderByRelationAggregateInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestOrderByRelationAggregateInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestOrderByRelationAggregateInput
-  user_connection_requester?: Prisma.user_connectionOrderByRelationAggregateInput
-  user_connection_receiver?: Prisma.user_connectionOrderByRelationAggregateInput
-  conversation_participant1?: Prisma.conversationOrderByRelationAggregateInput
-  conversation_participant2?: Prisma.conversationOrderByRelationAggregateInput
-  pinned_conversations?: Prisma.conversation_pinOrderByRelationAggregateInput
-  notifications?: Prisma.notificationOrderByRelationAggregateInput
-  user_block_blocker?: Prisma.user_blockOrderByRelationAggregateInput
-  user_block_blocked?: Prisma.user_blockOrderByRelationAggregateInput
+  account?: Prisma.accountOrderByWithRelationInput
   reports_made?: Prisma.user_reportOrderByRelationAggregateInput
   reports_received?: Prisma.user_reportOrderByRelationAggregateInput
+  blocked_by?: Prisma.user_blockOrderByRelationAggregateInput
+  blocking?: Prisma.user_blockOrderByRelationAggregateInput
+  sent_requests?: Prisma.user_connectionOrderByRelationAggregateInput
+  received_requests?: Prisma.user_connectionOrderByRelationAggregateInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestOrderByRelationAggregateInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestOrderByRelationAggregateInput
+  feedback_as_mentor?: Prisma.mentor_feedbackOrderByRelationAggregateInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackOrderByRelationAggregateInput
+  conversations_as_participant1?: Prisma.conversationOrderByRelationAggregateInput
+  conversations_as_participant2?: Prisma.conversationOrderByRelationAggregateInput
+  creditTransactions?: Prisma.credit_transactionOrderByRelationAggregateInput
+  supportRequests?: Prisma.support_requestOrderByRelationAggregateInput
+  auditLogs?: Prisma.audit_logOrderByRelationAggregateInput
+  workshops?: Prisma.workshopOrderByRelationAggregateInput
+  messages?: Prisma.messageOrderByRelationAggregateInput
+  messageReactions?: Prisma.message_reactionOrderByRelationAggregateInput
+  notifications?: Prisma.notificationOrderByRelationAggregateInput
 }
 
 export type app_userWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   userId?: string
+  email?: string
   AND?: Prisma.app_userWhereInput | Prisma.app_userWhereInput[]
   OR?: Prisma.app_userWhereInput[]
   NOT?: Prisma.app_userWhereInput | Prisma.app_userWhereInput[]
-  role?: Prisma.EnumRoleNullableFilter<"app_user"> | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFilter<"app_user"> | $Enums.AppUserStatus
+  name?: Prisma.StringFilter<"app_user"> | string
+  onboardingStep?: Prisma.IntFilter<"app_user"> | number
+  role?: Prisma.StringNullableFilter<"app_user"> | string | null
+  status?: Prisma.StringFilter<"app_user"> | string
+  deletionReason?: Prisma.StringNullableFilter<"app_user"> | string | null
+  photoUrl?: Prisma.StringNullableFilter<"app_user"> | string | null
+  displayName?: Prisma.StringNullableFilter<"app_user"> | string | null
+  bio?: Prisma.StringNullableFilter<"app_user"> | string | null
+  domain?: Prisma.StringNullableFilter<"app_user"> | string | null
+  areasOfExpertise?: Prisma.StringNullableListFilter<"app_user">
+  mentorshipTopics?: Prisma.StringNullableListFilter<"app_user">
+  qualifications?: Prisma.StringNullableFilter<"app_user"> | string | null
+  experience?: Prisma.StringNullableFilter<"app_user"> | string | null
+  socialMediaLinks?: Prisma.JsonNullableFilter<"app_user">
+  calendlyLink?: Prisma.StringNullableFilter<"app_user"> | string | null
+  isPublished?: Prisma.BoolFilter<"app_user"> | boolean
+  publishedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"app_user"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"app_user"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  deletionRequestedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  deletionReason?: Prisma.StringNullableFilter<"app_user"> | string | null
-  bio?: Prisma.StringNullableFilter<"app_user"> | string | null
-  domain?: Prisma.StringNullableFilter<"app_user"> | string | null
-  photoUrl?: Prisma.StringNullableFilter<"app_user"> | string | null
-  areasOfExpertise?: Prisma.JsonNullableFilter<"app_user">
-  calendlyLink?: Prisma.StringNullableFilter<"app_user"> | string | null
-  experience?: Prisma.StringNullableFilter<"app_user"> | string | null
-  isPublished?: Prisma.BoolFilter<"app_user"> | boolean
-  mentorshipTopics?: Prisma.JsonNullableFilter<"app_user">
-  publishedAt?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  qualifications?: Prisma.StringNullableFilter<"app_user"> | string | null
-  socialMediaLinks?: Prisma.JsonNullableFilter<"app_user">
-  displayName?: Prisma.StringNullableFilter<"app_user"> | string | null
-  iceBreakerTags?: Prisma.JsonNullableFilter<"app_user">
-  studyDomain?: Prisma.StringNullableFilter<"app_user"> | string | null
-  studyProgram?: Prisma.StringNullableFilter<"app_user"> | string | null
-  lastSeen?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
-  isOnline?: Prisma.BoolFilter<"app_user"> | boolean
-  creditBalance?: Prisma.IntFilter<"app_user"> | number
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
-  credit_transactions?: Prisma.Credit_transactionListRelationFilter
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.Mentor_feedbackListRelationFilter
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.Mentor_feedbackListRelationFilter
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.WorkshopListRelationFilter
-  workshop_workshop_creatorIdToapp_user?: Prisma.WorkshopListRelationFilter
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.Workshop_requestListRelationFilter
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.Workshop_requestListRelationFilter
-  user_connection_requester?: Prisma.User_connectionListRelationFilter
-  user_connection_receiver?: Prisma.User_connectionListRelationFilter
-  conversation_participant1?: Prisma.ConversationListRelationFilter
-  conversation_participant2?: Prisma.ConversationListRelationFilter
-  pinned_conversations?: Prisma.Conversation_pinListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
-  user_block_blocker?: Prisma.User_blockListRelationFilter
-  user_block_blocked?: Prisma.User_blockListRelationFilter
+  account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.accountWhereInput>
   reports_made?: Prisma.User_reportListRelationFilter
   reports_received?: Prisma.User_reportListRelationFilter
-}, "id" | "userId">
+  blocked_by?: Prisma.User_blockListRelationFilter
+  blocking?: Prisma.User_blockListRelationFilter
+  sent_requests?: Prisma.User_connectionListRelationFilter
+  received_requests?: Prisma.User_connectionListRelationFilter
+  workshop_requests_as_apprentice?: Prisma.Workshop_requestListRelationFilter
+  workshop_requests_as_mentor?: Prisma.Workshop_requestListRelationFilter
+  feedback_as_mentor?: Prisma.Mentor_feedbackListRelationFilter
+  feedback_as_apprentice?: Prisma.Mentor_feedbackListRelationFilter
+  conversations_as_participant1?: Prisma.ConversationListRelationFilter
+  conversations_as_participant2?: Prisma.ConversationListRelationFilter
+  creditTransactions?: Prisma.Credit_transactionListRelationFilter
+  supportRequests?: Prisma.Support_requestListRelationFilter
+  auditLogs?: Prisma.Audit_logListRelationFilter
+  workshops?: Prisma.WorkshopListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
+  messageReactions?: Prisma.Message_reactionListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
+}, "id" | "userId" | "email">
 
 export type app_userOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
   role?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayName?: Prisma.SortOrderInput | Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
+  domain?: Prisma.SortOrderInput | Prisma.SortOrder
+  areasOfExpertise?: Prisma.SortOrder
+  mentorshipTopics?: Prisma.SortOrder
+  qualifications?: Prisma.SortOrderInput | Prisma.SortOrder
+  experience?: Prisma.SortOrderInput | Prisma.SortOrder
+  socialMediaLinks?: Prisma.SortOrderInput | Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  deletionRequestedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  deletionReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  bio?: Prisma.SortOrderInput | Prisma.SortOrder
-  domain?: Prisma.SortOrderInput | Prisma.SortOrder
-  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  areasOfExpertise?: Prisma.SortOrderInput | Prisma.SortOrder
-  calendlyLink?: Prisma.SortOrderInput | Prisma.SortOrder
-  experience?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  mentorshipTopics?: Prisma.SortOrderInput | Prisma.SortOrder
-  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  qualifications?: Prisma.SortOrderInput | Prisma.SortOrder
-  socialMediaLinks?: Prisma.SortOrderInput | Prisma.SortOrder
-  displayName?: Prisma.SortOrderInput | Prisma.SortOrder
-  iceBreakerTags?: Prisma.SortOrderInput | Prisma.SortOrder
-  studyDomain?: Prisma.SortOrderInput | Prisma.SortOrder
-  studyProgram?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastSeen?: Prisma.SortOrderInput | Prisma.SortOrder
-  isOnline?: Prisma.SortOrder
-  creditBalance?: Prisma.SortOrder
   _count?: Prisma.app_userCountOrderByAggregateInput
   _avg?: Prisma.app_userAvgOrderByAggregateInput
   _max?: Prisma.app_userMaxOrderByAggregateInput
@@ -536,403 +502,284 @@ export type app_userScalarWhereWithAggregatesInput = {
   NOT?: Prisma.app_userScalarWhereWithAggregatesInput | Prisma.app_userScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"app_user"> | string
   userId?: Prisma.StringWithAggregatesFilter<"app_user"> | string
-  role?: Prisma.EnumRoleNullableWithAggregatesFilter<"app_user"> | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusWithAggregatesFilter<"app_user"> | $Enums.AppUserStatus
+  name?: Prisma.StringWithAggregatesFilter<"app_user"> | string
+  email?: Prisma.StringWithAggregatesFilter<"app_user"> | string
+  onboardingStep?: Prisma.IntWithAggregatesFilter<"app_user"> | number
+  role?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  status?: Prisma.StringWithAggregatesFilter<"app_user"> | string
+  deletionReason?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  photoUrl?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  displayName?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  bio?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  domain?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  areasOfExpertise?: Prisma.StringNullableListFilter<"app_user">
+  mentorshipTopics?: Prisma.StringNullableListFilter<"app_user">
+  qualifications?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  experience?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  socialMediaLinks?: Prisma.JsonNullableWithAggregatesFilter<"app_user">
+  calendlyLink?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
+  isPublished?: Prisma.BoolWithAggregatesFilter<"app_user"> | boolean
+  publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"app_user"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"app_user"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"app_user"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"app_user"> | Date | string | null
-  deletionRequestedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"app_user"> | Date | string | null
-  deletionReason?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  bio?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  domain?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  photoUrl?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  areasOfExpertise?: Prisma.JsonNullableWithAggregatesFilter<"app_user">
-  calendlyLink?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  experience?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  isPublished?: Prisma.BoolWithAggregatesFilter<"app_user"> | boolean
-  mentorshipTopics?: Prisma.JsonNullableWithAggregatesFilter<"app_user">
-  publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"app_user"> | Date | string | null
-  qualifications?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  socialMediaLinks?: Prisma.JsonNullableWithAggregatesFilter<"app_user">
-  displayName?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  iceBreakerTags?: Prisma.JsonNullableWithAggregatesFilter<"app_user">
-  studyDomain?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  studyProgram?: Prisma.StringNullableWithAggregatesFilter<"app_user"> | string | null
-  lastSeen?: Prisma.DateTimeNullableWithAggregatesFilter<"app_user"> | Date | string | null
-  isOnline?: Prisma.BoolWithAggregatesFilter<"app_user"> | boolean
-  creditBalance?: Prisma.IntWithAggregatesFilter<"app_user"> | number
 }
 
 export type app_userCreateInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
   reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
 }
 
 export type app_userUncheckedCreateInput = {
-  id: string
+  id?: string
   userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type app_userUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
   reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
 }
 
 export type app_userUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
   reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type app_userCreateManyInput = {
-  id: string
+  id?: string
   userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type app_userUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type app_userUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type app_userCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  role?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
-  deletionRequestedAt?: Prisma.SortOrder
-  deletionReason?: Prisma.SortOrder
-  bio?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  photoUrl?: Prisma.SortOrder
-  areasOfExpertise?: Prisma.SortOrder
-  calendlyLink?: Prisma.SortOrder
-  experience?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  mentorshipTopics?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrder
-  qualifications?: Prisma.SortOrder
-  socialMediaLinks?: Prisma.SortOrder
-  displayName?: Prisma.SortOrder
-  iceBreakerTags?: Prisma.SortOrder
-  studyDomain?: Prisma.SortOrder
-  studyProgram?: Prisma.SortOrder
-  lastSeen?: Prisma.SortOrder
-  isOnline?: Prisma.SortOrder
-  creditBalance?: Prisma.SortOrder
-}
-
-export type app_userAvgOrderByAggregateInput = {
-  creditBalance?: Prisma.SortOrder
-}
-
-export type app_userMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  role?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
-  deletionRequestedAt?: Prisma.SortOrder
-  deletionReason?: Prisma.SortOrder
-  bio?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  photoUrl?: Prisma.SortOrder
-  calendlyLink?: Prisma.SortOrder
-  experience?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrder
-  qualifications?: Prisma.SortOrder
-  displayName?: Prisma.SortOrder
-  studyDomain?: Prisma.SortOrder
-  studyProgram?: Prisma.SortOrder
-  lastSeen?: Prisma.SortOrder
-  isOnline?: Prisma.SortOrder
-  creditBalance?: Prisma.SortOrder
-}
-
-export type app_userMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  role?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
-  deletionRequestedAt?: Prisma.SortOrder
-  deletionReason?: Prisma.SortOrder
-  bio?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  photoUrl?: Prisma.SortOrder
-  calendlyLink?: Prisma.SortOrder
-  experience?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrder
-  qualifications?: Prisma.SortOrder
-  displayName?: Prisma.SortOrder
-  studyDomain?: Prisma.SortOrder
-  studyProgram?: Prisma.SortOrder
-  lastSeen?: Prisma.SortOrder
-  isOnline?: Prisma.SortOrder
-  creditBalance?: Prisma.SortOrder
-}
-
-export type app_userSumOrderByAggregateInput = {
-  creditBalance?: Prisma.SortOrder
-}
-
-export type App_userScalarRelationFilter = {
-  is?: Prisma.app_userWhereInput
-  isNot?: Prisma.app_userWhereInput
 }
 
 export type App_userNullableScalarRelationFilter = {
@@ -940,254 +787,189 @@ export type App_userNullableScalarRelationFilter = {
   isNot?: Prisma.app_userWhereInput | null
 }
 
-export type NullableEnumRoleFieldUpdateOperationsInput = {
-  set?: $Enums.Role | null
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
-export type EnumAppUserStatusFieldUpdateOperationsInput = {
-  set?: $Enums.AppUserStatus
+export type app_userCountOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
+  displayName?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
+  domain?: Prisma.SortOrder
+  areasOfExpertise?: Prisma.SortOrder
+  mentorshipTopics?: Prisma.SortOrder
+  qualifications?: Prisma.SortOrder
+  experience?: Prisma.SortOrder
+  socialMediaLinks?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
+export type app_userAvgOrderByAggregateInput = {
+  onboardingStep?: Prisma.SortOrder
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type app_userMaxOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
+  displayName?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
+  domain?: Prisma.SortOrder
+  qualifications?: Prisma.SortOrder
+  experience?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
-export type app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput
+export type app_userMinOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
+  displayName?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
+  domain?: Prisma.SortOrder
+  qualifications?: Prisma.SortOrder
+  experience?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type app_userSumOrderByAggregateInput = {
+  onboardingStep?: Prisma.SortOrder
+}
+
+export type App_userScalarRelationFilter = {
+  is?: Prisma.app_userWhereInput
+  isNot?: Prisma.app_userWhereInput
+}
+
+export type app_userCreateNestedOneWithoutAccountInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutAccountInput, Prisma.app_userUncheckedCreateWithoutAccountInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutAccountInput
   connect?: Prisma.app_userWhereUniqueInput
 }
 
-export type app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput
+export type app_userUncheckedCreateNestedOneWithoutAccountInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutAccountInput, Prisma.app_userUncheckedCreateWithoutAccountInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutAccountInput
   connect?: Prisma.app_userWhereUniqueInput
 }
 
-export type app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput
-  upsert?: Prisma.app_userUpsertWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput, Prisma.app_userUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>
-}
-
-export type app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput
-  upsert?: Prisma.app_userUpsertWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput, Prisma.app_userUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>
-}
-
-export type app_userCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUserInput, Prisma.app_userUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUserInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUncheckedCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUserInput, Prisma.app_userUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUserInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUserInput, Prisma.app_userUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUserInput
-  upsert?: Prisma.app_userUpsertWithoutUserInput
+export type app_userUpdateOneWithoutAccountNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutAccountInput, Prisma.app_userUncheckedCreateWithoutAccountInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutAccountInput
+  upsert?: Prisma.app_userUpsertWithoutAccountInput
   disconnect?: Prisma.app_userWhereInput | boolean
   delete?: Prisma.app_userWhereInput | boolean
   connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutUserInput, Prisma.app_userUpdateWithoutUserInput>, Prisma.app_userUncheckedUpdateWithoutUserInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutAccountInput, Prisma.app_userUpdateWithoutAccountInput>, Prisma.app_userUncheckedUpdateWithoutAccountInput>
 }
 
-export type app_userUncheckedUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUserInput, Prisma.app_userUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUserInput
-  upsert?: Prisma.app_userUpsertWithoutUserInput
+export type app_userUncheckedUpdateOneWithoutAccountNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutAccountInput, Prisma.app_userUncheckedCreateWithoutAccountInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutAccountInput
+  upsert?: Prisma.app_userUpsertWithoutAccountInput
   disconnect?: Prisma.app_userWhereInput | boolean
   delete?: Prisma.app_userWhereInput | boolean
   connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutUserInput, Prisma.app_userUpdateWithoutUserInput>, Prisma.app_userUncheckedUpdateWithoutUserInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutAccountInput, Prisma.app_userUpdateWithoutAccountInput>, Prisma.app_userUncheckedUpdateWithoutAccountInput>
 }
 
-export type app_userCreateNestedOneWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_workshop_apprenticeIdToapp_userInput
+export type app_userCreateareasOfExpertiseInput = {
+  set: string[]
+}
+
+export type app_userCreatementorshipTopicsInput = {
+  set: string[]
+}
+
+export type app_userUpdateareasOfExpertiseInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type app_userUpdatementorshipTopicsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type app_userCreateNestedOneWithoutCreditTransactionsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutCreditTransactionsInput, Prisma.app_userUncheckedCreateWithoutCreditTransactionsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutCreditTransactionsInput
   connect?: Prisma.app_userWhereUniqueInput
 }
 
-export type app_userCreateNestedOneWithoutWorkshop_workshop_creatorIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_creatorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_creatorIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_workshop_creatorIdToapp_userInput
+export type app_userUpdateOneRequiredWithoutCreditTransactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutCreditTransactionsInput, Prisma.app_userUncheckedCreateWithoutCreditTransactionsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutCreditTransactionsInput
+  upsert?: Prisma.app_userUpsertWithoutCreditTransactionsInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutCreditTransactionsInput, Prisma.app_userUpdateWithoutCreditTransactionsInput>, Prisma.app_userUncheckedUpdateWithoutCreditTransactionsInput>
+}
+
+export type app_userCreateNestedOneWithoutSupportRequestsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutSupportRequestsInput, Prisma.app_userUncheckedCreateWithoutSupportRequestsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutSupportRequestsInput
   connect?: Prisma.app_userWhereUniqueInput
 }
 
-export type app_userUpdateOneWithoutWorkshop_workshop_apprenticeIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  upsert?: Prisma.app_userUpsertWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  disconnect?: Prisma.app_userWhereInput | boolean
-  delete?: Prisma.app_userWhereInput | boolean
+export type app_userUpdateOneRequiredWithoutSupportRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutSupportRequestsInput, Prisma.app_userUncheckedCreateWithoutSupportRequestsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutSupportRequestsInput
+  upsert?: Prisma.app_userUpsertWithoutSupportRequestsInput
   connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutWorkshop_workshop_apprenticeIdToapp_userInput, Prisma.app_userUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutSupportRequestsInput, Prisma.app_userUpdateWithoutSupportRequestsInput>, Prisma.app_userUncheckedUpdateWithoutSupportRequestsInput>
 }
 
-export type app_userUpdateOneRequiredWithoutWorkshop_workshop_creatorIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_creatorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_creatorIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_workshop_creatorIdToapp_userInput
-  upsert?: Prisma.app_userUpsertWithoutWorkshop_workshop_creatorIdToapp_userInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutWorkshop_workshop_creatorIdToapp_userInput, Prisma.app_userUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput>
-}
-
-export type app_userCreateNestedOneWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput
+export type app_userCreateNestedOneWithoutAuditLogsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutAuditLogsInput, Prisma.app_userUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutAuditLogsInput
   connect?: Prisma.app_userWhereUniqueInput
 }
 
-export type app_userCreateNestedOneWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput
+export type app_userUpdateOneRequiredWithoutAuditLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutAuditLogsInput, Prisma.app_userUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutAuditLogsInput
+  upsert?: Prisma.app_userUpsertWithoutAuditLogsInput
   connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUpdateOneRequiredWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput
-  upsert?: Prisma.app_userUpsertWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput, Prisma.app_userUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>
-}
-
-export type app_userUpdateOneRequiredWithoutWorkshop_request_workshop_request_mentorIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput
-  upsert?: Prisma.app_userUpsertWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput, Prisma.app_userUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>
-}
-
-export type app_userCreateNestedOneWithoutUser_connection_requesterInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_requesterInput, Prisma.app_userUncheckedCreateWithoutUser_connection_requesterInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_connection_requesterInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userCreateNestedOneWithoutUser_connection_receiverInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_receiverInput, Prisma.app_userUncheckedCreateWithoutUser_connection_receiverInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_connection_receiverInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUpdateOneRequiredWithoutUser_connection_requesterNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_requesterInput, Prisma.app_userUncheckedCreateWithoutUser_connection_requesterInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_connection_requesterInput
-  upsert?: Prisma.app_userUpsertWithoutUser_connection_requesterInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutUser_connection_requesterInput, Prisma.app_userUpdateWithoutUser_connection_requesterInput>, Prisma.app_userUncheckedUpdateWithoutUser_connection_requesterInput>
-}
-
-export type app_userUpdateOneRequiredWithoutUser_connection_receiverNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_receiverInput, Prisma.app_userUncheckedCreateWithoutUser_connection_receiverInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_connection_receiverInput
-  upsert?: Prisma.app_userUpsertWithoutUser_connection_receiverInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutUser_connection_receiverInput, Prisma.app_userUpdateWithoutUser_connection_receiverInput>, Prisma.app_userUncheckedUpdateWithoutUser_connection_receiverInput>
-}
-
-export type app_userCreateNestedOneWithoutConversation_participant1Input = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant1Input, Prisma.app_userUncheckedCreateWithoutConversation_participant1Input>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversation_participant1Input
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userCreateNestedOneWithoutConversation_participant2Input = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant2Input, Prisma.app_userUncheckedCreateWithoutConversation_participant2Input>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversation_participant2Input
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUpdateOneRequiredWithoutConversation_participant1NestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant1Input, Prisma.app_userUncheckedCreateWithoutConversation_participant1Input>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversation_participant1Input
-  upsert?: Prisma.app_userUpsertWithoutConversation_participant1Input
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutConversation_participant1Input, Prisma.app_userUpdateWithoutConversation_participant1Input>, Prisma.app_userUncheckedUpdateWithoutConversation_participant1Input>
-}
-
-export type app_userUpdateOneRequiredWithoutConversation_participant2NestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant2Input, Prisma.app_userUncheckedCreateWithoutConversation_participant2Input>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversation_participant2Input
-  upsert?: Prisma.app_userUpsertWithoutConversation_participant2Input
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutConversation_participant2Input, Prisma.app_userUpdateWithoutConversation_participant2Input>, Prisma.app_userUncheckedUpdateWithoutConversation_participant2Input>
-}
-
-export type app_userCreateNestedOneWithoutPinned_conversationsInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutPinned_conversationsInput, Prisma.app_userUncheckedCreateWithoutPinned_conversationsInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutPinned_conversationsInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUpdateOneRequiredWithoutPinned_conversationsNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutPinned_conversationsInput, Prisma.app_userUncheckedCreateWithoutPinned_conversationsInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutPinned_conversationsInput
-  upsert?: Prisma.app_userUpsertWithoutPinned_conversationsInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutPinned_conversationsInput, Prisma.app_userUpdateWithoutPinned_conversationsInput>, Prisma.app_userUncheckedUpdateWithoutPinned_conversationsInput>
-}
-
-export type app_userCreateNestedOneWithoutNotificationsInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutNotificationsInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUpdateOneRequiredWithoutNotificationsNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutNotificationsInput
-  upsert?: Prisma.app_userUpsertWithoutNotificationsInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutNotificationsInput, Prisma.app_userUpdateWithoutNotificationsInput>, Prisma.app_userUncheckedUpdateWithoutNotificationsInput>
-}
-
-export type app_userCreateNestedOneWithoutUser_block_blockerInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockerInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockerInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_block_blockerInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userCreateNestedOneWithoutUser_block_blockedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockedInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockedInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_block_blockedInput
-  connect?: Prisma.app_userWhereUniqueInput
-}
-
-export type app_userUpdateOneRequiredWithoutUser_block_blockerNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockerInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockerInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_block_blockerInput
-  upsert?: Prisma.app_userUpsertWithoutUser_block_blockerInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutUser_block_blockerInput, Prisma.app_userUpdateWithoutUser_block_blockerInput>, Prisma.app_userUncheckedUpdateWithoutUser_block_blockerInput>
-}
-
-export type app_userUpdateOneRequiredWithoutUser_block_blockedNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockedInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockedInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutUser_block_blockedInput
-  upsert?: Prisma.app_userUpsertWithoutUser_block_blockedInput
-  connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutUser_block_blockedInput, Prisma.app_userUpdateWithoutUser_block_blockedInput>, Prisma.app_userUncheckedUpdateWithoutUser_block_blockedInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.app_userUpdateWithoutAuditLogsInput>, Prisma.app_userUncheckedUpdateWithoutAuditLogsInput>
 }
 
 export type app_userCreateNestedOneWithoutReports_madeInput = {
@@ -1218,3110 +1000,1056 @@ export type app_userUpdateOneRequiredWithoutReports_receivedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutReports_receivedInput, Prisma.app_userUpdateWithoutReports_receivedInput>, Prisma.app_userUncheckedUpdateWithoutReports_receivedInput>
 }
 
-export type app_userCreateNestedOneWithoutCredit_transactionsInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutCredit_transactionsInput, Prisma.app_userUncheckedCreateWithoutCredit_transactionsInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutCredit_transactionsInput
+export type app_userCreateNestedOneWithoutBlocked_byInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBlocked_byInput, Prisma.app_userUncheckedCreateWithoutBlocked_byInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBlocked_byInput
   connect?: Prisma.app_userWhereUniqueInput
 }
 
-export type app_userUpdateOneRequiredWithoutCredit_transactionsNestedInput = {
-  create?: Prisma.XOR<Prisma.app_userCreateWithoutCredit_transactionsInput, Prisma.app_userUncheckedCreateWithoutCredit_transactionsInput>
-  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutCredit_transactionsInput
-  upsert?: Prisma.app_userUpsertWithoutCredit_transactionsInput
+export type app_userCreateNestedOneWithoutBlockingInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBlockingInput, Prisma.app_userUncheckedCreateWithoutBlockingInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBlockingInput
   connect?: Prisma.app_userWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutCredit_transactionsInput, Prisma.app_userUpdateWithoutCredit_transactionsInput>, Prisma.app_userUncheckedUpdateWithoutCredit_transactionsInput>
 }
 
-export type app_userCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+export type app_userUpdateOneRequiredWithoutBlocked_byNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBlocked_byInput, Prisma.app_userUncheckedCreateWithoutBlocked_byInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBlocked_byInput
+  upsert?: Prisma.app_userUpsertWithoutBlocked_byInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutBlocked_byInput, Prisma.app_userUpdateWithoutBlocked_byInput>, Prisma.app_userUncheckedUpdateWithoutBlocked_byInput>
+}
+
+export type app_userUpdateOneRequiredWithoutBlockingNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBlockingInput, Prisma.app_userUncheckedCreateWithoutBlockingInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBlockingInput
+  upsert?: Prisma.app_userUpsertWithoutBlockingInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutBlockingInput, Prisma.app_userUpdateWithoutBlockingInput>, Prisma.app_userUncheckedUpdateWithoutBlockingInput>
+}
+
+export type app_userCreateNestedOneWithoutSent_requestsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutSent_requestsInput, Prisma.app_userUncheckedCreateWithoutSent_requestsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutSent_requestsInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userCreateNestedOneWithoutReceived_requestsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutReceived_requestsInput, Prisma.app_userUncheckedCreateWithoutReceived_requestsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutReceived_requestsInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutSent_requestsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutSent_requestsInput, Prisma.app_userUncheckedCreateWithoutSent_requestsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutSent_requestsInput
+  upsert?: Prisma.app_userUpsertWithoutSent_requestsInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutSent_requestsInput, Prisma.app_userUpdateWithoutSent_requestsInput>, Prisma.app_userUncheckedUpdateWithoutSent_requestsInput>
+}
+
+export type app_userUpdateOneRequiredWithoutReceived_requestsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutReceived_requestsInput, Prisma.app_userUncheckedCreateWithoutReceived_requestsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutReceived_requestsInput
+  upsert?: Prisma.app_userUpsertWithoutReceived_requestsInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutReceived_requestsInput, Prisma.app_userUpdateWithoutReceived_requestsInput>, Prisma.app_userUncheckedUpdateWithoutReceived_requestsInput>
+}
+
+export type app_userCreateNestedOneWithoutWorkshopsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshopsInput, Prisma.app_userUncheckedCreateWithoutWorkshopsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshopsInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutWorkshopsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshopsInput, Prisma.app_userUncheckedCreateWithoutWorkshopsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshopsInput
+  upsert?: Prisma.app_userUpsertWithoutWorkshopsInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutWorkshopsInput, Prisma.app_userUpdateWithoutWorkshopsInput>, Prisma.app_userUncheckedUpdateWithoutWorkshopsInput>
+}
+
+export type app_userCreateNestedOneWithoutWorkshop_requests_as_apprenticeInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_apprenticeInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_requests_as_apprenticeInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userCreateNestedOneWithoutWorkshop_requests_as_mentorInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_mentorInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_mentorInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_requests_as_mentorInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutWorkshop_requests_as_apprenticeNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_apprenticeInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_requests_as_apprenticeInput
+  upsert?: Prisma.app_userUpsertWithoutWorkshop_requests_as_apprenticeInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutWorkshop_requests_as_apprenticeInput, Prisma.app_userUpdateWithoutWorkshop_requests_as_apprenticeInput>, Prisma.app_userUncheckedUpdateWithoutWorkshop_requests_as_apprenticeInput>
+}
+
+export type app_userUpdateOneRequiredWithoutWorkshop_requests_as_mentorNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_mentorInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_mentorInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutWorkshop_requests_as_mentorInput
+  upsert?: Prisma.app_userUpsertWithoutWorkshop_requests_as_mentorInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutWorkshop_requests_as_mentorInput, Prisma.app_userUpdateWithoutWorkshop_requests_as_mentorInput>, Prisma.app_userUncheckedUpdateWithoutWorkshop_requests_as_mentorInput>
+}
+
+export type app_userCreateNestedOneWithoutFeedback_as_mentorInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_mentorInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_mentorInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutFeedback_as_mentorInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userCreateNestedOneWithoutFeedback_as_apprenticeInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_apprenticeInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutFeedback_as_apprenticeInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutFeedback_as_mentorNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_mentorInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_mentorInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutFeedback_as_mentorInput
+  upsert?: Prisma.app_userUpsertWithoutFeedback_as_mentorInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutFeedback_as_mentorInput, Prisma.app_userUpdateWithoutFeedback_as_mentorInput>, Prisma.app_userUncheckedUpdateWithoutFeedback_as_mentorInput>
+}
+
+export type app_userUpdateOneRequiredWithoutFeedback_as_apprenticeNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_apprenticeInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutFeedback_as_apprenticeInput
+  upsert?: Prisma.app_userUpsertWithoutFeedback_as_apprenticeInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutFeedback_as_apprenticeInput, Prisma.app_userUpdateWithoutFeedback_as_apprenticeInput>, Prisma.app_userUncheckedUpdateWithoutFeedback_as_apprenticeInput>
+}
+
+export type app_userCreateNestedOneWithoutConversations_as_participant1Input = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant1Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant1Input>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversations_as_participant1Input
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userCreateNestedOneWithoutConversations_as_participant2Input = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant2Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant2Input>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversations_as_participant2Input
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutConversations_as_participant1NestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant1Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant1Input>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversations_as_participant1Input
+  upsert?: Prisma.app_userUpsertWithoutConversations_as_participant1Input
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutConversations_as_participant1Input, Prisma.app_userUpdateWithoutConversations_as_participant1Input>, Prisma.app_userUncheckedUpdateWithoutConversations_as_participant1Input>
+}
+
+export type app_userUpdateOneRequiredWithoutConversations_as_participant2NestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant2Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant2Input>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutConversations_as_participant2Input
+  upsert?: Prisma.app_userUpsertWithoutConversations_as_participant2Input
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutConversations_as_participant2Input, Prisma.app_userUpdateWithoutConversations_as_participant2Input>, Prisma.app_userUncheckedUpdateWithoutConversations_as_participant2Input>
+}
+
+export type app_userCreateNestedOneWithoutMessagesInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutMessagesInput, Prisma.app_userUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMessagesInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutMessagesInput, Prisma.app_userUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMessagesInput
+  upsert?: Prisma.app_userUpsertWithoutMessagesInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutMessagesInput, Prisma.app_userUpdateWithoutMessagesInput>, Prisma.app_userUncheckedUpdateWithoutMessagesInput>
+}
+
+export type app_userCreateNestedOneWithoutMessageReactionsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutMessageReactionsInput, Prisma.app_userUncheckedCreateWithoutMessageReactionsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMessageReactionsInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutMessageReactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutMessageReactionsInput, Prisma.app_userUncheckedCreateWithoutMessageReactionsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutMessageReactionsInput
+  upsert?: Prisma.app_userUpsertWithoutMessageReactionsInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutMessageReactionsInput, Prisma.app_userUpdateWithoutMessageReactionsInput>, Prisma.app_userUncheckedUpdateWithoutMessageReactionsInput>
+}
+
+export type app_userCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneRequiredWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.app_userUpsertWithoutNotificationsInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutNotificationsInput, Prisma.app_userUpdateWithoutNotificationsInput>, Prisma.app_userUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type app_userCreateWithoutAccountInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
 }
 
-export type app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+export type app_userUncheckedCreateWithoutAccountInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
+export type app_userCreateOrConnectWithoutAccountInput = {
   where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutAccountInput, Prisma.app_userUncheckedCreateWithoutAccountInput>
 }
 
-export type app_userCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>
-}
-
-export type app_userUpsertWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>
+export type app_userUpsertWithoutAccountInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutAccountInput, Prisma.app_userUncheckedUpdateWithoutAccountInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutAccountInput, Prisma.app_userUncheckedCreateWithoutAccountInput>
   where?: Prisma.app_userWhereInput
 }
 
-export type app_userUpdateToOneWithWhereWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
+export type app_userUpdateToOneWithWhereWithoutAccountInput = {
   where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput>
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutAccountInput, Prisma.app_userUncheckedUpdateWithoutAccountInput>
 }
 
-export type app_userUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
+export type app_userUpdateWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
   reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
 }
 
-export type app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput = {
+export type app_userUncheckedUpdateWithoutAccountInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutCreditTransactionsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutCreditTransactionsInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutCreditTransactionsInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutCreditTransactionsInput, Prisma.app_userUncheckedCreateWithoutCreditTransactionsInput>
+}
+
+export type app_userUpsertWithoutCreditTransactionsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutCreditTransactionsInput, Prisma.app_userUncheckedUpdateWithoutCreditTransactionsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutCreditTransactionsInput, Prisma.app_userUncheckedCreateWithoutCreditTransactionsInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutCreditTransactionsInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutCreditTransactionsInput, Prisma.app_userUncheckedUpdateWithoutCreditTransactionsInput>
+}
+
+export type app_userUpdateWithoutCreditTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutCreditTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
   reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type app_userUpsertWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput>
-}
-
-export type app_userUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutUserInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+export type app_userCreateWithoutSupportRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
   reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
 }
 
-export type app_userUncheckedCreateWithoutUserInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutUserInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUserInput, Prisma.app_userUncheckedCreateWithoutUserInput>
-}
-
-export type app_userUpsertWithoutUserInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutUserInput, Prisma.app_userUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUserInput, Prisma.app_userUncheckedCreateWithoutUserInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutUserInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutUserInput, Prisma.app_userUncheckedUpdateWithoutUserInput>
-}
-
-export type app_userUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
-  id: string
+export type app_userUncheckedCreateWithoutSupportRequestsInput = {
+  id?: string
   userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type app_userCreateOrConnectWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
+export type app_userCreateOrConnectWithoutSupportRequestsInput = {
   where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutSupportRequestsInput, Prisma.app_userUncheckedCreateWithoutSupportRequestsInput>
 }
 
-export type app_userCreateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+export type app_userUpsertWithoutSupportRequestsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutSupportRequestsInput, Prisma.app_userUncheckedUpdateWithoutSupportRequestsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutSupportRequestsInput, Prisma.app_userUncheckedCreateWithoutSupportRequestsInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutSupportRequestsInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutSupportRequestsInput, Prisma.app_userUncheckedUpdateWithoutSupportRequestsInput>
+}
+
+export type app_userUpdateWithoutSupportRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutSupportRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutAuditLogsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
   reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
 }
 
-export type app_userUncheckedCreateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
-  id: string
+export type app_userUncheckedCreateWithoutAuditLogsInput = {
+  id?: string
   userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type app_userCreateOrConnectWithoutWorkshop_workshop_creatorIdToapp_userInput = {
+export type app_userCreateOrConnectWithoutAuditLogsInput = {
   where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_creatorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_creatorIdToapp_userInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutAuditLogsInput, Prisma.app_userUncheckedCreateWithoutAuditLogsInput>
 }
 
-export type app_userUpsertWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>
+export type app_userUpsertWithoutAuditLogsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutAuditLogsInput, Prisma.app_userUncheckedUpdateWithoutAuditLogsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutAuditLogsInput, Prisma.app_userUncheckedCreateWithoutAuditLogsInput>
   where?: Prisma.app_userWhereInput
 }
 
-export type app_userUpdateToOneWithWhereWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
+export type app_userUpdateToOneWithWhereWithoutAuditLogsInput = {
   where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput>
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutAuditLogsInput, Prisma.app_userUncheckedUpdateWithoutAuditLogsInput>
 }
 
-export type app_userUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
+export type app_userUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
   reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
 }
 
-export type app_userUncheckedUpdateWithoutWorkshop_workshop_apprenticeIdToapp_userInput = {
+export type app_userUncheckedUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
   reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUpsertWithoutWorkshop_workshop_creatorIdToapp_userInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_workshop_creatorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_workshop_creatorIdToapp_userInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutWorkshop_workshop_creatorIdToapp_userInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput>
-}
-
-export type app_userUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutWorkshop_workshop_creatorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>
-}
-
-export type app_userCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>
-}
-
-export type app_userUpsertWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput>
-}
-
-export type app_userUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_apprenticeIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUpsertWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput, Prisma.app_userUncheckedCreateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput>
-}
-
-export type app_userUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutWorkshop_request_workshop_request_mentorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutUser_connection_requesterInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutUser_connection_requesterInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutUser_connection_requesterInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_requesterInput, Prisma.app_userUncheckedCreateWithoutUser_connection_requesterInput>
-}
-
-export type app_userCreateWithoutUser_connection_receiverInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutUser_connection_receiverInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutUser_connection_receiverInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_receiverInput, Prisma.app_userUncheckedCreateWithoutUser_connection_receiverInput>
-}
-
-export type app_userUpsertWithoutUser_connection_requesterInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutUser_connection_requesterInput, Prisma.app_userUncheckedUpdateWithoutUser_connection_requesterInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_requesterInput, Prisma.app_userUncheckedCreateWithoutUser_connection_requesterInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutUser_connection_requesterInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutUser_connection_requesterInput, Prisma.app_userUncheckedUpdateWithoutUser_connection_requesterInput>
-}
-
-export type app_userUpdateWithoutUser_connection_requesterInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutUser_connection_requesterInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUpsertWithoutUser_connection_receiverInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutUser_connection_receiverInput, Prisma.app_userUncheckedUpdateWithoutUser_connection_receiverInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_connection_receiverInput, Prisma.app_userUncheckedCreateWithoutUser_connection_receiverInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutUser_connection_receiverInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutUser_connection_receiverInput, Prisma.app_userUncheckedUpdateWithoutUser_connection_receiverInput>
-}
-
-export type app_userUpdateWithoutUser_connection_receiverInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutUser_connection_receiverInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutConversation_participant1Input = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutConversation_participant1Input = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutConversation_participant1Input = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant1Input, Prisma.app_userUncheckedCreateWithoutConversation_participant1Input>
-}
-
-export type app_userCreateWithoutConversation_participant2Input = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutConversation_participant2Input = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutConversation_participant2Input = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant2Input, Prisma.app_userUncheckedCreateWithoutConversation_participant2Input>
-}
-
-export type app_userUpsertWithoutConversation_participant1Input = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutConversation_participant1Input, Prisma.app_userUncheckedUpdateWithoutConversation_participant1Input>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant1Input, Prisma.app_userUncheckedCreateWithoutConversation_participant1Input>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutConversation_participant1Input = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutConversation_participant1Input, Prisma.app_userUncheckedUpdateWithoutConversation_participant1Input>
-}
-
-export type app_userUpdateWithoutConversation_participant1Input = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutConversation_participant1Input = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUpsertWithoutConversation_participant2Input = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutConversation_participant2Input, Prisma.app_userUncheckedUpdateWithoutConversation_participant2Input>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutConversation_participant2Input, Prisma.app_userUncheckedCreateWithoutConversation_participant2Input>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutConversation_participant2Input = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutConversation_participant2Input, Prisma.app_userUncheckedUpdateWithoutConversation_participant2Input>
-}
-
-export type app_userUpdateWithoutConversation_participant2Input = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutConversation_participant2Input = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutPinned_conversationsInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutPinned_conversationsInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutPinned_conversationsInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutPinned_conversationsInput, Prisma.app_userUncheckedCreateWithoutPinned_conversationsInput>
-}
-
-export type app_userUpsertWithoutPinned_conversationsInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutPinned_conversationsInput, Prisma.app_userUncheckedUpdateWithoutPinned_conversationsInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutPinned_conversationsInput, Prisma.app_userUncheckedCreateWithoutPinned_conversationsInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutPinned_conversationsInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutPinned_conversationsInput, Prisma.app_userUncheckedUpdateWithoutPinned_conversationsInput>
-}
-
-export type app_userUpdateWithoutPinned_conversationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutPinned_conversationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutNotificationsInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutNotificationsInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutNotificationsInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
-}
-
-export type app_userUpsertWithoutNotificationsInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutNotificationsInput, Prisma.app_userUncheckedUpdateWithoutNotificationsInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutNotificationsInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutNotificationsInput, Prisma.app_userUncheckedUpdateWithoutNotificationsInput>
-}
-
-export type app_userUpdateWithoutNotificationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutNotificationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userCreateWithoutUser_block_blockerInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutUser_block_blockerInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutUser_block_blockerInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockerInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockerInput>
-}
-
-export type app_userCreateWithoutUser_block_blockedInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
-}
-
-export type app_userUncheckedCreateWithoutUser_block_blockedInput = {
-  id: string
-  userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
-  deletionReason?: string | null
-  bio?: string | null
-  domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
-  qualifications?: string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
-  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
-}
-
-export type app_userCreateOrConnectWithoutUser_block_blockedInput = {
-  where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockedInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockedInput>
-}
-
-export type app_userUpsertWithoutUser_block_blockerInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutUser_block_blockerInput, Prisma.app_userUncheckedUpdateWithoutUser_block_blockerInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockerInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockerInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutUser_block_blockerInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutUser_block_blockerInput, Prisma.app_userUncheckedUpdateWithoutUser_block_blockerInput>
-}
-
-export type app_userUpdateWithoutUser_block_blockerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutUser_block_blockerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUpsertWithoutUser_block_blockedInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutUser_block_blockedInput, Prisma.app_userUncheckedUpdateWithoutUser_block_blockedInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutUser_block_blockedInput, Prisma.app_userUncheckedCreateWithoutUser_block_blockedInput>
-  where?: Prisma.app_userWhereInput
-}
-
-export type app_userUpdateToOneWithWhereWithoutUser_block_blockedInput = {
-  where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutUser_block_blockedInput, Prisma.app_userUncheckedUpdateWithoutUser_block_blockedInput>
-}
-
-export type app_userUpdateWithoutUser_block_blockedInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
-}
-
-export type app_userUncheckedUpdateWithoutUser_block_blockedInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
-  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type app_userCreateWithoutReports_madeInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
   reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
 }
 
 export type app_userUncheckedCreateWithoutReports_madeInput = {
-  id: string
+  id?: string
   userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type app_userCreateOrConnectWithoutReports_madeInput = {
@@ -4330,95 +2058,91 @@ export type app_userCreateOrConnectWithoutReports_madeInput = {
 }
 
 export type app_userCreateWithoutReports_receivedInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  credit_transactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
   reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
 }
 
 export type app_userUncheckedCreateWithoutReports_receivedInput = {
-  id: string
+  id?: string
   userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  credit_transactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type app_userCreateOrConnectWithoutReports_receivedInput = {
@@ -4439,94 +2163,90 @@ export type app_userUpdateToOneWithWhereWithoutReports_madeInput = {
 
 export type app_userUpdateWithoutReports_madeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
   reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutReports_madeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
   reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type app_userUpsertWithoutReports_receivedInput = {
@@ -4542,294 +2262,2778 @@ export type app_userUpdateToOneWithWhereWithoutReports_receivedInput = {
 
 export type app_userUpdateWithoutReports_receivedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  credit_transactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
   reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutReports_receivedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  credit_transactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
   reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type app_userCreateWithoutCredit_transactionsInput = {
-  id: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+export type app_userCreateWithoutBlocked_byInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  user: Prisma.userCreateNestedOneWithoutApp_userInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
   reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
 }
 
-export type app_userUncheckedCreateWithoutCredit_transactionsInput = {
-  id: string
+export type app_userUncheckedCreateWithoutBlocked_byInput = {
+  id?: string
   userId: string
-  role?: $Enums.Role | null
-  status?: $Enums.AppUserStatus
-  createdAt: Date | string
-  updatedAt: Date | string
-  deletedAt?: Date | string | null
-  deletionRequestedAt?: Date | string | null
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
   deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
   bio?: string | null
   domain?: string | null
-  photoUrl?: string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: string | null
-  experience?: string | null
-  isPublished?: boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Date | string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
   qualifications?: string | null
+  experience?: string | null
   socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: string | null
-  studyProgram?: string | null
-  lastSeen?: Date | string | null
-  isOnline?: boolean
-  creditBalance?: number
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_apprenticeIdToapp_userInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApp_user_workshop_request_mentorIdToapp_userInput
-  user_connection_requester?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_requesterInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedCreateNestedManyWithoutApp_user_receiverInput
-  conversation_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
-  conversation_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
-  pinned_conversations?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutApp_userInput
-  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutApp_userInput
-  user_block_blocker?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
-  user_block_blocked?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
   reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type app_userCreateOrConnectWithoutCredit_transactionsInput = {
+export type app_userCreateOrConnectWithoutBlocked_byInput = {
   where: Prisma.app_userWhereUniqueInput
-  create: Prisma.XOR<Prisma.app_userCreateWithoutCredit_transactionsInput, Prisma.app_userUncheckedCreateWithoutCredit_transactionsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBlocked_byInput, Prisma.app_userUncheckedCreateWithoutBlocked_byInput>
 }
 
-export type app_userUpsertWithoutCredit_transactionsInput = {
-  update: Prisma.XOR<Prisma.app_userUpdateWithoutCredit_transactionsInput, Prisma.app_userUncheckedUpdateWithoutCredit_transactionsInput>
-  create: Prisma.XOR<Prisma.app_userCreateWithoutCredit_transactionsInput, Prisma.app_userUncheckedCreateWithoutCredit_transactionsInput>
+export type app_userCreateWithoutBlockingInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutBlockingInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutBlockingInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBlockingInput, Prisma.app_userUncheckedCreateWithoutBlockingInput>
+}
+
+export type app_userUpsertWithoutBlocked_byInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutBlocked_byInput, Prisma.app_userUncheckedUpdateWithoutBlocked_byInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBlocked_byInput, Prisma.app_userUncheckedCreateWithoutBlocked_byInput>
   where?: Prisma.app_userWhereInput
 }
 
-export type app_userUpdateToOneWithWhereWithoutCredit_transactionsInput = {
+export type app_userUpdateToOneWithWhereWithoutBlocked_byInput = {
   where?: Prisma.app_userWhereInput
-  data: Prisma.XOR<Prisma.app_userUpdateWithoutCredit_transactionsInput, Prisma.app_userUncheckedUpdateWithoutCredit_transactionsInput>
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutBlocked_byInput, Prisma.app_userUncheckedUpdateWithoutBlocked_byInput>
 }
 
-export type app_userUpdateWithoutCredit_transactionsInput = {
+export type app_userUpdateWithoutBlocked_byInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  user?: Prisma.userUpdateOneRequiredWithoutApp_userNestedInput
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
   reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
 }
 
-export type app_userUncheckedUpdateWithoutCredit_transactionsInput = {
+export type app_userUncheckedUpdateWithoutBlocked_byInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-  status?: Prisma.EnumAppUserStatusFieldUpdateOperationsInput | $Enums.AppUserStatus
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  areasOfExpertise?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  mentorshipTopics?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  iceBreakerTags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  studyDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  studyProgram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  creditBalance?: Prisma.IntFieldUpdateOperationsInput | number
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop_workshop_apprenticeIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput
-  workshop_workshop_creatorIdToapp_user?: Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_apprenticeIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_request_mentorIdToapp_user?: Prisma.workshop_requestUncheckedUpdateManyWithoutApp_user_workshop_request_mentorIdToapp_userNestedInput
-  user_connection_requester?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_requesterNestedInput
-  user_connection_receiver?: Prisma.user_connectionUncheckedUpdateManyWithoutApp_user_receiverNestedInput
-  conversation_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
-  conversation_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
-  pinned_conversations?: Prisma.conversation_pinUncheckedUpdateManyWithoutApp_userNestedInput
-  notifications?: Prisma.notificationUncheckedUpdateManyWithoutApp_userNestedInput
-  user_block_blocker?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
-  user_block_blocked?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
   reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
   reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUpsertWithoutBlockingInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutBlockingInput, Prisma.app_userUncheckedUpdateWithoutBlockingInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBlockingInput, Prisma.app_userUncheckedCreateWithoutBlockingInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutBlockingInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutBlockingInput, Prisma.app_userUncheckedUpdateWithoutBlockingInput>
+}
+
+export type app_userUpdateWithoutBlockingInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutBlockingInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutSent_requestsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutSent_requestsInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutSent_requestsInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutSent_requestsInput, Prisma.app_userUncheckedCreateWithoutSent_requestsInput>
+}
+
+export type app_userCreateWithoutReceived_requestsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutReceived_requestsInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutReceived_requestsInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutReceived_requestsInput, Prisma.app_userUncheckedCreateWithoutReceived_requestsInput>
+}
+
+export type app_userUpsertWithoutSent_requestsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutSent_requestsInput, Prisma.app_userUncheckedUpdateWithoutSent_requestsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutSent_requestsInput, Prisma.app_userUncheckedCreateWithoutSent_requestsInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutSent_requestsInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutSent_requestsInput, Prisma.app_userUncheckedUpdateWithoutSent_requestsInput>
+}
+
+export type app_userUpdateWithoutSent_requestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutSent_requestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUpsertWithoutReceived_requestsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutReceived_requestsInput, Prisma.app_userUncheckedUpdateWithoutReceived_requestsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutReceived_requestsInput, Prisma.app_userUncheckedCreateWithoutReceived_requestsInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutReceived_requestsInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutReceived_requestsInput, Prisma.app_userUncheckedUpdateWithoutReceived_requestsInput>
+}
+
+export type app_userUpdateWithoutReceived_requestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutReceived_requestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutWorkshopsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutWorkshopsInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutWorkshopsInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshopsInput, Prisma.app_userUncheckedCreateWithoutWorkshopsInput>
+}
+
+export type app_userUpsertWithoutWorkshopsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshopsInput, Prisma.app_userUncheckedUpdateWithoutWorkshopsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshopsInput, Prisma.app_userUncheckedCreateWithoutWorkshopsInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutWorkshopsInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshopsInput, Prisma.app_userUncheckedUpdateWithoutWorkshopsInput>
+}
+
+export type app_userUpdateWithoutWorkshopsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutWorkshopsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutWorkshop_requests_as_apprenticeInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutWorkshop_requests_as_apprenticeInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutWorkshop_requests_as_apprenticeInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_apprenticeInput>
+}
+
+export type app_userCreateWithoutWorkshop_requests_as_mentorInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutWorkshop_requests_as_mentorInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutWorkshop_requests_as_mentorInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_mentorInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_mentorInput>
+}
+
+export type app_userUpsertWithoutWorkshop_requests_as_apprenticeInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_requests_as_apprenticeInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_requests_as_apprenticeInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_apprenticeInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutWorkshop_requests_as_apprenticeInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_requests_as_apprenticeInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_requests_as_apprenticeInput>
+}
+
+export type app_userUpdateWithoutWorkshop_requests_as_apprenticeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutWorkshop_requests_as_apprenticeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUpsertWithoutWorkshop_requests_as_mentorInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_requests_as_mentorInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_requests_as_mentorInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutWorkshop_requests_as_mentorInput, Prisma.app_userUncheckedCreateWithoutWorkshop_requests_as_mentorInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutWorkshop_requests_as_mentorInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutWorkshop_requests_as_mentorInput, Prisma.app_userUncheckedUpdateWithoutWorkshop_requests_as_mentorInput>
+}
+
+export type app_userUpdateWithoutWorkshop_requests_as_mentorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutWorkshop_requests_as_mentorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutFeedback_as_mentorInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutFeedback_as_mentorInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutFeedback_as_mentorInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_mentorInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_mentorInput>
+}
+
+export type app_userCreateWithoutFeedback_as_apprenticeInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutFeedback_as_apprenticeInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutFeedback_as_apprenticeInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_apprenticeInput>
+}
+
+export type app_userUpsertWithoutFeedback_as_mentorInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutFeedback_as_mentorInput, Prisma.app_userUncheckedUpdateWithoutFeedback_as_mentorInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_mentorInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_mentorInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutFeedback_as_mentorInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutFeedback_as_mentorInput, Prisma.app_userUncheckedUpdateWithoutFeedback_as_mentorInput>
+}
+
+export type app_userUpdateWithoutFeedback_as_mentorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutFeedback_as_mentorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUpsertWithoutFeedback_as_apprenticeInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutFeedback_as_apprenticeInput, Prisma.app_userUncheckedUpdateWithoutFeedback_as_apprenticeInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutFeedback_as_apprenticeInput, Prisma.app_userUncheckedCreateWithoutFeedback_as_apprenticeInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutFeedback_as_apprenticeInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutFeedback_as_apprenticeInput, Prisma.app_userUncheckedUpdateWithoutFeedback_as_apprenticeInput>
+}
+
+export type app_userUpdateWithoutFeedback_as_apprenticeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutFeedback_as_apprenticeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutConversations_as_participant1Input = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutConversations_as_participant1Input = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutConversations_as_participant1Input = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant1Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant1Input>
+}
+
+export type app_userCreateWithoutConversations_as_participant2Input = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutConversations_as_participant2Input = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutConversations_as_participant2Input = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant2Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant2Input>
+}
+
+export type app_userUpsertWithoutConversations_as_participant1Input = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutConversations_as_participant1Input, Prisma.app_userUncheckedUpdateWithoutConversations_as_participant1Input>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant1Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant1Input>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutConversations_as_participant1Input = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutConversations_as_participant1Input, Prisma.app_userUncheckedUpdateWithoutConversations_as_participant1Input>
+}
+
+export type app_userUpdateWithoutConversations_as_participant1Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutConversations_as_participant1Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUpsertWithoutConversations_as_participant2Input = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutConversations_as_participant2Input, Prisma.app_userUncheckedUpdateWithoutConversations_as_participant2Input>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutConversations_as_participant2Input, Prisma.app_userUncheckedCreateWithoutConversations_as_participant2Input>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutConversations_as_participant2Input = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutConversations_as_participant2Input, Prisma.app_userUncheckedUpdateWithoutConversations_as_participant2Input>
+}
+
+export type app_userUpdateWithoutConversations_as_participant2Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutConversations_as_participant2Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutMessagesInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutMessagesInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutMessagesInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutMessagesInput, Prisma.app_userUncheckedCreateWithoutMessagesInput>
+}
+
+export type app_userUpsertWithoutMessagesInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutMessagesInput, Prisma.app_userUncheckedUpdateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutMessagesInput, Prisma.app_userUncheckedCreateWithoutMessagesInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutMessagesInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutMessagesInput, Prisma.app_userUncheckedUpdateWithoutMessagesInput>
+}
+
+export type app_userUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutMessageReactionsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.notificationCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutMessageReactionsInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.notificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutMessageReactionsInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutMessageReactionsInput, Prisma.app_userUncheckedCreateWithoutMessageReactionsInput>
+}
+
+export type app_userUpsertWithoutMessageReactionsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutMessageReactionsInput, Prisma.app_userUncheckedUpdateWithoutMessageReactionsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutMessageReactionsInput, Prisma.app_userUncheckedCreateWithoutMessageReactionsInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutMessageReactionsInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutMessageReactionsInput, Prisma.app_userUncheckedUpdateWithoutMessageReactionsInput>
+}
+
+export type app_userUpdateWithoutMessageReactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.notificationUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutMessageReactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.notificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type app_userCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  account: Prisma.accountCreateNestedOneWithoutUserInput
+  reports_made?: Prisma.user_reportCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionCreateNestedManyWithoutUserInput
+}
+
+export type app_userUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  userId: string
+  name: string
+  email: string
+  onboardingStep?: number
+  role?: string | null
+  status?: string
+  deletionReason?: string | null
+  photoUrl?: string | null
+  displayName?: string | null
+  bio?: string | null
+  domain?: string | null
+  areasOfExpertise?: Prisma.app_userCreateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userCreatementorshipTopicsInput | string[]
+  qualifications?: string | null
+  experience?: string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: string | null
+  isPublished?: boolean
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  reports_made?: Prisma.user_reportUncheckedCreateNestedManyWithoutReporterInput
+  reports_received?: Prisma.user_reportUncheckedCreateNestedManyWithoutReportedInput
+  blocked_by?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockerInput
+  blocking?: Prisma.user_blockUncheckedCreateNestedManyWithoutBlockedInput
+  sent_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutRequesterInput
+  received_requests?: Prisma.user_connectionUncheckedCreateNestedManyWithoutReceiverInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutApprenticeInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput
+  conversations_as_participant1?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant1Input
+  conversations_as_participant2?: Prisma.conversationUncheckedCreateNestedManyWithoutParticipant2Input
+  creditTransactions?: Prisma.credit_transactionUncheckedCreateNestedManyWithoutApp_userInput
+  supportRequests?: Prisma.support_requestUncheckedCreateNestedManyWithoutApp_userInput
+  auditLogs?: Prisma.audit_logUncheckedCreateNestedManyWithoutAdminInput
+  workshops?: Prisma.workshopUncheckedCreateNestedManyWithoutCreatorInput
+  messages?: Prisma.messageUncheckedCreateNestedManyWithoutSenderInput
+  messageReactions?: Prisma.message_reactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type app_userCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
+}
+
+export type app_userUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutNotificationsInput, Prisma.app_userUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutNotificationsInput, Prisma.app_userUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutNotificationsInput, Prisma.app_userUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type app_userUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.accountUpdateOneRequiredWithoutUserNestedInput
+  reports_made?: Prisma.user_reportUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUpdateManyWithoutUserNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areasOfExpertise?: Prisma.app_userUpdateareasOfExpertiseInput | string[]
+  mentorshipTopics?: Prisma.app_userUpdatementorshipTopicsInput | string[]
+  qualifications?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  socialMediaLinks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reports_made?: Prisma.user_reportUncheckedUpdateManyWithoutReporterNestedInput
+  reports_received?: Prisma.user_reportUncheckedUpdateManyWithoutReportedNestedInput
+  blocked_by?: Prisma.user_blockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocking?: Prisma.user_blockUncheckedUpdateManyWithoutBlockedNestedInput
+  sent_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutRequesterNestedInput
+  received_requests?: Prisma.user_connectionUncheckedUpdateManyWithoutReceiverNestedInput
+  workshop_requests_as_apprentice?: Prisma.workshop_requestUncheckedUpdateManyWithoutApprenticeNestedInput
+  workshop_requests_as_mentor?: Prisma.workshop_requestUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_mentor?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput
+  feedback_as_apprentice?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput
+  conversations_as_participant1?: Prisma.conversationUncheckedUpdateManyWithoutParticipant1NestedInput
+  conversations_as_participant2?: Prisma.conversationUncheckedUpdateManyWithoutParticipant2NestedInput
+  creditTransactions?: Prisma.credit_transactionUncheckedUpdateManyWithoutApp_userNestedInput
+  supportRequests?: Prisma.support_requestUncheckedUpdateManyWithoutApp_userNestedInput
+  auditLogs?: Prisma.audit_logUncheckedUpdateManyWithoutAdminNestedInput
+  workshops?: Prisma.workshopUncheckedUpdateManyWithoutCreatorNestedInput
+  messages?: Prisma.messageUncheckedUpdateManyWithoutSenderNestedInput
+  messageReactions?: Prisma.message_reactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -4838,43 +5042,47 @@ export type app_userUncheckedUpdateWithoutCredit_transactionsInput = {
  */
 
 export type App_userCountOutputType = {
-  credit_transactions: number
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user: number
-  mentor_feedback_mentor_feedback_mentorIdToapp_user: number
-  workshop_workshop_apprenticeIdToapp_user: number
-  workshop_workshop_creatorIdToapp_user: number
-  workshop_request_workshop_request_apprenticeIdToapp_user: number
-  workshop_request_workshop_request_mentorIdToapp_user: number
-  user_connection_requester: number
-  user_connection_receiver: number
-  conversation_participant1: number
-  conversation_participant2: number
-  pinned_conversations: number
-  notifications: number
-  user_block_blocker: number
-  user_block_blocked: number
   reports_made: number
   reports_received: number
+  blocked_by: number
+  blocking: number
+  sent_requests: number
+  received_requests: number
+  workshop_requests_as_apprentice: number
+  workshop_requests_as_mentor: number
+  feedback_as_mentor: number
+  feedback_as_apprentice: number
+  conversations_as_participant1: number
+  conversations_as_participant2: number
+  creditTransactions: number
+  supportRequests: number
+  auditLogs: number
+  workshops: number
+  messages: number
+  messageReactions: number
+  notifications: number
 }
 
 export type App_userCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  credit_transactions?: boolean | App_userCountOutputTypeCountCredit_transactionsArgs
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: boolean | App_userCountOutputTypeCountMentor_feedback_mentor_feedback_apprenticeIdToapp_userArgs
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: boolean | App_userCountOutputTypeCountMentor_feedback_mentor_feedback_mentorIdToapp_userArgs
-  workshop_workshop_apprenticeIdToapp_user?: boolean | App_userCountOutputTypeCountWorkshop_workshop_apprenticeIdToapp_userArgs
-  workshop_workshop_creatorIdToapp_user?: boolean | App_userCountOutputTypeCountWorkshop_workshop_creatorIdToapp_userArgs
-  workshop_request_workshop_request_apprenticeIdToapp_user?: boolean | App_userCountOutputTypeCountWorkshop_request_workshop_request_apprenticeIdToapp_userArgs
-  workshop_request_workshop_request_mentorIdToapp_user?: boolean | App_userCountOutputTypeCountWorkshop_request_workshop_request_mentorIdToapp_userArgs
-  user_connection_requester?: boolean | App_userCountOutputTypeCountUser_connection_requesterArgs
-  user_connection_receiver?: boolean | App_userCountOutputTypeCountUser_connection_receiverArgs
-  conversation_participant1?: boolean | App_userCountOutputTypeCountConversation_participant1Args
-  conversation_participant2?: boolean | App_userCountOutputTypeCountConversation_participant2Args
-  pinned_conversations?: boolean | App_userCountOutputTypeCountPinned_conversationsArgs
-  notifications?: boolean | App_userCountOutputTypeCountNotificationsArgs
-  user_block_blocker?: boolean | App_userCountOutputTypeCountUser_block_blockerArgs
-  user_block_blocked?: boolean | App_userCountOutputTypeCountUser_block_blockedArgs
   reports_made?: boolean | App_userCountOutputTypeCountReports_madeArgs
   reports_received?: boolean | App_userCountOutputTypeCountReports_receivedArgs
+  blocked_by?: boolean | App_userCountOutputTypeCountBlocked_byArgs
+  blocking?: boolean | App_userCountOutputTypeCountBlockingArgs
+  sent_requests?: boolean | App_userCountOutputTypeCountSent_requestsArgs
+  received_requests?: boolean | App_userCountOutputTypeCountReceived_requestsArgs
+  workshop_requests_as_apprentice?: boolean | App_userCountOutputTypeCountWorkshop_requests_as_apprenticeArgs
+  workshop_requests_as_mentor?: boolean | App_userCountOutputTypeCountWorkshop_requests_as_mentorArgs
+  feedback_as_mentor?: boolean | App_userCountOutputTypeCountFeedback_as_mentorArgs
+  feedback_as_apprentice?: boolean | App_userCountOutputTypeCountFeedback_as_apprenticeArgs
+  conversations_as_participant1?: boolean | App_userCountOutputTypeCountConversations_as_participant1Args
+  conversations_as_participant2?: boolean | App_userCountOutputTypeCountConversations_as_participant2Args
+  creditTransactions?: boolean | App_userCountOutputTypeCountCreditTransactionsArgs
+  supportRequests?: boolean | App_userCountOutputTypeCountSupportRequestsArgs
+  auditLogs?: boolean | App_userCountOutputTypeCountAuditLogsArgs
+  workshops?: boolean | App_userCountOutputTypeCountWorkshopsArgs
+  messages?: boolean | App_userCountOutputTypeCountMessagesArgs
+  messageReactions?: boolean | App_userCountOutputTypeCountMessageReactionsArgs
+  notifications?: boolean | App_userCountOutputTypeCountNotificationsArgs
 }
 
 /**
@@ -4885,111 +5093,6 @@ export type App_userCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ext
    * Select specific fields to fetch from the App_userCountOutputType
    */
   select?: Prisma.App_userCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountCredit_transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.credit_transactionWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountMentor_feedback_mentor_feedback_apprenticeIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.mentor_feedbackWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountMentor_feedback_mentor_feedback_mentorIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.mentor_feedbackWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountWorkshop_workshop_apprenticeIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.workshopWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountWorkshop_workshop_creatorIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.workshopWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountWorkshop_request_workshop_request_apprenticeIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.workshop_requestWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountWorkshop_request_workshop_request_mentorIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.workshop_requestWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountUser_connection_requesterArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.user_connectionWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountUser_connection_receiverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.user_connectionWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountConversation_participant1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.conversationWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountConversation_participant2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.conversationWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountPinned_conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.conversation_pinWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.notificationWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountUser_block_blockerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.user_blockWhereInput
-}
-
-/**
- * App_userCountOutputType without action
- */
-export type App_userCountOutputTypeCountUser_block_blockedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.user_blockWhereInput
 }
 
 /**
@@ -5006,227 +5109,332 @@ export type App_userCountOutputTypeCountReports_receivedArgs<ExtArgs extends run
   where?: Prisma.user_reportWhereInput
 }
 
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountBlocked_byArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.user_blockWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountBlockingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.user_blockWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountSent_requestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.user_connectionWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountReceived_requestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.user_connectionWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountWorkshop_requests_as_apprenticeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.workshop_requestWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountWorkshop_requests_as_mentorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.workshop_requestWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountFeedback_as_mentorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.mentor_feedbackWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountFeedback_as_apprenticeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.mentor_feedbackWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountConversations_as_participant1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.conversationWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountConversations_as_participant2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.conversationWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountCreditTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.credit_transactionWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountSupportRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.support_requestWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.audit_logWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountWorkshopsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.workshopWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.messageWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountMessageReactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.message_reactionWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.notificationWhereInput
+}
+
 
 export type app_userSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  name?: boolean
+  email?: boolean
+  onboardingStep?: boolean
   role?: boolean
   status?: boolean
+  deletionReason?: boolean
+  photoUrl?: boolean
+  displayName?: boolean
+  bio?: boolean
+  domain?: boolean
+  areasOfExpertise?: boolean
+  mentorshipTopics?: boolean
+  qualifications?: boolean
+  experience?: boolean
+  socialMediaLinks?: boolean
+  calendlyLink?: boolean
+  isPublished?: boolean
+  publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  deletionRequestedAt?: boolean
-  deletionReason?: boolean
-  bio?: boolean
-  domain?: boolean
-  photoUrl?: boolean
-  areasOfExpertise?: boolean
-  calendlyLink?: boolean
-  experience?: boolean
-  isPublished?: boolean
-  mentorshipTopics?: boolean
-  publishedAt?: boolean
-  qualifications?: boolean
-  socialMediaLinks?: boolean
-  displayName?: boolean
-  iceBreakerTags?: boolean
-  studyDomain?: boolean
-  studyProgram?: boolean
-  lastSeen?: boolean
-  isOnline?: boolean
-  creditBalance?: boolean
-  user?: boolean | Prisma.userDefaultArgs<ExtArgs>
-  credit_transactions?: boolean | Prisma.app_user$credit_transactionsArgs<ExtArgs>
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_user$mentor_feedback_mentor_feedback_apprenticeIdToapp_userArgs<ExtArgs>
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_user$mentor_feedback_mentor_feedback_mentorIdToapp_userArgs<ExtArgs>
-  workshop_workshop_apprenticeIdToapp_user?: boolean | Prisma.app_user$workshop_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  workshop_workshop_creatorIdToapp_user?: boolean | Prisma.app_user$workshop_workshop_creatorIdToapp_userArgs<ExtArgs>
-  workshop_request_workshop_request_apprenticeIdToapp_user?: boolean | Prisma.app_user$workshop_request_workshop_request_apprenticeIdToapp_userArgs<ExtArgs>
-  workshop_request_workshop_request_mentorIdToapp_user?: boolean | Prisma.app_user$workshop_request_workshop_request_mentorIdToapp_userArgs<ExtArgs>
-  user_connection_requester?: boolean | Prisma.app_user$user_connection_requesterArgs<ExtArgs>
-  user_connection_receiver?: boolean | Prisma.app_user$user_connection_receiverArgs<ExtArgs>
-  conversation_participant1?: boolean | Prisma.app_user$conversation_participant1Args<ExtArgs>
-  conversation_participant2?: boolean | Prisma.app_user$conversation_participant2Args<ExtArgs>
-  pinned_conversations?: boolean | Prisma.app_user$pinned_conversationsArgs<ExtArgs>
-  notifications?: boolean | Prisma.app_user$notificationsArgs<ExtArgs>
-  user_block_blocker?: boolean | Prisma.app_user$user_block_blockerArgs<ExtArgs>
-  user_block_blocked?: boolean | Prisma.app_user$user_block_blockedArgs<ExtArgs>
+  account?: boolean | Prisma.accountDefaultArgs<ExtArgs>
   reports_made?: boolean | Prisma.app_user$reports_madeArgs<ExtArgs>
   reports_received?: boolean | Prisma.app_user$reports_receivedArgs<ExtArgs>
+  blocked_by?: boolean | Prisma.app_user$blocked_byArgs<ExtArgs>
+  blocking?: boolean | Prisma.app_user$blockingArgs<ExtArgs>
+  sent_requests?: boolean | Prisma.app_user$sent_requestsArgs<ExtArgs>
+  received_requests?: boolean | Prisma.app_user$received_requestsArgs<ExtArgs>
+  workshop_requests_as_apprentice?: boolean | Prisma.app_user$workshop_requests_as_apprenticeArgs<ExtArgs>
+  workshop_requests_as_mentor?: boolean | Prisma.app_user$workshop_requests_as_mentorArgs<ExtArgs>
+  feedback_as_mentor?: boolean | Prisma.app_user$feedback_as_mentorArgs<ExtArgs>
+  feedback_as_apprentice?: boolean | Prisma.app_user$feedback_as_apprenticeArgs<ExtArgs>
+  conversations_as_participant1?: boolean | Prisma.app_user$conversations_as_participant1Args<ExtArgs>
+  conversations_as_participant2?: boolean | Prisma.app_user$conversations_as_participant2Args<ExtArgs>
+  creditTransactions?: boolean | Prisma.app_user$creditTransactionsArgs<ExtArgs>
+  supportRequests?: boolean | Prisma.app_user$supportRequestsArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.app_user$auditLogsArgs<ExtArgs>
+  workshops?: boolean | Prisma.app_user$workshopsArgs<ExtArgs>
+  messages?: boolean | Prisma.app_user$messagesArgs<ExtArgs>
+  messageReactions?: boolean | Prisma.app_user$messageReactionsArgs<ExtArgs>
+  notifications?: boolean | Prisma.app_user$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.App_userCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["app_user"]>
 
 export type app_userSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  name?: boolean
+  email?: boolean
+  onboardingStep?: boolean
   role?: boolean
   status?: boolean
+  deletionReason?: boolean
+  photoUrl?: boolean
+  displayName?: boolean
+  bio?: boolean
+  domain?: boolean
+  areasOfExpertise?: boolean
+  mentorshipTopics?: boolean
+  qualifications?: boolean
+  experience?: boolean
+  socialMediaLinks?: boolean
+  calendlyLink?: boolean
+  isPublished?: boolean
+  publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  deletionRequestedAt?: boolean
-  deletionReason?: boolean
-  bio?: boolean
-  domain?: boolean
-  photoUrl?: boolean
-  areasOfExpertise?: boolean
-  calendlyLink?: boolean
-  experience?: boolean
-  isPublished?: boolean
-  mentorshipTopics?: boolean
-  publishedAt?: boolean
-  qualifications?: boolean
-  socialMediaLinks?: boolean
-  displayName?: boolean
-  iceBreakerTags?: boolean
-  studyDomain?: boolean
-  studyProgram?: boolean
-  lastSeen?: boolean
-  isOnline?: boolean
-  creditBalance?: boolean
-  user?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.accountDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["app_user"]>
 
 export type app_userSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  name?: boolean
+  email?: boolean
+  onboardingStep?: boolean
   role?: boolean
   status?: boolean
+  deletionReason?: boolean
+  photoUrl?: boolean
+  displayName?: boolean
+  bio?: boolean
+  domain?: boolean
+  areasOfExpertise?: boolean
+  mentorshipTopics?: boolean
+  qualifications?: boolean
+  experience?: boolean
+  socialMediaLinks?: boolean
+  calendlyLink?: boolean
+  isPublished?: boolean
+  publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  deletionRequestedAt?: boolean
-  deletionReason?: boolean
-  bio?: boolean
-  domain?: boolean
-  photoUrl?: boolean
-  areasOfExpertise?: boolean
-  calendlyLink?: boolean
-  experience?: boolean
-  isPublished?: boolean
-  mentorshipTopics?: boolean
-  publishedAt?: boolean
-  qualifications?: boolean
-  socialMediaLinks?: boolean
-  displayName?: boolean
-  iceBreakerTags?: boolean
-  studyDomain?: boolean
-  studyProgram?: boolean
-  lastSeen?: boolean
-  isOnline?: boolean
-  creditBalance?: boolean
-  user?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.accountDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["app_user"]>
 
 export type app_userSelectScalar = {
   id?: boolean
   userId?: boolean
+  name?: boolean
+  email?: boolean
+  onboardingStep?: boolean
   role?: boolean
   status?: boolean
+  deletionReason?: boolean
+  photoUrl?: boolean
+  displayName?: boolean
+  bio?: boolean
+  domain?: boolean
+  areasOfExpertise?: boolean
+  mentorshipTopics?: boolean
+  qualifications?: boolean
+  experience?: boolean
+  socialMediaLinks?: boolean
+  calendlyLink?: boolean
+  isPublished?: boolean
+  publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
-  deletionRequestedAt?: boolean
-  deletionReason?: boolean
-  bio?: boolean
-  domain?: boolean
-  photoUrl?: boolean
-  areasOfExpertise?: boolean
-  calendlyLink?: boolean
-  experience?: boolean
-  isPublished?: boolean
-  mentorshipTopics?: boolean
-  publishedAt?: boolean
-  qualifications?: boolean
-  socialMediaLinks?: boolean
-  displayName?: boolean
-  iceBreakerTags?: boolean
-  studyDomain?: boolean
-  studyProgram?: boolean
-  lastSeen?: boolean
-  isOnline?: boolean
-  creditBalance?: boolean
 }
 
-export type app_userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "role" | "status" | "createdAt" | "updatedAt" | "deletedAt" | "deletionRequestedAt" | "deletionReason" | "bio" | "domain" | "photoUrl" | "areasOfExpertise" | "calendlyLink" | "experience" | "isPublished" | "mentorshipTopics" | "publishedAt" | "qualifications" | "socialMediaLinks" | "displayName" | "iceBreakerTags" | "studyDomain" | "studyProgram" | "lastSeen" | "isOnline" | "creditBalance", ExtArgs["result"]["app_user"]>
+export type app_userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "email" | "onboardingStep" | "role" | "status" | "deletionReason" | "photoUrl" | "displayName" | "bio" | "domain" | "areasOfExpertise" | "mentorshipTopics" | "qualifications" | "experience" | "socialMediaLinks" | "calendlyLink" | "isPublished" | "publishedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["app_user"]>
 export type app_userInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.userDefaultArgs<ExtArgs>
-  credit_transactions?: boolean | Prisma.app_user$credit_transactionsArgs<ExtArgs>
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_user$mentor_feedback_mentor_feedback_apprenticeIdToapp_userArgs<ExtArgs>
-  mentor_feedback_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_user$mentor_feedback_mentor_feedback_mentorIdToapp_userArgs<ExtArgs>
-  workshop_workshop_apprenticeIdToapp_user?: boolean | Prisma.app_user$workshop_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  workshop_workshop_creatorIdToapp_user?: boolean | Prisma.app_user$workshop_workshop_creatorIdToapp_userArgs<ExtArgs>
-  workshop_request_workshop_request_apprenticeIdToapp_user?: boolean | Prisma.app_user$workshop_request_workshop_request_apprenticeIdToapp_userArgs<ExtArgs>
-  workshop_request_workshop_request_mentorIdToapp_user?: boolean | Prisma.app_user$workshop_request_workshop_request_mentorIdToapp_userArgs<ExtArgs>
-  user_connection_requester?: boolean | Prisma.app_user$user_connection_requesterArgs<ExtArgs>
-  user_connection_receiver?: boolean | Prisma.app_user$user_connection_receiverArgs<ExtArgs>
-  conversation_participant1?: boolean | Prisma.app_user$conversation_participant1Args<ExtArgs>
-  conversation_participant2?: boolean | Prisma.app_user$conversation_participant2Args<ExtArgs>
-  pinned_conversations?: boolean | Prisma.app_user$pinned_conversationsArgs<ExtArgs>
-  notifications?: boolean | Prisma.app_user$notificationsArgs<ExtArgs>
-  user_block_blocker?: boolean | Prisma.app_user$user_block_blockerArgs<ExtArgs>
-  user_block_blocked?: boolean | Prisma.app_user$user_block_blockedArgs<ExtArgs>
+  account?: boolean | Prisma.accountDefaultArgs<ExtArgs>
   reports_made?: boolean | Prisma.app_user$reports_madeArgs<ExtArgs>
   reports_received?: boolean | Prisma.app_user$reports_receivedArgs<ExtArgs>
+  blocked_by?: boolean | Prisma.app_user$blocked_byArgs<ExtArgs>
+  blocking?: boolean | Prisma.app_user$blockingArgs<ExtArgs>
+  sent_requests?: boolean | Prisma.app_user$sent_requestsArgs<ExtArgs>
+  received_requests?: boolean | Prisma.app_user$received_requestsArgs<ExtArgs>
+  workshop_requests_as_apprentice?: boolean | Prisma.app_user$workshop_requests_as_apprenticeArgs<ExtArgs>
+  workshop_requests_as_mentor?: boolean | Prisma.app_user$workshop_requests_as_mentorArgs<ExtArgs>
+  feedback_as_mentor?: boolean | Prisma.app_user$feedback_as_mentorArgs<ExtArgs>
+  feedback_as_apprentice?: boolean | Prisma.app_user$feedback_as_apprenticeArgs<ExtArgs>
+  conversations_as_participant1?: boolean | Prisma.app_user$conversations_as_participant1Args<ExtArgs>
+  conversations_as_participant2?: boolean | Prisma.app_user$conversations_as_participant2Args<ExtArgs>
+  creditTransactions?: boolean | Prisma.app_user$creditTransactionsArgs<ExtArgs>
+  supportRequests?: boolean | Prisma.app_user$supportRequestsArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.app_user$auditLogsArgs<ExtArgs>
+  workshops?: boolean | Prisma.app_user$workshopsArgs<ExtArgs>
+  messages?: boolean | Prisma.app_user$messagesArgs<ExtArgs>
+  messageReactions?: boolean | Prisma.app_user$messageReactionsArgs<ExtArgs>
+  notifications?: boolean | Prisma.app_user$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.App_userCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type app_userIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.accountDefaultArgs<ExtArgs>
 }
 export type app_userIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.accountDefaultArgs<ExtArgs>
 }
 
 export type $app_userPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "app_user"
   objects: {
-    user: Prisma.$userPayload<ExtArgs>
-    credit_transactions: Prisma.$credit_transactionPayload<ExtArgs>[]
-    mentor_feedback_mentor_feedback_apprenticeIdToapp_user: Prisma.$mentor_feedbackPayload<ExtArgs>[]
-    mentor_feedback_mentor_feedback_mentorIdToapp_user: Prisma.$mentor_feedbackPayload<ExtArgs>[]
-    workshop_workshop_apprenticeIdToapp_user: Prisma.$workshopPayload<ExtArgs>[]
-    workshop_workshop_creatorIdToapp_user: Prisma.$workshopPayload<ExtArgs>[]
-    workshop_request_workshop_request_apprenticeIdToapp_user: Prisma.$workshop_requestPayload<ExtArgs>[]
-    workshop_request_workshop_request_mentorIdToapp_user: Prisma.$workshop_requestPayload<ExtArgs>[]
-    user_connection_requester: Prisma.$user_connectionPayload<ExtArgs>[]
-    user_connection_receiver: Prisma.$user_connectionPayload<ExtArgs>[]
-    conversation_participant1: Prisma.$conversationPayload<ExtArgs>[]
-    conversation_participant2: Prisma.$conversationPayload<ExtArgs>[]
-    pinned_conversations: Prisma.$conversation_pinPayload<ExtArgs>[]
-    notifications: Prisma.$notificationPayload<ExtArgs>[]
-    user_block_blocker: Prisma.$user_blockPayload<ExtArgs>[]
-    user_block_blocked: Prisma.$user_blockPayload<ExtArgs>[]
+    account: Prisma.$accountPayload<ExtArgs>
     reports_made: Prisma.$user_reportPayload<ExtArgs>[]
     reports_received: Prisma.$user_reportPayload<ExtArgs>[]
+    blocked_by: Prisma.$user_blockPayload<ExtArgs>[]
+    blocking: Prisma.$user_blockPayload<ExtArgs>[]
+    sent_requests: Prisma.$user_connectionPayload<ExtArgs>[]
+    received_requests: Prisma.$user_connectionPayload<ExtArgs>[]
+    workshop_requests_as_apprentice: Prisma.$workshop_requestPayload<ExtArgs>[]
+    workshop_requests_as_mentor: Prisma.$workshop_requestPayload<ExtArgs>[]
+    feedback_as_mentor: Prisma.$mentor_feedbackPayload<ExtArgs>[]
+    feedback_as_apprentice: Prisma.$mentor_feedbackPayload<ExtArgs>[]
+    conversations_as_participant1: Prisma.$conversationPayload<ExtArgs>[]
+    conversations_as_participant2: Prisma.$conversationPayload<ExtArgs>[]
+    creditTransactions: Prisma.$credit_transactionPayload<ExtArgs>[]
+    supportRequests: Prisma.$support_requestPayload<ExtArgs>[]
+    auditLogs: Prisma.$audit_logPayload<ExtArgs>[]
+    workshops: Prisma.$workshopPayload<ExtArgs>[]
+    messages: Prisma.$messagePayload<ExtArgs>[]
+    messageReactions: Prisma.$message_reactionPayload<ExtArgs>[]
+    notifications: Prisma.$notificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
-    role: $Enums.Role | null
-    status: $Enums.AppUserStatus
+    name: string
+    email: string
+    onboardingStep: number
+    role: string | null
+    status: string
+    deletionReason: string | null
+    photoUrl: string | null
+    displayName: string | null
+    bio: string | null
+    domain: string | null
+    areasOfExpertise: string[]
+    mentorshipTopics: string[]
+    qualifications: string | null
+    experience: string | null
+    socialMediaLinks: runtime.JsonValue | null
+    calendlyLink: string | null
+    isPublished: boolean
+    publishedAt: Date | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
-    deletionRequestedAt: Date | null
-    deletionReason: string | null
-    bio: string | null
-    domain: string | null
-    photoUrl: string | null
-    areasOfExpertise: runtime.JsonValue | null
-    calendlyLink: string | null
-    experience: string | null
-    isPublished: boolean
-    mentorshipTopics: runtime.JsonValue | null
-    publishedAt: Date | null
-    qualifications: string | null
-    socialMediaLinks: runtime.JsonValue | null
-    displayName: string | null
-    iceBreakerTags: runtime.JsonValue | null
-    studyDomain: string | null
-    studyProgram: string | null
-    lastSeen: Date | null
-    isOnline: boolean
-    creditBalance: number
   }, ExtArgs["result"]["app_user"]>
   composites: {}
 }
@@ -5621,24 +5829,26 @@ readonly fields: app_userFieldRefs;
  */
 export interface Prisma__app_userClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.userDefaultArgs<ExtArgs>>): Prisma.Prisma__userClient<runtime.Types.Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  credit_transactions<T extends Prisma.app_user$credit_transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$credit_transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$credit_transactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  mentor_feedback_mentor_feedback_apprenticeIdToapp_user<T extends Prisma.app_user$mentor_feedback_mentor_feedback_apprenticeIdToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$mentor_feedback_mentor_feedback_apprenticeIdToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$mentor_feedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  mentor_feedback_mentor_feedback_mentorIdToapp_user<T extends Prisma.app_user$mentor_feedback_mentor_feedback_mentorIdToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$mentor_feedback_mentor_feedback_mentorIdToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$mentor_feedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  workshop_workshop_apprenticeIdToapp_user<T extends Prisma.app_user$workshop_workshop_apprenticeIdToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$workshop_workshop_apprenticeIdToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshopPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  workshop_workshop_creatorIdToapp_user<T extends Prisma.app_user$workshop_workshop_creatorIdToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$workshop_workshop_creatorIdToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshopPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  workshop_request_workshop_request_apprenticeIdToapp_user<T extends Prisma.app_user$workshop_request_workshop_request_apprenticeIdToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$workshop_request_workshop_request_apprenticeIdToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshop_requestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  workshop_request_workshop_request_mentorIdToapp_user<T extends Prisma.app_user$workshop_request_workshop_request_mentorIdToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$workshop_request_workshop_request_mentorIdToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshop_requestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  user_connection_requester<T extends Prisma.app_user$user_connection_requesterArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$user_connection_requesterArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_connectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  user_connection_receiver<T extends Prisma.app_user$user_connection_receiverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$user_connection_receiverArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_connectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  conversation_participant1<T extends Prisma.app_user$conversation_participant1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$conversation_participant1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$conversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  conversation_participant2<T extends Prisma.app_user$conversation_participant2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$conversation_participant2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$conversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  pinned_conversations<T extends Prisma.app_user$pinned_conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$pinned_conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$conversation_pinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notifications<T extends Prisma.app_user$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$notificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  user_block_blocker<T extends Prisma.app_user$user_block_blockerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$user_block_blockerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_blockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  user_block_blocked<T extends Prisma.app_user$user_block_blockedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$user_block_blockedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_blockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  account<T extends Prisma.accountDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.accountDefaultArgs<ExtArgs>>): Prisma.Prisma__accountClient<runtime.Types.Result.GetResult<Prisma.$accountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   reports_made<T extends Prisma.app_user$reports_madeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$reports_madeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_reportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports_received<T extends Prisma.app_user$reports_receivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$reports_receivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_reportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  blocked_by<T extends Prisma.app_user$blocked_byArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$blocked_byArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_blockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  blocking<T extends Prisma.app_user$blockingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$blockingArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_blockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sent_requests<T extends Prisma.app_user$sent_requestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$sent_requestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_connectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  received_requests<T extends Prisma.app_user$received_requestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$received_requestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_connectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workshop_requests_as_apprentice<T extends Prisma.app_user$workshop_requests_as_apprenticeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$workshop_requests_as_apprenticeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshop_requestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workshop_requests_as_mentor<T extends Prisma.app_user$workshop_requests_as_mentorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$workshop_requests_as_mentorArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshop_requestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  feedback_as_mentor<T extends Prisma.app_user$feedback_as_mentorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$feedback_as_mentorArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$mentor_feedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  feedback_as_apprentice<T extends Prisma.app_user$feedback_as_apprenticeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$feedback_as_apprenticeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$mentor_feedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversations_as_participant1<T extends Prisma.app_user$conversations_as_participant1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$conversations_as_participant1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$conversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversations_as_participant2<T extends Prisma.app_user$conversations_as_participant2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$conversations_as_participant2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$conversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  creditTransactions<T extends Prisma.app_user$creditTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$creditTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$credit_transactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supportRequests<T extends Prisma.app_user$supportRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$supportRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$support_requestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditLogs<T extends Prisma.app_user$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$audit_logPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workshops<T extends Prisma.app_user$workshopsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$workshopsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshopPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messages<T extends Prisma.app_user$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$messagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messageReactions<T extends Prisma.app_user$messageReactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$messageReactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$message_reactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.app_user$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$notificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5670,31 +5880,27 @@ export interface Prisma__app_userClient<T, Null = never, ExtArgs extends runtime
 export interface app_userFieldRefs {
   readonly id: Prisma.FieldRef<"app_user", 'String'>
   readonly userId: Prisma.FieldRef<"app_user", 'String'>
-  readonly role: Prisma.FieldRef<"app_user", 'Role'>
-  readonly status: Prisma.FieldRef<"app_user", 'AppUserStatus'>
+  readonly name: Prisma.FieldRef<"app_user", 'String'>
+  readonly email: Prisma.FieldRef<"app_user", 'String'>
+  readonly onboardingStep: Prisma.FieldRef<"app_user", 'Int'>
+  readonly role: Prisma.FieldRef<"app_user", 'String'>
+  readonly status: Prisma.FieldRef<"app_user", 'String'>
+  readonly deletionReason: Prisma.FieldRef<"app_user", 'String'>
+  readonly photoUrl: Prisma.FieldRef<"app_user", 'String'>
+  readonly displayName: Prisma.FieldRef<"app_user", 'String'>
+  readonly bio: Prisma.FieldRef<"app_user", 'String'>
+  readonly domain: Prisma.FieldRef<"app_user", 'String'>
+  readonly areasOfExpertise: Prisma.FieldRef<"app_user", 'String[]'>
+  readonly mentorshipTopics: Prisma.FieldRef<"app_user", 'String[]'>
+  readonly qualifications: Prisma.FieldRef<"app_user", 'String'>
+  readonly experience: Prisma.FieldRef<"app_user", 'String'>
+  readonly socialMediaLinks: Prisma.FieldRef<"app_user", 'Json'>
+  readonly calendlyLink: Prisma.FieldRef<"app_user", 'String'>
+  readonly isPublished: Prisma.FieldRef<"app_user", 'Boolean'>
+  readonly publishedAt: Prisma.FieldRef<"app_user", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"app_user", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"app_user", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"app_user", 'DateTime'>
-  readonly deletionRequestedAt: Prisma.FieldRef<"app_user", 'DateTime'>
-  readonly deletionReason: Prisma.FieldRef<"app_user", 'String'>
-  readonly bio: Prisma.FieldRef<"app_user", 'String'>
-  readonly domain: Prisma.FieldRef<"app_user", 'String'>
-  readonly photoUrl: Prisma.FieldRef<"app_user", 'String'>
-  readonly areasOfExpertise: Prisma.FieldRef<"app_user", 'Json'>
-  readonly calendlyLink: Prisma.FieldRef<"app_user", 'String'>
-  readonly experience: Prisma.FieldRef<"app_user", 'String'>
-  readonly isPublished: Prisma.FieldRef<"app_user", 'Boolean'>
-  readonly mentorshipTopics: Prisma.FieldRef<"app_user", 'Json'>
-  readonly publishedAt: Prisma.FieldRef<"app_user", 'DateTime'>
-  readonly qualifications: Prisma.FieldRef<"app_user", 'String'>
-  readonly socialMediaLinks: Prisma.FieldRef<"app_user", 'Json'>
-  readonly displayName: Prisma.FieldRef<"app_user", 'String'>
-  readonly iceBreakerTags: Prisma.FieldRef<"app_user", 'Json'>
-  readonly studyDomain: Prisma.FieldRef<"app_user", 'String'>
-  readonly studyProgram: Prisma.FieldRef<"app_user", 'String'>
-  readonly lastSeen: Prisma.FieldRef<"app_user", 'DateTime'>
-  readonly isOnline: Prisma.FieldRef<"app_user", 'Boolean'>
-  readonly creditBalance: Prisma.FieldRef<"app_user", 'Int'>
 }
     
 
@@ -6091,366 +6297,6 @@ export type app_userDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * app_user.credit_transactions
- */
-export type app_user$credit_transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the credit_transaction
-   */
-  select?: Prisma.credit_transactionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the credit_transaction
-   */
-  omit?: Prisma.credit_transactionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.credit_transactionInclude<ExtArgs> | null
-  where?: Prisma.credit_transactionWhereInput
-  orderBy?: Prisma.credit_transactionOrderByWithRelationInput | Prisma.credit_transactionOrderByWithRelationInput[]
-  cursor?: Prisma.credit_transactionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Credit_transactionScalarFieldEnum | Prisma.Credit_transactionScalarFieldEnum[]
-}
-
-/**
- * app_user.mentor_feedback_mentor_feedback_apprenticeIdToapp_user
- */
-export type app_user$mentor_feedback_mentor_feedback_apprenticeIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the mentor_feedback
-   */
-  select?: Prisma.mentor_feedbackSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the mentor_feedback
-   */
-  omit?: Prisma.mentor_feedbackOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.mentor_feedbackInclude<ExtArgs> | null
-  where?: Prisma.mentor_feedbackWhereInput
-  orderBy?: Prisma.mentor_feedbackOrderByWithRelationInput | Prisma.mentor_feedbackOrderByWithRelationInput[]
-  cursor?: Prisma.mentor_feedbackWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Mentor_feedbackScalarFieldEnum | Prisma.Mentor_feedbackScalarFieldEnum[]
-}
-
-/**
- * app_user.mentor_feedback_mentor_feedback_mentorIdToapp_user
- */
-export type app_user$mentor_feedback_mentor_feedback_mentorIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the mentor_feedback
-   */
-  select?: Prisma.mentor_feedbackSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the mentor_feedback
-   */
-  omit?: Prisma.mentor_feedbackOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.mentor_feedbackInclude<ExtArgs> | null
-  where?: Prisma.mentor_feedbackWhereInput
-  orderBy?: Prisma.mentor_feedbackOrderByWithRelationInput | Prisma.mentor_feedbackOrderByWithRelationInput[]
-  cursor?: Prisma.mentor_feedbackWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Mentor_feedbackScalarFieldEnum | Prisma.Mentor_feedbackScalarFieldEnum[]
-}
-
-/**
- * app_user.workshop_workshop_apprenticeIdToapp_user
- */
-export type app_user$workshop_workshop_apprenticeIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop
-   */
-  select?: Prisma.workshopSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop
-   */
-  omit?: Prisma.workshopOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshopInclude<ExtArgs> | null
-  where?: Prisma.workshopWhereInput
-  orderBy?: Prisma.workshopOrderByWithRelationInput | Prisma.workshopOrderByWithRelationInput[]
-  cursor?: Prisma.workshopWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.WorkshopScalarFieldEnum | Prisma.WorkshopScalarFieldEnum[]
-}
-
-/**
- * app_user.workshop_workshop_creatorIdToapp_user
- */
-export type app_user$workshop_workshop_creatorIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop
-   */
-  select?: Prisma.workshopSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop
-   */
-  omit?: Prisma.workshopOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshopInclude<ExtArgs> | null
-  where?: Prisma.workshopWhereInput
-  orderBy?: Prisma.workshopOrderByWithRelationInput | Prisma.workshopOrderByWithRelationInput[]
-  cursor?: Prisma.workshopWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.WorkshopScalarFieldEnum | Prisma.WorkshopScalarFieldEnum[]
-}
-
-/**
- * app_user.workshop_request_workshop_request_apprenticeIdToapp_user
- */
-export type app_user$workshop_request_workshop_request_apprenticeIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop_request
-   */
-  select?: Prisma.workshop_requestSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop_request
-   */
-  omit?: Prisma.workshop_requestOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshop_requestInclude<ExtArgs> | null
-  where?: Prisma.workshop_requestWhereInput
-  orderBy?: Prisma.workshop_requestOrderByWithRelationInput | Prisma.workshop_requestOrderByWithRelationInput[]
-  cursor?: Prisma.workshop_requestWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Workshop_requestScalarFieldEnum | Prisma.Workshop_requestScalarFieldEnum[]
-}
-
-/**
- * app_user.workshop_request_workshop_request_mentorIdToapp_user
- */
-export type app_user$workshop_request_workshop_request_mentorIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop_request
-   */
-  select?: Prisma.workshop_requestSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop_request
-   */
-  omit?: Prisma.workshop_requestOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshop_requestInclude<ExtArgs> | null
-  where?: Prisma.workshop_requestWhereInput
-  orderBy?: Prisma.workshop_requestOrderByWithRelationInput | Prisma.workshop_requestOrderByWithRelationInput[]
-  cursor?: Prisma.workshop_requestWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Workshop_requestScalarFieldEnum | Prisma.Workshop_requestScalarFieldEnum[]
-}
-
-/**
- * app_user.user_connection_requester
- */
-export type app_user$user_connection_requesterArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the user_connection
-   */
-  select?: Prisma.user_connectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the user_connection
-   */
-  omit?: Prisma.user_connectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.user_connectionInclude<ExtArgs> | null
-  where?: Prisma.user_connectionWhereInput
-  orderBy?: Prisma.user_connectionOrderByWithRelationInput | Prisma.user_connectionOrderByWithRelationInput[]
-  cursor?: Prisma.user_connectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.User_connectionScalarFieldEnum | Prisma.User_connectionScalarFieldEnum[]
-}
-
-/**
- * app_user.user_connection_receiver
- */
-export type app_user$user_connection_receiverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the user_connection
-   */
-  select?: Prisma.user_connectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the user_connection
-   */
-  omit?: Prisma.user_connectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.user_connectionInclude<ExtArgs> | null
-  where?: Prisma.user_connectionWhereInput
-  orderBy?: Prisma.user_connectionOrderByWithRelationInput | Prisma.user_connectionOrderByWithRelationInput[]
-  cursor?: Prisma.user_connectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.User_connectionScalarFieldEnum | Prisma.User_connectionScalarFieldEnum[]
-}
-
-/**
- * app_user.conversation_participant1
- */
-export type app_user$conversation_participant1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the conversation
-   */
-  select?: Prisma.conversationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the conversation
-   */
-  omit?: Prisma.conversationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.conversationInclude<ExtArgs> | null
-  where?: Prisma.conversationWhereInput
-  orderBy?: Prisma.conversationOrderByWithRelationInput | Prisma.conversationOrderByWithRelationInput[]
-  cursor?: Prisma.conversationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
-}
-
-/**
- * app_user.conversation_participant2
- */
-export type app_user$conversation_participant2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the conversation
-   */
-  select?: Prisma.conversationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the conversation
-   */
-  omit?: Prisma.conversationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.conversationInclude<ExtArgs> | null
-  where?: Prisma.conversationWhereInput
-  orderBy?: Prisma.conversationOrderByWithRelationInput | Prisma.conversationOrderByWithRelationInput[]
-  cursor?: Prisma.conversationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
-}
-
-/**
- * app_user.pinned_conversations
- */
-export type app_user$pinned_conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the conversation_pin
-   */
-  select?: Prisma.conversation_pinSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the conversation_pin
-   */
-  omit?: Prisma.conversation_pinOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.conversation_pinInclude<ExtArgs> | null
-  where?: Prisma.conversation_pinWhereInput
-  orderBy?: Prisma.conversation_pinOrderByWithRelationInput | Prisma.conversation_pinOrderByWithRelationInput[]
-  cursor?: Prisma.conversation_pinWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Conversation_pinScalarFieldEnum | Prisma.Conversation_pinScalarFieldEnum[]
-}
-
-/**
- * app_user.notifications
- */
-export type app_user$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the notification
-   */
-  select?: Prisma.notificationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the notification
-   */
-  omit?: Prisma.notificationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.notificationInclude<ExtArgs> | null
-  where?: Prisma.notificationWhereInput
-  orderBy?: Prisma.notificationOrderByWithRelationInput | Prisma.notificationOrderByWithRelationInput[]
-  cursor?: Prisma.notificationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
-}
-
-/**
- * app_user.user_block_blocker
- */
-export type app_user$user_block_blockerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the user_block
-   */
-  select?: Prisma.user_blockSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the user_block
-   */
-  omit?: Prisma.user_blockOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.user_blockInclude<ExtArgs> | null
-  where?: Prisma.user_blockWhereInput
-  orderBy?: Prisma.user_blockOrderByWithRelationInput | Prisma.user_blockOrderByWithRelationInput[]
-  cursor?: Prisma.user_blockWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.User_blockScalarFieldEnum | Prisma.User_blockScalarFieldEnum[]
-}
-
-/**
- * app_user.user_block_blocked
- */
-export type app_user$user_block_blockedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the user_block
-   */
-  select?: Prisma.user_blockSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the user_block
-   */
-  omit?: Prisma.user_blockOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.user_blockInclude<ExtArgs> | null
-  where?: Prisma.user_blockWhereInput
-  orderBy?: Prisma.user_blockOrderByWithRelationInput | Prisma.user_blockOrderByWithRelationInput[]
-  cursor?: Prisma.user_blockWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.User_blockScalarFieldEnum | Prisma.User_blockScalarFieldEnum[]
-}
-
-/**
  * app_user.reports_made
  */
 export type app_user$reports_madeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6496,6 +6342,414 @@ export type app_user$reports_receivedArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.User_reportScalarFieldEnum | Prisma.User_reportScalarFieldEnum[]
+}
+
+/**
+ * app_user.blocked_by
+ */
+export type app_user$blocked_byArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the user_block
+   */
+  select?: Prisma.user_blockSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the user_block
+   */
+  omit?: Prisma.user_blockOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.user_blockInclude<ExtArgs> | null
+  where?: Prisma.user_blockWhereInput
+  orderBy?: Prisma.user_blockOrderByWithRelationInput | Prisma.user_blockOrderByWithRelationInput[]
+  cursor?: Prisma.user_blockWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.User_blockScalarFieldEnum | Prisma.User_blockScalarFieldEnum[]
+}
+
+/**
+ * app_user.blocking
+ */
+export type app_user$blockingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the user_block
+   */
+  select?: Prisma.user_blockSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the user_block
+   */
+  omit?: Prisma.user_blockOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.user_blockInclude<ExtArgs> | null
+  where?: Prisma.user_blockWhereInput
+  orderBy?: Prisma.user_blockOrderByWithRelationInput | Prisma.user_blockOrderByWithRelationInput[]
+  cursor?: Prisma.user_blockWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.User_blockScalarFieldEnum | Prisma.User_blockScalarFieldEnum[]
+}
+
+/**
+ * app_user.sent_requests
+ */
+export type app_user$sent_requestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the user_connection
+   */
+  select?: Prisma.user_connectionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the user_connection
+   */
+  omit?: Prisma.user_connectionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.user_connectionInclude<ExtArgs> | null
+  where?: Prisma.user_connectionWhereInput
+  orderBy?: Prisma.user_connectionOrderByWithRelationInput | Prisma.user_connectionOrderByWithRelationInput[]
+  cursor?: Prisma.user_connectionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.User_connectionScalarFieldEnum | Prisma.User_connectionScalarFieldEnum[]
+}
+
+/**
+ * app_user.received_requests
+ */
+export type app_user$received_requestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the user_connection
+   */
+  select?: Prisma.user_connectionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the user_connection
+   */
+  omit?: Prisma.user_connectionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.user_connectionInclude<ExtArgs> | null
+  where?: Prisma.user_connectionWhereInput
+  orderBy?: Prisma.user_connectionOrderByWithRelationInput | Prisma.user_connectionOrderByWithRelationInput[]
+  cursor?: Prisma.user_connectionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.User_connectionScalarFieldEnum | Prisma.User_connectionScalarFieldEnum[]
+}
+
+/**
+ * app_user.workshop_requests_as_apprentice
+ */
+export type app_user$workshop_requests_as_apprenticeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the workshop_request
+   */
+  select?: Prisma.workshop_requestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the workshop_request
+   */
+  omit?: Prisma.workshop_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.workshop_requestInclude<ExtArgs> | null
+  where?: Prisma.workshop_requestWhereInput
+  orderBy?: Prisma.workshop_requestOrderByWithRelationInput | Prisma.workshop_requestOrderByWithRelationInput[]
+  cursor?: Prisma.workshop_requestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Workshop_requestScalarFieldEnum | Prisma.Workshop_requestScalarFieldEnum[]
+}
+
+/**
+ * app_user.workshop_requests_as_mentor
+ */
+export type app_user$workshop_requests_as_mentorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the workshop_request
+   */
+  select?: Prisma.workshop_requestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the workshop_request
+   */
+  omit?: Prisma.workshop_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.workshop_requestInclude<ExtArgs> | null
+  where?: Prisma.workshop_requestWhereInput
+  orderBy?: Prisma.workshop_requestOrderByWithRelationInput | Prisma.workshop_requestOrderByWithRelationInput[]
+  cursor?: Prisma.workshop_requestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Workshop_requestScalarFieldEnum | Prisma.Workshop_requestScalarFieldEnum[]
+}
+
+/**
+ * app_user.feedback_as_mentor
+ */
+export type app_user$feedback_as_mentorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the mentor_feedback
+   */
+  select?: Prisma.mentor_feedbackSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the mentor_feedback
+   */
+  omit?: Prisma.mentor_feedbackOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.mentor_feedbackInclude<ExtArgs> | null
+  where?: Prisma.mentor_feedbackWhereInput
+  orderBy?: Prisma.mentor_feedbackOrderByWithRelationInput | Prisma.mentor_feedbackOrderByWithRelationInput[]
+  cursor?: Prisma.mentor_feedbackWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Mentor_feedbackScalarFieldEnum | Prisma.Mentor_feedbackScalarFieldEnum[]
+}
+
+/**
+ * app_user.feedback_as_apprentice
+ */
+export type app_user$feedback_as_apprenticeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the mentor_feedback
+   */
+  select?: Prisma.mentor_feedbackSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the mentor_feedback
+   */
+  omit?: Prisma.mentor_feedbackOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.mentor_feedbackInclude<ExtArgs> | null
+  where?: Prisma.mentor_feedbackWhereInput
+  orderBy?: Prisma.mentor_feedbackOrderByWithRelationInput | Prisma.mentor_feedbackOrderByWithRelationInput[]
+  cursor?: Prisma.mentor_feedbackWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Mentor_feedbackScalarFieldEnum | Prisma.Mentor_feedbackScalarFieldEnum[]
+}
+
+/**
+ * app_user.conversations_as_participant1
+ */
+export type app_user$conversations_as_participant1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the conversation
+   */
+  select?: Prisma.conversationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the conversation
+   */
+  omit?: Prisma.conversationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.conversationInclude<ExtArgs> | null
+  where?: Prisma.conversationWhereInput
+  orderBy?: Prisma.conversationOrderByWithRelationInput | Prisma.conversationOrderByWithRelationInput[]
+  cursor?: Prisma.conversationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+}
+
+/**
+ * app_user.conversations_as_participant2
+ */
+export type app_user$conversations_as_participant2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the conversation
+   */
+  select?: Prisma.conversationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the conversation
+   */
+  omit?: Prisma.conversationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.conversationInclude<ExtArgs> | null
+  where?: Prisma.conversationWhereInput
+  orderBy?: Prisma.conversationOrderByWithRelationInput | Prisma.conversationOrderByWithRelationInput[]
+  cursor?: Prisma.conversationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+}
+
+/**
+ * app_user.creditTransactions
+ */
+export type app_user$creditTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the credit_transaction
+   */
+  select?: Prisma.credit_transactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the credit_transaction
+   */
+  omit?: Prisma.credit_transactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.credit_transactionInclude<ExtArgs> | null
+  where?: Prisma.credit_transactionWhereInput
+  orderBy?: Prisma.credit_transactionOrderByWithRelationInput | Prisma.credit_transactionOrderByWithRelationInput[]
+  cursor?: Prisma.credit_transactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Credit_transactionScalarFieldEnum | Prisma.Credit_transactionScalarFieldEnum[]
+}
+
+/**
+ * app_user.supportRequests
+ */
+export type app_user$supportRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the support_request
+   */
+  select?: Prisma.support_requestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the support_request
+   */
+  omit?: Prisma.support_requestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.support_requestInclude<ExtArgs> | null
+  where?: Prisma.support_requestWhereInput
+  orderBy?: Prisma.support_requestOrderByWithRelationInput | Prisma.support_requestOrderByWithRelationInput[]
+  cursor?: Prisma.support_requestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Support_requestScalarFieldEnum | Prisma.Support_requestScalarFieldEnum[]
+}
+
+/**
+ * app_user.auditLogs
+ */
+export type app_user$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the audit_log
+   */
+  select?: Prisma.audit_logSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the audit_log
+   */
+  omit?: Prisma.audit_logOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.audit_logInclude<ExtArgs> | null
+  where?: Prisma.audit_logWhereInput
+  orderBy?: Prisma.audit_logOrderByWithRelationInput | Prisma.audit_logOrderByWithRelationInput[]
+  cursor?: Prisma.audit_logWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Audit_logScalarFieldEnum | Prisma.Audit_logScalarFieldEnum[]
+}
+
+/**
+ * app_user.workshops
+ */
+export type app_user$workshopsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the workshop
+   */
+  select?: Prisma.workshopSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the workshop
+   */
+  omit?: Prisma.workshopOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.workshopInclude<ExtArgs> | null
+  where?: Prisma.workshopWhereInput
+  orderBy?: Prisma.workshopOrderByWithRelationInput | Prisma.workshopOrderByWithRelationInput[]
+  cursor?: Prisma.workshopWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkshopScalarFieldEnum | Prisma.WorkshopScalarFieldEnum[]
+}
+
+/**
+ * app_user.messages
+ */
+export type app_user$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the message
+   */
+  select?: Prisma.messageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the message
+   */
+  omit?: Prisma.messageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.messageInclude<ExtArgs> | null
+  where?: Prisma.messageWhereInput
+  orderBy?: Prisma.messageOrderByWithRelationInput | Prisma.messageOrderByWithRelationInput[]
+  cursor?: Prisma.messageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+}
+
+/**
+ * app_user.messageReactions
+ */
+export type app_user$messageReactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the message_reaction
+   */
+  select?: Prisma.message_reactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the message_reaction
+   */
+  omit?: Prisma.message_reactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.message_reactionInclude<ExtArgs> | null
+  where?: Prisma.message_reactionWhereInput
+  orderBy?: Prisma.message_reactionOrderByWithRelationInput | Prisma.message_reactionOrderByWithRelationInput[]
+  cursor?: Prisma.message_reactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Message_reactionScalarFieldEnum | Prisma.Message_reactionScalarFieldEnum[]
+}
+
+/**
+ * app_user.notifications
+ */
+export type app_user$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the notification
+   */
+  select?: Prisma.notificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the notification
+   */
+  omit?: Prisma.notificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notificationInclude<ExtArgs> | null
+  where?: Prisma.notificationWhereInput
+  orderBy?: Prisma.notificationOrderByWithRelationInput | Prisma.notificationOrderByWithRelationInput[]
+  cursor?: Prisma.notificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

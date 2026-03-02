@@ -48,4 +48,45 @@ export class AdminService implements IAdminService {
       data: { status: "SUSPENDED", deletionReason: reason },
     });
   }
+
+  async getAuditLogs(params: {
+    limit: number;
+    offset: number;
+    searchTerm?: string;
+  }): Promise<{ logs: any[]; total: number }> {
+    const { limit, offset, searchTerm } = params;
+    const where: any = {};
+
+    if (searchTerm) {
+      where.OR = [
+        { action: { contains: searchTerm, mode: 'insensitive' } },
+        { targetId: { contains: searchTerm, mode: 'insensitive' } },
+        { admin: { name: { contains: searchTerm, mode: 'insensitive' } } },
+      ];
+    }
+    
+    const [logs, total] = await this.prisma.$transaction([
+      this.prisma.audit_log.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: { createdAt: "desc" },
+        include: {
+          admin: {
+            select: { name: true, id: true }
+          }
+        }
+      }),
+      this.prisma.audit_log.count({ where }),
+    ]);
+
+    return { 
+      logs: logs.map(log => ({
+        ...log,
+        adminName: log.admin.name,
+        adminId: log.admin.id,
+      })), 
+      total 
+    };
+  }
 }

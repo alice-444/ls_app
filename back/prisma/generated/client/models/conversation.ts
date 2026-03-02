@@ -28,7 +28,6 @@ export type ConversationMinAggregateOutputType = {
   id: string | null
   participant1Id: string | null
   participant2Id: string | null
-  workshopId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -37,7 +36,6 @@ export type ConversationMaxAggregateOutputType = {
   id: string | null
   participant1Id: string | null
   participant2Id: string | null
-  workshopId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -46,7 +44,6 @@ export type ConversationCountAggregateOutputType = {
   id: number
   participant1Id: number
   participant2Id: number
-  workshopId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -57,7 +54,6 @@ export type ConversationMinAggregateInputType = {
   id?: true
   participant1Id?: true
   participant2Id?: true
-  workshopId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -66,7 +62,6 @@ export type ConversationMaxAggregateInputType = {
   id?: true
   participant1Id?: true
   participant2Id?: true
-  workshopId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -75,7 +70,6 @@ export type ConversationCountAggregateInputType = {
   id?: true
   participant1Id?: true
   participant2Id?: true
-  workshopId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -157,7 +151,6 @@ export type ConversationGroupByOutputType = {
   id: string
   participant1Id: string
   participant2Id: string
-  workshopId: string | null
   createdAt: Date
   updatedAt: Date
   _count: ConversationCountAggregateOutputType | null
@@ -187,28 +180,22 @@ export type conversationWhereInput = {
   id?: Prisma.StringFilter<"conversation"> | string
   participant1Id?: Prisma.StringFilter<"conversation"> | string
   participant2Id?: Prisma.StringFilter<"conversation"> | string
-  workshopId?: Prisma.StringNullableFilter<"conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"conversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"conversation"> | Date | string
   participant1?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
   participant2?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  workshop?: Prisma.XOR<Prisma.WorkshopNullableScalarRelationFilter, Prisma.workshopWhereInput> | null
   messages?: Prisma.MessageListRelationFilter
-  pinned_by?: Prisma.Conversation_pinListRelationFilter
 }
 
 export type conversationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   participant1Id?: Prisma.SortOrder
   participant2Id?: Prisma.SortOrder
-  workshopId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   participant1?: Prisma.app_userOrderByWithRelationInput
   participant2?: Prisma.app_userOrderByWithRelationInput
-  workshop?: Prisma.workshopOrderByWithRelationInput
   messages?: Prisma.messageOrderByRelationAggregateInput
-  pinned_by?: Prisma.conversation_pinOrderByRelationAggregateInput
 }
 
 export type conversationWhereUniqueInput = Prisma.AtLeast<{
@@ -219,21 +206,17 @@ export type conversationWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.conversationWhereInput | Prisma.conversationWhereInput[]
   participant1Id?: Prisma.StringFilter<"conversation"> | string
   participant2Id?: Prisma.StringFilter<"conversation"> | string
-  workshopId?: Prisma.StringNullableFilter<"conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"conversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"conversation"> | Date | string
   participant1?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
   participant2?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  workshop?: Prisma.XOR<Prisma.WorkshopNullableScalarRelationFilter, Prisma.workshopWhereInput> | null
   messages?: Prisma.MessageListRelationFilter
-  pinned_by?: Prisma.Conversation_pinListRelationFilter
 }, "id" | "participant1Id_participant2Id">
 
 export type conversationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   participant1Id?: Prisma.SortOrder
   participant2Id?: Prisma.SortOrder
-  workshopId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.conversationCountOrderByAggregateInput
@@ -248,62 +231,52 @@ export type conversationScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"conversation"> | string
   participant1Id?: Prisma.StringWithAggregatesFilter<"conversation"> | string
   participant2Id?: Prisma.StringWithAggregatesFilter<"conversation"> | string
-  workshopId?: Prisma.StringNullableWithAggregatesFilter<"conversation"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"conversation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"conversation"> | Date | string
 }
 
 export type conversationCreateInput = {
-  id: string
+  id?: string
   createdAt?: Date | string
-  updatedAt: Date | string
-  participant1: Prisma.app_userCreateNestedOneWithoutConversation_participant1Input
-  participant2: Prisma.app_userCreateNestedOneWithoutConversation_participant2Input
-  workshop?: Prisma.workshopCreateNestedOneWithoutConversationInput
+  updatedAt?: Date | string
+  participant1: Prisma.app_userCreateNestedOneWithoutConversations_as_participant1Input
+  participant2: Prisma.app_userCreateNestedOneWithoutConversations_as_participant2Input
   messages?: Prisma.messageCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinCreateNestedManyWithoutConversationInput
 }
 
 export type conversationUncheckedCreateInput = {
-  id: string
+  id?: string
   participant1Id: string
   participant2Id: string
-  workshopId?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
   messages?: Prisma.messageUncheckedCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutConversationInput
 }
 
 export type conversationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant1NestedInput
-  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant2NestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutConversationNestedInput
+  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversations_as_participant1NestedInput
+  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversations_as_participant2NestedInput
   messages?: Prisma.messageUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUpdateManyWithoutConversationNestedInput
 }
 
 export type conversationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
   participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.messageUncheckedUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUncheckedUpdateManyWithoutConversationNestedInput
 }
 
 export type conversationCreateManyInput = {
-  id: string
+  id?: string
   participant1Id: string
   participant2Id: string
-  workshopId?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type conversationUpdateManyMutationInput = {
@@ -316,7 +289,6 @@ export type conversationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
   participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -340,7 +312,6 @@ export type conversationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   participant1Id?: Prisma.SortOrder
   participant2Id?: Prisma.SortOrder
-  workshopId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -349,7 +320,6 @@ export type conversationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   participant1Id?: Prisma.SortOrder
   participant2Id?: Prisma.SortOrder
-  workshopId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -358,7 +328,6 @@ export type conversationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   participant1Id?: Prisma.SortOrder
   participant2Id?: Prisma.SortOrder
-  workshopId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -452,62 +421,6 @@ export type conversationUncheckedUpdateManyWithoutParticipant2NestedInput = {
   deleteMany?: Prisma.conversationScalarWhereInput | Prisma.conversationScalarWhereInput[]
 }
 
-export type conversationCreateNestedManyWithoutWorkshopInput = {
-  create?: Prisma.XOR<Prisma.conversationCreateWithoutWorkshopInput, Prisma.conversationUncheckedCreateWithoutWorkshopInput> | Prisma.conversationCreateWithoutWorkshopInput[] | Prisma.conversationUncheckedCreateWithoutWorkshopInput[]
-  connectOrCreate?: Prisma.conversationCreateOrConnectWithoutWorkshopInput | Prisma.conversationCreateOrConnectWithoutWorkshopInput[]
-  createMany?: Prisma.conversationCreateManyWorkshopInputEnvelope
-  connect?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-}
-
-export type conversationUncheckedCreateNestedManyWithoutWorkshopInput = {
-  create?: Prisma.XOR<Prisma.conversationCreateWithoutWorkshopInput, Prisma.conversationUncheckedCreateWithoutWorkshopInput> | Prisma.conversationCreateWithoutWorkshopInput[] | Prisma.conversationUncheckedCreateWithoutWorkshopInput[]
-  connectOrCreate?: Prisma.conversationCreateOrConnectWithoutWorkshopInput | Prisma.conversationCreateOrConnectWithoutWorkshopInput[]
-  createMany?: Prisma.conversationCreateManyWorkshopInputEnvelope
-  connect?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-}
-
-export type conversationUpdateManyWithoutWorkshopNestedInput = {
-  create?: Prisma.XOR<Prisma.conversationCreateWithoutWorkshopInput, Prisma.conversationUncheckedCreateWithoutWorkshopInput> | Prisma.conversationCreateWithoutWorkshopInput[] | Prisma.conversationUncheckedCreateWithoutWorkshopInput[]
-  connectOrCreate?: Prisma.conversationCreateOrConnectWithoutWorkshopInput | Prisma.conversationCreateOrConnectWithoutWorkshopInput[]
-  upsert?: Prisma.conversationUpsertWithWhereUniqueWithoutWorkshopInput | Prisma.conversationUpsertWithWhereUniqueWithoutWorkshopInput[]
-  createMany?: Prisma.conversationCreateManyWorkshopInputEnvelope
-  set?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  disconnect?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  delete?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  connect?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  update?: Prisma.conversationUpdateWithWhereUniqueWithoutWorkshopInput | Prisma.conversationUpdateWithWhereUniqueWithoutWorkshopInput[]
-  updateMany?: Prisma.conversationUpdateManyWithWhereWithoutWorkshopInput | Prisma.conversationUpdateManyWithWhereWithoutWorkshopInput[]
-  deleteMany?: Prisma.conversationScalarWhereInput | Prisma.conversationScalarWhereInput[]
-}
-
-export type conversationUncheckedUpdateManyWithoutWorkshopNestedInput = {
-  create?: Prisma.XOR<Prisma.conversationCreateWithoutWorkshopInput, Prisma.conversationUncheckedCreateWithoutWorkshopInput> | Prisma.conversationCreateWithoutWorkshopInput[] | Prisma.conversationUncheckedCreateWithoutWorkshopInput[]
-  connectOrCreate?: Prisma.conversationCreateOrConnectWithoutWorkshopInput | Prisma.conversationCreateOrConnectWithoutWorkshopInput[]
-  upsert?: Prisma.conversationUpsertWithWhereUniqueWithoutWorkshopInput | Prisma.conversationUpsertWithWhereUniqueWithoutWorkshopInput[]
-  createMany?: Prisma.conversationCreateManyWorkshopInputEnvelope
-  set?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  disconnect?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  delete?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  connect?: Prisma.conversationWhereUniqueInput | Prisma.conversationWhereUniqueInput[]
-  update?: Prisma.conversationUpdateWithWhereUniqueWithoutWorkshopInput | Prisma.conversationUpdateWithWhereUniqueWithoutWorkshopInput[]
-  updateMany?: Prisma.conversationUpdateManyWithWhereWithoutWorkshopInput | Prisma.conversationUpdateManyWithWhereWithoutWorkshopInput[]
-  deleteMany?: Prisma.conversationScalarWhereInput | Prisma.conversationScalarWhereInput[]
-}
-
-export type conversationCreateNestedOneWithoutPinned_byInput = {
-  create?: Prisma.XOR<Prisma.conversationCreateWithoutPinned_byInput, Prisma.conversationUncheckedCreateWithoutPinned_byInput>
-  connectOrCreate?: Prisma.conversationCreateOrConnectWithoutPinned_byInput
-  connect?: Prisma.conversationWhereUniqueInput
-}
-
-export type conversationUpdateOneRequiredWithoutPinned_byNestedInput = {
-  create?: Prisma.XOR<Prisma.conversationCreateWithoutPinned_byInput, Prisma.conversationUncheckedCreateWithoutPinned_byInput>
-  connectOrCreate?: Prisma.conversationCreateOrConnectWithoutPinned_byInput
-  upsert?: Prisma.conversationUpsertWithoutPinned_byInput
-  connect?: Prisma.conversationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.conversationUpdateToOneWithWhereWithoutPinned_byInput, Prisma.conversationUpdateWithoutPinned_byInput>, Prisma.conversationUncheckedUpdateWithoutPinned_byInput>
-}
-
 export type conversationCreateNestedOneWithoutMessagesInput = {
   create?: Prisma.XOR<Prisma.conversationCreateWithoutMessagesInput, Prisma.conversationUncheckedCreateWithoutMessagesInput>
   connectOrCreate?: Prisma.conversationCreateOrConnectWithoutMessagesInput
@@ -523,23 +436,19 @@ export type conversationUpdateOneRequiredWithoutMessagesNestedInput = {
 }
 
 export type conversationCreateWithoutParticipant1Input = {
-  id: string
+  id?: string
   createdAt?: Date | string
-  updatedAt: Date | string
-  participant2: Prisma.app_userCreateNestedOneWithoutConversation_participant2Input
-  workshop?: Prisma.workshopCreateNestedOneWithoutConversationInput
+  updatedAt?: Date | string
+  participant2: Prisma.app_userCreateNestedOneWithoutConversations_as_participant2Input
   messages?: Prisma.messageCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinCreateNestedManyWithoutConversationInput
 }
 
 export type conversationUncheckedCreateWithoutParticipant1Input = {
-  id: string
+  id?: string
   participant2Id: string
-  workshopId?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
   messages?: Prisma.messageUncheckedCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutConversationInput
 }
 
 export type conversationCreateOrConnectWithoutParticipant1Input = {
@@ -553,23 +462,19 @@ export type conversationCreateManyParticipant1InputEnvelope = {
 }
 
 export type conversationCreateWithoutParticipant2Input = {
-  id: string
+  id?: string
   createdAt?: Date | string
-  updatedAt: Date | string
-  participant1: Prisma.app_userCreateNestedOneWithoutConversation_participant1Input
-  workshop?: Prisma.workshopCreateNestedOneWithoutConversationInput
+  updatedAt?: Date | string
+  participant1: Prisma.app_userCreateNestedOneWithoutConversations_as_participant1Input
   messages?: Prisma.messageCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinCreateNestedManyWithoutConversationInput
 }
 
 export type conversationUncheckedCreateWithoutParticipant2Input = {
-  id: string
+  id?: string
   participant1Id: string
-  workshopId?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
   messages?: Prisma.messageUncheckedCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutConversationInput
 }
 
 export type conversationCreateOrConnectWithoutParticipant2Input = {
@@ -605,7 +510,6 @@ export type conversationScalarWhereInput = {
   id?: Prisma.StringFilter<"conversation"> | string
   participant1Id?: Prisma.StringFilter<"conversation"> | string
   participant2Id?: Prisma.StringFilter<"conversation"> | string
-  workshopId?: Prisma.StringNullableFilter<"conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"conversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"conversation"> | Date | string
 }
@@ -626,126 +530,20 @@ export type conversationUpdateManyWithWhereWithoutParticipant2Input = {
   data: Prisma.XOR<Prisma.conversationUpdateManyMutationInput, Prisma.conversationUncheckedUpdateManyWithoutParticipant2Input>
 }
 
-export type conversationCreateWithoutWorkshopInput = {
-  id: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  participant1: Prisma.app_userCreateNestedOneWithoutConversation_participant1Input
-  participant2: Prisma.app_userCreateNestedOneWithoutConversation_participant2Input
-  messages?: Prisma.messageCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinCreateNestedManyWithoutConversationInput
-}
-
-export type conversationUncheckedCreateWithoutWorkshopInput = {
-  id: string
-  participant1Id: string
-  participant2Id: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  messages?: Prisma.messageUncheckedCreateNestedManyWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutConversationInput
-}
-
-export type conversationCreateOrConnectWithoutWorkshopInput = {
-  where: Prisma.conversationWhereUniqueInput
-  create: Prisma.XOR<Prisma.conversationCreateWithoutWorkshopInput, Prisma.conversationUncheckedCreateWithoutWorkshopInput>
-}
-
-export type conversationCreateManyWorkshopInputEnvelope = {
-  data: Prisma.conversationCreateManyWorkshopInput | Prisma.conversationCreateManyWorkshopInput[]
-  skipDuplicates?: boolean
-}
-
-export type conversationUpsertWithWhereUniqueWithoutWorkshopInput = {
-  where: Prisma.conversationWhereUniqueInput
-  update: Prisma.XOR<Prisma.conversationUpdateWithoutWorkshopInput, Prisma.conversationUncheckedUpdateWithoutWorkshopInput>
-  create: Prisma.XOR<Prisma.conversationCreateWithoutWorkshopInput, Prisma.conversationUncheckedCreateWithoutWorkshopInput>
-}
-
-export type conversationUpdateWithWhereUniqueWithoutWorkshopInput = {
-  where: Prisma.conversationWhereUniqueInput
-  data: Prisma.XOR<Prisma.conversationUpdateWithoutWorkshopInput, Prisma.conversationUncheckedUpdateWithoutWorkshopInput>
-}
-
-export type conversationUpdateManyWithWhereWithoutWorkshopInput = {
-  where: Prisma.conversationScalarWhereInput
-  data: Prisma.XOR<Prisma.conversationUpdateManyMutationInput, Prisma.conversationUncheckedUpdateManyWithoutWorkshopInput>
-}
-
-export type conversationCreateWithoutPinned_byInput = {
-  id: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  participant1: Prisma.app_userCreateNestedOneWithoutConversation_participant1Input
-  participant2: Prisma.app_userCreateNestedOneWithoutConversation_participant2Input
-  workshop?: Prisma.workshopCreateNestedOneWithoutConversationInput
-  messages?: Prisma.messageCreateNestedManyWithoutConversationInput
-}
-
-export type conversationUncheckedCreateWithoutPinned_byInput = {
-  id: string
-  participant1Id: string
-  participant2Id: string
-  workshopId?: string | null
-  createdAt?: Date | string
-  updatedAt: Date | string
-  messages?: Prisma.messageUncheckedCreateNestedManyWithoutConversationInput
-}
-
-export type conversationCreateOrConnectWithoutPinned_byInput = {
-  where: Prisma.conversationWhereUniqueInput
-  create: Prisma.XOR<Prisma.conversationCreateWithoutPinned_byInput, Prisma.conversationUncheckedCreateWithoutPinned_byInput>
-}
-
-export type conversationUpsertWithoutPinned_byInput = {
-  update: Prisma.XOR<Prisma.conversationUpdateWithoutPinned_byInput, Prisma.conversationUncheckedUpdateWithoutPinned_byInput>
-  create: Prisma.XOR<Prisma.conversationCreateWithoutPinned_byInput, Prisma.conversationUncheckedCreateWithoutPinned_byInput>
-  where?: Prisma.conversationWhereInput
-}
-
-export type conversationUpdateToOneWithWhereWithoutPinned_byInput = {
-  where?: Prisma.conversationWhereInput
-  data: Prisma.XOR<Prisma.conversationUpdateWithoutPinned_byInput, Prisma.conversationUncheckedUpdateWithoutPinned_byInput>
-}
-
-export type conversationUpdateWithoutPinned_byInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant1NestedInput
-  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant2NestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutConversationNestedInput
-  messages?: Prisma.messageUpdateManyWithoutConversationNestedInput
-}
-
-export type conversationUncheckedUpdateWithoutPinned_byInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
-  participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messages?: Prisma.messageUncheckedUpdateManyWithoutConversationNestedInput
-}
-
 export type conversationCreateWithoutMessagesInput = {
-  id: string
+  id?: string
   createdAt?: Date | string
-  updatedAt: Date | string
-  participant1: Prisma.app_userCreateNestedOneWithoutConversation_participant1Input
-  participant2: Prisma.app_userCreateNestedOneWithoutConversation_participant2Input
-  workshop?: Prisma.workshopCreateNestedOneWithoutConversationInput
-  pinned_by?: Prisma.conversation_pinCreateNestedManyWithoutConversationInput
+  updatedAt?: Date | string
+  participant1: Prisma.app_userCreateNestedOneWithoutConversations_as_participant1Input
+  participant2: Prisma.app_userCreateNestedOneWithoutConversations_as_participant2Input
 }
 
 export type conversationUncheckedCreateWithoutMessagesInput = {
-  id: string
+  id?: string
   participant1Id: string
   participant2Id: string
-  workshopId?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  pinned_by?: Prisma.conversation_pinUncheckedCreateNestedManyWithoutConversationInput
+  updatedAt?: Date | string
 }
 
 export type conversationCreateOrConnectWithoutMessagesInput = {
@@ -768,62 +566,51 @@ export type conversationUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant1NestedInput
-  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant2NestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUpdateManyWithoutConversationNestedInput
+  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversations_as_participant1NestedInput
+  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversations_as_participant2NestedInput
 }
 
 export type conversationUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
   participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  pinned_by?: Prisma.conversation_pinUncheckedUpdateManyWithoutConversationNestedInput
 }
 
 export type conversationCreateManyParticipant1Input = {
-  id: string
+  id?: string
   participant2Id: string
-  workshopId?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type conversationCreateManyParticipant2Input = {
-  id: string
+  id?: string
   participant1Id: string
-  workshopId?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type conversationUpdateWithoutParticipant1Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant2NestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutConversationNestedInput
+  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversations_as_participant2NestedInput
   messages?: Prisma.messageUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUpdateManyWithoutConversationNestedInput
 }
 
 export type conversationUncheckedUpdateWithoutParticipant1Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.messageUncheckedUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUncheckedUpdateManyWithoutConversationNestedInput
 }
 
 export type conversationUncheckedUpdateManyWithoutParticipant1Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -832,62 +619,21 @@ export type conversationUpdateWithoutParticipant2Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant1NestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutConversationNestedInput
+  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversations_as_participant1NestedInput
   messages?: Prisma.messageUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUpdateManyWithoutConversationNestedInput
 }
 
 export type conversationUncheckedUpdateWithoutParticipant2Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.messageUncheckedUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUncheckedUpdateManyWithoutConversationNestedInput
 }
 
 export type conversationUncheckedUpdateManyWithoutParticipant2Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type conversationCreateManyWorkshopInput = {
-  id: string
-  participant1Id: string
-  participant2Id: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-}
-
-export type conversationUpdateWithoutWorkshopInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  participant1?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant1NestedInput
-  participant2?: Prisma.app_userUpdateOneRequiredWithoutConversation_participant2NestedInput
-  messages?: Prisma.messageUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUpdateManyWithoutConversationNestedInput
-}
-
-export type conversationUncheckedUpdateWithoutWorkshopInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
-  participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messages?: Prisma.messageUncheckedUpdateManyWithoutConversationNestedInput
-  pinned_by?: Prisma.conversation_pinUncheckedUpdateManyWithoutConversationNestedInput
-}
-
-export type conversationUncheckedUpdateManyWithoutWorkshopInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  participant1Id?: Prisma.StringFieldUpdateOperationsInput | string
-  participant2Id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -899,12 +645,10 @@ export type conversationUncheckedUpdateManyWithoutWorkshopInput = {
 
 export type ConversationCountOutputType = {
   messages: number
-  pinned_by: number
 }
 
 export type ConversationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   messages?: boolean | ConversationCountOutputTypeCountMessagesArgs
-  pinned_by?: boolean | ConversationCountOutputTypeCountPinned_byArgs
 }
 
 /**
@@ -924,26 +668,16 @@ export type ConversationCountOutputTypeCountMessagesArgs<ExtArgs extends runtime
   where?: Prisma.messageWhereInput
 }
 
-/**
- * ConversationCountOutputType without action
- */
-export type ConversationCountOutputTypeCountPinned_byArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.conversation_pinWhereInput
-}
-
 
 export type conversationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   participant1Id?: boolean
   participant2Id?: boolean
-  workshopId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   participant1?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
   participant2?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.conversation$workshopArgs<ExtArgs>
   messages?: boolean | Prisma.conversation$messagesArgs<ExtArgs>
-  pinned_by?: boolean | Prisma.conversation$pinned_byArgs<ExtArgs>
   _count?: boolean | Prisma.ConversationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["conversation"]>
 
@@ -951,53 +685,44 @@ export type conversationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   id?: boolean
   participant1Id?: boolean
   participant2Id?: boolean
-  workshopId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   participant1?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
   participant2?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.conversation$workshopArgs<ExtArgs>
 }, ExtArgs["result"]["conversation"]>
 
 export type conversationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   participant1Id?: boolean
   participant2Id?: boolean
-  workshopId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   participant1?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
   participant2?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.conversation$workshopArgs<ExtArgs>
 }, ExtArgs["result"]["conversation"]>
 
 export type conversationSelectScalar = {
   id?: boolean
   participant1Id?: boolean
   participant2Id?: boolean
-  workshopId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type conversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "participant1Id" | "participant2Id" | "workshopId" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
+export type conversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "participant1Id" | "participant2Id" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
 export type conversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   participant1?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
   participant2?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.conversation$workshopArgs<ExtArgs>
   messages?: boolean | Prisma.conversation$messagesArgs<ExtArgs>
-  pinned_by?: boolean | Prisma.conversation$pinned_byArgs<ExtArgs>
   _count?: boolean | Prisma.ConversationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type conversationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   participant1?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
   participant2?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.conversation$workshopArgs<ExtArgs>
 }
 export type conversationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   participant1?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
   participant2?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.conversation$workshopArgs<ExtArgs>
 }
 
 export type $conversationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1005,15 +730,12 @@ export type $conversationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     participant1: Prisma.$app_userPayload<ExtArgs>
     participant2: Prisma.$app_userPayload<ExtArgs>
-    workshop: Prisma.$workshopPayload<ExtArgs> | null
     messages: Prisma.$messagePayload<ExtArgs>[]
-    pinned_by: Prisma.$conversation_pinPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     participant1Id: string
     participant2Id: string
-    workshopId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["conversation"]>
@@ -1412,9 +1134,7 @@ export interface Prisma__conversationClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   participant1<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   participant2<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  workshop<T extends Prisma.conversation$workshopArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.conversation$workshopArgs<ExtArgs>>): Prisma.Prisma__workshopClient<runtime.Types.Result.GetResult<Prisma.$workshopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   messages<T extends Prisma.conversation$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.conversation$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$messagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  pinned_by<T extends Prisma.conversation$pinned_byArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.conversation$pinned_byArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$conversation_pinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1447,7 +1167,6 @@ export interface conversationFieldRefs {
   readonly id: Prisma.FieldRef<"conversation", 'String'>
   readonly participant1Id: Prisma.FieldRef<"conversation", 'String'>
   readonly participant2Id: Prisma.FieldRef<"conversation", 'String'>
-  readonly workshopId: Prisma.FieldRef<"conversation", 'String'>
   readonly createdAt: Prisma.FieldRef<"conversation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"conversation", 'DateTime'>
 }
@@ -1846,25 +1565,6 @@ export type conversationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
- * conversation.workshop
- */
-export type conversation$workshopArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop
-   */
-  select?: Prisma.workshopSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop
-   */
-  omit?: Prisma.workshopOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshopInclude<ExtArgs> | null
-  where?: Prisma.workshopWhereInput
-}
-
-/**
  * conversation.messages
  */
 export type conversation$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1886,30 +1586,6 @@ export type conversation$messagesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
-}
-
-/**
- * conversation.pinned_by
- */
-export type conversation$pinned_byArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the conversation_pin
-   */
-  select?: Prisma.conversation_pinSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the conversation_pin
-   */
-  omit?: Prisma.conversation_pinOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.conversation_pinInclude<ExtArgs> | null
-  where?: Prisma.conversation_pinWhereInput
-  orderBy?: Prisma.conversation_pinOrderByWithRelationInput | Prisma.conversation_pinOrderByWithRelationInput[]
-  cursor?: Prisma.conversation_pinWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Conversation_pinScalarFieldEnum | Prisma.Conversation_pinScalarFieldEnum[]
 }
 
 /**

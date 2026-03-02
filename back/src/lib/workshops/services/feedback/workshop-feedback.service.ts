@@ -7,6 +7,7 @@ import type { IWorkshopRepository } from "../../repositories/workshop.repository
 import type { IMentorRepository } from "../../../mentors/repositories/mentor.repository.interface";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
 import type { IEmailService } from "../../../email/services/email.service.interface";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import { FeedbackModerationService } from "./feedback-moderation.service";
 import type { IFeedbackModerationService } from "./feedback-moderation.service";
 import { container } from "../../../di/container";
@@ -250,8 +251,8 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
     return this.moderationService.getModerationQueue(options);
   }
 
-  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>> {
-    return this.moderationService.dismissReport(feedbackId);
+  approveFeedback(feedbackId: string): Promise<Result<{ success: boolean }>> {
+    return this.moderationService.approveFeedback(feedbackId);
   }
 
   deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>> {

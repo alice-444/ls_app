@@ -39,6 +39,7 @@ import { PasswordValidationService } from "../users/services/account/security/pa
 import { HttpClient } from "../users/services/account/shared/http-client";
 import { DeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service";
 import { EmailTemplateService } from "../users/services/account/shared/email-template.service";
+import { MagicLinkService } from "../auth/services/magic-link/magic-link.service";
 import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
 import type { IWorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service.interface";
 import type { IMentorProfileService } from "../mentors/services/profile/mentor-profile.service.interface";
@@ -74,10 +75,12 @@ import { AdminService } from "../admin/services/admin.service";
 import type { IAdminService } from "../admin/services/admin.service.interface";
 import { SupportRequestService } from "../support/services/support-request.service";
 import type { ISupportRequestService } from "../support/services/support-request.service.interface";
+import type { IMagicLinkService } from "../auth/services/magic-link/magic-link.service.interface";
 
 export class ServicesContainer {
   private _adminService?: IAdminService;
   private _supportRequestService?: ISupportRequestService;
+  private _magicLinkService?: IMagicLinkService;
 
   private _workshopService?: IWorkshopService;
   private _workshopFeedbackService?: IWorkshopFeedbackService;
@@ -117,6 +120,15 @@ export class ServicesContainer {
     private readonly prisma: PrismaClient,
     private readonly repositories: RepositoriesContainer
   ) {}
+  
+  get magicLinkService(): IMagicLinkService {
+    this._magicLinkService ??= new MagicLinkService(
+      this.prisma,
+      this.repositories.appUserRepository,
+      this.emailService
+    );
+    return this._magicLinkService;
+  }
 
   get workshopService(): IWorkshopService {
     this._workshopService ??= new WorkshopService(

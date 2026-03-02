@@ -124,14 +124,14 @@ export const workshopFeedbackRouter = router({
       });
     }),
 
-  dismissReport: adminProcedure
+  approveFeedback: adminProcedure
     .input(z.object({ feedbackId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const result = await container.workshopFeedbackService.dismissReport(
+      const result = await container.workshopFeedbackService.approveFeedback(
         input.feedbackId
       );
       return handleRouterResult(result, {
-        operation: "dismissReport",
+        operation: "approveFeedback",
         userId: ctx.session.user.id,
         resourceId: input.feedbackId,
       });
@@ -167,7 +167,7 @@ export const workshopFeedbackRouter = router({
     .input(
       z.object({
         mentorUserId: z.string(),
-        amount: z.number().min(1).max(2),
+        amount: z.number().int().min(1, "Le pourboire minimum est de 1 crédit.").max(100, "Le pourboire maximum est de 100 crédits."),
       })
     )
     .mutation(async ({ ctx, input }) => {

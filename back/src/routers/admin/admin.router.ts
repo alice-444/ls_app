@@ -34,4 +34,16 @@ export const adminRouter = router({
     .mutation(async ({ input }) => {
       return await container.adminService.rejectUser(input.appUserId, input.reason);
     }),
+
+  getAuditLogs: adminProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(20),
+        offset: z.number().min(0).default(0),
+        searchTerm: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      return await container.adminService.getAuditLogs(input);
+    }),
 });

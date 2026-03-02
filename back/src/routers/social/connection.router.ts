@@ -93,5 +93,15 @@ export const connectionRouter = router({
     }
     return result.data;
   }),
-});
 
+  getPendingRequestsSent: protectedProcedure.query(async ({ ctx }) => {
+    const result =
+      await container.userConnectionService.getPendingRequestsSent(
+        ctx.session.user.id
+      );
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  }),
+});

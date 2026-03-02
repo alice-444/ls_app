@@ -52,35 +52,35 @@ export type account = Prisma.accountModel
  */
 export type app_user = Prisma.app_userModel
 /**
+ * Model credit_transaction
+ * 
+ */
+export type credit_transaction = Prisma.credit_transactionModel
+/**
+ * Model support_request
+ * 
+ */
+export type support_request = Prisma.support_requestModel
+/**
  * Model audit_log
  * 
  */
 export type audit_log = Prisma.audit_logModel
 /**
- * Model deletion_job
+ * Model user_report
  * 
  */
-export type deletion_job = Prisma.deletion_jobModel
+export type user_report = Prisma.user_reportModel
 /**
- * Model mentor_feedback
+ * Model user_block
  * 
  */
-export type mentor_feedback = Prisma.mentor_feedbackModel
+export type user_block = Prisma.user_blockModel
 /**
- * Model session
+ * Model user_connection
  * 
  */
-export type session = Prisma.sessionModel
-/**
- * Model user
- * 
- */
-export type user = Prisma.userModel
-/**
- * Model verification
- * 
- */
-export type verification = Prisma.verificationModel
+export type user_connection = Prisma.user_connectionModel
 /**
  * Model workshop
  * 
@@ -92,25 +92,15 @@ export type workshop = Prisma.workshopModel
  */
 export type workshop_request = Prisma.workshop_requestModel
 /**
- * Model workshop_cashback_queue
+ * Model mentor_feedback
  * 
  */
-export type workshop_cashback_queue = Prisma.workshop_cashback_queueModel
-/**
- * Model user_connection
- * 
- */
-export type user_connection = Prisma.user_connectionModel
+export type mentor_feedback = Prisma.mentor_feedbackModel
 /**
  * Model conversation
  * 
  */
 export type conversation = Prisma.conversationModel
-/**
- * Model conversation_pin
- * 
- */
-export type conversation_pin = Prisma.conversation_pinModel
 /**
  * Model message
  * 
@@ -127,22 +117,7 @@ export type message_reaction = Prisma.message_reactionModel
  */
 export type notification = Prisma.notificationModel
 /**
- * Model user_block
+ * Model magic_link_token
  * 
  */
-export type user_block = Prisma.user_blockModel
-/**
- * Model user_report
- * 
- */
-export type user_report = Prisma.user_reportModel
-/**
- * Model support_request
- * 
- */
-export type support_request = Prisma.support_requestModel
-/**
- * Model credit_transaction
- * 
- */
-export type credit_transaction = Prisma.credit_transactionModel
+export type magic_link_token = Prisma.magic_link_tokenModel

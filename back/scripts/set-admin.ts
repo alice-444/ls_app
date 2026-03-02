@@ -1,11 +1,10 @@
-import { PrismaClient } from "../prisma/generated/client";
-import * as dotenv from "dotenv";
 import * as path from "path";
+import * as dotenv from "dotenv";
 
-// Load .env from the back directory
+// Load .env before importing prisma (which reads DATABASE_URL)
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
-const prisma = new PrismaClient();
+import { prisma } from "../prisma";
 
 async function main() {
   const email = process.argv[2];

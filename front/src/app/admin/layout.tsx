@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
-import { Loader2, ShieldAlert, LayoutDashboard, Flag, MessageSquare, LifeBuoy, Users, Settings, Bell } from "lucide-react";
+import { Loader2, ShieldAlert, LayoutDashboard, Flag, MessageSquare, LifeBuoy, Users, Settings, Bell, History } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -57,6 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Modération", href: "/admin/feedback-moderation", icon: MessageSquare },
     { label: "Support", href: "/admin/support", icon: LifeBuoy },
     { label: "Onboarding", href: "/admin/onboarding", icon: Users },
+    { label: "Audit Logs", href: "/admin/audit-logs", icon: History },
     { label: "Notifications", href: "/admin/notifications", icon: Bell },
     { label: "Paramètres", href: "/admin/settings", icon: Settings },
   ];

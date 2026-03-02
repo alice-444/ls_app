@@ -7,7 +7,7 @@ import type { IUserBlockService } from "../../users/services/moderation/user-blo
 import { success, failure } from "../../common/types";
 import { generateInternalId } from "../../utils/id-generator";
 import { logger } from "../../common/logger";
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "../../../../prisma/generated/client/client";
 
 export class NotificationService implements INotificationService {
   constructor(

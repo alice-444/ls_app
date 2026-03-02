@@ -97,7 +97,12 @@ export default function Sidebar() {
       return null;
   }
 
-  const navItems = getNavItems(userRole);
+  // Wait for role to be loaded before rendering nav items
+  if (isLoadingRole) {
+    return null; // Or a sidebar skeleton
+  }
+
+  const navItems = getNavItems(userRole ?? null);
 
   const getSubNavItems = (key: string) => {
     switch (key) {

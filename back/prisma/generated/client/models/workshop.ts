@@ -29,88 +29,68 @@ export type AggregateWorkshop = {
 export type WorkshopAvgAggregateOutputType = {
   maxParticipants: number | null
   duration: number | null
-  creditCost: number | null
 }
 
 export type WorkshopSumAggregateOutputType = {
   maxParticipants: number | null
   duration: number | null
-  creditCost: number | null
 }
 
 export type WorkshopMinAggregateOutputType = {
   id: string | null
+  creatorId: string | null
   title: string | null
   description: string | null
-  date: Date | null
-  time: string | null
-  location: string | null
-  isVirtual: boolean | null
+  domain: string | null
+  isPublished: boolean | null
   maxParticipants: number | null
-  materialsNeeded: string | null
-  status: $Enums.WorkshopStatus | null
-  creatorId: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  publishedAt: Date | null
+  date: Date | null
+  time: string | null
   duration: number | null
+  location: string | null
+  isVirtual: boolean | null
   apprenticeId: string | null
-  requestId: string | null
-  topic: string | null
-  dailyRoomId: string | null
-  dailyRoomLastActivityAt: Date | null
-  apprenticeAttendanceStatus: $Enums.AttendanceStatus | null
-  creditCost: number | null
+  apprenticeAttendanceStatus: string | null
 }
 
 export type WorkshopMaxAggregateOutputType = {
   id: string | null
+  creatorId: string | null
   title: string | null
   description: string | null
-  date: Date | null
-  time: string | null
-  location: string | null
-  isVirtual: boolean | null
+  domain: string | null
+  isPublished: boolean | null
   maxParticipants: number | null
-  materialsNeeded: string | null
-  status: $Enums.WorkshopStatus | null
-  creatorId: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  publishedAt: Date | null
+  date: Date | null
+  time: string | null
   duration: number | null
+  location: string | null
+  isVirtual: boolean | null
   apprenticeId: string | null
-  requestId: string | null
-  topic: string | null
-  dailyRoomId: string | null
-  dailyRoomLastActivityAt: Date | null
-  apprenticeAttendanceStatus: $Enums.AttendanceStatus | null
-  creditCost: number | null
+  apprenticeAttendanceStatus: string | null
 }
 
 export type WorkshopCountAggregateOutputType = {
   id: number
+  creatorId: number
   title: number
   description: number
-  date: number
-  time: number
-  location: number
-  isVirtual: number
+  domain: number
+  isPublished: number
   maxParticipants: number
-  materialsNeeded: number
-  status: number
-  creatorId: number
   createdAt: number
   updatedAt: number
-  publishedAt: number
+  date: number
+  time: number
   duration: number
+  location: number
+  isVirtual: number
   apprenticeId: number
-  requestId: number
-  topic: number
-  dailyRoomId: number
-  dailyRoomLastActivityAt: number
   apprenticeAttendanceStatus: number
-  creditCost: number
   _all: number
 }
 
@@ -118,88 +98,68 @@ export type WorkshopCountAggregateOutputType = {
 export type WorkshopAvgAggregateInputType = {
   maxParticipants?: true
   duration?: true
-  creditCost?: true
 }
 
 export type WorkshopSumAggregateInputType = {
   maxParticipants?: true
   duration?: true
-  creditCost?: true
 }
 
 export type WorkshopMinAggregateInputType = {
   id?: true
+  creatorId?: true
   title?: true
   description?: true
-  date?: true
-  time?: true
-  location?: true
-  isVirtual?: true
+  domain?: true
+  isPublished?: true
   maxParticipants?: true
-  materialsNeeded?: true
-  status?: true
-  creatorId?: true
   createdAt?: true
   updatedAt?: true
-  publishedAt?: true
+  date?: true
+  time?: true
   duration?: true
+  location?: true
+  isVirtual?: true
   apprenticeId?: true
-  requestId?: true
-  topic?: true
-  dailyRoomId?: true
-  dailyRoomLastActivityAt?: true
   apprenticeAttendanceStatus?: true
-  creditCost?: true
 }
 
 export type WorkshopMaxAggregateInputType = {
   id?: true
+  creatorId?: true
   title?: true
   description?: true
-  date?: true
-  time?: true
-  location?: true
-  isVirtual?: true
+  domain?: true
+  isPublished?: true
   maxParticipants?: true
-  materialsNeeded?: true
-  status?: true
-  creatorId?: true
   createdAt?: true
   updatedAt?: true
-  publishedAt?: true
+  date?: true
+  time?: true
   duration?: true
+  location?: true
+  isVirtual?: true
   apprenticeId?: true
-  requestId?: true
-  topic?: true
-  dailyRoomId?: true
-  dailyRoomLastActivityAt?: true
   apprenticeAttendanceStatus?: true
-  creditCost?: true
 }
 
 export type WorkshopCountAggregateInputType = {
   id?: true
+  creatorId?: true
   title?: true
   description?: true
-  date?: true
-  time?: true
-  location?: true
-  isVirtual?: true
+  domain?: true
+  isPublished?: true
   maxParticipants?: true
-  materialsNeeded?: true
-  status?: true
-  creatorId?: true
   createdAt?: true
   updatedAt?: true
-  publishedAt?: true
+  date?: true
+  time?: true
   duration?: true
+  location?: true
+  isVirtual?: true
   apprenticeId?: true
-  requestId?: true
-  topic?: true
-  dailyRoomId?: true
-  dailyRoomLastActivityAt?: true
   apprenticeAttendanceStatus?: true
-  creditCost?: true
   _all?: true
 }
 
@@ -291,27 +251,21 @@ export type workshopGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type WorkshopGroupByOutputType = {
   id: string
+  creatorId: string
   title: string
   description: string | null
-  date: Date | null
-  time: string | null
-  location: string | null
-  isVirtual: boolean
-  maxParticipants: number | null
-  materialsNeeded: string | null
-  status: $Enums.WorkshopStatus
-  creatorId: string
+  domain: string | null
+  isPublished: boolean
+  maxParticipants: number
   createdAt: Date
   updatedAt: Date
-  publishedAt: Date | null
+  date: Date | null
+  time: string | null
   duration: number | null
+  location: string | null
+  isVirtual: boolean | null
   apprenticeId: string | null
-  requestId: string | null
-  topic: string | null
-  dailyRoomId: string | null
-  dailyRoomLastActivityAt: Date | null
-  apprenticeAttendanceStatus: $Enums.AttendanceStatus | null
-  creditCost: number | null
+  apprenticeAttendanceStatus: string | null
   _count: WorkshopCountAggregateOutputType | null
   _avg: WorkshopAvgAggregateOutputType | null
   _sum: WorkshopSumAggregateOutputType | null
@@ -339,64 +293,44 @@ export type workshopWhereInput = {
   OR?: Prisma.workshopWhereInput[]
   NOT?: Prisma.workshopWhereInput | Prisma.workshopWhereInput[]
   id?: Prisma.StringFilter<"workshop"> | string
+  creatorId?: Prisma.StringFilter<"workshop"> | string
   title?: Prisma.StringFilter<"workshop"> | string
   description?: Prisma.StringNullableFilter<"workshop"> | string | null
-  date?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
-  time?: Prisma.StringNullableFilter<"workshop"> | string | null
-  location?: Prisma.StringNullableFilter<"workshop"> | string | null
-  isVirtual?: Prisma.BoolFilter<"workshop"> | boolean
-  maxParticipants?: Prisma.IntNullableFilter<"workshop"> | number | null
-  materialsNeeded?: Prisma.StringNullableFilter<"workshop"> | string | null
-  status?: Prisma.EnumWorkshopStatusFilter<"workshop"> | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFilter<"workshop"> | string
+  domain?: Prisma.StringNullableFilter<"workshop"> | string | null
+  isPublished?: Prisma.BoolFilter<"workshop"> | boolean
+  maxParticipants?: Prisma.IntFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
+  date?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
+  time?: Prisma.StringNullableFilter<"workshop"> | string | null
   duration?: Prisma.IntNullableFilter<"workshop"> | number | null
+  location?: Prisma.StringNullableFilter<"workshop"> | string | null
+  isVirtual?: Prisma.BoolNullableFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  requestId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  topic?: Prisma.StringNullableFilter<"workshop"> | string | null
-  dailyRoomId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  dailyRoomLastActivityAt?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.EnumAttendanceStatusNullableFilter<"workshop"> | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.IntNullableFilter<"workshop"> | number | null
-  mentor_feedback?: Prisma.Mentor_feedbackListRelationFilter
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.XOR<Prisma.App_userNullableScalarRelationFilter, Prisma.app_userWhereInput> | null
-  app_user_workshop_creatorIdToapp_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.XOR<Prisma.Workshop_requestNullableScalarRelationFilter, Prisma.workshop_requestWhereInput> | null
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.Workshop_requestListRelationFilter
-  conversation?: Prisma.ConversationListRelationFilter
+  apprenticeAttendanceStatus?: Prisma.StringNullableFilter<"workshop"> | string | null
+  creator?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  mentorFeedbacks?: Prisma.Mentor_feedbackListRelationFilter
 }
 
 export type workshopOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  date?: Prisma.SortOrderInput | Prisma.SortOrder
-  time?: Prisma.SortOrderInput | Prisma.SortOrder
-  location?: Prisma.SortOrderInput | Prisma.SortOrder
-  isVirtual?: Prisma.SortOrder
-  maxParticipants?: Prisma.SortOrderInput | Prisma.SortOrder
-  materialsNeeded?: Prisma.SortOrderInput | Prisma.SortOrder
-  status?: Prisma.SortOrder
-  creatorId?: Prisma.SortOrder
+  domain?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
+  maxParticipants?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  date?: Prisma.SortOrderInput | Prisma.SortOrder
+  time?: Prisma.SortOrderInput | Prisma.SortOrder
   duration?: Prisma.SortOrderInput | Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
+  isVirtual?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeId?: Prisma.SortOrderInput | Prisma.SortOrder
-  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
-  topic?: Prisma.SortOrderInput | Prisma.SortOrder
-  dailyRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
-  dailyRoomLastActivityAt?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
-  creditCost?: Prisma.SortOrderInput | Prisma.SortOrder
-  mentor_feedback?: Prisma.mentor_feedbackOrderByRelationAggregateInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userOrderByWithRelationInput
-  app_user_workshop_creatorIdToapp_user?: Prisma.app_userOrderByWithRelationInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestOrderByWithRelationInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestOrderByRelationAggregateInput
-  conversation?: Prisma.conversationOrderByRelationAggregateInput
+  creator?: Prisma.app_userOrderByWithRelationInput
+  mentorFeedbacks?: Prisma.mentor_feedbackOrderByRelationAggregateInput
 }
 
 export type workshopWhereUniqueInput = Prisma.AtLeast<{
@@ -404,58 +338,42 @@ export type workshopWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.workshopWhereInput | Prisma.workshopWhereInput[]
   OR?: Prisma.workshopWhereInput[]
   NOT?: Prisma.workshopWhereInput | Prisma.workshopWhereInput[]
+  creatorId?: Prisma.StringFilter<"workshop"> | string
   title?: Prisma.StringFilter<"workshop"> | string
   description?: Prisma.StringNullableFilter<"workshop"> | string | null
-  date?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
-  time?: Prisma.StringNullableFilter<"workshop"> | string | null
-  location?: Prisma.StringNullableFilter<"workshop"> | string | null
-  isVirtual?: Prisma.BoolFilter<"workshop"> | boolean
-  maxParticipants?: Prisma.IntNullableFilter<"workshop"> | number | null
-  materialsNeeded?: Prisma.StringNullableFilter<"workshop"> | string | null
-  status?: Prisma.EnumWorkshopStatusFilter<"workshop"> | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFilter<"workshop"> | string
+  domain?: Prisma.StringNullableFilter<"workshop"> | string | null
+  isPublished?: Prisma.BoolFilter<"workshop"> | boolean
+  maxParticipants?: Prisma.IntFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
+  date?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
+  time?: Prisma.StringNullableFilter<"workshop"> | string | null
   duration?: Prisma.IntNullableFilter<"workshop"> | number | null
+  location?: Prisma.StringNullableFilter<"workshop"> | string | null
+  isVirtual?: Prisma.BoolNullableFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  requestId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  topic?: Prisma.StringNullableFilter<"workshop"> | string | null
-  dailyRoomId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  dailyRoomLastActivityAt?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.EnumAttendanceStatusNullableFilter<"workshop"> | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.IntNullableFilter<"workshop"> | number | null
-  mentor_feedback?: Prisma.Mentor_feedbackListRelationFilter
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.XOR<Prisma.App_userNullableScalarRelationFilter, Prisma.app_userWhereInput> | null
-  app_user_workshop_creatorIdToapp_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.XOR<Prisma.Workshop_requestNullableScalarRelationFilter, Prisma.workshop_requestWhereInput> | null
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.Workshop_requestListRelationFilter
-  conversation?: Prisma.ConversationListRelationFilter
+  apprenticeAttendanceStatus?: Prisma.StringNullableFilter<"workshop"> | string | null
+  creator?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  mentorFeedbacks?: Prisma.Mentor_feedbackListRelationFilter
 }, "id">
 
 export type workshopOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  date?: Prisma.SortOrderInput | Prisma.SortOrder
-  time?: Prisma.SortOrderInput | Prisma.SortOrder
-  location?: Prisma.SortOrderInput | Prisma.SortOrder
-  isVirtual?: Prisma.SortOrder
-  maxParticipants?: Prisma.SortOrderInput | Prisma.SortOrder
-  materialsNeeded?: Prisma.SortOrderInput | Prisma.SortOrder
-  status?: Prisma.SortOrder
-  creatorId?: Prisma.SortOrder
+  domain?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
+  maxParticipants?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  date?: Prisma.SortOrderInput | Prisma.SortOrder
+  time?: Prisma.SortOrderInput | Prisma.SortOrder
   duration?: Prisma.SortOrderInput | Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
+  isVirtual?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeId?: Prisma.SortOrderInput | Prisma.SortOrder
-  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
-  topic?: Prisma.SortOrderInput | Prisma.SortOrder
-  dailyRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
-  dailyRoomLastActivityAt?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
-  creditCost?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.workshopCountOrderByAggregateInput
   _avg?: Prisma.workshopAvgOrderByAggregateInput
   _max?: Prisma.workshopMaxOrderByAggregateInput
@@ -468,211 +386,157 @@ export type workshopScalarWhereWithAggregatesInput = {
   OR?: Prisma.workshopScalarWhereWithAggregatesInput[]
   NOT?: Prisma.workshopScalarWhereWithAggregatesInput | Prisma.workshopScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"workshop"> | string
+  creatorId?: Prisma.StringWithAggregatesFilter<"workshop"> | string
   title?: Prisma.StringWithAggregatesFilter<"workshop"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  date?: Prisma.DateTimeNullableWithAggregatesFilter<"workshop"> | Date | string | null
-  time?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  location?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  isVirtual?: Prisma.BoolWithAggregatesFilter<"workshop"> | boolean
-  maxParticipants?: Prisma.IntNullableWithAggregatesFilter<"workshop"> | number | null
-  materialsNeeded?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  status?: Prisma.EnumWorkshopStatusWithAggregatesFilter<"workshop"> | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringWithAggregatesFilter<"workshop"> | string
+  domain?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
+  isPublished?: Prisma.BoolWithAggregatesFilter<"workshop"> | boolean
+  maxParticipants?: Prisma.IntWithAggregatesFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"workshop"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"workshop"> | Date | string | null
+  date?: Prisma.DateTimeNullableWithAggregatesFilter<"workshop"> | Date | string | null
+  time?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
   duration?: Prisma.IntNullableWithAggregatesFilter<"workshop"> | number | null
+  location?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
+  isVirtual?: Prisma.BoolNullableWithAggregatesFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  requestId?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  topic?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  dailyRoomId?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  dailyRoomLastActivityAt?: Prisma.DateTimeNullableWithAggregatesFilter<"workshop"> | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.EnumAttendanceStatusNullableWithAggregatesFilter<"workshop"> | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.IntNullableWithAggregatesFilter<"workshop"> | number | null
+  apprenticeAttendanceStatus?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
 }
 
 export type workshopCreateInput = {
-  id: string
+  id?: string
   title: string
   description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   date?: Date | string | null
   time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
   duration?: number | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  app_user_workshop_creatorIdToapp_user: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestCreateNestedOneWithoutWorkshop_workshop_requestIdToworkshop_requestInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationCreateNestedManyWithoutWorkshopInput
+  location?: string | null
+  isVirtual?: boolean | null
+  apprenticeId?: string | null
+  apprenticeAttendanceStatus?: string | null
+  creator: Prisma.app_userCreateNestedOneWithoutWorkshopsInput
+  mentorFeedbacks?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
 }
 
 export type workshopUncheckedCreateInput = {
-  id: string
+  id?: string
+  creatorId: string
   title: string
   description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   date?: Date | string | null
   time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
   duration?: number | null
+  location?: string | null
+  isVirtual?: boolean | null
   apprenticeId?: string | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationUncheckedCreateNestedManyWithoutWorkshopInput
+  apprenticeAttendanceStatus?: string | null
+  mentorFeedbacks?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
 }
 
 export type workshopUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userUpdateOneWithoutWorkshop_workshop_apprenticeIdToapp_userNestedInput
-  app_user_workshop_creatorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestUpdateOneWithoutWorkshop_workshop_requestIdToworkshop_requestNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUpdateManyWithoutWorkshopNestedInput
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creator?: Prisma.app_userUpdateOneRequiredWithoutWorkshopsNestedInput
+  mentorFeedbacks?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
 }
 
 export type workshopUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUncheckedUpdateManyWithoutWorkshopNestedInput
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mentorFeedbacks?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
 }
 
 export type workshopCreateManyInput = {
-  id: string
+  id?: string
+  creatorId: string
   title: string
   description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   date?: Date | string | null
   time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
   duration?: number | null
+  location?: string | null
+  isVirtual?: boolean | null
   apprenticeId?: string | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
+  apprenticeAttendanceStatus?: string | null
 }
 
 export type workshopUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type workshopUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WorkshopListRelationFilter = {
@@ -685,196 +549,118 @@ export type workshopOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type WorkshopNullableScalarRelationFilter = {
-  is?: Prisma.workshopWhereInput | null
-  isNot?: Prisma.workshopWhereInput | null
-}
-
 export type workshopCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  date?: Prisma.SortOrder
-  time?: Prisma.SortOrder
-  location?: Prisma.SortOrder
-  isVirtual?: Prisma.SortOrder
+  domain?: Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
-  materialsNeeded?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  creatorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrder
+  date?: Prisma.SortOrder
+  time?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  location?: Prisma.SortOrder
+  isVirtual?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  topic?: Prisma.SortOrder
-  dailyRoomId?: Prisma.SortOrder
-  dailyRoomLastActivityAt?: Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrder
-  creditCost?: Prisma.SortOrder
 }
 
 export type workshopAvgOrderByAggregateInput = {
   maxParticipants?: Prisma.SortOrder
   duration?: Prisma.SortOrder
-  creditCost?: Prisma.SortOrder
 }
 
 export type workshopMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  date?: Prisma.SortOrder
-  time?: Prisma.SortOrder
-  location?: Prisma.SortOrder
-  isVirtual?: Prisma.SortOrder
+  domain?: Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
-  materialsNeeded?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  creatorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrder
+  date?: Prisma.SortOrder
+  time?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  location?: Prisma.SortOrder
+  isVirtual?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  topic?: Prisma.SortOrder
-  dailyRoomId?: Prisma.SortOrder
-  dailyRoomLastActivityAt?: Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrder
-  creditCost?: Prisma.SortOrder
 }
 
 export type workshopMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  date?: Prisma.SortOrder
-  time?: Prisma.SortOrder
-  location?: Prisma.SortOrder
-  isVirtual?: Prisma.SortOrder
+  domain?: Prisma.SortOrder
+  isPublished?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
-  materialsNeeded?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  creatorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrder
+  date?: Prisma.SortOrder
+  time?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  location?: Prisma.SortOrder
+  isVirtual?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  topic?: Prisma.SortOrder
-  dailyRoomId?: Prisma.SortOrder
-  dailyRoomLastActivityAt?: Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrder
-  creditCost?: Prisma.SortOrder
 }
 
 export type workshopSumOrderByAggregateInput = {
   maxParticipants?: Prisma.SortOrder
   duration?: Prisma.SortOrder
-  creditCost?: Prisma.SortOrder
 }
 
-export type workshopCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInputEnvelope
+export type WorkshopScalarRelationFilter = {
+  is?: Prisma.workshopWhereInput
+  isNot?: Prisma.workshopWhereInput
+}
+
+export type workshopCreateNestedManyWithoutCreatorInput = {
+  create?: Prisma.XOR<Prisma.workshopCreateWithoutCreatorInput, Prisma.workshopUncheckedCreateWithoutCreatorInput> | Prisma.workshopCreateWithoutCreatorInput[] | Prisma.workshopUncheckedCreateWithoutCreatorInput[]
+  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutCreatorInput | Prisma.workshopCreateOrConnectWithoutCreatorInput[]
+  createMany?: Prisma.workshopCreateManyCreatorInputEnvelope
   connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
 }
 
-export type workshopCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_creatorIdToapp_userInputEnvelope
+export type workshopUncheckedCreateNestedManyWithoutCreatorInput = {
+  create?: Prisma.XOR<Prisma.workshopCreateWithoutCreatorInput, Prisma.workshopUncheckedCreateWithoutCreatorInput> | Prisma.workshopCreateWithoutCreatorInput[] | Prisma.workshopUncheckedCreateWithoutCreatorInput[]
+  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutCreatorInput | Prisma.workshopCreateOrConnectWithoutCreatorInput[]
+  createMany?: Prisma.workshopCreateManyCreatorInputEnvelope
   connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
 }
 
-export type workshopUncheckedCreateNestedManyWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInputEnvelope
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-}
-
-export type workshopUncheckedCreateNestedManyWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_creatorIdToapp_userInputEnvelope
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-}
-
-export type workshopUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInputEnvelope
+export type workshopUpdateManyWithoutCreatorNestedInput = {
+  create?: Prisma.XOR<Prisma.workshopCreateWithoutCreatorInput, Prisma.workshopUncheckedCreateWithoutCreatorInput> | Prisma.workshopCreateWithoutCreatorInput[] | Prisma.workshopUncheckedCreateWithoutCreatorInput[]
+  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutCreatorInput | Prisma.workshopCreateOrConnectWithoutCreatorInput[]
+  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutCreatorInput | Prisma.workshopUpsertWithWhereUniqueWithoutCreatorInput[]
+  createMany?: Prisma.workshopCreateManyCreatorInputEnvelope
   set?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
   disconnect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
   delete?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
   connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  update?: Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
+  update?: Prisma.workshopUpdateWithWhereUniqueWithoutCreatorInput | Prisma.workshopUpdateWithWhereUniqueWithoutCreatorInput[]
+  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutCreatorInput | Prisma.workshopUpdateManyWithWhereWithoutCreatorInput[]
   deleteMany?: Prisma.workshopScalarWhereInput | Prisma.workshopScalarWhereInput[]
 }
 
-export type workshopUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_creatorIdToapp_userInputEnvelope
+export type workshopUncheckedUpdateManyWithoutCreatorNestedInput = {
+  create?: Prisma.XOR<Prisma.workshopCreateWithoutCreatorInput, Prisma.workshopUncheckedCreateWithoutCreatorInput> | Prisma.workshopCreateWithoutCreatorInput[] | Prisma.workshopUncheckedCreateWithoutCreatorInput[]
+  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutCreatorInput | Prisma.workshopCreateOrConnectWithoutCreatorInput[]
+  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutCreatorInput | Prisma.workshopUpsertWithWhereUniqueWithoutCreatorInput[]
+  createMany?: Prisma.workshopCreateManyCreatorInputEnvelope
   set?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
   disconnect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
   delete?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
   connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  update?: Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_creatorIdToapp_userInput[]
+  update?: Prisma.workshopUpdateWithWhereUniqueWithoutCreatorInput | Prisma.workshopUpdateWithWhereUniqueWithoutCreatorInput[]
+  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutCreatorInput | Prisma.workshopUpdateManyWithWhereWithoutCreatorInput[]
   deleteMany?: Prisma.workshopScalarWhereInput | Prisma.workshopScalarWhereInput[]
-}
-
-export type workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInputEnvelope
-  set?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  disconnect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  delete?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  update?: Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_apprenticeIdToapp_userInput[]
-  deleteMany?: Prisma.workshopScalarWhereInput | Prisma.workshopScalarWhereInput[]
-}
-
-export type workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput> | Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput[] | Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopUpsertWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  createMany?: Prisma.workshopCreateManyApp_user_workshop_creatorIdToapp_userInputEnvelope
-  set?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  disconnect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  delete?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  update?: Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopUpdateWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopUpdateManyWithWhereWithoutApp_user_workshop_creatorIdToapp_userInput[]
-  deleteMany?: Prisma.workshopScalarWhereInput | Prisma.workshopScalarWhereInput[]
-}
-
-export type workshopCreateNestedOneWithoutMentor_feedbackInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutMentor_feedbackInput, Prisma.workshopUncheckedCreateWithoutMentor_feedbackInput>
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutMentor_feedbackInput
-  connect?: Prisma.workshopWhereUniqueInput
-}
-
-export type workshopUpdateOneWithoutMentor_feedbackNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutMentor_feedbackInput, Prisma.workshopUncheckedCreateWithoutMentor_feedbackInput>
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutMentor_feedbackInput
-  upsert?: Prisma.workshopUpsertWithoutMentor_feedbackInput
-  disconnect?: Prisma.workshopWhereInput | boolean
-  delete?: Prisma.workshopWhereInput | boolean
-  connect?: Prisma.workshopWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.workshopUpdateToOneWithWhereWithoutMentor_feedbackInput, Prisma.workshopUpdateWithoutMentor_feedbackInput>, Prisma.workshopUncheckedUpdateWithoutMentor_feedbackInput>
 }
 
 export type NullableIntFieldUpdateOperationsInput = {
@@ -885,230 +671,86 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type EnumWorkshopStatusFieldUpdateOperationsInput = {
-  set?: $Enums.WorkshopStatus
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
 }
 
-export type NullableEnumAttendanceStatusFieldUpdateOperationsInput = {
-  set?: $Enums.AttendanceStatus | null
-}
-
-export type workshopCreateNestedManyWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput> | Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[] | Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  createMany?: Prisma.workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInputEnvelope
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-}
-
-export type workshopCreateNestedOneWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput
+export type workshopCreateNestedOneWithoutMentorFeedbacksInput = {
+  create?: Prisma.XOR<Prisma.workshopCreateWithoutMentorFeedbacksInput, Prisma.workshopUncheckedCreateWithoutMentorFeedbacksInput>
+  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutMentorFeedbacksInput
   connect?: Prisma.workshopWhereUniqueInput
 }
 
-export type workshopUncheckedCreateNestedManyWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput> | Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[] | Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  createMany?: Prisma.workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInputEnvelope
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-}
-
-export type workshopUpdateManyWithoutWorkshop_request_workshop_requestIdToworkshop_requestNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput> | Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[] | Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopUpsertWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  createMany?: Prisma.workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInputEnvelope
-  set?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  disconnect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  delete?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  update?: Prisma.workshopUpdateWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopUpdateWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopUpdateManyWithWhereWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  deleteMany?: Prisma.workshopScalarWhereInput | Prisma.workshopScalarWhereInput[]
-}
-
-export type workshopUpdateOneWithoutWorkshop_request_workshop_request_workshopIdToworkshopNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput
-  upsert?: Prisma.workshopUpsertWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput
-  disconnect?: Prisma.workshopWhereInput | boolean
-  delete?: Prisma.workshopWhereInput | boolean
+export type workshopUpdateOneRequiredWithoutMentorFeedbacksNestedInput = {
+  create?: Prisma.XOR<Prisma.workshopCreateWithoutMentorFeedbacksInput, Prisma.workshopUncheckedCreateWithoutMentorFeedbacksInput>
+  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutMentorFeedbacksInput
+  upsert?: Prisma.workshopUpsertWithoutMentorFeedbacksInput
   connect?: Prisma.workshopWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.workshopUpdateToOneWithWhereWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput, Prisma.workshopUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>, Prisma.workshopUncheckedUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.workshopUpdateToOneWithWhereWithoutMentorFeedbacksInput, Prisma.workshopUpdateWithoutMentorFeedbacksInput>, Prisma.workshopUncheckedUpdateWithoutMentorFeedbacksInput>
 }
 
-export type workshopUncheckedUpdateManyWithoutWorkshop_request_workshop_requestIdToworkshop_requestNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput> | Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[] | Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  upsert?: Prisma.workshopUpsertWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopUpsertWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  createMany?: Prisma.workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInputEnvelope
-  set?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  disconnect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  delete?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  connect?: Prisma.workshopWhereUniqueInput | Prisma.workshopWhereUniqueInput[]
-  update?: Prisma.workshopUpdateWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopUpdateWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  updateMany?: Prisma.workshopUpdateManyWithWhereWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopUpdateManyWithWhereWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  deleteMany?: Prisma.workshopScalarWhereInput | Prisma.workshopScalarWhereInput[]
-}
-
-export type workshopCreateNestedOneWithoutConversationInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutConversationInput, Prisma.workshopUncheckedCreateWithoutConversationInput>
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutConversationInput
-  connect?: Prisma.workshopWhereUniqueInput
-}
-
-export type workshopUpdateOneWithoutConversationNestedInput = {
-  create?: Prisma.XOR<Prisma.workshopCreateWithoutConversationInput, Prisma.workshopUncheckedCreateWithoutConversationInput>
-  connectOrCreate?: Prisma.workshopCreateOrConnectWithoutConversationInput
-  upsert?: Prisma.workshopUpsertWithoutConversationInput
-  disconnect?: Prisma.workshopWhereInput | boolean
-  delete?: Prisma.workshopWhereInput | boolean
-  connect?: Prisma.workshopWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.workshopUpdateToOneWithWhereWithoutConversationInput, Prisma.workshopUpdateWithoutConversationInput>, Prisma.workshopUncheckedUpdateWithoutConversationInput>
-}
-
-export type workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
-  id: string
+export type workshopCreateWithoutCreatorInput = {
+  id?: string
   title: string
   description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   date?: Date | string | null
   time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
   duration?: number | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
-  app_user_workshop_creatorIdToapp_user: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestCreateNestedOneWithoutWorkshop_workshop_requestIdToworkshop_requestInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationCreateNestedManyWithoutWorkshopInput
-}
-
-export type workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
   location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationUncheckedCreateNestedManyWithoutWorkshopInput
-}
-
-export type workshopCreateOrConnectWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
-  where: Prisma.workshopWhereUniqueInput
-  create: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput>
-}
-
-export type workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInputEnvelope = {
-  data: Prisma.workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInput | Prisma.workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInput[]
-  skipDuplicates?: boolean
-}
-
-export type workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestCreateNestedOneWithoutWorkshop_workshop_requestIdToworkshop_requestInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationCreateNestedManyWithoutWorkshopInput
-}
-
-export type workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
+  isVirtual?: boolean | null
   apprenticeId?: string | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationUncheckedCreateNestedManyWithoutWorkshopInput
+  apprenticeAttendanceStatus?: string | null
+  mentorFeedbacks?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
 }
 
-export type workshopCreateOrConnectWithoutApp_user_workshop_creatorIdToapp_userInput = {
+export type workshopUncheckedCreateWithoutCreatorInput = {
+  id?: string
+  title: string
+  description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  date?: Date | string | null
+  time?: string | null
+  duration?: number | null
+  location?: string | null
+  isVirtual?: boolean | null
+  apprenticeId?: string | null
+  apprenticeAttendanceStatus?: string | null
+  mentorFeedbacks?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
+}
+
+export type workshopCreateOrConnectWithoutCreatorInput = {
   where: Prisma.workshopWhereUniqueInput
-  create: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput>
+  create: Prisma.XOR<Prisma.workshopCreateWithoutCreatorInput, Prisma.workshopUncheckedCreateWithoutCreatorInput>
 }
 
-export type workshopCreateManyApp_user_workshop_creatorIdToapp_userInputEnvelope = {
-  data: Prisma.workshopCreateManyApp_user_workshop_creatorIdToapp_userInput | Prisma.workshopCreateManyApp_user_workshop_creatorIdToapp_userInput[]
+export type workshopCreateManyCreatorInputEnvelope = {
+  data: Prisma.workshopCreateManyCreatorInput | Prisma.workshopCreateManyCreatorInput[]
   skipDuplicates?: boolean
 }
 
-export type workshopUpsertWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
+export type workshopUpsertWithWhereUniqueWithoutCreatorInput = {
   where: Prisma.workshopWhereUniqueInput
-  update: Prisma.XOR<Prisma.workshopUpdateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedUpdateWithoutApp_user_workshop_apprenticeIdToapp_userInput>
-  create: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_apprenticeIdToapp_userInput>
+  update: Prisma.XOR<Prisma.workshopUpdateWithoutCreatorInput, Prisma.workshopUncheckedUpdateWithoutCreatorInput>
+  create: Prisma.XOR<Prisma.workshopCreateWithoutCreatorInput, Prisma.workshopUncheckedCreateWithoutCreatorInput>
 }
 
-export type workshopUpdateWithWhereUniqueWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
+export type workshopUpdateWithWhereUniqueWithoutCreatorInput = {
   where: Prisma.workshopWhereUniqueInput
-  data: Prisma.XOR<Prisma.workshopUpdateWithoutApp_user_workshop_apprenticeIdToapp_userInput, Prisma.workshopUncheckedUpdateWithoutApp_user_workshop_apprenticeIdToapp_userInput>
+  data: Prisma.XOR<Prisma.workshopUpdateWithoutCreatorInput, Prisma.workshopUncheckedUpdateWithoutCreatorInput>
 }
 
-export type workshopUpdateManyWithWhereWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
+export type workshopUpdateManyWithWhereWithoutCreatorInput = {
   where: Prisma.workshopScalarWhereInput
-  data: Prisma.XOR<Prisma.workshopUpdateManyMutationInput, Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userInput>
+  data: Prisma.XOR<Prisma.workshopUpdateManyMutationInput, Prisma.workshopUncheckedUpdateManyWithoutCreatorInput>
 }
 
 export type workshopScalarWhereInput = {
@@ -1116,801 +758,187 @@ export type workshopScalarWhereInput = {
   OR?: Prisma.workshopScalarWhereInput[]
   NOT?: Prisma.workshopScalarWhereInput | Prisma.workshopScalarWhereInput[]
   id?: Prisma.StringFilter<"workshop"> | string
+  creatorId?: Prisma.StringFilter<"workshop"> | string
   title?: Prisma.StringFilter<"workshop"> | string
   description?: Prisma.StringNullableFilter<"workshop"> | string | null
-  date?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
-  time?: Prisma.StringNullableFilter<"workshop"> | string | null
-  location?: Prisma.StringNullableFilter<"workshop"> | string | null
-  isVirtual?: Prisma.BoolFilter<"workshop"> | boolean
-  maxParticipants?: Prisma.IntNullableFilter<"workshop"> | number | null
-  materialsNeeded?: Prisma.StringNullableFilter<"workshop"> | string | null
-  status?: Prisma.EnumWorkshopStatusFilter<"workshop"> | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFilter<"workshop"> | string
+  domain?: Prisma.StringNullableFilter<"workshop"> | string | null
+  isPublished?: Prisma.BoolFilter<"workshop"> | boolean
+  maxParticipants?: Prisma.IntFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
+  date?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
+  time?: Prisma.StringNullableFilter<"workshop"> | string | null
   duration?: Prisma.IntNullableFilter<"workshop"> | number | null
+  location?: Prisma.StringNullableFilter<"workshop"> | string | null
+  isVirtual?: Prisma.BoolNullableFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  requestId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  topic?: Prisma.StringNullableFilter<"workshop"> | string | null
-  dailyRoomId?: Prisma.StringNullableFilter<"workshop"> | string | null
-  dailyRoomLastActivityAt?: Prisma.DateTimeNullableFilter<"workshop"> | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.EnumAttendanceStatusNullableFilter<"workshop"> | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.IntNullableFilter<"workshop"> | number | null
+  apprenticeAttendanceStatus?: Prisma.StringNullableFilter<"workshop"> | string | null
 }
 
-export type workshopUpsertWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  where: Prisma.workshopWhereUniqueInput
-  update: Prisma.XOR<Prisma.workshopUpdateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedUpdateWithoutApp_user_workshop_creatorIdToapp_userInput>
-  create: Prisma.XOR<Prisma.workshopCreateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedCreateWithoutApp_user_workshop_creatorIdToapp_userInput>
-}
-
-export type workshopUpdateWithWhereUniqueWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  where: Prisma.workshopWhereUniqueInput
-  data: Prisma.XOR<Prisma.workshopUpdateWithoutApp_user_workshop_creatorIdToapp_userInput, Prisma.workshopUncheckedUpdateWithoutApp_user_workshop_creatorIdToapp_userInput>
-}
-
-export type workshopUpdateManyWithWhereWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  where: Prisma.workshopScalarWhereInput
-  data: Prisma.XOR<Prisma.workshopUpdateManyMutationInput, Prisma.workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userInput>
-}
-
-export type workshopCreateWithoutMentor_feedbackInput = {
-  id: string
+export type workshopCreateWithoutMentorFeedbacksInput = {
+  id?: string
   title: string
   description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   date?: Date | string | null
   time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
   duration?: number | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  app_user_workshop_creatorIdToapp_user: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestCreateNestedOneWithoutWorkshop_workshop_requestIdToworkshop_requestInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationCreateNestedManyWithoutWorkshopInput
-}
-
-export type workshopUncheckedCreateWithoutMentor_feedbackInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
   location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
+  isVirtual?: boolean | null
   apprenticeId?: string | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationUncheckedCreateNestedManyWithoutWorkshopInput
+  apprenticeAttendanceStatus?: string | null
+  creator: Prisma.app_userCreateNestedOneWithoutWorkshopsInput
 }
 
-export type workshopCreateOrConnectWithoutMentor_feedbackInput = {
+export type workshopUncheckedCreateWithoutMentorFeedbacksInput = {
+  id?: string
+  creatorId: string
+  title: string
+  description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  date?: Date | string | null
+  time?: string | null
+  duration?: number | null
+  location?: string | null
+  isVirtual?: boolean | null
+  apprenticeId?: string | null
+  apprenticeAttendanceStatus?: string | null
+}
+
+export type workshopCreateOrConnectWithoutMentorFeedbacksInput = {
   where: Prisma.workshopWhereUniqueInput
-  create: Prisma.XOR<Prisma.workshopCreateWithoutMentor_feedbackInput, Prisma.workshopUncheckedCreateWithoutMentor_feedbackInput>
+  create: Prisma.XOR<Prisma.workshopCreateWithoutMentorFeedbacksInput, Prisma.workshopUncheckedCreateWithoutMentorFeedbacksInput>
 }
 
-export type workshopUpsertWithoutMentor_feedbackInput = {
-  update: Prisma.XOR<Prisma.workshopUpdateWithoutMentor_feedbackInput, Prisma.workshopUncheckedUpdateWithoutMentor_feedbackInput>
-  create: Prisma.XOR<Prisma.workshopCreateWithoutMentor_feedbackInput, Prisma.workshopUncheckedCreateWithoutMentor_feedbackInput>
+export type workshopUpsertWithoutMentorFeedbacksInput = {
+  update: Prisma.XOR<Prisma.workshopUpdateWithoutMentorFeedbacksInput, Prisma.workshopUncheckedUpdateWithoutMentorFeedbacksInput>
+  create: Prisma.XOR<Prisma.workshopCreateWithoutMentorFeedbacksInput, Prisma.workshopUncheckedCreateWithoutMentorFeedbacksInput>
   where?: Prisma.workshopWhereInput
 }
 
-export type workshopUpdateToOneWithWhereWithoutMentor_feedbackInput = {
+export type workshopUpdateToOneWithWhereWithoutMentorFeedbacksInput = {
   where?: Prisma.workshopWhereInput
-  data: Prisma.XOR<Prisma.workshopUpdateWithoutMentor_feedbackInput, Prisma.workshopUncheckedUpdateWithoutMentor_feedbackInput>
+  data: Prisma.XOR<Prisma.workshopUpdateWithoutMentorFeedbacksInput, Prisma.workshopUncheckedUpdateWithoutMentorFeedbacksInput>
 }
 
-export type workshopUpdateWithoutMentor_feedbackInput = {
+export type workshopUpdateWithoutMentorFeedbacksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userUpdateOneWithoutWorkshop_workshop_apprenticeIdToapp_userNestedInput
-  app_user_workshop_creatorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestUpdateOneWithoutWorkshop_workshop_requestIdToworkshop_requestNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateWithoutMentor_feedbackInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUncheckedUpdateManyWithoutWorkshopNestedInput
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creator?: Prisma.app_userUpdateOneRequiredWithoutWorkshopsNestedInput
 }
 
-export type workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  app_user_workshop_creatorIdToapp_user: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationCreateNestedManyWithoutWorkshopInput
+export type workshopUncheckedUpdateWithoutMentorFeedbacksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  id: string
+export type workshopCreateManyCreatorInput = {
+  id?: string
   title: string
   description?: string | null
+  domain?: string | null
+  isPublished?: boolean
+  maxParticipants?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   date?: Date | string | null
   time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
   duration?: number | null
+  location?: string | null
+  isVirtual?: boolean | null
   apprenticeId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-  conversation?: Prisma.conversationUncheckedCreateNestedManyWithoutWorkshopInput
+  apprenticeAttendanceStatus?: string | null
 }
 
-export type workshopCreateOrConnectWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  where: Prisma.workshopWhereUniqueInput
-  create: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput>
-}
-
-export type workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInputEnvelope = {
-  data: Prisma.workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInput | Prisma.workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInput[]
-  skipDuplicates?: boolean
-}
-
-export type workshopCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  app_user_workshop_creatorIdToapp_user: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestCreateNestedOneWithoutWorkshop_workshop_requestIdToworkshop_requestInput
-  conversation?: Prisma.conversationCreateNestedManyWithoutWorkshopInput
-}
-
-export type workshopUncheckedCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  apprenticeId?: string | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
-  conversation?: Prisma.conversationUncheckedCreateNestedManyWithoutWorkshopInput
-}
-
-export type workshopCreateOrConnectWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
-  where: Prisma.workshopWhereUniqueInput
-  create: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>
-}
-
-export type workshopUpsertWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  where: Prisma.workshopWhereUniqueInput
-  update: Prisma.XOR<Prisma.workshopUpdateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedUpdateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput>
-  create: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput>
-}
-
-export type workshopUpdateWithWhereUniqueWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  where: Prisma.workshopWhereUniqueInput
-  data: Prisma.XOR<Prisma.workshopUpdateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput, Prisma.workshopUncheckedUpdateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput>
-}
-
-export type workshopUpdateManyWithWhereWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  where: Prisma.workshopScalarWhereInput
-  data: Prisma.XOR<Prisma.workshopUpdateManyMutationInput, Prisma.workshopUncheckedUpdateManyWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput>
-}
-
-export type workshopUpsertWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
-  update: Prisma.XOR<Prisma.workshopUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput, Prisma.workshopUncheckedUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>
-  create: Prisma.XOR<Prisma.workshopCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput, Prisma.workshopUncheckedCreateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>
-  where?: Prisma.workshopWhereInput
-}
-
-export type workshopUpdateToOneWithWhereWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
-  where?: Prisma.workshopWhereInput
-  data: Prisma.XOR<Prisma.workshopUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput, Prisma.workshopUncheckedUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput>
-}
-
-export type workshopUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
+export type workshopUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userUpdateOneWithoutWorkshop_workshop_apprenticeIdToapp_userNestedInput
-  app_user_workshop_creatorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestUpdateOneWithoutWorkshop_workshop_requestIdToworkshop_requestNestedInput
-  conversation?: Prisma.conversationUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateWithoutWorkshop_request_workshop_request_workshopIdToworkshopInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
-  conversation?: Prisma.conversationUncheckedUpdateManyWithoutWorkshopNestedInput
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mentorFeedbacks?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
 }
 
-export type workshopCreateWithoutConversationInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_apprenticeIdToapp_userInput
-  app_user_workshop_creatorIdToapp_user: Prisma.app_userCreateNestedOneWithoutWorkshop_workshop_creatorIdToapp_userInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestCreateNestedOneWithoutWorkshop_workshop_requestIdToworkshop_requestInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-}
-
-export type workshopUncheckedCreateWithoutConversationInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  apprenticeId?: string | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedCreateNestedManyWithoutWorkshop_workshop_request_workshopIdToworkshopInput
-}
-
-export type workshopCreateOrConnectWithoutConversationInput = {
-  where: Prisma.workshopWhereUniqueInput
-  create: Prisma.XOR<Prisma.workshopCreateWithoutConversationInput, Prisma.workshopUncheckedCreateWithoutConversationInput>
-}
-
-export type workshopUpsertWithoutConversationInput = {
-  update: Prisma.XOR<Prisma.workshopUpdateWithoutConversationInput, Prisma.workshopUncheckedUpdateWithoutConversationInput>
-  create: Prisma.XOR<Prisma.workshopCreateWithoutConversationInput, Prisma.workshopUncheckedCreateWithoutConversationInput>
-  where?: Prisma.workshopWhereInput
-}
-
-export type workshopUpdateToOneWithWhereWithoutConversationInput = {
-  where?: Prisma.workshopWhereInput
-  data: Prisma.XOR<Prisma.workshopUpdateWithoutConversationInput, Prisma.workshopUncheckedUpdateWithoutConversationInput>
-}
-
-export type workshopUpdateWithoutConversationInput = {
+export type workshopUncheckedUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userUpdateOneWithoutWorkshop_workshop_apprenticeIdToapp_userNestedInput
-  app_user_workshop_creatorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestUpdateOneWithoutWorkshop_workshop_requestIdToworkshop_requestNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-}
-
-export type workshopUncheckedUpdateWithoutConversationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mentorFeedbacks?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
 }
 
-export type workshopCreateManyApp_user_workshop_apprenticeIdToapp_userInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-}
-
-export type workshopCreateManyApp_user_workshop_creatorIdToapp_userInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  apprenticeId?: string | null
-  requestId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-}
-
-export type workshopUpdateWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
+export type workshopUncheckedUpdateManyWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
-  app_user_workshop_creatorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestUpdateOneWithoutWorkshop_workshop_requestIdToworkshop_requestNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUncheckedUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateManyWithoutApp_user_workshop_apprenticeIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-}
-
-export type workshopUpdateWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userUpdateOneWithoutWorkshop_workshop_apprenticeIdToapp_userNestedInput
-  workshop_request_workshop_requestIdToworkshop_request?: Prisma.workshop_requestUpdateOneWithoutWorkshop_workshop_requestIdToworkshop_requestNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUncheckedUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateManyWithoutApp_user_workshop_creatorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-}
-
-export type workshopCreateManyWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  id: string
-  title: string
-  description?: string | null
-  date?: Date | string | null
-  time?: string | null
-  location?: string | null
-  isVirtual?: boolean
-  maxParticipants?: number | null
-  materialsNeeded?: string | null
-  status?: $Enums.WorkshopStatus
-  creatorId: string
-  createdAt?: Date | string
-  updatedAt: Date | string
-  publishedAt?: Date | string | null
-  duration?: number | null
-  apprenticeId?: string | null
-  topic?: string | null
-  dailyRoomId?: string | null
-  dailyRoomLastActivityAt?: Date | string | null
-  apprenticeAttendanceStatus?: $Enums.AttendanceStatus | null
-  creditCost?: number | null
-}
-
-export type workshopUpdateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
-  app_user_workshop_apprenticeIdToapp_user?: Prisma.app_userUpdateOneWithoutWorkshop_workshop_apprenticeIdToapp_userNestedInput
-  app_user_workshop_creatorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_workshop_creatorIdToapp_userNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  mentor_feedback?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
-  workshop_request_workshop_request_workshopIdToworkshop?: Prisma.workshop_requestUncheckedUpdateManyWithoutWorkshop_workshop_request_workshopIdToworkshopNestedInput
-  conversation?: Prisma.conversationUncheckedUpdateManyWithoutWorkshopNestedInput
-}
-
-export type workshopUncheckedUpdateManyWithoutWorkshop_request_workshop_requestIdToworkshop_requestInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isVirtual?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  maxParticipants?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  materialsNeeded?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumWorkshopStatusFieldUpdateOperationsInput | $Enums.WorkshopStatus
-  creatorId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  topic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dailyRoomLastActivityAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  apprenticeAttendanceStatus?: Prisma.NullableEnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus | null
-  creditCost?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1919,15 +947,11 @@ export type workshopUncheckedUpdateManyWithoutWorkshop_request_workshop_requestI
  */
 
 export type WorkshopCountOutputType = {
-  mentor_feedback: number
-  workshop_request_workshop_request_workshopIdToworkshop: number
-  conversation: number
+  mentorFeedbacks: number
 }
 
 export type WorkshopCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  mentor_feedback?: boolean | WorkshopCountOutputTypeCountMentor_feedbackArgs
-  workshop_request_workshop_request_workshopIdToworkshop?: boolean | WorkshopCountOutputTypeCountWorkshop_request_workshop_request_workshopIdToworkshopArgs
-  conversation?: boolean | WorkshopCountOutputTypeCountConversationArgs
+  mentorFeedbacks?: boolean | WorkshopCountOutputTypeCountMentorFeedbacksArgs
 }
 
 /**
@@ -1943,192 +967,128 @@ export type WorkshopCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ext
 /**
  * WorkshopCountOutputType without action
  */
-export type WorkshopCountOutputTypeCountMentor_feedbackArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type WorkshopCountOutputTypeCountMentorFeedbacksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.mentor_feedbackWhereInput
-}
-
-/**
- * WorkshopCountOutputType without action
- */
-export type WorkshopCountOutputTypeCountWorkshop_request_workshop_request_workshopIdToworkshopArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.workshop_requestWhereInput
-}
-
-/**
- * WorkshopCountOutputType without action
- */
-export type WorkshopCountOutputTypeCountConversationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.conversationWhereInput
 }
 
 
 export type workshopSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  creatorId?: boolean
   title?: boolean
   description?: boolean
-  date?: boolean
-  time?: boolean
-  location?: boolean
-  isVirtual?: boolean
+  domain?: boolean
+  isPublished?: boolean
   maxParticipants?: boolean
-  materialsNeeded?: boolean
-  status?: boolean
-  creatorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  publishedAt?: boolean
+  date?: boolean
+  time?: boolean
   duration?: boolean
+  location?: boolean
+  isVirtual?: boolean
   apprenticeId?: boolean
-  requestId?: boolean
-  topic?: boolean
-  dailyRoomId?: boolean
-  dailyRoomLastActivityAt?: boolean
   apprenticeAttendanceStatus?: boolean
-  creditCost?: boolean
-  mentor_feedback?: boolean | Prisma.workshop$mentor_feedbackArgs<ExtArgs>
-  app_user_workshop_apprenticeIdToapp_user?: boolean | Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  app_user_workshop_creatorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop_request_workshop_requestIdToworkshop_request?: boolean | Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs>
-  workshop_request_workshop_request_workshopIdToworkshop?: boolean | Prisma.workshop$workshop_request_workshop_request_workshopIdToworkshopArgs<ExtArgs>
-  conversation?: boolean | Prisma.workshop$conversationArgs<ExtArgs>
+  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  mentorFeedbacks?: boolean | Prisma.workshop$mentorFeedbacksArgs<ExtArgs>
   _count?: boolean | Prisma.WorkshopCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop"]>
 
 export type workshopSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  creatorId?: boolean
   title?: boolean
   description?: boolean
-  date?: boolean
-  time?: boolean
-  location?: boolean
-  isVirtual?: boolean
+  domain?: boolean
+  isPublished?: boolean
   maxParticipants?: boolean
-  materialsNeeded?: boolean
-  status?: boolean
-  creatorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  publishedAt?: boolean
+  date?: boolean
+  time?: boolean
   duration?: boolean
+  location?: boolean
+  isVirtual?: boolean
   apprenticeId?: boolean
-  requestId?: boolean
-  topic?: boolean
-  dailyRoomId?: boolean
-  dailyRoomLastActivityAt?: boolean
   apprenticeAttendanceStatus?: boolean
-  creditCost?: boolean
-  app_user_workshop_apprenticeIdToapp_user?: boolean | Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  app_user_workshop_creatorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop_request_workshop_requestIdToworkshop_request?: boolean | Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs>
+  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop"]>
 
 export type workshopSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  creatorId?: boolean
   title?: boolean
   description?: boolean
-  date?: boolean
-  time?: boolean
-  location?: boolean
-  isVirtual?: boolean
+  domain?: boolean
+  isPublished?: boolean
   maxParticipants?: boolean
-  materialsNeeded?: boolean
-  status?: boolean
-  creatorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  publishedAt?: boolean
+  date?: boolean
+  time?: boolean
   duration?: boolean
+  location?: boolean
+  isVirtual?: boolean
   apprenticeId?: boolean
-  requestId?: boolean
-  topic?: boolean
-  dailyRoomId?: boolean
-  dailyRoomLastActivityAt?: boolean
   apprenticeAttendanceStatus?: boolean
-  creditCost?: boolean
-  app_user_workshop_apprenticeIdToapp_user?: boolean | Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  app_user_workshop_creatorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop_request_workshop_requestIdToworkshop_request?: boolean | Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs>
+  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop"]>
 
 export type workshopSelectScalar = {
   id?: boolean
+  creatorId?: boolean
   title?: boolean
   description?: boolean
-  date?: boolean
-  time?: boolean
-  location?: boolean
-  isVirtual?: boolean
+  domain?: boolean
+  isPublished?: boolean
   maxParticipants?: boolean
-  materialsNeeded?: boolean
-  status?: boolean
-  creatorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  publishedAt?: boolean
+  date?: boolean
+  time?: boolean
   duration?: boolean
+  location?: boolean
+  isVirtual?: boolean
   apprenticeId?: boolean
-  requestId?: boolean
-  topic?: boolean
-  dailyRoomId?: boolean
-  dailyRoomLastActivityAt?: boolean
   apprenticeAttendanceStatus?: boolean
-  creditCost?: boolean
 }
 
-export type workshopOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "date" | "time" | "location" | "isVirtual" | "maxParticipants" | "materialsNeeded" | "status" | "creatorId" | "createdAt" | "updatedAt" | "publishedAt" | "duration" | "apprenticeId" | "requestId" | "topic" | "dailyRoomId" | "dailyRoomLastActivityAt" | "apprenticeAttendanceStatus" | "creditCost", ExtArgs["result"]["workshop"]>
+export type workshopOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "creatorId" | "title" | "description" | "domain" | "isPublished" | "maxParticipants" | "createdAt" | "updatedAt" | "date" | "time" | "duration" | "location" | "isVirtual" | "apprenticeId" | "apprenticeAttendanceStatus", ExtArgs["result"]["workshop"]>
 export type workshopInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  mentor_feedback?: boolean | Prisma.workshop$mentor_feedbackArgs<ExtArgs>
-  app_user_workshop_apprenticeIdToapp_user?: boolean | Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  app_user_workshop_creatorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop_request_workshop_requestIdToworkshop_request?: boolean | Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs>
-  workshop_request_workshop_request_workshopIdToworkshop?: boolean | Prisma.workshop$workshop_request_workshop_request_workshopIdToworkshopArgs<ExtArgs>
-  conversation?: boolean | Prisma.workshop$conversationArgs<ExtArgs>
+  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  mentorFeedbacks?: boolean | Prisma.workshop$mentorFeedbacksArgs<ExtArgs>
   _count?: boolean | Prisma.WorkshopCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type workshopIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  app_user_workshop_apprenticeIdToapp_user?: boolean | Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  app_user_workshop_creatorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop_request_workshop_requestIdToworkshop_request?: boolean | Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs>
+  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }
 export type workshopIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  app_user_workshop_apprenticeIdToapp_user?: boolean | Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs>
-  app_user_workshop_creatorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop_request_workshop_requestIdToworkshop_request?: boolean | Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs>
+  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }
 
 export type $workshopPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "workshop"
   objects: {
-    mentor_feedback: Prisma.$mentor_feedbackPayload<ExtArgs>[]
-    app_user_workshop_apprenticeIdToapp_user: Prisma.$app_userPayload<ExtArgs> | null
-    app_user_workshop_creatorIdToapp_user: Prisma.$app_userPayload<ExtArgs>
-    workshop_request_workshop_requestIdToworkshop_request: Prisma.$workshop_requestPayload<ExtArgs> | null
-    workshop_request_workshop_request_workshopIdToworkshop: Prisma.$workshop_requestPayload<ExtArgs>[]
-    conversation: Prisma.$conversationPayload<ExtArgs>[]
+    creator: Prisma.$app_userPayload<ExtArgs>
+    mentorFeedbacks: Prisma.$mentor_feedbackPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    creatorId: string
     title: string
     description: string | null
-    date: Date | null
-    time: string | null
-    location: string | null
-    isVirtual: boolean
-    maxParticipants: number | null
-    materialsNeeded: string | null
-    status: $Enums.WorkshopStatus
-    creatorId: string
+    domain: string | null
+    isPublished: boolean
+    maxParticipants: number
     createdAt: Date
     updatedAt: Date
-    publishedAt: Date | null
+    date: Date | null
+    time: string | null
     duration: number | null
+    location: string | null
+    isVirtual: boolean | null
     apprenticeId: string | null
-    requestId: string | null
-    topic: string | null
-    dailyRoomId: string | null
-    dailyRoomLastActivityAt: Date | null
-    apprenticeAttendanceStatus: $Enums.AttendanceStatus | null
-    creditCost: number | null
+    apprenticeAttendanceStatus: string | null
   }, ExtArgs["result"]["workshop"]>
   composites: {}
 }
@@ -2523,12 +1483,8 @@ readonly fields: workshopFieldRefs;
  */
 export interface Prisma__workshopClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  mentor_feedback<T extends Prisma.workshop$mentor_feedbackArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshop$mentor_feedbackArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$mentor_feedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  app_user_workshop_apprenticeIdToapp_user<T extends Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  app_user_workshop_creatorIdToapp_user<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  workshop_request_workshop_requestIdToworkshop_request<T extends Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs>>): Prisma.Prisma__workshop_requestClient<runtime.Types.Result.GetResult<Prisma.$workshop_requestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  workshop_request_workshop_request_workshopIdToworkshop<T extends Prisma.workshop$workshop_request_workshop_request_workshopIdToworkshopArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshop$workshop_request_workshop_request_workshopIdToworkshopArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$workshop_requestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  conversation<T extends Prisma.workshop$conversationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshop$conversationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$conversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  creator<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  mentorFeedbacks<T extends Prisma.workshop$mentorFeedbacksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshop$mentorFeedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$mentor_feedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2559,27 +1515,21 @@ export interface Prisma__workshopClient<T, Null = never, ExtArgs extends runtime
  */
 export interface workshopFieldRefs {
   readonly id: Prisma.FieldRef<"workshop", 'String'>
+  readonly creatorId: Prisma.FieldRef<"workshop", 'String'>
   readonly title: Prisma.FieldRef<"workshop", 'String'>
   readonly description: Prisma.FieldRef<"workshop", 'String'>
-  readonly date: Prisma.FieldRef<"workshop", 'DateTime'>
-  readonly time: Prisma.FieldRef<"workshop", 'String'>
-  readonly location: Prisma.FieldRef<"workshop", 'String'>
-  readonly isVirtual: Prisma.FieldRef<"workshop", 'Boolean'>
+  readonly domain: Prisma.FieldRef<"workshop", 'String'>
+  readonly isPublished: Prisma.FieldRef<"workshop", 'Boolean'>
   readonly maxParticipants: Prisma.FieldRef<"workshop", 'Int'>
-  readonly materialsNeeded: Prisma.FieldRef<"workshop", 'String'>
-  readonly status: Prisma.FieldRef<"workshop", 'WorkshopStatus'>
-  readonly creatorId: Prisma.FieldRef<"workshop", 'String'>
   readonly createdAt: Prisma.FieldRef<"workshop", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"workshop", 'DateTime'>
-  readonly publishedAt: Prisma.FieldRef<"workshop", 'DateTime'>
+  readonly date: Prisma.FieldRef<"workshop", 'DateTime'>
+  readonly time: Prisma.FieldRef<"workshop", 'String'>
   readonly duration: Prisma.FieldRef<"workshop", 'Int'>
+  readonly location: Prisma.FieldRef<"workshop", 'String'>
+  readonly isVirtual: Prisma.FieldRef<"workshop", 'Boolean'>
   readonly apprenticeId: Prisma.FieldRef<"workshop", 'String'>
-  readonly requestId: Prisma.FieldRef<"workshop", 'String'>
-  readonly topic: Prisma.FieldRef<"workshop", 'String'>
-  readonly dailyRoomId: Prisma.FieldRef<"workshop", 'String'>
-  readonly dailyRoomLastActivityAt: Prisma.FieldRef<"workshop", 'DateTime'>
-  readonly apprenticeAttendanceStatus: Prisma.FieldRef<"workshop", 'AttendanceStatus'>
-  readonly creditCost: Prisma.FieldRef<"workshop", 'Int'>
+  readonly apprenticeAttendanceStatus: Prisma.FieldRef<"workshop", 'String'>
 }
     
 
@@ -2976,9 +1926,9 @@ export type workshopDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * workshop.mentor_feedback
+ * workshop.mentorFeedbacks
  */
-export type workshop$mentor_feedbackArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type workshop$mentorFeedbacksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the mentor_feedback
    */
@@ -2997,92 +1947,6 @@ export type workshop$mentor_feedbackArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.Mentor_feedbackScalarFieldEnum | Prisma.Mentor_feedbackScalarFieldEnum[]
-}
-
-/**
- * workshop.app_user_workshop_apprenticeIdToapp_user
- */
-export type workshop$app_user_workshop_apprenticeIdToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the app_user
-   */
-  select?: Prisma.app_userSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the app_user
-   */
-  omit?: Prisma.app_userOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.app_userInclude<ExtArgs> | null
-  where?: Prisma.app_userWhereInput
-}
-
-/**
- * workshop.workshop_request_workshop_requestIdToworkshop_request
- */
-export type workshop$workshop_request_workshop_requestIdToworkshop_requestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop_request
-   */
-  select?: Prisma.workshop_requestSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop_request
-   */
-  omit?: Prisma.workshop_requestOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshop_requestInclude<ExtArgs> | null
-  where?: Prisma.workshop_requestWhereInput
-}
-
-/**
- * workshop.workshop_request_workshop_request_workshopIdToworkshop
- */
-export type workshop$workshop_request_workshop_request_workshopIdToworkshopArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop_request
-   */
-  select?: Prisma.workshop_requestSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop_request
-   */
-  omit?: Prisma.workshop_requestOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshop_requestInclude<ExtArgs> | null
-  where?: Prisma.workshop_requestWhereInput
-  orderBy?: Prisma.workshop_requestOrderByWithRelationInput | Prisma.workshop_requestOrderByWithRelationInput[]
-  cursor?: Prisma.workshop_requestWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.Workshop_requestScalarFieldEnum | Prisma.Workshop_requestScalarFieldEnum[]
-}
-
-/**
- * workshop.conversation
- */
-export type workshop$conversationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the conversation
-   */
-  select?: Prisma.conversationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the conversation
-   */
-  omit?: Prisma.conversationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.conversationInclude<ExtArgs> | null
-  where?: Prisma.conversationWhereInput
-  orderBy?: Prisma.conversationOrderByWithRelationInput | Prisma.conversationOrderByWithRelationInput[]
-  cursor?: Prisma.conversationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
 }
 
 /**
