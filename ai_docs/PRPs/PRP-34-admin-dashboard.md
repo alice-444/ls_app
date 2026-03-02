@@ -4,39 +4,45 @@
 
 ## Goal
 
-Provide a central admin page with links to all admin tools (moderation, reports, support) so that admins have a single entry point for their tasks.
+Provide a central admin page with real-time stats and links to all admin tools (moderation, reports, support) so that admins have a single entry point for their tasks and can see at a glance what requires attention.
 
 ## Why
 
 **Business Justification:**
 - Efficiency: one place to start
 - Discoverability of admin features
-- Optional: stats overview
+- Accountability: see pending counts (reports, support, feedback)
+- Role protection: strictly restricted to ADMIN role
 
-**Priority:** Low
+**Priority:** High
 
 ## What
 
 ### Feature Description
-- **Page `/admin`** : Hub admin central
-- **Liens** : Modération feedbacks, Signalements utilisateurs, Demandes support
-- **Optional** : Stats (nb users, nb workshops, nb pending reports)
-- **Accès** : ADMIN role only
+- **Page `/admin`**: Central Admin Hub
+- **Dynamic Stats Cards**: Displaying counts for:
+  - Pending User Reports
+  - Pending Workshop Feedback Moderation
+  - Pending Support Requests
+  - Pending User Onboarding (AppUsers with status PENDING)
+- **Navigation Links**: Direct access to specialized admin modules.
+- **Access Control**: Role check at layout level.
 
 ### Scope
 **In Scope:**
-- Admin landing page
-- Links to /admin/feedback-moderation, /admin/user-reports, /admin/support
-- Role check
-- Simple layout
+- Backend: `adminRouter` with `getStats` procedure.
+- Backend: `userReportRouter` updates (admin procedures to list/process reports).
+- Frontend: `/admin` page with a grid of status cards.
+- Frontend: `/admin/layout.tsx` for global admin role check.
 
 **Out of Scope:**
-- Complex analytics dashboard
-- Inline actions (just links)
+- Detailed user management (handled in PRP-12).
+- Advanced analytics (handled in PRP-27).
 
 ### User Stories
-1. As an admin, I want to see all admin tools in one place so that I can navigate quickly
-2. As an admin, I want to see pending counts so that I know what needs attention
+1. As an admin, I want to see how many user reports are pending so that I can prioritize safety.
+2. As an admin, I want to see how many support requests are open so that I can respond to users.
+3. As an admin, I want to see how many new users are waiting for role validation.
 
 ## Technical Context
 
@@ -44,68 +50,68 @@ Provide a central admin page with links to all admin tools (moderation, reports,
 
 | File | Purpose |
 |------|---------|
-| `front/src/app/admin/feedback-moderation/page.tsx` | Existing admin page |
-| `front/src/app/admin/user-reports/page.tsx` | User reports (PRP-30) |
-| `front/src/app/admin/support/page.tsx` | Support (PRP-36) |
+| `back/src/lib/trpc.ts` | Reference `adminProcedure` |
+| `back/prisma/schema/schema.prisma` | Model definitions |
+| `back/src/routers/workshops/workshop-feedback.router.ts` | Example of `adminProcedure` usage |
 
 ### Files to Implement/Modify
 
 | File | Action | Description |
 |------|--------|-------------|
-| `front/src/app/admin/page.tsx` | CREATE/MODIFY | Admin dashboard |
-| `front/src/app/admin/layout.tsx` | MODIFY | Admin layout, role check |
+| `back/src/routers/admin/admin.router.ts` | CREATE | Central admin router |
+| `back/src/routers/index.ts` | MODIFY | Register `admin` router |
+| `back/src/routers/users/moderation/user-report.router.ts` | MODIFY | Add admin listing/review procedures |
+| `front/src/app/admin/page.tsx` | CREATE | Admin dashboard UI |
+| `front/src/app/admin/layout.tsx` | CREATE | Role check & Admin Navigation |
 
 ### Existing Patterns to Follow
 
 ```typescript
-// Check admin role in layout or page
-// Redirect to login or 403 if not admin
+// Admin Stats Implementation
+export const adminRouter = router({
+  getStats: adminProcedure.query(async ({ ctx }) => {
+    const [reports, moderation, support, onboarding] = await Promise.all([
+      prisma.user_report.count({ where: { status: "PENDING" } }),
+      prisma.mentor_feedback.count({ where: { status: "UNDER_REVIEW" } }),
+      prisma.support_request.count({ where: { status: "PENDING" } }),
+      prisma.app_user.count({ where: { status: "PENDING" } }),
+    ]);
+    return { reports, moderation, support, onboarding };
+  }),
+});
 ```
-
-### Dependencies
-- ADMIN role
-- tRPC for counts (optional)
 
 ## Implementation Details
 
-### Routes
+### Backend: Admin Router
+- **Procedure `getStats`**: Aggregates counts from `user_report`, `mentor_feedback`, `support_request`, and `app_user`.
+- **Procedure `getOnboardingQueue`**: List users with `status: PENDING`.
 
-| Link | Destination |
-|------|-------------|
-| Modération feedbacks | /admin/feedback-moderation |
-| Signalements utilisateurs | /admin/user-reports |
-| Demandes support | /admin/support |
+### Backend: User Report Router (Admin additions)
+- **Procedure `getReportQueue`**: `adminProcedure` to list reports with pagination.
+- **Procedure `reviewReport`**: `adminProcedure` to change status and add `adminNotes`.
 
-### Optional tRPC
-
-#### `admin.getStats`
-**Output:** `{ pendingReports: number, pendingFeedbackModeration: number, pendingSupportRequests: number }`
-
-**Auth:** ADMIN only
-
-### Components
-
-| Component | Location | Props |
-|-----------|----------|-------|
-| AdminDashboard | `app/admin/` | - |
-| AdminNavCard | - | title, href, count? |
+### Frontend: Dashboard Components
+- **StatsGrid**: A grid layout using Shadcn Cards.
+- **AdminActionCard**: Component with title, icon, pending count, and link.
 
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Admin sees dashboard
-- [ ] Links work (all admin pages exist)
-- [ ] Non-admin → 403 or redirect
-- [ ] Optional: counts displayed
+- [ ] Only users with `ADMIN` role can access `/admin`.
+- [ ] Counts correctly reflect database state.
+- [ ] Links navigate to the correct sub-pages.
+- [ ] Non-admin users are redirected to `/` or see a 403.
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Role check in layout
+- [ ] All procedures use `adminProcedure`.
+- [ ] Statistics fetch uses `Promise.all` for efficiency.
+- [ ] Frontend uses React Suspense or Skeleton loaders for stats.
 
 ### Testing Steps
-1. Login as admin → /admin
-2. Click each link → correct page
-3. Non-admin → 403
+1. Create a few pending reports and support requests via DB or other UIs.
+2. Login as Admin.
+3. Access `/admin` and verify counts match.
+4. Attempt access as MENTOR/APPRENANT and verify 403/Redirect.
 
 ---
