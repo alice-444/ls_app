@@ -12,11 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle, Trash2, AlertTriangle, User, Star } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { useSearchParams } from "next/navigation";
 
-export default function AdminFeedbackModerationPage() {
+function AdminFeedbackModerationContent() {
+  const searchParams = useSearchParams();
+  const feedbackIdParam = searchParams.get("feedbackId");
+
   const { data: moderationQueue, isLoading, refetch } = trpc.workshopFeedback.getModerationQueue.useQuery();
   const dismissReportMutation = trpc.workshopFeedback.dismissReport.useMutation();
   const deleteFeedbackMutation = trpc.workshopFeedback.deleteFeedback.useMutation();
@@ -25,6 +29,18 @@ export default function AdminFeedbackModerationPage() {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState<any | null>(null);
   const [actionType, setActionType] = useState<"DELETE" | "WARN" | "DISMISS" | null>(null);
+
+  useEffect(() => {
+    if (feedbackIdParam && moderationQueue?.feedbacks) {
+      const feedback = moderationQueue.feedbacks.find((f: any) => f.id === feedbackIdParam);
+      if (feedback) {
+        // For moderation, we don't have a "view" dialog, just confirmation actions.
+        // We could maybe highlight the row or scroll to it.
+        // For now, let's just keep it simple.
+        setSelectedFeedback(feedback);
+      }
+    }
+  }, [feedbackIdParam, moderationQueue]);
 
   const handleAction = (feedback: any, type: "DELETE" | "WARN" | "DISMISS") => {
     setSelectedFeedback(feedback);
@@ -105,15 +121,15 @@ export default function AdminFeedbackModerationPage() {
               </TableRow>
             ) : (
               feedbacks.map((feedback: any) => (
-                <TableRow key={feedback.id}>
+                <TableRow key={feedback.id} className={feedback.id === feedbackIdParam ? "bg-primary/5" : ""}>
                   <TableCell>
-                    <div className="font-medium">{feedback.workshop?.title || "N/A"}</div>
-                    <div className="text-xs text-muted-foreground">Mentor: {feedback.mentor?.user?.name || "N/A"}</div>
+                    <div className="font-medium">{feedback.workshopTitle || "N/A"}</div>
+                    <div className="text-xs text-muted-foreground">Mentor: {feedback.mentorName || "N/A"}</div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4" />
-                      <span>{feedback.isAnonymous ? "Anonyme" : (feedback.apprentice?.user?.name || "N/A")}</span>
+                      <span>{feedback.publicName}</span>
                     </div>
                   </TableCell>
                   <TableCell className="max-w-[300px]">
@@ -184,5 +200,13 @@ export default function AdminFeedbackModerationPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function AdminFeedbackModerationPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-48"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <AdminFeedbackModerationContent />
+    </Suspense>
   );
 }

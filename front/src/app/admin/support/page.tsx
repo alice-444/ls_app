@@ -10,19 +10,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Loader2, Eye, CheckCircle, Clock, Info, LifeBuoy } from "lucide-react";
+import { Loader2, Eye, CheckCircle, Info, LifeBuoy } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSearchParams } from "next/navigation";
 
-export default function AdminSupportPage() {
+function AdminSupportContent() {
+  const searchParams = useSearchParams();
+  const requestIdParam = searchParams.get("requestId");
+
   const { data: supportRequests, isLoading, refetch } = trpc.support.getAdminSupportQueue.useQuery();
   const updateStatusMutation = trpc.support.updateStatus.useMutation();
 
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+
+  useEffect(() => {
+    if (requestIdParam && supportRequests) {
+      const request = supportRequests.find((r: any) => r.id === requestIdParam);
+      if (request) {
+        handleViewDetails(request);
+      }
+    }
+  }, [requestIdParam, supportRequests]);
 
   const handleViewDetails = (request: any) => {
     setSelectedRequest(request);
@@ -202,5 +215,13 @@ export default function AdminSupportPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function AdminSupportPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-48"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <AdminSupportContent />
+    </Suspense>
   );
 }

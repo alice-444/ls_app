@@ -40,4 +40,15 @@ export interface IUserReportRepository {
     reviewedBy?: string | null,
     adminNotes?: string | null
   ): Promise<UserReportEntity>;
+  findMany(params?: {
+    skip?: number;
+    take?: number;
+    where?: any;
+    orderBy?: any;
+    include?: any;
+  }): Promise<any[]>;
+  update(params: {
+    where: { id: string };
+    data: any;
+  }): Promise<any>;
 }

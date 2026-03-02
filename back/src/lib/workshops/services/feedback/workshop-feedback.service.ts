@@ -19,6 +19,7 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
     private readonly feedbackRepository: IWorkshopFeedbackRepository,
     private readonly workshopRepository: IWorkshopRepository,
     private readonly mentorRepository: IMentorRepository,
+    private readonly notificationService: INotificationService,
     private readonly creditService?: ICreditService,
     emailService?: IEmailService
   ) {
@@ -26,7 +27,8 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
     this.moderationService = new FeedbackModerationService(
       feedbackRepository,
       mentorRepository,
-      resolvedEmailService
+      resolvedEmailService,
+      notificationService
     );
   }
 

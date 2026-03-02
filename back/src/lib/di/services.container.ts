@@ -135,6 +135,7 @@ export class ServicesContainer {
       this.repositories.workshopFeedbackRepository,
       this.repositories.workshopRepository,
       this.repositories.mentorRepository,
+      this.notificationService,
       this.creditService
     );
     return this._workshopFeedbackService;
@@ -254,7 +255,8 @@ export class ServicesContainer {
         this.repositories.notificationRepository,
         this.repositories.appUserRepository,
         eventEmitter,
-        this.userBlockService
+        this.userBlockService,
+        this.prisma
       );
     }
     return this._notificationService;
@@ -278,7 +280,8 @@ export class ServicesContainer {
     this._userReportService ??= new UserReportService(
       this.repositories.userReportRepository,
       this.repositories.appUserRepository,
-      this.auditLogService
+      this.auditLogService,
+      this.notificationService
     );
     return this._userReportService;
   }
@@ -422,7 +425,8 @@ export class ServicesContainer {
 
   get supportRequestService(): ISupportRequestService {
     this._supportRequestService ??= new SupportRequestService(
-      this.repositories.supportRequestRepository
+      this.repositories.supportRequestRepository,
+      this.notificationService
     );
     return this._supportRequestService;
   }

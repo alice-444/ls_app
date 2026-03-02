@@ -1,4 +1,4 @@
-import { prisma } from "../../../common";
+import { PrismaClient } from "@prisma/client";
 import type {
   IMessageReactionRepository,
   MessageReactionEntity,
@@ -7,8 +7,10 @@ import type {
 export class PrismaMessageReactionRepository
   implements IMessageReactionRepository
 {
+  constructor(private readonly prisma: PrismaClient) {}
+
   async findByMessageId(messageId: string): Promise<MessageReactionEntity[]> {
-    const reactions = await (prisma as any).message_reaction.findMany({
+    const reactions = await this.prisma.message_reaction.findMany({
       where: { messageId },
       orderBy: { createdAt: "asc" },
     });
@@ -26,7 +28,7 @@ export class PrismaMessageReactionRepository
     messageId: string,
     userId: string
   ): Promise<MessageReactionEntity[]> {
-    const reactions = await (prisma as any).message_reaction.findMany({
+    const reactions = await this.prisma.message_reaction.findMany({
       where: { messageId, userId },
       orderBy: { createdAt: "asc" },
     });
@@ -41,7 +43,7 @@ export class PrismaMessageReactionRepository
   }
 
   async findById(reactionId: string): Promise<MessageReactionEntity | null> {
-    const reaction = await (prisma as any).message_reaction.findUnique({
+    const reaction = await this.prisma.message_reaction.findUnique({
       where: { id: reactionId },
     });
 
@@ -62,7 +64,7 @@ export class PrismaMessageReactionRepository
     userId: string;
     emoji: string;
   }): Promise<MessageReactionEntity> {
-    const reaction = await (prisma as any).message_reaction.create({
+    const reaction = await this.prisma.message_reaction.create({
       data: {
         id: data.id,
         messageId: data.messageId,
@@ -81,7 +83,7 @@ export class PrismaMessageReactionRepository
   }
 
   async delete(reactionId: string): Promise<void> {
-    await (prisma as any).message_reaction.delete({
+    await this.prisma.message_reaction.delete({
       where: { id: reactionId },
     });
   }
@@ -91,7 +93,7 @@ export class PrismaMessageReactionRepository
     userId: string,
     emoji: string
   ): Promise<void> {
-    await (prisma as any).message_reaction.deleteMany({
+    await this.prisma.message_reaction.deleteMany({
       where: {
         messageId,
         userId,

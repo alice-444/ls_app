@@ -12,12 +12,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, Eye, CheckCircle, XCircle, Ban, MessageSquareText } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { useSearchParams } from "next/navigation";
 
-export default function AdminUserReportsPage() {
+function AdminUserReportsContent() {
+  const searchParams = useSearchParams();
+  const reportIdParam = searchParams.get("reportId");
+  
   const { data: reports, isLoading, refetch } = trpc.userReport.getAdminReportQueue.useQuery();
   const reviewReportMutation = trpc.userReport.reviewReport.useMutation();
 
@@ -25,6 +29,15 @@ export default function AdminUserReportsPage() {
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
   const [reviewStatus, setReviewStatus] = useState<"RESOLVED" | "DISMISSED">("RESOLVED");
+
+  useEffect(() => {
+    if (reportIdParam && reports) {
+      const report = reports.find((r: any) => r.id === reportIdParam);
+      if (report) {
+        handleReviewClick(report);
+      }
+    }
+  }, [reportIdParam, reports]);
 
   const handleReviewClick = (report: any) => {
     setSelectedReport(report);
@@ -117,7 +130,6 @@ export default function AdminUserReportsPage() {
                     >
                       <Eye className="h-4 w-4 mr-2" /> Examiner
                     </Button>
-                    {/* Add more actions if needed, e.g., direct ban */}
                   </TableCell>
                 </TableRow>
               ))
@@ -178,5 +190,13 @@ export default function AdminUserReportsPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function AdminUserReportsPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-48"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <AdminUserReportsContent />
+    </Suspense>
   );
 }

@@ -5,11 +5,11 @@ import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import { Footer } from "@/components/footer";
 import { ScrollToTopButton } from "@/components/scroll-to-top-button";
+import { RoleGate } from "@/components/layout/role-gate";
 
 export const metadata: Metadata = {
-  title: "LearnSup",
-  description:
-    "LearnSup is a platform for learning and/or teaching between students",
+  title: "Learning Solidarity",
+  description: "Plateforme d'apprentissage solidaire",
 };
 
 export default function RootLayout({
@@ -18,18 +18,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`antialiased`}>
+    <html lang="fr" suppressHydrationWarning>
+      <body className="font-sans antialiased bg-white dark:bg-[#0a0510] text-[#26547c] dark:text-[#e6e6e6] transition-colors duration-300">
         <Providers>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <div className="flex flex-col flex-1 min-w-0 bg-transparent">
-              <Header />
-              <main className="flex-1 overflow-auto">{children}</main>
-              <Footer />
-              <ScrollToTopButton />
+          <RoleGate>
+            <div className="flex min-h-screen relative">
+              <Sidebar />
+              <div className="flex-1 flex flex-col min-w-0">
+                <Header />
+                <main className="flex-1 overflow-auto">{children}</main>
+                <Footer />
+                <ScrollToTopButton />
+              </div>
             </div>
-          </div>
+          </RoleGate>
         </Providers>
       </body>
     </html>

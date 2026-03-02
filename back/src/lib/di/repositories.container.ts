@@ -102,28 +102,28 @@ export class RepositoriesContainer {
 
   get userConnectionRepository(): IUserConnectionRepository {
     if (!this._userConnectionRepository) {
-      this._userConnectionRepository = new PrismaUserConnectionRepository();
+      this._userConnectionRepository = new PrismaUserConnectionRepository(this.prisma);
     }
     return this._userConnectionRepository;
   }
 
   get conversationRepository(): IConversationRepository {
     if (!this._conversationRepository) {
-      this._conversationRepository = new PrismaConversationRepository();
+      this._conversationRepository = new PrismaConversationRepository(this.prisma);
     }
     return this._conversationRepository;
   }
 
   get messageRepository(): IMessageRepository {
     if (!this._messageRepository) {
-      this._messageRepository = new PrismaMessageRepository();
+      this._messageRepository = new PrismaMessageRepository(this.prisma);
     }
     return this._messageRepository;
   }
 
   get messageReactionRepository(): IMessageReactionRepository {
     if (!this._messageReactionRepository) {
-      this._messageReactionRepository = new PrismaMessageReactionRepository();
+      this._messageReactionRepository = new PrismaMessageReactionRepository(this.prisma);
     }
     return this._messageReactionRepository;
   }
@@ -187,14 +187,14 @@ export class RepositoriesContainer {
 
   get userBlockRepository(): IUserBlockRepository {
     if (!this._userBlockRepository) {
-      this._userBlockRepository = new PrismaUserBlockRepository();
+      this._userBlockRepository = new PrismaUserBlockRepository(this.prisma);
     }
     return this._userBlockRepository;
   }
 
   get userReportRepository(): IUserReportRepository {
     if (!this._userReportRepository) {
-      this._userReportRepository = new PrismaUserReportRepository();
+      this._userReportRepository = new PrismaUserReportRepository(this.prisma);
     }
     return this._userReportRepository;
   }

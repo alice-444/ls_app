@@ -8,6 +8,7 @@ import type {
 } from "../../repositories/moderation/user-report.repository.interface";
 import type { AppUserRepository } from "../../repositories";
 import type { IAuditLogService } from "../../../common/audit-log.service";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import { Result, success, failure } from "../../../common";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import { logger } from "../../../common/logger";
@@ -16,7 +17,8 @@ export class UserReportService implements IUserReportService {
   constructor(
     private readonly userReportRepository: IUserReportRepository,
     private readonly appUserRepository: AppUserRepository,
-    private readonly auditLogService?: IAuditLogService
+    private readonly auditLogService: IAuditLogService | undefined,
+    private readonly notificationService: INotificationService
   ) {}
 
   async createReport(
@@ -72,6 +74,13 @@ export class UserReportService implements IUserReportService {
           }
         );
       }
+
+      // Notify admins
+      await this.notificationService.notifyAdmin(
+        "NEW_REPORT",
+        `Nouveau signalement créé par ${input.reporterUserId} contre ${input.reportedUserId} pour ${input.reason}.`,
+        `/admin/user-reports?reportId=${report.id}`
+      );
 
       return success({ reportId: report.id });
     } catch (error) {
@@ -140,7 +149,7 @@ export class UserReportService implements IUserReportService {
     const limit = params?.limit ?? 50;
     const offset = params?.offset ?? 0;
 
-    const reports = await (this.userReportRepository as any).findMany({
+    const reports = await this.userReportRepository.findMany({
       where: { status: "PENDING" },
       take: limit,
       skip: offset,
@@ -158,7 +167,7 @@ export class UserReportService implements IUserReportService {
   }
 
   async reviewReport(reportId: string, status: "RESOLVED" | "DISMISSED", adminNotes?: string): Promise<any> {
-    return (this.userReportRepository as any).update({
+    return this.userReportRepository.update({
       where: { id: reportId },
       data: {
         status,

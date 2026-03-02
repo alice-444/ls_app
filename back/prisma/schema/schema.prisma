@@ -68,6 +68,8 @@ model app_user {
   notifications                                            notification[]
   user_block_blocker                                       user_block[]         @relation("user_block_blocker")
   user_block_blocked                                       user_block[]         @relation("user_block_blocked")
+  reports_made                                             user_report[]        @relation("reports_made")
+  reports_received                                         user_report[]        @relation("reports_received")
 }
 
 model audit_log {
@@ -396,6 +398,9 @@ model user_report {
   reviewedAt DateTime?
   reviewedBy String?
   adminNotes String?
+
+  reporter   app_user     @relation("reports_made", fields: [reporterId], references: [id], onDelete: Cascade)
+  reported   app_user     @relation("reports_received", fields: [reportedId], references: [id], onDelete: Cascade)
 
   @@index([reporterId])
   @@index([reportedId])

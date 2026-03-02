@@ -1,10 +1,17 @@
-import { prisma } from "../src/lib/common/prisma";
+import { PrismaClient } from "../prisma/generated/client";
+import * as dotenv from "dotenv";
+import * as path from "path";
+
+// Load .env from the back directory
+dotenv.config({ path: path.join(__dirname, "../.env") });
+
+const prisma = new PrismaClient();
 
 async function main() {
   const email = process.argv[2];
 
   if (!email) {
-    console.error("Veuillez fournir un email : npm run set-admin user@example.com");
+    console.error("Veuillez fournir un email : npx tsx scripts/set-admin.ts user@example.com");
     process.exit(1);
   }
 

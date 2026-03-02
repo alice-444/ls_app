@@ -7,17 +7,28 @@ import {
   ISupportRequestService,
 } from "./support-request.service.interface";
 import { ISupportRequestRepository } from "../repositories/support-request.repository.interface";
+import { INotificationService } from "../../notifications/services/notification.service.interface";
 
 export class SupportRequestService implements ISupportRequestService {
   constructor(
-    private readonly supportRequestRepository: ISupportRequestRepository
+    private readonly supportRequestRepository: ISupportRequestRepository,
+    private readonly notificationService: INotificationService
   ) {}
 
   async createSupportRequest(command: CreateSupportRequestCommand): Promise<support_request> {
-    return this.supportRequestRepository.create({
+    const request = await this.supportRequestRepository.create({
       ...command,
       status: SupportRequestStatus.PENDING,
     });
+
+    // Notify admins
+    await this.notificationService.notifyAdmin(
+      "NEW_SUPPORT_REQUEST",
+      `Nouvelle demande de support de ${command.email} : ${command.subject}`,
+      `/admin/support?requestId=${request.id}`
+    );
+
+    return request;
   }
 
   async getAdminSupportQueue(params?: {
