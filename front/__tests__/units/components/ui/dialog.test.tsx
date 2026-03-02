@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { assertNoViolations } from "../../lib/axe";
 import {
   Dialog,
   DialogContent,
@@ -35,6 +36,21 @@ describe("Dialog", () => {
     expect(screen.getByText("Title")).toBeInTheDocument();
     expect(screen.getByText("Description")).toBeInTheDocument();
     expect(screen.getByText("Footer")).toBeInTheDocument();
+  });
+
+  it("has no accessibility violations when open with heading and description", async () => {
+    const { container } = render(
+      <Dialog open onOpenChange={vi.fn()}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Title</DialogTitle>
+            <DialogDescription>Description</DialogDescription>
+          </DialogHeader>
+          <span>Content</span>
+        </DialogContent>
+      </Dialog>
+    );
+    await assertNoViolations(container);
   });
 
   it("calls onOpenChange(false) when overlay is clicked", async () => {

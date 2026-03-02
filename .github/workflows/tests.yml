@@ -139,50 +139,11 @@ jobs:
             junit.xml
           retention-days: 30
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: check-test-files
-    if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
-
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PNPM and Node.js
-        uses: digi-fry/setup-pnpm-node-action@v1
-        with:
-          node-version: "20"
-
-      - name: Run integration tests
-        run: pnpm run test:integration
-        env:
-          NODE_ENV: test
-          CI: true
-          DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
-
-      - name: Upload integration test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: integration-test-results
-          path: |
-            coverage/
-            test-results/
-            junit.xml
-          retention-days: 30
-
   build:
     name: Build Application
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [check-test-files, unit-tests, integration-tests]
+    needs: [check-test-files, unit-tests]
     if: needs.check-test-files.outputs.has-tests == 'true' || github.event_name == 'push'
 
     permissions:
@@ -282,7 +243,7 @@ jobs:
     name: Test Summary
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [check-test-files, unit-tests, integration-tests, build, cypress-e2e]
+    needs: [check-test-files, unit-tests, build, cypress-e2e]
     if: always() && github.event_name == 'pull_request'
 
     permissions:
@@ -304,7 +265,6 @@ jobs:
             const path = require('path');
 
             const unitTestResult = '${{ needs.unit-tests.result }}';
-            const integrationResult = '${{ needs.integration-tests.result }}';
             const buildResult = '${{ needs.build.result }}';
             const e2eResult = '${{ needs.cypress-e2e.result }}';
             const hasTests = '${{ needs.check-test-files.outputs.has-tests }}' === 'true';

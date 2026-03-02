@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { assertNoViolations } from "../../lib/axe";
 import { Button } from "@/components/ui/button";
 
 describe("Button", () => {
@@ -33,5 +34,10 @@ describe("Button", () => {
   it("has data-slot for styling", () => {
     render(<Button>Slot</Button>);
     expect(screen.getByRole("button")).toHaveAttribute("data-slot", "button");
+  });
+
+  it("has no accessibility violations", async () => {
+    const { container } = render(<Button>Accessible</Button>);
+    await assertNoViolations(container);
   });
 });

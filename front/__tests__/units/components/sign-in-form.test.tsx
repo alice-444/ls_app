@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { assertNoViolations } from "../lib/axe";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SignInForm from "@/components/sign-in-form";
 
@@ -81,5 +82,10 @@ describe("SignInForm", () => {
       { email: "a@b.co", password: "password1" },
       expect.any(Object)
     );
+  });
+
+  it("has no accessibility violations", async () => {
+    const { container } = renderSignInForm();
+    await assertNoViolations(container);
   });
 });
