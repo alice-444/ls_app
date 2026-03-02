@@ -34,4 +34,18 @@ export class AdminService implements IAdminService {
       },
     });
   }
+
+  async approveUser(appUserId: string): Promise<any> {
+    return (this.prisma as any).app_user.update({
+      where: { id: appUserId },
+      data: { status: "ACTIVE" },
+    });
+  }
+
+  async rejectUser(appUserId: string, reason?: string): Promise<any> {
+    return (this.prisma as any).app_user.update({
+      where: { id: appUserId },
+      data: { status: "SUSPENDED", deletionReason: reason },
+    });
+  }
 }

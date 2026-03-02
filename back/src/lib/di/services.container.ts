@@ -72,8 +72,12 @@ import { WorkshopAttendanceService } from "../workshops/services/attendance/work
 import type { IWorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service.interface";
 import { AdminService } from "../admin/services/admin.service";
 import type { IAdminService } from "../admin/services/admin.service.interface";
+import { SupportRequestService } from "../support/services/support-request.service";
+import type { ISupportRequestService } from "../support/services/support-request.service.interface";
+...
+  private _adminService?: IAdminService;
+  private _supportRequestService?: ISupportRequestService;
 
-export class ServicesContainer {
   private _workshopService?: IWorkshopService;
   private _workshopFeedbackService?: IWorkshopFeedbackService;
   private _mentorProfileService?: IMentorProfileService;
@@ -108,6 +112,7 @@ export class ServicesContainer {
   private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
   private _workshopAttendanceService?: IWorkshopAttendanceService;
   private _adminService?: IAdminService;
+  private _supportRequestService?: ISupportRequestService;
 
   constructor(
     private readonly prisma: PrismaClient,
@@ -414,5 +419,12 @@ export class ServicesContainer {
   get adminService(): IAdminService {
     this._adminService ??= new AdminService(this.prisma);
     return this._adminService;
+  }
+
+  get supportRequestService(): ISupportRequestService {
+    this._supportRequestService ??= new SupportRequestService(
+      this.repositories.supportRequestRepository
+    );
+    return this._supportRequestService;
   }
 }

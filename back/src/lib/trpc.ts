@@ -1,6 +1,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { Context } from "./context";
 import { prisma } from "./common/prisma";
+import { container } from "./di/container";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -26,6 +27,26 @@ export const protectedProcedure = t.procedure
 			},
 		});
 	});
+
+// Middleware for automated audit logging of admin actions
+const adminLogger = t.middleware(async ({ ctx, next, path, type, rawInput }) => {
+  const result = await next();
+  
+  // Log only successful mutations (write actions) for admin operations
+  if (result.ok && type === 'mutation' && ctx.session?.user?.id) {
+    try {
+      await container.auditLogService.record(
+        ctx.session.user.id,
+        `ADMIN_ACTION_${path.toUpperCase().replace(/\./g, '_')}`,
+        { input: rawInput }
+      );
+    } catch (e) {
+      console.error("Failed to record admin audit log:", e);
+    }
+  }
+  
+  return result;
+});
 
 export const profProcedure = protectedProcedure
 	.use(async ({ ctx, next }) => {
@@ -63,6 +84,7 @@ export const profProcedure = protectedProcedure
 	});
 
 export const adminProcedure = protectedProcedure
+  .use(adminLogger)
 	.use(async ({ ctx, next }) => {
 		const appUser = await (prisma as any).app_user.findUnique({
 			where: { userId: ctx.session.user.id },

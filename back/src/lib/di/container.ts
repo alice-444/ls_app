@@ -268,6 +268,10 @@ class DIContainer {
     return this._services.adminService;
   }
 
+  get supportRequestService() {
+    return this._services.supportRequestService;
+  }
+
   get prisma(): PrismaClient {
     return this._prisma;
   }

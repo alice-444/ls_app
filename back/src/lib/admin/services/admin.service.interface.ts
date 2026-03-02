@@ -8,4 +8,6 @@ export interface AdminStats {
 export interface IAdminService {
   getStats(): Promise<AdminStats>;
   getOnboardingQueue(params?: { limit?: number; offset?: number }): Promise<any>;
+  approveUser(appUserId: string): Promise<any>;
+  rejectUser(appUserId: string, reason?: string): Promise<any>;
 }

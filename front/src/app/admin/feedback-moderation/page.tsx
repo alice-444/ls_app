@@ -1,389 +1,188 @@
 "use client";
 
-import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Shield,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Star,
-  User,
-  Mail,
-  Calendar,
-} from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
-import { renderStars } from "@/lib/rating-utils";
+import { Loader2, CheckCircle, Trash2, AlertTriangle, User, Star } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
-interface ModerationFeedback {
-  id: string;
-  rating: number;
-  comment?: string;
-  createdAt: string;
-  status: string;
-  moderationReason?: string;
-  reportReason?: string;
-  mentorName?: string;
-  workshopTitle?: string;
-  publicName?: string;
-  realName?: string;
-  realEmail?: string;
-  workshop?: { title: string };
-  apprentice?: { user?: { name?: string } };
-}
+export default function AdminFeedbackModerationPage() {
+  const { data: moderationQueue, isLoading, refetch } = trpc.workshopFeedback.getModerationQueue.useQuery();
+  const dismissReportMutation = trpc.workshopFeedback.dismissReport.useMutation();
+  const deleteFeedbackMutation = trpc.workshopFeedback.deleteFeedback.useMutation();
+  const warnUserMutation = trpc.workshopFeedback.warnUser.useMutation();
 
-export default function FeedbackModerationPage() {
-  const router = useRouter();
-  const [selectedFeedback, setSelectedFeedback] = useState<ModerationFeedback | null>(null);
-  const [actionType, setActionType] = useState<
-    "dismiss" | "delete" | "warn" | null
-  >(null);
-  const [page, setPage] = useState(0);
-  const limit = 20;
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState<any | null>(null);
+  const [actionType, setActionType] = useState<"DELETE" | "WARN" | "DISMISS" | null>(null);
 
-  const utils = trpc.useUtils();
-  const { data, isLoading, refetch } =
-    trpc.workshopFeedback.getModerationQueue.useQuery(
-      {
-        limit,
-        offset: page * limit,
-      },
-      {
-        enabled: true,
+  const handleAction = (feedback: any, type: "DELETE" | "WARN" | "DISMISS") => {
+    setSelectedFeedback(feedback);
+    setActionType(type);
+    setIsConfirmDialogOpen(true);
+  };
+
+  const confirmAction = async () => {
+    if (!selectedFeedback || !actionType) return;
+    
+    try {
+      if (actionType === "DISMISS") {
+        await dismissReportMutation.mutateAsync({ feedbackId: selectedFeedback.id });
+        toast.success("Signalement ignoré.");
+      } else if (actionType === "DELETE") {
+        await deleteFeedbackMutation.mutateAsync({ feedbackId: selectedFeedback.id });
+        toast.success("Avis supprimé.");
+      } else if (actionType === "WARN") {
+        await warnUserMutation.mutateAsync({ feedbackId: selectedFeedback.id });
+        toast.success("Utilisateur averti.");
       }
-    );
-
-  const dismissMutation = trpc.workshopFeedback.dismissReport.useMutation({
-    onSuccess: () => {
-      toast.success("Signalement rejeté. L'avis reste actif.");
-      setSelectedFeedback(null);
-      setActionType(null);
+      
       refetch();
-    },
-    onError: (error: { message?: string }) => {
-      toast.error(error.message || "Une erreur est survenue");
-    },
-  });
-
-  const deleteMutation = trpc.workshopFeedback.deleteFeedback.useMutation({
-    onSuccess: () => {
-      toast.success("Avis supprimé avec succès");
-      setSelectedFeedback(null);
-      setActionType(null);
-      refetch();
-    },
-    onError: (error: { message?: string }) => {
-      toast.error(error.message || "Une erreur est survenue");
-    },
-  });
-
-  const warnMutation = trpc.workshopFeedback.warnUser.useMutation({
-    onSuccess: () => {
-      toast.success("Email d'avertissement envoyé à l'utilisateur");
-      setSelectedFeedback(null);
-      setActionType(null);
-      refetch();
-    },
-    onError: (error: { message?: string }) => {
-      toast.error(error.message || "Une erreur est survenue");
-    },
-  });
-
-  const handleAction = () => {
-    if (!selectedFeedback) return;
-
-    if (actionType === "dismiss") {
-      dismissMutation.mutate({ feedbackId: selectedFeedback.id });
-    } else if (actionType === "delete") {
-      deleteMutation.mutate({ feedbackId: selectedFeedback.id });
-    } else if (actionType === "warn") {
-      warnMutation.mutate({ feedbackId: selectedFeedback.id });
+      setIsConfirmDialogOpen(false);
+    } catch (error) {
+      toast.error("Une erreur est survenue.");
+      console.error(error);
     }
+  };
+
+  const renderRating = (rating: number) => {
+    return (
+      <div className="flex items-center">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            className={`h-4 w-4 ${i < rating ? "text-yellow-400 fill-yellow-400" : "text-slate-300"}`}
+          />
+        ))}
+      </div>
+    );
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Chargement...</p>
-          </div>
-        </div>
+      <div className="flex justify-center items-center h-48">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
-  const feedbacks: ModerationFeedback[] = data?.feedbacks || [];
-  const total: number = data?.total || 0;
-  const totalPages = Math.ceil(total / limit);
+  const feedbacks = moderationQueue?.feedbacks || [];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Shield className="h-8 w-8" />
-            Modération des avis
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Gérez les avis signalés par les mentors
-          </p>
-        </div>
-
-        {feedbacks.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <CheckCircle className="h-16 w-16 mx-auto text-green-500 mb-4" />
-              <p className="text-lg font-medium">Aucun avis en attente</p>
-              <p className="text-muted-foreground mt-2">
-                Tous les avis signalés ont été traités.
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <>
-            <div className="mb-4">
-              <Badge variant="secondary">
-                {total} avis en attente de modération
-              </Badge>
-            </div>
-
-            <div className="space-y-4">
-              {feedbacks.map((feedback) => (
-                <Card key={feedback.id}>
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      <div className="lg:col-span-2 space-y-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center">
-                              {renderStars(feedback.rating, "md")}
-                            </div>
-                            <Badge variant="destructive">En modération</Badge>
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(feedback.createdAt), {
-                              addSuffix: true,
-                              locale: fr,
-                            })}
-                          </span>
-                        </div>
-
-                        {feedback.comment && (
-                          <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-                            <p className="text-sm">{feedback.comment}</p>
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Mentor</p>
-                            <p className="font-medium">{feedback.mentorName}</p>
-                          </div>
-                          {feedback.workshopTitle && (
-                            <div>
-                              <p className="text-muted-foreground">Atelier</p>
-                              <p className="font-medium">
-                                {feedback.workshopTitle}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-
-                        {feedback.reportReason && (
-                          <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                            <p className="text-sm font-medium mb-1">
-                              Raison du signalement :
-                            </p>
-                            <p className="text-sm">{feedback.reportReason}</p>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-4 border-l pl-6">
-                        <div>
-                          <h3 className="font-semibold mb-3 flex items-center gap-2">
-                            <User className="h-4 w-4" />
-                            Identité de l'auteur
-                          </h3>
-                          <div className="space-y-2 text-sm">
-                            <div>
-                              <p className="text-muted-foreground">
-                                Nom public :
-                              </p>
-                              <p className="font-medium">
-                                {feedback.publicName}
-                              </p>
-                            </div>
-                            <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded p-2">
-                              <p className="text-muted-foreground text-xs mb-1">
-                                Nom réel (Admin uniquement) :
-                              </p>
-                              <p className="font-bold text-blue-700 dark:text-blue-300">
-                                {feedback.realName || "Non disponible"}
-                              </p>
-                            </div>
-                            {feedback.realEmail && (
-                              <div>
-                                <p className="text-muted-foreground text-xs">
-                                  Email :
-                                </p>
-                                <p className="font-medium text-sm">
-                                  {feedback.realEmail}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedFeedback(feedback);
-                              setActionType("dismiss");
-                            }}
-                            disabled={
-                              dismissMutation.isPending ||
-                              deleteMutation.isPending ||
-                              warnMutation.isPending
-                            }
-                          >
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Rejeter le signalement
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedFeedback(feedback);
-                              setActionType("delete");
-                            }}
-                            disabled={
-                              dismissMutation.isPending ||
-                              deleteMutation.isPending ||
-                              warnMutation.isPending
-                            }
-                          >
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Supprimer l'avis
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedFeedback(feedback);
-                              setActionType("warn");
-                            }}
-                            disabled={
-                              dismissMutation.isPending ||
-                              deleteMutation.isPending ||
-                              warnMutation.isPending
-                            }
-                          >
-                            <AlertTriangle className="h-4 w-4 mr-2" />
-                            Avertir l'utilisateur
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                >
-                  Précédent
-                </Button>
-                <span className="flex items-center px-4">
-                  Page {page + 1} / {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    setPage((p) => Math.min(totalPages - 1, p + 1))
-                  }
-                  disabled={page >= totalPages - 1}
-                >
-                  Suivant
-                </Button>
-              </div>
-            )}
-          </>
-        )}
-
-        <AlertDialog
-          open={actionType !== null && selectedFeedback !== null}
-          onOpenChange={(open: boolean) => {
-            if (!open) {
-              setActionType(null);
-              setSelectedFeedback(null);
-            }
-          }}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                {actionType === "dismiss" && "Rejeter le signalement"}
-                {actionType === "delete" && "Supprimer l'avis"}
-                {actionType === "warn" && "Avertir l'utilisateur"}
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                {actionType === "dismiss" &&
-                  "Le signalement sera rejeté et l'avis restera actif. L'anonymat sera préservé."}
-                {actionType === "delete" &&
-                  "L'avis sera définitivement supprimé du profil du mentor. Cette action est irréversible."}
-                {actionType === "warn" &&
-                  "Un email d'avertissement formel sera envoyé à l'auteur de l'avis."}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleAction}
-                className={
-                  actionType === "delete" ? "bg-red-600 hover:bg-red-700" : ""
-                }
-                disabled={
-                  dismissMutation.isPending ||
-                  deleteMutation.isPending ||
-                  warnMutation.isPending
-                }
-              >
-                {dismissMutation.isPending ||
-                deleteMutation.isPending ||
-                warnMutation.isPending
-                  ? "Traitement..."
-                  : "Confirmer"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Modération des Avis</h1>
+        <p className="text-muted-foreground">Gérer les avis signalés par la communauté.</p>
       </div>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Atelier / Mentor</TableHead>
+              <TableHead>Auteur</TableHead>
+              <TableHead>Avis</TableHead>
+              <TableHead>Raison du signalement</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {feedbacks.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                  Aucun avis en attente de modération.
+                </TableCell>
+              </TableRow>
+            ) : (
+              feedbacks.map((feedback: any) => (
+                <TableRow key={feedback.id}>
+                  <TableCell>
+                    <div className="font-medium">{feedback.workshop?.title || "N/A"}</div>
+                    <div className="text-xs text-muted-foreground">Mentor: {feedback.mentor?.user?.name || "N/A"}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span>{feedback.isAnonymous ? "Anonyme" : (feedback.apprentice?.user?.name || "N/A")}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="max-w-[300px]">
+                    {renderRating(feedback.rating)}
+                    <p className="mt-1 text-sm italic">"{feedback.comment || "Pas de commentaire"}"</p>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50">
+                      {feedback.reportReason || "Signalé"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right space-x-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleAction(feedback, "DISMISS")}
+                      title="Ignorer le signalement"
+                    >
+                      <CheckCircle className="h-4 w-4 text-emerald-600" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleAction(feedback, "WARN")}
+                      title="Avertir l'auteur"
+                    >
+                      <AlertTriangle className="h-4 w-4 text-amber-600" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleAction(feedback, "DELETE")}
+                      title="Supprimer l'avis"
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {actionType === "DELETE" && "Supprimer cet avis ?"}
+              {actionType === "WARN" && "Avertir l'utilisateur ?"}
+              {actionType === "DISMISS" && "Ignorer le signalement ?"}
+            </DialogTitle>
+            <DialogDescription>
+              Cette action est irréversible.
+              {actionType === "WARN" && " Un message sera envoyé à l'utilisateur pour lui notifier un manquement aux règles de la communauté."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>Annuler</Button>
+            <Button 
+              variant={actionType === "DELETE" ? "destructive" : "default"} 
+              onClick={confirmAction}
+              className={actionType === "DISMISS" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}
+            >
+              Confirmer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

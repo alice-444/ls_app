@@ -135,4 +135,36 @@ export class UserReportService implements IUserReportService {
       );
     }
   }
+
+  async getAdminReportQueue(params?: { limit?: number; offset?: number }): Promise<any> {
+    const limit = params?.limit ?? 50;
+    const offset = params?.offset ?? 0;
+
+    const reports = await (this.userReportRepository as any).findMany({
+      where: { status: "PENDING" },
+      take: limit,
+      skip: offset,
+      orderBy: { createdAt: "desc" },
+      include: {
+        reporter: {
+          include: { user: true },
+        },
+        reported: {
+          include: { user: true },
+        },
+      },
+    });
+    return reports;
+  }
+
+  async reviewReport(reportId: string, status: "RESOLVED" | "DISMISSED", adminNotes?: string): Promise<any> {
+    return (this.userReportRepository as any).update({
+      where: { id: reportId },
+      data: {
+        status,
+        adminNotes: adminNotes || null,
+        reviewedAt: new Date(),
+      },
+    });
+  }
 }

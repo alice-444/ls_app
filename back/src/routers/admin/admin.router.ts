@@ -17,4 +17,21 @@ export const adminRouter = router({
     .query(async ({ input }) => {
       return await container.adminService.getOnboardingQueue(input);
     }),
+
+  approveUser: adminProcedure
+    .input(z.object({ appUserId: z.string() }))
+    .mutation(async ({ input }) => {
+      return await container.adminService.approveUser(input.appUserId);
+    }),
+
+  rejectUser: adminProcedure
+    .input(
+      z.object({
+        appUserId: z.string(),
+        reason: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await container.adminService.rejectUser(input.appUserId, input.reason);
+    }),
 });

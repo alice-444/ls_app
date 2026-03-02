@@ -35,6 +35,8 @@ import type { IAuthUserRepository } from "../users/repositories/auth/auth-user.r
 import type { IAccountRepository } from "../users/repositories/auth/account.repository.interface";
 import type { ISessionRepository } from "../users/repositories/auth/session.repository.interface";
 import type { IVerificationRepository } from "../users/repositories/verification/verification.repository.interface";
+import { PrismaSupportRequestRepository } from "../support/repositories/support-request.repository";
+import type { ISupportRequestRepository } from "../support/repositories/support-request.repository.interface";
 
 export class RepositoriesContainer {
   private _workshopRepository?: IWorkshopRepository;
@@ -55,6 +57,7 @@ export class RepositoriesContainer {
   private _verificationRepository?: IVerificationRepository;
   private _userBlockRepository?: IUserBlockRepository;
   private _userReportRepository?: IUserReportRepository;
+  private _supportRequestRepository?: ISupportRequestRepository;
 
   constructor(private readonly prisma: PrismaClient) {}
 
@@ -194,5 +197,12 @@ export class RepositoriesContainer {
       this._userReportRepository = new PrismaUserReportRepository();
     }
     return this._userReportRepository;
+  }
+
+  get supportRequestRepository(): ISupportRequestRepository {
+    if (!this._supportRequestRepository) {
+      this._supportRequestRepository = new PrismaSupportRequestRepository(this.prisma);
+    }
+    return this._supportRequestRepository;
   }
 }
