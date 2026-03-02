@@ -69,7 +69,7 @@ export const userReportRouter = router({
       return await container.userReportService.reviewReport(
         input.reportId,
         input.status,
-        input.adminNotes
+        input.adminNotes ?? undefined
       );
     }),
 });

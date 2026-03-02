@@ -1,4 +1,7 @@
-import { PrismaClient, SupportRequest, SupportRequestStatus } from "@prisma/client";
+import type {
+  PrismaClient,
+  support_request,
+} from "../../../../prisma/generated/client/client";
 import {
   ISupportRequestRepository,
   CreateSupportRequestInput,
@@ -8,11 +11,11 @@ import {
 export class PrismaSupportRequestRepository implements ISupportRequestRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async create(data: CreateSupportRequestInput): Promise<SupportRequest> {
+  async create(data: CreateSupportRequestInput): Promise<support_request> {
     return this.prisma.support_request.create({ data: { ...data, id: undefined as any } });
   }
 
-  async findById(id: string): Promise<SupportRequest | null> {
+  async findById(id: string): Promise<support_request | null> {
     return this.prisma.support_request.findUnique({ where: { id } });
   }
 
@@ -22,7 +25,7 @@ export class PrismaSupportRequestRepository implements ISupportRequestRepository
     where?: any;
     orderBy?: any;
     include?: any;
-  }): Promise<SupportRequest[]> {
+  }): Promise<support_request[]> {
     return this.prisma.support_request.findMany(params);
   }
 
@@ -30,7 +33,7 @@ export class PrismaSupportRequestRepository implements ISupportRequestRepository
     return this.prisma.support_request.count({ where });
   }
 
-  async update(id: string, data: UpdateSupportRequestInput): Promise<SupportRequest> {
+  async update(id: string, data: UpdateSupportRequestInput): Promise<support_request> {
     return this.prisma.support_request.update({
       where: { id },
       data: { ...data, updatedAt: new Date() },

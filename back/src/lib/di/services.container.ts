@@ -74,7 +74,8 @@ import { AdminService } from "../admin/services/admin.service";
 import type { IAdminService } from "../admin/services/admin.service.interface";
 import { SupportRequestService } from "../support/services/support-request.service";
 import type { ISupportRequestService } from "../support/services/support-request.service.interface";
-...
+
+export class ServicesContainer {
   private _adminService?: IAdminService;
   private _supportRequestService?: ISupportRequestService;
 
@@ -111,8 +112,6 @@ import type { ISupportRequestService } from "../support/services/support-request
   private _forgotPasswordService?: IForgotPasswordService;
   private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
   private _workshopAttendanceService?: IWorkshopAttendanceService;
-  private _adminService?: IAdminService;
-  private _supportRequestService?: ISupportRequestService;
 
   constructor(
     private readonly prisma: PrismaClient,

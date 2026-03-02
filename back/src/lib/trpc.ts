@@ -29,22 +29,23 @@ export const protectedProcedure = t.procedure
 	});
 
 // Middleware for automated audit logging of admin actions
-const adminLogger = t.middleware(async ({ ctx, next, path, type, rawInput }) => {
+const adminLogger = t.middleware(async ({ ctx, next, path, type, getRawInput }) => {
   const result = await next();
-  
+
   // Log only successful mutations (write actions) for admin operations
-  if (result.ok && type === 'mutation' && ctx.session?.user?.id) {
+  if (result.ok && type === "mutation" && ctx.session?.user?.id) {
     try {
+      const rawInput = await getRawInput();
       await container.auditLogService.record(
         ctx.session.user.id,
-        `ADMIN_ACTION_${path.toUpperCase().replace(/\./g, '_')}`,
+        `ADMIN_ACTION_${path.toUpperCase().replace(/\./g, "_")}`,
         { input: rawInput }
       );
     } catch (e) {
       console.error("Failed to record admin audit log:", e);
     }
   }
-  
+
   return result;
 });
 

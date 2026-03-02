@@ -1,4 +1,7 @@
-import { SupportRequest, SupportRequestStatus } from "@prisma/client";
+import {
+  type support_request,
+  SupportRequestStatus,
+} from "../../../../prisma/generated/client/client";
 import {
   CreateSupportRequestCommand,
   ISupportRequestService,
@@ -10,7 +13,7 @@ export class SupportRequestService implements ISupportRequestService {
     private readonly supportRequestRepository: ISupportRequestRepository
   ) {}
 
-  async createSupportRequest(command: CreateSupportRequestCommand): Promise<SupportRequest> {
+  async createSupportRequest(command: CreateSupportRequestCommand): Promise<support_request> {
     return this.supportRequestRepository.create({
       ...command,
       status: SupportRequestStatus.PENDING,
@@ -21,7 +24,7 @@ export class SupportRequestService implements ISupportRequestService {
     limit?: number;
     offset?: number;
     status?: string;
-  }): Promise<SupportRequest[]> {
+  }): Promise<support_request[]> {
     const where: any = {};
     if (params?.status) {
       where.status = params.status;
@@ -38,11 +41,11 @@ export class SupportRequestService implements ISupportRequestService {
   async updateSupportRequestStatus(
     requestId: string,
     status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED"
-  ): Promise<SupportRequest> {
+  ): Promise<support_request> {
     return this.supportRequestRepository.update(requestId, { status });
   }
 
-  async getSupportRequestById(requestId: string): Promise<SupportRequest | null> {
+  async getSupportRequestById(requestId: string): Promise<support_request | null> {
     return this.supportRequestRepository.findById(requestId);
   }
 }
