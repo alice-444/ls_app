@@ -30,15 +30,16 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ## API (tRPC)
 
 - Router racine : `back/src/routers/index.ts` (appRouter).
-- Sous-routers : workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, messaging, notification, userBlock, userReport, credits, user, accountSettings.
-- Procédures : `publicProcedure` (sans session), `protectedProcedure` (session Better Auth requise).
+- **Renommage** : `workshopFeedback.dismissReport` → `approveFeedback`.
+- Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
+- Procédures : `publicProcedure` (sans session), `protectedProcedure` (session requise), `profProcedure` (MENTOR actif), `adminProcedure` (ADMIN actif, audit log).
 - Point d’entrée HTTP : `/trpc` (POST batch).
 
 ---
 
 ## API (routes REST / custom)
 
-- Auth : `/api/auth/*` (Better Auth), `/api/sign-up`, `/api/sign-in`.
+- Auth : `/api/auth/*` (Better Auth), `/api/auth/magic-link-callback`, `/api/sign-up`, `/api/sign-in`.
 - Onboarding : `/api/onboarding/select-role`.
 - Profil : `/api/profile/role`, `/api/profile/role/prof`, `/api/profile/upload-photo`, `/api/profile/photo/[filename]`, `/api/profile/publish`, `/api/profile/delete`.
 - Support : `/api/support-request`, `/api/support-request/attachments/[filename]`.
@@ -51,14 +52,14 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ## Base de données (Prisma)
 
 - Schéma : `back/prisma/schema/schema.prisma`.
-- Modèles principaux : user, account, session, app_user, workshop, workshop_request, mentor_feedback, workshop_cashback_queue, user_connection, conversation, message, message_reaction, conversation_pin, notification, user_block, user_report, support_request, credit_transaction, audit_log, deletion_job, verification.
+- Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token.
 - Client généré : `back/prisma/generated/client`.
 
 ---
 
 ## Variables d’environnement
 
-- **Back** : `CORS_ORIGIN`, `CRON_SECRET`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `RESEND_*`, `DAILY_*`, `STRIPE_*` (optionnel), `PORT_BACKEND`, `HOSTNAME_BACKEND`. Voir `back/.env.example`.
+- **Back** : `CORS_ORIGIN`, `CRON_SECRET`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `RESEND_*`, `DAILY_*`, `POLAR_*` (paiement), `PORT_BACKEND`, `HOSTNAME_BACKEND`. Voir `back/.env.example`.
 - **Front** : `NEXT_PUBLIC_SERVER_URL`. Voir `front/.env.example`.
 
 ---
@@ -85,8 +86,9 @@ Détail et emplacements des tests : [procedure.md](procedure.md) § Lancer les t
 
 - **Apprenant** — Utilisateur avec le rôle APPRENANT : peut s’inscrire à des ateliers, envoyer des demandes, participer aux sessions visio, recevoir du cashback.
 - **Atelier** — Synonyme de *workshop* : session d’apprentissage (souvent en visio) créée par un mentor, à laquelle des apprenants peuvent s’inscrire.
-- **Cashback** — Remboursement ou crédit accordé à un apprenant après participation à un atelier (règles métier dans le back ; file de traitement : `workshop_cashback_queue`).
+- **Cashback** — Remboursement ou crédit accordé à un apprenant après participation à un atelier (règles métier dans le back).
 - **Mentor** — Utilisateur avec le rôle MENTOR : crée et anime des ateliers, a un profil publié (bio, domaines, disponibilités), reçoit des demandes d’inscription et des feedbacks.
+- **Admin** — Utilisateur avec le rôle ADMIN : accès à l’interface `/admin` (modération, signalements, support, onboarding, audit logs, paramètres).
 - **Workshop** — Atelier : entité métier (titre, date, mentor, statut, inscriptions, visio Daily). Voir modèles `workshop`, `workshop_request`, `mentor_feedback` dans le schéma Prisma.
 
 ---

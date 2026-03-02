@@ -51,7 +51,6 @@ export default function NetworkPage() {
   const acceptMutation = trpc.connection.acceptConnectionRequest.useMutation();
   const rejectMutation = trpc.connection.rejectConnectionRequest.useMutation();
   const removeConnectionMutation = trpc.connection.removeConnection.useMutation();
-  const cancelSentRequestMutation = trpc.connection.removeConnection.useMutation(); 
 
   const getOrCreateConversationMutation =
     trpc.messaging.getOrCreateConversation.useMutation();
@@ -207,8 +206,6 @@ export default function NetworkPage() {
             <SentRequestsList
               requests={sentRequests}
               onCancel={(connectionId) => {
-                  // Note: The logic for canceling a sent request is the same as rejecting it
-                  // from the receiver's side, or removing it.
                   rejectMutation.mutate(
                     { connectionId },
                     {
@@ -216,7 +213,7 @@ export default function NetworkPage() {
                             toast.success("Demande annulée");
                             refetchSent();
                         },
-                        onError: (error) => {
+                        onError: (error: { message: string }) => {
                             toast.error("Erreur lors de l'annulation", {
                                 description: error.message,
                             });

@@ -26,11 +26,13 @@ import { creditsRouter } from "./credits/credits.router";
 // Admin
 import { adminRouter } from "./admin/admin.router";
 import { supportRouter } from "./support/support.router";
+import { authRouter } from "./auth/auth.router";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
     return "OK";
   }),
+  auth: authRouter,
   privateData: protectedProcedure.query(({ ctx }) => {
     return {
       message: "This is private",

@@ -251,8 +251,8 @@ export class WorkshopFeedbackService implements IWorkshopFeedbackService {
     return this.moderationService.getModerationQueue(options);
   }
 
-  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>> {
-    return this.moderationService.dismissReport(feedbackId);
+  approveFeedback(feedbackId: string): Promise<Result<{ success: boolean }>> {
+    return this.moderationService.approveFeedback(feedbackId);
   }
 
   deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>> {

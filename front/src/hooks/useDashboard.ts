@@ -18,7 +18,7 @@ interface WorkshopRequest {
   [key: string]: unknown;
 }
 
-function mapServerRole(role: "MENTOR" | "APPRENANT" | null): UserRole {
+function mapServerRole(role: "MENTOR" | "APPRENANT" | "ADMIN" | null): UserRole {
   if (role === "MENTOR") return "mentor";
   if (role === "APPRENANT") return "apprenant";
   return "both";
@@ -40,8 +40,12 @@ export function useDashboard() {
   );
 
   useEffect(() => {
+    if (actualUserRole === "ADMIN") {
+      router.replace("/admin");
+      return;
+    }
     if (actualUserRole) setUserRole(mapServerRole(actualUserRole));
-  }, [actualUserRole]);
+  }, [actualUserRole, router]);
 
   const isMentor =
     (userRole === "mentor" || userRole === "both") &&

@@ -42,7 +42,7 @@ export type Mentor_feedbackMinAggregateOutputType = {
   rating: number | null
   comment: string | null
   isAnonymous: boolean | null
-  status: $Enums.FeedbackStatus | null
+  status: string | null
   reportedAt: Date | null
   reportedBy: string | null
   reportReason: string | null
@@ -58,7 +58,7 @@ export type Mentor_feedbackMaxAggregateOutputType = {
   rating: number | null
   comment: string | null
   isAnonymous: boolean | null
-  status: $Enums.FeedbackStatus | null
+  status: string | null
   reportedAt: Date | null
   reportedBy: string | null
   reportReason: string | null
@@ -231,11 +231,11 @@ export type Mentor_feedbackGroupByOutputType = {
   id: string
   mentorId: string
   apprenticeId: string
-  workshopId: string | null
+  workshopId: string
   rating: number
   comment: string | null
   isAnonymous: boolean
-  status: $Enums.FeedbackStatus
+  status: string
   reportedAt: Date | null
   reportedBy: string | null
   reportReason: string | null
@@ -270,26 +270,26 @@ export type mentor_feedbackWhereInput = {
   id?: Prisma.StringFilter<"mentor_feedback"> | string
   mentorId?: Prisma.StringFilter<"mentor_feedback"> | string
   apprenticeId?: Prisma.StringFilter<"mentor_feedback"> | string
-  workshopId?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
+  workshopId?: Prisma.StringFilter<"mentor_feedback"> | string
   rating?: Prisma.IntFilter<"mentor_feedback"> | number
   comment?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   isAnonymous?: Prisma.BoolFilter<"mentor_feedback"> | boolean
-  status?: Prisma.EnumFeedbackStatusFilter<"mentor_feedback"> | $Enums.FeedbackStatus
+  status?: Prisma.StringFilter<"mentor_feedback"> | string
   reportedAt?: Prisma.DateTimeNullableFilter<"mentor_feedback"> | Date | string | null
   reportedBy?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   reportReason?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   createdAt?: Prisma.DateTimeFilter<"mentor_feedback"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"mentor_feedback"> | Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  app_user_mentor_feedback_mentorIdToapp_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  workshop?: Prisma.XOR<Prisma.WorkshopNullableScalarRelationFilter, Prisma.workshopWhereInput> | null
+  mentor?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  apprentice?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  workshop?: Prisma.XOR<Prisma.WorkshopScalarRelationFilter, Prisma.workshopWhereInput>
 }
 
 export type mentor_feedbackOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   mentorId?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
-  workshopId?: Prisma.SortOrderInput | Prisma.SortOrder
+  workshopId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
   isAnonymous?: Prisma.SortOrder
@@ -299,39 +299,38 @@ export type mentor_feedbackOrderByWithRelationInput = {
   reportReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  app_user_mentor_feedback_apprenticeIdToapp_user?: Prisma.app_userOrderByWithRelationInput
-  app_user_mentor_feedback_mentorIdToapp_user?: Prisma.app_userOrderByWithRelationInput
+  mentor?: Prisma.app_userOrderByWithRelationInput
+  apprentice?: Prisma.app_userOrderByWithRelationInput
   workshop?: Prisma.workshopOrderByWithRelationInput
 }
 
 export type mentor_feedbackWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  apprenticeId_workshopId?: Prisma.mentor_feedbackApprenticeIdWorkshopIdCompoundUniqueInput
   AND?: Prisma.mentor_feedbackWhereInput | Prisma.mentor_feedbackWhereInput[]
   OR?: Prisma.mentor_feedbackWhereInput[]
   NOT?: Prisma.mentor_feedbackWhereInput | Prisma.mentor_feedbackWhereInput[]
   mentorId?: Prisma.StringFilter<"mentor_feedback"> | string
   apprenticeId?: Prisma.StringFilter<"mentor_feedback"> | string
-  workshopId?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
+  workshopId?: Prisma.StringFilter<"mentor_feedback"> | string
   rating?: Prisma.IntFilter<"mentor_feedback"> | number
   comment?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   isAnonymous?: Prisma.BoolFilter<"mentor_feedback"> | boolean
-  status?: Prisma.EnumFeedbackStatusFilter<"mentor_feedback"> | $Enums.FeedbackStatus
+  status?: Prisma.StringFilter<"mentor_feedback"> | string
   reportedAt?: Prisma.DateTimeNullableFilter<"mentor_feedback"> | Date | string | null
   reportedBy?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   reportReason?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   createdAt?: Prisma.DateTimeFilter<"mentor_feedback"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"mentor_feedback"> | Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  app_user_mentor_feedback_mentorIdToapp_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  workshop?: Prisma.XOR<Prisma.WorkshopNullableScalarRelationFilter, Prisma.workshopWhereInput> | null
-}, "id" | "apprenticeId_workshopId">
+  mentor?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  apprentice?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  workshop?: Prisma.XOR<Prisma.WorkshopScalarRelationFilter, Prisma.workshopWhereInput>
+}, "id">
 
 export type mentor_feedbackOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   mentorId?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
-  workshopId?: Prisma.SortOrderInput | Prisma.SortOrder
+  workshopId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
   isAnonymous?: Prisma.SortOrder
@@ -355,11 +354,11 @@ export type mentor_feedbackScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"mentor_feedback"> | string
   mentorId?: Prisma.StringWithAggregatesFilter<"mentor_feedback"> | string
   apprenticeId?: Prisma.StringWithAggregatesFilter<"mentor_feedback"> | string
-  workshopId?: Prisma.StringNullableWithAggregatesFilter<"mentor_feedback"> | string | null
+  workshopId?: Prisma.StringWithAggregatesFilter<"mentor_feedback"> | string
   rating?: Prisma.IntWithAggregatesFilter<"mentor_feedback"> | number
   comment?: Prisma.StringNullableWithAggregatesFilter<"mentor_feedback"> | string | null
   isAnonymous?: Prisma.BoolWithAggregatesFilter<"mentor_feedback"> | boolean
-  status?: Prisma.EnumFeedbackStatusWithAggregatesFilter<"mentor_feedback"> | $Enums.FeedbackStatus
+  status?: Prisma.StringWithAggregatesFilter<"mentor_feedback"> | string
   reportedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"mentor_feedback"> | Date | string | null
   reportedBy?: Prisma.StringNullableWithAggregatesFilter<"mentor_feedback"> | string | null
   reportReason?: Prisma.StringNullableWithAggregatesFilter<"mentor_feedback"> | string | null
@@ -368,35 +367,35 @@ export type mentor_feedbackScalarWhereWithAggregatesInput = {
 }
 
 export type mentor_feedbackCreateInput = {
-  id: string
+  id?: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user: Prisma.app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput
-  app_user_mentor_feedback_mentorIdToapp_user: Prisma.app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput
-  workshop?: Prisma.workshopCreateNestedOneWithoutMentor_feedbackInput
+  updatedAt?: Date | string
+  mentor: Prisma.app_userCreateNestedOneWithoutFeedback_as_mentorInput
+  apprentice: Prisma.app_userCreateNestedOneWithoutFeedback_as_apprenticeInput
+  workshop: Prisma.workshopCreateNestedOneWithoutMentorFeedbacksInput
 }
 
 export type mentor_feedbackUncheckedCreateInput = {
-  id: string
+  id?: string
   mentorId: string
   apprenticeId: string
-  workshopId?: string | null
+  workshopId: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type mentor_feedbackUpdateInput = {
@@ -404,26 +403,26 @@ export type mentor_feedbackUpdateInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userNestedInput
-  app_user_mentor_feedback_mentorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutMentor_feedbackNestedInput
+  mentor?: Prisma.app_userUpdateOneRequiredWithoutFeedback_as_mentorNestedInput
+  apprentice?: Prisma.app_userUpdateOneRequiredWithoutFeedback_as_apprenticeNestedInput
+  workshop?: Prisma.workshopUpdateOneRequiredWithoutMentorFeedbacksNestedInput
 }
 
 export type mentor_feedbackUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   mentorId?: Prisma.StringFieldUpdateOperationsInput | string
   apprenticeId?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workshopId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -432,19 +431,19 @@ export type mentor_feedbackUncheckedUpdateInput = {
 }
 
 export type mentor_feedbackCreateManyInput = {
-  id: string
+  id?: string
   mentorId: string
   apprenticeId: string
-  workshopId?: string | null
+  workshopId: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type mentor_feedbackUpdateManyMutationInput = {
@@ -452,7 +451,7 @@ export type mentor_feedbackUpdateManyMutationInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -464,11 +463,11 @@ export type mentor_feedbackUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   mentorId?: Prisma.StringFieldUpdateOperationsInput | string
   apprenticeId?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workshopId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -484,11 +483,6 @@ export type Mentor_feedbackListRelationFilter = {
 
 export type mentor_feedbackOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type mentor_feedbackApprenticeIdWorkshopIdCompoundUniqueInput = {
-  apprenticeId: string
-  workshopId: string
 }
 
 export type mentor_feedbackCountOrderByAggregateInput = {
@@ -547,92 +541,88 @@ export type mentor_feedbackSumOrderByAggregateInput = {
   rating?: Prisma.SortOrder
 }
 
-export type mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInputEnvelope
+export type mentor_feedbackCreateNestedManyWithoutMentorInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutMentorInput, Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput> | Prisma.mentor_feedbackCreateWithoutMentorInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput | Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyMentorInputEnvelope
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
 }
 
-export type mentor_feedbackCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInputEnvelope
+export type mentor_feedbackCreateNestedManyWithoutApprenticeInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput> | Prisma.mentor_feedbackCreateWithoutApprenticeInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput | Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyApprenticeInputEnvelope
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
 }
 
-export type mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInputEnvelope
+export type mentor_feedbackUncheckedCreateNestedManyWithoutMentorInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutMentorInput, Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput> | Prisma.mentor_feedbackCreateWithoutMentorInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput | Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyMentorInputEnvelope
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
 }
 
-export type mentor_feedbackUncheckedCreateNestedManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInputEnvelope
+export type mentor_feedbackUncheckedCreateNestedManyWithoutApprenticeInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput> | Prisma.mentor_feedbackCreateWithoutApprenticeInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput | Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyApprenticeInputEnvelope
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
 }
 
-export type mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInputEnvelope
+export type mentor_feedbackUpdateManyWithoutMentorNestedInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutMentorInput, Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput> | Prisma.mentor_feedbackCreateWithoutMentorInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput | Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput[]
+  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutMentorInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutMentorInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyMentorInputEnvelope
   set?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   disconnect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   delete?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
-  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
+  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutMentorInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutMentorInput[]
+  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutMentorInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutMentorInput[]
   deleteMany?: Prisma.mentor_feedbackScalarWhereInput | Prisma.mentor_feedbackScalarWhereInput[]
 }
 
-export type mentor_feedbackUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInputEnvelope
+export type mentor_feedbackUpdateManyWithoutApprenticeNestedInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput> | Prisma.mentor_feedbackCreateWithoutApprenticeInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput | Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput[]
+  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApprenticeInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApprenticeInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyApprenticeInputEnvelope
   set?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   disconnect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   delete?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
-  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
+  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApprenticeInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApprenticeInput[]
+  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutApprenticeInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutApprenticeInput[]
   deleteMany?: Prisma.mentor_feedbackScalarWhereInput | Prisma.mentor_feedbackScalarWhereInput[]
 }
 
-export type mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInputEnvelope
+export type mentor_feedbackUncheckedUpdateManyWithoutMentorNestedInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutMentorInput, Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput> | Prisma.mentor_feedbackCreateWithoutMentorInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput | Prisma.mentor_feedbackCreateOrConnectWithoutMentorInput[]
+  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutMentorInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutMentorInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyMentorInputEnvelope
   set?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   disconnect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   delete?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
-  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
+  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutMentorInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutMentorInput[]
+  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutMentorInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutMentorInput[]
   deleteMany?: Prisma.mentor_feedbackScalarWhereInput | Prisma.mentor_feedbackScalarWhereInput[]
 }
 
-export type mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userNestedInput = {
-  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput> | Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  createMany?: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInputEnvelope
+export type mentor_feedbackUncheckedUpdateManyWithoutApprenticeNestedInput = {
+  create?: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput> | Prisma.mentor_feedbackCreateWithoutApprenticeInput[] | Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput[]
+  connectOrCreate?: Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput | Prisma.mentor_feedbackCreateOrConnectWithoutApprenticeInput[]
+  upsert?: Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApprenticeInput | Prisma.mentor_feedbackUpsertWithWhereUniqueWithoutApprenticeInput[]
+  createMany?: Prisma.mentor_feedbackCreateManyApprenticeInputEnvelope
   set?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   disconnect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   delete?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
   connect?: Prisma.mentor_feedbackWhereUniqueInput | Prisma.mentor_feedbackWhereUniqueInput[]
-  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
-  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_mentorIdToapp_userInput[]
+  update?: Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApprenticeInput | Prisma.mentor_feedbackUpdateWithWhereUniqueWithoutApprenticeInput[]
+  updateMany?: Prisma.mentor_feedbackUpdateManyWithWhereWithoutApprenticeInput | Prisma.mentor_feedbackUpdateManyWithWhereWithoutApprenticeInput[]
   deleteMany?: Prisma.mentor_feedbackScalarWhereInput | Prisma.mentor_feedbackScalarWhereInput[]
-}
-
-export type EnumFeedbackStatusFieldUpdateOperationsInput = {
-  set?: $Enums.FeedbackStatus
 }
 
 export type mentor_feedbackCreateNestedManyWithoutWorkshopInput = {
@@ -677,100 +667,100 @@ export type mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput = {
   deleteMany?: Prisma.mentor_feedbackScalarWhereInput | Prisma.mentor_feedbackScalarWhereInput[]
 }
 
-export type mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  id: string
+export type mentor_feedbackCreateWithoutMentorInput = {
+  id?: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  app_user_mentor_feedback_mentorIdToapp_user: Prisma.app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput
-  workshop?: Prisma.workshopCreateNestedOneWithoutMentor_feedbackInput
+  updatedAt?: Date | string
+  apprentice: Prisma.app_userCreateNestedOneWithoutFeedback_as_apprenticeInput
+  workshop: Prisma.workshopCreateNestedOneWithoutMentorFeedbacksInput
 }
 
-export type mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  id: string
-  mentorId: string
-  workshopId?: string | null
-  rating: number
-  comment?: string | null
-  isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
-  reportedAt?: Date | string | null
-  reportedBy?: string | null
-  reportReason?: string | null
-  createdAt?: Date | string
-  updatedAt: Date | string
-}
-
-export type mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  where: Prisma.mentor_feedbackWhereUniqueInput
-  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput>
-}
-
-export type mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInputEnvelope = {
-  data: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInput | Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInput[]
-  skipDuplicates?: boolean
-}
-
-export type mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
-  id: string
-  rating: number
-  comment?: string | null
-  isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
-  reportedAt?: Date | string | null
-  reportedBy?: string | null
-  reportReason?: string | null
-  createdAt?: Date | string
-  updatedAt: Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user: Prisma.app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput
-  workshop?: Prisma.workshopCreateNestedOneWithoutMentor_feedbackInput
-}
-
-export type mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
-  id: string
+export type mentor_feedbackUncheckedCreateWithoutMentorInput = {
+  id?: string
   apprenticeId: string
-  workshopId?: string | null
+  workshopId: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
-export type mentor_feedbackCreateOrConnectWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
+export type mentor_feedbackCreateOrConnectWithoutMentorInput = {
   where: Prisma.mentor_feedbackWhereUniqueInput
-  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput>
+  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutMentorInput, Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput>
 }
 
-export type mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInputEnvelope = {
-  data: Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInput | Prisma.mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInput[]
+export type mentor_feedbackCreateManyMentorInputEnvelope = {
+  data: Prisma.mentor_feedbackCreateManyMentorInput | Prisma.mentor_feedbackCreateManyMentorInput[]
   skipDuplicates?: boolean
 }
 
-export type mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  where: Prisma.mentor_feedbackWhereUniqueInput
-  update: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedUpdateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput>
-  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput>
+export type mentor_feedbackCreateWithoutApprenticeInput = {
+  id?: string
+  rating: number
+  comment?: string | null
+  isAnonymous?: boolean
+  status?: string
+  reportedAt?: Date | string | null
+  reportedBy?: string | null
+  reportReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  mentor: Prisma.app_userCreateNestedOneWithoutFeedback_as_mentorInput
+  workshop: Prisma.workshopCreateNestedOneWithoutMentorFeedbacksInput
 }
 
-export type mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  where: Prisma.mentor_feedbackWhereUniqueInput
-  data: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput, Prisma.mentor_feedbackUncheckedUpdateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput>
+export type mentor_feedbackUncheckedCreateWithoutApprenticeInput = {
+  id?: string
+  mentorId: string
+  workshopId: string
+  rating: number
+  comment?: string | null
+  isAnonymous?: boolean
+  status?: string
+  reportedAt?: Date | string | null
+  reportedBy?: string | null
+  reportReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
-export type mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
+export type mentor_feedbackCreateOrConnectWithoutApprenticeInput = {
+  where: Prisma.mentor_feedbackWhereUniqueInput
+  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput>
+}
+
+export type mentor_feedbackCreateManyApprenticeInputEnvelope = {
+  data: Prisma.mentor_feedbackCreateManyApprenticeInput | Prisma.mentor_feedbackCreateManyApprenticeInput[]
+  skipDuplicates?: boolean
+}
+
+export type mentor_feedbackUpsertWithWhereUniqueWithoutMentorInput = {
+  where: Prisma.mentor_feedbackWhereUniqueInput
+  update: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutMentorInput, Prisma.mentor_feedbackUncheckedUpdateWithoutMentorInput>
+  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutMentorInput, Prisma.mentor_feedbackUncheckedCreateWithoutMentorInput>
+}
+
+export type mentor_feedbackUpdateWithWhereUniqueWithoutMentorInput = {
+  where: Prisma.mentor_feedbackWhereUniqueInput
+  data: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutMentorInput, Prisma.mentor_feedbackUncheckedUpdateWithoutMentorInput>
+}
+
+export type mentor_feedbackUpdateManyWithWhereWithoutMentorInput = {
   where: Prisma.mentor_feedbackScalarWhereInput
-  data: Prisma.XOR<Prisma.mentor_feedbackUpdateManyMutationInput, Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput>
+  data: Prisma.XOR<Prisma.mentor_feedbackUpdateManyMutationInput, Prisma.mentor_feedbackUncheckedUpdateManyWithoutMentorInput>
 }
 
 export type mentor_feedbackScalarWhereInput = {
@@ -780,11 +770,11 @@ export type mentor_feedbackScalarWhereInput = {
   id?: Prisma.StringFilter<"mentor_feedback"> | string
   mentorId?: Prisma.StringFilter<"mentor_feedback"> | string
   apprenticeId?: Prisma.StringFilter<"mentor_feedback"> | string
-  workshopId?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
+  workshopId?: Prisma.StringFilter<"mentor_feedback"> | string
   rating?: Prisma.IntFilter<"mentor_feedback"> | number
   comment?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   isAnonymous?: Prisma.BoolFilter<"mentor_feedback"> | boolean
-  status?: Prisma.EnumFeedbackStatusFilter<"mentor_feedback"> | $Enums.FeedbackStatus
+  status?: Prisma.StringFilter<"mentor_feedback"> | string
   reportedAt?: Prisma.DateTimeNullableFilter<"mentor_feedback"> | Date | string | null
   reportedBy?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
   reportReason?: Prisma.StringNullableFilter<"mentor_feedback"> | string | null
@@ -792,50 +782,50 @@ export type mentor_feedbackScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"mentor_feedback"> | Date | string
 }
 
-export type mentor_feedbackUpsertWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
+export type mentor_feedbackUpsertWithWhereUniqueWithoutApprenticeInput = {
   where: Prisma.mentor_feedbackWhereUniqueInput
-  update: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedUpdateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput>
-  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedCreateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput>
+  update: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedUpdateWithoutApprenticeInput>
+  create: Prisma.XOR<Prisma.mentor_feedbackCreateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedCreateWithoutApprenticeInput>
 }
 
-export type mentor_feedbackUpdateWithWhereUniqueWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
+export type mentor_feedbackUpdateWithWhereUniqueWithoutApprenticeInput = {
   where: Prisma.mentor_feedbackWhereUniqueInput
-  data: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput, Prisma.mentor_feedbackUncheckedUpdateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput>
+  data: Prisma.XOR<Prisma.mentor_feedbackUpdateWithoutApprenticeInput, Prisma.mentor_feedbackUncheckedUpdateWithoutApprenticeInput>
 }
 
-export type mentor_feedbackUpdateManyWithWhereWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
+export type mentor_feedbackUpdateManyWithWhereWithoutApprenticeInput = {
   where: Prisma.mentor_feedbackScalarWhereInput
-  data: Prisma.XOR<Prisma.mentor_feedbackUpdateManyMutationInput, Prisma.mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput>
+  data: Prisma.XOR<Prisma.mentor_feedbackUpdateManyMutationInput, Prisma.mentor_feedbackUncheckedUpdateManyWithoutApprenticeInput>
 }
 
 export type mentor_feedbackCreateWithoutWorkshopInput = {
-  id: string
+  id?: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user: Prisma.app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userInput
-  app_user_mentor_feedback_mentorIdToapp_user: Prisma.app_userCreateNestedOneWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userInput
+  updatedAt?: Date | string
+  mentor: Prisma.app_userCreateNestedOneWithoutFeedback_as_mentorInput
+  apprentice: Prisma.app_userCreateNestedOneWithoutFeedback_as_apprenticeInput
 }
 
 export type mentor_feedbackUncheckedCreateWithoutWorkshopInput = {
-  id: string
+  id?: string
   mentorId: string
   apprenticeId: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type mentor_feedbackCreateOrConnectWithoutWorkshopInput = {
@@ -864,104 +854,59 @@ export type mentor_feedbackUpdateManyWithWhereWithoutWorkshopInput = {
   data: Prisma.XOR<Prisma.mentor_feedbackUpdateManyMutationInput, Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopInput>
 }
 
-export type mentor_feedbackCreateManyApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  id: string
-  mentorId: string
-  workshopId?: string | null
-  rating: number
-  comment?: string | null
-  isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
-  reportedAt?: Date | string | null
-  reportedBy?: string | null
-  reportReason?: string | null
-  createdAt?: Date | string
-  updatedAt: Date | string
-}
-
-export type mentor_feedbackCreateManyApp_user_mentor_feedback_mentorIdToapp_userInput = {
-  id: string
+export type mentor_feedbackCreateManyMentorInput = {
+  id?: string
   apprenticeId: string
-  workshopId?: string | null
+  workshopId: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
-export type mentor_feedbackUpdateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
+export type mentor_feedbackCreateManyApprenticeInput = {
+  id?: string
+  mentorId: string
+  workshopId: string
+  rating: number
+  comment?: string | null
+  isAnonymous?: boolean
+  status?: string
+  reportedAt?: Date | string | null
+  reportedBy?: string | null
+  reportReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type mentor_feedbackUpdateWithoutMentorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  app_user_mentor_feedback_mentorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userNestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutMentor_feedbackNestedInput
+  apprentice?: Prisma.app_userUpdateOneRequiredWithoutFeedback_as_apprenticeNestedInput
+  workshop?: Prisma.workshopUpdateOneRequiredWithoutMentorFeedbacksNestedInput
 }
 
-export type mentor_feedbackUncheckedUpdateWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  mentorId?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
-  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
-  reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_apprenticeIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  mentorId?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
-  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
-  reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type mentor_feedbackUpdateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
-  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
-  reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userNestedInput
-  workshop?: Prisma.workshopUpdateOneWithoutMentor_feedbackNestedInput
-}
-
-export type mentor_feedbackUncheckedUpdateWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
+export type mentor_feedbackUncheckedUpdateWithoutMentorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   apprenticeId?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workshopId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -969,14 +914,59 @@ export type mentor_feedbackUncheckedUpdateWithoutApp_user_mentor_feedback_mentor
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_mentorIdToapp_userInput = {
+export type mentor_feedbackUncheckedUpdateManyWithoutMentorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   apprenticeId?: Prisma.StringFieldUpdateOperationsInput | string
-  workshopId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workshopId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type mentor_feedbackUpdateWithoutApprenticeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mentor?: Prisma.app_userUpdateOneRequiredWithoutFeedback_as_mentorNestedInput
+  workshop?: Prisma.workshopUpdateOneRequiredWithoutMentorFeedbacksNestedInput
+}
+
+export type mentor_feedbackUncheckedUpdateWithoutApprenticeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  mentorId?: Prisma.StringFieldUpdateOperationsInput | string
+  workshopId?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type mentor_feedbackUncheckedUpdateManyWithoutApprenticeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  mentorId?: Prisma.StringFieldUpdateOperationsInput | string
+  workshopId?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -985,18 +975,18 @@ export type mentor_feedbackUncheckedUpdateManyWithoutApp_user_mentor_feedback_me
 }
 
 export type mentor_feedbackCreateManyWorkshopInput = {
-  id: string
+  id?: string
   mentorId: string
   apprenticeId: string
   rating: number
   comment?: string | null
   isAnonymous?: boolean
-  status?: $Enums.FeedbackStatus
+  status?: string
   reportedAt?: Date | string | null
   reportedBy?: string | null
   reportReason?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type mentor_feedbackUpdateWithoutWorkshopInput = {
@@ -1004,14 +994,14 @@ export type mentor_feedbackUpdateWithoutWorkshopInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  app_user_mentor_feedback_apprenticeIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_apprenticeIdToapp_userNestedInput
-  app_user_mentor_feedback_mentorIdToapp_user?: Prisma.app_userUpdateOneRequiredWithoutMentor_feedback_mentor_feedback_mentorIdToapp_userNestedInput
+  mentor?: Prisma.app_userUpdateOneRequiredWithoutFeedback_as_mentorNestedInput
+  apprentice?: Prisma.app_userUpdateOneRequiredWithoutFeedback_as_apprenticeNestedInput
 }
 
 export type mentor_feedbackUncheckedUpdateWithoutWorkshopInput = {
@@ -1021,7 +1011,7 @@ export type mentor_feedbackUncheckedUpdateWithoutWorkshopInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1036,7 +1026,7 @@ export type mentor_feedbackUncheckedUpdateManyWithoutWorkshopInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   reportedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reportedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1060,9 +1050,9 @@ export type mentor_feedbackSelect<ExtArgs extends runtime.Types.Extensions.Inter
   reportReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  app_user_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  app_user_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.mentor_feedback$workshopArgs<ExtArgs>
+  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  workshop?: boolean | Prisma.workshopDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mentor_feedback"]>
 
 export type mentor_feedbackSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1079,9 +1069,9 @@ export type mentor_feedbackSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   reportReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  app_user_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  app_user_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.mentor_feedback$workshopArgs<ExtArgs>
+  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  workshop?: boolean | Prisma.workshopDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mentor_feedback"]>
 
 export type mentor_feedbackSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1098,9 +1088,9 @@ export type mentor_feedbackSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   reportReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  app_user_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  app_user_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.mentor_feedback$workshopArgs<ExtArgs>
+  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  workshop?: boolean | Prisma.workshopDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mentor_feedback"]>
 
 export type mentor_feedbackSelectScalar = {
@@ -1121,37 +1111,37 @@ export type mentor_feedbackSelectScalar = {
 
 export type mentor_feedbackOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mentorId" | "apprenticeId" | "workshopId" | "rating" | "comment" | "isAnonymous" | "status" | "reportedAt" | "reportedBy" | "reportReason" | "createdAt" | "updatedAt", ExtArgs["result"]["mentor_feedback"]>
 export type mentor_feedbackInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  app_user_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  app_user_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.mentor_feedback$workshopArgs<ExtArgs>
+  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  workshop?: boolean | Prisma.workshopDefaultArgs<ExtArgs>
 }
 export type mentor_feedbackIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  app_user_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  app_user_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.mentor_feedback$workshopArgs<ExtArgs>
+  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  workshop?: boolean | Prisma.workshopDefaultArgs<ExtArgs>
 }
 export type mentor_feedbackIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  app_user_mentor_feedback_apprenticeIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  app_user_mentor_feedback_mentorIdToapp_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  workshop?: boolean | Prisma.mentor_feedback$workshopArgs<ExtArgs>
+  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  workshop?: boolean | Prisma.workshopDefaultArgs<ExtArgs>
 }
 
 export type $mentor_feedbackPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "mentor_feedback"
   objects: {
-    app_user_mentor_feedback_apprenticeIdToapp_user: Prisma.$app_userPayload<ExtArgs>
-    app_user_mentor_feedback_mentorIdToapp_user: Prisma.$app_userPayload<ExtArgs>
-    workshop: Prisma.$workshopPayload<ExtArgs> | null
+    mentor: Prisma.$app_userPayload<ExtArgs>
+    apprentice: Prisma.$app_userPayload<ExtArgs>
+    workshop: Prisma.$workshopPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     mentorId: string
     apprenticeId: string
-    workshopId: string | null
+    workshopId: string
     rating: number
     comment: string | null
     isAnonymous: boolean
-    status: $Enums.FeedbackStatus
+    status: string
     reportedAt: Date | null
     reportedBy: string | null
     reportReason: string | null
@@ -1551,9 +1541,9 @@ readonly fields: mentor_feedbackFieldRefs;
  */
 export interface Prisma__mentor_feedbackClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  app_user_mentor_feedback_apprenticeIdToapp_user<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  app_user_mentor_feedback_mentorIdToapp_user<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  workshop<T extends Prisma.mentor_feedback$workshopArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.mentor_feedback$workshopArgs<ExtArgs>>): Prisma.Prisma__workshopClient<runtime.Types.Result.GetResult<Prisma.$workshopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  mentor<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  apprentice<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  workshop<T extends Prisma.workshopDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshopDefaultArgs<ExtArgs>>): Prisma.Prisma__workshopClient<runtime.Types.Result.GetResult<Prisma.$workshopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1590,7 +1580,7 @@ export interface mentor_feedbackFieldRefs {
   readonly rating: Prisma.FieldRef<"mentor_feedback", 'Int'>
   readonly comment: Prisma.FieldRef<"mentor_feedback", 'String'>
   readonly isAnonymous: Prisma.FieldRef<"mentor_feedback", 'Boolean'>
-  readonly status: Prisma.FieldRef<"mentor_feedback", 'FeedbackStatus'>
+  readonly status: Prisma.FieldRef<"mentor_feedback", 'String'>
   readonly reportedAt: Prisma.FieldRef<"mentor_feedback", 'DateTime'>
   readonly reportedBy: Prisma.FieldRef<"mentor_feedback", 'String'>
   readonly reportReason: Prisma.FieldRef<"mentor_feedback", 'String'>
@@ -1989,25 +1979,6 @@ export type mentor_feedbackDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many mentor_feedbacks to delete.
    */
   limit?: number
-}
-
-/**
- * mentor_feedback.workshop
- */
-export type mentor_feedback$workshopArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the workshop
-   */
-  select?: Prisma.workshopSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the workshop
-   */
-  omit?: Prisma.workshopOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.workshopInclude<ExtArgs> | null
-  where?: Prisma.workshopWhereInput
 }
 
 /**

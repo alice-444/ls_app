@@ -124,14 +124,14 @@ export const workshopFeedbackRouter = router({
       });
     }),
 
-  dismissReport: adminProcedure
+  approveFeedback: adminProcedure
     .input(z.object({ feedbackId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const result = await container.workshopFeedbackService.dismissReport(
+      const result = await container.workshopFeedbackService.approveFeedback(
         input.feedbackId
       );
       return handleRouterResult(result, {
-        operation: "dismissReport",
+        operation: "approveFeedback",
         userId: ctx.session.user.id,
         resourceId: input.feedbackId,
       });

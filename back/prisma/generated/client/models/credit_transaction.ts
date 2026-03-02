@@ -36,28 +36,28 @@ export type Credit_transactionSumAggregateOutputType = {
 
 export type Credit_transactionMinAggregateOutputType = {
   id: string | null
-  userId: string | null
+  appUserId: string | null
   amount: number | null
-  type: $Enums.CreditTransactionType | null
   description: string | null
+  type: $Enums.CreditTransactionType | null
   createdAt: Date | null
 }
 
 export type Credit_transactionMaxAggregateOutputType = {
   id: string | null
-  userId: string | null
+  appUserId: string | null
   amount: number | null
-  type: $Enums.CreditTransactionType | null
   description: string | null
+  type: $Enums.CreditTransactionType | null
   createdAt: Date | null
 }
 
 export type Credit_transactionCountAggregateOutputType = {
   id: number
-  userId: number
+  appUserId: number
   amount: number
-  type: number
   description: number
+  type: number
   createdAt: number
   _all: number
 }
@@ -73,28 +73,28 @@ export type Credit_transactionSumAggregateInputType = {
 
 export type Credit_transactionMinAggregateInputType = {
   id?: true
-  userId?: true
+  appUserId?: true
   amount?: true
-  type?: true
   description?: true
+  type?: true
   createdAt?: true
 }
 
 export type Credit_transactionMaxAggregateInputType = {
   id?: true
-  userId?: true
+  appUserId?: true
   amount?: true
-  type?: true
   description?: true
+  type?: true
   createdAt?: true
 }
 
 export type Credit_transactionCountAggregateInputType = {
   id?: true
-  userId?: true
+  appUserId?: true
   amount?: true
-  type?: true
   description?: true
+  type?: true
   createdAt?: true
   _all?: true
 }
@@ -187,10 +187,10 @@ export type credit_transactionGroupByArgs<ExtArgs extends runtime.Types.Extensio
 
 export type Credit_transactionGroupByOutputType = {
   id: string
-  userId: string
+  appUserId: string
   amount: number
-  type: $Enums.CreditTransactionType
   description: string
+  type: $Enums.CreditTransactionType
   createdAt: Date
   _count: Credit_transactionCountAggregateOutputType | null
   _avg: Credit_transactionAvgAggregateOutputType | null
@@ -219,20 +219,20 @@ export type credit_transactionWhereInput = {
   OR?: Prisma.credit_transactionWhereInput[]
   NOT?: Prisma.credit_transactionWhereInput | Prisma.credit_transactionWhereInput[]
   id?: Prisma.StringFilter<"credit_transaction"> | string
-  userId?: Prisma.StringFilter<"credit_transaction"> | string
+  appUserId?: Prisma.StringFilter<"credit_transaction"> | string
   amount?: Prisma.IntFilter<"credit_transaction"> | number
-  type?: Prisma.EnumCreditTransactionTypeFilter<"credit_transaction"> | $Enums.CreditTransactionType
   description?: Prisma.StringFilter<"credit_transaction"> | string
+  type?: Prisma.EnumCreditTransactionTypeFilter<"credit_transaction"> | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFilter<"credit_transaction"> | Date | string
   app_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
 }
 
 export type credit_transactionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   app_user?: Prisma.app_userOrderByWithRelationInput
 }
@@ -242,20 +242,20 @@ export type credit_transactionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.credit_transactionWhereInput | Prisma.credit_transactionWhereInput[]
   OR?: Prisma.credit_transactionWhereInput[]
   NOT?: Prisma.credit_transactionWhereInput | Prisma.credit_transactionWhereInput[]
-  userId?: Prisma.StringFilter<"credit_transaction"> | string
+  appUserId?: Prisma.StringFilter<"credit_transaction"> | string
   amount?: Prisma.IntFilter<"credit_transaction"> | number
-  type?: Prisma.EnumCreditTransactionTypeFilter<"credit_transaction"> | $Enums.CreditTransactionType
   description?: Prisma.StringFilter<"credit_transaction"> | string
+  type?: Prisma.EnumCreditTransactionTypeFilter<"credit_transaction"> | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFilter<"credit_transaction"> | Date | string
   app_user?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
 }, "id">
 
 export type credit_transactionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.credit_transactionCountOrderByAggregateInput
   _avg?: Prisma.credit_transactionAvgOrderByAggregateInput
@@ -269,72 +269,72 @@ export type credit_transactionScalarWhereWithAggregatesInput = {
   OR?: Prisma.credit_transactionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.credit_transactionScalarWhereWithAggregatesInput | Prisma.credit_transactionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"credit_transaction"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"credit_transaction"> | string
+  appUserId?: Prisma.StringWithAggregatesFilter<"credit_transaction"> | string
   amount?: Prisma.IntWithAggregatesFilter<"credit_transaction"> | number
-  type?: Prisma.EnumCreditTransactionTypeWithAggregatesFilter<"credit_transaction"> | $Enums.CreditTransactionType
   description?: Prisma.StringWithAggregatesFilter<"credit_transaction"> | string
+  type?: Prisma.EnumCreditTransactionTypeWithAggregatesFilter<"credit_transaction"> | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"credit_transaction"> | Date | string
 }
 
 export type credit_transactionCreateInput = {
-  id: string
+  id?: string
   amount: number
-  type: $Enums.CreditTransactionType
   description: string
+  type: $Enums.CreditTransactionType
   createdAt?: Date | string
-  app_user: Prisma.app_userCreateNestedOneWithoutCredit_transactionsInput
+  app_user: Prisma.app_userCreateNestedOneWithoutCreditTransactionsInput
 }
 
 export type credit_transactionUncheckedCreateInput = {
-  id: string
-  userId: string
+  id?: string
+  appUserId: string
   amount: number
-  type: $Enums.CreditTransactionType
   description: string
+  type: $Enums.CreditTransactionType
   createdAt?: Date | string
 }
 
 export type credit_transactionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
-  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  app_user?: Prisma.app_userUpdateOneRequiredWithoutCredit_transactionsNestedInput
+  app_user?: Prisma.app_userUpdateOneRequiredWithoutCreditTransactionsNestedInput
 }
 
 export type credit_transactionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  appUserId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
-  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type credit_transactionCreateManyInput = {
-  id: string
-  userId: string
+  id?: string
+  appUserId: string
   amount: number
-  type: $Enums.CreditTransactionType
   description: string
+  type: $Enums.CreditTransactionType
   createdAt?: Date | string
 }
 
 export type credit_transactionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
-  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type credit_transactionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  appUserId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
-  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -350,10 +350,10 @@ export type credit_transactionOrderByRelationAggregateInput = {
 
 export type credit_transactionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -363,19 +363,19 @@ export type credit_transactionAvgOrderByAggregateInput = {
 
 export type credit_transactionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type credit_transactionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  appUserId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -430,18 +430,18 @@ export type EnumCreditTransactionTypeFieldUpdateOperationsInput = {
 }
 
 export type credit_transactionCreateWithoutApp_userInput = {
-  id: string
+  id?: string
   amount: number
-  type: $Enums.CreditTransactionType
   description: string
+  type: $Enums.CreditTransactionType
   createdAt?: Date | string
 }
 
 export type credit_transactionUncheckedCreateWithoutApp_userInput = {
-  id: string
+  id?: string
   amount: number
-  type: $Enums.CreditTransactionType
   description: string
+  type: $Enums.CreditTransactionType
   createdAt?: Date | string
 }
 
@@ -476,42 +476,42 @@ export type credit_transactionScalarWhereInput = {
   OR?: Prisma.credit_transactionScalarWhereInput[]
   NOT?: Prisma.credit_transactionScalarWhereInput | Prisma.credit_transactionScalarWhereInput[]
   id?: Prisma.StringFilter<"credit_transaction"> | string
-  userId?: Prisma.StringFilter<"credit_transaction"> | string
+  appUserId?: Prisma.StringFilter<"credit_transaction"> | string
   amount?: Prisma.IntFilter<"credit_transaction"> | number
-  type?: Prisma.EnumCreditTransactionTypeFilter<"credit_transaction"> | $Enums.CreditTransactionType
   description?: Prisma.StringFilter<"credit_transaction"> | string
+  type?: Prisma.EnumCreditTransactionTypeFilter<"credit_transaction"> | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFilter<"credit_transaction"> | Date | string
 }
 
 export type credit_transactionCreateManyApp_userInput = {
-  id: string
+  id?: string
   amount: number
-  type: $Enums.CreditTransactionType
   description: string
+  type: $Enums.CreditTransactionType
   createdAt?: Date | string
 }
 
 export type credit_transactionUpdateWithoutApp_userInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
-  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type credit_transactionUncheckedUpdateWithoutApp_userInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
-  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type credit_transactionUncheckedUpdateManyWithoutApp_userInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
-  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCreditTransactionTypeFieldUpdateOperationsInput | $Enums.CreditTransactionType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -519,44 +519,44 @@ export type credit_transactionUncheckedUpdateManyWithoutApp_userInput = {
 
 export type credit_transactionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  appUserId?: boolean
   amount?: boolean
-  type?: boolean
   description?: boolean
+  type?: boolean
   createdAt?: boolean
   app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["credit_transaction"]>
 
 export type credit_transactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  appUserId?: boolean
   amount?: boolean
-  type?: boolean
   description?: boolean
+  type?: boolean
   createdAt?: boolean
   app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["credit_transaction"]>
 
 export type credit_transactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  appUserId?: boolean
   amount?: boolean
-  type?: boolean
   description?: boolean
+  type?: boolean
   createdAt?: boolean
   app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["credit_transaction"]>
 
 export type credit_transactionSelectScalar = {
   id?: boolean
-  userId?: boolean
+  appUserId?: boolean
   amount?: boolean
-  type?: boolean
   description?: boolean
+  type?: boolean
   createdAt?: boolean
 }
 
-export type credit_transactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "amount" | "type" | "description" | "createdAt", ExtArgs["result"]["credit_transaction"]>
+export type credit_transactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appUserId" | "amount" | "description" | "type" | "createdAt", ExtArgs["result"]["credit_transaction"]>
 export type credit_transactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   app_user?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
 }
@@ -574,10 +574,10 @@ export type $credit_transactionPayload<ExtArgs extends runtime.Types.Extensions.
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    userId: string
+    appUserId: string
     amount: number
-    type: $Enums.CreditTransactionType
     description: string
+    type: $Enums.CreditTransactionType
     createdAt: Date
   }, ExtArgs["result"]["credit_transaction"]>
   composites: {}
@@ -1004,10 +1004,10 @@ export interface Prisma__credit_transactionClient<T, Null = never, ExtArgs exten
  */
 export interface credit_transactionFieldRefs {
   readonly id: Prisma.FieldRef<"credit_transaction", 'String'>
-  readonly userId: Prisma.FieldRef<"credit_transaction", 'String'>
+  readonly appUserId: Prisma.FieldRef<"credit_transaction", 'String'>
   readonly amount: Prisma.FieldRef<"credit_transaction", 'Int'>
-  readonly type: Prisma.FieldRef<"credit_transaction", 'CreditTransactionType'>
   readonly description: Prisma.FieldRef<"credit_transaction", 'String'>
+  readonly type: Prisma.FieldRef<"credit_transaction", 'CreditTransactionType'>
   readonly createdAt: Prisma.FieldRef<"credit_transaction", 'DateTime'>
 }
     
