@@ -15,7 +15,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
   async findByAuthUserId(
     userId: string
   ): Promise<{ id: string; deletedAt: Date | null } | null> {
-    const row = await (this.prisma as any).app_user.findUnique({
+    const row = await this.prisma.user.findUnique({
       where: { userId },
       select: { id: true, deletedAt: true },
     });
@@ -28,7 +28,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     when: Date,
     reason?: string
   ): Promise<void> {
-    await (this.prisma as any).app_user.update({
+    await this.prisma.user.update({
       where: { id: appUserId },
       data: {
         deletedAt: when,
@@ -39,7 +39,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
   }
 
   async isAlreadyDeleted(appUserId: string): Promise<boolean> {
-    const row = await (this.prisma as any).app_user.findUnique({
+    const row = await this.prisma.user.findUnique({
       where: { id: appUserId },
       select: { deletedAt: true },
     });
@@ -51,7 +51,7 @@ export class PrismaAuthUserRepository implements AuthUserRepository {
   constructor(private readonly prisma: any) {}
 
   async disable(userId: string, when: Date): Promise<void> {
-    await (this.prisma as any).user.update({
+    await this.prisma.user.update({
       where: { id: userId },
       data: { isDisabled: true, updatedAt: when } as any,
     });

@@ -32,7 +32,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };
@@ -64,7 +63,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };
@@ -81,7 +79,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };
@@ -103,7 +100,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     }));
@@ -113,7 +109,6 @@ export class PrismaConversationRepository implements IConversationRepository {
     id: string;
     participant1Id: string;
     participant2Id: string;
-    workshopId?: string | null;
     updatedAt: Date;
   }): Promise<ConversationEntity> {
     const conversation = await this.prisma.conversation.create({
@@ -124,7 +119,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };
@@ -135,7 +129,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: string;
       participant1Id: string;
       participant2Id: string;
-      workshopId?: string | null;
       updatedAt: Date;
     },
     tx: any
@@ -148,7 +141,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };
@@ -156,10 +148,7 @@ export class PrismaConversationRepository implements IConversationRepository {
 
   async update(
     conversationId: string,
-    data: {
-      workshopId?: string | null;
-      updatedAt: Date;
-    }
+    data: { updatedAt: Date }
   ): Promise<ConversationEntity> {
     const conversation = await this.prisma.conversation.update({
       where: { id: conversationId },
@@ -170,7 +159,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };
@@ -178,10 +166,7 @@ export class PrismaConversationRepository implements IConversationRepository {
 
   async updateWithTransaction(
     conversationId: string,
-    data: {
-      workshopId?: string | null;
-      updatedAt: Date;
-    },
+    data: { updatedAt: Date },
     tx: any
   ): Promise<ConversationEntity> {
     const conversation = await tx.conversation.update({
@@ -193,7 +178,6 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
-      workshopId: conversation.workshopId || null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };

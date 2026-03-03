@@ -6,27 +6,19 @@ import type {
 } from "./workshop-request.repository.interface";
 
 const WORKSHOP_REQUEST_INCLUDE = {
-  app_user_workshop_request_apprenticeIdToapp_user: {
-    include: {
-      user: {
-        select: { id: true, name: true, email: true },
-      },
-    },
+  user_workshop_request_apprenticeIdTouser: {
+    select: { id: true, name: true, email: true, userId: true },
   },
-  app_user_workshop_request_mentorIdToapp_user: {
-    include: {
-      user: {
-        select: { id: true, name: true, email: true },
-      },
-    },
+  user_workshop_request_mentorIdTouser: {
+    select: { id: true, name: true, email: true, userId: true },
   },
 } as const;
 
 function mapToEntity(raw: any): WorkshopRequestEntity {
   return {
     ...raw,
-    apprentice: raw.app_user_workshop_request_apprenticeIdToapp_user,
-    mentor: raw.app_user_workshop_request_mentorIdToapp_user,
+    apprentice: raw.user_workshop_request_apprenticeIdTouser,
+    mentor: raw.user_workshop_request_mentorIdTouser,
   } as WorkshopRequestEntity;
 }
 

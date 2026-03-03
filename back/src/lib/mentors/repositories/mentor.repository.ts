@@ -9,7 +9,7 @@ export class PrismaMentorRepository implements IMentorRepository {
   constructor(private readonly prisma: any) {}
 
   async findPublishedMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await (this.prisma as any).app_user.findUnique({
+    const mentor = await this.prisma.user.findUnique({
       where: { id },
       include: {
         user: {
@@ -30,7 +30,7 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await (this.prisma as any).app_user.findFirst({
+    const mentor = await this.prisma.user.findFirst({
       where: {
         OR: [{ id }, { userId: id }],
       },
@@ -53,7 +53,7 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findApprenticeByUserId(userId: string): Promise<MentorEntity | null> {
-    const apprentice = await (this.prisma as any).app_user.findUnique({
+    const apprentice = await this.prisma.user.findUnique({
       where: { userId },
       include: {
         user: {
@@ -87,7 +87,7 @@ export class PrismaMentorRepository implements IMentorRepository {
         createdAt: "desc",
       },
       include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
+        user_mentor_feedback_apprenticeIdTouser: {
           include: {
             user: {
               select: {
@@ -110,7 +110,7 @@ export class PrismaMentorRepository implements IMentorRepository {
 
     return feedbacks.map((f: any) => ({
       ...f,
-      apprentice: f.app_user_mentor_feedback_apprenticeIdToapp_user,
+      apprentice: f.user_mentor_feedback_apprenticeIdTouser,
     })) as MentorFeedbackEntity[];
   }
 

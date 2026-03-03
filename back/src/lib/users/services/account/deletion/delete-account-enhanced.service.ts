@@ -95,7 +95,7 @@ export class DeleteAccountEnhancedService
           },
         });
 
-        await tx.app_user.update({
+        await tx.user.update({
           where: { userId },
           data: {
             photoUrl: null,
