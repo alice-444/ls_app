@@ -15,7 +15,8 @@ export default function InfoPage() {
   });
 
   const infoLinks = [
-    { title: "Foire aux questions", href: "/help" },
+    { title: "Foire aux questions", href: "/faq" },
+    { title: "Centre d'aide", href: "/help" },
     { title: "Conditions d'utilisation générales", href: "/terms" },
     { title: "Mentions légales", href: "/legal" },
     {
@@ -44,7 +45,44 @@ export default function InfoPage() {
         </p>
       </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="lg:col-span-2 bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl p-6 sm:p-8 space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#26547c] dark:text-[#e6e6e6]">
+            À propos de LearnSup
+          </h2>
+          <p className="text-[#26547c] dark:text-[#e6e6e6] leading-relaxed">
+            LearnSup est une plateforme d'apprentissage solidaire née de la
+            volonté de rendre le soutien scolaire et l'échange de compétences
+            accessibles à tous les étudiants.
+          </p>
+          <p className="text-[#26547c] dark:text-[#e6e6e6] leading-relaxed">
+            Notre mission est de connecter des mentors passionnés avec des
+            apprenants motivés dans un environnement bienveillant et structuré.
+            Que vous soyez là pour approfondir vos connaissances ou pour
+            partager votre expertise, LearnSup vous offre les outils nécessaires
+            pour réussir.
+          </p>
+        </div>
+
+        <div className="bg-[#FF8C42]/10 dark:bg-[#FF8C42]/5 border-2 border-[#FF8C42]/20 rounded-2xl p-6 sm:p-8 flex flex-col justify-center items-center text-center space-y-4">
+          <h3 className="text-xl font-bold text-[#26547c] dark:text-[#e6e6e6]">
+            Besoin d'aide ?
+          </h3>
+          <p className="text-[#26547c]/80 dark:text-[#e6e6e6]/80 text-sm">
+            Notre équipe est disponible pour répondre à toutes vos questions.
+          </p>
+          <Link href="/support-request" className="w-full">
+            <button className="w-full bg-[#FF8C42] hover:bg-[#FF8C42]/90 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-md">
+              Nous contacter
+            </button>
+          </Link>
+        </div>
+      </div>
+
       <div className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl p-5 sm:p-8">
+        <h2 className="text-xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-6">
+          Liens utiles
+        </h2>
         <div className="flex flex-col gap-4">
           {infoLinks.map((link) => (
             <Link
