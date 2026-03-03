@@ -126,15 +126,26 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const supportRequest = await prisma.support_request.create({
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Authentification requise pour soumettre une demande de support" },
+        { status: 401 }
+      );
+    }
+
+    const appUser = await container.appUserRepository.findByUserId(userId);
+    if (!appUser) {
+      return NextResponse.json(
+        { error: "Utilisateur non trouvé" },
+        { status: 404 }
+      );
+    }
+
+    const supportRequest = await (prisma as any).support_request.create({
       data: {
-        id: randomUUID(),
-        userId: userId || null,
-        email: validation.data.email,
+        appUserId: appUser.id,
         subject: validation.data.subject,
-        description: validation.data.description,
-        problemType: validation.data.problemType,
-        attachments: attachments.length > 0 ? attachments : undefined,
+        message: `${validation.data.problemType}: ${validation.data.description}`,
         status: "PENDING",
       },
     });

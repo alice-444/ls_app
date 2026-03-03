@@ -19,7 +19,7 @@ export class PrismaCreditTransactionRepository
     }
   ): Promise<CreditTransaction[]> {
     const transactions = await this.prisma.credit_transaction.findMany({
-      where: { userId },
+      where: { appUserId: userId },
       orderBy: { createdAt: options?.orderBy || "desc" },
       take: options?.limit,
       skip: options?.offset,
@@ -27,7 +27,7 @@ export class PrismaCreditTransactionRepository
 
     return transactions.map((t) => ({
       id: t.id,
-      userId: t.userId,
+      userId: t.appUserId,
       amount: t.amount,
       type: t.type,
       description: t.description,
@@ -44,7 +44,7 @@ export class PrismaCreditTransactionRepository
     }
   ): Promise<CreditTransaction | null> {
     const where: any = {
-      userId,
+      appUserId: userId,
       type,
     };
 
@@ -63,7 +63,7 @@ export class PrismaCreditTransactionRepository
 
     return {
       id: transaction.id,
-      userId: transaction.userId,
+      userId: transaction.appUserId,
       amount: transaction.amount,
       type: transaction.type,
       description: transaction.description,
@@ -73,7 +73,7 @@ export class PrismaCreditTransactionRepository
 
   async countByUserId(userId: string): Promise<number> {
     return this.prisma.credit_transaction.count({
-      where: { userId },
+      where: { appUserId: userId },
     });
   }
 }

@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     }
     const { userId } = authResult;
 
-    const fullAppUser = await (prisma as any).app_user.findUnique({
+    const fullAppUser = await prisma.user.findUnique({
       where: { userId },
       select: {
         isPublished: true,
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ isPublished: false });
     }
 
-    const user = await (prisma as any).user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
         name: true,

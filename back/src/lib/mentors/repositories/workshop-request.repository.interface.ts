@@ -13,19 +13,15 @@ export interface WorkshopRequestEntity {
   updatedAt: Date;
   apprentice?: {
     id: string;
-    user?: {
-      id: string;
-      name: string | null;
-      email: string | null;
-    };
+    name: string | null;
+    email: string | null;
+    userId: string;
   };
   mentor?: {
     id: string;
-    user?: {
-      id: string;
-      name: string | null;
-      email: string | null;
-    };
+    name: string | null;
+    email: string | null;
+    userId: string;
   };
 }
 

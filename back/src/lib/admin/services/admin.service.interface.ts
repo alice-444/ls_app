@@ -10,4 +10,9 @@ export interface IAdminService {
   getOnboardingQueue(params?: { limit?: number; offset?: number }): Promise<any>;
   approveUser(appUserId: string): Promise<any>;
   rejectUser(appUserId: string, reason?: string): Promise<any>;
+  getAuditLogs(params: {
+    limit: number;
+    offset: number;
+    searchTerm?: string;
+  }): Promise<{ logs: any[]; total: number }>;
 }
