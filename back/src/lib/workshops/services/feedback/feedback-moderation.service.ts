@@ -24,6 +24,8 @@ export interface IFeedbackModerationService {
   deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 
   warnUser(feedbackId: string): Promise<Result<{ success: boolean }>>;
+
+  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>>;
 }
 
 export class FeedbackModerationService implements IFeedbackModerationService {
@@ -208,6 +210,32 @@ export class FeedbackModerationService implements IFeedbackModerationService {
       return handleError(
         error,
         createErrorContext("warnUser", {
+          resourceId: feedbackId,
+        })
+      );
+    }
+  }
+
+  async dismissReport(
+    feedbackId: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const feedback = await this.feedbackRepository.findById(feedbackId);
+      if (!feedback) {
+        return failure("Avis introuvable", 404);
+      }
+
+      if (feedback.status !== "UNDER_REVIEW") {
+        return failure("Cet avis n'est pas en cours de modération", 400);
+      }
+
+      await this.feedbackRepository.updateStatus(feedbackId, "ACTIVE");
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("dismissReport", {
           resourceId: feedbackId,
         })
       );

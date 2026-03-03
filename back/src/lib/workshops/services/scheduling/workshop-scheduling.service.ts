@@ -125,9 +125,9 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     if (input.location !== undefined) changes.push("le lieu");
 
     if (changes.length > 0) {
-      const mentorName = updatedWorkshop.creator?.user?.name || "le mentor";
+      const mentorName = updatedWorkshop.creator?.name || "le mentor";
       await this.dbNotificationService!.createNotification(
-        updatedWorkshop.apprentice.user.id,
+        updatedWorkshop.apprentice.id,
         {
           type: "workshop",
           title: "Modification de l'atelier",
@@ -207,14 +207,14 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
 
     if (this.dbNotificationService) {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
-      if (cancelledWorkshop?.creator?.user?.id) {
-        const apprenticeName = cancelledWorkshop.apprentice?.user?.name || "un apprenti";
+      if (cancelledWorkshop?.creator?.id) {
+        const apprenticeName = cancelledWorkshop.apprentice?.name || "un apprenti";
         const message = cancellationReason
           ? `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}". Raison: ${cancellationReason}`
           : `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}".`;
 
         await this.dbNotificationService.createNotification(
-          cancelledWorkshop.creator.user.id,
+          cancelledWorkshop.creator.id,
           {
             type: "workshop",
             title: "Participation annulée",
@@ -248,10 +248,10 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
 
     if (this.dbNotificationService) {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
-      if (cancelledWorkshop?.apprentice?.user?.id) {
-        const mentorName = cancelledWorkshop.creator?.user?.name || "le mentor";
+      if (cancelledWorkshop?.apprentice?.id) {
+        const mentorName = cancelledWorkshop.creator?.name || "le mentor";
         await this.dbNotificationService.createNotification(
-          cancelledWorkshop.apprentice.user.id,
+          cancelledWorkshop.apprentice.id,
           {
             type: "workshop",
             title: "Atelier annulé",
@@ -275,19 +275,12 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   ): Promise<void> {
     try {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
-      if (!cancelledWorkshop?.creator?.user?.id || !this.emailService) return;
-
-      const { container } = await import("../../../di/container");
-      const mentorUser = await container.prisma.user.findUnique({
-        where: { id: cancelledWorkshop.creator.user.id },
-        select: { email: true, name: true },
-      });
-
-      if (!mentorUser?.email) return;
+      const creator = cancelledWorkshop?.creator;
+      if (!cancelledWorkshop || !creator?.email || !this.emailService) return;
 
       const template = WorkshopEmailTemplates.cancellation({
-        recipientName: mentorUser.name || "Mentor",
-        apprenticeName: cancelledWorkshop.apprentice?.user?.name || "un apprenti",
+        recipientName: creator.name || "Mentor",
+        apprenticeName: cancelledWorkshop.apprentice?.name || "un apprenti",
         workshopTitle: cancelledWorkshop.title,
         workshopDate: cancelledWorkshop.date,
         workshopTime: cancelledWorkshop.time,
@@ -296,7 +289,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       });
 
       const emailResult = await this.emailService.sendEmail({
-        to: mentorUser.email,
+        to: creator.email,
         ...template,
       });
 

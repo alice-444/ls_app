@@ -8,14 +8,14 @@ import { generateInternalId } from "../../../utils/id-generator";
 import type { FeedbackStatus } from "../../../../../prisma/generated/client/enums";
 
 const FEEDBACK_INCLUDE = {
-  app_user_mentor_feedback_apprenticeIdToapp_user: {
+  user_mentor_feedback_apprenticeIdTouser: {
     include: {
       user: {
         select: { id: true, name: true, email: true, image: true },
       },
     },
   },
-  app_user_mentor_feedback_mentorIdToapp_user: {
+  user_mentor_feedback_mentorIdTouser: {
     include: {
       user: {
         select: { id: true, name: true },
@@ -182,8 +182,8 @@ export class PrismaWorkshopFeedbackRepository
 
   private mapToEntity(feedback: any): WorkshopFeedbackEntity {
     const apprenticeRaw =
-      feedback.app_user_mentor_feedback_apprenticeIdToapp_user;
-    const mentorRaw = feedback.app_user_mentor_feedback_mentorIdToapp_user;
+      feedback.user_mentor_feedback_apprenticeIdTouser;
+    const mentorRaw = feedback.user_mentor_feedback_mentorIdTouser;
 
     return {
       id: feedback.id,

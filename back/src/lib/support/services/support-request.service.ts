@@ -1,7 +1,5 @@
-import {
-  type support_request,
-  SupportRequestStatus,
-} from "../../../../prisma/generated/client/client";
+import { type support_request } from "../../../../prisma/generated/client/client";
+import { SupportRequestStatus } from "../types/support-types";
 import {
   CreateSupportRequestCommand,
   ISupportRequestService,
@@ -17,14 +15,16 @@ export class SupportRequestService implements ISupportRequestService {
 
   async createSupportRequest(command: CreateSupportRequestCommand): Promise<support_request> {
     const request = await this.supportRequestRepository.create({
-      ...command,
+      appUserId: command.appUserId,
+      subject: command.subject,
+      message: command.message,
       status: SupportRequestStatus.PENDING,
     });
 
     // Notify admins
     await this.notificationService.notifyAdmin(
       "NEW_SUPPORT_REQUEST",
-      `Nouvelle demande de support de ${command.email} : ${command.subject}`,
+      `Nouvelle demande de support : ${command.subject}`,
       `/admin/support?requestId=${request.id}`
     );
 

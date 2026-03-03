@@ -12,7 +12,7 @@ export class PrismaSupportRequestRepository implements ISupportRequestRepository
   constructor(private readonly prisma: PrismaClient) {}
 
   async create(data: CreateSupportRequestInput): Promise<support_request> {
-    return this.prisma.support_request.create({ data: { ...data, id: undefined as any } });
+    return this.prisma.support_request.create({ data });
   }
 
   async findById(id: string): Promise<support_request | null> {

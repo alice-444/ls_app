@@ -19,7 +19,6 @@ function mapToEntity(raw: any): MessageEntity {
   };
 }
 
-const NOT_DELETED = { deletedAt: null } as const;
 
 export class PrismaMessageRepository implements IMessageRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -38,7 +37,7 @@ export class PrismaMessageRepository implements IMessageRepository {
     offset?: number
   ): Promise<MessageEntity[]> {
     const messages = await this.prisma.message.findMany({
-      where: { conversationId, ...NOT_DELETED },
+      where: { conversationId },
       orderBy: { createdAt: "desc" },
       take: limit,
       skip: offset,
@@ -51,7 +50,7 @@ export class PrismaMessageRepository implements IMessageRepository {
     conversationId: string
   ): Promise<MessageEntity | null> {
     const message = await this.prisma.message.findFirst({
-      where: { conversationId, ...NOT_DELETED },
+      where: { conversationId },
       orderBy: { createdAt: "desc" },
     });
 
@@ -73,7 +72,6 @@ export class PrismaMessageRepository implements IMessageRepository {
         conversationId,
         senderId: { not: userId },
         isRead: false,
-        ...NOT_DELETED,
       },
     });
   }
@@ -91,7 +89,6 @@ export class PrismaMessageRepository implements IMessageRepository {
         conversationId: data.conversationId,
         senderId: data.senderId,
         content: data.content,
-        replyToMessageId: data.replyToMessageId || null,
       },
     });
 
@@ -106,7 +103,6 @@ export class PrismaMessageRepository implements IMessageRepository {
       conversationId,
       senderId: { not: userId },
       isRead: false,
-      ...NOT_DELETED,
     };
 
     const messages = await this.prisma.message.findMany({
@@ -139,7 +135,6 @@ export class PrismaMessageRepository implements IMessageRepository {
       data: {
         content: data.content,
         updatedAt: data.updatedAt,
-        editCount: data.editCount,
       },
     });
 
@@ -156,7 +151,6 @@ export class PrismaMessageRepository implements IMessageRepository {
       where: {
         conversationId,
         content: { contains: query, mode: "insensitive" },
-        ...NOT_DELETED,
       },
       orderBy: { createdAt: "desc" },
       take: limit,
@@ -166,9 +160,8 @@ export class PrismaMessageRepository implements IMessageRepository {
   }
 
   async delete(messageId: string): Promise<MessageEntity> {
-    const message = await this.prisma.message.update({
+    const message = await this.prisma.message.delete({
       where: { id: messageId },
-      data: { deletedAt: new Date() },
     });
 
     return mapToEntity(message);

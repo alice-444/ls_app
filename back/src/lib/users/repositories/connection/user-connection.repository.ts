@@ -34,7 +34,7 @@ export class PrismaUserConnectionRepository
       id: connection.id,
       requesterId: connection.requesterId,
       receiverId: connection.receiverId,
-      status: connection.status,
+      status: connection.status as "PENDING" | "ACCEPTED" | "REJECTED",
       createdAt: connection.createdAt,
       updatedAt: connection.updatedAt,
     };
@@ -51,7 +51,7 @@ export class PrismaUserConnectionRepository
       id: connection.id,
       requesterId: connection.requesterId,
       receiverId: connection.receiverId,
-      status: connection.status,
+      status: connection.status as "PENDING" | "ACCEPTED" | "REJECTED",
       createdAt: connection.createdAt,
       updatedAt: connection.updatedAt,
     };
@@ -72,7 +72,7 @@ export class PrismaUserConnectionRepository
       id: connection.id,
       requesterId: connection.requesterId,
       receiverId: connection.receiverId,
-      status: connection.status,
+      status: connection.status as "PENDING" | "ACCEPTED" | "REJECTED",
       createdAt: connection.createdAt,
       updatedAt: connection.updatedAt,
     };
@@ -94,7 +94,7 @@ export class PrismaUserConnectionRepository
       id: connection.id,
       requesterId: connection.requesterId,
       receiverId: connection.receiverId,
-      status: connection.status,
+      status: connection.status as "PENDING" | "ACCEPTED" | "REJECTED",
       createdAt: connection.createdAt,
       updatedAt: connection.updatedAt,
     };
@@ -123,7 +123,7 @@ export class PrismaUserConnectionRepository
       id: connection.id,
       requesterId: connection.requesterId,
       receiverId: connection.receiverId,
-      status: connection.status,
+      status: connection.status as "PENDING" | "ACCEPTED" | "REJECTED",
       createdAt: connection.createdAt,
       updatedAt: connection.updatedAt,
     }));
@@ -146,7 +146,7 @@ export class PrismaUserConnectionRepository
       id: connection.id,
       requesterId: connection.requesterId,
       receiverId: connection.receiverId,
-      status: connection.status,
+      status: connection.status as "PENDING" | "ACCEPTED" | "REJECTED",
       createdAt: connection.createdAt,
       updatedAt: connection.updatedAt,
     }));
@@ -169,7 +169,7 @@ export class PrismaUserConnectionRepository
       id: connection.id,
       requesterId: connection.requesterId,
       receiverId: connection.receiverId,
-      status: connection.status,
+      status: connection.status as "PENDING" | "ACCEPTED" | "REJECTED",
       createdAt: connection.createdAt,
       updatedAt: connection.updatedAt,
     }));

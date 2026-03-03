@@ -14,14 +14,11 @@ export class PrismaUserReportRepository implements IUserReportRepository {
     const report = await this.prisma.user_report.create({
       data: {
         id: generateInternalId(),
-        reporterId: input.reporterId,
-        reportedId: input.reportedId,
+        reporterUserId: input.reporterId,
+        reportedUserId: input.reportedId,
         reason: input.reason,
         details: input.details || null,
-        messageId: input.messageId || null,
         status: "PENDING",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     });
 
@@ -40,7 +37,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
 
   async findByReporter(reporterId: string): Promise<UserReportEntity[]> {
     const reports = await this.prisma.user_report.findMany({
-      where: { reporterId },
+      where: { reporterUserId: reporterId },
       orderBy: { createdAt: "desc" },
     });
 
@@ -49,7 +46,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
 
   async findByReported(reportedId: string): Promise<UserReportEntity[]> {
     const reports = await this.prisma.user_report.findMany({
-      where: { reportedId },
+      where: { reportedUserId: reportedId },
       orderBy: { createdAt: "desc" },
     });
 
@@ -68,28 +65,12 @@ export class PrismaUserReportRepository implements IUserReportRepository {
   async updateStatus(
     id: string,
     status: ReportStatus,
-    reviewedBy?: string | null,
-    adminNotes?: string | null
+    _reviewedBy?: string | null,
+    _adminNotes?: string | null
   ): Promise<UserReportEntity> {
-    const updateData: any = {
-      status,
-      updatedAt: new Date(),
-    };
-
-    if (status !== "PENDING") {
-      updateData.reviewedAt = new Date();
-      if (reviewedBy) {
-        updateData.reviewedBy = reviewedBy;
-      }
-    }
-
-    if (adminNotes !== undefined) {
-      updateData.adminNotes = adminNotes;
-    }
-
     const report = await this.prisma.user_report.update({
       where: { id },
-      data: updateData,
+      data: { status, updatedAt: new Date() },
     });
 
     return this.mapToEntity(report);
@@ -115,17 +96,17 @@ export class PrismaUserReportRepository implements IUserReportRepository {
   private mapToEntity(report: any): UserReportEntity {
     return {
       id: report.id,
-      reporterId: report.reporterId,
-      reportedId: report.reportedId,
+      reporterId: report.reporterUserId,
+      reportedId: report.reportedUserId,
       reason: report.reason,
       details: report.details,
-      messageId: report.messageId,
+      messageId: null,
       status: report.status,
       createdAt: report.createdAt,
       updatedAt: report.updatedAt,
-      reviewedAt: report.reviewedAt,
-      reviewedBy: report.reviewedBy,
-      adminNotes: report.adminNotes,
+      reviewedAt: null,
+      reviewedBy: null,
+      adminNotes: null,
     };
   }
 }

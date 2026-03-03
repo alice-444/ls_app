@@ -13,9 +13,9 @@ export class WorkshopTippingService implements IWorkshopTippingService {
     amount: number
   ): Promise<Result<{ success: boolean; newBalance: number }>> {
     try {
-      if (amount < 1 || amount > 100) {
+      if (amount < 1 || amount > 5) {
         return failure(
-          "Le montant du pourboire doit être compris entre 1 et 100 crédits.",
+          "Le montant du pourboire doit être de 1 à 5 crédits.",
           400
         );
       }

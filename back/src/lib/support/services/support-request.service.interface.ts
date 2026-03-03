@@ -1,12 +1,9 @@
 import type { support_request } from "../../../../prisma/generated/client/client";
 
 export interface CreateSupportRequestCommand {
-  userId?: string;
-  email: string;
+  appUserId: string;
   subject: string;
-  description: string;
-  problemType: string;
-  attachments?: any;
+  message: string;
 }
 
 export interface ISupportRequestService {

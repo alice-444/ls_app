@@ -41,7 +41,7 @@ export interface IWorkshopFeedbackService {
     offset?: number;
   }): Promise<Result<any>>;
 
-  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>>;
+  approveFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 
   deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 
