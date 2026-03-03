@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ProfProfileService } from "@/lib/auth/services/prof-profile.service";
+import { MentorProfileService } from "@/lib/auth/services/mentor-profile.service";
 import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
 import { profileRateLimit } from "@/lib/rate-limit";
@@ -12,7 +12,7 @@ import {
 } from "@/lib/api-helpers";
 
 const appUserRepository = new PrismaAppUserRepository(prisma);
-const service = new ProfProfileService(appUserRepository);
+const service = new MentorProfileService(appUserRepository);
 
 export async function POST(req: NextRequest) {
   try {
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     const { userId } = authResult;
 
     const fullAppUser = await prisma.user.findUnique({
-      where: { userId },
+      where: { id: userId },
       select: {
         isPublished: true,
         publishedAt: true,

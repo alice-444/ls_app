@@ -16,7 +16,7 @@ vi.mock("@/lib/auth-client", () => ({
   },
   customAuthClient: {
     uploadPhoto: vi.fn(),
-    saveProfProfile: vi.fn(),
+    saveMentorProfile: vi.fn(),
     publishProfile: vi.fn(),
     unpublishProfile: vi.fn(),
   },

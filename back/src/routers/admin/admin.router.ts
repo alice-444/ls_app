@@ -19,20 +19,20 @@ export const adminRouter = router({
     }),
 
   approveUser: adminProcedure
-    .input(z.object({ appUserId: z.string() }))
+    .input(z.object({ userId: z.string() }))
     .mutation(async ({ input }) => {
-      return await container.adminService.approveUser(input.appUserId);
+      return await container.adminService.approveUser(input.userId);
     }),
 
   rejectUser: adminProcedure
     .input(
       z.object({
-        appUserId: z.string(),
+        userId: z.string(),
         reason: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      return await container.adminService.rejectUser(input.appUserId, input.reason);
+      return await container.adminService.rejectUser(input.userId, input.reason);
     }),
 
   getAuditLogs: adminProcedure

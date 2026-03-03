@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextResponse } from "next/server";
 import { createRequest, getJson } from "../../../helpers/request";
-import { GET, POST } from "@/app/api/profile/role/prof/route";
+import { GET, POST } from "@/app/api/profile/role/mentor/route";
 
 vi.mock("@/lib/api-helpers", async (importOriginal) => {
   const actual =
@@ -15,7 +15,7 @@ vi.mock("@/lib/api-helpers", async (importOriginal) => {
 
 const { getAuthenticatedSession } = await import("@/lib/api-helpers");
 
-describe("GET /api/profile/role/prof", () => {
+describe("GET /api/profile/role/mentor", () => {
   beforeEach(() => {
     vi.mocked(getAuthenticatedSession).mockResolvedValue({
       ok: false,
@@ -24,7 +24,7 @@ describe("GET /api/profile/role/prof", () => {
   });
 
   it("returns 401 when not authenticated", async () => {
-    const req = createRequest("/api/profile/role/prof");
+    const req = createRequest("/api/profile/role/mentor");
     const res = await GET(req);
     expect(res.status).toBe(401);
     const data = await getJson<{ error?: string }>(res);
@@ -32,7 +32,7 @@ describe("GET /api/profile/role/prof", () => {
   });
 });
 
-describe("POST /api/profile/role/prof", () => {
+describe("POST /api/profile/role/mentor", () => {
   beforeEach(() => {
     vi.mocked(getAuthenticatedSession).mockResolvedValue({
       ok: false,
@@ -41,7 +41,7 @@ describe("POST /api/profile/role/prof", () => {
   });
 
   it("returns 401 when not authenticated", async () => {
-    const req = createRequest("/api/profile/role/prof", {
+    const req = createRequest("/api/profile/role/mentor", {
       method: "POST",
       body: {},
     });

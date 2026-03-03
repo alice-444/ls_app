@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     }
     const { userId } = authResult;
 
-    const appUser = await appUserRepository.findByUserId(userId);
+    const appUser = await appUserRepository.findByAppUserId(userId);
 
     if (!appUser) {
       return NextResponse.json({ role: null });

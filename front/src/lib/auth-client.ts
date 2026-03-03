@@ -65,7 +65,7 @@ export const customAuthClient = {
 
     return response.json();
   },
-  async saveProfProfile(data: {
+  async saveMentorProfile(data: {
     name: string;
     bio: string;
     domain: string;
@@ -77,7 +77,7 @@ export const customAuthClient = {
     mentorshipTopics?: string[] | null;
     calendlyLink?: string | null;
   }): Promise<{ success: boolean }> {
-		const response = await fetch(`${baseURL}/api/profile/role/prof`, {
+		const response = await fetch(`${baseURL}/api/profile/role/mentor`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

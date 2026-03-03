@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { buildDeletionPlan } from "@/lib/users/services/account/deletion/delete-account.usecase";
-import prisma from "../../../../../prisma";
+import prisma from "@/lib/prisma";
 import { DeleteUserAccountService } from "@/lib/users/services/account/deletion/delete-account.service";
 import {
   PrismaAccountRepository,
@@ -39,7 +39,7 @@ export async function DELETE(req: NextRequest) {
 
     const planResult = buildDeletionPlan({
       authUserId: userId,
-      appUserId: appUser.id,
+      userId: appUser.id,
       policy: { retentionDays: 30, requireReason: false },
       now: new Date(),
       reason,

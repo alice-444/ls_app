@@ -7,7 +7,7 @@ import type { AppUserRepository } from "../../users/repositories";
 import { sanitizeString } from "../../utils/sanitize";
 import { verifyUserExists, verifyProfUser } from "./user-helpers";
 
-export const profProfileSchema = z.object({
+export const mentorProfileSchema = z.object({
   name: z
     .string()
     .trim()
@@ -65,9 +65,9 @@ export const profProfileSchema = z.object({
     }, "Le lien doit être un lien Calendly valide (format: https://calendly.com/votre-nom)"),
 });
 
-export type ProfProfileInput = z.infer<typeof profProfileSchema>;
+export type MentorProfileInput = z.infer<typeof mentorProfileSchema>;
 
-export class ProfProfileService {
+export class MentorProfileService {
   constructor(private readonly appUserRepository: AppUserRepository) {}
 
   private async validatePhotoUrl(
@@ -98,7 +98,7 @@ export class ProfProfileService {
 
     const nameWithoutExt = sanitizedFileName.replace(/\.(jpg|jpeg|png)$/, "");
     const uuidPattern =
-      /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
+      /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
     const match = nameWithoutExt.match(uuidPattern);
 
     if (!match) {
@@ -125,7 +125,7 @@ export class ProfProfileService {
     return success(photoUrl);
   }
 
-  private sanitizeProfileData(data: ProfProfileInput) {
+  private sanitizeProfileData(data: MentorProfileInput) {
     return {
       name: sanitizeString(data.name, { maxLength: 100, trim: true }),
       bio: sanitizeString(data.bio, { maxLength: 2000, trim: true }),
@@ -141,7 +141,7 @@ export class ProfProfileService {
 
   private buildUpdateData(
     sanitized: ReturnType<typeof this.sanitizeProfileData>,
-    data: ProfProfileInput,
+    data: MentorProfileInput,
     photoUrl?: string
   ) {
     const updateData: any = {
@@ -167,7 +167,7 @@ export class ProfProfileService {
     userId: string,
     input: unknown
   ): Promise<Result<{ success: boolean }>> {
-    const validation = validateInput(profProfileSchema, input);
+    const validation = validateInput(mentorProfileSchema, input);
     if (!validation.ok) {
       return validation;
     }
@@ -234,7 +234,7 @@ export class ProfProfileService {
       }
 
       const fullProfile = await prisma.user.findUnique({
-        where: { userId },
+        where: { userId: userId },
         select: { bio: true, domain: true },
       });
 

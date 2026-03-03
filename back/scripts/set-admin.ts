@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 // Load .env before importing prisma (which reads DATABASE_URL)
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
-import { prisma } from "../prisma";
+import { prisma } from "../src/lib/prisma";
 
 async function main() {
   const email = process.argv[2];
@@ -16,30 +16,32 @@ async function main() {
 
   try {
     // 1. Trouver l'utilisateur par email
-    const user = await prisma.user.findUnique({
+    const account = await prisma.account.findUnique({
       where: { email },
-      include: { app_user: true }
+      include: { user: true }
     });
 
-    if (!user) {
-      console.error(`Utilisateur avec l'email ${email} non trouvé.`);
+    if (!account) {
+      console.error(`Compte avec l'email ${email} non trouvé.`);
       return;
     }
 
-    // 2. Mettre à jour ou créer l'app_user avec le rôle ADMIN
-    if (user.app_user) {
-      await prisma.app_user.update({
-        where: { userId: user.id },
+    // 2. Mettre à jour ou créer l'user avec le rôle ADMIN
+    if (account.user) {
+      await prisma.user.update({
+        where: { userId: account.accountId },
         data: { 
           role: "ADMIN",
           status: "ACTIVE" 
         }
       });
     } else {
-      await prisma.app_user.create({
+      await prisma.user.create({
         data: {
-          id: `admin_${user.id}`,
-          userId: user.id,
+          id: `admin_${account.accountId}`,
+          userId: account.accountId,
+          name: "Admin User",
+          email: account.email || `${account.accountId}@learnsup.com`,
           role: "ADMIN",
           status: "ACTIVE",
           createdAt: new Date(),

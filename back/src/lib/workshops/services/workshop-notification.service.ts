@@ -47,16 +47,6 @@ export class WorkshopNotificationService {
         return success({ notifiedCount: 0 });
       }
 
-      let apprenticeUserId = workshop.apprentice.user?.id;
-      if (!apprenticeUserId && this.appUserRepository) {
-        const apprenticeAppUser = await this.appUserRepository.findByAppUserId(
-          workshop.apprentice.id
-        );
-        if (apprenticeAppUser) {
-          apprenticeUserId = apprenticeAppUser.userId;
-        }
-      }
-
       const notificationData: WorkshopRescheduleNotificationData = {
         workshopId: workshop.id,
         workshopTitle: workshop.title,
@@ -65,9 +55,9 @@ export class WorkshopNotificationService {
         newDate,
         newTime,
         apprenticeId: workshop.apprentice.id,
-        apprenticeEmail: workshop.apprentice.user?.email || null,
-        apprenticeName: workshop.apprentice.user?.name || null,
-        apprenticeUserId: apprenticeUserId || undefined,
+        apprenticeEmail: workshop.apprentice.email || null,
+        apprenticeName: workshop.apprentice.name || null,
+        apprenticeUserId: workshop.apprentice.userId,
       };
 
       await this.sendRescheduleNotification(notificationData, senderUserId);
@@ -131,11 +121,11 @@ export class WorkshopNotificationService {
       let apprenticeEmail = data.apprenticeEmail;
 
       if (!apprenticeEmail && data.apprenticeUserId) {
-        const apprenticeUser = await container.prisma.user.findUnique({
-          where: { id: data.apprenticeUserId },
+        const apprenticeAppUser = await container.prisma.user.findUnique({
+          where: { userId: data.apprenticeUserId },
           select: { email: true },
         });
-        apprenticeEmail = apprenticeUser?.email || null;
+        apprenticeEmail = apprenticeAppUser?.email || null;
       }
 
       if (!apprenticeEmail) {

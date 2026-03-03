@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../../../prisma/generated/client/client";
+import { PrismaClient } from '@/lib/prisma';
 import { AdminStats, IAdminService } from "./admin.service.interface";
 
 export class AdminService implements IAdminService {
@@ -32,16 +32,16 @@ export class AdminService implements IAdminService {
     });
   }
 
-  async approveUser(appUserId: string): Promise<any> {
+  async approveUser(userId: string): Promise<any> {
     return this.prisma.user.update({
-      where: { id: appUserId },
+      where: { id: userId },
       data: { status: "ACTIVE" },
     });
   }
 
-  async rejectUser(appUserId: string, reason?: string): Promise<any> {
+  async rejectUser(userId: string, reason?: string): Promise<any> {
     return this.prisma.user.update({
-      where: { id: appUserId },
+      where: { id: userId },
       data: { status: "SUSPENDED", deletionReason: reason },
     });
   }

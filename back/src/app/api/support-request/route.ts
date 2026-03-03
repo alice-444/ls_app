@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
 
     const supportRequest = await (prisma as any).support_request.create({
       data: {
-        appUserId: appUser.id,
+        userId: appUser.id,
         subject: validation.data.subject,
         message: `${validation.data.problemType}: ${validation.data.description}`,
         status: "PENDING",

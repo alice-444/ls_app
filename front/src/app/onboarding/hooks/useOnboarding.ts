@@ -85,7 +85,7 @@ export function useOnboarding() {
         }
 
         // Save profile
-        await customAuthClient.saveProfProfile({
+        await customAuthClient.saveMentorProfile({
           name: data.name,
           bio: data.bio,
           domain: data.domain,
