@@ -2,10 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createRequest, getJson } from "../../helpers/request";
 import { POST } from "@/app/api/cron/create-feedback-notifications/route";
 
+const mockCreateFeedbackNotifications = vi.fn();
+
 vi.mock("@/lib/di/container", () => ({
   container: {
-    prisma: {
-      workshop: { findMany: vi.fn().mockResolvedValue([]) },
+    maintenanceService: {
+      createFeedbackNotifications: () => mockCreateFeedbackNotifications(),
     },
   },
 }));
@@ -15,6 +17,7 @@ describe("POST /api/cron/create-feedback-notifications", () => {
 
   beforeEach(() => {
     process.env.CRON_SECRET = validToken;
+    mockCreateFeedbackNotifications.mockResolvedValue({ created: 0, skipped: 0, timestamp: new Date().toISOString() });
   });
 
   afterEach(() => {
@@ -29,6 +32,7 @@ describe("POST /api/cron/create-feedback-notifications", () => {
     expect(res.status).toBe(401);
     const data = await getJson<{ error?: string }>(res);
     expect(data.error).toBe("Unauthorized");
+    expect(mockCreateFeedbackNotifications).not.toHaveBeenCalled();
   });
 
   it("returns 200 with notificationsCreated when authorized", async () => {
@@ -39,14 +43,10 @@ describe("POST /api/cron/create-feedback-notifications", () => {
     const res = await POST(req);
     expect(res.status).toBe(200);
     const data = await getJson<{
-      success?: boolean;
-      notificationsCreated?: number;
-      notificationsSkipped?: number;
-      timestamp?: string;
+      created?: number;
+      skipped?: number;
     }>(res);
-    expect(data.success).toBe(true);
-    expect(data.notificationsCreated).toBeDefined();
-    expect(data.notificationsSkipped).toBeDefined();
-    expect(data.timestamp).toBeDefined();
+    expect(data.created).toBe(0);
+    expect(mockCreateFeedbackNotifications).toHaveBeenCalled();
   });
 });

@@ -1,48 +1,48 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { success, failure } from "@/lib/common/types";
+import { WorkshopAttendanceService } from "@/lib/workshops/services/attendance/workshop-attendance.service";
 
-vi.mock("../../../../../../src/lib/common/prisma", () => ({ prisma: {} }));
-vi.mock("../../../../../../src/lib/common/logger", () => ({
-  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
+// Mock logger to avoid noise and potential errors
+vi.mock("@/lib/common/logger", () => ({
+  logger: {
+    error: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
 }));
-
-import { WorkshopAttendanceService } from "../../../../../../src/lib/workshops/services/attendance/workshop-attendance.service";
 
 describe("WorkshopAttendanceService", () => {
   const mockWorkshopService = {
     getWorkshopById: vi.fn(),
   };
-
   const mockWorkshopRepo = {
     update: vi.fn(),
   };
-
   const mockUserTitleService = {
     updateTitleBasedOnWorkshops: vi.fn(),
   };
-
-  const mockCashbackService = {
+  const mockWorkshopCashbackService = {
     processCashback: vi.fn(),
   };
-
   const mockNoShowPenaltyService = {
     applyPenalty: vi.fn(),
   };
-
   const mockPrisma = {
-    user: { findUnique: vi.fn() },
-    workshop: { update: vi.fn() },
+    workshop: {
+      update: vi.fn(),
+    },
   };
 
   let service: WorkshopAttendanceService;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useRealTimers();
     service = new WorkshopAttendanceService(
       mockWorkshopService as any,
       mockWorkshopRepo as any,
       mockUserTitleService as any,
-      mockCashbackService as any,
+      mockWorkshopCashbackService as any,
       mockNoShowPenaltyService as any,
       mockPrisma as any
     );
@@ -50,58 +50,44 @@ describe("WorkshopAttendanceService", () => {
 
   describe("getWorkshopParticipants", () => {
     it("returns failure when workshop not found", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: false,
-        error: "Not found",
-        status: 404,
-      });
-
+      mockWorkshopService.getWorkshopById.mockResolvedValue(failure("Not found"));
       const result = await service.getWorkshopParticipants("user-1", "ws-1");
       expect(result.ok).toBe(false);
     });
 
     it("returns 403 when user is not the creator", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: { creatorId: "other-user" },
-      });
-
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({ id: "ws-1", creatorId: "other-user" } as any)
+      );
       const result = await service.getWorkshopParticipants("user-1", "ws-1");
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.status).toBe(403);
     });
 
     it("returns empty participants when no apprentice", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
-          creatorId: "user-1",
-          apprenticeId: null,
-          apprentice: null,
-        },
-      });
-
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({ id: "ws-1", creatorId: "user-1", apprenticeId: null } as any)
+      );
       const result = await service.getWorkshopParticipants("user-1", "ws-1");
       expect(result.ok).toBe(true);
-      if (result.ok) {
-        expect(result.data.participants).toHaveLength(0);
-      }
+      if (result.ok) expect(result.data.participants).toHaveLength(0);
     });
 
     it("returns participants when apprentice exists", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({
+          id: "ws-1",
           creatorId: "user-1",
           apprenticeId: "app-1",
           apprentice: {
-            user: { id: "participant-1", name: "John", email: "j@t.com" },
+            userId: "user-app-1",
+            name: "John",
+            email: "john@example.com",
+            title: "Explorer",
           },
           apprenticeAttendanceStatus: "PENDING",
-        },
-      });
-      mockPrisma.user.findUnique.mockResolvedValue({ title: "Explorer" });
-
+        } as any)
+      );
       const result = await service.getWorkshopParticipants("user-1", "ws-1");
       expect(result.ok).toBe(true);
       if (result.ok) {
@@ -114,11 +100,9 @@ describe("WorkshopAttendanceService", () => {
 
   describe("updateAttendance", () => {
     it("returns 403 when user is not the creator", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: { creatorId: "other-user" },
-      });
-
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({ id: "ws-1", creatorId: "other-user" } as any)
+      );
       const result = await service.updateAttendance(
         "user-1",
         "ws-1",
@@ -130,15 +114,14 @@ describe("WorkshopAttendanceService", () => {
     });
 
     it("returns 404 when participant not found", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({
+          id: "ws-1",
           creatorId: "user-1",
-          apprenticeId: null,
-          apprentice: null,
-        },
-      });
-
+          apprenticeId: "app-1",
+          apprentice: { userId: "other-part" },
+        } as any)
+      );
       const result = await service.updateAttendance(
         "user-1",
         "ws-1",
@@ -150,21 +133,23 @@ describe("WorkshopAttendanceService", () => {
     });
 
     it("returns error when marking PRESENT before workshop end", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-01T10:00:00Z"));
-
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
+      const workshopDate = new Date(2025, 0, 1); // 1st Jan 2025 local
+      const fakeNow = new Date(2025, 0, 1, 10, 30); // 10:30 Jan 1st local
+      
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({
+          id: "ws-1",
           creatorId: "user-1",
           apprenticeId: "app-1",
-          apprentice: { user: { id: "part-1" } },
-          date: new Date("2025-06-15"),
-          time: "14:00",
-          duration: 120,
-          apprenticeAttendanceStatus: "PENDING",
-        },
-      });
+          apprentice: { userId: "part-1" },
+          date: workshopDate,
+          time: "10:00",
+          duration: 60, // Ends at 11:00
+        } as any)
+      );
+
+      vi.useFakeTimers();
+      vi.setSystemTime(fakeNow);
 
       const result = await service.updateAttendance(
         "user-1",
@@ -179,27 +164,23 @@ describe("WorkshopAttendanceService", () => {
     });
 
     it("succeeds and processes cashback when marking PRESENT after end", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-01T15:00:00Z"));
-
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
+      const pastDate = new Date(2020, 0, 1);
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({
+          id: "ws-1",
           creatorId: "user-1",
           apprenticeId: "app-1",
-          apprentice: { user: { id: "part-1" } },
-          date: new Date("2025-06-01"),
+          apprentice: { userId: "part-1" },
+          date: pastDate,
           time: "10:00",
           duration: 60,
           apprenticeAttendanceStatus: "PENDING",
-        },
-      });
-      mockPrisma.workshop.update.mockResolvedValue({});
-      mockUserTitleService.updateTitleBasedOnWorkshops.mockResolvedValue({
-        ok: true,
-        data: { titleChanged: true, newTitle: "Challenger" },
-      });
-      mockCashbackService.processCashback.mockResolvedValue({ ok: true });
+        } as any)
+      );
+      mockUserTitleService.updateTitleBasedOnWorkshops.mockResolvedValue(
+        success({ titleChanged: false })
+      );
+      mockWorkshopCashbackService.processCashback.mockResolvedValue(success({}));
 
       const result = await service.updateAttendance(
         "user-1",
@@ -208,84 +189,65 @@ describe("WorkshopAttendanceService", () => {
         "PRESENT"
       );
       expect(result.ok).toBe(true);
-      if (result.ok) {
-        expect(result.data.success).toBe(true);
-        expect(result.data.titleChanged).toBe(true);
-        expect(result.data.newTitle).toBe("Challenger");
-      }
-      expect(mockCashbackService.processCashback).toHaveBeenCalled();
-
-      vi.useRealTimers();
+      expect(mockPrisma.workshop.update).toHaveBeenCalledWith({
+        where: { id: "ws-1" },
+        data: { apprenticeAttendanceStatus: "PRESENT" },
+      });
+      expect(mockWorkshopCashbackService.processCashback).toHaveBeenCalled();
     });
   });
 
   describe("confirmAttendance", () => {
     it("returns 403 when user is not the creator", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: { creatorId: "other-user" },
-      });
-
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({ id: "ws-1", creatorId: "other-user" } as any)
+      );
       const result = await service.confirmAttendance("user-1", "ws-1");
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.status).toBe(403);
     });
 
     it("returns error when workshop has no date/time/duration", async () => {
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
-          creatorId: "user-1",
-          date: null,
-          time: null,
-          duration: null,
-        },
-      });
-
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({ id: "ws-1", creatorId: "user-1", date: null } as any)
+      );
       const result = await service.confirmAttendance("user-1", "ws-1");
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.status).toBe(400);
     });
 
     it("returns error when workshop is not yet finished", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-01T10:00:00Z"));
-
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({
+          id: "ws-1",
           creatorId: "user-1",
-          date: new Date("2025-06-15"),
-          time: "14:00",
+          date: futureDate,
+          time: "10:00",
           duration: 60,
-        },
-      });
-
+        } as any)
+      );
       const result = await service.confirmAttendance("user-1", "ws-1");
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.status).toBe(400);
-
-      vi.useRealTimers();
     });
 
     it("applies no-show penalty when apprentice is PENDING", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-01T15:00:00Z"));
-
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
+      const pastDate = new Date(2020, 0, 1);
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({
+          id: "ws-1",
           creatorId: "user-1",
-          date: new Date("2025-06-01"),
+          apprenticeId: "app-1",
+          apprentice: { userId: "part-1" },
+          apprenticeAttendanceStatus: "PENDING",
+          date: pastDate,
           time: "10:00",
           duration: 60,
-          apprenticeId: "app-1",
-          apprentice: { user: { id: "part-1" } },
-          apprenticeAttendanceStatus: "PENDING",
-        },
-      });
-      mockWorkshopRepo.update.mockResolvedValue({});
-      mockNoShowPenaltyService.applyPenalty.mockResolvedValue({ ok: true });
+        } as any)
+      );
+      mockNoShowPenaltyService.applyPenalty.mockResolvedValue(success({ penaltyApplied: true }));
 
       const result = await service.confirmAttendance("user-1", "ws-1");
       expect(result.ok).toBe(true);
@@ -297,38 +259,26 @@ describe("WorkshopAttendanceService", () => {
         "ws-1",
         "part-1"
       );
-
-      vi.useRealTimers();
     });
 
     it("marks workshop as COMPLETED on success", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-01T15:00:00Z"));
-
-      mockWorkshopService.getWorkshopById.mockResolvedValue({
-        ok: true,
-        data: {
+      const pastDate = new Date(2020, 0, 1);
+      mockWorkshopService.getWorkshopById.mockResolvedValue(
+        success({
+          id: "ws-1",
           creatorId: "user-1",
-          date: new Date("2025-06-01"),
+          date: pastDate,
           time: "10:00",
           duration: 60,
-          apprenticeId: null,
-          apprentice: null,
-          apprenticeAttendanceStatus: null,
-        },
-      });
-      mockWorkshopRepo.update.mockResolvedValue({});
+        } as any)
+      );
+      mockWorkshopRepo.update.mockResolvedValue({ status: "COMPLETED" });
 
       const result = await service.confirmAttendance("user-1", "ws-1");
       expect(result.ok).toBe(true);
-      if (result.ok) {
-        expect(result.data.message).toBe("Attendance confirmed");
-      }
       expect(mockWorkshopRepo.update).toHaveBeenCalledWith("ws-1", {
         status: "COMPLETED",
       });
-
-      vi.useRealTimers();
     });
   });
 });

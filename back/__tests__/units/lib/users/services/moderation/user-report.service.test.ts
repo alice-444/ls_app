@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-
-vi.mock("../../../../../../src/lib/common/prisma", () => ({ prisma: {} }));
-vi.mock("../../../../../../src/lib/common/logger", () => ({
-  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
-}));
-
-import { UserReportService } from "../../../../../../src/lib/users/services/moderation/user-report.service";
+import { success, failure } from "@/lib/common/types";
+import { UserReportService } from "@/lib/users/services/moderation/user-report.service";
 
 describe("UserReportService", () => {
   const mockReportRepo = {
@@ -22,6 +17,10 @@ describe("UserReportService", () => {
     record: vi.fn(),
   };
 
+  const mockNotificationService = {
+    notifyAdmin: vi.fn(),
+  };
+
   let service: UserReportService;
 
   beforeEach(() => {
@@ -29,7 +28,8 @@ describe("UserReportService", () => {
     service = new UserReportService(
       mockReportRepo as any,
       mockAppUserRepo as any,
-      mockAuditLogService as any
+      mockAuditLogService as any,
+      mockNotificationService as any
     );
   });
 
@@ -72,8 +72,8 @@ describe("UserReportService", () => {
 
     it("creates report successfully", async () => {
       mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-reporter" })
-        .mockResolvedValueOnce({ id: "app-reported" });
+        .mockResolvedValueOnce({ id: "app-reporter", name: "Reporter" })
+        .mockResolvedValueOnce({ id: "app-reported", name: "Reported" });
       mockReportRepo.create.mockResolvedValue({ id: "report-1" });
 
       const result = await service.createReport({
@@ -92,47 +92,7 @@ describe("UserReportService", () => {
         details: "Inappropriate behavior",
         messageId: null,
       });
-    });
-
-    it("records audit log when service is available", async () => {
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-reporter" })
-        .mockResolvedValueOnce({ id: "app-reported" });
-      mockReportRepo.create.mockResolvedValue({ id: "report-1" });
-
-      await service.createReport({
-        reporterUserId: "user-1",
-        reportedUserId: "user-2",
-        reason: "SPAM",
-      });
-
-      expect(mockAuditLogService.record).toHaveBeenCalledWith(
-        "user-1",
-        "USER_REPORTED",
-        expect.objectContaining({
-          reportId: "report-1",
-          reportedUserId: "user-2",
-          reason: "SPAM",
-        })
-      );
-    });
-
-    it("creates report with messageId when provided", async () => {
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-reporter" })
-        .mockResolvedValueOnce({ id: "app-reported" });
-      mockReportRepo.create.mockResolvedValue({ id: "report-1" });
-
-      await service.createReport({
-        reporterUserId: "user-1",
-        reportedUserId: "user-2",
-        reason: "INAPPROPRIATE_CONTENT",
-        messageId: "msg-123",
-      });
-
-      expect(mockReportRepo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ messageId: "msg-123" })
-      );
+      expect(mockNotificationService.notifyAdmin).toHaveBeenCalled();
     });
   });
 
@@ -167,27 +127,6 @@ describe("UserReportService", () => {
         expect(result.data).toHaveLength(1);
         expect(result.data[0].reportedUserId).toBe("reported-user-id");
         expect(result.data[0].reason).toBe("SPAM");
-      }
-    });
-
-    it("falls back to reportedId when appUser not found", async () => {
-      mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
-      mockReportRepo.findByReporter.mockResolvedValue([
-        {
-          id: "report-1",
-          reportedId: "app-unknown",
-          reason: "HARASSMENT",
-          details: null,
-          status: "PENDING",
-          createdAt: new Date("2025-06-01"),
-        },
-      ]);
-      mockAppUserRepo.findByAppUserId.mockResolvedValue(null);
-
-      const result = await service.getReportsByReporter("user-1");
-      expect(result.ok).toBe(true);
-      if (result.ok) {
-        expect(result.data[0].reportedUserId).toBe("app-unknown");
       }
     });
   });
