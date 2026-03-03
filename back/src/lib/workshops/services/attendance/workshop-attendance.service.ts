@@ -11,7 +11,7 @@ import type { IWorkshopRepository } from "../../repositories/workshop.repository
 import type { IUserTitleService } from "../../../users/services/profile/user-title.service.interface";
 import type { IWorkshopCashbackService } from "../rewards/workshop-cashback.service.interface";
 import type { IWorkshopNoShowPenaltyService } from "../rewards/workshop-no-show-penalty.service.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import { calculateWorkshopEndTime } from "../../utils/workshop-helpers";
 import { logger } from "../../../common/logger";
 

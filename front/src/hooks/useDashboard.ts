@@ -44,8 +44,13 @@ export function useDashboard() {
       router.replace("/admin");
       return;
     }
-    if (actualUserRole) setUserRole(mapServerRole(actualUserRole));
-  }, [actualUserRole, router]);
+    if (actualUserRole) {
+      setUserRole(mapServerRole(actualUserRole));
+    } else if (session && !isPending && actualUserRole === null) {
+      // If user is logged in but has no role, redirect to onboarding
+      router.replace("/onboarding");
+    }
+  }, [actualUserRole, session, isPending, router]);
 
   const isMentor =
     (userRole === "mentor" || userRole === "both") &&
