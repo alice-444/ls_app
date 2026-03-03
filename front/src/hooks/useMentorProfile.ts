@@ -81,7 +81,7 @@ export function useMentorProfile() {
     const loadProfile = async () => {
       if (!session?.user?.id) return;
       try {
-        const response = await fetch(`${API_BASE_URL}/api/profile/role/prof`, {
+        const response = await fetch(`${API_BASE_URL}/api/profile/role/mentor`, {
           method: "GET",
           credentials: "include",
         });
@@ -199,7 +199,7 @@ export function useMentorProfile() {
   );
 
   const reloadProfileStatus = async () => {
-    const response = await fetch(`${API_BASE_URL}/api/profile/role/prof`, {
+    const response = await fetch(`${API_BASE_URL}/api/profile/role/mentor`, {
       method: "GET",
       credentials: "include",
     });
@@ -253,7 +253,7 @@ export function useMentorProfile() {
         return;
       }
 
-      await customAuthClient.saveProfProfile({
+      await customAuthClient.saveMentorProfile({
         name: data.name,
         bio: data.bio,
         domain: data.areasOfExpertise[0] || "",
