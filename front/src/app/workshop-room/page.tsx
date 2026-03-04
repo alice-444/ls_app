@@ -41,6 +41,7 @@ import {
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 import { Badge } from "@/components/ui/badge";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
+import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
 
 type Workshop = {
   id: string;
@@ -494,98 +495,18 @@ export default function WorkshopRoomPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredWorkshops.map((workshop: Workshop) => (
-              <Card
+              <WorkshopCard
                 key={workshop.id}
-                className="hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => router.push(`/workshop/${workshop.id}`)}
-              >
-                <CardHeader>
-                  <CardTitle className="line-clamp-2">
-                    {workshop.title}
-                  </CardTitle>
-                  <CardDescription className="line-clamp-2">
-                    {workshop.description || "Aucune description"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {workshop.creator && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <User className="h-4 w-4 text-slate-500" />
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (workshop.creator) {
-                            router.push(`/mentors/${workshop.creator.id}`);
-                          }
-                        }}
-                        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:underline"
-                      >
-                        {workshop.creator.user?.name || "Mentor"}
-                      </button>
-                    </div>
-                  )}
-
-                  {workshop.date && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4 text-slate-500" />
-                      <span className="text-slate-600 dark:text-slate-400">
-                        {formatDate(workshop.date)}
-                      </span>
-                    </div>
-                  )}
-
-                  {workshop.time && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4 text-slate-500" />
-                      <span className="text-slate-600 dark:text-slate-400">
-                        {formatTime(workshop.time)}
-                        {workshop.duration && ` • ${workshop.duration} min`}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2 text-sm">
-                    {workshop.isVirtual ? (
-                      <Video className="h-4 w-4 text-slate-500" />
-                    ) : (
-                      <MapPin className="h-4 w-4 text-slate-500" />
-                    )}
-                    <span className="text-slate-600 dark:text-slate-400">
-                      {workshop.isVirtual
-                        ? "En ligne"
-                        : workshop.location || "Lieu à définir"}
-                    </span>
-                  </div>
-
-                  {workshop.maxParticipants && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="h-4 w-4 text-slate-500" />
-                      <span className="text-slate-600 dark:text-slate-400">
-                        Max {workshop.maxParticipants} participants
-                      </span>
-                    </div>
-                  )}
-
-                  {isApprentice && workshop.creator && (
-                    <div className="pt-2 border-t">
-                      <Button
-                        size="sm"
-                        className="w-full gap-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedWorkshopId(workshop.id);
-                          setSelectedMentorId(workshop.creator?.id || null);
-                          setSelectedMentorName(workshop.creator?.user?.name || "Mentor");
-                          setShowRequestDialog(true);
-                        }}
-                      >
-                        <BookOpen className="h-4 w-4" />
-                        Demander à participer
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                workshop={workshop}
+                variant="catalogue"
+                onViewDetails={(id) => router.push(`/workshop/${id}`)}
+                onRequestParticipation={(w) => {
+                  setSelectedWorkshopId(w.id);
+                  setSelectedMentorId(w.creator?.id || null);
+                  setSelectedMentorName(w.creator?.user?.name || "Mentor");
+                  setShowRequestDialog(true);
+                }}
+              />
             ))}
           </div>
         )}

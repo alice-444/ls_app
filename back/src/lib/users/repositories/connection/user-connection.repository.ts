@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type {
   IUserConnectionRepository,
   UserConnectionEntity,
@@ -107,11 +107,11 @@ export class PrismaUserConnectionRepository
   }
 
   async findPendingRequestsReceivedBy(
-    appUserId: string
+    userId: string
   ): Promise<UserConnectionEntity[]> {
     const connections = await this.prisma.user_connection.findMany({
       where: {
-        receiverId: appUserId,
+        receiverId: userId,
         status: "PENDING",
       },
       orderBy: {
@@ -130,12 +130,12 @@ export class PrismaUserConnectionRepository
   }
 
   async findAcceptedConnectionsFor(
-    appUserId: string
+    userId: string
   ): Promise<UserConnectionEntity[]> {
     const connections = await this.prisma.user_connection.findMany({
       where: {
         status: "ACCEPTED",
-        OR: [{ requesterId: appUserId }, { receiverId: appUserId }],
+        OR: [{ requesterId: userId }, { receiverId: userId }],
       },
       orderBy: {
         updatedAt: "desc",
@@ -153,11 +153,11 @@ export class PrismaUserConnectionRepository
   }
 
   async findPendingRequestsSentBy(
-    appUserId: string
+    userId: string
   ): Promise<UserConnectionEntity[]> {
     const connections = await this.prisma.user_connection.findMany({
       where: {
-        requesterId: appUserId,
+        requesterId: userId,
         status: "PENDING",
       },
       orderBy: {

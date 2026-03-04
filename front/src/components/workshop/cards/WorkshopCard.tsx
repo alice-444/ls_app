@@ -10,6 +10,8 @@ import {
   LinkIcon,
   Users,
   MoreVertical,
+  User,
+  BookOpen,
 } from "lucide-react";
 import { formatDate, formatTime, getStatusBadge } from "@/lib/workshop-utils";
 import { WorkshopDropdownMenu } from "../WorkshopDropdownMenu";
@@ -26,6 +28,7 @@ export function WorkshopCard({
   onReschedule,
   onDelete,
   onDuplicate,
+  onRequestParticipation,
   showDropdown = true,
   className = "",
 }: WorkshopCardProps) {
@@ -37,19 +40,26 @@ export function WorkshopCard({
 
   const isPast = variant === "past";
   const isHero = variant === "hero";
+  const isCatalogue = variant === "catalogue";
 
   return (
     <Card
       className={`hover:shadow-lg transition-shadow relative ${
         isHero ? "lg:col-span-full" : ""
-      } ${className}`}
+      } ${isCatalogue ? "cursor-pointer" : ""} ${className}`}
+      onClick={isCatalogue ? handleCardClick : undefined}
     >
       <CardHeader>
         <div className="flex items-start justify-between">
-          <div className={isPast ? "flex-1" : ""}>
+          <div className={isPast || isCatalogue ? "flex-1" : ""}>
             <CardTitle className={`${isHero ? "text-2xl" : "text-lg"} pr-2`}>
               {workshop.title}
             </CardTitle>
+            {isCatalogue && workshop.description && (
+              <CardDescription className="line-clamp-2 mt-1">
+                {workshop.description}
+              </CardDescription>
+            )}
             {isPast && (
               <div className="mt-2 flex items-center gap-2">
                 {workshop.status && getStatusBadge(workshop.status)}
@@ -64,7 +74,7 @@ export function WorkshopCard({
               </div>
             )}
           </div>
-          {showDropdown && (
+          {showDropdown && !isCatalogue && (
             <WorkshopDropdownMenu
               workshop={workshop}
               onViewDetails={onViewDetails}
@@ -79,9 +89,17 @@ export function WorkshopCard({
       </CardHeader>
       <CardContent>
         <div
-          className={`space-y-2 ${onViewDetails ? "cursor-pointer" : ""}`}
-          onClick={handleCardClick}
+          className={`space-y-2 ${onViewDetails && !isCatalogue ? "cursor-pointer" : ""}`}
+          onClick={!isCatalogue ? handleCardClick : undefined}
         >
+          {isCatalogue && workshop.creator && (
+            <div className="flex items-center gap-2 text-sm mb-3">
+              <User className="h-4 w-4 text-slate-500" />
+              <span className="text-slate-600 dark:text-slate-400 font-medium">
+                {workshop.creator.user?.name || "Mentor"}
+              </span>
+            </div>
+          )}
           <WorkshopDetails
             workshop={workshop}
             variant={isHero ? "hero" : "default"}
@@ -99,6 +117,21 @@ export function WorkshopCard({
               }}
             >
               Dupliquer cet atelier
+            </Button>
+          </div>
+        )}
+        {isCatalogue && onRequestParticipation && (
+          <div className="mt-4 pt-4 border-t">
+            <Button
+              size="sm"
+              className="w-full gap-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRequestParticipation(workshop);
+              }}
+            >
+              <BookOpen className="h-4 w-4" />
+              Demander à participer
             </Button>
           </div>
         )}

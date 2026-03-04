@@ -21,6 +21,7 @@ import {
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
+  cancelWorkshopSchema,
   type CreateWorkshopBackendInput,
   type UpdateWorkshopBackendInput,
   type PublishWorkshopInput,
@@ -30,7 +31,12 @@ import { z } from "zod";
 
 export const createWorkshopSchema = createWorkshopBackendSchema;
 export const updateWorkshopSchema = updateWorkshopBackendSchema;
-export { publishWorkshopSchema, unpublishWorkshopSchema, deleteWorkshopSchema };
+export {
+  publishWorkshopSchema,
+  unpublishWorkshopSchema,
+  deleteWorkshopSchema,
+  cancelWorkshopSchema,
+};
 export type CreateWorkshopInput = CreateWorkshopBackendInput;
 export type UpdateWorkshopInput = UpdateWorkshopBackendInput;
 export type { PublishWorkshopInput, DeleteWorkshopInput };
@@ -121,6 +127,13 @@ export class WorkshopService implements IWorkshopService {
     input: unknown
   ): Promise<Result<{ success: boolean }>> {
     return this.lifecycleService.deleteWorkshop(userId, input);
+  }
+
+  cancelWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>> {
+    return this.lifecycleService.cancelWorkshop(userId, input);
   }
 
   getWorkshopsByCreator(userId: string): Promise<Result<any[]>> {

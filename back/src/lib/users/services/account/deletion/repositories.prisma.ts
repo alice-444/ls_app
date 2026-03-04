@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import {
   AppUserRepository,
   AuthUserRepository,
@@ -24,12 +24,12 @@ export class PrismaAppUserRepository implements AppUserRepository {
   }
 
   async softDelete(
-    appUserId: string,
+    userId: string,
     when: Date,
     reason?: string
   ): Promise<void> {
     await this.prisma.user.update({
-      where: { id: appUserId },
+      where: { id: userId },
       data: {
         deletedAt: when,
         deletionRequestedAt: when,
@@ -38,9 +38,9 @@ export class PrismaAppUserRepository implements AppUserRepository {
     });
   }
 
-  async isAlreadyDeleted(appUserId: string): Promise<boolean> {
+  async isAlreadyDeleted(userId: string): Promise<boolean> {
     const row = await this.prisma.user.findUnique({
-      where: { id: appUserId },
+      where: { id: userId },
       select: { deletedAt: true },
     });
     return !!(row as any)?.deletedAt;

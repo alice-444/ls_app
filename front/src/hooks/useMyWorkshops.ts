@@ -49,7 +49,7 @@ export function useMyWorkshops() {
   } as Record<string, unknown>);
 
   const { data: mentorRequests } =
-    trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
+    trpc.mentor.getReceivedRequests.useQuery(undefined, {
       enabled: !!session,
     } as Record<string, unknown>);
 
@@ -88,7 +88,7 @@ export function useMyWorkshops() {
   );
 
   const utils = trpc.useUtils();
-  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation();
+  const rejectRequest = trpc.mentor.rejectRequest.useMutation();
 
   const handleAcceptRequest = (request: {
     id: string;
@@ -112,7 +112,7 @@ export function useMyWorkshops() {
         {
           onSuccess: () => {
             toast.success("Demande refusée avec succès");
-            utils.mentor.getWorkshopRequests.invalidate();
+            utils.mentor.getReceivedRequests.invalidate();
             setShowRejectDialog(false);
             setRequestToReject(null);
           },

@@ -61,7 +61,7 @@ export function useDashboard() {
 
   // --- Apprentice data ---
   const { data: workshopRequests, refetch: refetchApprenticeRequests } =
-    trpc.mentor.getMyWorkshopRequests.useQuery(undefined, {
+    trpc.apprentice.getMyRequests.useQuery(undefined, {
       enabled: !!session && userRole === "apprenant" && isApprenant,
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
@@ -98,7 +98,7 @@ export function useDashboard() {
   }, [workshopRequests]);
 
   const { data: confirmedWorkshops, refetch: refetchConfirmedWorkshops } =
-    trpc.workshop.getConfirmedWorkshops.useQuery(undefined, {
+    trpc.apprentice.getMyWorkshops.useQuery(undefined, {
       enabled: !!session && isApprenant,
     });
 
@@ -135,10 +135,9 @@ export function useDashboard() {
     },
   });
 
-  const cancelRequestMutation = trpc.mentor.cancelWorkshopRequest.useMutation({
+  const cancelRequestMutation = trpc.apprentice.cancelRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande annulée avec succès");
-      trpc.useUtils;
       refetchApprenticeRequests();
     },
     onError: (error: { message?: string }) => {
@@ -153,7 +152,7 @@ export function useDashboard() {
 
   // --- Mentor data ---
   const { data: mentorWorkshopRequests } =
-    trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
+    trpc.mentor.getReceivedRequests.useQuery(undefined, {
       enabled: !!session && isMentor,
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
