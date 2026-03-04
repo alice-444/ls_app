@@ -39,16 +39,16 @@ export class MentorContactService implements IMentorContactService {
       }
 
       const mentor = await this.mentorRepository.findMentorById(mentorId);
-      if (!mentor?.user?.id) {
+      if (!mentor?.userId) {
         return failure("Mentor introuvable", 404);
       }
 
-      const mentorUserId = mentor.user.id;
-      const apprenticeName = apprentice.user?.name || "un apprenti";
+      const mentorBetterAuthId = mentor.userId;
+      const apprenticeName = apprentice.name || "un apprenti";
 
       logger.info("Contact request sent", {
         from: apprenticeId,
-        to: mentorUserId,
+        to: mentorBetterAuthId,
         hasSubject: !!subject,
         hasMessage: !!message,
       });
@@ -57,7 +57,7 @@ export class MentorContactService implements IMentorContactService {
         const conversationResult =
           await this.messagingService.getOrCreateConversation(
             apprenticeId,
-            mentorUserId
+            mentorBetterAuthId
           );
 
         if (conversationResult.ok) {
@@ -80,14 +80,14 @@ export class MentorContactService implements IMentorContactService {
             : message;
 
         await this.notificationService.createNotification(
-          mentorUserId,
+          mentorBetterAuthId,
           {
             type: "social",
             title: "Nouvelle demande de contact",
             message: `${apprenticeName} vous a envoyé une demande de contact${
               subject ? ` : "${subject}"` : ""
             }${messagePreview ? `. "${messagePreview}"` : ""}.`,
-            actionUrl: `/dashboard/messages`,
+            actionUrl: `/inbox`,
           },
           apprenticeId
         );

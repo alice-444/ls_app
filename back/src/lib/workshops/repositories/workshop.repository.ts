@@ -35,8 +35,8 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
     const workshop = await this.prisma.workshop.findUnique({
       where: { id },
       include: {
-        user_workshop_creatorIdTouser: true,
-        user_workshop_apprenticeIdTouser: true,
+        creator: true,
+        apprentice: true,
       },
     });
     if (!workshop) return null;
@@ -47,8 +47,8 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
     const workshops = await this.prisma.workshop.findMany({
       where: { creatorId },
       include: {
-        user_workshop_creatorIdTouser: true,
-        user_workshop_apprenticeIdTouser: true,
+        creator: true,
+        apprentice: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -59,8 +59,8 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
     const workshops = await this.prisma.workshop.findMany({
       where: { apprenticeId },
       include: {
-        user_workshop_creatorIdTouser: true,
-        user_workshop_apprenticeIdTouser: true,
+        creator: true,
+        apprentice: true,
       },
       orderBy: { date: "asc" },
     });
@@ -73,8 +73,8 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         status: "PUBLISHED",
       },
       include: {
-        user_workshop_creatorIdTouser: true,
-        user_workshop_apprenticeIdTouser: true,
+        creator: true,
+        apprentice: true,
       },
       orderBy: { date: "asc" },
     });
@@ -91,8 +91,8 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
       where: { id },
       data: input,
       include: {
-        user_workshop_creatorIdTouser: true,
-        user_workshop_apprenticeIdTouser: true,
+        creator: true,
+        apprentice: true,
       },
     });
     return this.mapToEntity(workshop);
@@ -136,8 +136,8 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         },
       },
       include: {
-        user_workshop_creatorIdTouser: true,
-        user_workshop_apprenticeIdTouser: true,
+        creator: true,
+        apprentice: true,
       },
     });
 
@@ -168,8 +168,8 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
       publishedAt: workshop.publishedAt,
       dailyRoomId: workshop.dailyRoomId,
       dailyRoomLastActivityAt: workshop.dailyRoomLastActivityAt,
-      creator: workshop.user_workshop_creatorIdTouser,
-      apprentice: workshop.user_workshop_apprenticeIdTouser,
+      creator: workshop.creator,
+      apprentice: workshop.apprentice,
     };
   }
 }
