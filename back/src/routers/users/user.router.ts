@@ -4,12 +4,12 @@ import { container } from "../../lib/di/container";
 
 export const userRouter = router({
   getTitle: protectedProcedure.query(async ({ ctx }) => {
-    const user = await container.prisma.user.findUnique({
-      where: { id: ctx.session.user.id },
+    const appUser = await container.prisma.user.findUnique({
+      where: { userId: ctx.session.user.id },
       select: { title: true },
     });
 
-    return { title: user?.title || "Explorer" };
+    return { title: appUser?.title || "Explorer" };
   }),
 
   checkTitleUpdate: protectedProcedure.query(async ({ ctx }) => {
@@ -25,19 +25,14 @@ export const userRouter = router({
   }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {
-    const user = await container.prisma.user.findUnique({
-      where: { id: ctx.session.user.id },
-      select: { name: true, email: true },
-    });
-
-    const appUser = await (container.prisma as any).app_user.findUnique({
+    const appUser = await container.prisma.user.findUnique({
       where: { userId: ctx.session.user.id },
-      select: { bio: true, photoUrl: true },
+      select: { name: true, email: true, bio: true, photoUrl: true },
     });
 
     return {
-      name: user?.name || null,
-      email: user?.email || null,
+      name: appUser?.name || null,
+      email: appUser?.email || null,
       bio: appUser?.bio || null,
       photoUrl: appUser?.photoUrl || null,
     };

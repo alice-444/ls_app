@@ -16,6 +16,9 @@ import {
   Trash2,
   Settings,
   ChevronDown,
+  GraduationCap,
+  Coins,
+  Star,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
@@ -80,13 +83,26 @@ export default function NotificationsPage() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "message":
+      case "MESSAGE":
         return <MessageSquare className="h-5 w-5" />;
+      case "workshop":
+      case "WORKSHOP":
+      case "WORKSHOP_REQUEST":
+      case "REQUEST_ACCEPTED":
+      case "REQUEST_REJECTED":
+        return <GraduationCap className="h-5 w-5" />;
+      case "cashback":
+      case "CASHBACK":
+        return <Coins className="h-5 w-5" />;
       case "learning":
         return <BookOpen className="h-5 w-5" />;
       case "social":
         return <Users className="h-5 w-5" />;
       case "reminder":
+      case "WORKSHOP_REMINDER":
         return <Calendar className="h-5 w-5" />;
+      case "WORKSHOP_FEEDBACK_REQUEST":
+        return <Star className="h-5 w-5" />;
       case "system":
         return <Info className="h-5 w-5" />;
       default:
@@ -97,13 +113,26 @@ export default function NotificationsPage() {
   const getTypeLabel = (type: string) => {
     switch (type) {
       case "message":
+      case "MESSAGE":
         return "Message";
+      case "workshop":
+      case "WORKSHOP":
+      case "WORKSHOP_REQUEST":
+      case "REQUEST_ACCEPTED":
+      case "REQUEST_REJECTED":
+        return "Atelier";
+      case "cashback":
+      case "CASHBACK":
+        return "Récompense";
       case "learning":
         return "Apprentissage";
       case "social":
         return "Social";
       case "reminder":
+      case "WORKSHOP_REMINDER":
         return "Rappel";
+      case "WORKSHOP_FEEDBACK_REQUEST":
+        return "Avis";
       case "system":
         return "Système";
       default:

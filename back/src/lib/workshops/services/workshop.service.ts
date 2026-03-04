@@ -67,7 +67,8 @@ export class WorkshopService implements IWorkshopService {
 
     this.lifecycleService = new WorkshopLifecycleService(
       workshopRepository,
-      accessGuard
+      accessGuard,
+      dbNotificationService
     );
 
     this.schedulingService = new WorkshopSchedulingService(

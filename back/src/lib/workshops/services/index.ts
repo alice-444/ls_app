@@ -13,6 +13,7 @@ export {
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
+  cancelWorkshopSchema,
 } from "./workshop.service";
 
 // Sub-services (SRP)
