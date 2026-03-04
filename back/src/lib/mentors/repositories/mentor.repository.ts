@@ -90,7 +90,7 @@ export class PrismaMentorRepository implements IMentorRepository {
         status: "PUBLISHED",
       },
       include: {
-        mentor_feedback: {
+        mentorFeedbacks: {
           select: {
             rating: true,
           },
@@ -101,6 +101,9 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    return workshops as MentorWorkshopEntity[];
+    return workshops.map((w: any) => ({
+      ...w,
+      feedbacks: w.mentorFeedbacks,
+    })) as MentorWorkshopEntity[];
   }
 }

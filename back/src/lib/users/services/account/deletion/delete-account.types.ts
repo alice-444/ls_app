@@ -17,8 +17,8 @@ export type DeletionPlan = {
 
 export interface AppUserRepository {
   findByAuthUserId(userId: string): Promise<{ id: string; deletedAt: Date | null } | null>;
-  softDelete(appUserId: string, when: Date, reason?: string): Promise<void>;
-  isAlreadyDeleted(appUserId: string): Promise<boolean>;
+  softDelete(userId: string, when: Date, reason?: string): Promise<void>;
+  isAlreadyDeleted(userId: string): Promise<boolean>;
 }
 
 export interface AuthUserRepository {

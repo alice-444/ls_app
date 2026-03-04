@@ -6,6 +6,7 @@ import type { IUserConnectionRepository } from "../../repositories/connection/us
 import { verifyUserExists } from "../../../auth/services/user-helpers";
 import type { IUserConnectionService } from "./user-connection.service.interface";
 import type { IUserBlockService } from "../moderation/user-block.service.interface";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import { UserInfoEnricher } from "./user-info-enricher";
 import { logger } from "../../../common/logger";
 
@@ -15,7 +16,8 @@ export class UserConnectionService implements IUserConnectionService {
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly userConnectionRepository: IUserConnectionRepository,
-    private readonly userBlockService: IUserBlockService
+    private readonly userBlockService: IUserBlockService,
+    private readonly notificationService: INotificationService
   ) {
     this.enricher = new UserInfoEnricher(appUserRepository);
   }
@@ -79,6 +81,19 @@ export class UserConnectionService implements IUserConnectionService {
         updatedAt: new Date(),
       });
 
+      // Trigger notification for the receiver
+      const requesterName = requesterAppUser.displayName || requesterAppUser.name || "Un utilisateur";
+      await this.notificationService.createNotification(
+        receiverUserId,
+        {
+          type: "social",
+          title: "Nouvelle demande de connexion",
+          message: `${requesterName} souhaite rejoindre votre réseau.`,
+          actionUrl: "/network",
+        },
+        requesterUserId
+      );
+
       return success({ success: true });
     } catch (error) {
       return handleError(
@@ -116,10 +131,37 @@ export class UserConnectionService implements IUserConnectionService {
         return failure("Connection request is not pending", 400);
       }
 
+      // Check for blocks before accepting
+      const requesterAppUser = await this.appUserRepository.findByAppUserId(connection.requesterId);
+      if (requesterAppUser) {
+        const blockResult = await this.userBlockService.areUsersBlocked(
+          userId,
+          requesterAppUser.userId
+        );
+        if (blockResult.ok && (blockResult.data.user1BlockedUser2 || blockResult.data.user2BlockedUser1)) {
+          return failure("Cannot accept request from this user", 403);
+        }
+      }
+
       await this.userConnectionRepository.update(connectionId, {
         status: "ACCEPTED",
         updatedAt: new Date(),
       });
+
+      // Notify the requester
+      if (requesterAppUser) {
+        const accepterName = appUser.displayName || appUser.name || "Un utilisateur";
+        await this.notificationService.createNotification(
+          requesterAppUser.userId,
+          {
+            type: "social",
+            title: "Demande de connexion acceptée",
+            message: `${accepterName} a accepté votre demande de connexion.`,
+            actionUrl: "/network",
+          },
+          userId
+        );
+      }
 
       return success({ success: true });
     } catch (error) {

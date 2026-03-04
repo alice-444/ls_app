@@ -48,8 +48,9 @@ export interface MentorWorkshopEntity {
   time: string | null;
   duration: number | null;
   location: string | null;
-  isVirtual: boolean;
+  isVirtual: boolean | null;
   maxParticipants: number | null;
+  status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   publishedAt: Date | null;
   feedbacks?: Array<{ rating: number }>;
 }

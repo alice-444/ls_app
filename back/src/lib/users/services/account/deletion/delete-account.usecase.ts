@@ -14,20 +14,20 @@ export function computeRetentionDate(now: Date, policy: DeletionPolicy): Date {
 
 export function buildDeletionPlan(params: {
   authUserId: string | null;
-  appUserId: string | null;
+  userId: string | null;
   policy: DeletionPolicy;
   now: Date;
   reason?: string;
 }): { ok: true; plan: DeletionPlan } | { ok: false; error: DomainError } {
-  const { authUserId, appUserId, policy, now, reason } = params;
+  const { authUserId, userId, policy, now, reason } = params;
   if (!authUserId) return { ok: false, error: { type: "NOT_AUTHENTICATED" } };
-  if (!appUserId) return { ok: false, error: { type: "APPUSER_NOT_FOUND" } };
+  if (!userId) return { ok: false, error: { type: "APPUSER_NOT_FOUND" } };
   if (policy.requireReason && !reason)
     return { ok: false, error: { type: "REASON_REQUIRED" } };
 
   const plan: DeletionPlan = {
     userId: authUserId,
-    appUserId,
+    appUserId: userId,
     softDeleteAppUserNow: true,
     disableAuthUserNow: true,
     unlinkAccounts: true,
