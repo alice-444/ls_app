@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { customAuthClient } from "@/lib/auth-client";
-import { getProfProfile, API_BASE_URL, getUserRole } from "@/lib/api-client";
+import { getMentorProfile, API_BASE_URL, getUserRole } from "@/lib/api-client";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
@@ -77,7 +77,7 @@ export default function MyProfilePage() {
 
     setIsLoading(true);
     try {
-      const data = await getProfProfile();
+      const data = await getMentorProfile();
       setIsPublished(data.isPublished || false);
       if (data.profile) {
         setProfile(data.profile as unknown as MentorProfile);

@@ -35,7 +35,7 @@ export class SignUpService {
       const authResult = await auth.api.signUpEmail({
         body: { email, password, name, username },
         headers,
-      }).catch(err => {
+      }).catch((err: any) => {
         console.error("Better-auth signUpEmail error:", err);
         throw err;
       });
@@ -53,7 +53,7 @@ export class SignUpService {
           status: "PENDING",
           role: null,
         },
-      }).catch(err => {
+      }).catch((err: any) => {
         console.error("Prisma user synchronization error:", err);
         throw err;
       });

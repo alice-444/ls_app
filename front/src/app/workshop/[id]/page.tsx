@@ -78,7 +78,15 @@ export default function WorkshopDetailPage() {
     }
   };
 
-  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation();
+  const rejectRequest = trpc.mentor.rejectRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée");
+      router.push("/dashboard");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erreur lors du refus");
+    },
+  });
 
   const { data: workshopRequests } = trpc.mentor.getWorkshopRequests.useQuery(
     { workshopId },

@@ -98,7 +98,7 @@ export function MentorDashboard({
       setShowRejectDialog(false);
       setSelectedRequest(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors du refus");
     },
   });
