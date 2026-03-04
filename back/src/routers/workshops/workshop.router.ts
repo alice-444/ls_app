@@ -1,5 +1,5 @@
 import {
-  profProcedure,
+  mentorProcedure,
   publicProcedure,
   protectedProcedure,
   router,
@@ -11,6 +11,7 @@ import {
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
+  cancelWorkshopSchema,
 } from "../../lib/workshops/services";
 import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
@@ -18,7 +19,7 @@ import { workshopAttendanceRouter } from "./workshop-attendance.router";
 import { workshopVideoRouter } from "./workshop-video.router";
 
 const workshopCoreRouter = router({
-  create: profProcedure
+  create: mentorProcedure
     .input(createWorkshopSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
@@ -26,7 +27,7 @@ const workshopCoreRouter = router({
       )
     ),
 
-  update: profProcedure
+  update: mentorProcedure
     .input(updateWorkshopSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
@@ -34,7 +35,7 @@ const workshopCoreRouter = router({
       )
     ),
 
-  publish: profProcedure
+  publish: mentorProcedure
     .input(publishWorkshopSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
@@ -42,7 +43,7 @@ const workshopCoreRouter = router({
       )
     ),
 
-  unpublish: profProcedure
+  unpublish: mentorProcedure
     .input(unpublishWorkshopSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
@@ -53,7 +54,7 @@ const workshopCoreRouter = router({
       )
     ),
 
-  delete: profProcedure
+  delete: mentorProcedure
     .input(deleteWorkshopSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
@@ -61,7 +62,15 @@ const workshopCoreRouter = router({
       )
     ),
 
-  getMyWorkshops: profProcedure.query(async ({ ctx }) =>
+  cancel: mentorProcedure
+    .input(cancelWorkshopSchema)
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
+        await container.workshopService.cancelWorkshop(ctx.session.user.id, input)
+      )
+    ),
+
+  getMyWorkshops: mentorProcedure.query(async ({ ctx }) =>
     unwrapResult(
       await container.workshopService.getWorkshopsByCreator(ctx.session.user.id)
     )
@@ -151,7 +160,7 @@ const workshopSchedulingRouter = router({
     )
   ),
 
-  reschedule: profProcedure
+  reschedule: mentorProcedure
     .input(
       z.object({
         workshopId: z.string(),

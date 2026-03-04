@@ -7,7 +7,7 @@ import type { IUserBlockService } from "../../users/services/moderation/user-blo
 import { success, failure } from "../../common/types";
 import { generateInternalId } from "../../utils/id-generator";
 import { logger } from "../../common/logger";
-import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 
 export class NotificationService implements INotificationService {
   constructor(
@@ -29,7 +29,7 @@ export class NotificationService implements INotificationService {
     actionUrl?: string
   ): Promise<Result<void>> {
     try {
-      const adminUsers = await this.prisma.app_user.findMany({
+      const adminUsers = await this.prisma.user.findMany({
         where: { role: "ADMIN" },
         select: { userId: true },
       });
@@ -78,12 +78,12 @@ export class NotificationService implements INotificationService {
       if (senderUserId && this.userBlockService) {
         const blockResult = await this.userBlockService.areUsersBlocked(
           senderUserId,
-          userId
+          appUserId
         );
         if (!blockResult.ok) {
           logger.warn("Error checking block status before notification", {
             senderUserId,
-            recipientUserId: userId,
+            recipientUserId: appUserId,
             error: blockResult.error,
             notificationType: input.type,
           });
@@ -92,7 +92,7 @@ export class NotificationService implements INotificationService {
           if (user1BlockedUser2 || user2BlockedUser1) {
             logger.debug("Notification blocked due to user block", {
               senderUserId,
-              recipientUserId: userId,
+              recipientUserId: appUserId,
               user1BlockedUser2,
               user2BlockedUser1,
               notificationType: input.type,
@@ -120,7 +120,7 @@ export class NotificationService implements INotificationService {
         actionUrl: input.actionUrl || null,
       });
 
-      this.eventEmitter.emitNewNotification(userId, notification);
+      this.eventEmitter.emitNewNotification(appUserId, notification);
 
       return success(notification);
     } catch (error) {
@@ -226,7 +226,7 @@ export class NotificationService implements INotificationService {
         appUserId
       );
 
-      this.eventEmitter.emitNotificationUpdate(userId);
+      this.eventEmitter.emitNotificationUpdate(appUserId);
 
       return success(notification);
     } catch (error) {
@@ -246,7 +246,7 @@ export class NotificationService implements INotificationService {
 
       const count = await this.notificationRepository.markAllAsRead(appUserId);
 
-      this.eventEmitter.emitNotificationUpdate(userId);
+      this.eventEmitter.emitNotificationUpdate(appUserId);
 
       return success({ count });
     } catch (error) {
@@ -269,7 +269,7 @@ export class NotificationService implements INotificationService {
 
       await this.notificationRepository.delete(notificationId, appUserId);
 
-      this.eventEmitter.emitNotificationUpdate(userId);
+      this.eventEmitter.emitNotificationUpdate(appUserId);
 
       return success(undefined);
     } catch (error) {

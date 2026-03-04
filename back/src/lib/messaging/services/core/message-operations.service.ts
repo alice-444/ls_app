@@ -13,6 +13,7 @@ import { verifyUserExists } from "../../../auth/services/user-helpers";
 import type { IMessageValidationService } from "../validation/message-validation.service.interface";
 import type { IMessageEnrichmentService } from "../enrichment/message-enrichment.service.interface";
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import { logger } from "../../../common/logger";
 
 export class MessageOperationsService implements IMessageOperationsService {
@@ -22,7 +23,8 @@ export class MessageOperationsService implements IMessageOperationsService {
     private readonly messageRepository: IMessageRepository,
     private readonly validationService: IMessageValidationService,
     private readonly enrichmentService: IMessageEnrichmentService,
-    private readonly userBlockService: IUserBlockService
+    private readonly userBlockService: IUserBlockService,
+    private readonly notificationService: INotificationService
   ) {}
 
   private async validateUserAndGetAppUser(userId: string): Promise<
@@ -106,6 +108,32 @@ export class MessageOperationsService implements IMessageOperationsService {
       await this.conversationRepository.update(conversation.id, {
         updatedAt: new Date(),
       });
+
+      // Trigger notification for the recipient
+      const otherParticipantId =
+        conversation.participant1Id === appUser.id
+          ? conversation.participant2Id
+          : conversation.participant1Id;
+
+      const otherAppUser = await this.appUserRepository.findByAppUserId(
+        otherParticipantId
+      );
+
+      if (otherAppUser) {
+        const senderName = appUser.displayName || appUser.name || "Un utilisateur";
+        await this.notificationService.createNotification(
+          otherAppUser.userId,
+          {
+            type: "message",
+            title: `Nouveau message de ${senderName}`,
+            message: contentValidation.data.length > 100 
+              ? contentValidation.data.substring(0, 100) + "..." 
+              : contentValidation.data,
+            actionUrl: `/inbox/${conversationId}`,
+          },
+          userId
+        );
+      }
 
       return success({ messageId: message.id });
     } catch (error) {

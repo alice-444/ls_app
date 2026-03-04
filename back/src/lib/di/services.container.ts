@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type { RepositoriesContainer } from "./repositories.container";
 import { WorkshopService } from "../workshops/services/workshop.service";
 import { WorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service";
@@ -76,11 +76,14 @@ import type { IAdminService } from "../admin/services/admin.service.interface";
 import { SupportRequestService } from "../support/services/support-request.service";
 import type { ISupportRequestService } from "../support/services/support-request.service.interface";
 import type { IMagicLinkService } from "../auth/services/magic-link/magic-link.service.interface";
+import { MaintenanceService } from "../maintenance/services/maintenance.service";
+import type { IMaintenanceService } from "../maintenance/services/maintenance.service.interface";
 
 export class ServicesContainer {
   private _adminService?: IAdminService;
   private _supportRequestService?: ISupportRequestService;
   private _magicLinkService?: IMagicLinkService;
+  private _maintenanceService?: IMaintenanceService;
 
   private _workshopService?: IWorkshopService;
   private _workshopFeedbackService?: IWorkshopFeedbackService;
@@ -145,10 +148,9 @@ export class ServicesContainer {
   get workshopFeedbackService(): IWorkshopFeedbackService {
     this._workshopFeedbackService ??= new WorkshopFeedbackService(
       this.repositories.workshopFeedbackRepository,
-      this.repositories.workshopRepository,
-      this.repositories.mentorRepository,
-      this.notificationService,
-      this.creditService
+      this.workshopService,
+      this.creditService,
+      this.notificationService
     );
     return this._workshopFeedbackService;
   }
@@ -238,6 +240,7 @@ export class ServicesContainer {
       this.messageValidationService,
       this.messageEnrichmentService,
       this.userBlockService,
+      this.notificationService,
       this.repositories.workshopRepository,
       this.prisma
     );
@@ -441,5 +444,10 @@ export class ServicesContainer {
       this.notificationService
     );
     return this._supportRequestService;
+  }
+
+  get maintenanceService(): IMaintenanceService {
+    this._maintenanceService ??= new MaintenanceService(this.prisma, this);
+    return this._maintenanceService;
   }
 }
