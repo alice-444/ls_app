@@ -5,7 +5,7 @@ import { Result, failure, success, validateInput, prisma } from "../../common";
 import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../../users/repositories";
 import { sanitizeString } from "../../utils/sanitize";
-import { verifyUserExists, verifyProfUser } from "./user-helpers";
+import { verifyUserExists, verifyMentorUser } from "./user-helpers";
 
 export const mentorProfileSchema = z.object({
   name: z
@@ -52,17 +52,17 @@ export const mentorProfileSchema = z.object({
     .max(15, "Maximum 15 sujets")
     .optional()
     .nullable(),
-  calendlyLink: z
+  displayName: z
     .string()
-    .url("Lien Calendly invalide")
+    .trim()
+    .max(50, "Le nom d'affichage ne peut pas dépasser 50 caractères")
     .optional()
-    .nullable()
-    .refine((val) => {
-      if (!val) return true;
-      const calendlyRegex =
-        /^https:\/\/(www\.)?calendly\.com\/[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)?(\?.*)?$/;
-      return calendlyRegex.test(val);
-    }, "Le lien doit être un lien Calendly valide (format: https://calendly.com/votre-nom)"),
+    .nullable(),
+  iceBreakerTags: z
+    .array(z.string().trim().min(1).max(30))
+    .max(5, "Maximum 5 tags d'ice-breaker")
+    .optional()
+    .nullable(),
 });
 
 export type MentorProfileInput = z.infer<typeof mentorProfileSchema>;
@@ -136,6 +136,9 @@ export class MentorProfileService {
       experience: data.experience
         ? sanitizeString(data.experience, { maxLength: 2000, trim: true })
         : null,
+      displayName: data.displayName
+        ? sanitizeString(data.displayName, { maxLength: 100, trim: true })
+        : null,
     };
   }
 
@@ -153,7 +156,8 @@ export class MentorProfileService {
         (data.socialMediaLinks as Record<string, string>) || null,
       areasOfExpertise: data.areasOfExpertise,
       mentorshipTopics: data.mentorshipTopics || null,
-      calendlyLink: data.calendlyLink || null,
+      displayName: sanitized.displayName,
+      iceBreakerTags: data.iceBreakerTags || null,
     };
 
     if (photoUrl !== undefined) {
@@ -178,9 +182,9 @@ export class MentorProfileService {
         return userCheck;
       }
 
-      const profCheck = await verifyProfUser(this.appUserRepository, userId);
-      if (!profCheck.ok) {
-        return profCheck;
+      const mentorCheck = await verifyMentorUser(this.appUserRepository, userId);
+      if (!mentorCheck.ok) {
+        return mentorCheck;
       }
 
       let validatedPhotoUrl: string | undefined = undefined;
@@ -228,9 +232,9 @@ export class MentorProfileService {
         return userCheck;
       }
 
-      const profCheck = await verifyProfUser(this.appUserRepository, userId);
-      if (!profCheck.ok) {
-        return profCheck;
+      const mentorCheck = await verifyMentorUser(this.appUserRepository, userId);
+      if (!mentorCheck.ok) {
+        return mentorCheck;
       }
 
       const fullProfile = await prisma.user.findUnique({
@@ -270,9 +274,9 @@ export class MentorProfileService {
         return userCheck;
       }
 
-      const profCheck = await verifyProfUser(this.appUserRepository, userId);
-      if (!profCheck.ok) {
-        return profCheck;
+      const mentorCheck = await verifyMentorUser(this.appUserRepository, userId);
+      if (!mentorCheck.ok) {
+        return mentorCheck;
       }
 
       await this.appUserRepository.update(userId, {

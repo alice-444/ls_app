@@ -16,7 +16,7 @@ export async function verifyUserExists(
   return { ok: true, data: { user } };
 }
 
-export async function verifyProfUser(
+export async function verifyMentorUser(
   appUserRepository: AppUserRepository,
   userId: string
 ): Promise<

@@ -4,7 +4,7 @@ import type { AppUserRepository } from "../../../users/repositories";
 import type { IWorkshopRepository } from "../../repositories/workshop.repository.interface";
 import {
   verifyUserExists,
-  verifyProfUser,
+  verifyMentorUser,
 } from "../../../auth/services/user-helpers";
 
 export interface IWorkshopAccessGuard {
@@ -37,12 +37,12 @@ export class WorkshopAccessGuard implements IWorkshopAccessGuard {
       return userCheck;
     }
 
-    const profCheck = await verifyProfUser(this.appUserRepository, userId);
-    if (!profCheck.ok) {
-      return profCheck;
+    const mentorCheck = await verifyMentorUser(this.appUserRepository, userId);
+    if (!mentorCheck.ok) {
+      return mentorCheck;
     }
 
-    return profCheck;
+    return mentorCheck;
   }
 
   async verifyWorkshopOwnership(
