@@ -9,6 +9,8 @@ export interface AppUserData {
   updatedAt: Date;
   photoUrl?: string | null;
   deletedAt?: Date | null;
+  emailNotifications: boolean;
+  inAppNotifications: boolean;
 }
 
 export interface CreateAppUserInput {
@@ -37,6 +39,8 @@ export interface UpdateAppUserInput {
   studyProgram?: string | null;
   iceBreakerTags?: string[] | null;
   deletedAt?: Date | null;
+  emailNotifications?: boolean;
+  inAppNotifications?: boolean;
 }
 
 export interface AppUserRepository {
@@ -65,6 +69,7 @@ const UPDATABLE_FIELDS = [
   "experience", "socialMediaLinks", "areasOfExpertise", "mentorshipTopics",
   "calendlyLink", "isPublished", "publishedAt", "displayName",
   "studyDomain", "studyProgram", "iceBreakerTags", "deletedAt",
+  "emailNotifications", "inAppNotifications",
 ] as const;
 
 function buildPrismaUpdateData(input: UpdateAppUserInput): Record<string, unknown> {
@@ -89,6 +94,8 @@ function mapToAppUserData(raw: any): AppUserData {
     updatedAt: raw.updatedAt,
     photoUrl: raw.photoUrl ?? null,
     deletedAt: raw.deletedAt ?? null,
+    emailNotifications: raw.emailNotifications ?? true,
+    inAppNotifications: raw.inAppNotifications ?? true,
   };
 }
 
@@ -103,6 +110,8 @@ const APP_USER_BASE_SELECT = {
   updatedAt: true,
   photoUrl: true,
   deletedAt: true,
+  emailNotifications: true,
+  inAppNotifications: true,
 } as const;
 
 export class PrismaAppUserRepository implements AppUserRepository {
