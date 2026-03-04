@@ -83,9 +83,11 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
 
   async update(
     id: string,
-    input: UpdateWorkshopInput
+    input: UpdateWorkshopInput,
+    tx?: any
   ): Promise<WorkshopEntity> {
-    const workshop = await this.prisma.workshop.update({
+    const client = tx || this.prisma;
+    const workshop = await client.workshop.update({
       where: { id },
       data: input,
       include: {
@@ -113,8 +115,9 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
     return workshop?.creatorId === creatorId;
   }
 
-  async removeApprentice(id: string): Promise<void> {
-    await this.prisma.workshop.update({
+  async removeApprentice(id: string, tx?: any): Promise<void> {
+    const client = tx || this.prisma;
+    await client.workshop.update({
       where: { id },
       data: { apprenticeId: null },
     });

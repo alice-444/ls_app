@@ -410,9 +410,33 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         );
       }
 
-      await this.workshopRequestRepository.update(requestId, {
-        status: "REJECTED",
-      });
+      if (this.prisma && this.creditService) {
+        await this.prisma.$transaction(async (tx) => {
+          await (tx as any).workshop_request.update({
+            where: { id: requestId },
+            data: { status: "REJECTED", updatedAt: new Date() },
+          });
+
+          // Find the apprentice BetterAuth ID
+          const apprentice = await (tx as any).user.findUnique({
+            where: { id: request.apprenticeId },
+            select: { userId: true },
+          });
+
+          if (apprentice) {
+            await this.creditService!.refundCreditsInTransaction(
+              apprentice.userId,
+              this.WORKSHOP_REQUEST_COST,
+              `Remboursement demande rejetée: ${request.title}`,
+              tx
+            );
+          }
+        });
+      } else {
+        await this.workshopRequestRepository.update(requestId, {
+          status: "REJECTED",
+        });
+      }
 
       logger.info("Workshop request rejected", {
         requestId,
@@ -474,9 +498,35 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         );
       }
 
-      await this.workshopRequestRepository.update(requestId, {
-        status: "CANCELLED",
-      });
+      const previousStatus = request.status;
+
+      if (this.prisma && this.creditService && previousStatus === "PENDING") {
+        await this.prisma.$transaction(async (tx) => {
+          await (tx as any).workshop_request.update({
+            where: { id: requestId },
+            data: { status: "CANCELLED", updatedAt: new Date() },
+          });
+
+          // Find the apprentice BetterAuth ID
+          const apprenticeUser = await (tx as any).user.findUnique({
+            where: { id: request.apprenticeId },
+            select: { userId: true },
+          });
+
+          if (apprenticeUser) {
+            await this.creditService!.refundCreditsInTransaction(
+              apprenticeUser.userId,
+              this.WORKSHOP_REQUEST_COST,
+              `Remboursement demande annulée: ${request.title}`,
+              tx
+            );
+          }
+        });
+      } else {
+        await this.workshopRequestRepository.update(requestId, {
+          status: "CANCELLED",
+        });
+      }
 
       logger.info("Workshop request cancelled", {
         requestId,

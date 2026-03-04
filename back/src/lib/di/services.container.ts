@@ -141,7 +141,9 @@ export class ServicesContainer {
       this.repositories.workshopRequestRepository,
       this.notificationService,
       this.workshopVideoLinkService,
-      this.emailService
+      this.emailService,
+      this.creditService,
+      this.prisma
     );
     return this._workshopService;
   }

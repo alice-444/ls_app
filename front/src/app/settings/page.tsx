@@ -5,6 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 import { PageHeader, PageContainer, SectionSidebar } from "@/components/layout";
 import { BlockedUsersSection } from "@/components/settings/BlockedUsersSection";
+import { CreditsHistorySection } from "@/components/settings/CreditsHistorySection";
 import { SIDEBAR_ITEMS, type SettingsSection } from "@/components/settings/constants";
 import {
   AccountSection,
@@ -53,6 +54,7 @@ export default function SettingsPage() {
     ),
     "informations-personnelles": <PersonalInformationSection />,
     "utilisateurs-bloques": <BlockedUsersSection />,
+    "mes-credits": <CreditsHistorySection />,
     notifications: <NotificationsSection />,
     "parametres-systeme": <SystemSettingsSection />,
     feedback: <FeedbackSection />,

@@ -7,6 +7,8 @@ import type { IWorkshopService } from "./workshop.service.interface";
 import type { IWorkshopVideoLinkService } from "./video/workshop-video-link.service.interface";
 import type { IEmailService } from "../../email/services/email.service.interface";
 import type { IUserBlockService } from "../../users/services/moderation/user-block.service.interface";
+import type { ICreditService } from "../../credits/services/credit.service.interface";
+import type { PrismaClient } from '@/lib/prisma';
 import { WorkshopAccessGuard } from "./guards/workshop-access.guard";
 import { WorkshopLifecycleService } from "./lifecycle/workshop-lifecycle.service";
 import { WorkshopSchedulingService } from "./scheduling/workshop-scheduling.service";
@@ -60,7 +62,9 @@ export class WorkshopService implements IWorkshopService {
     workshopRequestRepository?: IWorkshopRequestRepository,
     dbNotificationService?: INotificationService,
     workshopVideoLinkService?: IWorkshopVideoLinkService,
-    emailService?: IEmailService
+    emailService?: IEmailService,
+    creditService?: ICreditService,
+    prisma?: PrismaClient
   ) {
     const accessGuard = new WorkshopAccessGuard(
       appUserRepository,
@@ -78,7 +82,9 @@ export class WorkshopService implements IWorkshopService {
       accessGuard,
       dbNotificationService,
       emailService,
-      appUserRepository
+      appUserRepository,
+      creditService,
+      prisma
     );
 
     const videoLinkService =

@@ -7,6 +7,7 @@ import {
   MessageSquare,
   Info,
   HelpCircle,
+  Coins,
 } from "lucide-react";
 import type { SidebarItem } from "@/components/layout";
 
@@ -14,6 +15,7 @@ export type SettingsSection =
   | "profil"
   | "informations-personnelles"
   | "utilisateurs-bloques"
+  | "mes-credits"
   | "notifications"
   | "parametres-systeme"
   | "feedback"
@@ -28,6 +30,7 @@ export const SIDEBAR_ITEMS: ReadonlyArray<SidebarItem<SettingsSection>> = [
     icon: UserCircle,
   },
   { id: "utilisateurs-bloques", label: "Utilisateurs bloqués", icon: Ban },
+  { id: "mes-credits", label: "Mes crédits", icon: Coins },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "parametres-systeme", label: "Paramètres système", icon: SettingsIcon },
   { id: "feedback", label: "Feedback", icon: MessageSquare },

@@ -4,13 +4,17 @@ export interface IWorkshopRepository {
   findByCreatorId(creatorId: string): Promise<WorkshopEntity[]>;
   findByApprenticeId(apprenticeId: string): Promise<WorkshopEntity[]>;
   findPublished(): Promise<WorkshopEntity[]>;
-  update(id: string, input: UpdateWorkshopInput): Promise<WorkshopEntity>;
+  update(
+    id: string,
+    input: UpdateWorkshopInput,
+    tx?: any
+  ): Promise<WorkshopEntity>;
   delete(id: string): Promise<void>;
   checkCreatorOwnership(
     workshopId: string,
     creatorId: string
   ): Promise<boolean>;
-  removeApprentice(workshopId: string): Promise<void>;
+  removeApprentice(workshopId: string, tx?: any): Promise<void>;
   findWorkshopBetweenMentorAndApprentice(
     mentorAppUserId: string,
     apprenticeAppUserId: string

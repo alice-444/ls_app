@@ -16,17 +16,22 @@ import {
 } from "../../../common/error-handler";
 import { isValidTimeFormat } from "../../utils/workshop-helpers";
 import { WorkshopEmailTemplates } from "../email/workshop-email.templates";
+import type { ICreditService } from "../../../credits/services/credit.service.interface";
+import type { PrismaClient } from '@/lib/prisma';
 
 export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   private readonly workshopNotificationService: WorkshopNotificationService;
   private readonly conflictChecker: ISchedulingConflictChecker;
+  private readonly WORKSHOP_REQUEST_COST = 10;
 
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly accessGuard: IWorkshopAccessGuard,
     private readonly dbNotificationService?: INotificationService,
     private readonly emailService?: IEmailService,
-    appUserRepository?: any
+    appUserRepository?: any,
+    private readonly creditService?: ICreditService,
+    private readonly prisma?: PrismaClient
   ) {
     this.workshopNotificationService = new WorkshopNotificationService(
       this.workshopRepository,
@@ -203,7 +208,27 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     workshop: any,
     cancellationReason?: string
   ): Promise<Result<{ success: boolean }>> {
-    await this.workshopRepository.removeApprentice(workshopId);
+    if (this.prisma && this.creditService && workshop.apprenticeId) {
+      await this.prisma.$transaction(async (tx) => {
+        await this.workshopRepository.removeApprentice(workshopId, tx);
+
+        const apprentice = await (tx as any).user.findUnique({
+          where: { id: workshop.apprenticeId },
+          select: { userId: true },
+        });
+
+        if (apprentice) {
+          await this.creditService!.refundCreditsInTransaction(
+            apprentice.userId,
+            this.WORKSHOP_REQUEST_COST,
+            `Remboursement participation annulée: ${workshop.title}`,
+            tx
+          );
+        }
+      });
+    } else {
+      await this.workshopRepository.removeApprentice(workshopId);
+    }
 
     if (this.dbNotificationService) {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
@@ -244,7 +269,27 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     workshopId: string,
     workshop: any
   ): Promise<Result<{ success: boolean }>> {
-    await this.workshopRepository.update(workshopId, { status: "CANCELLED" });
+    if (this.prisma && this.creditService && workshop.apprenticeId) {
+      await this.prisma.$transaction(async (tx) => {
+        await this.workshopRepository.update(workshopId, { status: "CANCELLED" }, tx);
+
+        const apprentice = await (tx as any).user.findUnique({
+          where: { id: workshop.apprenticeId },
+          select: { userId: true },
+        });
+
+        if (apprentice) {
+          await this.creditService!.refundCreditsInTransaction(
+            apprentice.userId,
+            this.WORKSHOP_REQUEST_COST,
+            `Remboursement atelier annulé par mentor: ${workshop.title}`,
+            tx
+          );
+        }
+      });
+    } else {
+      await this.workshopRepository.update(workshopId, { status: "CANCELLED" });
+    }
 
     if (this.dbNotificationService) {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
