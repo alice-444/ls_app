@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { MessageSquare, Plus, Search, Pin } from "lucide-react";
@@ -37,6 +37,16 @@ export function ConversationList() {
     userId: string;
     userName: string;
   } | null>(null);
+
+  const otherUserIds = useMemo(() => 
+    localConversations.map(c => c.otherUserId),
+    [localConversations]
+  );
+
+  const { data: presenceMap } = trpc.messaging.getMultipleUsersPresence.useQuery(
+    { userIds: otherUserIds },
+    { enabled: otherUserIds.length > 0, refetchInterval: 60000 }
+  );
 
   const { data: acceptedConnections } =
     trpc.connection.getAcceptedConnections.useQuery(undefined, {
@@ -268,16 +278,21 @@ export function ConversationList() {
               <p>Essayez de modifier ta recherche</p>
             </div>
           ) : (
-            paginatedConversations.map((conversation) => (
-              <ConversationRow
-                key={conversation.conversationId}
-                conversation={conversation}
-                onTogglePin={handleTogglePin}
-                onDelete={(id) => deleteMutation.mutate({ conversationId: id })}
-                onBlockUser={handleBlockUser}
-                isDeleting={deleteMutation.isPending}
-              />
-            ))
+            paginatedConversations.map((conversation) => {
+              const presence = presenceMap?.[conversation.otherUserId];
+              return (
+                <ConversationRow
+                  key={conversation.conversationId}
+                  conversation={conversation}
+                  onTogglePin={handleTogglePin}
+                  onDelete={(id) => deleteMutation.mutate({ conversationId: id })}
+                  onBlockUser={handleBlockUser}
+                  isDeleting={deleteMutation.isPending}
+                  isOnline={presence?.isOnline}
+                  lastSeen={presence?.lastSeen}
+                />
+              );
+            })
           )}
         </div>
 

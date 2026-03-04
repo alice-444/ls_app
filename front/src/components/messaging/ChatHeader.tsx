@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, X, MoreVertical, Ban, Flag } from "lucide-react";
+import { Search, X, MoreVertical, Ban, Flag, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { PresenceIndicator } from "./PresenceIndicator";
+import { trpc } from "@/utils/trpc";
+import { useRouter } from "next/navigation";
 
 interface SearchResult {
   messageId: string;
@@ -45,13 +48,36 @@ export function ChatHeader({
   onShowBlockDialog,
   onShowReportDialog,
 }: ChatHeaderProps) {
+  const router = useRouter();
+  const { data: presence } = trpc.messaging.getUserPresence.useQuery(
+    { userId: otherUserId || "" },
+    { enabled: !!otherUserId, refetchInterval: 30000 }
+  );
+
   return (
     <div className="shrink-0 border-b border-[#d6dae4] dark:border-[#d6dae4] p-4 bg-white dark:bg-[#1a1720]">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex-1">
-          <h2 className="text-xl font-bold text-[#26547c] dark:text-[#e6e6e6]">
-            {displayName}
-          </h2>
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/inbox")}
+            className="md:hidden h-8 w-8 rounded-full"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex flex-col min-w-0">
+            <h2 className="text-lg sm:text-xl font-bold text-[#26547c] dark:text-[#e6e6e6] truncate">
+              {displayName}
+            </h2>
+            {presence && (
+              <PresenceIndicator
+                isOnline={presence.isOnline}
+                lastSeen={presence.lastSeen}
+                showText={true}
+              />
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button

@@ -13,6 +13,8 @@ import {
   Inbox,
   Calendar,
   Coins,
+  Check,
+  X,
 } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import {
@@ -22,6 +24,10 @@ import {
 } from "@/lib/dashboard-utils";
 import { AllWorkshopRequestsDialog } from "./AllWorkshopRequestsDialog";
 import { StatusBadge } from "./StatusBadge";
+import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
 
 interface Connection {
   connectionId: string;
@@ -51,6 +57,8 @@ interface WorkshopRequest {
   description?: string;
   status: string;
   preferredDate: string | Date | null;
+  preferredTime?: string | null;
+  apprenticeName?: string;
 }
 
 interface MentorDashboardProps {
@@ -77,6 +85,23 @@ export function MentorDashboard({
     "month" | "week" | "day" | "agenda"
   >("month");
   const [showAllRequestsDialog, setShowAllRequestsDialog] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<WorkshopRequest | null>(null);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+
+  const utils = trpc.useUtils();
+
+  const rejectMutation = trpc.mentor.rejectRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée");
+      utils.mentor.getReceivedRequests.invalidate();
+      setShowRejectDialog(false);
+      setSelectedRequest(null);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erreur lors du refus");
+    },
+  });
 
   const navigateCalendar = createNavigateCalendar(
     mentorCalendarDate,
@@ -361,12 +386,36 @@ export function MentorDashboard({
                                 {formatWorkshopDate(request.preferredDate)}
                               </p>
                             </div>
-                            <div className="shrink-0">
-                              {request.status === "ACCEPTED" ||
-                              request.status === "PENDING" ||
-                              request.status === "REJECTED" ? (
+                            <div className="shrink-0 flex items-center gap-2">
+                              {request.status === "PENDING" ? (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    className="bg-green-600 hover:bg-green-700 text-white rounded-[32px] h-8 px-3"
+                                    onClick={() => {
+                                      setSelectedRequest(request);
+                                      setShowAcceptDialog(true);
+                                    }}
+                                  >
+                                    <Check className="h-4 w-4 mr-1" />
+                                    Accepter
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600 border-red-200 hover:bg-red-50 rounded-[32px] h-8 px-3"
+                                    onClick={() => {
+                                      setSelectedRequest(request);
+                                      setShowRejectDialog(true);
+                                    }}
+                                  >
+                                    <X className="h-4 w-4 mr-1" />
+                                    Refuser
+                                  </Button>
+                                </>
+                              ) : (
                                 <StatusBadge status={request.status} />
-                              ) : null}
+                              )}
                             </div>
                           </div>
                         ))}
@@ -536,6 +585,35 @@ export function MentorDashboard({
         onOpenChange={setShowAllRequestsDialog}
         requests={mentorWorkshopRequests}
       />
+
+      {selectedRequest && (
+        <>
+          <AcceptWorkshopRequestDialog
+            open={showAcceptDialog}
+            onOpenChange={setShowAcceptDialog}
+            requestId={selectedRequest.id}
+            requestTitle={selectedRequest.title}
+            preferredDate={
+              selectedRequest.preferredDate
+                ? new Date(selectedRequest.preferredDate)
+                : null
+            }
+            preferredTime={selectedRequest.preferredTime}
+            onSuccess={() => {
+              utils.mentor.getReceivedRequests.invalidate();
+              utils.workshop.getMyWorkshops.invalidate();
+            }}
+          />
+          <RejectWorkshopRequestDialog
+            open={showRejectDialog}
+            onOpenChange={setShowRejectDialog}
+            onConfirm={() => rejectMutation.mutate({ requestId: selectedRequest.id })}
+            isSubmitting={rejectMutation.isPending}
+            apprenticeName={selectedRequest.apprenticeName}
+            workshopTitle={selectedRequest.title}
+          />
+        </>
+      )}
     </>
   );
 }
