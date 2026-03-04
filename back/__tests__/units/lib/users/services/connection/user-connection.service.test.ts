@@ -32,6 +32,22 @@ describe("UserConnectionService", () => {
     delete: vi.fn(),
     findPendingRequestsReceivedBy: vi.fn(),
     findAcceptedConnectionsFor: vi.fn(),
+    findPendingRequestsSentBy: vi.fn(),
+  };
+
+  const mockUserBlockService = {
+    areUsersBlocked: vi.fn().mockResolvedValue({
+      ok: true,
+      data: { user1BlockedUser2: false, user2BlockedUser1: false },
+    }),
+    getAllBlockedAppUserIds: vi.fn().mockResolvedValue({
+      ok: true,
+      data: { blockedByUser: [], blockedUser: [] },
+    }),
+  };
+
+  const mockNotificationService = {
+    createNotification: vi.fn().mockResolvedValue({ ok: true }),
   };
 
   let service: UserConnectionService;
@@ -40,7 +56,9 @@ describe("UserConnectionService", () => {
     vi.clearAllMocks();
     service = new UserConnectionService(
       mockAppUserRepo as any,
-      mockConnectionRepo as any
+      mockConnectionRepo as any,
+      mockUserBlockService as any,
+      mockNotificationService as any
     );
   });
 

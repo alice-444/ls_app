@@ -43,6 +43,20 @@ describe("WorkshopSchedulingService", () => {
     createNotification: vi.fn(),
   };
 
+  const mockCreditService = {
+    refundCreditsInTransaction: vi.fn().mockResolvedValue({ ok: true }),
+  };
+
+  const mockPrisma = {
+    $transaction: vi.fn((cb) => cb(mockPrisma)),
+    user: {
+      findUnique: vi.fn(),
+    },
+    workshop: {
+      update: vi.fn(),
+    },
+  };
+
   let service: WorkshopSchedulingService;
 
   beforeEach(() => {
@@ -53,7 +67,9 @@ describe("WorkshopSchedulingService", () => {
       mockAccessGuard as any,
       mockNotificationService as any,
       undefined,
-      undefined
+      undefined,
+      mockCreditService as any,
+      mockPrisma as any
     );
   });
 

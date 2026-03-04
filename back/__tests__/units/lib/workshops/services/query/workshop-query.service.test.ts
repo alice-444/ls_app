@@ -123,6 +123,13 @@ describe("WorkshopApprenticeQueryService", () => {
     findByApprenticeId: vi.fn(),
   };
 
+  const mockUserBlockService = {
+    getAllBlockedAppUserIds: vi.fn().mockResolvedValue({
+      ok: true,
+      data: { blockedByUser: [], blockedUser: [] },
+    }),
+  };
+
   let service: WorkshopApprenticeQueryService;
 
   beforeEach(() => {
@@ -131,6 +138,7 @@ describe("WorkshopApprenticeQueryService", () => {
     service = new WorkshopApprenticeQueryService(
       mockWorkshopRepo as any,
       mockAccessGuard as any,
+      mockUserBlockService as any,
       mockRequestRepo as any
     );
   });
@@ -281,6 +289,30 @@ describe("WorkshopApprenticeQueryService", () => {
         expect(result.data).toHaveLength(1);
         expect(result.data[0].id).toBe("ws-available");
       }
-    });
-  });
-});
+      });
+
+      it("filters out workshops from blocked mentors", async () => {
+      mockAccessGuard.verifyApprenticeAccess.mockResolvedValue({
+        ok: true,
+        data: { appUser: { id: "app-1" } },
+      });
+      mockWorkshopRepo.findPublished.mockResolvedValue([
+        { id: "ws-blocked", status: "PUBLISHED", apprenticeId: null, creatorId: "blocked-mentor" },
+        { id: "ws-ok", status: "PUBLISHED", apprenticeId: null, creatorId: "ok-mentor" },
+      ]);
+      mockWorkshopRepo.findByApprenticeId.mockResolvedValue([]);
+      mockRequestRepo.findByApprenticeId.mockResolvedValue([]);
+      mockUserBlockService.getAllBlockedAppUserIds.mockResolvedValue({
+        ok: true,
+        data: { blockedByUser: ["blocked-mentor"], blockedUser: [] },
+      });
+
+      const result = await service.getAvailableWorkshopsForApprentice("user-1");
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.data).toHaveLength(1);
+        expect(result.data[0].id).toBe("ws-ok");
+      }
+      });
+      });
+      });
