@@ -74,7 +74,7 @@ export class FeedbackModerationService implements IFeedbackModerationService {
       // Notify admins
       await this.notificationService.notifyAdmin(
         "NEW_FEEDBACK_MODERATION",
-        `Un avis sur l'atelier "${feedback.workshop?.title || 'N/A'}" a été signalé pour modération par le mentor ${mentor.user?.name || userId}.`,
+        `Un avis sur l'atelier "${feedback.workshop?.title || 'N/A'}" a été signalé pour modération par le mentor ${mentor.name || userId}.`,
         `/admin/feedback-moderation?feedbackId=${feedbackId}`
       );
 

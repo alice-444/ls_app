@@ -16,7 +16,7 @@ export interface WorkshopFeedbackEntity {
   updatedAt: Date;
   apprentice?: {
     id: string;
-    user?: {
+    user: {
       id: string;
       name: string | null;
       email: string | null;
@@ -25,7 +25,7 @@ export interface WorkshopFeedbackEntity {
   };
   mentor?: {
     id: string;
-    user?: {
+    user: {
       id: string;
       name: string | null;
     };
