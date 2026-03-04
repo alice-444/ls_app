@@ -6,7 +6,6 @@ export interface IDeleteAccountEnhancedService {
   ): Promise<Result<{ canDelete: boolean; reason?: string }>>;
 
   scrubPII(
-    userId: string,
-    appUserId: string
+    userId: string
   ): Promise<Result<{ success: boolean }>>;
 }

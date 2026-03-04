@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type { IDeleteAccountEnhancedService } from "./delete-account-enhanced.service.interface";
 import type { IWorkshopRepository } from "../../../../workshops/repositories/workshop.repository.interface";
 import type { AppUserRepository } from "../../../repositories";
@@ -65,8 +65,7 @@ export class DeleteAccountEnhancedService
   }
 
   async scrubPII(
-    userId: string,
-    appUserId: string
+    userId: string
   ): Promise<Result<{ success: boolean }>> {
     try {
       const appUser = await this.appUserRepository.findByUserId(userId);

@@ -163,8 +163,7 @@ export const accountSettingsRouter = router({
       }
 
       const scrubResult = await container.deleteAccountEnhancedService.scrubPII(
-        ctx.session.user.id,
-        appUser.id
+        ctx.session.user.id
       );
 
       if (!scrubResult.ok) {
