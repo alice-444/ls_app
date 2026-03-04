@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createCaller, createPublicContext } from "./helpers/caller";
 
-const mockGetPublishedMentorById = vi.fn();
+const mockGetPublicProfile = vi.fn();
 
 vi.mock("@/lib/di/container", () => ({
   container: {
     mentorProfileService: {
-      getPublishedMentorById: (mentorId: string) =>
-        mockGetPublishedMentorById(mentorId),
+      getPublicProfile: (mentorId: string) =>
+        mockGetPublicProfile(mentorId),
     },
   },
 }));
 
-describe("trpc mentor.getById", () => {
+describe("trpc mentor.getPublicProfile", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -24,23 +24,23 @@ describe("trpc mentor.getById", () => {
       name: "Jane Mentor",
       bio: "Expert",
     } as any;
-    mockGetPublishedMentorById.mockResolvedValue({ ok: true, data: mentor });
+    mockGetPublicProfile.mockResolvedValue({ ok: true, data: mentor });
     const ctx = createPublicContext();
     const caller = createCaller(ctx);
-    const result = await caller.mentor.getById({ mentorId: "mentor-1" });
+    const result = await caller.mentor.getPublicProfile({ mentorId: "mentor-1" });
     expect(result).toEqual(mentor);
-    expect(mockGetPublishedMentorById).toHaveBeenCalledWith("mentor-1");
+    expect(mockGetPublicProfile).toHaveBeenCalledWith("mentor-1");
   });
 
   it("throws when service returns error", async () => {
-    mockGetPublishedMentorById.mockResolvedValue({
+    mockGetPublicProfile.mockResolvedValue({
       ok: false,
       error: "Mentor not found",
     });
     const ctx = createPublicContext();
     const caller = createCaller(ctx);
     await expect(
-      caller.mentor.getById({ mentorId: "missing" })
+      caller.mentor.getPublicProfile({ mentorId: "missing" })
     ).rejects.toThrow();
   });
 });

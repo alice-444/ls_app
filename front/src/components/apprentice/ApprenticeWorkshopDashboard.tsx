@@ -218,7 +218,7 @@ export function ApprenticeWorkshopDashboard() {
           onSuccess={() => {
             utils.workshop.getAvailableWorkshops.invalidate();
             utils.workshop.getUpcomingWorkshops.invalidate();
-            utils.mentor.getMyWorkshopRequests.invalidate();
+            utils.apprentice.getMyRequests.invalidate();
           }}
         />
       )}

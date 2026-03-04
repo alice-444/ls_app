@@ -40,7 +40,7 @@ export function MentorProfileModal({
   const { data: session } = authClient.useSession();
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
-  const { data: mentor, isLoading } = trpc.mentor.getById.useQuery(
+  const { data: mentor, isLoading } = trpc.mentor.getPublicProfile.useQuery(
     { mentorId },
     {
       enabled: open && !!mentorId,
