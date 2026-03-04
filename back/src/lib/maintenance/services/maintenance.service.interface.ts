@@ -40,4 +40,14 @@ export interface IMaintenanceService {
     retried: number;
     integrityIssues: number;
   }>;
+
+  /**
+   * Retry failed cashback operations
+   */
+  retryFailedCashbacks(): Promise<{ retried: number; errors: number }>;
+
+  /**
+   * Check cashback data integrity
+   */
+  checkCashbackIntegrity(): Promise<{ issues: number }>;
 }

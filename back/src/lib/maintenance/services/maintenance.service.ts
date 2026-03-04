@@ -256,4 +256,19 @@ export class MaintenanceService implements IMaintenanceService {
       integrityIssues: integrityCheck.ok ? integrityCheck.data.length : 0,
     };
   }
+
+  async retryFailedCashbacks(): Promise<{ retried: number; errors: number }> {
+    const retryResult = await this.services.workshopCashbackService.retryFailedCashbacks();
+    return {
+      retried: retryResult.ok ? retryResult.data.retried : 0,
+      errors: retryResult.ok ? 0 : 1,
+    };
+  }
+
+  async checkCashbackIntegrity(): Promise<{ issues: number }> {
+    const integrityCheck = await this.services.workshopCashbackService.checkDataIntegrity();
+    return {
+      issues: integrityCheck.ok ? integrityCheck.data.length : 0,
+    };
+  }
 }

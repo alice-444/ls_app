@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { container } from "../../../../lib/di/container";
 import { logger } from "../../../../lib/common/logger";
+import { isCronAuthorized } from "@/lib/api-helpers";
 
 export const dynamic = "force-dynamic";
 
-function isAuthorized(req: NextRequest): boolean {
-  const token = req.headers.get("x-cron-token");
-  return !!token && token === process.env.CRON_SECRET;
-}
-
-export async function POST(req: NextRequest) {
-  if (!isAuthorized(req)) {
+export async function GET(req: NextRequest) {
+  if (!isCronAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -24,4 +20,8 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(req: NextRequest) {
+  return GET(req);
 }

@@ -10,10 +10,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const result = await container.maintenanceService.cleanupInactiveRooms();
+    const result = await container.maintenanceService.retryFailedCashbacks();
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error("Error in cleanup-inactive-rooms cron:", error);
+    console.error("Error in retry-failed-cashbacks cron:", error);
     return NextResponse.json(
       { error: "Internal server error", message: error.message },
       { status: 500 }
