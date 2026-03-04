@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/utils/trpc";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 
 function VerifyEmailChangeContent() {
@@ -24,31 +24,36 @@ function VerifyEmailChangeContent() {
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const verifyEmailChangeMutation =
-    trpc.accountSettings.verifyEmailChange.useMutation({
-      onSuccess: () => {
-        setStatus("success");
-        toast.success("Email modifié avec succès");
-        setTimeout(() => {
-          router.push("/settings");
-        }, 3000);
-      },
-      onError: (error: { message?: string }) => {
+  useEffect(() => {
+    async function verify() {
+      if (!token) {
+        setStatus("error");
+        setErrorMessage("Token de vérification manquant");
+        return;
+      }
+
+      setStatus("loading");
+      const { data, error } = await authClient.verifyEmail({
+        query: {
+          token,
+        },
+      });
+
+      if (error) {
         setStatus("error");
         setErrorMessage(error.message || "Erreur lors de la vérification");
         toast.error(error.message || "Erreur lors de la vérification");
-      },
-    });
-
-  useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      setErrorMessage("Token de vérification manquant");
-      return;
+      } else {
+        setStatus("success");
+        toast.success("Email vérifié avec succès");
+        setTimeout(() => {
+          router.push("/settings");
+        }, 3000);
+      }
     }
 
-    verifyEmailChangeMutation.mutate({ token });
-  }, [token]);
+    verify();
+  }, [token, router]);
 
   if (status === "loading") {
     return (
