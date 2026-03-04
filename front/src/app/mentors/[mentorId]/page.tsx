@@ -28,12 +28,21 @@ import Loader from "@/components/loader";
 import { ContactMentorDialog } from "@/components/mentor/ContactMentorDialog";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 import { MentorFeedbacks } from "@/components/mentor/MentorFeedbacks";
-import { MentorWorkshopsList } from "@/components/mentor/MentorWorkshopsList"; 
+import { MentorWorkshopsList } from "@/components/mentor/MentorWorkshopsList";
+import { BlockUserDialog } from "@/components/user/BlockUserDialog";
+import { ReportUserDialog } from "@/components/user/ReportUserDialog";
 import { toast } from "sonner";
 import { BackButton } from "@/components/back-button";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageCard } from "@/components/layout/PageCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreVertical, Ban, Flag } from "lucide-react";
 
 export default function MentorProfileViewPage() {
   const router = useRouter();
@@ -42,6 +51,8 @@ export default function MentorProfileViewPage() {
   const { data: session } = authClient.useSession();
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   const { data: userRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
@@ -108,6 +119,25 @@ export default function MentorProfileViewPage() {
       <BackButton onClick={() => router.back()} />
 
       <PageCard>
+        <div className="absolute top-4 right-4">
+          {session && mentor.userId !== session.user.id && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-ls-error">
+                  <Flag className="h-4 w-4 mr-2" /> Signaler
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-ls-error">
+                  <Ban className="h-4 w-4 mr-2" /> Bloquer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
         <div className="text-center space-y-4 pb-6">
           <div className="flex justify-center">
              <Avatar className="w-32 h-32 border-4 border-primary shadow-lg">
@@ -187,6 +217,20 @@ export default function MentorProfileViewPage() {
 
       <ContactMentorDialog open={showContactDialog} onOpenChange={setShowContactDialog} mentorId={mentorId} mentorName={mentor.displayName || "ce mentor"} />
       <RequestWorkshopParticipationDialog open={showRequestDialog} onOpenChange={setShowRequestDialog} mentorId={mentorId} mentorName={mentor.displayName || "ce mentor"} />
+      
+      <BlockUserDialog
+        open={showBlockDialog}
+        onOpenChange={setShowBlockDialog}
+        userId={mentor.userId!}
+        userName={mentor.displayName}
+        onBlocked={() => router.push("/")}
+      />
+      <ReportUserDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+        userId={mentor.userId!}
+        userName={mentor.displayName}
+      />
     </PageContainer>
   );
 }

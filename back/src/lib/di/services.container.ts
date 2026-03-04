@@ -137,6 +137,7 @@ export class ServicesContainer {
     this._workshopService ??= new WorkshopService(
       this.repositories.workshopRepository,
       this.repositories.appUserRepository,
+      this.userBlockService,
       this.repositories.workshopRequestRepository,
       this.notificationService,
       this.workshopVideoLinkService,
@@ -157,7 +158,8 @@ export class ServicesContainer {
 
   get mentorProfileService(): IMentorProfileService {
     this._mentorProfileService ??= new MentorProfileService(
-      this.repositories.mentorRepository
+      this.repositories.mentorRepository,
+      this.userBlockService
     );
     return this._mentorProfileService;
   }
@@ -206,7 +208,8 @@ export class ServicesContainer {
     this._apprenticeProfileService ??= new ApprenticeProfileService(
       this.repositories.appUserRepository,
       this.repositories.workshopRepository,
-      this.repositories.userConnectionRepository
+      this.repositories.userConnectionRepository,
+      this.userBlockService
     );
     return this._apprenticeProfileService;
   }
@@ -214,7 +217,8 @@ export class ServicesContainer {
   get userConnectionService(): UserConnectionService {
     this._userConnectionService ??= new UserConnectionService(
       this.repositories.appUserRepository,
-      this.repositories.userConnectionRepository
+      this.repositories.userConnectionRepository,
+      this.userBlockService
     );
     return this._userConnectionService;
   }

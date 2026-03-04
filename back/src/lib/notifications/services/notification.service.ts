@@ -78,7 +78,7 @@ export class NotificationService implements INotificationService {
       if (senderUserId && this.userBlockService) {
         const blockResult = await this.userBlockService.areUsersBlocked(
           senderUserId,
-          appUserId
+          userId // Use BetterAuth ID
         );
         if (!blockResult.ok) {
           logger.warn("Error checking block status before notification", {

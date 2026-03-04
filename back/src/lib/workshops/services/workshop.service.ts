@@ -6,6 +6,7 @@ import type { INotificationService } from "../../notifications/services/notifica
 import type { IWorkshopService } from "./workshop.service.interface";
 import type { IWorkshopVideoLinkService } from "./video/workshop-video-link.service.interface";
 import type { IEmailService } from "../../email/services/email.service.interface";
+import type { IUserBlockService } from "../../users/services/moderation/user-block.service.interface";
 import { WorkshopAccessGuard } from "./guards/workshop-access.guard";
 import { WorkshopLifecycleService } from "./lifecycle/workshop-lifecycle.service";
 import { WorkshopSchedulingService } from "./scheduling/workshop-scheduling.service";
@@ -55,6 +56,7 @@ export class WorkshopService implements IWorkshopService {
   constructor(
     workshopRepository: IWorkshopRepository,
     appUserRepository: AppUserRepository,
+    userBlockService: IUserBlockService,
     workshopRequestRepository?: IWorkshopRequestRepository,
     dbNotificationService?: INotificationService,
     workshopVideoLinkService?: IWorkshopVideoLinkService,
@@ -91,6 +93,7 @@ export class WorkshopService implements IWorkshopService {
     this.apprenticeQueryService = new WorkshopApprenticeQueryService(
       workshopRepository,
       accessGuard,
+      userBlockService,
       workshopRequestRepository
     );
   }

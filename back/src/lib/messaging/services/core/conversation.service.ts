@@ -196,6 +196,18 @@ export class ConversationService implements IConversationService {
         return failure("One or both users not found", 404);
       }
 
+      // Check for blocks
+      const blockResult = await this.userBlockService.areUsersBlocked(
+        userId1,
+        userId2
+      );
+      if (!blockResult.ok) {
+        return blockResult;
+      }
+      if (blockResult.data.user1BlockedUser2 || blockResult.data.user2BlockedUser1) {
+        return failure("Cannot start conversation with this user", 403);
+      }
+
       const client = this.prismaClient || prisma;
       const result = await (client as any).$transaction(
         async (tx: any) => {

@@ -4,11 +4,13 @@ import type { IWorkshopAccessGuard } from "../guards/workshop-access.guard";
 import type { IWorkshopQueryService, IWorkshopApprenticeQueryService } from "./workshop-query.service.interface";
 import type { IWorkshopRequestRepository } from "../../../mentors/repositories/workshop-request.repository.interface";
 import type { IWorkshopVideoLinkService } from "../video/workshop-video-link.service.interface";
+import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
 import { failure } from "../../../common";
 import {
   handleError,
   createErrorContext,
 } from "../../../common/error-handler";
+import { logger } from "../../../common/logger";
 import { calculateWorkshopEndTime } from "../../utils/workshop-helpers";
 
 export class WorkshopQueryService implements IWorkshopQueryService {
@@ -75,6 +77,7 @@ export class WorkshopApprenticeQueryService
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly accessGuard: IWorkshopAccessGuard,
+    private readonly userBlockService: IUserBlockService,
     private readonly workshopRequestRepository?: IWorkshopRequestRepository
   ) {}
 
@@ -186,6 +189,7 @@ export class WorkshopApprenticeQueryService
       }
 
       const { appUser } = accessCheck.data;
+      const blockedAppUserIds = await this.getBlockedAppUserIds(appUser.id);
 
       const publishedWorkshops = await this.workshopRepository.findPublished();
       const registeredWorkshops =
@@ -210,7 +214,8 @@ export class WorkshopApprenticeQueryService
           !registeredWorkshopIds.has(w.id) &&
           !pendingRequestWorkshopIds.has(w.id) &&
           w.status === "PUBLISHED" &&
-          w.apprenticeId === null
+          w.apprenticeId === null &&
+          !blockedAppUserIds.has(w.creatorId)
       );
 
       return success(availableWorkshops);
@@ -220,5 +225,26 @@ export class WorkshopApprenticeQueryService
         createErrorContext("getAvailableWorkshopsForApprentice", { userId })
       );
     }
+  }
+
+  private async getBlockedAppUserIds(appUserId: string): Promise<Set<string>> {
+    const blockedAppUserIds = new Set<string>();
+    const blockedUsersResult =
+      await this.userBlockService.getAllBlockedAppUserIds(appUserId);
+
+    if (blockedUsersResult.ok) {
+      blockedUsersResult.data.blockedByUser.forEach((id) =>
+        blockedAppUserIds.add(id)
+      );
+      blockedUsersResult.data.blockedUser.forEach((id) =>
+        blockedAppUserIds.add(id)
+      );
+    } else {
+      logger.warn("Error loading blocked users, continuing without filter", {
+        userId: appUserId,
+        error: blockedUsersResult.error,
+      });
+    }
+    return blockedAppUserIds;
   }
 }

@@ -6,10 +6,11 @@ import { z } from "zod";
 export const mentorRouter = router({
   getPublicProfile: publicProcedure
     .input(z.object({ mentorId: z.string() }))
-    .query(async ({ input }) =>
+    .query(async ({ ctx, input }) =>
       unwrapResult(
         await container.mentorProfileService.getPublicProfile(
-          input.mentorId
+          input.mentorId,
+          ctx.session?.user?.id
         )
       )
     ),

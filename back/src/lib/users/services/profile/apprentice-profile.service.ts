@@ -3,13 +3,15 @@ import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { AppUserRepository } from "../../repositories";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IUserConnectionRepository } from "../../repositories/connection/user-connection.repository.interface";
+import type { IUserBlockService } from "../moderation/user-block.service.interface";
 import { verifyUserExists } from "../../../auth/services/user-helpers";
 
 export class ApprenticeProfileService {
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly userConnectionRepository: IUserConnectionRepository
+    private readonly userConnectionRepository: IUserConnectionRepository,
+    private readonly userBlockService: IUserBlockService
   ) {}
 
   async saveIdentityCard(
@@ -190,6 +192,16 @@ export class ApprenticeProfileService {
     }>
   > {
     try {
+      // Check for blocks
+      const blockResult = await this.userBlockService.areUsersBlocked(
+        viewerUserId,
+        apprenticeUserId
+      );
+      if (!blockResult.ok) return blockResult;
+      if (blockResult.data.user1BlockedUser2 || blockResult.data.user2BlockedUser1) {
+        return failure("Cannot view this profile", 403);
+      }
+
       const viewerAppUser = await this.appUserRepository.findByUserId(
         viewerUserId
       );

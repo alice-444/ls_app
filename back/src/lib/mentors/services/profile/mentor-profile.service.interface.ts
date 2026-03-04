@@ -1,5 +1,5 @@
 import type { Result } from "../../../common";
 
 export interface IMentorProfileService {
-  getPublicProfile(mentorId: string): Promise<Result<any>>;
+  getPublicProfile(mentorId: string, viewerUserId?: string): Promise<Result<any>>;
 }
