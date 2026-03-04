@@ -1,10 +1,10 @@
-import { profProcedure, router } from "../../lib/trpc";
+import { mentorProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
 
 export const workshopAttendanceRouter = router({
-  getWorkshopParticipants: profProcedure
+  getWorkshopParticipants: mentorProcedure
     .input(z.object({ workshopId: z.string() }))
     .query(async ({ ctx, input }) =>
       unwrapResult(
@@ -15,7 +15,7 @@ export const workshopAttendanceRouter = router({
       )
     ),
 
-  updateAttendance: profProcedure
+  updateAttendance: mentorProcedure
     .input(
       z.object({
         workshopId: z.string(),
@@ -34,7 +34,7 @@ export const workshopAttendanceRouter = router({
       )
     ),
 
-  confirmAttendance: profProcedure
+  confirmAttendance: mentorProcedure
     .input(z.object({ workshopId: z.string() }))
     .mutation(async ({ ctx, input }) =>
       unwrapResult(

@@ -1,11 +1,11 @@
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type {
   IWorkshopFeedbackRepository,
   WorkshopFeedbackEntity,
   CreateWorkshopFeedbackInput,
 } from "./workshop-feedback.repository.interface";
 import { generateInternalId } from "../../../utils/id-generator";
-import type { FeedbackStatus } from "../../../../../prisma/generated/client/enums";
+import type { FeedbackStatus } from '@/lib/prisma';
 
 const FEEDBACK_INCLUDE = {
   user_mentor_feedback_apprenticeIdTouser: {

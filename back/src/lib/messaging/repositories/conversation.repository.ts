@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type {
   IConversationRepository,
   ConversationEntity,
@@ -85,11 +85,11 @@ export class PrismaConversationRepository implements IConversationRepository {
   }
 
   async findConversationsForUser(
-    appUserId: string
+    userId: string
   ): Promise<ConversationEntity[]> {
     const conversations = await this.prisma.conversation.findMany({
       where: {
-        OR: [{ participant1Id: appUserId }, { participant2Id: appUserId }],
+        OR: [{ participant1Id: userId }, { participant2Id: userId }],
       },
       orderBy: {
         updatedAt: "desc",

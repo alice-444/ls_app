@@ -10,7 +10,7 @@ import { verifyUserExists } from "../../../auth/services/user-helpers";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IMessageEnrichmentService } from "../enrichment/message-enrichment.service.interface";
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import { prisma } from "../../../common";
 import { logger } from "../../../common/logger";
 import { ConversationPinService } from "./conversation-pin.service";
@@ -28,10 +28,7 @@ export class ConversationService implements IConversationService {
     private readonly workshopRepository?: IWorkshopRepository,
     private readonly prismaClient?: PrismaClient
   ) {
-    this.pinService = new ConversationPinService(
-      conversationRepository,
-      prismaClient
-    );
+    this.pinService = new ConversationPinService(conversationRepository);
   }
 
   private async validateUserAndGetAppUser(userId: string): Promise<
@@ -144,7 +141,7 @@ export class ConversationService implements IConversationService {
         this.appUserRepository.findIdentityCardByUserId(otherAppUser.userId),
         this.messageRepository.findLastMessageForConversation(conversation.id),
         this.messageRepository.countUnreadMessagesForUser(conversation.id, appUser.id),
-        this.enrichWithWorkshopInfo(conversation.workshopId),
+        this.enrichWithWorkshopInfo(null),
         this.pinService.isConversationPinned(appUser.id, conversation.id),
       ]);
 
@@ -160,7 +157,7 @@ export class ConversationService implements IConversationService {
       otherUserName,
       otherUserDisplayName: identityCard?.displayName || null,
       otherUserPhotoUrl: identityCard?.photoUrl || null,
-      otherUserRole: otherAppUser.role,
+      otherUserRole: otherAppUser.role as "MENTOR" | "APPRENANT" | "ADMIN" | null,
       lastMessage: lastMessage
         ? {
             content: formattedLastMessageContent || lastMessage.content,
@@ -169,7 +166,7 @@ export class ConversationService implements IConversationService {
         : null,
       unreadCount,
       updatedAt: conversation.updatedAt,
-      workshopId: conversation.workshopId,
+      workshopId: null,
       workshopTitle: workshopInfo.workshopTitle,
       workshopDate: workshopInfo.workshopDate,
       isPinned,
@@ -217,7 +214,6 @@ export class ConversationService implements IConversationService {
                     id: generateInternalId(),
                     participant1Id: appUser1.id,
                     participant2Id: appUser2.id,
-                    workshopId: workshopId || null,
                     updatedAt: new Date(),
                   },
                   tx
@@ -242,21 +238,6 @@ export class ConversationService implements IConversationService {
             }
 
             if (workshopId && conversation) {
-              await this.createWorkshopReferenceMessage(
-                conversation.id,
-                appUser1.id,
-                workshopId
-              );
-            }
-          } else if (workshopId) {
-            const previousWorkshopId = conversation.workshopId;
-            conversation =
-              await this.conversationRepository.updateWithTransaction(
-                conversation.id,
-                { workshopId, updatedAt: new Date() },
-                tx
-              );
-            if (previousWorkshopId !== workshopId) {
               await this.createWorkshopReferenceMessage(
                 conversation.id,
                 appUser1.id,
@@ -336,11 +317,11 @@ export class ConversationService implements IConversationService {
       }
 
       const { workshopTitle, workshopDate } = await this.enrichWithWorkshopInfo(
-        conversation.workshopId
+        null
       );
 
       return success({
-        workshopId: conversation.workshopId,
+        workshopId: null,
         workshopTitle,
         workshopDate,
       });

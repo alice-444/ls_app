@@ -13,7 +13,6 @@ import {
   Twitter,
   Youtube,
   Github,
-  Mail,
   GraduationCap,
   Briefcase,
   Award,
@@ -24,7 +23,7 @@ import {
   UserMinus,
   Star,
 } from "lucide-react";
-import { API_BASE_URL } from "@/lib/api-client";
+import { API_BASE_URL, getUserRole } from "@/lib/api-client";
 import Loader from "@/components/loader";
 import { ContactMentorDialog } from "@/components/mentor/ContactMentorDialog";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
@@ -39,14 +38,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function MentorProfileViewPage() {
   const router = useRouter();
   const params = useParams();
-  const mentorId = params.id as string; // Using 'id' from the folder name
+  const mentorId = params.mentorId as string;
   const { data: session } = authClient.useSession();
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
 
   const { data: userRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
-    queryFn: () => trpc.profile.getRole.query(),
+    queryFn: getUserRole,
     enabled: !!session?.user?.id,
   });
 
@@ -54,7 +53,7 @@ export default function MentorProfileViewPage() {
     data: mentor,
     isLoading,
     error,
-  } = trpc.mentor.getById.useQuery({ mentorId }, {
+  } = trpc.mentor.getPublicProfile.useQuery({ mentorId }, {
     enabled: !!mentorId,
   });
 

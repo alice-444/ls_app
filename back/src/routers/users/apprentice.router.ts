@@ -1,8 +1,36 @@
 import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
+import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
 
 export const apprenticeRouter = router({
+  getMyRequests: protectedProcedure.query(async ({ ctx }) =>
+    unwrapResult(
+      await container.workshopRequestService.getApprenticeRequests(
+        ctx.session.user.id
+      )
+    )
+  ),
+
+  getMyWorkshops: protectedProcedure.query(async ({ ctx }) =>
+    unwrapResult(
+      await container.workshopService.getConfirmedWorkshopsForApprentice(
+        ctx.session.user.id
+      )
+    )
+  ),
+
+  cancelRequest: protectedProcedure
+    .input(z.object({ requestId: z.string() }))
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
+        await container.workshopRequestService.cancelWorkshopRequest(
+          ctx.session.user.id,
+          input.requestId
+        )
+      )
+    ),
+
   saveIdentityCard: protectedProcedure
     .input(
       z.object({

@@ -1,6 +1,6 @@
 export interface IAppUserRepository {
   findByUserId(userId: string): Promise<AppUserEntity | null>;
-  findByAppUserId(appUserId: string): Promise<AppUserEntity | null>;
+  findByAppUserId(userId: string): Promise<AppUserEntity | null>;
   update(
     userId: string,
     data: Partial<AppUserUpdateData>

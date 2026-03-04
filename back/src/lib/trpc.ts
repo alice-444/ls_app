@@ -49,7 +49,7 @@ const adminLogger = t.middleware(async ({ ctx, next, path, type, getRawInput }) 
   return result;
 });
 
-export const profProcedure = protectedProcedure
+export const mentorProcedure = protectedProcedure
 	.use(async ({ ctx, next }) => {
 		const appUser = await prisma.user.findUnique({
 			where: { userId: ctx.session.user.id },

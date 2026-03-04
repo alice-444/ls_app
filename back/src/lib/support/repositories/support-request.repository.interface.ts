@@ -1,14 +1,19 @@
-import type { support_request } from "../../../../prisma/generated/client/client";
+import type { support_request } from '@/lib/prisma';
 
 export interface CreateSupportRequestInput {
-  appUserId: string;
+  userId?: string | null;
+  email: string;
   subject: string;
-  message: string;
+  description: string;
+  problemType: string;
   status?: string;
+  attachments?: any;
 }
 
 export interface UpdateSupportRequestInput {
   status?: string;
+  description?: string;
+  attachments?: any;
 }
 
 export interface ISupportRequestRepository {

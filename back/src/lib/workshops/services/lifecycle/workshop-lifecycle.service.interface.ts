@@ -25,4 +25,9 @@ export interface IWorkshopLifecycleService {
     userId: string,
     input: unknown
   ): Promise<Result<{ success: boolean }>>;
+
+  cancelWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>>;
 }

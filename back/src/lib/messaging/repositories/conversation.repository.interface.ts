@@ -21,7 +21,7 @@ export interface IConversationRepository {
   findById(conversationId: string): Promise<ConversationEntity | null>;
 
   findConversationsForUser(
-    appUserId: string
+    userId: string
   ): Promise<ConversationEntity[]>;
 
   create(data: {

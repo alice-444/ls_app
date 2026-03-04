@@ -230,8 +230,8 @@ export type workshop_requestWhereInput = {
   status?: Prisma.StringFilter<"workshop_request"> | string
   createdAt?: Prisma.DateTimeFilter<"workshop_request"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop_request"> | Date | string
-  apprentice?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  mentor?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  apprentice?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
+  mentor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
 }
 
 export type workshop_requestOrderByWithRelationInput = {
@@ -246,8 +246,8 @@ export type workshop_requestOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  apprentice?: Prisma.app_userOrderByWithRelationInput
-  mentor?: Prisma.app_userOrderByWithRelationInput
+  apprentice?: Prisma.userOrderByWithRelationInput
+  mentor?: Prisma.userOrderByWithRelationInput
 }
 
 export type workshop_requestWhereUniqueInput = Prisma.AtLeast<{
@@ -265,8 +265,8 @@ export type workshop_requestWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"workshop_request"> | string
   createdAt?: Prisma.DateTimeFilter<"workshop_request"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop_request"> | Date | string
-  apprentice?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
-  mentor?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  apprentice?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
+  mentor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
 }, "id">
 
 export type workshop_requestOrderByWithAggregationInput = {
@@ -313,8 +313,8 @@ export type workshop_requestCreateInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  apprentice: Prisma.app_userCreateNestedOneWithoutWorkshop_requests_as_apprenticeInput
-  mentor: Prisma.app_userCreateNestedOneWithoutWorkshop_requests_as_mentorInput
+  apprentice: Prisma.userCreateNestedOneWithoutWorkshop_requests_as_apprenticeInput
+  mentor: Prisma.userCreateNestedOneWithoutWorkshop_requests_as_mentorInput
 }
 
 export type workshop_requestUncheckedCreateInput = {
@@ -341,8 +341,8 @@ export type workshop_requestUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  apprentice?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_requests_as_apprenticeNestedInput
-  mentor?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_requests_as_mentorNestedInput
+  apprentice?: Prisma.userUpdateOneRequiredWithoutWorkshop_requests_as_apprenticeNestedInput
+  mentor?: Prisma.userUpdateOneRequiredWithoutWorkshop_requests_as_mentorNestedInput
 }
 
 export type workshop_requestUncheckedUpdateInput = {
@@ -545,7 +545,7 @@ export type workshop_requestCreateWithoutApprenticeInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  mentor: Prisma.app_userCreateNestedOneWithoutWorkshop_requests_as_mentorInput
+  mentor: Prisma.userCreateNestedOneWithoutWorkshop_requests_as_mentorInput
 }
 
 export type workshop_requestUncheckedCreateWithoutApprenticeInput = {
@@ -581,7 +581,7 @@ export type workshop_requestCreateWithoutMentorInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  apprentice: Prisma.app_userCreateNestedOneWithoutWorkshop_requests_as_apprenticeInput
+  apprentice: Prisma.userCreateNestedOneWithoutWorkshop_requests_as_apprenticeInput
 }
 
 export type workshop_requestUncheckedCreateWithoutMentorInput = {
@@ -692,7 +692,7 @@ export type workshop_requestUpdateWithoutApprenticeInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  mentor?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_requests_as_mentorNestedInput
+  mentor?: Prisma.userUpdateOneRequiredWithoutWorkshop_requests_as_mentorNestedInput
 }
 
 export type workshop_requestUncheckedUpdateWithoutApprenticeInput = {
@@ -731,7 +731,7 @@ export type workshop_requestUpdateWithoutMentorInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  apprentice?: Prisma.app_userUpdateOneRequiredWithoutWorkshop_requests_as_apprenticeNestedInput
+  apprentice?: Prisma.userUpdateOneRequiredWithoutWorkshop_requests_as_apprenticeNestedInput
 }
 
 export type workshop_requestUncheckedUpdateWithoutMentorInput = {
@@ -774,8 +774,8 @@ export type workshop_requestSelect<ExtArgs extends runtime.Types.Extensions.Inte
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  mentor?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop_request"]>
 
 export type workshop_requestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -790,8 +790,8 @@ export type workshop_requestSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  mentor?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop_request"]>
 
 export type workshop_requestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -806,8 +806,8 @@ export type workshop_requestSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  mentor?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop_request"]>
 
 export type workshop_requestSelectScalar = {
@@ -826,23 +826,23 @@ export type workshop_requestSelectScalar = {
 
 export type workshop_requestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "apprenticeId" | "mentorId" | "title" | "description" | "message" | "preferredDate" | "preferredTime" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["workshop_request"]>
 export type workshop_requestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  mentor?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }
 export type workshop_requestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  mentor?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }
 export type workshop_requestIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  apprentice?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
-  mentor?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  apprentice?: boolean | Prisma.userDefaultArgs<ExtArgs>
+  mentor?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }
 
 export type $workshop_requestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "workshop_request"
   objects: {
-    apprentice: Prisma.$app_userPayload<ExtArgs>
-    mentor: Prisma.$app_userPayload<ExtArgs>
+    apprentice: Prisma.$userPayload<ExtArgs>
+    mentor: Prisma.$userPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1250,8 +1250,8 @@ readonly fields: workshop_requestFieldRefs;
  */
 export interface Prisma__workshop_requestClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  apprentice<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  mentor<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  apprentice<T extends Prisma.userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.userDefaultArgs<ExtArgs>>): Prisma.Prisma__userClient<runtime.Types.Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  mentor<T extends Prisma.userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.userDefaultArgs<ExtArgs>>): Prisma.Prisma__userClient<runtime.Types.Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

@@ -42,6 +42,7 @@ export interface WorkshopCardProps {
   workshop: {
     id: string;
     title: string;
+    description?: string | null;
     date?: Date | string | null;
     time?: string | null;
     duration?: number | null;
@@ -51,14 +52,21 @@ export interface WorkshopCardProps {
     maxParticipants?: number | null;
     status?: string;
     averageRating?: number | null;
+    creator?: {
+      id: string;
+      user?: {
+        name: string | null;
+      } | null;
+    } | null;
   };
-  variant?: "default" | "hero" | "past";
+  variant?: "default" | "hero" | "past" | "catalogue";
   onViewDetails?: (workshopId: string) => void;
   onViewParticipants?: (workshopId: string) => void;
   onEdit?: (workshopId: string) => void;
   onReschedule?: (workshopId: string) => void;
   onDelete?: (workshopId: string) => void;
   onDuplicate?: (workshopId: string) => void;
+  onRequestParticipation?: (workshop: any) => void;
   showDropdown?: boolean;
   className?: string;
 }

@@ -27,11 +27,13 @@ export type AggregateWorkshop = {
 }
 
 export type WorkshopAvgAggregateOutputType = {
+  creditCost: number | null
   maxParticipants: number | null
   duration: number | null
 }
 
 export type WorkshopSumAggregateOutputType = {
+  creditCost: number | null
   maxParticipants: number | null
   duration: number | null
 }
@@ -42,7 +44,8 @@ export type WorkshopMinAggregateOutputType = {
   title: string | null
   description: string | null
   domain: string | null
-  isPublished: boolean | null
+  status: string | null
+  creditCost: number | null
   maxParticipants: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -53,6 +56,9 @@ export type WorkshopMinAggregateOutputType = {
   isVirtual: boolean | null
   apprenticeId: string | null
   apprenticeAttendanceStatus: string | null
+  dailyRoomId: string | null
+  dailyRoomName: string | null
+  dailyRoomUrl: string | null
 }
 
 export type WorkshopMaxAggregateOutputType = {
@@ -61,7 +67,8 @@ export type WorkshopMaxAggregateOutputType = {
   title: string | null
   description: string | null
   domain: string | null
-  isPublished: boolean | null
+  status: string | null
+  creditCost: number | null
   maxParticipants: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -72,6 +79,9 @@ export type WorkshopMaxAggregateOutputType = {
   isVirtual: boolean | null
   apprenticeId: string | null
   apprenticeAttendanceStatus: string | null
+  dailyRoomId: string | null
+  dailyRoomName: string | null
+  dailyRoomUrl: string | null
 }
 
 export type WorkshopCountAggregateOutputType = {
@@ -80,7 +90,8 @@ export type WorkshopCountAggregateOutputType = {
   title: number
   description: number
   domain: number
-  isPublished: number
+  status: number
+  creditCost: number
   maxParticipants: number
   createdAt: number
   updatedAt: number
@@ -91,16 +102,21 @@ export type WorkshopCountAggregateOutputType = {
   isVirtual: number
   apprenticeId: number
   apprenticeAttendanceStatus: number
+  dailyRoomId: number
+  dailyRoomName: number
+  dailyRoomUrl: number
   _all: number
 }
 
 
 export type WorkshopAvgAggregateInputType = {
+  creditCost?: true
   maxParticipants?: true
   duration?: true
 }
 
 export type WorkshopSumAggregateInputType = {
+  creditCost?: true
   maxParticipants?: true
   duration?: true
 }
@@ -111,7 +127,8 @@ export type WorkshopMinAggregateInputType = {
   title?: true
   description?: true
   domain?: true
-  isPublished?: true
+  status?: true
+  creditCost?: true
   maxParticipants?: true
   createdAt?: true
   updatedAt?: true
@@ -122,6 +139,9 @@ export type WorkshopMinAggregateInputType = {
   isVirtual?: true
   apprenticeId?: true
   apprenticeAttendanceStatus?: true
+  dailyRoomId?: true
+  dailyRoomName?: true
+  dailyRoomUrl?: true
 }
 
 export type WorkshopMaxAggregateInputType = {
@@ -130,7 +150,8 @@ export type WorkshopMaxAggregateInputType = {
   title?: true
   description?: true
   domain?: true
-  isPublished?: true
+  status?: true
+  creditCost?: true
   maxParticipants?: true
   createdAt?: true
   updatedAt?: true
@@ -141,6 +162,9 @@ export type WorkshopMaxAggregateInputType = {
   isVirtual?: true
   apprenticeId?: true
   apprenticeAttendanceStatus?: true
+  dailyRoomId?: true
+  dailyRoomName?: true
+  dailyRoomUrl?: true
 }
 
 export type WorkshopCountAggregateInputType = {
@@ -149,7 +173,8 @@ export type WorkshopCountAggregateInputType = {
   title?: true
   description?: true
   domain?: true
-  isPublished?: true
+  status?: true
+  creditCost?: true
   maxParticipants?: true
   createdAt?: true
   updatedAt?: true
@@ -160,6 +185,9 @@ export type WorkshopCountAggregateInputType = {
   isVirtual?: true
   apprenticeId?: true
   apprenticeAttendanceStatus?: true
+  dailyRoomId?: true
+  dailyRoomName?: true
+  dailyRoomUrl?: true
   _all?: true
 }
 
@@ -255,7 +283,8 @@ export type WorkshopGroupByOutputType = {
   title: string
   description: string | null
   domain: string | null
-  isPublished: boolean
+  status: string
+  creditCost: number
   maxParticipants: number
   createdAt: Date
   updatedAt: Date
@@ -266,6 +295,9 @@ export type WorkshopGroupByOutputType = {
   isVirtual: boolean | null
   apprenticeId: string | null
   apprenticeAttendanceStatus: string | null
+  dailyRoomId: string | null
+  dailyRoomName: string | null
+  dailyRoomUrl: string | null
   _count: WorkshopCountAggregateOutputType | null
   _avg: WorkshopAvgAggregateOutputType | null
   _sum: WorkshopSumAggregateOutputType | null
@@ -297,7 +329,8 @@ export type workshopWhereInput = {
   title?: Prisma.StringFilter<"workshop"> | string
   description?: Prisma.StringNullableFilter<"workshop"> | string | null
   domain?: Prisma.StringNullableFilter<"workshop"> | string | null
-  isPublished?: Prisma.BoolFilter<"workshop"> | boolean
+  status?: Prisma.StringFilter<"workshop"> | string
+  creditCost?: Prisma.IntFilter<"workshop"> | number
   maxParticipants?: Prisma.IntFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
@@ -308,7 +341,10 @@ export type workshopWhereInput = {
   isVirtual?: Prisma.BoolNullableFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableFilter<"workshop"> | string | null
   apprenticeAttendanceStatus?: Prisma.StringNullableFilter<"workshop"> | string | null
-  creator?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  dailyRoomId?: Prisma.StringNullableFilter<"workshop"> | string | null
+  dailyRoomName?: Prisma.StringNullableFilter<"workshop"> | string | null
+  dailyRoomUrl?: Prisma.StringNullableFilter<"workshop"> | string | null
+  creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
   mentorFeedbacks?: Prisma.Mentor_feedbackListRelationFilter
 }
 
@@ -318,7 +354,8 @@ export type workshopOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   domain?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  creditCost?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -329,7 +366,10 @@ export type workshopOrderByWithRelationInput = {
   isVirtual?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeId?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
-  creator?: Prisma.app_userOrderByWithRelationInput
+  dailyRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
+  dailyRoomName?: Prisma.SortOrderInput | Prisma.SortOrder
+  dailyRoomUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  creator?: Prisma.userOrderByWithRelationInput
   mentorFeedbacks?: Prisma.mentor_feedbackOrderByRelationAggregateInput
 }
 
@@ -342,7 +382,8 @@ export type workshopWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"workshop"> | string
   description?: Prisma.StringNullableFilter<"workshop"> | string | null
   domain?: Prisma.StringNullableFilter<"workshop"> | string | null
-  isPublished?: Prisma.BoolFilter<"workshop"> | boolean
+  status?: Prisma.StringFilter<"workshop"> | string
+  creditCost?: Prisma.IntFilter<"workshop"> | number
   maxParticipants?: Prisma.IntFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
@@ -353,7 +394,10 @@ export type workshopWhereUniqueInput = Prisma.AtLeast<{
   isVirtual?: Prisma.BoolNullableFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableFilter<"workshop"> | string | null
   apprenticeAttendanceStatus?: Prisma.StringNullableFilter<"workshop"> | string | null
-  creator?: Prisma.XOR<Prisma.App_userScalarRelationFilter, Prisma.app_userWhereInput>
+  dailyRoomId?: Prisma.StringNullableFilter<"workshop"> | string | null
+  dailyRoomName?: Prisma.StringNullableFilter<"workshop"> | string | null
+  dailyRoomUrl?: Prisma.StringNullableFilter<"workshop"> | string | null
+  creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
   mentorFeedbacks?: Prisma.Mentor_feedbackListRelationFilter
 }, "id">
 
@@ -363,7 +407,8 @@ export type workshopOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   domain?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  creditCost?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -374,6 +419,9 @@ export type workshopOrderByWithAggregationInput = {
   isVirtual?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeId?: Prisma.SortOrderInput | Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  dailyRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
+  dailyRoomName?: Prisma.SortOrderInput | Prisma.SortOrder
+  dailyRoomUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.workshopCountOrderByAggregateInput
   _avg?: Prisma.workshopAvgOrderByAggregateInput
   _max?: Prisma.workshopMaxOrderByAggregateInput
@@ -390,7 +438,8 @@ export type workshopScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"workshop"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
   domain?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
-  isPublished?: Prisma.BoolWithAggregatesFilter<"workshop"> | boolean
+  status?: Prisma.StringWithAggregatesFilter<"workshop"> | string
+  creditCost?: Prisma.IntWithAggregatesFilter<"workshop"> | number
   maxParticipants?: Prisma.IntWithAggregatesFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"workshop"> | Date | string
@@ -401,6 +450,9 @@ export type workshopScalarWhereWithAggregatesInput = {
   isVirtual?: Prisma.BoolNullableWithAggregatesFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
   apprenticeAttendanceStatus?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
+  dailyRoomId?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
+  dailyRoomName?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
+  dailyRoomUrl?: Prisma.StringNullableWithAggregatesFilter<"workshop"> | string | null
 }
 
 export type workshopCreateInput = {
@@ -408,7 +460,8 @@ export type workshopCreateInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -419,7 +472,10 @@ export type workshopCreateInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
-  creator: Prisma.app_userCreateNestedOneWithoutWorkshopsInput
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
+  creator: Prisma.userCreateNestedOneWithoutWorkshopsInput
   mentorFeedbacks?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
 }
 
@@ -429,7 +485,8 @@ export type workshopUncheckedCreateInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -440,6 +497,9 @@ export type workshopUncheckedCreateInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
   mentorFeedbacks?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
 }
 
@@ -448,7 +508,8 @@ export type workshopUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -459,7 +520,10 @@ export type workshopUpdateInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creator?: Prisma.app_userUpdateOneRequiredWithoutWorkshopsNestedInput
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creator?: Prisma.userUpdateOneRequiredWithoutWorkshopsNestedInput
   mentorFeedbacks?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
 }
 
@@ -469,7 +533,8 @@ export type workshopUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -480,6 +545,9 @@ export type workshopUncheckedUpdateInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mentorFeedbacks?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
 }
 
@@ -489,7 +557,8 @@ export type workshopCreateManyInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -500,6 +569,9 @@ export type workshopCreateManyInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
 }
 
 export type workshopUpdateManyMutationInput = {
@@ -507,7 +579,8 @@ export type workshopUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -518,6 +591,9 @@ export type workshopUpdateManyMutationInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type workshopUncheckedUpdateManyInput = {
@@ -526,7 +602,8 @@ export type workshopUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -537,6 +614,9 @@ export type workshopUncheckedUpdateManyInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WorkshopListRelationFilter = {
@@ -555,7 +635,8 @@ export type workshopCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  creditCost?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -566,9 +647,13 @@ export type workshopCountOrderByAggregateInput = {
   isVirtual?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrder
+  dailyRoomId?: Prisma.SortOrder
+  dailyRoomName?: Prisma.SortOrder
+  dailyRoomUrl?: Prisma.SortOrder
 }
 
 export type workshopAvgOrderByAggregateInput = {
+  creditCost?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
   duration?: Prisma.SortOrder
 }
@@ -579,7 +664,8 @@ export type workshopMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  creditCost?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -590,6 +676,9 @@ export type workshopMaxOrderByAggregateInput = {
   isVirtual?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrder
+  dailyRoomId?: Prisma.SortOrder
+  dailyRoomName?: Prisma.SortOrder
+  dailyRoomUrl?: Prisma.SortOrder
 }
 
 export type workshopMinOrderByAggregateInput = {
@@ -598,7 +687,8 @@ export type workshopMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  creditCost?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -609,9 +699,13 @@ export type workshopMinOrderByAggregateInput = {
   isVirtual?: Prisma.SortOrder
   apprenticeId?: Prisma.SortOrder
   apprenticeAttendanceStatus?: Prisma.SortOrder
+  dailyRoomId?: Prisma.SortOrder
+  dailyRoomName?: Prisma.SortOrder
+  dailyRoomUrl?: Prisma.SortOrder
 }
 
 export type workshopSumOrderByAggregateInput = {
+  creditCost?: Prisma.SortOrder
   maxParticipants?: Prisma.SortOrder
   duration?: Prisma.SortOrder
 }
@@ -694,7 +788,8 @@ export type workshopCreateWithoutCreatorInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -705,6 +800,9 @@ export type workshopCreateWithoutCreatorInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
   mentorFeedbacks?: Prisma.mentor_feedbackCreateNestedManyWithoutWorkshopInput
 }
 
@@ -713,7 +811,8 @@ export type workshopUncheckedCreateWithoutCreatorInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -724,6 +823,9 @@ export type workshopUncheckedCreateWithoutCreatorInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
   mentorFeedbacks?: Prisma.mentor_feedbackUncheckedCreateNestedManyWithoutWorkshopInput
 }
 
@@ -762,7 +864,8 @@ export type workshopScalarWhereInput = {
   title?: Prisma.StringFilter<"workshop"> | string
   description?: Prisma.StringNullableFilter<"workshop"> | string | null
   domain?: Prisma.StringNullableFilter<"workshop"> | string | null
-  isPublished?: Prisma.BoolFilter<"workshop"> | boolean
+  status?: Prisma.StringFilter<"workshop"> | string
+  creditCost?: Prisma.IntFilter<"workshop"> | number
   maxParticipants?: Prisma.IntFilter<"workshop"> | number
   createdAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"workshop"> | Date | string
@@ -773,6 +876,9 @@ export type workshopScalarWhereInput = {
   isVirtual?: Prisma.BoolNullableFilter<"workshop"> | boolean | null
   apprenticeId?: Prisma.StringNullableFilter<"workshop"> | string | null
   apprenticeAttendanceStatus?: Prisma.StringNullableFilter<"workshop"> | string | null
+  dailyRoomId?: Prisma.StringNullableFilter<"workshop"> | string | null
+  dailyRoomName?: Prisma.StringNullableFilter<"workshop"> | string | null
+  dailyRoomUrl?: Prisma.StringNullableFilter<"workshop"> | string | null
 }
 
 export type workshopCreateWithoutMentorFeedbacksInput = {
@@ -780,7 +886,8 @@ export type workshopCreateWithoutMentorFeedbacksInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -791,7 +898,10 @@ export type workshopCreateWithoutMentorFeedbacksInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
-  creator: Prisma.app_userCreateNestedOneWithoutWorkshopsInput
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
+  creator: Prisma.userCreateNestedOneWithoutWorkshopsInput
 }
 
 export type workshopUncheckedCreateWithoutMentorFeedbacksInput = {
@@ -800,7 +910,8 @@ export type workshopUncheckedCreateWithoutMentorFeedbacksInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -811,6 +922,9 @@ export type workshopUncheckedCreateWithoutMentorFeedbacksInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
 }
 
 export type workshopCreateOrConnectWithoutMentorFeedbacksInput = {
@@ -834,7 +948,8 @@ export type workshopUpdateWithoutMentorFeedbacksInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -845,7 +960,10 @@ export type workshopUpdateWithoutMentorFeedbacksInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creator?: Prisma.app_userUpdateOneRequiredWithoutWorkshopsNestedInput
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creator?: Prisma.userUpdateOneRequiredWithoutWorkshopsNestedInput
 }
 
 export type workshopUncheckedUpdateWithoutMentorFeedbacksInput = {
@@ -854,7 +972,8 @@ export type workshopUncheckedUpdateWithoutMentorFeedbacksInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -865,6 +984,9 @@ export type workshopUncheckedUpdateWithoutMentorFeedbacksInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type workshopCreateManyCreatorInput = {
@@ -872,7 +994,8 @@ export type workshopCreateManyCreatorInput = {
   title: string
   description?: string | null
   domain?: string | null
-  isPublished?: boolean
+  status?: string
+  creditCost?: number
   maxParticipants?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -883,6 +1006,9 @@ export type workshopCreateManyCreatorInput = {
   isVirtual?: boolean | null
   apprenticeId?: string | null
   apprenticeAttendanceStatus?: string | null
+  dailyRoomId?: string | null
+  dailyRoomName?: string | null
+  dailyRoomUrl?: string | null
 }
 
 export type workshopUpdateWithoutCreatorInput = {
@@ -890,7 +1016,8 @@ export type workshopUpdateWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -901,6 +1028,9 @@ export type workshopUpdateWithoutCreatorInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mentorFeedbacks?: Prisma.mentor_feedbackUpdateManyWithoutWorkshopNestedInput
 }
 
@@ -909,7 +1039,8 @@ export type workshopUncheckedUpdateWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -920,6 +1051,9 @@ export type workshopUncheckedUpdateWithoutCreatorInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mentorFeedbacks?: Prisma.mentor_feedbackUncheckedUpdateManyWithoutWorkshopNestedInput
 }
 
@@ -928,7 +1062,8 @@ export type workshopUncheckedUpdateManyWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  creditCost?: Prisma.IntFieldUpdateOperationsInput | number
   maxParticipants?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -939,6 +1074,9 @@ export type workshopUncheckedUpdateManyWithoutCreatorInput = {
   isVirtual?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   apprenticeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apprenticeAttendanceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dailyRoomUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -978,7 +1116,8 @@ export type workshopSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   title?: boolean
   description?: boolean
   domain?: boolean
-  isPublished?: boolean
+  status?: boolean
+  creditCost?: boolean
   maxParticipants?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -989,7 +1128,10 @@ export type workshopSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   isVirtual?: boolean
   apprenticeId?: boolean
   apprenticeAttendanceStatus?: boolean
-  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  dailyRoomId?: boolean
+  dailyRoomName?: boolean
+  dailyRoomUrl?: boolean
+  creator?: boolean | Prisma.userDefaultArgs<ExtArgs>
   mentorFeedbacks?: boolean | Prisma.workshop$mentorFeedbacksArgs<ExtArgs>
   _count?: boolean | Prisma.WorkshopCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop"]>
@@ -1000,7 +1142,8 @@ export type workshopSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   title?: boolean
   description?: boolean
   domain?: boolean
-  isPublished?: boolean
+  status?: boolean
+  creditCost?: boolean
   maxParticipants?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1011,7 +1154,10 @@ export type workshopSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   isVirtual?: boolean
   apprenticeId?: boolean
   apprenticeAttendanceStatus?: boolean
-  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  dailyRoomId?: boolean
+  dailyRoomName?: boolean
+  dailyRoomUrl?: boolean
+  creator?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop"]>
 
 export type workshopSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1020,7 +1166,8 @@ export type workshopSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   title?: boolean
   description?: boolean
   domain?: boolean
-  isPublished?: boolean
+  status?: boolean
+  creditCost?: boolean
   maxParticipants?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1031,7 +1178,10 @@ export type workshopSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   isVirtual?: boolean
   apprenticeId?: boolean
   apprenticeAttendanceStatus?: boolean
-  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  dailyRoomId?: boolean
+  dailyRoomName?: boolean
+  dailyRoomUrl?: boolean
+  creator?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workshop"]>
 
 export type workshopSelectScalar = {
@@ -1040,7 +1190,8 @@ export type workshopSelectScalar = {
   title?: boolean
   description?: boolean
   domain?: boolean
-  isPublished?: boolean
+  status?: boolean
+  creditCost?: boolean
   maxParticipants?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1051,25 +1202,28 @@ export type workshopSelectScalar = {
   isVirtual?: boolean
   apprenticeId?: boolean
   apprenticeAttendanceStatus?: boolean
+  dailyRoomId?: boolean
+  dailyRoomName?: boolean
+  dailyRoomUrl?: boolean
 }
 
-export type workshopOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "creatorId" | "title" | "description" | "domain" | "isPublished" | "maxParticipants" | "createdAt" | "updatedAt" | "date" | "time" | "duration" | "location" | "isVirtual" | "apprenticeId" | "apprenticeAttendanceStatus", ExtArgs["result"]["workshop"]>
+export type workshopOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "creatorId" | "title" | "description" | "domain" | "status" | "creditCost" | "maxParticipants" | "createdAt" | "updatedAt" | "date" | "time" | "duration" | "location" | "isVirtual" | "apprenticeId" | "apprenticeAttendanceStatus" | "dailyRoomId" | "dailyRoomName" | "dailyRoomUrl", ExtArgs["result"]["workshop"]>
 export type workshopInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.userDefaultArgs<ExtArgs>
   mentorFeedbacks?: boolean | Prisma.workshop$mentorFeedbacksArgs<ExtArgs>
   _count?: boolean | Prisma.WorkshopCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type workshopIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }
 export type workshopIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  creator?: boolean | Prisma.app_userDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.userDefaultArgs<ExtArgs>
 }
 
 export type $workshopPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "workshop"
   objects: {
-    creator: Prisma.$app_userPayload<ExtArgs>
+    creator: Prisma.$userPayload<ExtArgs>
     mentorFeedbacks: Prisma.$mentor_feedbackPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1078,7 +1232,8 @@ export type $workshopPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     title: string
     description: string | null
     domain: string | null
-    isPublished: boolean
+    status: string
+    creditCost: number
     maxParticipants: number
     createdAt: Date
     updatedAt: Date
@@ -1089,6 +1244,9 @@ export type $workshopPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     isVirtual: boolean | null
     apprenticeId: string | null
     apprenticeAttendanceStatus: string | null
+    dailyRoomId: string | null
+    dailyRoomName: string | null
+    dailyRoomUrl: string | null
   }, ExtArgs["result"]["workshop"]>
   composites: {}
 }
@@ -1483,7 +1641,7 @@ readonly fields: workshopFieldRefs;
  */
 export interface Prisma__workshopClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  creator<T extends Prisma.app_userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_userDefaultArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  creator<T extends Prisma.userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.userDefaultArgs<ExtArgs>>): Prisma.Prisma__userClient<runtime.Types.Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   mentorFeedbacks<T extends Prisma.workshop$mentorFeedbacksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.workshop$mentorFeedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$mentor_feedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1519,7 +1677,8 @@ export interface workshopFieldRefs {
   readonly title: Prisma.FieldRef<"workshop", 'String'>
   readonly description: Prisma.FieldRef<"workshop", 'String'>
   readonly domain: Prisma.FieldRef<"workshop", 'String'>
-  readonly isPublished: Prisma.FieldRef<"workshop", 'Boolean'>
+  readonly status: Prisma.FieldRef<"workshop", 'String'>
+  readonly creditCost: Prisma.FieldRef<"workshop", 'Int'>
   readonly maxParticipants: Prisma.FieldRef<"workshop", 'Int'>
   readonly createdAt: Prisma.FieldRef<"workshop", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"workshop", 'DateTime'>
@@ -1530,6 +1689,9 @@ export interface workshopFieldRefs {
   readonly isVirtual: Prisma.FieldRef<"workshop", 'Boolean'>
   readonly apprenticeId: Prisma.FieldRef<"workshop", 'String'>
   readonly apprenticeAttendanceStatus: Prisma.FieldRef<"workshop", 'String'>
+  readonly dailyRoomId: Prisma.FieldRef<"workshop", 'String'>
+  readonly dailyRoomName: Prisma.FieldRef<"workshop", 'String'>
+  readonly dailyRoomUrl: Prisma.FieldRef<"workshop", 'String'>
 }
     
 

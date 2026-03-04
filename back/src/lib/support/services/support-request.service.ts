@@ -1,4 +1,4 @@
-import { type support_request } from "../../../../prisma/generated/client/client";
+import { type support_request } from '@/lib/prisma';
 import { SupportRequestStatus } from "../types/support-types";
 import {
   CreateSupportRequestCommand,
@@ -15,9 +15,12 @@ export class SupportRequestService implements ISupportRequestService {
 
   async createSupportRequest(command: CreateSupportRequestCommand): Promise<support_request> {
     const request = await this.supportRequestRepository.create({
-      appUserId: command.appUserId,
+      userId: command.userId,
+      email: command.email,
       subject: command.subject,
-      message: command.message,
+      description: command.description,
+      problemType: command.problemType,
+      attachments: command.attachments,
       status: SupportRequestStatus.PENDING,
     });
 
@@ -35,7 +38,7 @@ export class SupportRequestService implements ISupportRequestService {
     limit?: number;
     offset?: number;
     status?: string;
-  }): Promise<support_request[]> {
+  }): Promise<any[]> {
     const where: any = {};
     if (params?.status) {
       where.status = params.status;
@@ -46,6 +49,17 @@ export class SupportRequestService implements ISupportRequestService {
       skip: params?.offset ?? 0,
       where,
       orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            photoUrl: true,
+            displayName: true,
+          }
+        }
+      }
     });
   }
 
@@ -56,7 +70,20 @@ export class SupportRequestService implements ISupportRequestService {
     return this.supportRequestRepository.update(requestId, { status });
   }
 
-  async getSupportRequestById(requestId: string): Promise<support_request | null> {
-    return this.supportRequestRepository.findById(requestId);
+  async getSupportRequestById(requestId: string): Promise<any | null> {
+    return this.supportRequestRepository.findMany({
+      where: { id: requestId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            photoUrl: true,
+            displayName: true,
+          }
+        }
+      }
+    }).then(results => results[0] || null);
   }
 }

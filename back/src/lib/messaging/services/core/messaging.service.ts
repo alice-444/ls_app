@@ -10,7 +10,7 @@ import type {
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IMessageValidationService } from "../validation/message-validation.service.interface";
 import type { IMessageEnrichmentService } from "../enrichment/message-enrichment.service.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
 import { ConversationService } from "./conversation.service";
 import { MessageOperationsService } from "./message-operations.service";

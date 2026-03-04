@@ -30,12 +30,12 @@ export class OnboardingService {
         return userCheck;
       }
 
-      let appUser = await this.appUserRepository.findByUserId(userId);
+      let appUser = await this.appUserRepository.findByAppUserId(userId);
 
       if (!appUser) {
         appUser = await this.appUserRepository.create({
           id: generateInternalId(),
-          userId,
+          userId: userId,
           role: validation.data.role,
           status: "ACTIVE",
         });

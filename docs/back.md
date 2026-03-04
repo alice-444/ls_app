@@ -194,7 +194,7 @@ sequenceDiagram
 - **admin** — Administration : stats, file d’onboarding (approbation/rejet), audit logs.
 - **support** — Demandes de support.
 
-Procédures protégées : utilisation de la session Better Auth (ctx.session). `protectedProcedure` (session requise), `profProcedure` (rôle MENTOR + statut ACTIVE), `adminProcedure` (rôle ADMIN + statut ACTIVE, avec audit log des mutations). Health check et données publiques en `publicProcedure`.
+Procédures protégées : utilisation de la session Better Auth (ctx.session). `protectedProcedure` (session requise), `mentorProcedure` (rôle MENTOR + statut ACTIVE), `adminProcedure` (rôle ADMIN + statut ACTIVE, avec audit log des mutations). Health check et données publiques en `publicProcedure`.
 
 ---
 

@@ -32,7 +32,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - Router racine : `back/src/routers/index.ts` (appRouter).
 - **Renommage** : `workshopFeedback.dismissReport` → `approveFeedback`.
 - Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
-- Procédures : `publicProcedure` (sans session), `protectedProcedure` (session requise), `profProcedure` (MENTOR actif), `adminProcedure` (ADMIN actif, audit log).
+- Procédures : `publicProcedure` (sans session), `protectedProcedure` (session requise), `mentorProcedure` (MENTOR actif), `adminProcedure` (ADMIN actif, audit log).
 - Point d’entrée HTTP : `/trpc` (POST batch).
 
 ---

@@ -1,6 +1,6 @@
 export interface AppUserData {
   id: string;
-  appUserId: string;
+  userId: string;
   role: string | null;
   status: string;
   createdAt: Date;
@@ -11,7 +11,7 @@ export interface AppUserData {
 
 export interface CreateAppUserInput {
   id: string;
-  appUserId: string;
+  userId: string;
   status: string;
   role?: string | null;
 }
@@ -38,24 +38,24 @@ export interface UpdateAppUserInput {
 }
 
 export interface AppUserRepository {
-  findByUserId(appUserId: string): Promise<AppUserData | null>;
+  findByUserId(userId: string): Promise<AppUserData | null>;
   findByEmail(email: string): Promise<AppUserData | null>;
-  findByAppUserId(appUserId: string): Promise<AppUserData | null>;
+  findByAppUserId(userId: string): Promise<AppUserData | null>;
   create(input: CreateAppUserInput): Promise<AppUserData>;
-  update(appUserId: string, input: UpdateAppUserInput): Promise<AppUserData>;
+  update(userId: string, input: UpdateAppUserInput): Promise<AppUserData>;
   upsert(
-    appUserId: string,
+    userId: string,
     createInput: CreateAppUserInput,
     updateInput?: UpdateAppUserInput
   ): Promise<AppUserData>;
-  findIdentityCardByUserId(appUserId: string): Promise<{
+  findIdentityCardByUserId(userId: string): Promise<{
     displayName: string | null;
     studyDomain: string | null;
     studyProgram: string | null;
     photoUrl: string | null;
     iceBreakerTags: string[] | null;
   } | null>;
-  findUserNameByUserId(appUserId: string): Promise<string | null>;
+  findUserNameByUserId(userId: string): Promise<string | null>;
 }
 
 const UPDATABLE_FIELDS = [
@@ -78,7 +78,7 @@ function buildPrismaUpdateData(input: UpdateAppUserInput): Record<string, unknow
 function mapToAppUserData(raw: any): AppUserData {
   return {
     id: raw.id,
-    appUserId: raw.appUserId,
+    userId: raw.userId,
     role: raw.role,
     status: raw.status,
     createdAt: raw.createdAt,
@@ -90,7 +90,7 @@ function mapToAppUserData(raw: any): AppUserData {
 
 const APP_USER_BASE_SELECT = {
   id: true,
-  appUserId: true,
+  userId: true,
   role: true,
   status: true,
   createdAt: true,
@@ -102,13 +102,13 @@ const APP_USER_BASE_SELECT = {
 export class PrismaAppUserRepository implements AppUserRepository {
   constructor(private readonly prisma: any) {}
 
-  async findByUserId(appUserId: string): Promise<AppUserData | null> {
+  async findByUserId(userId: string): Promise<AppUserData | null> {
     if (!this.prisma) {
       throw new Error("Prisma client is not initialized");
     }
 
     const appUser = await this.prisma.user.findUnique({
-      where: { appUserId },
+      where: { userId },
       select: APP_USER_BASE_SELECT,
     });
 
@@ -128,13 +128,13 @@ export class PrismaAppUserRepository implements AppUserRepository {
     return appUser ? mapToAppUserData(appUser) : null;
   }
 
-  async findByAppUserId(appUserId: string): Promise<AppUserData | null> {
+  async findByAppUserId(userId: string): Promise<AppUserData | null> {
     if (!this.prisma) {
       throw new Error("Prisma client is not initialized");
     }
 
     const appUser = await this.prisma.user.findUnique({
-      where: { id: appUserId },
+      where: { id: userId },
       select: APP_USER_BASE_SELECT,
     });
 
@@ -146,7 +146,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     const appUser = await this.prisma.user.create({
       data: {
         id: input.id,
-        appUserId: input.appUserId,
+        userId: input.userId,
         status: input.status,
         role: input.role ?? null,
         createdAt: now,
@@ -158,11 +158,11 @@ export class PrismaAppUserRepository implements AppUserRepository {
   }
 
   async update(
-    appUserId: string,
+    userId: string,
     input: UpdateAppUserInput
   ): Promise<AppUserData> {
     const appUser = await this.prisma.user.update({
-      where: { appUserId },
+      where: { userId },
       data: buildPrismaUpdateData(input),
     });
 
@@ -170,16 +170,16 @@ export class PrismaAppUserRepository implements AppUserRepository {
   }
 
   async upsert(
-    appUserId: string,
+    userId: string,
     createInput: CreateAppUserInput,
     updateInput: UpdateAppUserInput = {}
   ): Promise<AppUserData> {
     const now = new Date();
     const appUser = await this.prisma.user.upsert({
-      where: { appUserId },
+      where: { userId },
       create: {
         id: createInput.id,
-        appUserId: createInput.appUserId,
+        userId: createInput.userId,
         status: createInput.status,
         role: createInput.role ?? null,
         createdAt: now,
@@ -191,7 +191,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     return mapToAppUserData(appUser);
   }
 
-  async findIdentityCardByUserId(appUserId: string): Promise<{
+  async findIdentityCardByUserId(userId: string): Promise<{
     displayName: string | null;
     studyDomain: string | null;
     studyProgram: string | null;
@@ -199,7 +199,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     iceBreakerTags: string[] | null;
   } | null> {
     const appUser = await this.prisma.user.findUnique({
-      where: { appUserId },
+      where: { userId },
       select: {
         displayName: true,
         studyDomain: true,
@@ -220,9 +220,9 @@ export class PrismaAppUserRepository implements AppUserRepository {
     };
   }
 
-  async findUserNameByUserId(appUserId: string): Promise<string | null> {
+  async findUserNameByUserId(userId: string): Promise<string | null> {
     const user = await this.prisma.user.findUnique({
-      where: { id: appUserId },
+      where: { id: userId },
       select: { name: true },
     });
 

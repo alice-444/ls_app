@@ -1,5 +1,5 @@
 import type { IAuthUserRepository } from "./auth-user.repository.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 
 export class PrismaAuthUserRepository implements IAuthUserRepository {
   constructor(private readonly prisma: PrismaClient) {}

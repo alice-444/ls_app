@@ -4,11 +4,11 @@ import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
 
 export const mentorRouter = router({
-  getById: publicProcedure
+  getPublicProfile: publicProcedure
     .input(z.object({ mentorId: z.string() }))
     .query(async ({ input }) =>
       unwrapResult(
-        await container.mentorProfileService.getPublishedMentorById(
+        await container.mentorProfileService.getPublicProfile(
           input.mentorId
         )
       )
@@ -94,15 +94,7 @@ export const mentorRouter = router({
       )
     ),
 
-  getMyWorkshopRequests: protectedProcedure.query(async ({ ctx }) =>
-    unwrapResult(
-      await container.workshopRequestService.getApprenticeRequests(
-        ctx.session.user.id
-      )
-    )
-  ),
-
-  getMentorWorkshopRequests: protectedProcedure.query(async ({ ctx }) =>
+  getReceivedRequests: protectedProcedure.query(async ({ ctx }) =>
     unwrapResult(
       await container.workshopRequestService.getMentorRequests(
         ctx.session.user.id
@@ -120,7 +112,7 @@ export const mentorRouter = router({
       )
     ),
 
-  acceptWorkshopRequest: protectedProcedure
+  acceptRequest: protectedProcedure
     .input(
       z.object({
         requestId: z.string(),
@@ -149,22 +141,11 @@ export const mentorRouter = router({
       )
     ),
 
-  rejectWorkshopRequest: protectedProcedure
+  rejectRequest: protectedProcedure
     .input(z.object({ requestId: z.string() }))
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopRequestService.rejectWorkshopRequest(
-          ctx.session.user.id,
-          input.requestId
-        )
-      )
-    ),
-
-  cancelWorkshopRequest: protectedProcedure
-    .input(z.object({ requestId: z.string() }))
-    .mutation(async ({ ctx, input }) =>
-      unwrapResult(
-        await container.workshopRequestService.cancelWorkshopRequest(
           ctx.session.user.id,
           input.requestId
         )

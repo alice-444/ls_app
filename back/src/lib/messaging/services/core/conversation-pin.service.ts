@@ -5,17 +5,17 @@ import type { IConversationRepository } from "../../repositories/conversation.re
 
 export interface IConversationPinService {
   pinConversation(
-    appUserId: string,
+    userId: string,
     conversationId: string
   ): Promise<Result<{ success: boolean }>>;
 
   unpinConversation(
-    appUserId: string,
+    userId: string,
     conversationId: string
   ): Promise<Result<{ success: boolean }>>;
 
   isConversationPinned(
-    appUserId: string,
+    userId: string,
     conversationId: string
   ): Promise<boolean>;
 }
@@ -28,7 +28,7 @@ export class ConversationPinService implements IConversationPinService {
   constructor(private readonly conversationRepository: IConversationRepository) {}
 
   async pinConversation(
-    appUserId: string,
+    userId: string,
     conversationId: string
   ): Promise<Result<{ success: boolean }>> {
     try {
@@ -36,8 +36,8 @@ export class ConversationPinService implements IConversationPinService {
       if (!conversation) return failure("Conversation not found", 404);
 
       if (
-        conversation.participant1Id !== appUserId &&
-        conversation.participant2Id !== appUserId
+        conversation.participant1Id !== userId &&
+        conversation.participant2Id !== userId
       ) {
         return failure("You are not a participant of this conversation", 403);
       }
@@ -54,7 +54,7 @@ export class ConversationPinService implements IConversationPinService {
   }
 
   async unpinConversation(
-    appUserId: string,
+    userId: string,
     conversationId: string
   ): Promise<Result<{ success: boolean }>> {
     try {
@@ -62,8 +62,8 @@ export class ConversationPinService implements IConversationPinService {
       if (!conversation) return failure("Conversation not found", 404);
 
       if (
-        conversation.participant1Id !== appUserId &&
-        conversation.participant2Id !== appUserId
+        conversation.participant1Id !== userId &&
+        conversation.participant2Id !== userId
       ) {
         return failure("You are not a participant of this conversation", 403);
       }
