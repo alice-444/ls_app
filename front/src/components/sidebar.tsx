@@ -93,7 +93,7 @@ const getNavItems = (
     name: "Mon réseau",
     href: "/network",
     icon: Globe,
-    roles: ["APPRENANT"],
+    roles: ["APPRENANT", "MENTOR"],
   },
   {
     key: "/buy-credits",

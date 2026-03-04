@@ -218,7 +218,8 @@ export class ServicesContainer {
     this._userConnectionService ??= new UserConnectionService(
       this.repositories.appUserRepository,
       this.repositories.userConnectionRepository,
-      this.userBlockService
+      this.userBlockService,
+      this.notificationService
     );
     return this._userConnectionService;
   }
