@@ -9,12 +9,6 @@ export async function GET(
   { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const authResult = await getAuthenticatedSession(req);
-    if (!authResult.ok) {
-      return authResult.response;
-    }
-    const { userId } = authResult;
-
     const { filename } = await params;
 
     const sanitizedFilename = filename.replaceAll(/[^a-zA-Z0-9._-]/, "");
@@ -33,15 +27,7 @@ export async function GET(
       );
     }
 
-    const userIdFromFilename = match[1];
     const extension = match[3].toLowerCase();
-
-    if (userIdFromFilename !== userId) {
-      return NextResponse.json(
-        { error: "Access denied. This file does not belong to you." },
-        { status: 403 }
-      );
-    }
 
     // Construct file path
     const uploadsDir = resolve(process.cwd(), "uploads", "profiles");

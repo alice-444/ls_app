@@ -27,7 +27,14 @@ export const userRouter = router({
   getProfile: protectedProcedure.query(async ({ ctx }) => {
     const appUser = await container.prisma.user.findUnique({
       where: { userId: ctx.session.user.id },
-      select: { name: true, email: true, bio: true, photoUrl: true },
+      select: { 
+        name: true, 
+        email: true, 
+        bio: true, 
+        photoUrl: true,
+        emailNotifications: true,
+        inAppNotifications: true
+      },
     });
 
     return {
@@ -35,6 +42,8 @@ export const userRouter = router({
       email: appUser?.email || null,
       bio: appUser?.bio || null,
       photoUrl: appUser?.photoUrl || null,
+      emailNotifications: appUser?.emailNotifications ?? true,
+      inAppNotifications: appUser?.inAppNotifications ?? true,
     };
   }),
 });
