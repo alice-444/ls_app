@@ -159,12 +159,12 @@ export class WorkshopRequestService implements IWorkshopRequestService {
           updatedAt: now,
         },
         include: {
-          user_workshop_request_apprenticeIdTouser: {
+          apprentice: {
             include: {
               user: { select: { id: true, name: true, email: true } },
             },
           },
-          user_workshop_request_mentorIdTouser: {
+          mentor: {
             include: {
               user: { select: { id: true, name: true, email: true } },
             },
@@ -175,9 +175,9 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       return {
         ...workshopRequest,
         apprentice:
-          workshopRequest.user_workshop_request_apprenticeIdTouser,
+          workshopRequest.apprentice,
         mentor:
-          workshopRequest.user_workshop_request_mentorIdTouser,
+          workshopRequest.mentor,
       };
     });
 

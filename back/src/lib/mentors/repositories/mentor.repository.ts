@@ -11,15 +11,6 @@ export class PrismaMentorRepository implements IMentorRepository {
   async findPublishedMentorById(id: string): Promise<MentorEntity | null> {
     const mentor = await this.prisma.user.findUnique({
       where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
 
     if (!mentor || !mentor.isPublished || mentor.role !== "MENTOR") {
@@ -34,15 +25,6 @@ export class PrismaMentorRepository implements IMentorRepository {
       where: {
         OR: [{ id }, { userId: id }],
       },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
 
     if (!mentor || !mentor.isPublished || mentor.role !== "MENTOR") {
@@ -55,15 +37,6 @@ export class PrismaMentorRepository implements IMentorRepository {
   async findApprenticeByUserId(userId: string): Promise<MentorEntity | null> {
     const apprentice = await this.prisma.user.findUnique({
       where: { userId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
 
     return apprentice as MentorEntity | null;
@@ -87,15 +60,12 @@ export class PrismaMentorRepository implements IMentorRepository {
         createdAt: "desc",
       },
       include: {
-        user_mentor_feedback_apprenticeIdTouser: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
+        apprentice: {
+          select: {
+            id: true,
+            name: true,
+            photoUrl: true,
+            displayName: true,
           },
         },
         workshop: {
@@ -108,10 +78,7 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    return feedbacks.map((f: any) => ({
-      ...f,
-      apprentice: f.user_mentor_feedback_apprenticeIdTouser,
-    })) as MentorFeedbackEntity[];
+    return feedbacks as MentorFeedbackEntity[];
   }
 
   async findMentorPublicWorkshops(

@@ -6,10 +6,10 @@ import type {
 } from "./workshop-request.repository.interface";
 
 const WORKSHOP_REQUEST_INCLUDE = {
-  user_workshop_request_apprenticeIdTouser: {
+  apprentice: {
     select: { id: true, name: true, email: true, userId: true },
   },
-  user_workshop_request_mentorIdTouser: {
+  mentor: {
     select: { id: true, name: true, email: true, userId: true },
   },
 } as const;
@@ -17,8 +17,8 @@ const WORKSHOP_REQUEST_INCLUDE = {
 function mapToEntity(raw: any): WorkshopRequestEntity {
   return {
     ...raw,
-    apprentice: raw.user_workshop_request_apprenticeIdTouser,
-    mentor: raw.user_workshop_request_mentorIdTouser,
+    apprentice: raw.apprentice,
+    mentor: raw.mentor,
   } as WorkshopRequestEntity;
 }
 
