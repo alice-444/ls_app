@@ -1,4 +1,4 @@
-import { Result } from "../../../../common";
+import type { Result } from "../../../../common";
 
 export interface ForgotPasswordInput {
   email: string;
