@@ -8,6 +8,7 @@ export function createPublicContext(): Context {
   return {
     session: null,
     ipAddress: "127.0.0.1",
+    req: null as any,
   };
 }
 
@@ -25,10 +26,9 @@ export function createProtectedContext(overrides?: {
         email: overrides?.email ?? "test@example.com",
         image: null,
         emailVerified: false,
-        role: "user",
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
+      } as any,
       session: {
         id: "test-session-id",
         userId,
@@ -41,5 +41,6 @@ export function createProtectedContext(overrides?: {
       },
     },
     ipAddress: "127.0.0.1",
+    req: null as any,
   };
 }
