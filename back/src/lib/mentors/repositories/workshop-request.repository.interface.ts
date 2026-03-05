@@ -6,6 +6,7 @@ export interface WorkshopRequestEntity {
   preferredDate: Date | null;
   preferredTime: string | null;
   status: "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+  rejectionReason: string | null;
   apprenticeId: string;
   mentorId: string;
   workshopId: string | null;

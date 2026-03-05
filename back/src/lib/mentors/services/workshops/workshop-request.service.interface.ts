@@ -36,7 +36,8 @@ export interface IWorkshopRequestService {
   ): Promise<Result<{ workshopId: string; requestId: string }>>;
   rejectWorkshopRequest(
     userId: string,
-    requestId: string
+    requestId: string,
+    reason?: string | null
   ): Promise<Result<{ success: boolean }>>;
   cancelWorkshopRequest(
     userId: string,
