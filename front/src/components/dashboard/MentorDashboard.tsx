@@ -15,6 +15,7 @@ import {
   Coins,
   Check,
   X,
+  TrendingUp,
 } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import {
@@ -138,14 +139,24 @@ export function MentorDashboard({
                   </div>
                 </div>
               </div>
-              <Button
-                variant="secondary"
-                className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-[#d6dae4]"
-                onClick={() => router.push("/my-workshops")}
-              >
-                Voir mes ateliers
-                <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2" />
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="secondary"
+                  className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-[#d6dae4]"
+                  onClick={() => router.push("/my-workshops")}
+                >
+                  Voir mes ateliers
+                  <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full text-white hover:bg-white/10 hover:text-white rounded-[32px] h-8 sm:h-9 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
+                  onClick={() => router.push("/mentor/analytics")}
+                >
+                  Analyse des gains
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
