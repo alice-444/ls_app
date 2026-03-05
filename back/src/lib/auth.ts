@@ -12,6 +12,16 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    sendResetPassword: async ({ user, url, token }, request) => {
+      await container.emailService.sendEmail({
+        to: user.email,
+        subject: "Réinitialisation de votre mot de passe LearnSup",
+        text: `Réinitialisez votre mot de passe en cliquant sur ce lien : ${url}`,
+        html: `<p>Vous avez demandé une réinitialisation de mot de passe. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.</p>
+               <a href="${url}" style="padding: 10px 20px; background-color: #0070f3; color: white; text-decoration: none; border-radius: 5px;">Réinitialiser mon mot de passe</a>
+               <p>Ce lien est valable pendant 60 minutes.</p>`,
+      });
+    },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
