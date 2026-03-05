@@ -3,6 +3,8 @@ import type {
   CashbackProcessingDelay,
   ProcessedCashbackReport,
   DataIntegrityIssue,
+  CashbackSummary,
+  CashbackItem,
 } from "./workshop-cashback.service.interface";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
 import type { INotificationService } from "../../../notifications/services/notification.service.interface";
@@ -375,5 +377,64 @@ export class WorkshopCashbackService implements IWorkshopCashbackService {
       message: `Atelier terminé ! Présence vérifiée : Vous avez récupéré ${cashbackAmount} crédit${cashbackAmount > 1 ? "s" : ""}.`,
       actionUrl: `/workshop/${workshopId}`,
     });
+  }
+
+  async getSummary(
+    mentorId: string,
+    options?: { from?: Date; to?: Date }
+  ): Promise<Result<CashbackSummary>> {
+    try {
+      const summary = await this.cashbackQueueRepository.findSummaryByMentor(
+        mentorId,
+        options?.from,
+        options?.to
+      );
+      return success(summary);
+    } catch (error) {
+      logger.error("Error getting cashback summary", error, { mentorId });
+      return failure(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la récupération du résumé des cashbacks",
+        500
+      );
+    }
+  }
+
+  async getHistory(
+    mentorId: string,
+    options?: { limit?: number; cursor?: string }
+  ): Promise<Result<{ items: CashbackItem[]; nextCursor?: string }>> {
+    try {
+      const history = await this.cashbackQueueRepository.findHistoryByMentor(
+        mentorId,
+        options
+      );
+
+      const items: CashbackItem[] = history.items.map((item) => ({
+        id: item.id,
+        workshopId: item.workshopId,
+        workshopTitle: item.workshopTitle,
+        participantUserId: item.participantUserId,
+        participantName: item.participantName,
+        cashbackAmount: item.cashbackAmount,
+        status: item.status,
+        processedAt: item.processedAt,
+        createdAt: item.createdAt,
+      }));
+
+      return success({
+        items,
+        nextCursor: history.nextCursor,
+      });
+    } catch (error) {
+      logger.error("Error getting cashback history", error, { mentorId });
+      return failure(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la récupération de l'historique des cashbacks",
+        500
+      );
+    }
   }
 }
