@@ -54,4 +54,9 @@ export interface IMaintenanceService {
     errors: number;
     timestamp: string;
   }>;
+
+  /**
+   * Check for cashback data integrity issues
+   */
+  checkCashbackIntegrity(): Promise<{ issues: number }>;
 }

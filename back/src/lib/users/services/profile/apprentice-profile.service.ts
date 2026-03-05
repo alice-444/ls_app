@@ -65,6 +65,49 @@ export class ApprenticeProfileService {
     }
   }
 
+  async updateProfile(
+    userId: string,
+    input: {
+      studyDomain?: string;
+      studyProgram?: string;
+      displayName?: string;
+      bio?: string;
+    }
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const userCheck = await verifyUserExists(userId);
+      if (!userCheck.ok) {
+        return userCheck;
+      }
+
+      const appUser = await this.appUserRepository.findByUserId(userId);
+      if (!appUser) {
+        return failure(
+          "AppUser not found. Please complete role selection first.",
+          400
+        );
+      }
+
+      if (appUser.role !== "APPRENANT") {
+        return failure("Only apprentices can update their profile", 403);
+      }
+
+      await this.appUserRepository.update(userId, {
+        displayName: input.displayName,
+        studyDomain: input.studyDomain,
+        studyProgram: input.studyProgram,
+        bio: input.bio,
+      });
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("updateProfile", { userId })
+      );
+    }
+  }
+
   async getIdentityCard(userId: string): Promise<
     Result<{
       displayName: string | null;

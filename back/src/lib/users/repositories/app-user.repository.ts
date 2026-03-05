@@ -58,6 +58,7 @@ export interface AppUserRepository {
     displayName: string | null;
     studyDomain: string | null;
     studyProgram: string | null;
+    bio: string | null;
     photoUrl: string | null;
     iceBreakerTags: string[] | null;
   } | null>;
@@ -210,6 +211,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     displayName: string | null;
     studyDomain: string | null;
     studyProgram: string | null;
+    bio: string | null;
     photoUrl: string | null;
     iceBreakerTags: string[] | null;
   } | null> {
@@ -219,6 +221,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
         displayName: true,
         studyDomain: true,
         studyProgram: true,
+        bio: true,
         photoUrl: true,
         iceBreakerTags: true,
       },
@@ -230,6 +233,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
       displayName: appUser.displayName || null,
       studyDomain: appUser.studyDomain || null,
       studyProgram: appUser.studyProgram || null,
+      bio: appUser.bio || null,
       photoUrl: appUser.photoUrl || null,
       iceBreakerTags: (appUser.iceBreakerTags as string[]) || null,
     };
@@ -237,7 +241,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
 
   async findUserNameByUserId(userId: string): Promise<string | null> {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { userId },
       select: { name: true },
     });
 
