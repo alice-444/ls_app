@@ -299,6 +299,223 @@ flowchart TB
 
 ---
 
+## Flux atelier (workshop)
+
+```mermaid
+flowchart TB
+  subgraph Mentor["Mentor"]
+    M1[Créer atelier]
+    M2[workshop.create tRPC]
+    M3[Status DRAFT]
+    M4[Publier]
+    M5[workshop.publish]
+    M6[Status PUBLISHED]
+    M7[Recevoir demande]
+    M8[Accepter / Rejeter]
+  end
+
+  subgraph Apprenant["Apprenant"]
+    A1[Demander atelier]
+    A2[mentor.submitWorkshopRequest]
+    A3[Débit crédits si activé]
+    A4[workshop_request PENDING]
+    A5[Si accepté: workshop créé]
+    A6[Rejoindre visio]
+    A7[Soumettre feedback]
+  end
+
+  subgraph Cashback["Cashback"]
+    C1[Cron process-cashback-queue]
+    C2[Crédit apprenant]
+  end
+
+  M1 --> M2 --> M3 --> M4 --> M5 --> M6
+  M6 --> M7
+  A1 --> A2 --> A3 --> A4
+  M7 --> A4
+  M8 --> A5
+  A5 --> A6
+  A6 --> A7
+  A7 --> C1 --> C2
+```
+
+**Cycle de vie** : Mentor crée (DRAFT) → publie (PUBLISHED). Apprenant envoie une demande (`submitWorkshopRequest`) → débit de 10 crédits → `workshop_request` PENDING. Mentor accepte ou rejette. Si accepté : création du `workshop` lié (date, lieu, visio), notification. Apprenant rejoint la visio (Daily.co), participe, soumet un feedback. Cron `process-cashback-queue` crédite l'apprenant (cashback).
+
+---
+
+## Flux paiement / crédits
+
+```mermaid
+sequenceDiagram
+  participant U as Utilisateur
+  participant F as Front
+  participant T as tRPC
+  participant B as Back
+  participant P as Polar
+  participant DB as PostgreSQL
+
+  U->>F: /buy-credits
+  F->>T: credits.createCheckoutSession
+  T->>B: mutation
+  B->>P: POST /v1/checkouts (metadata: userId, credits)
+  P-->>B: url + sessionId
+  B-->>F: url
+  F->>U: Redirect vers Polar
+  U->>P: Paiement
+  P->>B: Webhook checkout.succeeded
+  B->>DB: creditCredits (TOP_UP)
+  B->>U: Email confirmation
+```
+
+**Achat** : `credits.createCheckoutSession` (credits, amount) → Polar crée un checkout avec `metadata.userId` et `metadata.credits` → redirection vers l'URL Polar. Après paiement, Polar envoie un webhook à `/api/polar/webhook` → vérification signature → `creditService.creditCredits` → transaction TOP_UP → email de confirmation (Resend).
+
+**Utilisation** : lors de `submitWorkshopRequest`, débit de 10 crédits (transaction atomique avec création de la demande).
+
+---
+
+## Flux messagerie
+
+```mermaid
+flowchart LR
+  subgraph Init["Initialisation"]
+    I1[getOrCreateConversation]
+    I2[mentor.getOrCreateConversation ou messaging]
+    I3[Conversation créée si absente]
+  end
+
+  subgraph Envoi["Envoi message"]
+    E1[tRPC messaging.sendMessage]
+    E2[OU Socket send-message]
+    E3[MessageOperationsService]
+    E4[DB + notification]
+    E5[Socket broadcast new-message]
+  end
+
+  subgraph TempsRéel["Temps réel"]
+    T1[join-conversation]
+    T2[typing-start / typing-stop]
+    T3[add-reaction / remove-reaction]
+    T4[mark-messages-read]
+  end
+
+  I1 --> I2 --> I3
+  E1 --> E3
+  E2 --> E3
+  E3 --> E4 --> E5
+  T1 --> E5
+```
+
+**Connexion Socket** : authentification via cookie session → `join-conversation` pour recevoir les messages d'une conversation. Événements : `send-message`, `new-message`, `typing-start`, `typing-stop`, `add-reaction`, `remove-reaction`, `mark-messages-read`, `messages-read`.
+
+**Envoi** : tRPC `messaging.sendMessage` ou Socket `send-message` → validation (accès, blocage, contenu) → création message en DB → notification au destinataire → broadcast Socket `new-message` aux participants.
+
+---
+
+## Flux visio (Daily.co)
+
+```mermaid
+flowchart TB
+  subgraph Accès["Accès salle"]
+    A1[Mentor ou Apprenant]
+    A2[workshop-video.getDailyToken]
+    A3[Salle existe ?]
+    A4[DailyService.getOrCreateRoomForWorkshop]
+    A5[workshop-{id}]
+    A6[generateToken]
+    A7[Redirect /workshop/[id]/join-video]
+  end
+
+  subgraph Webhook["Webhook Daily"]
+    W1[participant-joined / participant-left]
+    W2[POST /api/daily/webhook]
+    W3[room name = workshop-{id}]
+    W4[update dailyRoomLastActivityAt]
+  end
+
+  subgraph Cron["Crons"]
+    C1[generate-video-links]
+    C2[cleanup-inactive-rooms]
+  end
+
+  A1 --> A2 --> A3
+  A3 -->|Non| A4 --> A5
+  A3 -->|Oui| A5
+  A5 --> A6 --> A7
+  W1 --> W2 --> W3 --> W4
+  C1 --> A4
+  C2 --> W4
+```
+
+**Token** : `workshop-video.getDailyToken(workshopId)` → si pas de `dailyRoomId`, création salle via API Daily (`workshop-{workshopId}`) → génération token (owner pour mentor) → front redirige vers `/workshop/[id]/join-video` avec daily-js.
+
+**Webhook** : Daily envoie `participant-joined` / `participant-left` → back met à jour `dailyRoomLastActivityAt`. Cron `cleanup-inactive-rooms` ferme les salles inactives.
+
+---
+
+## Flux suppression de compte
+
+```mermaid
+flowchart TB
+  subgraph Demande["Demande utilisateur"]
+    D1[/settings → DeleteAccountSection]
+    D2[DELETE /api/profile/delete]
+    D3[buildDeletionPlan]
+    D4[softDelete + disable auth]
+    D5[deletion_job créé runAt +30j]
+  end
+
+  subgraph Purge["Purge planifiée"]
+    P1[Cron purge-deletions]
+    P2[Jobs runAt <= now]
+    P3[Anonymisation PII]
+    P4[name, email, bio → anonyme]
+    P5[deletion_job COMPLETED]
+  end
+
+  D1 --> D2 --> D3 --> D4 --> D5
+  P1 --> P2 --> P3 --> P4 --> P5
+```
+
+**Demande** : DELETE `/api/profile/delete?reason=...` → `buildDeletionPlan` (rétention 30j) → soft delete user, désactivation compte auth, révocation sessions → création `deletion_job` (status PENDING, runAt = now + 30 jours).
+
+**Purge** : cron `purge-deletions` (CRON_SECRET) → jobs échus → anonymisation (name, email, displayName, photoUrl, bio, etc.) → status COMPLETED.
+
+---
+
+## Flux crons (jobs planifiés)
+
+Les routes sous `/api/cron/*` sont appelées par un planificateur externe avec `CRON_SECRET`.
+
+| Route | Rôle |
+|-------|------|
+| `generate-video-links` | Crée les salles Daily pour les ateliers à venir (sans salle) |
+| `cleanup-inactive-rooms` | Ferme les salles Daily inactives |
+| `process-cashback-queue` | Traite la file de cashback (crédit apprenants après participation) |
+| `retry-failed-cashbacks` | Retente les cashbacks en échec |
+| `create-feedback-notifications` | Crée les notifications après soumission de feedback |
+| `purge-deletions` | Exécute les `deletion_job` à échéance (anonymisation PII) |
+| `check-cashback-integrity` | Vérifie l'intégrité des cashbacks |
+
+Route `all` : exécute l'ensemble des jobs en une seule requête.
+
+---
+
+## Flux réseau (connexions)
+
+```mermaid
+flowchart LR
+  A[Apprenant] -->|sendConnectionRequest| B[user_connection PENDING]
+  B --> C[Mentor]
+  C -->|acceptConnectionRequest| D[ACCEPTED]
+  C -->|rejectConnectionRequest| E[REJECTED]
+  D --> F[Messagerie débloquée]
+  D --> G[Demande atelier possible]
+```
+
+**Connexion** : `connection.sendConnectionRequest(otherUserId)` → `user_connection` PENDING. Mentor `acceptConnectionRequest` ou `rejectConnectionRequest`. Si ACCEPTED : messagerie et demandes d'atelier possibles entre les deux utilisateurs.
+
+---
+
 ## Modèles de données (Prisma)
 
 Schéma relationnel simplifié (principales entités et relations) :

@@ -18,7 +18,7 @@ ce qui existe et où le trouver
 
 ## Architecture
 
-Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md). Inclut les flux d'authentification, flux utilisateur et flux de données.
+Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md). Inclut les flux d'authentification, utilisateur, données, atelier, paiement, messagerie, visio, suppression compte, crons et réseau.
 
 ---
 
