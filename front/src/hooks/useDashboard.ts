@@ -15,6 +15,7 @@ interface WorkshopRequest {
   id: string;
   title: string;
   status: string;
+  rejectionReason?: string | null;
   [key: string]: unknown;
 }
 
@@ -84,8 +85,9 @@ export function useDashboard() {
         }
         if (prevReq.status === "PENDING" && req.status === "REJECTED") {
           toast.error(`Votre demande "${req.title}" a été refusée`, {
-            description:
-              "Vous pouvez modifier et renvoyer votre demande ou choisir un autre mentor.",
+            description: req.rejectionReason
+              ? `Motif: ${req.rejectionReason}`
+              : "Vous pouvez modifier et renvoyer votre demande ou choisir un autre mentor.",
             duration: 8000,
           });
         }

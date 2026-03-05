@@ -458,7 +458,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       await this.notificationService.notifyAndEmailRejection(
         requestId,
         request.title,
-        userId
+        userId,
+        sanitizedReason
       );
 
       return success({ success: true });

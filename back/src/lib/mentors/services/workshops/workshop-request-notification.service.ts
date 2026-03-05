@@ -27,7 +27,8 @@ export interface IWorkshopRequestNotificationService {
   notifyAndEmailRejection(
     requestId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
+    reason?: string | null
   ): Promise<void>;
 
   notifyCancellation(
@@ -98,11 +99,12 @@ export class WorkshopRequestNotificationService
   async notifyAndEmailRejection(
     requestId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
+    reason?: string | null
   ): Promise<void> {
     await Promise.all([
-      this.notifyApprenticeOfRejection(requestId, requestTitle, userId),
-      this.sendRejectionEmail(requestId, requestTitle),
+      this.notifyApprenticeOfRejection(requestId, requestTitle, userId, reason),
+      this.sendRejectionEmail(requestId, requestTitle, reason),
     ]);
   }
 
@@ -287,7 +289,8 @@ export class WorkshopRequestNotificationService
   private async notifyApprenticeOfRejection(
     requestId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
+    reason?: string | null
   ): Promise<void> {
     if (!this.notificationService) return;
 
@@ -297,12 +300,16 @@ export class WorkshopRequestNotificationService
     if (!requestWithRelations?.apprentice?.id) return;
 
     const mentorName = requestWithRelations.mentor?.name || "le mentor";
+    const message = reason 
+      ? `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}". Motif : ${reason}`
+      : `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}".`;
+
     await this.notificationService.createNotification(
       requestWithRelations.apprentice.id,
       {
         type: "workshop",
         title: "Demande d'atelier rejetée",
-        message: `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}".`,
+        message,
         actionUrl: `/workshop-room`,
       },
       userId
@@ -311,7 +318,8 @@ export class WorkshopRequestNotificationService
 
   private async sendRejectionEmail(
     requestId: string,
-    requestTitle: string
+    requestTitle: string,
+    reason?: string | null
   ): Promise<void> {
     if (!this.emailService) return;
 
@@ -330,6 +338,7 @@ export class WorkshopRequestNotificationService
           userName: apprentice.name || "Apprenti",
           mentorName,
           workshopTitle: requestTitle,
+          reason,
           workshopsUrl: `${APP_URL}/workshop-room`,
         })
       );
