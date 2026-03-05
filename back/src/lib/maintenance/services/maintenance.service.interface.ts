@@ -47,7 +47,11 @@ export interface IMaintenanceService {
   retryFailedCashbacks(): Promise<{ retried: number; errors: number }>;
 
   /**
-   * Check cashback data integrity
+   * Send email reminders for workshops starting in ~24h
    */
-  checkCashbackIntegrity(): Promise<{ issues: number }>;
+  sendWorkshopReminders(): Promise<{
+    sent: number;
+    errors: number;
+    timestamp: string;
+  }>;
 }

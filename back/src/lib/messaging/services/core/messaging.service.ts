@@ -13,6 +13,7 @@ import type { IMessageEnrichmentService } from "../enrichment/message-enrichment
 import type { PrismaClient } from '@/lib/prisma';
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
 import type { INotificationService } from "../../../notifications/services/notification.service.interface";
+import type { IEmailService } from "../../../email/services/email.service.interface";
 import { ConversationService } from "./conversation.service";
 import { MessageOperationsService } from "./message-operations.service";
 
@@ -33,7 +34,8 @@ export class MessagingService implements IMessagingService {
     userBlockService: IUserBlockService,
     notificationService: INotificationService,
     workshopRepository?: IWorkshopRepository,
-    prismaClient?: PrismaClient
+    prismaClient?: PrismaClient,
+    emailService?: IEmailService
   ) {
     this.conversationService = new ConversationService(
       appUserRepository,
@@ -52,7 +54,8 @@ export class MessagingService implements IMessagingService {
       validationService,
       enrichmentService,
       userBlockService,
-      notificationService
+      notificationService,
+      emailService
     );
   }
 

@@ -250,7 +250,8 @@ export class ServicesContainer {
       this.userBlockService,
       this.notificationService,
       this.repositories.workshopRepository,
-      this.prisma
+      this.prisma,
+      this.emailService
     );
     return this._messagingService;
   }

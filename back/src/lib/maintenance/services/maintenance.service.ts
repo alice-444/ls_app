@@ -3,6 +3,12 @@ import { IMaintenanceService } from "./maintenance.service.interface";
 import { logger } from "../../common/logger";
 import { generateInternalId } from "../../utils/id-generator";
 import type { ServicesContainer } from "../../di/services.container";
+import { renderEmailTemplate } from "../../email/utils/render-email";
+import { WorkshopReminderEmail } from "../../email/templates/WorkshopReminder";
+import { FeedbackReminderEmail } from "../../email/templates/FeedbackReminder";
+import * as React from "react";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export class MaintenanceService implements IMaintenanceService {
   constructor(
@@ -85,6 +91,11 @@ export class MaintenanceService implements IMaintenanceService {
       },
       include: {
         creator: true,
+        apprentice: {
+          include: {
+            user: true
+          }
+        }
       },
     });
 
@@ -115,7 +126,99 @@ export class MaintenanceService implements IMaintenanceService {
           actionUrl: `/workshop/${workshop.id}/feedback`,
         },
       });
+
+      // Send email reminder
+      if (workshop.apprentice?.user?.email) {
+        try {
+          const { html, text } = await renderEmailTemplate(
+            React.createElement(FeedbackReminderEmail, {
+              userName: workshop.apprentice.user.name || "Apprenti",
+              workshopTitle: workshop.title,
+              feedbackUrl: `${APP_URL}/workshop/${workshop.id}/feedback`,
+            })
+          );
+
+          await this.services.emailService.sendEmail({
+            to: workshop.apprentice.user.email,
+            subject: `Votre avis sur l'atelier : ${workshop.title}`,
+            html,
+            text,
+          });
+        } catch (error) {
+          logger.error("Failed to send feedback reminder email", { error, workshopId: workshop.id });
+        }
+      }
+
       result.created++;
+    }
+
+    return result;
+  }
+
+  async sendWorkshopReminders(): Promise<{
+    sent: number;
+    errors: number;
+    timestamp: string;
+  }> {
+    const now = new Date();
+    const result = { sent: 0, errors: 0, timestamp: now.toISOString() };
+
+    // Find workshops starting in ~24h (between 23h and 25h from now)
+    const tomorrowStart = new Date(now.getTime() + 23 * 60 * 60 * 1000);
+    const tomorrowEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+
+    const workshops = await this.prisma.workshop.findMany({
+      where: {
+        date: {
+          gte: tomorrowStart,
+          lte: tomorrowEnd,
+        },
+        status: "PUBLISHED",
+        apprenticeId: { not: null },
+      },
+      include: {
+        apprentice: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    for (const workshop of workshops) {
+      if (!workshop.apprentice?.user?.email) continue;
+
+      try {
+        const formattedDate = workshop.date 
+          ? new Date(workshop.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+          : "Demain";
+
+        const { html, text } = await renderEmailTemplate(
+          React.createElement(WorkshopReminderEmail, {
+            userName: workshop.apprentice.user.name || "Apprenti",
+            workshopTitle: workshop.title,
+            date: formattedDate,
+            time: workshop.time || "Heure à confirmer",
+            workshopUrl: `${APP_URL}/workshop/${workshop.id}`,
+          })
+        );
+
+        const emailResult = await this.services.emailService.sendEmail({
+          to: workshop.apprentice.user.email,
+          subject: `Rappel : Votre atelier "${workshop.title}" commence demain`,
+          html,
+          text,
+        });
+
+        if (emailResult.ok) {
+          result.sent++;
+        } else {
+          result.errors++;
+        }
+      } catch (error) {
+        logger.error("Error sending workshop reminder", { workshopId: workshop.id, error });
+        result.errors++;
+      }
     }
 
     return result;

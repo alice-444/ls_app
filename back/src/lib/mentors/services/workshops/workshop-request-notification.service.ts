@@ -2,8 +2,13 @@ import type { INotificationService } from "../../../notifications/services/notif
 import type { IEmailService } from "../../../email/services/email.service.interface";
 import type { IWorkshopRequestRepository } from "../../repositories/workshop-request.repository.interface";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
-import { WorkshopEmailTemplates } from "../../../workshops/services/email/workshop-email.templates";
+import { renderEmailTemplate } from "../../../email/utils/render-email";
+import { WorkshopRequestAcceptedEmail } from "../../../email/templates/WorkshopRequestAccepted";
+import { WorkshopRequestRejectedEmail } from "../../../email/templates/WorkshopRequestRejected";
+import * as React from "react";
 import { logger } from "../../../common/logger";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export interface IWorkshopRequestNotificationService {
   notifyMentorOfNewRequest(
@@ -246,21 +251,26 @@ export class WorkshopRequestNotificationService
       const mentorName =
         requestWithRelations.mentor?.name || "le mentor";
 
-      const template = WorkshopEmailTemplates.requestAccepted({
-        recipientName: apprentice.name || "Apprenti",
-        mentorName,
-        workshopTitle: workshopDetails?.title || requestTitle,
-        workshopDate: workshopDetails?.date || null,
-        workshopTime: workshopDetails?.time || null,
-        workshopDuration: workshopDetails?.duration || null,
-        workshopLocation: workshopDetails?.location || null,
-        isVirtual: workshopDetails?.isVirtual || false,
-        workshopId,
-      });
+      const formattedDate = workshopDetails?.date 
+        ? new Date(workshopDetails.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+        : "Date à confirmer";
+
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopRequestAcceptedEmail, {
+          userName: apprentice.name || "Apprenti",
+          mentorName,
+          workshopTitle: workshopDetails?.title || requestTitle,
+          date: formattedDate,
+          time: workshopDetails?.time || "Heure à confirmer",
+          workshopUrl: `${APP_URL}/workshop/${workshopId}`,
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
         to: apprentice.email,
-        ...template,
+        subject: `Demande acceptée - ${workshopDetails?.title || requestTitle}`,
+        html,
+        text,
       });
 
       if (!emailResult.ok) {
@@ -315,15 +325,20 @@ export class WorkshopRequestNotificationService
       const mentorName =
         requestWithRelations.mentor?.name || "le mentor";
 
-      const template = WorkshopEmailTemplates.requestRejected({
-        recipientName: apprentice.name || "Apprenti",
-        mentorName,
-        workshopTitle: requestTitle,
-      });
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopRequestRejectedEmail, {
+          userName: apprentice.name || "Apprenti",
+          mentorName,
+          workshopTitle: requestTitle,
+          workshopsUrl: `${APP_URL}/workshop-room`,
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
         to: apprentice.email,
-        ...template,
+        subject: `Mise à jour concernant votre demande - ${requestTitle}`,
+        html,
+        text,
       });
 
       if (!emailResult.ok) {
