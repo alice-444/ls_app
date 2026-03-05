@@ -166,6 +166,17 @@ export const mentorRouter = router({
       )
     ),
 
+  cancelRequest: protectedProcedure
+    .input(z.object({ requestId: z.string() }))
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
+        await container.workshopRequestService.cancelWorkshopRequest(
+          ctx.session.user.id,
+          input.requestId
+        )
+      )
+    ),
+
   updateWorkshopRequest: protectedProcedure
     .input(
       z.object({

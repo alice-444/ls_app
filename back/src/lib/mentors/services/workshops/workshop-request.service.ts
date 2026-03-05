@@ -491,23 +491,35 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Cette demande est déjà annulée", 400);
       }
 
-      if (request.status === "ACCEPTED" && request.workshopId) {
-        return failure(
-          "Cette demande a été acceptée et un atelier a été créé. Veuillez annuler l'atelier directement.",
-          400
-        );
-      }
-
-      const previousStatus = request.status;
-
-      if (this.prisma && this.creditService && previousStatus === "PENDING") {
+      if (this.prisma && this.creditService) {
         await this.prisma.$transaction(async (tx) => {
+          // If request was already accepted, we need to update the associated workshop
+          if (request.status === "ACCEPTED" && request.workshopId) {
+            const workshop = await (tx as any).workshop.findUnique({
+              where: { id: request.workshopId }
+            });
+
+            if (workshop && workshop.status === "PUBLISHED") {
+              // Clear apprentice from the workshop to free the slot
+              await (tx as any).workshop.update({
+                where: { id: request.workshopId },
+                data: {
+                  apprenticeId: null,
+                  apprenticeAttendanceStatus: null,
+                  updatedAt: new Date()
+                }
+              });
+            }
+          }
+
+          // Update request status to CANCELLED
           await (tx as any).workshop_request.update({
             where: { id: requestId },
             data: { status: "CANCELLED", updatedAt: new Date() },
           });
 
-          // Find the apprentice BetterAuth ID
+          // Refund credits ONLY if the cancellation is by apprentice or if it's still PENDING
+          // In most cases we refund if the request is not completed
           const apprenticeUser = await (tx as any).user.findUnique({
             where: { id: request.apprenticeId },
             select: { userId: true },

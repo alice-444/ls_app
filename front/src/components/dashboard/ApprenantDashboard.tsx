@@ -155,15 +155,13 @@ export function ApprenantDashboard({
                             {formatWorkshopDate(request.preferredDate)}
                           </p>
                         </div>
-                        <div className="shrink-0">
-                          {request.status === "ACCEPTED" ||
-                          request.status === "PENDING" ||
-                          request.status === "REJECTED" ? (
-                            <StatusBadge status={request.status} />
-                          ) : (
+                        <div className="shrink-0 flex items-center gap-2">
+                          <StatusBadge status={request.status} />
+                          {request.status === "PENDING" && (
                             <Button
                               variant="outline"
-                              className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-xs sm:text-sm lg:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center gap-2 shrink-0 bg-white dark:bg-transparent"
+                              size="sm"
+                              className="border-[#d6dae4] rounded-[32px] text-[#26547c] dark:text-[#e6e6e6] hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                               onClick={() => {
                                 if (
                                   confirm(
@@ -175,8 +173,13 @@ export function ApprenantDashboard({
                               }}
                             >
                               Annuler
-                              <Trash2 className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+                              <Trash2 className="h-4 w-4 ml-2" />
                             </Button>
+                          )}
+                          {request.status === "ACCEPTED" && (
+                            <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] italic">
+                              Annulation possible via l'atelier
+                            </p>
                           )}
                         </div>
                       </div>
