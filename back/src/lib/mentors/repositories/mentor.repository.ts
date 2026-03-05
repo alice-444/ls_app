@@ -106,4 +106,43 @@ export class PrismaMentorRepository implements IMentorRepository {
       feedbacks: w.mentorFeedbacks,
     })) as MentorWorkshopEntity[];
   }
+
+  async findPublicMentors(filters?: {
+    domain?: string;
+    topic?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<MentorEntity[]> {
+    const where: any = {
+      role: "MENTOR",
+      isPublished: true,
+      status: "ACTIVE",
+    };
+
+    if (filters?.domain) {
+      where.domain = filters.domain;
+    }
+
+    if (filters?.topic) {
+      where.mentorshipTopics = {
+        has: filters.topic,
+      };
+    }
+
+    if (filters?.cursor) {
+      where.id = {
+        gt: filters.cursor,
+      };
+    }
+
+    const mentors = await (this.prisma as any).user.findMany({
+      where,
+      take: filters?.limit || 20,
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    return mentors as MentorEntity[];
+  }
 }

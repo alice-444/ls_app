@@ -79,4 +79,51 @@ export class MentorProfileService implements IMentorProfileService {
       );
     }
   }
+
+  async getPublicMentors(filters?: {
+    domain?: string;
+    topic?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<Result<{ mentors: any[]; nextCursor?: string }>> {
+    try {
+      const mentors = await this.mentorRepository.findPublicMentors(filters);
+
+      const mentorsWithWorkshopsCount = await Promise.all(
+        mentors.map(async mentor => {
+          const workshops = await this.mentorRepository.findMentorPublicWorkshops(
+            mentor.id
+          );
+          return {
+            id: mentor.id,
+            name: mentor.name,
+            displayName: mentor.displayName || mentor.name,
+            bio: mentor.bio,
+            domain: mentor.domain,
+            photoUrl: mentor.photoUrl,
+            areasOfExpertise: mentor.areasOfExpertise,
+            mentorshipTopics: mentor.mentorshipTopics,
+            workshopsCount: workshops.length,
+          };
+        })
+      );
+
+      let nextCursor: string | undefined;
+      if (mentors.length === (filters?.limit || 20)) {
+        nextCursor = mentors[mentors.length - 1].id;
+      }
+
+      return success({
+        mentors: mentorsWithWorkshopsCount,
+        nextCursor,
+      });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("getPublicMentors", {
+          details: filters as Record<string, unknown>,
+        })
+      );
+    }
+  }
 }

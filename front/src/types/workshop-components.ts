@@ -30,6 +30,28 @@ export interface WorkshopCalendarProps {
 }
 
 // ============================================================================
+// Mentor Types
+// ============================================================================
+
+export interface MentorBasic {
+  id: string;
+  name: string | null;
+  displayName: string | null;
+  bio: string | null;
+  domain: string | null;
+  photoUrl: string | null;
+  areasOfExpertise: string[] | null;
+  mentorshipTopics: string[] | null;
+  workshopsCount?: number;
+}
+
+export interface MentorCardProps {
+  mentor: MentorBasic;
+  onViewProfile?: (mentorId: string) => void;
+  className?: string;
+}
+
+// ============================================================================
 // Card Types
 // ============================================================================
 

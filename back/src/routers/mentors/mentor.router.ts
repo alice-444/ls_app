@@ -15,6 +15,19 @@ export const mentorRouter = router({
       )
     ),
 
+  getPublicMentors: publicProcedure
+    .input(
+      z.object({
+        domain: z.string().optional(),
+        topic: z.string().optional(),
+        limit: z.number().min(1).max(100).default(20),
+        cursor: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) =>
+      unwrapResult(await container.mentorProfileService.getPublicMentors(input))
+    ),
+
   sendContactRequest: protectedProcedure
     .input(
       z.object({

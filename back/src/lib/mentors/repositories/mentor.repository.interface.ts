@@ -64,5 +64,11 @@ export interface IMentorRepository {
     filters?: { workshopId?: string }
   ): Promise<MentorFeedbackEntity[]>;
   findMentorPublicWorkshops(mentorId: string): Promise<MentorWorkshopEntity[]>;
+  findPublicMentors(filters?: {
+    domain?: string;
+    topic?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<MentorEntity[]>;
 }
 
