@@ -133,18 +133,22 @@ export function ConversationList() {
         const index = prev.findIndex(
           (c) => c.conversationId === updatedConversation.conversationId
         );
+        let newConversations: Conversation[];
         if (index >= 0) {
-          const newConversations = [...prev];
+          newConversations = [...prev];
           newConversations[index] = updatedConversation;
-          return newConversations.sort(
-            (a, b) =>
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
+        } else {
+          newConversations = [updatedConversation, ...prev];
         }
-        return [updatedConversation, ...prev].sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
+
+        return newConversations.sort((a, b) => {
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          
+          const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : new Date(a.updatedAt).getTime();
+          const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : new Date(b.updatedAt).getTime();
+          return timeB - timeA;
+        });
       });
     };
 
@@ -205,7 +209,10 @@ export function ConversationList() {
   const sortedConversations = [...filteredConversations].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
-    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    
+    const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : new Date(a.updatedAt).getTime();
+    const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : new Date(b.updatedAt).getTime();
+    return timeB - timeA;
   });
 
   const totalPages = Math.ceil(

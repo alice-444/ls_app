@@ -28,7 +28,10 @@ export class ConversationService implements IConversationService {
     private readonly workshopRepository?: IWorkshopRepository,
     private readonly prismaClient?: PrismaClient
   ) {
-    this.pinService = new ConversationPinService(conversationRepository);
+    this.pinService = new ConversationPinService(
+      conversationRepository,
+      prismaClient || prisma
+    );
   }
 
   private async validateUserAndGetAppUser(userId: string): Promise<
@@ -70,6 +73,7 @@ export class ConversationService implements IConversationService {
 
       const appUser = userResult.data.appUser;
       const blockedAppUserIds = await this.getBlockedAppUserIds(appUser);
+      const pinnedConversationIds = await this.pinService.getPinnedConversationIds(appUser.id);
 
       const conversations =
         await this.conversationRepository.findConversationsForUser(appUser.id);
@@ -86,15 +90,23 @@ export class ConversationService implements IConversationService {
           return this.buildConversationListItem(
             conversation,
             appUser,
-            otherAppUserId
+            otherAppUserId,
+            pinnedConversationIds.has(conversation.id)
           );
         })
       );
 
       return success(
-        conversationsWithDetails.filter(
-          (conv): conv is ConversationListItem => conv !== null
-        )
+        conversationsWithDetails
+          .filter((conv): conv is ConversationListItem => conv !== null)
+          .sort((a, b) => {
+            if (a.isPinned && !b.isPinned) return -1;
+            if (!a.isPinned && b.isPinned) return 1;
+            
+            const timeA = a.lastMessage?.createdAt || a.updatedAt;
+            const timeB = b.lastMessage?.createdAt || b.updatedAt;
+            return timeB.getTime() - timeA.getTime();
+          })
       );
     } catch (error) {
       return handleError(
@@ -128,21 +140,21 @@ export class ConversationService implements IConversationService {
   private async buildConversationListItem(
     conversation: any,
     appUser: any,
-    otherAppUserId: string
+    otherAppUserId: string,
+    isPinned: boolean
   ): Promise<ConversationListItem | null> {
     const otherAppUser = await this.appUserRepository.findByAppUserId(
       otherAppUserId
     );
     if (!otherAppUser) return null;
 
-    const [otherUserName, identityCard, lastMessage, unreadCount, workshopInfo, isPinned] =
+    const [otherUserName, identityCard, lastMessage, unreadCount, workshopInfo] =
       await Promise.all([
         this.appUserRepository.findUserNameByUserId(otherAppUser.userId),
         this.appUserRepository.findIdentityCardByUserId(otherAppUser.userId),
         this.messageRepository.findLastMessageForConversation(conversation.id),
         this.messageRepository.countUnreadMessagesForUser(conversation.id, appUser.id),
         this.enrichWithWorkshopInfo(null),
-        this.pinService.isConversationPinned(appUser.id, conversation.id),
       ]);
 
     let formattedLastMessageContent: string | null = null;
