@@ -18,6 +18,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - **Flux suppression compte** : demande, deletion_job, purge cron.
 - **Flux crons** : liste des jobs planifiés.
 - **Flux réseau** : connexions mentor-apprenant.
+- **Arborescence** : structure macro et micro (front, back) : [arborescence.md](arborescence.md).
 
 ---
 

@@ -72,7 +72,7 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
     userId: string,
     workshopId: string,
     participantId: string,
-    attendanceStatus: "PENDING" | "PRESENT"
+    attendanceStatus: "PENDING" | "PRESENT" | "NO_SHOW"
   ): Promise<Result<AttendanceUpdateResult>> {
     try {
       const workshopResult =
@@ -92,7 +92,7 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
       }
 
       if (
-        attendanceStatus === "PRESENT" &&
+        (attendanceStatus === "PRESENT" || attendanceStatus === "NO_SHOW") &&
         workshop.date &&
         workshop.time &&
         workshop.duration
@@ -116,7 +116,7 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
         }
         if (endTime > new Date()) {
           return failure(
-            "La présence ne peut être confirmée qu'après la fin de l'atelier",
+            "La présence ou l'absence ne peut être confirmée qu'après la fin de l'atelier",
             400
           );
         }
@@ -129,6 +129,9 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
         workshop.date &&
         workshop.time &&
         workshop.duration;
+
+      const shouldApplyPenalty =
+        attendanceStatus === "NO_SHOW" && previousStatus !== "NO_SHOW";
 
       let workshopEndTime: Date | null = null;
       if (shouldProcessCashback) {
@@ -168,6 +171,17 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
           } catch (error) {
             logger.error("Failed to process cashback", { workshopId, error });
           }
+        }
+      }
+
+      if (shouldApplyPenalty && workshop.apprentice?.userId) {
+        try {
+          await this.workshopNoShowPenaltyService.applyPenalty(
+            workshopId,
+            workshop.apprentice.userId
+          );
+        } catch (error) {
+          logger.error("Failed to apply penalty", { workshopId, error });
         }
       }
 

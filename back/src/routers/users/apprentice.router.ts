@@ -37,6 +37,7 @@ export const apprenticeRouter = router({
         displayName: z.string().min(1).max(50),
         studyDomain: z.string().min(1).max(50),
         studyProgram: z.string().min(1).max(50),
+        bio: z.string().max(500).nullable().optional(),
         photoUrl: z.string().url().nullable().optional(),
         iceBreakerTags: z
           .array(z.string().max(30))

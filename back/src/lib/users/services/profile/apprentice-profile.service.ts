@@ -20,6 +20,7 @@ export class ApprenticeProfileService {
       displayName: string;
       studyDomain: string;
       studyProgram: string;
+      bio?: string | null;
       photoUrl?: string | null;
       iceBreakerTags?: string[];
     }
@@ -50,6 +51,7 @@ export class ApprenticeProfileService {
         displayName: input.displayName,
         studyDomain: input.studyDomain,
         studyProgram: input.studyProgram,
+        bio: input.bio || null,
         photoUrl: input.photoUrl || null,
         iceBreakerTags: input.iceBreakerTags || [],
       });
@@ -68,6 +70,7 @@ export class ApprenticeProfileService {
       displayName: string | null;
       studyDomain: string | null;
       studyProgram: string | null;
+      bio: string | null;
       photoUrl: string | null;
       iceBreakerTags: string[];
       userName: string | null;
@@ -93,6 +96,7 @@ export class ApprenticeProfileService {
         displayName: identityCard.displayName,
         studyDomain: identityCard.studyDomain,
         studyProgram: identityCard.studyProgram,
+        bio: (identityCard as any).bio || null,
         photoUrl: identityCard.photoUrl,
         iceBreakerTags: identityCard.iceBreakerTags || [],
         userName,
@@ -113,6 +117,7 @@ export class ApprenticeProfileService {
       displayName: string | null;
       studyDomain: string | null;
       studyProgram: string | null;
+      bio: string | null;
       photoUrl: string | null;
       iceBreakerTags: string[];
     }>
@@ -164,6 +169,7 @@ export class ApprenticeProfileService {
         displayName: identityCard.displayName,
         studyDomain: identityCard.studyDomain,
         studyProgram: identityCard.studyProgram,
+        bio: (identityCard as any).bio || null,
         photoUrl: identityCard.photoUrl,
         iceBreakerTags: identityCard.iceBreakerTags || [],
       });
@@ -186,6 +192,7 @@ export class ApprenticeProfileService {
       displayName: string | null;
       studyDomain: string | null;
       studyProgram: string | null;
+      bio: string | null;
       photoUrl: string | null;
       iceBreakerTags: string[];
       hasFullAccess: boolean;
@@ -234,6 +241,7 @@ export class ApprenticeProfileService {
           displayName: identityCard.displayName,
           studyDomain: identityCard.studyDomain,
           studyProgram: identityCard.studyProgram,
+          bio: (identityCard as any).bio || null,
           photoUrl: identityCard.photoUrl,
           iceBreakerTags: identityCard.iceBreakerTags || [],
           hasFullAccess: true,
@@ -273,6 +281,7 @@ export class ApprenticeProfileService {
         displayName: identityCard.displayName,
         studyDomain: hasFullAccess ? identityCard.studyDomain : null,
         studyProgram: hasFullAccess ? identityCard.studyProgram : null,
+        bio: hasFullAccess ? (identityCard as any).bio || null : null,
         photoUrl: hasFullAccess ? identityCard.photoUrl : null,
         iceBreakerTags: hasFullAccess ? identityCard.iceBreakerTags || [] : [],
         hasFullAccess,

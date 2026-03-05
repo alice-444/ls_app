@@ -39,6 +39,7 @@ export default function ProfilPage() {
   const [displayNameVal, setDisplayNameVal] = useState("");
   const [studyDomainVal, setStudyDomainVal] = useState("");
   const [studyProgramVal, setStudyProgramVal] = useState("");
+  const [bioVal, setBioVal] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -90,6 +91,7 @@ export default function ProfilPage() {
       );
       setStudyDomainVal(identityCard.studyDomain || "");
       setStudyProgramVal(identityCard.studyProgram || "");
+      setBioVal(identityCard.bio || "");
     }
   }, [identityCard]);
 
@@ -101,11 +103,14 @@ export default function ProfilPage() {
     const displayName = displayNameVal.trim();
     const studyDomain = studyDomainVal.trim();
     const studyProgram = studyProgramVal.trim();
+    const bio = bioVal.trim();
 
     const errors: Record<string, string> = {};
     if (!displayName) errors.displayName = "Le prénom est requis";
     if (!studyDomain) errors.studyDomain = "Le domaine d'étude est requis";
     if (!studyProgram) errors.studyProgram = "Le cursus est requis";
+    if (bio.length > 500) errors.bio = "La bio ne peut dépasser 500 caractères";
+    
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -116,6 +121,7 @@ export default function ProfilPage() {
       displayName,
       studyDomain,
       studyProgram,
+      bio,
       photoUrl: previewPhoto || null,
       iceBreakerTags: localTags,
     });
@@ -126,6 +132,7 @@ export default function ProfilPage() {
   const previewStudyDomain = studyDomainVal || identityCard?.studyDomain || "";
   const previewStudyProgram =
     studyProgramVal || identityCard?.studyProgram || "";
+  const previewBio = bioVal || identityCard?.bio || "";
 
   return (
     <PageContainer>
@@ -152,32 +159,63 @@ export default function ProfilPage() {
                 Identité
               </h2>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="displayName">Prénom</Label>
-                <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-                  {displayNameVal.length}/{MAX_LENGTH}
-                </span>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="displayName">Prénom</Label>
+                  <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                    {displayNameVal.length}/{MAX_LENGTH}
+                  </span>
+                </div>
+                <Input
+                  id="displayName"
+                  value={displayNameVal}
+                  onChange={(e) =>
+                    setDisplayNameVal(e.target.value.slice(0, MAX_LENGTH))
+                  }
+                  placeholder="Ton prénom"
+                  maxLength={MAX_LENGTH}
+                  className={fieldErrors.displayName ? "border-destructive" : ""}
+                  aria-invalid={!!fieldErrors.displayName}
+                  aria-describedby={
+                    fieldErrors.displayName ? "displayName-error" : undefined
+                  }
+                />
+                {fieldErrors.displayName && (
+                  <p id="displayName-error" className="text-xs text-destructive" role="alert">
+                    {fieldErrors.displayName}
+                  </p>
+                )}
               </div>
-              <Input
-                id="displayName"
-                value={displayNameVal}
-                onChange={(e) =>
-                  setDisplayNameVal(e.target.value.slice(0, MAX_LENGTH))
-                }
-                placeholder="Ton prénom"
-                maxLength={MAX_LENGTH}
-                className={fieldErrors.displayName ? "border-destructive" : ""}
-                aria-invalid={!!fieldErrors.displayName}
-                aria-describedby={
-                  fieldErrors.displayName ? "displayName-error" : undefined
-                }
-              />
-              {fieldErrors.displayName && (
-                <p id="displayName-error" className="text-xs text-destructive" role="alert">
-                  {fieldErrors.displayName}
-                </p>
-              )}
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="bio">Bio (optionnelle)</Label>
+                  <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                    {bioVal.length}/500
+                  </span>
+                </div>
+                <textarea
+                  id="bio"
+                  value={bioVal}
+                  onChange={(e) =>
+                    setBioVal(e.target.value.slice(0, 500))
+                  }
+                  placeholder="Quelques mots sur toi, tes objectifs..."
+                  maxLength={500}
+                  rows={4}
+                  className={`flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none ${fieldErrors.bio ? "border-destructive" : ""}`}
+                  aria-invalid={!!fieldErrors.bio}
+                  aria-describedby={
+                    fieldErrors.bio ? "bio-error" : undefined
+                  }
+                />
+                {fieldErrors.bio && (
+                  <p id="bio-error" className="text-xs text-destructive" role="alert">
+                    {fieldErrors.bio}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -283,6 +321,7 @@ export default function ProfilPage() {
           displayName={previewDisplayName}
           studyDomain={previewStudyDomain}
           studyProgram={previewStudyProgram}
+          bio={previewBio}
           title={titleData?.title}
           tags={localTags}
         />

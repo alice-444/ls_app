@@ -20,7 +20,7 @@ export const workshopAttendanceRouter = router({
       z.object({
         workshopId: z.string(),
         participantId: z.string(),
-        attendanceStatus: z.enum(["PENDING", "PRESENT"]),
+        attendanceStatus: z.enum(["PENDING", "PRESENT", "NO_SHOW"]),
       })
     )
     .mutation(async ({ ctx, input }) =>

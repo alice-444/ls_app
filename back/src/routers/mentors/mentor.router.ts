@@ -50,6 +50,26 @@ export const mentorRouter = router({
       )
     ),
 
+  contactMentor: protectedProcedure
+    .input(
+      z.object({
+        mentorId: z.string(),
+        message: z
+          .string()
+          .max(1000, "Le message ne peut pas dépasser 1000 caractères")
+          .optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
+        await container.mentorContactService.contactMentor(
+          ctx.session.user.id,
+          input.mentorId,
+          input.message
+        )
+      )
+    ),
+
   getFeedbacks: publicProcedure
     .input(
       z.object({

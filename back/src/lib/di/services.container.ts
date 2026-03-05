@@ -170,7 +170,8 @@ export class ServicesContainer {
     this._mentorContactService ??= new MentorContactService(
       this.repositories.mentorRepository,
       this.notificationService,
-      this.messagingService
+      this.messagingService,
+      this.userBlockService
     );
     return this._mentorContactService;
   }
