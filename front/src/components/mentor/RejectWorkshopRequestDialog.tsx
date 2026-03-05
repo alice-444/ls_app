@@ -10,16 +10,23 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, X } from "lucide-react";
+import { Loader2, AlertTriangle, X, MessageSquare } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
-const rejectRequestSchema = z.object({});
+const rejectRequestSchema = z.object({
+  reason: z
+    .string()
+    .max(500, "Le motif ne peut pas dépasser 500 caractères")
+    .optional(),
+});
 
 type RejectRequestFormData = z.infer<typeof rejectRequestSchema>;
 
 interface RejectWorkshopRequestDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  onConfirm: (reason?: string) => void;
   isSubmitting: boolean;
   apprenticeName?: string;
   workshopTitle?: string;
@@ -33,16 +40,32 @@ export function RejectWorkshopRequestDialog({
   apprenticeName,
   workshopTitle,
 }: RejectWorkshopRequestDialogProps) {
-  const { handleSubmit } = useForm<RejectRequestFormData>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RejectRequestFormData>({
     resolver: zodResolver(rejectRequestSchema),
+    defaultValues: {
+      reason: "",
+    },
   });
 
-  const onSubmit = () => {
-    onConfirm();
+  const onSubmit = (data: RejectRequestFormData) => {
+    onConfirm(data.reason);
+  };
+
+  // Reset form when dialog closes
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      reset();
+    }
+    onOpenChange(newOpen);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
@@ -67,12 +90,30 @@ export function RejectWorkshopRequestDialog({
             </p>
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="reason" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Motif du refus (optionnel)
+            </Label>
+            <Textarea
+              id="reason"
+              placeholder="Expliquez brièvement pourquoi vous refusez cette demande..."
+              className="min-h-[100px] resize-none"
+              {...register("reason")}
+            />
+            {errors.reason && (
+              <p className="text-xs text-red-500 font-medium">
+                {errors.reason.message}
+              </p>
+            )}
+          </div>
+
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
               onClick={() => {
-                onOpenChange(false);
+                handleOpenChange(false);
               }}
               disabled={isSubmitting}
             >
