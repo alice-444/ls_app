@@ -18,6 +18,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
         reportedUserId: input.reportedId,
         reason: input.reason,
         details: input.details || null,
+        messageId: input.messageId || null,
         status: "PENDING",
       },
     });
@@ -65,12 +66,18 @@ export class PrismaUserReportRepository implements IUserReportRepository {
   async updateStatus(
     id: string,
     status: ReportStatus,
-    _reviewedBy?: string | null,
-    _adminNotes?: string | null
+    reviewedById?: string | null,
+    adminNotes?: string | null
   ): Promise<UserReportEntity> {
     const report = await this.prisma.user_report.update({
       where: { id },
-      data: { status, updatedAt: new Date() },
+      data: { 
+        status, 
+        reviewedById,
+        adminNotes,
+        reviewedAt: new Date(),
+        updatedAt: new Date() 
+      },
     });
 
     return this.mapToEntity(report);
@@ -100,13 +107,13 @@ export class PrismaUserReportRepository implements IUserReportRepository {
       reportedId: report.reportedUserId,
       reason: report.reason,
       details: report.details,
-      messageId: null,
+      messageId: report.messageId,
       status: report.status,
       createdAt: report.createdAt,
       updatedAt: report.updatedAt,
-      reviewedAt: null,
-      reviewedBy: null,
-      adminNotes: null,
+      reviewedAt: report.reviewedAt,
+      reviewedBy: report.reviewedById,
+      adminNotes: report.adminNotes,
     };
   }
 }

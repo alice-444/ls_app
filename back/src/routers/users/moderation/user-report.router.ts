@@ -51,6 +51,7 @@ export const userReportRouter = router({
       z.object({
         limit: z.number().min(1).max(100).default(50).optional(),
         offset: z.number().min(0).default(0).optional(),
+        status: z.enum(["PENDING", "REVIEWED", "RESOLVED", "DISMISSED"]).optional(),
       }).optional()
     )
     .query(async ({ input }) => {
@@ -61,14 +62,15 @@ export const userReportRouter = router({
     .input(
       z.object({
         reportId: z.string(),
-        status: z.enum(["RESOLVED", "DISMISSED"]),
+        status: z.enum(["REVIEWED", "RESOLVED", "DISMISSED"]),
         adminNotes: z.string().optional().nullable(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await container.userReportService.reviewReport(
         input.reportId,
         input.status,
+        ctx.session.user.id,
         input.adminNotes ?? undefined
       );
     }),

@@ -32,7 +32,7 @@ export default function MentorAnalyticsPage() {
             </Button>
             <PageHeader
               title="Analyses et Gains"
-              description="Suivez vos gains de cashback et l'historique de vos ateliers."
+              subtitle="Suivez vos gains de cashback et l'historique de vos ateliers."
             />
           </div>
           

@@ -105,9 +105,15 @@ export class UserReportService implements IUserReportService {
     }
   }
 
-  async getAdminReportQueue(params?: { limit?: number; offset?: number }): Promise<Result<any[]>> {
+  async getAdminReportQueue(params?: { limit?: number; offset?: number; status?: string }): Promise<Result<any[]>> {
     try {
+      const where: any = {};
+      if (params?.status) {
+        where.status = params.status;
+      }
+
       const reports = await this.userReportRepository.findMany({
+        where,
         take: params?.limit || 50,
         skip: params?.offset || 0,
         orderBy: { createdAt: "desc" },
@@ -136,33 +142,36 @@ export class UserReportService implements IUserReportService {
     }
   }
 
-  async reviewReport(reportId: string, status: "RESOLVED" | "DISMISSED", adminNotes?: string): Promise<Result<{ success: boolean }>> {
+  async reviewReport(
+    reportId: string, 
+    status: "REVIEWED" | "RESOLVED" | "DISMISSED", 
+    adminUserId: string,
+    adminNotes?: string
+  ): Promise<Result<{ success: boolean }>> {
     try {
-      await this.userReportRepository.update({
-        where: { id: reportId },
-        data: {
-          status,
-          adminNotes: adminNotes || null,
-          updatedAt: new Date(),
-        },
-      });
+      const admin = await this.appUserRepository.findByUserId(adminUserId);
+      if (!admin) return failure("Administrateur introuvable", 404);
 
-      logger.info("Report reviewed", { reportId, status });
+      await this.userReportRepository.updateStatus(
+        reportId,
+        status,
+        admin.id,
+        adminNotes || null
+      );
+
+      logger.info("Report reviewed", { reportId, status, reviewedBy: adminUserId });
+
+      if (this.auditLogService) {
+        await this.auditLogService.record(adminUserId, "USER_REPORT_REVIEWED", {
+          reportId,
+          status,
+          adminNotes,
+        });
+      }
 
       return success({ success: true });
     } catch (error) {
       return handleError(error, createErrorContext("reviewReport", { resourceId: reportId }));
     }
-  }
-
-  async updateReportStatus(reportId: string, status: any, adminNotes?: string): Promise<any> {
-    return this.userReportRepository.update({
-      where: { id: reportId },
-      data: {
-        status,
-        adminNotes: adminNotes || null,
-        reviewedAt: new Date(),
-      },
-    });
   }
 }
