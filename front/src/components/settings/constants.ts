@@ -8,6 +8,7 @@ import {
   Info,
   HelpCircle,
   Coins,
+  Download,
 } from "lucide-react";
 import type { SidebarItem } from "@/components/layout";
 
@@ -20,7 +21,8 @@ export type SettingsSection =
   | "parametres-systeme"
   | "feedback"
   | "a-propos"
-  | "centre-aide";
+  | "centre-aide"
+  | "export-donnees";
 
 export const SIDEBAR_ITEMS: ReadonlyArray<SidebarItem<SettingsSection>> = [
   { id: "profil", label: "Profil", icon: User },
@@ -36,4 +38,5 @@ export const SIDEBAR_ITEMS: ReadonlyArray<SidebarItem<SettingsSection>> = [
   { id: "feedback", label: "Feedback", icon: MessageSquare },
   { id: "a-propos", label: "A propos de LearnSup", icon: Info },
   { id: "centre-aide", label: "Centre d'aide", icon: HelpCircle },
+  { id: "export-donnees", label: "Export des données", icon: Download },
 ];

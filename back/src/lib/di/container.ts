@@ -270,6 +270,10 @@ class DIContainer {
     return this._services.deleteAccountEnhancedService;
   }
 
+  get exportDataService() {
+    return this._services.exportDataService;
+  }
+
   get adminService() {
     return this._services.adminService;
   }

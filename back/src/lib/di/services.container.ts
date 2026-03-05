@@ -39,6 +39,7 @@ import { PasswordValidationService } from "../users/services/account/security/pa
 import { HttpClient } from "../users/services/account/shared/http-client";
 import { DeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service";
 import { EmailTemplateService } from "../users/services/account/shared/email-template.service";
+import { ExportDataService } from "../users/services/account/export-data.service";
 import { MagicLinkService } from "../auth/services/magic-link/magic-link.service";
 import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
 import type { IWorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service.interface";
@@ -68,6 +69,7 @@ import type { IChangePasswordService } from "../users/services/account/security/
 import type { IChangeEmailService } from "../users/services/account/security/change-email.service.interface";
 import type { IForgotPasswordService } from "../users/services/account/security/forgot-password.service.interface";
 import type { IDeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service.interface";
+import type { IExportDataService } from "../users/services/account/export-data.service.interface";
 import type { DailyConfig } from "../daily/config/daily.config.interface";
 import { WorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service";
 import type { IWorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service.interface";
@@ -117,6 +119,7 @@ export class ServicesContainer {
   private _changeEmailService?: IChangeEmailService;
   private _forgotPasswordService?: IForgotPasswordService;
   private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
+  private _exportDataService?: IExportDataService;
   private _workshopAttendanceService?: IWorkshopAttendanceService;
 
   constructor(
@@ -440,6 +443,11 @@ export class ServicesContainer {
       new LocalFileStorageService()
     );
     return this._deleteAccountEnhancedService;
+  }
+
+  get exportDataService(): IExportDataService {
+    this._exportDataService ??= new ExportDataService(this.prisma);
+    return this._exportDataService;
   }
 
   get adminService(): IAdminService {

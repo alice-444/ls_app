@@ -15,6 +15,7 @@ import {
   FeedbackSection,
   AboutSection,
   HelpCenterSection,
+  ExportDataSection,
 } from "@/components/settings";
 
 export default function SettingsPage() {
@@ -60,6 +61,7 @@ export default function SettingsPage() {
     feedback: <FeedbackSection />,
     "a-propos": <AboutSection />,
     "centre-aide": <HelpCenterSection />,
+    "export-donnees": <ExportDataSection />,
   };
 
   return (
