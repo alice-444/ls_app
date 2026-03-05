@@ -82,6 +82,8 @@ export const customAuthClient = {
     areasOfExpertise?: string[] | null;
     mentorshipTopics?: string[] | null;
     calendlyLink?: string | null;
+    displayName?: string | null;
+    iceBreakerTags?: string[] | null;
   }): Promise<{ success: boolean }> {
 		const response = await fetch(`${baseURL}/api/profile/role/mentor`, {
       method: "POST",

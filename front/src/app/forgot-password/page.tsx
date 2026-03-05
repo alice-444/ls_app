@@ -14,33 +14,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/utils/trpc";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const requestPasswordResetMutation =
-    trpc.accountSettings.requestPasswordReset.useMutation({
-      onSuccess: (data: { message?: string }) => {
-        toast.success(
-          data.message ||
-            "Si un compte existe pour cet email, un lien de réinitialisation a été envoyé."
-        );
-        setIsSubmitted(true);
-      },
-      onError: (error: { message?: string }) => {
-        toast.error(
-          error.message || "Erreur lors de la demande de réinitialisation"
-        );
-      },
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    const { data, error } = await (authClient as any).requestPasswordReset({
+      email,
+      redirectTo: "/reset-password",
     });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    requestPasswordResetMutation.mutate({ email });
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(error.message || "Erreur lors de la demande de réinitialisation");
+    } else {
+      toast.success("Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.");
+      setIsSubmitted(true);
+    }
   };
 
   if (isSubmitted) {
@@ -116,9 +115,9 @@ export default function ForgotPasswordPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={requestPasswordResetMutation.isPending}
+              disabled={isLoading}
             >
-              {requestPasswordResetMutation.isPending
+              {isLoading
                 ? "Envoi..."
                 : "Envoyer le code"}
             </Button>

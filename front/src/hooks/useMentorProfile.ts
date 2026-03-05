@@ -43,6 +43,8 @@ export function useMentorProfile() {
   const [customQualification, setCustomQualification] = useState("");
   const [selectedExperience, setSelectedExperience] = useState<string[]>([]);
   const [customExperience, setCustomExperience] = useState("");
+  const [selectedIceBreakers, setSelectedIceBreakers] = useState<string[]>([]);
+  const [customIceBreaker, setCustomIceBreaker] = useState("");
 
   const [activeSection, setActiveSection] =
     useState<ProfileSection>("informations-base");
@@ -59,6 +61,8 @@ export function useMentorProfile() {
       socialMediaLinks: { linkedin: "", twitter: "", youtube: "", github: "" },
       areasOfExpertise: [],
       mentorshipTopics: [],
+      displayName: "",
+      iceBreakerTags: [],
     },
   });
 
@@ -95,6 +99,7 @@ export function useMentorProfile() {
           const p = data.profile;
           setValue("name", p.name || "");
           setValue("bio", p.bio || "");
+          setValue("displayName", p.displayName || "");
 
           const quals = parseStringOrArray(p.qualifications);
           setSelectedQualifications(quals);
@@ -112,6 +117,11 @@ export function useMentorProfile() {
           if (Array.isArray(p.mentorshipTopics)) {
             setSelectedTopics(p.mentorshipTopics);
             setValue("mentorshipTopics", p.mentorshipTopics);
+          }
+
+          if (Array.isArray(p.iceBreakerTags)) {
+            setSelectedIceBreakers(p.iceBreakerTags);
+            setValue("iceBreakerTags", p.iceBreakerTags);
           }
 
           if (p.socialMediaLinks) {
@@ -197,6 +207,13 @@ export function useMentorProfile() {
     setCustomExperience,
     20
   );
+  const iceBreakers = createTagManager(
+    selectedIceBreakers,
+    setSelectedIceBreakers,
+    "iceBreakerTags",
+    setCustomIceBreaker,
+    5
+  );
 
   const reloadProfileStatus = async () => {
     const response = await fetch(`${API_BASE_URL}/api/profile/role/mentor`, {
@@ -269,6 +286,8 @@ export function useMentorProfile() {
         socialMediaLinks: socialLinks as Record<string, string> | null,
         areasOfExpertise: data.areasOfExpertise,
         mentorshipTopics: data.mentorshipTopics || null,
+        displayName: data.displayName || null,
+        iceBreakerTags: data.iceBreakerTags || null,
       });
 
       toast.success("Profil sauvegardé avec succès !");
@@ -362,6 +381,11 @@ export function useMentorProfile() {
     customExperience,
     setCustomExperience,
     experience,
+
+    selectedIceBreakers,
+    customIceBreaker,
+    setCustomIceBreaker,
+    iceBreakers,
 
     onSubmit,
     handlePublish,

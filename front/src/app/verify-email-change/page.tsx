@@ -33,7 +33,7 @@ function VerifyEmailChangeContent() {
       }
 
       setStatus("loading");
-      const { data, error } = await authClient.verifyEmail({
+      const { data, error } = await (authClient as any).verifyEmail({
         query: {
           token,
         },
