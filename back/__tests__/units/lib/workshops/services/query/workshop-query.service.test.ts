@@ -19,7 +19,7 @@ describe("WorkshopQueryService", () => {
   };
 
   const mockAccessGuard = {
-    verifyProfAccess: vi.fn(),
+    verifyMentorAccess: vi.fn(),
     verifyApprenticeAccess: vi.fn(),
   };
 
@@ -40,7 +40,7 @@ describe("WorkshopQueryService", () => {
 
   describe("getWorkshopsByCreator", () => {
     it("returns failure when access check fails", async () => {
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: false,
         error: "Not a mentor",
         status: 403,
@@ -51,7 +51,7 @@ describe("WorkshopQueryService", () => {
     });
 
     it("returns failure when appUser is null", async () => {
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: null },
       });
@@ -63,7 +63,7 @@ describe("WorkshopQueryService", () => {
 
     it("returns workshops for the creator", async () => {
       const workshops = [{ id: "ws-1" }, { id: "ws-2" }];
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });

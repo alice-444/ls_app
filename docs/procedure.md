@@ -26,7 +26,7 @@ Voir [README principal](../README.md) pour le détail des variables.
 ## Base de données
 
 - **Dev (schéma à jour)** : `pnpm db:push` — applique le schéma Prisma sans créer de migration.
-- **Changements récents** : modèle `user` remplacé par `account` + `app_user` (Better Auth) ; suppression de `session`, `conversation_pin`, `deletion_job`, `verification`, `workshop_cashback_queue` ; ajout de `magic_link_token` ; `audit_log` avec adminId/action/targetId/details.
+- **Changements récents** : modèle `account` (Better Auth) lié à `user` ; suppression de `session`, `conversation_pin`, `verification`, `workshop_cashback_queue` ; ajout de `magic_link_token`, `deletion_job` (planification des suppressions de compte) ; `audit_log` avec adminId/action/targetId/details.
 - **Prod / migrations** : `pnpm db:migrate` — crée ou applique les migrations.
 - **Régénérer le client Prisma** : `pnpm db:generate` (utile après modification du schéma).
 - **Explorer les données** : `pnpm db:studio` — ouvre Prisma Studio.

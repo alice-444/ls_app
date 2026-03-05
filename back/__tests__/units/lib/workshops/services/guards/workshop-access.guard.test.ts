@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("../../../../../../src/lib/common/prisma", () => ({ prisma: {} }));
 vi.mock("../../../../../../src/lib/auth/services/user-helpers", () => ({
   verifyUserExists: vi.fn(),
-  verifyProfUser: vi.fn(),
+  verifyMentorUser: vi.fn(),
 }));
 
 import { WorkshopAccessGuard } from "../../../../../../src/lib/workshops/services/guards/workshop-access.guard";
-import { verifyUserExists, verifyProfUser } from "../../../../../../src/lib/auth/services/user-helpers";
+import { verifyUserExists, verifyMentorUser } from "../../../../../../src/lib/auth/services/user-helpers";
 
 const mockVerifyUserExists = vi.mocked(verifyUserExists);
-const mockVerifyProfUser = vi.mocked(verifyProfUser);
+const mockVerifyMentorUser = vi.mocked(verifyMentorUser);
 
 describe("WorkshopAccessGuard", () => {
   const mockAppUserRepo = {
@@ -28,7 +28,7 @@ describe("WorkshopAccessGuard", () => {
     guard = new WorkshopAccessGuard(mockAppUserRepo as any, mockWorkshopRepo as any);
   });
 
-  describe("verifyProfAccess", () => {
+  describe("verifyMentorAccess", () => {
     it("returns failure when user does not exist", async () => {
       mockVerifyUserExists.mockResolvedValue({
         ok: false,
@@ -36,7 +36,7 @@ describe("WorkshopAccessGuard", () => {
         status: 404,
       });
 
-      const result = await guard.verifyProfAccess("user-1");
+      const result = await guard.verifyMentorAccess("user-1");
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.status).toBe(404);
     });
@@ -46,29 +46,40 @@ describe("WorkshopAccessGuard", () => {
         ok: true,
         data: { user: { id: "user-1" } },
       });
-      mockVerifyProfUser.mockResolvedValue({
+      mockVerifyMentorUser.mockResolvedValue({
         ok: false,
         error: "Only users with MENTOR role can perform this action",
         status: 403,
       });
 
-      const result = await guard.verifyProfAccess("user-1");
+      const result = await guard.verifyMentorAccess("user-1");
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.status).toBe(403);
     });
 
     it("returns success with appUser when user is an active MENTOR", async () => {
-      const appUser = { id: "app-1", role: "MENTOR", status: "ACTIVE" };
+      const appUser = {
+        id: "app-1",
+        userId: "user-1",
+        name: "Test User",
+        displayName: "Test",
+        role: "MENTOR",
+        status: "ACTIVE",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailNotifications: true,
+        inAppNotifications: true,
+      };
       mockVerifyUserExists.mockResolvedValue({
         ok: true,
         data: { user: { id: "user-1" } },
       });
-      mockVerifyProfUser.mockResolvedValue({
+      mockVerifyMentorUser.mockResolvedValue({
         ok: true,
         data: { appUser },
       });
 
-      const result = await guard.verifyProfAccess("user-1");
+      const result = await guard.verifyMentorAccess("user-1");
       expect(result.ok).toBe(true);
       if (result.ok) expect(result.data.appUser).toEqual(appUser);
     });
@@ -91,7 +102,7 @@ describe("WorkshopAccessGuard", () => {
         ok: true,
         data: { user: { id: "user-1" } },
       });
-      mockVerifyProfUser.mockResolvedValue({
+      mockVerifyMentorUser.mockResolvedValue({
         ok: true,
         data: { appUser: null },
       });
@@ -106,9 +117,22 @@ describe("WorkshopAccessGuard", () => {
         ok: true,
         data: { user: { id: "user-1" } },
       });
-      mockVerifyProfUser.mockResolvedValue({
+      mockVerifyMentorUser.mockResolvedValue({
         ok: true,
-        data: { appUser: { id: "app-1" } },
+        data: {
+          appUser: {
+            id: "app-1",
+            userId: "user-1",
+            name: "Test User",
+            displayName: "Test",
+            role: "MENTOR",
+            status: "ACTIVE",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            emailNotifications: true,
+            inAppNotifications: true,
+          },
+        },
       });
       mockWorkshopRepo.checkCreatorOwnership.mockResolvedValue(false);
 
@@ -125,9 +149,22 @@ describe("WorkshopAccessGuard", () => {
         ok: true,
         data: { user: { id: "user-1" } },
       });
-      mockVerifyProfUser.mockResolvedValue({
+      mockVerifyMentorUser.mockResolvedValue({
         ok: true,
-        data: { appUser: { id: "app-1" } },
+        data: {
+          appUser: {
+            id: "app-1",
+            userId: "user-1",
+            name: "Test User",
+            displayName: "Test",
+            role: "MENTOR",
+            status: "ACTIVE",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            emailNotifications: true,
+            inAppNotifications: true,
+          },
+        },
       });
       mockWorkshopRepo.checkCreatorOwnership.mockResolvedValue(true);
 
@@ -152,8 +189,15 @@ describe("WorkshopAccessGuard", () => {
     it("returns failure when user is not APPRENANT", async () => {
       mockAppUserRepo.findByUserId.mockResolvedValue({
         id: "app-1",
+        userId: "user-1",
+        name: "Test User",
+        displayName: "Test",
         role: "MENTOR",
         status: "ACTIVE",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailNotifications: true,
+        inAppNotifications: true,
       });
 
       const result = await guard.verifyApprenticeAccess("user-1");
@@ -164,8 +208,15 @@ describe("WorkshopAccessGuard", () => {
     it("returns failure when account is not active", async () => {
       mockAppUserRepo.findByUserId.mockResolvedValue({
         id: "app-1",
+        userId: "user-1",
+        name: "Test User",
+        displayName: "Test",
         role: "APPRENANT",
         status: "INACTIVE",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailNotifications: true,
+        inAppNotifications: true,
       });
 
       const result = await guard.verifyApprenticeAccess("user-1");
@@ -174,7 +225,18 @@ describe("WorkshopAccessGuard", () => {
     });
 
     it("returns success for active APPRENANT", async () => {
-      const appUser = { id: "app-1", role: "APPRENANT", status: "ACTIVE" };
+      const appUser = {
+        id: "app-1",
+        userId: "user-1",
+        name: "Test User",
+        displayName: "Test",
+        role: "APPRENANT",
+        status: "ACTIVE",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailNotifications: true,
+        inAppNotifications: true,
+      };
       mockAppUserRepo.findByUserId.mockResolvedValue(appUser);
 
       const result = await guard.verifyApprenticeAccess("user-1");

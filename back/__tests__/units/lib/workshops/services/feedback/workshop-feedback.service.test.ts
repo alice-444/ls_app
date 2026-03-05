@@ -63,6 +63,7 @@ describe("WorkshopFeedbackService", () => {
       workshopId: "ws-1",
       rating: 5,
       comment: "Great!",
+      isAnonymous: false,
     };
 
     it("submits feedback and rewards credit", async () => {

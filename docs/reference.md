@@ -8,6 +8,9 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Vue d’ensemble système, flux, modèles de données : [architecture.md](architecture.md).
 - Schémas : système (front/back/DB), séquence des échanges, ER Prisma.
+- **Flux d'authentification** : inscription, connexion (email/mot de passe, magic link), récupération mot de passe, onboarding.
+- **Flux utilisateur** : états (non connecté → session → onboarding → dashboard), redirections par rôle (ADMIN/MENTOR/APPRENANT), RoleGate.
+- **Flux de données** : tRPC + TanStack Query, contexte session, procédures protégées, Socket.IO temps réel.
 
 ---
 
@@ -41,7 +44,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Auth : `/api/auth/*` (Better Auth), `/api/auth/magic-link-callback`, `/api/sign-up`, `/api/sign-in`.
 - Onboarding : `/api/onboarding/select-role`.
-- Profil : `/api/profile/role`, `/api/profile/role/prof`, `/api/profile/upload-photo`, `/api/profile/photo/[filename]`, `/api/profile/publish`, `/api/profile/delete`.
+- Profil : `/api/profile/role`, `/api/profile/role/mentor`, `/api/profile/upload-photo`, `/api/profile/photo/[filename]`, `/api/profile/publish`, `/api/profile/delete`.
 - Support : `/api/support-request`, `/api/support-request/attachments/[filename]`.
 - Crons : `/api/cron/*` (à appeler avec CRON_SECRET).
 - Webhooks : `/api/daily/webhook`, `/api/polar/webhook`.
@@ -52,7 +55,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ## Base de données (Prisma)
 
 - Schéma : `back/prisma/schema/schema.prisma`.
-- Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token.
+- Modèles principaux : account, user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token, deletion_job.
 - Client généré : `back/prisma/generated/client`.
 
 ---

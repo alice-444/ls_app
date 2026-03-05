@@ -35,7 +35,7 @@ describe("WorkshopSchedulingService", () => {
   };
 
   const mockAccessGuard = {
-    verifyProfAccess: vi.fn(),
+    verifyMentorAccess: vi.fn(),
     verifyApprenticeAccess: vi.fn(),
   };
 
@@ -90,7 +90,7 @@ describe("WorkshopSchedulingService", () => {
         creatorId: "other-app",
         apprenticeId: null,
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "different-app" } },
       });
@@ -116,7 +116,7 @@ describe("WorkshopSchedulingService", () => {
           title: "Test",
         });
 
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });
@@ -135,7 +135,7 @@ describe("WorkshopSchedulingService", () => {
         creatorId: "other-app",
         apprenticeId: "app-1",
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "different-app" } },
       });
@@ -168,7 +168,7 @@ describe("WorkshopSchedulingService", () => {
         apprenticeId: null,
         status: "PUBLISHED",
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "different-app" } },
       });
@@ -185,7 +185,7 @@ describe("WorkshopSchedulingService", () => {
         apprenticeId: null,
         status: "CANCELLED",
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });
@@ -240,7 +240,7 @@ describe("WorkshopSchedulingService", () => {
           apprentice: null,
         });
 
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });
@@ -268,7 +268,7 @@ describe("WorkshopSchedulingService", () => {
 
     it("returns 403 when access check fails", async () => {
       mockWorkshopRepo.findById.mockResolvedValue({ id: "ws-1" });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: false,
         error: "Not authorized",
         status: 403,
@@ -287,7 +287,7 @@ describe("WorkshopSchedulingService", () => {
         creatorId: "other-app",
         status: "PUBLISHED",
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });
@@ -306,7 +306,7 @@ describe("WorkshopSchedulingService", () => {
         creatorId: "app-1",
         status: "DRAFT",
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });
@@ -328,7 +328,7 @@ describe("WorkshopSchedulingService", () => {
         creatorId: "app-1",
         status: "PUBLISHED",
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });
@@ -358,7 +358,7 @@ describe("WorkshopSchedulingService", () => {
         location: "Paris",
         isVirtual: false,
       });
-      mockAccessGuard.verifyProfAccess.mockResolvedValue({
+      mockAccessGuard.verifyMentorAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
       });

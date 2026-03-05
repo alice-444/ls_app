@@ -147,7 +147,7 @@ sequenceDiagram
   - `**api/trpc/**` — Point d’entrée tRPC (procédures exposées sous `/trpc`).
   - `**api/sign-up**`, `**api/sign-in**` — Inscription / connexion custom si utilisé.
   - `**api/onboarding/select-role**` — Choix de rôle (MENTOR / APPRENANT).
-  - `**api/profile/**` — role, role/prof, upload-photo, photo/[filename], publish, delete.
+  - `**api/profile/**` — role, role/mentor, upload-photo, photo/[filename], publish, delete.
   - `**api/support-request/**` — Demande de support + pièces jointes (`attachments/[filename]`).
   - `**api/cron/**` — Jobs planifiés : generate-video-links, cleanup-inactive-rooms, process-cashback-queue, retry-failed-cashbacks, create-feedback-notifications, purge-deletions, check-cashback-integrity.
   - `**api/daily/webhook**` — Webhook Daily.co.
@@ -166,7 +166,7 @@ sequenceDiagram
   - `auth/services/magic-link/` — MagicLinkService (envoi lien par email).
   - `auth/`, `email/`, `daily/`, `di/`, `rate-limit/`, `logger/`, `metrics/` — Inchangés.
 - `**src/shared/**` — Schémas et validation partagés avec le front (Zod, workshop, password, date, etc.).
-- `**prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token.
+- `**prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token, deletion_job.
 
 ---
 
@@ -209,7 +209,7 @@ flowchart LR
 
   subgraph Profil["Profil / onboarding"]
     P1["/api/profile/role"]
-    P2["/api/profile/role/prof"]
+    P2["/api/profile/role/mentor"]
     P3["/api/profile/upload-photo"]
     P4["/api/profile/publish\n/api/profile/delete"]
     P5["/api/onboarding/select-role"]
@@ -242,7 +242,7 @@ flowchart LR
 
 - **Auth** : `/api/auth/*` (Better Auth), `/api/auth/magic-link-callback` (connexion via magic link), `/api/sign-up`, `/api/sign-in`.
 - **Onboarding** : `/api/onboarding/select-role`.
-- **Profil** : GET/POST `/api/profile/role`, POST `/api/profile/role/prof`, POST `/api/profile/upload-photo`, GET `/api/profile/photo/[filename]`, POST/DELETE `/api/profile/publish`, DELETE `/api/profile/delete`.
+- **Profil** : GET/POST `/api/profile/role`, POST `/api/profile/role/mentor`, POST `/api/profile/upload-photo`, GET `/api/profile/photo/[filename]`, POST/DELETE `/api/profile/publish`, DELETE `/api/profile/delete`.
 - **Support** : POST `/api/support-request`, GET `/api/support-request/attachments/[filename]`.
 - **Cron** : routes sous `/api/cron/*` (à appeler par un planificateur externe avec CRON_SECRET).
 - **Webhooks** : `/api/daily/webhook`, `/api/polar/webhook`.

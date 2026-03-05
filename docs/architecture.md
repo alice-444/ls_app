@@ -83,7 +83,7 @@ Vue simplifiée (ASCII) :
 
 ## Fonctionnalités métier
 
-- **Authentification** : Better Auth (email/mot de passe, magic link, sessions, cookies). Routes custom pour sign-up, onboarding (rôle MENTOR / APPRENANT), profil prof (photo, bio, publication). Magic link : envoi d’un lien par email via tRPC `auth.requestMagicLink`, callback `/api/auth/magic-link-callback`.
+- **Authentification** : Better Auth (email/mot de passe, magic link, sessions, cookies). Routes custom pour sign-up, onboarding (rôle MENTOR / APPRENANT), profil mentor (photo, bio, publication). Magic link : envoi d’un lien par email via tRPC `auth.requestMagicLink`, callback `/api/auth/magic-link-callback`.
 - **Ateliers (workshops)** : création, édition, publication, inscriptions, demandes, feedbacks, cashback, analytics. Visio via Daily.co (liens générés côté back, webhooks).
 - **Mentors / Apprenants** : profils mentors, catalogue, demandes d’ateliers, historique, connexions (réseau).
 - **Messagerie** : conversations, messages, réactions. Temps réel via Socket.IO.
@@ -137,38 +137,201 @@ sequenceDiagram
 
 ---
 
+## Flux d'authentification
+
+```mermaid
+flowchart TB
+  subgraph Inscription["Inscription"]
+    A1[Page /login mode signup]
+    A2[SignUpForm]
+    A3[POST /api/sign-up]
+    A4[Better Auth signUpEmail]
+    A5[Création account + user]
+    A6[Email bienvenue + lien onboarding]
+    A1 --> A2 --> A3 --> A4 --> A5 --> A6
+  end
+
+  subgraph Connexion["Connexion"]
+    B1[Page /login mode signin]
+    B2[SignInForm]
+    B2a[Email + mot de passe]
+    B2b[Magic link tRPC]
+    B3[Better Auth signIn / magic-link/verify]
+    B4[Session cookie]
+    B5[getUserRole → redirection]
+    B1 --> B2
+    B2 --> B2a
+    B2 --> B2b
+    B2a --> B3
+    B2b --> B3
+    B3 --> B4 --> B5
+  end
+
+  subgraph Récupération["Récupération compte"]
+    C1[/forgot-password]
+    C2[Better Auth sendResetPassword]
+    C3[Email avec lien]
+    C4[/reset-password?token=xxx]
+    C5[Nouveau mot de passe]
+    C1 --> C2 --> C3 --> C4 --> C5
+  end
+
+  subgraph Onboarding["Onboarding"]
+    D1[Session OK + role null]
+    D2[Redirection /onboarding]
+    D3[selectRole MENTOR ou APPRENANT]
+    D4[POST /api/onboarding/select-role]
+    D5[user.role + user.status ACTIVE]
+    D6[Redirection /dashboard]
+    D1 --> D2 --> D3 --> D4 --> D5 --> D6
+  end
+
+  A6 -.->|"Utilisateur clique"| B1
+  B5 -->|ADMIN| E1["/admin"]
+  B5 -->|role null| D1
+  B5 -->|MENTOR/APPRENANT| E2["/dashboard"]
+```
+
+Séquences détaillées :
+
+**Inscription** : `/login` (mode signup) → `customAuthClient.signUpEmail` → POST `/api/sign-up` → Better Auth crée `account` + `user` (status PENDING, role null) → email bienvenue avec lien `/onboarding`.
+
+**Connexion** : (1) **Email/mot de passe** : `authClient.signIn.email` → Better Auth `/api/auth/sign-in/email` → session cookie. (2) **Magic link** : `trpc.auth.requestMagicLink` → email avec lien → clic → `/api/auth/magic-link-callback` (redirect legacy) → `/api/auth/magic-link/verify` → session → redirect `/dashboard`.
+
+**Récupération mot de passe** : `/forgot-password` → Better Auth `forgetPassword` → email → `/reset-password?token=xxx` → nouveau mot de passe.
+
+**Changement email** : lien dans email → `/verify-email-change?token=xxx` (Better Auth).
+
+**Onboarding** : si session OK et `user.role === null` → redirect `/onboarding` → choix MENTOR ou APPRENANT → POST `/api/onboarding/select-role` → `user.role` et `user.status = ACTIVE` → redirect `/dashboard`.
+
+---
+
+## Flux utilisateur
+
+```mermaid
+stateDiagram-v2
+  [*] --> NonConnecté
+  NonConnecté --> Connexion: /login
+  NonConnecté --> Inscription: /login (signup)
+  Connexion --> SessionActive: Session OK
+  Inscription --> SessionActive: Compte créé
+  SessionActive --> Onboarding: role === null
+  SessionActive --> Dashboard: role défini
+  Onboarding --> Dashboard: selectRole OK
+  Dashboard --> Admin: role === ADMIN
+  Dashboard --> MentorEspace: role === MENTOR
+  Dashboard --> ApprenantEspace: role === APPRENANT
+  Admin --> AdminEspace: /admin/*
+  MentorEspace --> MesAteliers: /my-workshops
+  MentorEspace --> ProfilMentor: /mentor-profile
+  ApprenantEspace --> Profil: /profil
+  ApprenantEspace --> EAtelier: /workshop-room
+```
+
+**Redirections selon le rôle** :
+
+| Rôle | Redirection après login | Routes accessibles |
+|------|-------------------------|---------------------|
+| **ADMIN** | `/admin` | `/admin/*` uniquement (sidebar admin) |
+| **MENTOR** | `/dashboard` | `/dashboard`, `/my-workshops`, `/mentor-profile`, `/workshop-editor`, etc. |
+| **APPRENANT** | `/dashboard` | `/dashboard`, `/profil`, `/workshop-room`, etc. |
+| **Sans rôle** | `/onboarding` | Choix MENTOR ou APPRENANT obligatoire |
+
+**RoleGate** : composant qui redirige ADMIN hors des routes utilisateur (`/dashboard`, `/my-workshops`, etc.) vers `/admin`, et les utilisateurs non-ADMIN hors de `/admin` vers `/dashboard`.
+
+**Sources du rôle** : `getUserRole()` (GET `/api/profile/role`) → cache TanStack Query `["userRole", session.user.id]` → utilisé par `useDashboard`, `RoleGate`, `UserMenu`, page d'accueil.
+
+---
+
+## Flux de données
+
+```mermaid
+flowchart TB
+  subgraph Front["Front"]
+    UI[Composants React]
+    Hooks[trpc.*.useQuery / useMutation]
+    QC[TanStack QueryClient]
+    TC[trpcClient httpBatchLink]
+    Auth[Better Auth useSession]
+    Socket[Socket.IO client]
+  end
+
+  subgraph Back["Back"]
+    TRPC[/trpc]
+    Ctx[createContext]
+    Session[auth.api.getSession]
+    Proc[Procédures public / protected / mentor / admin]
+    Prisma[Prisma]
+    SockS[Socket.IO serveur]
+  end
+
+  subgraph DB[(PostgreSQL)]
+  end
+
+  UI --> Hooks
+  Hooks --> QC
+  QC --> TC
+  TC -->|"POST batch, credentials: include"| TRPC
+  TRPC --> Ctx
+  Ctx --> Session
+  Session --> Proc
+  Proc --> Prisma
+  Prisma --> DB
+
+  UI --> Auth
+  UI --> Socket
+  Socket <--> SockS
+  SockS --> Prisma
+```
+
+**Données via tRPC** :
+
+1. **Requête** : `trpc.workshop.list.useQuery()` → TanStack Query (cache, `staleTime`, `refetchInterval`) → `httpBatchLink` envoie POST `/trpc` avec `credentials: "include"` (cookie session).
+2. **Contexte** : `createContext` appelle `auth.api.getSession({ headers })` → `ctx.session` pour les procédures protégées.
+3. **Procédures** : `publicProcedure` (pas de session), `protectedProcedure` (session requise), `mentorProcedure` (role MENTOR + status ACTIVE), `adminProcedure` (role ADMIN + audit log).
+4. **Réponse** : JSON typé → cache QueryClient → composants.
+
+**Données via API REST** : `fetch` avec `credentials: "include"` vers `/api/profile/*`, `/api/sign-up`, etc. Session lue via `getAuthenticatedSession(req)`.
+
+**Données temps réel** : Socket.IO connecté au back → événements (messages, notifications) → mise à jour UI. Les écritures passent par tRPC ou API ; Socket.IO sert au broadcast.
+
+**Invalidation** : `queryClient.invalidateQueries({ queryKey: ["userRole"] })` après login, `trpc.useUtils().invalidate()` après mutations. Les toasts d’erreur gèrent les erreurs tRPC (sauf UNAUTHORIZED sur `/login`).
+
+---
+
 ## Modèles de données (Prisma)
 
 Schéma relationnel simplifié (principales entités et relations) :
 
 ```mermaid
 erDiagram
-  account ||--o| app_user : has
-  app_user }o--o{ workshop : "mentor crée"
+  account ||--o| user : has
+  user }o--o{ workshop : "mentor crée"
   workshop ||--o{ workshop_request : has
   workshop ||--o{ mentor_feedback : has
-  app_user ||--o{ user_connection : "from"
-  app_user ||--o{ user_connection : "to"
-  app_user ||--o{ conversation : participates
+  user ||--o{ user_connection : "from"
+  user ||--o{ user_connection : "to"
+  user ||--o{ conversation : participates
   conversation ||--o{ message : has
   message ||--o{ message_reaction : has
-  app_user ||--o{ notification : receives
-  app_user ||--o{ user_block : "blocker"
-  app_user ||--o{ user_block : "blocked"
-  app_user ||--o{ user_report : "reporter"
-  app_user ||--o{ support_request : creates
-  app_user ||--o{ credit_transaction : has
-  app_user ||--o{ audit_log : "admin"
+  user ||--o{ notification : receives
+  user ||--o{ user_block : "blocker"
+  user ||--o{ user_block : "blocked"
+  user ||--o{ user_report : "reporter"
+  user ||--o{ support_request : creates
+  user ||--o{ credit_transaction : has
+  user ||--o{ audit_log : "admin"
+  user ||--o{ deletion_job : "scheduled"
   account {
     string accountId
     string email
     string password
   }
-  app_user {
+  user {
     string id
     string userId
-    Role role
-    AppUserStatus status
+    string role
+    string status
     string bio
     string photoUrl
     boolean isPublished
@@ -197,7 +360,7 @@ erDiagram
   }
 ```
 
-Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`. Détails dans `back/prisma/schema/schema.prisma`.
+Liste des modèles : `account`, `user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `deletion_job`. Détails dans `back/prisma/schema/schema.prisma`.
 
 ---
 

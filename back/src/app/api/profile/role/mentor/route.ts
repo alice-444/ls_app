@@ -60,7 +60,8 @@ export async function GET(req: NextRequest) {
         socialMediaLinks: true,
         areasOfExpertise: true,
         mentorshipTopics: true,
-        calendlyLink: true,
+        displayName: true,
+        iceBreakerTags: true,
       },
     });
 
@@ -89,7 +90,8 @@ export async function GET(req: NextRequest) {
         socialMediaLinks: fullAppUser.socialMediaLinks || null,
         areasOfExpertise: fullAppUser.areasOfExpertise || null,
         mentorshipTopics: fullAppUser.mentorshipTopics || null,
-        calendlyLink: fullAppUser.calendlyLink || null,
+        displayName: fullAppUser.displayName || null,
+        iceBreakerTags: fullAppUser.iceBreakerTags || null,
       },
     });
   } catch (error) {
