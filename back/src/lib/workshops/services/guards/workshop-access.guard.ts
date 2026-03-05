@@ -8,7 +8,7 @@ import {
 } from "../../../auth/services/user-helpers";
 
 export interface IWorkshopAccessGuard {
-  verifyProfAccess(
+  verifyMentorAccess(
     userId: string
   ): Promise<Result<{ appUser: any }>>;
 
@@ -29,7 +29,7 @@ export class WorkshopAccessGuard implements IWorkshopAccessGuard {
     private readonly workshopRepository: IWorkshopRepository
   ) {}
 
-  async verifyProfAccess(
+  async verifyMentorAccess(
     userId: string
   ): Promise<Result<{ appUser: any }>> {
     const userCheck = await verifyUserExists(userId);
@@ -50,7 +50,7 @@ export class WorkshopAccessGuard implements IWorkshopAccessGuard {
     workshopId: string,
     action: string
   ): Promise<Result<{ appUser: any; workshopId: string }>> {
-    const accessCheck = await this.verifyProfAccess(userId);
+    const accessCheck = await this.verifyMentorAccess(userId);
     if (!accessCheck.ok) {
       return accessCheck;
     }

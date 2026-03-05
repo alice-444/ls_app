@@ -22,7 +22,7 @@ export class WorkshopQueryService implements IWorkshopQueryService {
 
   async getWorkshopsByCreator(userId: string): Promise<Result<any[]>> {
     try {
-      const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+      const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       if (!accessCheck.ok) {
         return accessCheck;
       }

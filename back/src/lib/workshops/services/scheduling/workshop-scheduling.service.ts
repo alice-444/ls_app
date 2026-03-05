@@ -65,7 +65,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
         return failure("Atelier non trouvé", 404);
       }
 
-      const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+      const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       const isMentor =
         accessCheck.ok &&
         accessCheck.data.appUser !== null &&
@@ -165,7 +165,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
 
       let isMentor = false;
       if (!isApprentice) {
-        const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+        const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
         isMentor =
           accessCheck.ok &&
           accessCheck.data.appUser !== null &&
@@ -367,7 +367,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
         return failure("Atelier non trouvé", 404);
       }
 
-      const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+      const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       if (!accessCheck.ok) {
         return accessCheck;
       }

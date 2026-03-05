@@ -70,7 +70,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
     }
 
     try {
-      const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+      const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       if (!accessCheck.ok) {
         return accessCheck;
       }
