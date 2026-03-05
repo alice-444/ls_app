@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient, trpc, trpcClient } from "@/utils/trpc";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
+import { SidebarProvider } from "@/hooks/use-sidebar";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
@@ -16,7 +17,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 		>
 			<trpc.Provider client={trpcClient} queryClient={queryClient}>
 				<QueryClientProvider client={queryClient}>
-					{children}
+					<SidebarProvider>
+						{children}
+					</SidebarProvider>
 					<ReactQueryDevtools />
 				</QueryClientProvider>
 			</trpc.Provider>

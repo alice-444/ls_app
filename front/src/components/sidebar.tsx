@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSidebar } from "@/hooks/use-sidebar";
 import {
   LayoutDashboard,
   Calendar,
@@ -24,6 +25,7 @@ import {
   Coins,
   Globe,
   Info,
+  Settings,
 } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
 
@@ -100,7 +102,7 @@ const getNavItems = (
     name: "Mes crédits",
     href: "/buy-credits",
     icon: Coins,
-    roles: ["APPRENANT"],
+    roles: ["APPRENANT", "MENTOR"],
   },
   // --- COMMON ---
   {
@@ -116,11 +118,16 @@ const getNavItems = (
     icon: Bell,
   },
   {
+    key: "/settings",
+    name: "Paramètres",
+    href: "/settings",
+    icon: Settings,
+  },
+  {
     key: "/profil",
     name: "Profil",
     href: "/profil",
     icon: UserCircle,
-    roles: ["APPRENANT"],
   },
 ];
 
@@ -128,6 +135,12 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const [isExpanded, setIsExpanded] = useState(true);
+  const { isMobileOpen, setMobileOpen } = useSidebar();
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname, setMobileOpen]);
 
   const { data: userRole, isLoading: isLoadingRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
@@ -152,10 +165,20 @@ export default function Sidebar() {
 
   return (
     <>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-300"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
       <aside
-        className={`relative z-20 flex-shrink-0 bg-white dark:bg-[#1a1720] border-r border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] transition-all duration-300 ${
+        className={`fixed md:relative z-50 md:z-20 flex-shrink-0 h-full bg-white dark:bg-[#1a1720] border-r border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] transition-all duration-300 ${
           isExpanded ? "w-64" : "w-20"
-        } hidden md:flex flex-col`}
+        } ${
+          isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        } flex flex-col`}
       >
         <div className="flex items-center justify-between h-20 px-4">
           <Link href="/" className="flex items-center gap-2 group">

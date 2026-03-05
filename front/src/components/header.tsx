@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { Coins, ShoppingCart, Crown } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Coins, ShoppingCart, Crown, Menu } from "lucide-react";
 
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
@@ -11,6 +13,7 @@ import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { useSidebar } from "@/hooks/use-sidebar";
 
 const REFETCH_INTERVALS = {
   CREDITS: 60000, // 60 seconds
@@ -19,6 +22,7 @@ const REFETCH_INTERVALS = {
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
+  const { toggleMobile } = useSidebar();
   const { data: session } = authClient.useSession();
 
   const { data: userRole } = useQuery({
@@ -75,7 +79,27 @@ export default function Header() {
   };
 
   return (
-    <div className="flex flex-row items-center justify-end px-4 sm:px-6 md:px-8 py-4 md:py-6 lg:py-8 bg-transparent">
+    <div className="flex flex-row items-center justify-between md:justify-end px-4 sm:px-6 md:px-8 py-4 md:py-6 lg:py-8 bg-transparent">
+      {/* Mobile Menu & Logo */}
+      <div className="flex items-center gap-4 md:hidden">
+        <button
+          onClick={toggleMobile}
+          className="p-2 text-[#26547c] dark:text-[#e6e6e6] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          aria-label="Ouvrir le menu"
+        >
+          <Menu size={24} />
+        </button>
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo/logo.png"
+            alt="LearnSup Logo"
+            width={32}
+            height={32}
+            className="shrink-0"
+          />
+        </Link>
+      </div>
+
       <div className="flex items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8">
         {renderCreditsSection()}
         {!shouldHideThemeToggle && <ModeToggle />}
