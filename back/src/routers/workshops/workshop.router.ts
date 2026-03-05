@@ -70,11 +70,24 @@ const workshopCoreRouter = router({
       )
     ),
 
-  getMyWorkshops: mentorProcedure.query(async ({ ctx }) =>
-    unwrapResult(
-      await container.workshopService.getWorkshopsByCreator(ctx.session.user.id)
+  getMyWorkshops: mentorProcedure
+    .input(
+      z
+        .object({
+          status: z
+            .enum(["DRAFT", "PUBLISHED", "CANCELLED", "COMPLETED"])
+            .optional(),
+        })
+        .optional()
     )
-  ),
+    .query(async ({ ctx, input }) =>
+      unwrapResult(
+        await container.workshopService.getWorkshopsByCreator(
+          ctx.session.user.id,
+          input?.status
+        )
+      )
+    ),
 
   getPublished: publicProcedure.query(async () =>
     unwrapResult(await container.workshopService.getPublishedWorkshops())

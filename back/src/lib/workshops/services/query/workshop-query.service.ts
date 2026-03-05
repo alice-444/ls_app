@@ -20,7 +20,10 @@ export class WorkshopQueryService implements IWorkshopQueryService {
     private readonly workshopVideoLinkService: IWorkshopVideoLinkService
   ) {}
 
-  async getWorkshopsByCreator(userId: string): Promise<Result<any[]>> {
+  async getWorkshopsByCreator(
+    userId: string,
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+  ): Promise<Result<any[]>> {
     try {
       const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       if (!accessCheck.ok) {
@@ -32,7 +35,10 @@ export class WorkshopQueryService implements IWorkshopQueryService {
         return failure("AppUser not found", 404);
       }
 
-      const workshops = await this.workshopRepository.findByCreatorId(appUser.id);
+      const workshops = await this.workshopRepository.findByCreatorId(
+        appUser.id,
+        status
+      );
       return success(workshops);
     } catch (error) {
       return handleError(

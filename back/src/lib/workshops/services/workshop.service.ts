@@ -146,8 +146,11 @@ export class WorkshopService implements IWorkshopService {
     return this.lifecycleService.cancelWorkshop(userId, input);
   }
 
-  getWorkshopsByCreator(userId: string): Promise<Result<any[]>> {
-    return this.queryService.getWorkshopsByCreator(userId);
+  getWorkshopsByCreator(
+    userId: string,
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+  ): Promise<Result<any[]>> {
+    return this.queryService.getWorkshopsByCreator(userId, status);
   }
 
   getPublishedWorkshops(): Promise<Result<any[]>> {

@@ -1,7 +1,10 @@
 export interface IWorkshopRepository {
   create(input: CreateWorkshopInput): Promise<WorkshopEntity>;
   findById(id: string): Promise<WorkshopEntity | null>;
-  findByCreatorId(creatorId: string): Promise<WorkshopEntity[]>;
+  findByCreatorId(
+    creatorId: string,
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+  ): Promise<WorkshopEntity[]>;
   findByApprenticeId(apprenticeId: string): Promise<WorkshopEntity[]>;
   findPublished(): Promise<WorkshopEntity[]>;
   update(

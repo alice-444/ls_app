@@ -126,6 +126,16 @@ export const formatTimeRange = (
   }
 };
 
+export const isWorkshopEnded = (
+  date: Date | string | null,
+  time: string | null,
+  duration: number | null
+): boolean => {
+  const endTime = calculateEndTime(date, time, duration);
+  if (!endTime) return false;
+  return endTime < new Date();
+};
+
 export interface CountdownResult {
   days: number;
   hours: number;

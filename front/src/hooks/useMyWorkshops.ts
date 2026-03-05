@@ -61,6 +61,8 @@ export function useMyWorkshops() {
   const deleteMutation = trpc.workshop.delete.useMutation();
   const publishMutation = trpc.workshop.publish.useMutation();
   const unpublishMutation = trpc.workshop.unpublish.useMutation();
+  const confirmAttendanceMutation =
+    trpc.workshopAttendance.confirmAttendance.useMutation();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<{
@@ -250,6 +252,21 @@ export function useMyWorkshops() {
     );
   };
 
+  const handleConfirmComplete = (workshopId: string) => {
+    confirmAttendanceMutation.mutate(
+      { workshopId },
+      {
+        onSuccess: () => {
+          toast.success("Atelier marqué comme terminé avec succès");
+          refetch();
+        },
+        onError: (error: { message: string }) => {
+          toast.error(error.message || "Erreur lors de la validation");
+        },
+      }
+    );
+  };
+
   return {
     router,
     session,
@@ -296,6 +313,7 @@ export function useMyWorkshops() {
     deleteMutation,
     publishMutation,
     unpublishMutation,
+    confirmAttendanceMutation,
     rejectRequest,
     utils,
 
@@ -305,5 +323,6 @@ export function useMyWorkshops() {
     handleDelete,
     handlePublish,
     handleUnpublish,
+    handleConfirmComplete,
   };
 }

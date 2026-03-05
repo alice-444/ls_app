@@ -43,9 +43,15 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
     return this.mapToEntity(workshop);
   }
 
-  async findByCreatorId(creatorId: string): Promise<WorkshopEntity[]> {
+  async findByCreatorId(
+    creatorId: string,
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+  ): Promise<WorkshopEntity[]> {
     const workshops = await this.prisma.workshop.findMany({
-      where: { creatorId },
+      where: {
+        creatorId,
+        ...(status ? { status } : {}),
+      },
       include: {
         creator: true,
         apprentice: true,

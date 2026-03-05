@@ -28,6 +28,7 @@ export function WorkshopCard({
   onReschedule,
   onDelete,
   onDuplicate,
+  onComplete,
   onRequestParticipation,
   showDropdown = true,
   className = "",
@@ -83,6 +84,7 @@ export function WorkshopCard({
               onReschedule={onReschedule}
               onDelete={onDelete}
               onDuplicate={onDuplicate}
+              onComplete={onComplete}
             />
           )}
         </div>

@@ -88,6 +88,7 @@ export interface WorkshopCardProps {
   onReschedule?: (workshopId: string) => void;
   onDelete?: (workshopId: string) => void;
   onDuplicate?: (workshopId: string) => void;
+  onComplete?: (workshopId: string) => void;
   onRequestParticipation?: (workshop: any) => void;
   showDropdown?: boolean;
   className?: string;
