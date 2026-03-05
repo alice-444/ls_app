@@ -105,10 +105,10 @@ export default function WorkshopDetailPage() {
     setShowRejectDialog(true);
   };
 
-  const confirmRejectRequest = () => {
+  const confirmRejectRequest = (reason?: string) => {
     if (requestToReject) {
       rejectRequest.mutate(
-        { requestId: requestToReject },
+        { requestId: requestToReject, reason },
         {
           onSuccess: () => {
             toast.success("Demande refusée avec succès");

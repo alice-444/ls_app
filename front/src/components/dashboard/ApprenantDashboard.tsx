@@ -11,6 +11,7 @@ import {
   Trash2,
   Inbox,
   Calendar,
+  MessageSquare,
 } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import {
@@ -42,6 +43,7 @@ interface WorkshopRequest {
   description?: string;
   status: string;
   preferredDate: string | Date | null;
+  rejectionReason?: string | null;
 }
 
 interface ConfirmedWorkshop {
@@ -154,6 +156,17 @@ export function ApprenantDashboard({
                           <p className="text-xs sm:text-sm lg:text-base text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
                             {formatWorkshopDate(request.preferredDate)}
                           </p>
+                          {request.status === "REJECTED" && request.rejectionReason && (
+                            <div className="mt-2 p-2 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-md">
+                              <p className="text-xs font-semibold text-red-700 dark:text-red-400 flex items-center gap-1">
+                                <MessageSquare className="h-3 w-3" />
+                                Motif du refus :
+                              </p>
+                              <p className="text-xs text-red-600 dark:text-red-300 italic mt-1">
+                                "{request.rejectionReason}"
+                              </p>
+                            </div>
+                          )}
                         </div>
                         <div className="shrink-0 flex items-center gap-2">
                           <StatusBadge status={request.status} />
