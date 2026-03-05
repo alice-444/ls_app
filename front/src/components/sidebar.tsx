@@ -34,11 +34,17 @@ interface NavItem {
   name: string;
   href: string;
   icon: LucideIcon;
-  roles?: ("MENTOR" | "APPRENANT")[];
+  roles?: ("MENTOR" | "APPRENANT" | "ADMIN")[];
+}
+
+interface SidebarProps {
+  customItems?: { title: string; href: string; icon: LucideIcon }[];
+  title?: string;
+  icon?: LucideIcon;
 }
 
 const getNavItems = (
-  role: "MENTOR" | "APPRENANT" | null
+  role: "MENTOR" | "APPRENANT" | "ADMIN" | null
 ): NavItem[] => [
   {
     key: "/dashboard",
@@ -131,7 +137,7 @@ const getNavItems = (
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ customItems, title, icon: TitleIcon }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -149,7 +155,7 @@ export default function Sidebar() {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (!session || userRole === "ADMIN") {
+  if (!session) {
     return null;
   }
   
@@ -161,7 +167,15 @@ export default function Sidebar() {
     return null;
   }
 
-  const navItems = getNavItems(userRole ?? null);
+  const navItems = customItems 
+    ? customItems.map(item => ({ 
+        key: item.href, 
+        name: item.title, 
+        href: item.href, 
+        icon: item.icon,
+        roles: undefined as ("MENTOR" | "APPRENANT" | "ADMIN")[] | undefined
+      }))
+    : getNavItems(userRole ?? null);
 
   return (
     <>
@@ -182,16 +196,20 @@ export default function Sidebar() {
       >
         <div className="flex items-center justify-between h-20 px-4">
           <Link href="/" className="flex items-center gap-2 group">
-            <Image
-              src="/logo/logo.png"
-              alt="LearnSup Logo"
-              width={32}
-              height={32}
-              className="shrink-0 transition-transform duration-300 group-hover:scale-110"
-            />
+            {TitleIcon ? (
+              <TitleIcon className="h-8 w-8 text-brand shrink-0 transition-transform duration-300 group-hover:scale-110" />
+            ) : (
+              <Image
+                src="/logo/logo.png"
+                alt="LearnSup Logo"
+                width={32}
+                height={32}
+                className="shrink-0 transition-transform duration-300 group-hover:scale-110"
+              />
+            )}
             {isExpanded && (
               <span className="font-bold text-xl text-[#26547c] dark:text-[#e6e6e6] whitespace-nowrap">
-                LearnSup
+                {title || "LearnSup"}
               </span>
             )}
           </Link>
@@ -207,10 +225,10 @@ export default function Sidebar() {
           {navItems
             .filter((item) => {
               if (!item.roles) return true;
-              return userRole ? item.roles.includes(userRole) : false;
+              return userRole ? (item.roles as string[]).includes(userRole) : false;
             })
             .map((item) => {
-              const isActive = pathname.startsWith(item.href);
+              const isActive = pathname === item.href || (item.href !== "/admin" && item.href !== "/" && pathname.startsWith(item.href));
               return (
                 <div key={item.key} className="relative group">
                   {isActive && (
@@ -231,32 +249,33 @@ export default function Sidebar() {
               );
             })}
 
-          {/* Bottom Utility Links inside Nav */}
-          <div className="pt-4 mt-6 border-t border-gray-100 dark:border-gray-800">
-            <Link
-              href="/help"
-              className={`flex items-center h-12 px-6 transition-all duration-300 group ${
-                pathname === "/help" 
-                  ? "text-[#26547c] font-bold bg-gray-50 dark:bg-gray-800/20" 
-                  : "text-gray-400 hover:text-[#26547c] hover:pl-8"
-              }`}
-            >
-              <HelpCircle className="h-5 w-5 shrink-0 transition-transform group-hover:rotate-12" />
-              {isExpanded && <span className="ml-4 text-sm">Aide et support</span>}
-            </Link>
+          {!customItems && (
+            <div className="pt-4 mt-6 border-t border-gray-100 dark:border-gray-800">
+              <Link
+                href="/help"
+                className={`flex items-center h-12 px-6 transition-all duration-300 group ${
+                  pathname === "/help" 
+                    ? "text-[#26547c] font-bold bg-gray-50 dark:bg-gray-800/20" 
+                    : "text-gray-400 hover:text-[#26547c] hover:pl-8"
+                }`}
+              >
+                <HelpCircle className="h-5 w-5 shrink-0 transition-transform group-hover:rotate-12" />
+                {isExpanded && <span className="ml-4 text-sm">Aide et support</span>}
+              </Link>
 
-            <Link
-              href="/legal"
-              className={`flex items-center h-12 px-6 transition-all duration-300 group ${
-                pathname === "/legal" 
-                  ? "text-[#26547c] font-bold bg-gray-50 dark:bg-gray-800/20" 
-                  : "text-gray-400 hover:text-[#26547c] hover:pl-8"
-              }`}
-            >
-              <Info className="h-5 w-5 shrink-0 transition-transform group-hover:scale-110" />
-              {isExpanded && <span className="ml-4 text-sm">Informations</span>}
-            </Link>
-          </div>
+              <Link
+                href="/legal"
+                className={`flex items-center h-12 px-6 transition-all duration-300 group ${
+                  pathname === "/legal" 
+                    ? "text-[#26547c] font-bold bg-gray-50 dark:bg-gray-800/20" 
+                    : "text-gray-400 hover:text-[#26547c] hover:pl-8"
+                }`}
+              >
+                <Info className="h-5 w-5 shrink-0 transition-transform group-hover:scale-110" />
+                {isExpanded && <span className="ml-4 text-sm">Informations</span>}
+              </Link>
+            </div>
+          )}
         </nav>
       </aside>
     </>
