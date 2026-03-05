@@ -39,6 +39,7 @@ export interface CreateWorkshopRequestInput {
 
 export interface UpdateWorkshopRequestInput {
   status?: "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+  rejectionReason?: string | null;
   workshopId?: string | null;
   title?: string;
   description?: string | null;

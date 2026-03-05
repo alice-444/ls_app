@@ -176,12 +176,16 @@ export const mentorRouter = router({
     ),
 
   rejectRequest: protectedProcedure
-    .input(z.object({ requestId: z.string() }))
+    .input(z.object({ 
+      requestId: z.string(),
+      reason: z.string().max(500, "Le motif ne peut pas dépasser 500 caractères").optional().nullable()
+    }))
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopRequestService.rejectWorkshopRequest(
           ctx.session.user.id,
-          input.requestId
+          input.requestId,
+          input.reason
         )
       )
     ),

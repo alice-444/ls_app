@@ -618,7 +618,7 @@ export function MentorDashboard({
           <RejectWorkshopRequestDialog
             open={showRejectDialog}
             onOpenChange={setShowRejectDialog}
-            onConfirm={() => rejectMutation.mutate({ requestId: selectedRequest.id })}
+            onConfirm={(reason) => rejectMutation.mutate({ requestId: selectedRequest.id, reason })}
             isSubmitting={rejectMutation.isPending}
             apprenticeName={selectedRequest.apprenticeName}
             workshopTitle={selectedRequest.title}

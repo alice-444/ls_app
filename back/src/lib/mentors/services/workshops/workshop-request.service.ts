@@ -382,7 +382,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
   async rejectWorkshopRequest(
     userId: string,
-    requestId: string
+    requestId: string,
+    reason?: string | null
   ): Promise<Result<{ success: boolean }>> {
     try {
       const mentor = await this.mentorRepository.findMentorById(userId);
@@ -410,11 +411,19 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         );
       }
 
+      const sanitizedReason = reason
+        ? sanitizeString(reason, { maxLength: 500, trim: true })
+        : null;
+
       if (this.prisma && this.creditService) {
         await this.prisma.$transaction(async (tx) => {
           await (tx as any).workshop_request.update({
             where: { id: requestId },
-            data: { status: "REJECTED", updatedAt: new Date() },
+            data: { 
+              status: "REJECTED", 
+              rejectionReason: sanitizedReason,
+              updatedAt: new Date() 
+            },
           });
 
           // Find the apprentice BetterAuth ID
@@ -435,6 +444,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       } else {
         await this.workshopRequestRepository.update(requestId, {
           status: "REJECTED",
+          rejectionReason: sanitizedReason,
         });
       }
 
@@ -442,6 +452,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         requestId,
         mentorId: mentor.id,
         apprenticeId: request.apprenticeId,
+        hasReason: !!sanitizedReason,
       });
 
       await this.notificationService.notifyAndEmailRejection(
