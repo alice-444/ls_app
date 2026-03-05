@@ -91,11 +91,7 @@ export class MaintenanceService implements IMaintenanceService {
       },
       include: {
         creator: true,
-        apprentice: {
-          include: {
-            user: true
-          }
-        }
+        apprentice: true,
       },
     });
 
@@ -128,18 +124,18 @@ export class MaintenanceService implements IMaintenanceService {
       });
 
       // Send email reminder
-      if (workshop.apprentice?.user?.email) {
+      if (workshop.apprentice?.email) {
         try {
           const { html, text } = await renderEmailTemplate(
             React.createElement(FeedbackReminderEmail, {
-              userName: workshop.apprentice.user.name || "Apprenti",
+              userName: workshop.apprentice.name || "Apprenti",
               workshopTitle: workshop.title,
               feedbackUrl: `${APP_URL}/workshop/${workshop.id}/feedback`,
             })
           );
 
           await this.services.emailService.sendEmail({
-            to: workshop.apprentice.user.email,
+            to: workshop.apprentice.email,
             subject: `Votre avis sur l'atelier : ${workshop.title}`,
             html,
             text,
@@ -163,39 +159,48 @@ export class MaintenanceService implements IMaintenanceService {
     const now = new Date();
     const result = { sent: 0, errors: 0, timestamp: now.toISOString() };
 
-    // Find workshops starting in ~24h (between 23h and 25h from now)
+    // 24h window (between 23h and 25h from now)
     const tomorrowStart = new Date(now.getTime() + 23 * 60 * 60 * 1000);
     const tomorrowEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000);
 
+    // 1h window (between 30m and 90m from now)
+    const soonStart = new Date(now.getTime() + 30 * 60 * 1000);
+    const soonEnd = new Date(now.getTime() + 90 * 60 * 1000);
+
     const workshops = await this.prisma.workshop.findMany({
       where: {
-        date: {
-          gte: tomorrowStart,
-          lte: tomorrowEnd,
-        },
+        OR: [
+          { date: { gte: tomorrowStart, lte: tomorrowEnd } },
+          { date: { gte: soonStart, lte: soonEnd } },
+        ],
         status: "PUBLISHED",
         apprenticeId: { not: null },
       },
       include: {
-        apprentice: {
-          include: {
-            user: true,
-          },
-        },
+        apprentice: true,
       },
     });
 
     for (const workshop of workshops) {
-      if (!workshop.apprentice?.user?.email) continue;
+      if (!workshop.apprentice?.email || !workshop.date) continue;
 
       try {
-        const formattedDate = workshop.date 
-          ? new Date(workshop.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
-          : "Demain";
+        const timeDiff = workshop.date.getTime() - now.getTime();
+        const isSoon = timeDiff < 2 * 60 * 60 * 1000; // Less than 2h
+
+        const subject = isSoon
+          ? `Rappel : Votre atelier "${workshop.title}" commence dans 1 heure !`
+          : `Rappel : Votre atelier "${workshop.title}" commence demain`;
+
+        const formattedDate = new Date(workshop.date).toLocaleDateString('fr-FR', { 
+          weekday: 'long', 
+          day: 'numeric', 
+          month: 'long' 
+        });
 
         const { html, text } = await renderEmailTemplate(
           React.createElement(WorkshopReminderEmail, {
-            userName: workshop.apprentice.user.name || "Apprenti",
+            userName: workshop.apprentice.name || "Apprenti",
             workshopTitle: workshop.title,
             date: formattedDate,
             time: workshop.time || "Heure à confirmer",
@@ -204,8 +209,8 @@ export class MaintenanceService implements IMaintenanceService {
         );
 
         const emailResult = await this.services.emailService.sendEmail({
-          to: workshop.apprentice.user.email,
-          subject: `Rappel : Votre atelier "${workshop.title}" commence demain`,
+          to: workshop.apprentice.email,
+          subject,
           html,
           text,
         });

@@ -57,6 +57,26 @@ export const apprenticeRouter = router({
       return result.data;
     }),
 
+  updateProfile: protectedProcedure
+    .input(
+      z.object({
+        displayName: z.string().min(1).max(50).optional(),
+        studyDomain: z.string().min(1).max(50).optional(),
+        studyProgram: z.string().min(1).max(50).optional(),
+        bio: z.string().max(500).nullable().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.apprenticeProfileService.updateProfile(
+        ctx.session.user.id,
+        input
+      );
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    }),
+
   getIdentityCard: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.apprenticeProfileService.getIdentityCard(
       ctx.session.user.id

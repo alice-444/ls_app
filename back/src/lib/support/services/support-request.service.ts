@@ -6,11 +6,17 @@ import {
 } from "./support-request.service.interface";
 import { ISupportRequestRepository } from "../repositories/support-request.repository.interface";
 import { INotificationService } from "../../notifications/services/notification.service.interface";
+import { IEmailService } from "../../email/services/email.service.interface";
+import { renderEmailTemplate } from "../../email/utils/render-email";
+import { SupportRequestConfirmation } from "../../email/templates/SupportRequestConfirmation";
+import * as React from "react";
+import { logger } from "../../common/logger";
 
 export class SupportRequestService implements ISupportRequestService {
   constructor(
     private readonly supportRequestRepository: ISupportRequestRepository,
-    private readonly notificationService: INotificationService
+    private readonly notificationService: INotificationService,
+    private readonly emailService?: IEmailService
   ) {}
 
   async createSupportRequest(command: CreateSupportRequestCommand): Promise<support_request> {
@@ -30,6 +36,31 @@ export class SupportRequestService implements ISupportRequestService {
       `Nouvelle demande de support : ${command.subject}`,
       `/admin/support?requestId=${request.id}`
     );
+
+    // Send confirmation email
+    if (this.emailService && command.email) {
+      try {
+        const attachments = command.attachments as any[];
+        const { html, text } = await renderEmailTemplate(
+          React.createElement(SupportRequestConfirmation, {
+            subject: command.subject,
+            problemType: command.problemType,
+            requestId: request.id,
+            hasAttachments: !!(attachments && attachments.length > 0),
+            attachmentCount: attachments?.length || 0,
+          })
+        );
+
+        await this.emailService.sendEmail({
+          to: command.email,
+          subject: `Confirmation de votre demande de support : ${command.subject}`,
+          html,
+          text,
+        });
+      } catch (error) {
+        logger.error("Failed to send support request confirmation email", { error, requestId: request.id });
+      }
+    }
 
     return request;
   }

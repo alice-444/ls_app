@@ -4,7 +4,9 @@ import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { IWorkshopFeedbackRepository } from "../../repositories/feedback/workshop-feedback.repository.interface";
 import type { IMentorRepository } from "../../../mentors/repositories/mentor.repository.interface";
 import type { IEmailService } from "../../../email/services/email.service.interface";
-import { WorkshopEmailTemplates } from "../email/workshop-email.templates";
+import { renderEmailTemplate } from "../../../email/utils/render-email";
+import { FeedbackWarningEmail } from "../../../email/templates/FeedbackWarningEmail";
+import * as React from "react";
 import { INotificationService } from "../../../notifications/services/notification.service.interface";
 
 export interface IFeedbackModerationService {
@@ -186,19 +188,24 @@ export class FeedbackModerationService implements IFeedbackModerationService {
         return failure("Avis introuvable", 404);
       }
 
-      if (!feedback.apprentice?.user?.email) {
+      const apprentice = feedback.apprentice;
+      if (!apprentice?.user?.email) {
         return failure("Email de l'utilisateur introuvable", 404);
       }
 
-      const template = WorkshopEmailTemplates.feedbackWarning({
-        recipientName: feedback.apprentice.user.name || "Utilisateur",
-        mentorName: feedback.mentor?.user?.name || "le mentor",
-        workshopTitle: feedback.workshop?.title || "l'atelier",
-      });
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(FeedbackWarningEmail, {
+          userName: apprentice.user.name || "Utilisateur",
+          mentorName: feedback.mentor?.user?.name || "le mentor",
+          workshopTitle: feedback.workshop?.title || "l'atelier",
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
-        to: feedback.apprentice.user.email,
-        ...template,
+        to: apprentice.user.email,
+        subject: "Avertissement - Avis signalé",
+        html,
+        text,
       });
 
       if (!emailResult.ok) {

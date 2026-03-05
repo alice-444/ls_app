@@ -450,7 +450,8 @@ export class ServicesContainer {
   get supportRequestService(): ISupportRequestService {
     this._supportRequestService ??= new SupportRequestService(
       this.repositories.supportRequestRepository,
-      this.notificationService
+      this.notificationService,
+      this.emailService
     );
     return this._supportRequestService;
   }

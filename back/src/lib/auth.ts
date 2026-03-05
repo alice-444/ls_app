@@ -3,6 +3,11 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { username, magicLink, emailOTP } from "better-auth/plugins";
 import { container } from "./di/container";
+import { renderEmailTemplate } from "./email/utils/render-email";
+import { AuthEmailVerification } from "./email/templates/AuthEmailVerification";
+import { AuthPasswordResetEmail } from "./email/templates/AuthPasswordResetEmail";
+import { AuthMagicLinkEmail } from "./email/templates/AuthMagicLinkEmail";
+import * as React from "react";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -13,24 +18,27 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url, token }, request) => {
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(AuthPasswordResetEmail, { url })
+      );
       await container.emailService.sendEmail({
         to: user.email,
         subject: "Réinitialisation de votre mot de passe LearnSup",
-        text: `Réinitialisez votre mot de passe en cliquant sur ce lien : ${url}`,
-        html: `<p>Vous avez demandé une réinitialisation de mot de passe. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.</p>
-               <a href="${url}" style="padding: 10px 20px; background-color: #0070f3; color: white; text-decoration: none; border-radius: 5px;">Réinitialiser mon mot de passe</a>
-               <p>Ce lien est valable pendant 60 minutes.</p>`,
+        text,
+        html,
       });
     },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(AuthEmailVerification, { url })
+      );
       await container.emailService.sendEmail({
         to: user.email,
         subject: "Vérifiez votre adresse e-mail LearnSup",
-        text: `Veuillez vérifier votre adresse e-mail en cliquant sur ce lien : ${url}`,
-        html: `<p>Bienvenue sur LearnSup ! Veuillez vérifier votre adresse e-mail en cliquant sur le bouton ci-dessous.</p>
-               <a href="${url}" style="padding: 10px 20px; background-color: #0070f3; color: white; text-decoration: none; border-radius: 5px;">Vérifier mon e-mail</a>`,
+        text,
+        html,
       });
     },
   },
@@ -39,34 +47,38 @@ export const auth = betterAuth({
     emailOTP({
       async sendVerificationOTP({ email, otp, type }, request) {
         if (type === "forget-password") {
+          const { html, text } = await renderEmailTemplate(
+            React.createElement(AuthPasswordResetEmail, { otp })
+          );
           await container.emailService.sendEmail({
             to: email,
             subject: "Réinitialisation de votre mot de passe LearnSup",
-            text: `Votre code de réinitialisation est : ${otp}`,
-            html: `<p>Vous avez demandé une réinitialisation de mot de passe. Voici votre code à 6 chiffres :</p>
-                   <h2 style="font-size: 24px; font-weight: bold; color: #0070f3;">${otp}</h2>
-                   <p>Ce code est valable pendant 10 minutes.</p>`,
+            text,
+            html,
           });
         } else if (type === "email-verification") {
+          const { html, text } = await renderEmailTemplate(
+            React.createElement(AuthEmailVerification, { otp })
+          );
           await container.emailService.sendEmail({
             to: email,
             subject: "Code de vérification LearnSup",
-            text: `Votre code de vérification est : ${otp}`,
-            html: `<p>Voici votre code de vérification LearnSup :</p>
-                   <h2 style="font-size: 24px; font-weight: bold; color: #0070f3;">${otp}</h2>`,
+            text,
+            html,
           });
         }
       },
     }),
     magicLink({
       sendMagicLink: async (data, request) => {
+        const { html, text } = await renderEmailTemplate(
+          React.createElement(AuthMagicLinkEmail, { url: data.url })
+        );
         await container.emailService.sendEmail({
           to: data.email,
           subject: "Votre lien de connexion LearnSup",
-          text: `Cliquez ici pour vous connecter : ${data.url}`,
-          html: `<p>Cliquez sur le bouton ci-dessous pour vous connecter à votre compte LearnSup.</p>
-                 <a href="${data.url}" style="padding: 10px 20px; background-color: #0070f3; color: white; text-decoration: none; border-radius: 5px;">Se connecter</a>
-                 <p>Si vous n'avez pas demandé ce lien, vous pouvez ignorer cet e-mail.</p>`,
+          text,
+          html,
         });
       },
     }),

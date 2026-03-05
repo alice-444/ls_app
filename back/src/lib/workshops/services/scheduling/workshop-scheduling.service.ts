@@ -15,9 +15,13 @@ import {
   createErrorContext,
 } from "../../../common/error-handler";
 import { isValidTimeFormat } from "../../utils/workshop-helpers";
-import { WorkshopEmailTemplates } from "../email/workshop-email.templates";
+import { renderEmailTemplate } from "../../../email/utils/render-email";
+import { WorkshopCancelledEmail } from "../../../email/templates/WorkshopCancelledEmail";
+import * as React from "react";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
 import type { PrismaClient } from '@/lib/prisma';
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   private readonly workshopNotificationService: WorkshopNotificationService;
@@ -36,7 +40,8 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     this.workshopNotificationService = new WorkshopNotificationService(
       this.workshopRepository,
       this.dbNotificationService,
-      appUserRepository
+      appUserRepository,
+      this.emailService
     );
     this.conflictChecker = new SchedulingConflictChecker(this.workshopRepository);
   }
@@ -323,19 +328,26 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       const creator = cancelledWorkshop?.creator;
       if (!cancelledWorkshop || !creator?.email || !this.emailService) return;
 
-      const template = WorkshopEmailTemplates.cancellation({
-        recipientName: creator.name || "Mentor",
-        apprenticeName: cancelledWorkshop.apprentice?.name || "un apprenti",
-        workshopTitle: cancelledWorkshop.title,
-        workshopDate: cancelledWorkshop.date,
-        workshopTime: cancelledWorkshop.time,
-        workshopId,
-        cancellationReason,
-      });
+      const formatDate = (date: Date | null) => 
+        date ? new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : "Date non définie";
+
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopCancelledEmail, {
+          userName: creator.name || "Mentor",
+          workshopTitle: cancelledWorkshop.title,
+          date: formatDate(cancelledWorkshop.date),
+          time: cancelledWorkshop.time || "Heure non définie",
+          workshopsUrl: `${APP_URL}/dashboard/workshops`,
+          cancelledByName: cancelledWorkshop.apprentice?.name || "Un apprenti",
+          reason: cancellationReason,
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
         to: creator.email,
-        ...template,
+        subject: `Participation annulée - ${cancelledWorkshop.title}`,
+        html,
+        text,
       });
 
       if (!emailResult.ok) {

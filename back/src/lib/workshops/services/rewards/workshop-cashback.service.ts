@@ -278,7 +278,7 @@ export class WorkshopCashbackService implements IWorkshopCashbackService {
     if (!workshop.apprenticeId || !workshop.apprentice) {
       return failure("Aucun participant inscrit à cet atelier", 400);
     }
-    if (workshop.apprentice.user?.id !== participantUserId) {
+    if (workshop.apprentice.userId !== participantUserId) {
       return failure(
         "L'utilisateur n'est pas le participant de cet atelier",
         403

@@ -71,7 +71,7 @@ export class ApprenticeProfileService {
       studyDomain?: string;
       studyProgram?: string;
       displayName?: string;
-      bio?: string;
+      bio?: string | null;
     }
   ): Promise<Result<{ success: boolean }>> {
     try {

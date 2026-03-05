@@ -2,6 +2,7 @@ export interface AppUserData {
   id: string;
   userId: string;
   name: string | null;
+  email: string | null;
   displayName: string | null;
   role: string | null;
   status: string;
@@ -88,6 +89,7 @@ function mapToAppUserData(raw: any): AppUserData {
     id: raw.id,
     userId: raw.userId,
     name: raw.name || null,
+    email: raw.email || null,
     displayName: raw.displayName || null,
     role: raw.role,
     status: raw.status,
@@ -104,6 +106,7 @@ const APP_USER_BASE_SELECT = {
   id: true,
   userId: true,
   name: true,
+  email: true,
   displayName: true,
   role: true,
   status: true,
