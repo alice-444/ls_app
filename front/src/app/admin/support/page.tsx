@@ -56,7 +56,7 @@ type SupportRequestStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 
 function AdminSupportContent() {
   const [statusFilter, setStatusFilter] = useState<SupportRequestStatus | "ALL">("PENDING");
-  const [selectedRequest, setSelectedFeedback] = useState<any | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   const { data: requests, isLoading, refetch } = trpc.support.getAdminSupportQueue.useQuery({
@@ -94,7 +94,7 @@ function AdminSupportContent() {
   };
 
   const viewDetail = (request: any) => {
-    setSelectedFeedback(request);
+    setSelectedRequest(request);
     setIsDetailDialogOpen(true);
   };
 
