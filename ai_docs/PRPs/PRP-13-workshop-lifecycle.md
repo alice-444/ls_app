@@ -140,26 +140,26 @@ Enable mentors to create, edit, and publish workshops, and enable participants t
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Mentor creates workshop → draft saved
-- [ ] Mentor edits draft
-- [ ] Mentor publishes → appears in catalogue
-- [ ] Video link generated for published workshop
-- [ ] Participant joins video
-- [ ] After workshop, feedback dialog appears
-- [ ] Feedback submitted → visible in WorkshopReviews
-- [ ] Mentor can cancel workshop
+- [x] Mentor creates workshop → draft saved
+- [x] Mentor edits draft
+- [x] Mentor publishes → appears in catalogue
+- [x] Video link generated for published workshop
+- [x] Participant joins video
+- [x] After workshop, feedback dialog appears
+- [x] Feedback submitted → visible in WorkshopReviews
+- [x] Mentor can cancel workshop
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Daily.co room creation
-- [ ] Webhook handles room events
-- [ ] Unique feedback per (apprenticeId, workshopId)
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Daily.co room creation
+- [x] Webhook handles room events
+- [x] Unique feedback per (apprenticeId, workshopId)
 
 ### Security Checklist
-- [ ] Only creator can edit/publish/cancel
-- [ ] Only participant can submit feedback
-- [ ] One feedback per participant per workshop
+- [x] Only creator can edit/publish/cancel
+- [x] Only participant can submit feedback
+- [x] One feedback per participant per workshop
 
 ### Testing Steps
 1. Create workshop → edit → publish

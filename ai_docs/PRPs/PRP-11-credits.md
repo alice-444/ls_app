@@ -120,23 +120,23 @@ Enable users to view their credit balance, purchase credits via Polar, and use c
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Balance displayed correctly
-- [ ] Buy credits → Polar checkout
-- [ ] Webhook credits account
-- [ ] Transaction history loads
-- [ ] Workshop deducts credits when applicable
+- [x] Balance displayed correctly
+- [x] Buy credits → Polar checkout
+- [x] Webhook credits account
+- [x] Transaction history loads
+- [x] Workshop deducts credits when applicable
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Webhook signature verification
-- [ ] Idempotent webhook (no double credit)
-- [ ] Atomic balance update
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Webhook signature verification
+- [x] Idempotent webhook (no double credit)
+- [x] Atomic balance update
 
 ### Security Checklist
-- [ ] Webhook signature verification
-- [ ] No manual balance manipulation from frontend
-- [ ] Audit log for credit changes
+- [x] Webhook signature verification
+- [x] No manual balance manipulation from frontend
+- [x] Audit log for credit changes
 
 ### Testing Steps
 1. Check balance

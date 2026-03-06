@@ -111,21 +111,21 @@ Enable admins to review and manage user reports (harassment, spam, etc.) so that
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Admin sees list of reports
-- [ ] Filter by status
-- [ ] View report detail
-- [ ] Resolve, dismiss, add notes
-- [ ] Non-admin cannot access
+- [x] Admin sees list of reports
+- [x] Filter by status
+- [x] View report detail
+- [x] Resolve, dismiss, add notes
+- [x] Non-admin cannot access
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Role check on backend
-- [ ] reviewedAt, reviewedBy updated
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Role check on backend
+- [x] reviewedAt, reviewedBy updated
 
 ### Security Checklist
-- [ ] ADMIN role required
-- [ ] No bypass for non-admin
+- [x] ADMIN role required
+- [x] No bypass for non-admin
 
 ### Testing Steps
 1. Login as admin → access page

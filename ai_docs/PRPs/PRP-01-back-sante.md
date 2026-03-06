@@ -84,15 +84,15 @@ Enable DevOps and CI to verify that the backend is available and exposes health/
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] GET baseUrl returns 2xx or HTML
-- [ ] GET `/api/metrics` returns 200
-- [ ] Response body contains `# HELP` or `# TYPE`
-- [ ] Cypress smoke test passes (`cy.request` or `cy.visit`)
+- [x] GET baseUrl returns 2xx or HTML
+- [x] GET `/api/metrics` returns 200
+- [x] Response body contains `# HELP` or `# TYPE`
+- [x] Cypress smoke test passes (`cy.request` or `cy.visit`)
 
 ### Technical Requirements
-- [ ] TypeScript compiles (`pnpm build`)
-- [ ] ESLint passes (`pnpm lint`)
-- [ ] No timeout on health checks under normal load
+- [x] TypeScript compiles (`pnpm build`)
+- [x] ESLint passes (`pnpm lint`)
+- [x] No timeout on health checks under normal load
 
 ### Testing Steps
 1. `curl http://localhost:4500/` → 2xx
