@@ -42,6 +42,7 @@ Ce dossier contient les **PRP (Product Requirement Prompts)** pour l'intégralit
 | [PRP-34-admin-dashboard.md](PRP-34-admin-dashboard.md) | Admin dashboard | - | Done |
 | [PRP-35-cookie-consent.md](PRP-35-cookie-consent.md) | Cookie consent / bandeau RGPD | - | Todo |
 | [PRP-36-admin-support.md](PRP-36-admin-support.md) | Admin – gestion des demandes support | - | Done |
+| [PRP-37-communaute.md](PRP-37-communaute.md) | Page Communauté / Hub membres | - | Todo |
 
 ## Utilisation
 
