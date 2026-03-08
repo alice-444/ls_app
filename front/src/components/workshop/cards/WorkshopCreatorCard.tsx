@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 interface WorkshopCreatorCardProps {
   readonly creator: {
     readonly id: string;
-    readonly user?: {
-      readonly name?: string | null;
-    } | null;
+    readonly name?: string | null;
+    readonly displayName?: string | null;
+    readonly photoUrl?: string | null;
     readonly bio?: string | null;
   };
 }
@@ -20,6 +20,9 @@ export function WorkshopCreatorCard({
   const router = useRouter();
 
   if (!creator) return null;
+
+  const mentorName = creator.displayName || creator.name || "Mentor";
+  const initials = mentorName.charAt(0).toUpperCase() || "?";
 
   return (
     <Card
@@ -34,12 +37,20 @@ export function WorkshopCreatorCard({
       </CardHeader>
       <CardContent className="pt-0">
         <div className="flex items-start gap-3 mb-3">
-          <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#26547c] to-[#4A90E2] flex items-center justify-center text-white font-semibold text-sm shrink-0">
-            {creator.user?.name?.charAt(0).toUpperCase() || "?"}
-          </div>
+          {creator.photoUrl ? (
+            <img 
+              src={creator.photoUrl} 
+              alt={mentorName} 
+              className="w-10 h-10 rounded-full object-cover shrink-0" 
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#26547c] to-[#4A90E2] flex items-center justify-center text-white font-semibold text-sm shrink-0">
+              {initials}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-base text-ls-heading hover:underline mb-1">
-              {creator.user?.name || "Mentor"}
+              {mentorName}
             </p>
             {creator.bio && (
               <p className="text-sm text-ls-muted line-clamp-2">

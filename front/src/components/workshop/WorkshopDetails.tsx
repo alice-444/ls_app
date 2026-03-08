@@ -14,7 +14,7 @@ interface WorkshopDetailsProps {
     apprenticeId?: string | null;
     maxParticipants?: number | null;
   };
-  variant?: "default" | "hero";
+  variant?: "default" | "hero" | "catalogue";
 }
 
 export function WorkshopDetails({
@@ -24,7 +24,9 @@ export function WorkshopDetails({
   const textColor =
     variant === "hero"
       ? "text-blue-100"
-      : "text-slate-600 dark:text-slate-400";
+      : variant === "catalogue"
+        ? "text-ls-muted"
+        : "text-slate-600 dark:text-slate-400";
   const iconSize = variant === "hero" ? "w-5 h-5" : "w-4 h-4";
   const textSize = variant === "hero" ? "font-medium" : "text-sm";
 
