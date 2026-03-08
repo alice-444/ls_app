@@ -15,6 +15,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
+import RollingNumber from "@/components/ui/RollingNumber";
 
 const getAvatarColorClass = (index: number) => {
   if (index % 4 === 0) return "bg-linear-to-br from-blue-400 to-blue-600";
@@ -146,8 +147,6 @@ function TitleCard({
     </div>
   );
 }
-
-import RollingNumber from "@/components/ui/RollingNumber";
 
 function CreditBalanceCard({
   balance,

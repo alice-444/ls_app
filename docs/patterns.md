@@ -107,6 +107,30 @@ Transformation des données brutes du serveur en formats adaptés à la consomma
 ### Provider Pattern
 Utilisation de contextes React pour diffuser des configurations transversales (Auth, Thème, tRPC) sans "prop drilling".
 
+### Micro-interactions & Animations (React Bits)
+L'interface utilise des patterns d'animation avancés basés sur **Framer Motion** pour améliorer l'engagement utilisateur :
+
+```mermaid
+flowchart TD
+    subgraph UI_Effects["Effets Visuels"]
+        Magnet[Magnet Effect - Cartes]
+        Decrypt[Decrypted Text - Titres]
+        Shiny[Shiny Text - Boutons]
+        Rolling[Rolling Number - Stats]
+    end
+
+    Framer[Framer Motion Engine]
+    React[React UI]
+
+    React --> UI_Effects
+    UI_Effects --> Framer
+```
+
+- **Magnet Effect** : Utilisé sur les cartes interactives pour simuler une attraction physique au survol.
+- **Decrypted Text** : Effet visuel de "décryptage" pour l'apparition des titres importants.
+- **Shiny Text** : Effet de brillance dynamique sur les boutons d'appel à l'action (CTA).
+- **Rolling Number** : Animation fluide des compteurs numériques (ex: solde de crédits).
+
 ---
 
 ## 🔄 Communication & Validation

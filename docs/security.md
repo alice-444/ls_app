@@ -24,14 +24,24 @@ Toutes les actions de modification effectuées via une `adminProcedure` sont aut
 
 ## 🛡️ Protection contre les Abus
 
-### Rate Limiting (Brute Force & DoS)
-Un limiteur de débit en mémoire (`InMemoryRateLimiter`) est utilisé pour protéger les points d'entrée sensibles :
+### Onboarding & Découverte
+Le parcours d'onboarding est isolé de l'espace de travail principal pour maximiser la sécurité et la clarté :
 
-| Contexte | Limite | Fenêtre |
-| :--- | :--- | :--- |
-| **Onboarding** | 10 requêtes | 1 minute |
-| **Upload de fichiers** | 5 requêtes | 1 minute |
-| **Profil utilisateur** | 20 requêtes | 1 minute |
+```mermaid
+flowchart LR
+    Start[Inscription] --> Role[Sélection Rôle]
+    Role --> Lock[Role Locking - Zod/API]
+    Lock --> Active[Statut ACTIVE]
+    Active --> Dashboard[Accès Espace Dédié]
+    
+    subgraph Security_Gate["Sécurité"]
+        Lock
+    end
+```
+
+- **Activation Instantanée** : Les utilisateurs (Mentors et Apprenants) reçoivent le statut `ACTIVE` immédiatement après la sélection de leur rôle pour réduire la friction.
+- **Role Locking** : Une fois le rôle choisi et validé, il ne peut plus être modifié via l'API d'onboarding, prévenant les tentatives de changement de privilèges non autorisés.
+- **Adaptabilité UI** : Les Dashboards utilisent des données synchronisées avec la base de données (et non uniquement la session) pour afficher les actions et alertes pertinentes selon le statut réel de l'utilisateur.
 
 ### Sécurité de l'Authentification
 - **Vérification d'Email** : Obligatoire pour activer le compte.
