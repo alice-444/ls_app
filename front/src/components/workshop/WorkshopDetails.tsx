@@ -1,10 +1,11 @@
 "use client";
 
-import { Calendar, Clock, MapPin, LinkIcon, Users } from "lucide-react";
+import { Calendar, Clock, MapPin, LinkIcon, Users, Tag } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 
 interface WorkshopDetailsProps {
   workshop: {
+    topic?: string | null;
     date?: Date | string | null;
     time?: string | null;
     duration?: number | null;
@@ -29,6 +30,12 @@ export function WorkshopDetails({
 
   return (
     <>
+      {workshop.topic && (
+        <div className={`flex items-center gap-2 ${textSize} ${textColor}`}>
+          <Tag className={iconSize} />
+          {workshop.topic}
+        </div>
+      )}
       {workshop.date && (
         <div className={`flex items-center gap-2 ${textSize} ${textColor}`}>
           <Calendar className={iconSize} />

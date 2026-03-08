@@ -11,7 +11,7 @@ import type { IWorkshopRepository } from "../../repositories/workshop.repository
 import type { IUserTitleService } from "../../../users/services/profile/user-title.service.interface";
 import type { IWorkshopCashbackService } from "../rewards/workshop-cashback.service.interface";
 import type { IWorkshopNoShowPenaltyService } from "../rewards/workshop-no-show-penalty.service.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import { calculateWorkshopEndTime } from "../../utils/workshop-helpers";
 import { logger } from "../../../common/logger";
 
@@ -42,16 +42,11 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
       const participants: WorkshopParticipant[] = [];
 
       if (workshop.apprenticeId && workshop.apprentice) {
-        const user = await this.prisma.user.findUnique({
-          where: { id: workshop.apprentice.user?.id || "" },
-          select: { title: true },
-        });
-
         participants.push({
-          id: workshop.apprentice.user?.id || "",
-          name: workshop.apprentice.user?.name || null,
-          email: workshop.apprentice.user?.email || null,
-          title: user?.title || null,
+          id: workshop.apprentice.userId,
+          name: workshop.apprentice.name || null,
+          email: workshop.apprentice.email || null,
+          title: workshop.apprentice.title || null,
           attendanceStatus:
             (workshop.apprenticeAttendanceStatus as
               | "PENDING"
@@ -77,7 +72,7 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
     userId: string,
     workshopId: string,
     participantId: string,
-    attendanceStatus: "PENDING" | "PRESENT"
+    attendanceStatus: "PENDING" | "PRESENT" | "NO_SHOW"
   ): Promise<Result<AttendanceUpdateResult>> {
     try {
       const workshopResult =
@@ -91,25 +86,37 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
 
       if (
         !workshop.apprenticeId ||
-        workshop.apprentice?.user?.id !== participantId
+        workshop.apprentice?.userId !== participantId
       ) {
         return failure("Participant not found", 404);
       }
 
       if (
-        attendanceStatus === "PRESENT" &&
+        (attendanceStatus === "PRESENT" || attendanceStatus === "NO_SHOW") &&
         workshop.date &&
         workshop.time &&
         workshop.duration
       ) {
-        const endTime = calculateWorkshopEndTime(
-          workshop.date,
-          workshop.time,
-          workshop.duration
-        );
-        if (endTime && endTime > new Date()) {
+        let endTime: Date | null = null;
+        try {
+          endTime = calculateWorkshopEndTime(
+            workshop.date,
+            workshop.time,
+            workshop.duration
+          );
+        } catch (e) {
+          logger.error("Error calculating end time", e);
+        }
+
+        if (!endTime) {
           return failure(
-            "La présence ne peut être confirmée qu'après la fin de l'atelier",
+            "Impossible de calculer l'heure de fin de l'atelier",
+            400
+          );
+        }
+        if (endTime > new Date()) {
+          return failure(
+            "La présence ou l'absence ne peut être confirmée qu'après la fin de l'atelier",
             400
           );
         }
@@ -123,6 +130,9 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
         workshop.time &&
         workshop.duration;
 
+      const shouldApplyPenalty =
+        attendanceStatus === "NO_SHOW" && previousStatus !== "NO_SHOW";
+
       let workshopEndTime: Date | null = null;
       if (shouldProcessCashback) {
         workshopEndTime = calculateWorkshopEndTime(
@@ -132,7 +142,7 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
         );
       }
 
-      await (this.prisma as any).workshop.update({
+      await this.prisma.workshop.update({
         where: { id: workshopId },
         data: { apprenticeAttendanceStatus: attendanceStatus },
       });
@@ -140,10 +150,10 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
       let titleChanged = false;
       let newTitle: string | null = null;
 
-      if (shouldProcessCashback && workshop.apprentice?.user?.id) {
+      if (shouldProcessCashback && workshop.apprentice?.userId) {
         const titleResult =
           await this.userTitleService.updateTitleBasedOnWorkshops(
-            workshop.apprentice.user.id
+            workshop.apprentice.userId
           );
 
         if (titleResult.ok && titleResult.data.titleChanged) {
@@ -155,12 +165,23 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
           try {
             await this.workshopCashbackService.processCashback(
               workshopId,
-              workshop.apprentice.user.id,
+              workshop.apprentice.userId,
               workshopEndTime
             );
           } catch (error) {
             logger.error("Failed to process cashback", { workshopId, error });
           }
+        }
+      }
+
+      if (shouldApplyPenalty && workshop.apprentice?.userId) {
+        try {
+          await this.workshopNoShowPenaltyService.applyPenalty(
+            workshopId,
+            workshop.apprentice.userId
+          );
+        } catch (error) {
+          logger.error("Failed to apply penalty", { workshopId, error });
         }
       }
 
@@ -225,10 +246,10 @@ export class WorkshopAttendanceService implements IWorkshopAttendanceService {
           apprenticeAttendanceStatus: "NO_SHOW",
         } as any);
 
-        if (workshop.apprentice?.user?.id) {
+        if (workshop.apprentice?.userId) {
           await this.workshopNoShowPenaltyService.applyPenalty(
             workshopId,
-            workshop.apprentice.user.id
+            workshop.apprentice.userId
           );
         }
       }

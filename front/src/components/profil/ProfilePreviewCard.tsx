@@ -8,6 +8,7 @@ interface ProfilePreviewCardProps {
   readonly displayName: string;
   readonly studyDomain: string;
   readonly studyProgram: string;
+  readonly bio?: string | null;
   readonly title?: string;
   readonly tags: string[];
 }
@@ -17,6 +18,7 @@ export function ProfilePreviewCard({
   displayName,
   studyDomain,
   studyProgram,
+  bio,
   title,
   tags,
 }: ProfilePreviewCardProps) {
@@ -62,6 +64,11 @@ export function ProfilePreviewCard({
                 </p>
               )}
               {studyProgram && <p className="pl-5">{studyProgram}</p>}
+            </div>
+          )}
+          {bio && (
+            <div className="hidden lg:block mt-3 text-sm text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] italic line-clamp-3">
+              "{bio}"
             </div>
           )}
           {tags.length > 0 && (

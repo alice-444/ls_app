@@ -14,8 +14,8 @@ export class UserInfoEnricher {
     private readonly appUserRepository: AppUserRepository
   ) {}
 
-  async enrichByAppUserId(appUserId: string): Promise<UserInfo | null> {
-    const appUser = await this.appUserRepository.findByAppUserId(appUserId);
+  async enrichByAppUserId(userId: string): Promise<UserInfo | null> {
+    const appUser = await this.appUserRepository.findByAppUserId(userId);
     if (!appUser) return null;
 
     const [name, identityCard] = await Promise.all([
@@ -28,7 +28,7 @@ export class UserInfoEnricher {
       name,
       displayName: identityCard?.displayName || null,
       photoUrl: identityCard?.photoUrl || null,
-      role: appUser.role,
+      role: appUser.role as "MENTOR" | "APPRENANT" | "ADMIN" | null,
       appId: appUser.id,
     };
   }

@@ -48,7 +48,7 @@ export default function JoinVideoPage() {
           router.push(`/workshop/${workshopId}`);
         });
 
-        callFrame.on("error", (error) => {
+        callFrame.on("error", (error: any) => {
           console.error("Daily.co error:", error);
         });
 

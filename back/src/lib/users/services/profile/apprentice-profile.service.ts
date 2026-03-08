@@ -3,13 +3,15 @@ import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { AppUserRepository } from "../../repositories";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IUserConnectionRepository } from "../../repositories/connection/user-connection.repository.interface";
+import type { IUserBlockService } from "../moderation/user-block.service.interface";
 import { verifyUserExists } from "../../../auth/services/user-helpers";
 
 export class ApprenticeProfileService {
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly userConnectionRepository: IUserConnectionRepository
+    private readonly userConnectionRepository: IUserConnectionRepository,
+    private readonly userBlockService: IUserBlockService
   ) {}
 
   async saveIdentityCard(
@@ -18,6 +20,7 @@ export class ApprenticeProfileService {
       displayName: string;
       studyDomain: string;
       studyProgram: string;
+      bio?: string | null;
       photoUrl?: string | null;
       iceBreakerTags?: string[];
     }
@@ -48,6 +51,7 @@ export class ApprenticeProfileService {
         displayName: input.displayName,
         studyDomain: input.studyDomain,
         studyProgram: input.studyProgram,
+        bio: input.bio || null,
         photoUrl: input.photoUrl || null,
         iceBreakerTags: input.iceBreakerTags || [],
       });
@@ -61,11 +65,55 @@ export class ApprenticeProfileService {
     }
   }
 
+  async updateProfile(
+    userId: string,
+    input: {
+      studyDomain?: string;
+      studyProgram?: string;
+      displayName?: string;
+      bio?: string | null;
+    }
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const userCheck = await verifyUserExists(userId);
+      if (!userCheck.ok) {
+        return userCheck;
+      }
+
+      const appUser = await this.appUserRepository.findByUserId(userId);
+      if (!appUser) {
+        return failure(
+          "AppUser not found. Please complete role selection first.",
+          400
+        );
+      }
+
+      if (appUser.role !== "APPRENANT") {
+        return failure("Only apprentices can update their profile", 403);
+      }
+
+      await this.appUserRepository.update(userId, {
+        displayName: input.displayName,
+        studyDomain: input.studyDomain,
+        studyProgram: input.studyProgram,
+        bio: input.bio,
+      });
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("updateProfile", { userId })
+      );
+    }
+  }
+
   async getIdentityCard(userId: string): Promise<
     Result<{
       displayName: string | null;
       studyDomain: string | null;
       studyProgram: string | null;
+      bio: string | null;
       photoUrl: string | null;
       iceBreakerTags: string[];
       userName: string | null;
@@ -91,6 +139,7 @@ export class ApprenticeProfileService {
         displayName: identityCard.displayName,
         studyDomain: identityCard.studyDomain,
         studyProgram: identityCard.studyProgram,
+        bio: (identityCard as any).bio || null,
         photoUrl: identityCard.photoUrl,
         iceBreakerTags: identityCard.iceBreakerTags || [],
         userName,
@@ -111,6 +160,7 @@ export class ApprenticeProfileService {
       displayName: string | null;
       studyDomain: string | null;
       studyProgram: string | null;
+      bio: string | null;
       photoUrl: string | null;
       iceBreakerTags: string[];
     }>
@@ -162,6 +212,7 @@ export class ApprenticeProfileService {
         displayName: identityCard.displayName,
         studyDomain: identityCard.studyDomain,
         studyProgram: identityCard.studyProgram,
+        bio: (identityCard as any).bio || null,
         photoUrl: identityCard.photoUrl,
         iceBreakerTags: identityCard.iceBreakerTags || [],
       });
@@ -184,12 +235,23 @@ export class ApprenticeProfileService {
       displayName: string | null;
       studyDomain: string | null;
       studyProgram: string | null;
+      bio: string | null;
       photoUrl: string | null;
       iceBreakerTags: string[];
       hasFullAccess: boolean;
     }>
   > {
     try {
+      // Check for blocks
+      const blockResult = await this.userBlockService.areUsersBlocked(
+        viewerUserId,
+        apprenticeUserId
+      );
+      if (!blockResult.ok) return blockResult;
+      if (blockResult.data.user1BlockedUser2 || blockResult.data.user2BlockedUser1) {
+        return failure("Cannot view this profile", 403);
+      }
+
       const viewerAppUser = await this.appUserRepository.findByUserId(
         viewerUserId
       );
@@ -222,6 +284,7 @@ export class ApprenticeProfileService {
           displayName: identityCard.displayName,
           studyDomain: identityCard.studyDomain,
           studyProgram: identityCard.studyProgram,
+          bio: (identityCard as any).bio || null,
           photoUrl: identityCard.photoUrl,
           iceBreakerTags: identityCard.iceBreakerTags || [],
           hasFullAccess: true,
@@ -261,6 +324,7 @@ export class ApprenticeProfileService {
         displayName: identityCard.displayName,
         studyDomain: hasFullAccess ? identityCard.studyDomain : null,
         studyProgram: hasFullAccess ? identityCard.studyProgram : null,
+        bio: hasFullAccess ? (identityCard as any).bio || null : null,
         photoUrl: hasFullAccess ? identityCard.photoUrl : null,
         iceBreakerTags: hasFullAccess ? identityCard.iceBreakerTags || [] : [],
         hasFullAccess,

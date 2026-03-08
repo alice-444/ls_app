@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";
+import { MessageSquare } from "lucide-react";
 
 interface WorkshopRequest {
   id: string;
@@ -16,6 +17,7 @@ interface WorkshopRequest {
   description?: string;
   status: string;
   preferredDate: string | Date | null;
+  rejectionReason?: string | null;
 }
 
 interface AllWorkshopRequestsDialogProps {
@@ -58,6 +60,12 @@ export function AllWorkshopRequestsDialog({
                   <p className="text-base text-[rgba(38,84,124,0.64)]">
                     {formatWorkshopDate(request.preferredDate)}
                   </p>
+                  {request.status === "REJECTED" && request.rejectionReason && (
+                    <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1 mt-1">
+                      <MessageSquare className="h-3 w-3" />
+                      Motif: {request.rejectionReason}
+                    </p>
+                  )}
                 </div>
                 {(request.status === "ACCEPTED" ||
                   request.status === "PENDING" ||

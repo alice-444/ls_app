@@ -5,7 +5,7 @@ import type {
   UpdateCashbackQueueInput,
   CashbackStatus,
 } from "./cashback-queue.repository.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 
 export class PrismaCashbackQueueRepository implements ICashbackQueueRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -168,6 +168,96 @@ export class PrismaCashbackQueueRepository implements ICashbackQueueRepository {
     });
 
     return this.mapToEntity(queue);
+  }
+
+  async findSummaryByMentor(
+    mentorId: string,
+    from?: Date,
+    to?: Date
+  ): Promise<{ totalEarned: number; byMonth: { month: string; amount: number }[] }> {
+    const where: any = {
+      status: "PROCESSED",
+      workshop: {
+        creatorId: mentorId,
+      },
+    };
+
+    if (from || to) {
+      where.processedAt = {};
+      if (from) where.processedAt.gte = from;
+      if (to) where.processedAt.lte = to;
+    }
+
+    const queues = await (this.prisma as any).workshop_cashback_queue.findMany({
+      where,
+      select: {
+        cashbackAmount: true,
+        processedAt: true,
+      },
+      orderBy: { processedAt: "asc" },
+    });
+
+    let totalEarned = 0;
+    const monthMap = new Map<string, number>();
+
+    for (const q of queues) {
+      totalEarned += q.cashbackAmount;
+      if (q.processedAt) {
+        const month = q.processedAt.toISOString().substring(0, 7); // YYYY-MM
+        monthMap.set(month, (monthMap.get(month) || 0) + q.cashbackAmount);
+      }
+    }
+
+    const byMonth = Array.from(monthMap.entries())
+      .map(([month, amount]) => ({ month, amount }))
+      .sort((a, b) => a.month.localeCompare(b.month));
+
+    return { totalEarned, byMonth };
+  }
+
+  async findHistoryByMentor(
+    mentorId: string,
+    options?: { limit?: number; cursor?: string }
+  ): Promise<{ items: (CashbackQueueEntity & { workshopTitle: string; participantName: string })[]; nextCursor?: string }> {
+    const limit = options?.limit || 20;
+    const cursor = options?.cursor;
+
+    const items = await (this.prisma as any).workshop_cashback_queue.findMany({
+      where: {
+        workshop: {
+          creatorId: mentorId,
+        },
+      },
+      take: limit + 1,
+      cursor: cursor ? { id: cursor } : undefined,
+      orderBy: { createdAt: "desc" },
+      include: {
+        workshop: {
+          select: {
+            title: true,
+          },
+        },
+        participant: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    let nextCursor: string | undefined = undefined;
+    if (items.length > limit) {
+      const nextItem = items.pop();
+      nextCursor = nextItem?.id;
+    }
+
+    const mappedItems = items.map((q: any) => ({
+      ...this.mapToEntity(q),
+      workshopTitle: q.workshop.title,
+      participantName: q.participant.name || "Utilisateur",
+    }));
+
+    return { items: mappedItems, nextCursor };
   }
 
   private mapToEntity(queue: any): CashbackQueueEntity {

@@ -40,6 +40,17 @@ export function AboutSection() {
           className="w-full sm:w-auto"
           asChild
         >
+          <Link href="/info">
+            <Info className="h-4 w-4 mr-2" />
+            Plus d&apos;informations
+          </Link>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full sm:w-auto"
+          asChild
+        >
           <Link href="/help">
             <HelpCircle className="h-4 w-4 mr-2" />
             Aide

@@ -17,6 +17,7 @@ export default function Dashboard() {
     queryClient,
     userRole,
     actualUserRole,
+    userStatus,
     isMentor,
     isApprenant,
     workshopRequests,
@@ -67,6 +68,7 @@ export default function Dashboard() {
           onCancelRequest={(requestId) =>
             cancelRequestMutation.mutate({ requestId })
           }
+          onCancelConfirmed={(workshopId) => setShowCancelDialog(workshopId)}
         />
       )}
 
@@ -77,6 +79,7 @@ export default function Dashboard() {
           acceptedConnections={acceptedConnections}
           mentorWorkshopRequests={mentorWorkshopRequests}
           mentorWorkshops={mentorWorkshops}
+          userStatus={userStatus}
         />
       )}
 

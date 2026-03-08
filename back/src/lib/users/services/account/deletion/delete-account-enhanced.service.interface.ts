@@ -1,12 +1,16 @@
-import { Result } from "../../../../common";
+import type { Result } from "../../../../common";
 
 export interface IDeleteAccountEnhancedService {
   checkCanDeleteAccount(
     userId: string
   ): Promise<Result<{ canDelete: boolean; reason?: string }>>;
 
-  scrubPII(
+  initiateDeletion(
     userId: string,
-    appUserId: string
+    reason?: string
+  ): Promise<Result<{ success: boolean }>>;
+
+  scrubPII(
+    userId: string
   ): Promise<Result<{ success: boolean }>>;
 }

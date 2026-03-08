@@ -16,7 +16,7 @@ export class DeleteUserAccountService {
   async execute(plan: DeletionPlan): Promise<void> {
     await this.prisma.$transaction(async () => {
       if (plan.softDeleteAppUserNow) {
-        await this.repos.appUsers.softDelete(plan.appUserId, new Date(), plan.reason);
+        await this.repos.appUsers.softDelete(plan.userId, new Date(), plan.reason);
       }
       if (plan.disableAuthUserNow) {
         await this.repos.authUsers.disable(plan.userId, new Date());

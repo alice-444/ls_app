@@ -2,17 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createRequest, getJson } from "../../helpers/request";
 import { POST } from "@/app/api/cron/cleanup-inactive-rooms/route";
 
-const mockFindPublished = vi.fn();
+const mockCleanupInactiveRooms = vi.fn();
 
 vi.mock("@/lib/di/container", () => ({
   container: {
-    workshopRepository: {
-      findPublished: () => mockFindPublished(),
-      update: vi.fn(),
-    },
-    dailyService: {
-      getRoomInfo: vi.fn(),
-      deleteRoom: vi.fn(),
+    maintenanceService: {
+      cleanupInactiveRooms: () => mockCleanupInactiveRooms(),
     },
   },
 }));
@@ -22,7 +17,7 @@ describe("POST /api/cron/cleanup-inactive-rooms", () => {
 
   beforeEach(() => {
     process.env.CRON_SECRET = validToken;
-    mockFindPublished.mockResolvedValue([]);
+    mockCleanupInactiveRooms.mockResolvedValue({ processed: 0, closed: 0, errors: 0 });
   });
 
   afterEach(() => {
@@ -37,7 +32,7 @@ describe("POST /api/cron/cleanup-inactive-rooms", () => {
     expect(res.status).toBe(401);
     const data = await getJson<{ error?: string }>(res);
     expect(data.error).toBe("Unauthorized");
-    expect(mockFindPublished).not.toHaveBeenCalled();
+    expect(mockCleanupInactiveRooms).not.toHaveBeenCalled();
   });
 
   it("returns 200 with processed/closed/errors when authorized", async () => {
@@ -55,6 +50,6 @@ describe("POST /api/cron/cleanup-inactive-rooms", () => {
     expect(data.processed).toBe(0);
     expect(data.closed).toBe(0);
     expect(data.errors).toBe(0);
-    expect(mockFindPublished).toHaveBeenCalled();
+    expect(mockCleanupInactiveRooms).toHaveBeenCalled();
   });
 });

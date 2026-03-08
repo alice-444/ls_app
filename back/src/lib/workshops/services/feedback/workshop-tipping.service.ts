@@ -15,7 +15,7 @@ export class WorkshopTippingService implements IWorkshopTippingService {
     try {
       if (amount < 1 || amount > 100) {
         return failure(
-          "Le montant du pourboire doit être compris entre 1 et 100 crédits.",
+          "Le montant du pourboire doit être de 1 à 100 crédits.",
           400
         );
       }

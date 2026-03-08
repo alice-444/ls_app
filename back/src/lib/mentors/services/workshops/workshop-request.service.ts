@@ -13,7 +13,7 @@ import { sanitizeString } from "../../../utils/sanitize";
 import { logger } from "../../../common/logger";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import { generateInternalId } from "../../../utils/id-generator";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
@@ -159,12 +159,12 @@ export class WorkshopRequestService implements IWorkshopRequestService {
           updatedAt: now,
         },
         include: {
-          app_user_workshop_request_apprenticeIdToapp_user: {
+          apprentice: {
             include: {
               user: { select: { id: true, name: true, email: true } },
             },
           },
-          app_user_workshop_request_mentorIdToapp_user: {
+          mentor: {
             include: {
               user: { select: { id: true, name: true, email: true } },
             },
@@ -175,9 +175,9 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       return {
         ...workshopRequest,
         apprentice:
-          workshopRequest.app_user_workshop_request_apprenticeIdToapp_user,
+          workshopRequest.apprentice,
         mentor:
-          workshopRequest.app_user_workshop_request_mentorIdToapp_user,
+          workshopRequest.mentor,
       };
     });
 
@@ -382,7 +382,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
   async rejectWorkshopRequest(
     userId: string,
-    requestId: string
+    requestId: string,
+    reason?: string | null
   ): Promise<Result<{ success: boolean }>> {
     try {
       const mentor = await this.mentorRepository.findMentorById(userId);
@@ -410,20 +411,55 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         );
       }
 
-      await this.workshopRequestRepository.update(requestId, {
-        status: "REJECTED",
-      });
+      const sanitizedReason = reason
+        ? sanitizeString(reason, { maxLength: 500, trim: true })
+        : null;
+
+      if (this.prisma && this.creditService) {
+        await this.prisma.$transaction(async (tx) => {
+          await (tx as any).workshop_request.update({
+            where: { id: requestId },
+            data: { 
+              status: "REJECTED", 
+              rejectionReason: sanitizedReason,
+              updatedAt: new Date() 
+            },
+          });
+
+          // Find the apprentice BetterAuth ID
+          const apprentice = await (tx as any).user.findUnique({
+            where: { id: request.apprenticeId },
+            select: { userId: true },
+          });
+
+          if (apprentice) {
+            await this.creditService!.refundCreditsInTransaction(
+              apprentice.userId,
+              this.WORKSHOP_REQUEST_COST,
+              `Remboursement demande rejetée: ${request.title}`,
+              tx
+            );
+          }
+        });
+      } else {
+        await this.workshopRequestRepository.update(requestId, {
+          status: "REJECTED",
+          rejectionReason: sanitizedReason,
+        });
+      }
 
       logger.info("Workshop request rejected", {
         requestId,
         mentorId: mentor.id,
         apprenticeId: request.apprenticeId,
+        hasReason: !!sanitizedReason,
       });
 
       await this.notificationService.notifyAndEmailRejection(
         requestId,
         request.title,
-        userId
+        userId,
+        sanitizedReason
       );
 
       return success({ success: true });
@@ -467,16 +503,54 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Cette demande est déjà annulée", 400);
       }
 
-      if (request.status === "ACCEPTED" && request.workshopId) {
-        return failure(
-          "Cette demande a été acceptée et un atelier a été créé. Veuillez annuler l'atelier directement.",
-          400
-        );
-      }
+      if (this.prisma && this.creditService) {
+        await this.prisma.$transaction(async (tx) => {
+          // If request was already accepted, we need to update the associated workshop
+          if (request.status === "ACCEPTED" && request.workshopId) {
+            const workshop = await (tx as any).workshop.findUnique({
+              where: { id: request.workshopId }
+            });
 
-      await this.workshopRequestRepository.update(requestId, {
-        status: "CANCELLED",
-      });
+            if (workshop && workshop.status === "PUBLISHED") {
+              // Clear apprentice from the workshop to free the slot
+              await (tx as any).workshop.update({
+                where: { id: request.workshopId },
+                data: {
+                  apprenticeId: null,
+                  apprenticeAttendanceStatus: null,
+                  updatedAt: new Date()
+                }
+              });
+            }
+          }
+
+          // Update request status to CANCELLED
+          await (tx as any).workshop_request.update({
+            where: { id: requestId },
+            data: { status: "CANCELLED", updatedAt: new Date() },
+          });
+
+          // Refund credits ONLY if the cancellation is by apprentice or if it's still PENDING
+          // In most cases we refund if the request is not completed
+          const apprenticeUser = await (tx as any).user.findUnique({
+            where: { id: request.apprenticeId },
+            select: { userId: true },
+          });
+
+          if (apprenticeUser) {
+            await this.creditService!.refundCreditsInTransaction(
+              apprenticeUser.userId,
+              this.WORKSHOP_REQUEST_COST,
+              `Remboursement demande annulée: ${request.title}`,
+              tx
+            );
+          }
+        });
+      } else {
+        await this.workshopRequestRepository.update(requestId, {
+          status: "CANCELLED",
+        });
+      }
 
       logger.info("Workshop request cancelled", {
         requestId,

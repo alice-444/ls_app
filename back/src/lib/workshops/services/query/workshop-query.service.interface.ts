@@ -1,7 +1,10 @@
 import type { Result } from "../../../common";
 
 export interface IWorkshopQueryService {
-  getWorkshopsByCreator(userId: string): Promise<Result<any[]>>;
+  getWorkshopsByCreator(
+    userId: string,
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+  ): Promise<Result<any[]>>;
   getPublishedWorkshops(): Promise<Result<any[]>>;
   getWorkshopById(workshopId: string): Promise<Result<any>>;
 }

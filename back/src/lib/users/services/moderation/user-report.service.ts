@@ -8,172 +8,170 @@ import type {
 } from "../../repositories/moderation/user-report.repository.interface";
 import type { AppUserRepository } from "../../repositories";
 import type { IAuditLogService } from "../../../common/audit-log.service";
-import type { INotificationService } from "../../../notifications/services/notification.service.interface";
-import { Result, success, failure } from "../../../common";
-import { handleError, createErrorContext } from "../../../common/error-handler";
+import { failure, success, Result } from "@/lib/common/types";
 import { logger } from "../../../common/logger";
+import { handleError, createErrorContext } from "../../../common/error-handler";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 
 export class UserReportService implements IUserReportService {
   constructor(
     private readonly userReportRepository: IUserReportRepository,
     private readonly appUserRepository: AppUserRepository,
-    private readonly auditLogService: IAuditLogService | undefined,
-    private readonly notificationService: INotificationService
+    private readonly auditLogService?: IAuditLogService,
+    private readonly notificationService?: INotificationService
   ) {}
 
-  async createReport(
-    input: CreateReportInput
-  ): Promise<Result<{ reportId: string }>> {
+  async createReport(input: CreateReportInput): Promise<Result<{ reportId: string }>> {
+    const { reporterUserId, reportedUserId, reason, details, messageId } = input;
+
+    if (reporterUserId === reportedUserId) {
+      return failure("Vous ne pouvez pas vous signaler vous-même", 400);
+    }
+
     try {
-      if (input.reporterUserId === input.reportedUserId) {
-        return failure("Cannot report yourself", 400);
-      }
+      const reporter = await this.appUserRepository.findByUserId(reporterUserId);
+      if (!reporter) return failure("Utilisateur (rapporteur) introuvable", 404);
 
-      const reporterAppUser = await this.appUserRepository.findByUserId(
-        input.reporterUserId
-      );
-      if (!reporterAppUser) {
-        return failure("Reporter user not found", 404);
-      }
-
-      const reportedAppUser = await this.appUserRepository.findByUserId(
-        input.reportedUserId
-      );
-      if (!reportedAppUser) {
-        return failure("Reported user not found", 404);
-      }
+      const reported = await this.appUserRepository.findByUserId(reportedUserId);
+      if (!reported) return failure("Utilisateur (signalé) introuvable", 404);
 
       const report = await this.userReportRepository.create({
-        reporterId: reporterAppUser.id,
-        reportedId: reportedAppUser.id,
-        reason: input.reason,
-        details: input.details || null,
-        messageId: input.messageId || null,
+        reporterId: reporter.id,
+        reportedId: reported.id,
+        reason: reason as ReportReason,
+        details: details || null,
+        messageId: messageId || null,
       });
 
       logger.info("User report created", {
         reportId: report.id,
-        reporterUserId: input.reporterUserId,
-        reportedUserId: input.reportedUserId,
-        reason: input.reason,
-        hasMessageId: !!input.messageId,
+        reporterUserId,
+        reportedUserId,
+        reason,
+        hasMessageId: !!messageId,
       });
 
       if (this.auditLogService) {
-        await this.auditLogService.record(
-          input.reporterUserId,
-          "USER_REPORTED",
-          {
-            reportId: report.id,
-            reportedUserId: input.reportedUserId,
-            reason: input.reason,
-            hasDetails: !!input.details,
-            messageId: input.messageId || null,
-            reporterAppUserId: reporterAppUser.id,
-            reportedAppUserId: reportedAppUser.id,
-          }
-        );
+        await this.auditLogService.record(reporterUserId, "USER_REPORTED", {
+          reportId: report.id,
+          reportedUserId,
+          reason,
+        });
       }
 
-      // Notify admins
-      await this.notificationService.notifyAdmin(
-        "NEW_REPORT",
-        `Nouveau signalement créé par ${input.reporterUserId} contre ${input.reportedUserId} pour ${input.reason}.`,
-        `/admin/user-reports?reportId=${report.id}`
-      );
+      if (this.notificationService) {
+        const reporterName = await this.appUserRepository.findUserNameByUserId(reporterUserId);
+        const reportedName = await this.appUserRepository.findUserNameByUserId(reportedUserId);
+        
+        await this.notificationService.notifyAdmin(
+          "NEW_REPORT",
+          `Nouveau signalement de ${reporterName || reporterUserId} contre ${reportedName || reportedUserId} : ${reason}`,
+          `/admin/reports?id=${report.id}`
+        );
+      }
 
       return success({ reportId: report.id });
     } catch (error) {
       return handleError(
         error,
         createErrorContext("createReport", {
-          userId: input.reporterUserId,
-          details: { reportedUserId: input.reportedUserId },
+          userId: reporterUserId,
+          details: { reportedUserId },
         })
       );
     }
   }
 
-  async getReportsByReporter(reporterUserId: string): Promise<
-    Result<
-      Array<{
-        id: string;
-        reportedUserId: string;
-        reason: ReportReason;
-        details: string | null;
-        status: string;
-        createdAt: Date;
-      }>
-    >
-  > {
+  async getReportsByReporter(userId: string): Promise<Result<any[]>> {
     try {
-      const reporterAppUser = await this.appUserRepository.findByUserId(
-        reporterUserId
-      );
-      if (!reporterAppUser) {
-        return failure("User not found", 404);
-      }
+      const appUser = await this.appUserRepository.findByUserId(userId);
+      if (!appUser) return failure("Utilisateur introuvable", 404);
 
-      const reports = await this.userReportRepository.findByReporter(
-        reporterAppUser.id
-      );
+      const reports = await this.userReportRepository.findByReporter(appUser.id);
 
       const reportsWithUserIds = await Promise.all(
         reports.map(async (report) => {
-          const reportedAppUser = await this.appUserRepository.findByAppUserId(
-            report.reportedId
-          );
+          const reportedAppUser = await this.appUserRepository.findByAppUserId(report.reportedId);
           return {
-            id: report.id,
+            ...report,
             reportedUserId: reportedAppUser?.userId || report.reportedId,
-            reason: report.reason,
-            details: report.details,
-            status: report.status,
-            createdAt: report.createdAt,
           };
         })
       );
 
       return success(reportsWithUserIds);
     } catch (error) {
-      return handleError(
-        error,
-        createErrorContext("getReportsByReporter", {
-          userId: reporterUserId,
-        })
-      );
+      return handleError(error, createErrorContext("getReportsByReporter", { userId }));
     }
   }
 
-  async getAdminReportQueue(params?: { limit?: number; offset?: number }): Promise<any> {
-    const limit = params?.limit ?? 50;
-    const offset = params?.offset ?? 0;
+  async getAdminReportQueue(params?: { limit?: number; offset?: number; status?: string }): Promise<Result<any[]>> {
+    try {
+      const where: any = {};
+      if (params?.status) {
+        where.status = params.status;
+      }
 
-    const reports = await this.userReportRepository.findMany({
-      where: { status: "PENDING" },
-      take: limit,
-      skip: offset,
-      orderBy: { createdAt: "desc" },
-      include: {
-        reporter: {
-          include: { user: true },
-        },
-        reported: {
-          include: { user: true },
-        },
-      },
-    });
-    return reports;
+      const reports = await this.userReportRepository.findMany({
+        where,
+        take: params?.limit || 50,
+        skip: params?.offset || 0,
+        orderBy: { createdAt: "desc" },
+      });
+
+      const enrichedReports = await Promise.all(
+        reports.map(async (report) => {
+          const [reporter, reported] = await Promise.all([
+            this.appUserRepository.findByAppUserId(report.reporterUserId),
+            this.appUserRepository.findByAppUserId(report.reportedUserId),
+          ]);
+
+          return {
+            ...report,
+            reporterUserId: reporter?.userId,
+            reportedUserId: reported?.userId,
+            reporterName: reporter?.name,
+            reportedName: reported?.name,
+          };
+        })
+      );
+
+      return success(enrichedReports);
+    } catch (error) {
+      return handleError(error, createErrorContext("getAdminReportQueue"));
+    }
   }
 
-  async reviewReport(reportId: string, status: "RESOLVED" | "DISMISSED", adminNotes?: string): Promise<any> {
-    return this.userReportRepository.update({
-      where: { id: reportId },
-      data: {
+  async reviewReport(
+    reportId: string, 
+    status: "REVIEWED" | "RESOLVED" | "DISMISSED", 
+    adminUserId: string,
+    adminNotes?: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const admin = await this.appUserRepository.findByUserId(adminUserId);
+      if (!admin) return failure("Administrateur introuvable", 404);
+
+      await this.userReportRepository.updateStatus(
+        reportId,
         status,
-        adminNotes: adminNotes || null,
-        reviewedAt: new Date(),
-      },
-    });
+        admin.id,
+        adminNotes || null
+      );
+
+      logger.info("Report reviewed", { reportId, status, reviewedBy: adminUserId });
+
+      if (this.auditLogService) {
+        await this.auditLogService.record(adminUserId, "USER_REPORT_REVIEWED", {
+          reportId,
+          status,
+          adminNotes,
+        });
+      }
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(error, createErrorContext("reviewReport", { resourceId: reportId }));
+    }
   }
 }

@@ -83,7 +83,7 @@ export function AcceptWorkshopRequestDialog({
     },
   });
 
-  const acceptMutation = trpc.mentor.acceptWorkshopRequest.useMutation({
+  const acceptMutation = trpc.mentor.acceptRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande acceptée avec succès !", {
         description: "L'atelier a été créé et l'apprenti a été notifié.",

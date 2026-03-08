@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type { IDeleteAccountEnhancedService } from "./delete-account-enhanced.service.interface";
 import type { IWorkshopRepository } from "../../../../workshops/repositories/workshop.repository.interface";
 import type { AppUserRepository } from "../../../repositories";
@@ -64,9 +64,58 @@ export class DeleteAccountEnhancedService
     }
   }
 
-  async scrubPII(
+  async initiateDeletion(
     userId: string,
-    appUserId: string
+    reason?: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const canDeleteResult = await this.checkCanDeleteAccount(userId);
+      if (!canDeleteResult.ok) {
+        return failure(canDeleteResult.error, 400);
+      }
+      if (!canDeleteResult.data.canDelete) {
+        return failure(canDeleteResult.data.reason || "Cannot delete account", 400);
+      }
+
+      const appUser = await this.appUserRepository.findByUserId(userId);
+      if (!appUser) {
+        return failure("App user not found", 404);
+      }
+
+      await this.prisma.$transaction(async (tx: any) => {
+        // 1. Mark user as deleted (soft delete)
+        await tx.user.update({
+          where: { userId },
+          data: {
+            deletedAt: new Date(),
+            deletionReason: reason || null,
+            status: "DELETED",
+          },
+        });
+
+        // 2. Create a deletion job for 30 days from now
+        const runAt = new Date();
+        runAt.setDate(runAt.getDate() + 30);
+
+        await tx.deletion_job.create({
+          data: {
+            userId,
+            runAt,
+            status: "PENDING",
+          },
+        });
+      });
+
+      return success({ success: true });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      return failure(`Failed to initiate deletion: ${errorMessage}`, 500);
+    }
+  }
+
+  async scrubPII(
+    userId: string
   ): Promise<Result<{ success: boolean }>> {
     try {
       const appUser = await this.appUserRepository.findByUserId(userId);
@@ -81,27 +130,23 @@ export class DeleteAccountEnhancedService
         );
         if (!deleteResult.ok) {
           console.error("Failed to delete photo file:", deleteResult.error);
-
         }
       }
 
       await this.prisma.$transaction(async (tx: any) => {
         await tx.user.update({
-          where: { id: userId },
+          where: { userId },
           data: {
             email: `deleted_${userId}@anon.local`,
             name: "Deleted User",
-            updatedAt: new Date(),
-          },
-        });
-
-        await tx.app_user.update({
-          where: { userId },
-          data: {
+            displayName: "Utilisateur Supprimé",
             photoUrl: null,
             bio: null,
-            displayName: null,
+            experience: null,
+            qualifications: null,
+            updatedAt: new Date(),
             deletedAt: new Date(),
+            status: "DELETED",
           },
         });
 

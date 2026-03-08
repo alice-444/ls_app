@@ -4,14 +4,28 @@ import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
 
 export const mentorRouter = router({
-  getById: publicProcedure
+  getPublicProfile: publicProcedure
     .input(z.object({ mentorId: z.string() }))
-    .query(async ({ input }) =>
+    .query(async ({ ctx, input }) =>
       unwrapResult(
-        await container.mentorProfileService.getPublishedMentorById(
-          input.mentorId
+        await container.mentorProfileService.getPublicProfile(
+          input.mentorId,
+          ctx.session?.user?.id
         )
       )
+    ),
+
+  getPublicMentors: publicProcedure
+    .input(
+      z.object({
+        domain: z.string().optional(),
+        topic: z.string().optional(),
+        limit: z.number().min(1).max(100).default(20),
+        cursor: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) =>
+      unwrapResult(await container.mentorProfileService.getPublicMentors(input))
     ),
 
   sendContactRequest: protectedProcedure
@@ -32,6 +46,26 @@ export const mentorRouter = router({
           input.mentorId,
           input.message,
           input.subject
+        )
+      )
+    ),
+
+  contactMentor: protectedProcedure
+    .input(
+      z.object({
+        mentorId: z.string(),
+        message: z
+          .string()
+          .max(1000, "Le message ne peut pas dépasser 1000 caractères")
+          .optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) =>
+      unwrapResult(
+        await container.mentorContactService.contactMentor(
+          ctx.session.user.id,
+          input.mentorId,
+          input.message
         )
       )
     ),
@@ -94,15 +128,7 @@ export const mentorRouter = router({
       )
     ),
 
-  getMyWorkshopRequests: protectedProcedure.query(async ({ ctx }) =>
-    unwrapResult(
-      await container.workshopRequestService.getApprenticeRequests(
-        ctx.session.user.id
-      )
-    )
-  ),
-
-  getMentorWorkshopRequests: protectedProcedure.query(async ({ ctx }) =>
+  getReceivedRequests: protectedProcedure.query(async ({ ctx }) =>
     unwrapResult(
       await container.workshopRequestService.getMentorRequests(
         ctx.session.user.id
@@ -120,7 +146,7 @@ export const mentorRouter = router({
       )
     ),
 
-  acceptWorkshopRequest: protectedProcedure
+  acceptRequest: protectedProcedure
     .input(
       z.object({
         requestId: z.string(),
@@ -149,18 +175,22 @@ export const mentorRouter = router({
       )
     ),
 
-  rejectWorkshopRequest: protectedProcedure
-    .input(z.object({ requestId: z.string() }))
+  rejectRequest: protectedProcedure
+    .input(z.object({ 
+      requestId: z.string(),
+      reason: z.string().max(500, "Le motif ne peut pas dépasser 500 caractères").optional().nullable()
+    }))
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopRequestService.rejectWorkshopRequest(
           ctx.session.user.id,
-          input.requestId
+          input.requestId,
+          input.reason
         )
       )
     ),
 
-  cancelWorkshopRequest: protectedProcedure
+  cancelRequest: protectedProcedure
     .input(z.object({ requestId: z.string() }))
     .mutation(async ({ ctx, input }) =>
       unwrapResult(

@@ -22,12 +22,12 @@ export async function authenticatedFetch(
   });
 }
 
-export async function getProfProfile(): Promise<{
+export async function getMentorProfile(): Promise<{
   profile?: Record<string, unknown>;
   isPublished?: boolean;
 }> {
   const response = await authenticatedFetch(
-    `${API_BASE_URL}/api/profile/role/prof`,
+    `${API_BASE_URL}/api/profile/role/mentor`,
     {
       method: "GET",
     }
@@ -40,7 +40,10 @@ export async function getProfProfile(): Promise<{
   return response.json();
 }
 
-export async function getUserRole(): Promise<"MENTOR" | "APPRENANT" | "ADMIN" | null> {
+export async function getUserData(): Promise<{
+  role: "MENTOR" | "APPRENANT" | "ADMIN" | null;
+  status: "PENDING" | "ACTIVE" | "UNDER_REVIEW" | "BLOCKED" | null;
+} | null> {
   try {
     const response = await authenticatedFetch(
       `${API_BASE_URL}/api/profile/role`,
@@ -50,8 +53,16 @@ export async function getUserRole(): Promise<"MENTOR" | "APPRENANT" | "ADMIN" | 
     );
     if (!response.ok) return null;
     const data = await response.json();
-    return data.role || null;
+    return {
+      role: data.role || null,
+      status: data.status || null,
+    };
   } catch {
     return null;
   }
+}
+
+export async function getUserRole(): Promise<"MENTOR" | "APPRENANT" | "ADMIN" | null> {
+  const data = await getUserData();
+  return data?.role || null;
 }

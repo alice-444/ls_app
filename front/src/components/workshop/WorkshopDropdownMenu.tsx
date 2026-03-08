@@ -16,6 +16,7 @@ import {
   Calendar,
   Copy,
   Trash2,
+  CheckCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -33,6 +34,7 @@ interface WorkshopDropdownMenuProps {
   onReschedule?: (workshopId: string) => void;
   onDelete?: (workshopId: string) => void;
   onDuplicate?: (workshopId: string) => void;
+  onComplete?: (workshopId: string) => void;
   variant?: "default" | "hero";
 }
 
@@ -44,6 +46,7 @@ export function WorkshopDropdownMenu({
   onReschedule,
   onDelete,
   onDuplicate,
+  onComplete,
   variant = "default",
 }: WorkshopDropdownMenuProps) {
   const handleCopyLink = () => {
@@ -55,6 +58,8 @@ export function WorkshopDropdownMenu({
 
   const canReschedule =
     workshop.status === "PUBLISHED" && workshop.date !== null;
+
+  const canComplete = workshop.status === "PUBLISHED";
 
   return (
     <DropdownMenu>
@@ -119,6 +124,18 @@ export function WorkshopDropdownMenu({
               Reprogrammer
             </DropdownMenuItem>
           </>
+        )}
+        {canComplete && onComplete && (
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              onComplete(workshop.id);
+            }}
+            className="text-green-600 dark:text-green-400"
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Marquer comme terminé
+          </DropdownMenuItem>
         )}
         {workshop.isVirtual && workshop.location && (
           <DropdownMenuItem

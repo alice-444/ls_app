@@ -1,26 +1,18 @@
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type {
   IWorkshopFeedbackRepository,
   WorkshopFeedbackEntity,
   CreateWorkshopFeedbackInput,
 } from "./workshop-feedback.repository.interface";
 import { generateInternalId } from "../../../utils/id-generator";
-import type { FeedbackStatus } from "../../../../../prisma/generated/client/enums";
+import type { FeedbackStatus } from '@/lib/prisma';
 
 const FEEDBACK_INCLUDE = {
-  app_user_mentor_feedback_apprenticeIdToapp_user: {
-    include: {
-      user: {
-        select: { id: true, name: true, email: true, image: true },
-      },
-    },
+  apprentice: {
+    select: { id: true, name: true, email: true, photoUrl: true, displayName: true },
   },
-  app_user_mentor_feedback_mentorIdToapp_user: {
-    include: {
-      user: {
-        select: { id: true, name: true },
-      },
-    },
+  mentor: {
+    select: { id: true, name: true, displayName: true },
   },
   workshop: {
     select: { id: true, title: true, date: true, time: true, duration: true },
@@ -181,10 +173,6 @@ export class PrismaWorkshopFeedbackRepository
   }
 
   private mapToEntity(feedback: any): WorkshopFeedbackEntity {
-    const apprenticeRaw =
-      feedback.app_user_mentor_feedback_apprenticeIdToapp_user;
-    const mentorRaw = feedback.app_user_mentor_feedback_mentorIdToapp_user;
-
     return {
       id: feedback.id,
       mentorId: feedback.mentorId,
@@ -199,28 +187,24 @@ export class PrismaWorkshopFeedbackRepository
       reportReason: feedback.reportReason,
       createdAt: feedback.createdAt,
       updatedAt: feedback.updatedAt,
-      apprentice: apprenticeRaw
+      apprentice: feedback.apprentice
         ? {
-            id: apprenticeRaw.id,
-            user: apprenticeRaw.user
-              ? {
-                  id: apprenticeRaw.user.id,
-                  name: apprenticeRaw.user.name,
-                  email: apprenticeRaw.user.email,
-                  image: apprenticeRaw.user.image,
-                }
-              : undefined,
+            id: feedback.apprentice.id,
+            user: {
+              id: feedback.apprentice.id,
+              name: feedback.apprentice.name,
+              email: feedback.apprentice.email,
+              image: feedback.apprentice.photoUrl,
+            },
           }
         : undefined,
-      mentor: mentorRaw
+      mentor: feedback.mentor
         ? {
-            id: mentorRaw.id,
-            user: mentorRaw.user
-              ? {
-                  id: mentorRaw.user.id,
-                  name: mentorRaw.user.name,
-                }
-              : undefined,
+            id: feedback.mentor.id,
+            user: {
+              id: feedback.mentor.id,
+              name: feedback.mentor.name,
+            },
           }
         : undefined,
       workshop: feedback.workshop

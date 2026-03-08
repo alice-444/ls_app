@@ -113,19 +113,19 @@ Enable apprenants to browse published workshops, filter them, and request partic
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Catalogue shows published workshops
-- [ ] Filters work (if implemented)
-- [ ] "Demander à participer" opens dialog
-- [ ] Submit creates request, shows confirmation
-- [ ] Request appears in apprenant dashboard
-- [ ] Request appears in mentor dashboard
+- [x] Catalogue shows published workshops
+- [x] Filters work (if implemented)
+- [x] "Demander à participer" opens dialog
+- [x] Submit creates request, shows confirmation
+- [x] Request appears in apprenant dashboard
+- [x] Request appears in mentor dashboard
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Loading states
-- [ ] Error handling (e.g. already requested)
-- [ ] Credit check if workshop has cost
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Loading states
+- [x] Error handling (e.g. already requested)
+- [x] Credit check if workshop has cost
 
 ### Testing Steps
 1. Login as apprenant → catalogue

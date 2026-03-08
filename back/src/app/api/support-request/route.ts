@@ -126,16 +126,17 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const supportRequest = await prisma.support_request.create({
+    const appUser = userId ? await container.appUserRepository.findByUserId(userId) : null;
+
+    const supportRequest = await (prisma as any).support_request.create({
       data: {
-        id: randomUUID(),
-        userId: userId || null,
+        userId: appUser?.id || null,
         email: validation.data.email,
         subject: validation.data.subject,
         description: validation.data.description,
         problemType: validation.data.problemType,
-        attachments: attachments.length > 0 ? attachments : undefined,
         status: "PENDING",
+        attachments: attachments.length > 0 ? attachments : null,
       },
     });
 

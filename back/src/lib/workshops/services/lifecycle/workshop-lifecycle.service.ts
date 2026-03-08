@@ -1,5 +1,6 @@
 import { Result, failure, success, validateInput } from "../../../common";
 import type { IWorkshopRepository } from "../../repositories/workshop.repository.interface";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import { sanitizeString } from "../../../utils/sanitize";
 import type { IWorkshopLifecycleService } from "./workshop-lifecycle.service.interface";
 import type { IWorkshopAccessGuard } from "../guards/workshop-access.guard";
@@ -9,6 +10,7 @@ import {
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
+  cancelWorkshopSchema,
   isMinimumTomorrow,
   WORKSHOP_VALIDATION,
 } from "../../../../shared/validation";
@@ -20,7 +22,8 @@ import {
 export class WorkshopLifecycleService implements IWorkshopLifecycleService {
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
-    private readonly accessGuard: IWorkshopAccessGuard
+    private readonly accessGuard: IWorkshopAccessGuard,
+    private readonly notificationService?: INotificationService
   ) {}
 
   private sanitizeWorkshopFields(data: {
@@ -67,7 +70,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
     }
 
     try {
-      const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+      const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       if (!accessCheck.ok) {
         return accessCheck;
       }
@@ -339,6 +342,63 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
       return handleError(
         error,
         createErrorContext("deleteWorkshop", {
+          userId,
+          resourceId: validation.data.workshopId,
+        })
+      );
+    }
+  }
+
+  async cancelWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>> {
+    const validation = validateInput(cancelWorkshopSchema, input);
+    if (!validation.ok) {
+      return validation;
+    }
+
+    try {
+      const ownershipCheck = await this.accessGuard.verifyWorkshopOwnership(
+        userId,
+        validation.data.workshopId,
+        "annuler"
+      );
+      if (!ownershipCheck.ok) {
+        return ownershipCheck;
+      }
+
+      const workshop = await this.workshopRepository.findById(
+        validation.data.workshopId
+      );
+      if (!workshop) {
+        return failure("Atelier introuvable", 404);
+      }
+
+      await this.workshopRepository.update(validation.data.workshopId, {
+        status: "CANCELLED",
+      });
+
+      // Trigger notification for the participant if any
+      if (this.notificationService && workshop.apprenticeId) {
+        const creatorName = workshop.creator?.name || "Le mentor";
+        await this.notificationService.createNotification(
+          workshop.apprenticeId,
+          {
+            type: "workshop",
+            title: "Atelier annulé",
+            message: `${creatorName} a annulé l'atelier "${workshop.title}".`,
+            actionUrl: `/workshop-room`,
+          },
+          userId
+        );
+      }
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("cancelWorkshop", {
           userId,
           resourceId: validation.data.workshopId,
         })

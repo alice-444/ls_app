@@ -13,7 +13,14 @@ import { verifyUserExists } from "../../../auth/services/user-helpers";
 import type { IMessageValidationService } from "../validation/message-validation.service.interface";
 import type { IMessageEnrichmentService } from "../enrichment/message-enrichment.service.interface";
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
+import type { IEmailService } from "../../../email/services/email.service.interface";
+import { renderEmailTemplate } from "../../../email/utils/render-email";
+import { NewMessageEmail } from "../../../email/templates/NewMessageEmail";
+import * as React from "react";
 import { logger } from "../../../common/logger";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export class MessageOperationsService implements IMessageOperationsService {
   constructor(
@@ -22,7 +29,9 @@ export class MessageOperationsService implements IMessageOperationsService {
     private readonly messageRepository: IMessageRepository,
     private readonly validationService: IMessageValidationService,
     private readonly enrichmentService: IMessageEnrichmentService,
-    private readonly userBlockService: IUserBlockService
+    private readonly userBlockService: IUserBlockService,
+    private readonly notificationService: INotificationService,
+    private readonly emailService?: IEmailService
   ) {}
 
   private async validateUserAndGetAppUser(userId: string): Promise<
@@ -106,6 +115,59 @@ export class MessageOperationsService implements IMessageOperationsService {
       await this.conversationRepository.update(conversation.id, {
         updatedAt: new Date(),
       });
+
+      // Trigger notification for the recipient
+      const otherParticipantId =
+        conversation.participant1Id === appUser.id
+          ? conversation.participant2Id
+          : conversation.participant1Id;
+
+      const otherAppUser = await this.appUserRepository.findByAppUserId(
+        otherParticipantId
+      );
+
+      if (otherAppUser) {
+        const senderName = appUser.displayName || appUser.name || "Un utilisateur";
+        await this.notificationService.createNotification(
+          otherAppUser.userId,
+          {
+            type: "message",
+            title: `Nouveau message de ${senderName}`,
+            message: contentValidation.data.length > 100 
+              ? contentValidation.data.substring(0, 100) + "..." 
+              : contentValidation.data,
+            actionUrl: `/inbox/${conversationId}`,
+          },
+          userId
+        );
+
+        // Send email notification
+        if (this.emailService && otherAppUser.email) {
+          try {
+            const preview = contentValidation.data.length > 100 
+              ? contentValidation.data.substring(0, 100) + "..." 
+              : contentValidation.data;
+
+            const { html, text } = await renderEmailTemplate(
+              React.createElement(NewMessageEmail, {
+                userName: otherAppUser.name || "Utilisateur",
+                senderName,
+                messagePreview: preview,
+                inboxUrl: `${APP_URL}/inbox/${conversationId}`,
+              })
+            );
+
+            await this.emailService.sendEmail({
+              to: otherAppUser.email,
+              subject: `Nouveau message de ${senderName}`,
+              html,
+              text,
+            });
+          } catch (error) {
+            logger.error("Failed to send message email notification", { error, conversationId });
+          }
+        }
+      }
 
       return success({ messageId: message.id });
     } catch (error) {

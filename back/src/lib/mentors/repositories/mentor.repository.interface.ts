@@ -1,6 +1,9 @@
 export interface MentorEntity {
   id: string;
   userId: string;
+  name: string | null;
+  email: string | null;
+  displayName: string | null;
   role: string | null;
   bio: string | null;
   domain: string | null;
@@ -13,11 +16,6 @@ export interface MentorEntity {
   calendlyLink: string | null;
   isPublished: boolean;
   publishedAt: Date | null;
-  user?: {
-    id: string;
-    name: string | null;
-    email: string | null;
-  };
 }
 
 export interface MentorFeedbackEntity {
@@ -30,11 +28,10 @@ export interface MentorFeedbackEntity {
   isAnonymous: boolean;
   createdAt: Date;
   apprentice?: {
-    user?: {
-      id: string;
-      name: string | null;
-      image: string | null;
-    };
+    id: string;
+    name: string | null;
+    photoUrl: string | null;
+    displayName: string | null;
   };
   workshop?: {
     id: string;
@@ -51,8 +48,9 @@ export interface MentorWorkshopEntity {
   time: string | null;
   duration: number | null;
   location: string | null;
-  isVirtual: boolean;
+  isVirtual: boolean | null;
   maxParticipants: number | null;
+  status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
   publishedAt: Date | null;
   feedbacks?: Array<{ rating: number }>;
 }
@@ -66,5 +64,11 @@ export interface IMentorRepository {
     filters?: { workshopId?: string }
   ): Promise<MentorFeedbackEntity[]>;
   findMentorPublicWorkshops(mentorId: string): Promise<MentorWorkshopEntity[]>;
+  findPublicMentors(filters?: {
+    domain?: string;
+    topic?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<MentorEntity[]>;
 }
 

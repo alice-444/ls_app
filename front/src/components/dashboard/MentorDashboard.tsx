@@ -13,6 +13,9 @@ import {
   Inbox,
   Calendar,
   Coins,
+  Check,
+  X,
+  TrendingUp,
 } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import {
@@ -22,6 +25,12 @@ import {
 } from "@/lib/dashboard-utils";
 import { AllWorkshopRequestsDialog } from "./AllWorkshopRequestsDialog";
 import { StatusBadge } from "./StatusBadge";
+import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
+import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
+
+import RollingNumber from "@/components/ui/RollingNumber";
 
 interface Connection {
   connectionId: string;
@@ -51,7 +60,12 @@ interface WorkshopRequest {
   description?: string;
   status: string;
   preferredDate: string | Date | null;
+  preferredTime?: string | null;
+  apprenticeName?: string;
 }
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info, Lock } from "lucide-react";
 
 interface MentorDashboardProps {
   readonly mentorStats: {
@@ -62,6 +76,7 @@ interface MentorDashboardProps {
   readonly acceptedConnections: Connection[] | undefined;
   readonly mentorWorkshopRequests: WorkshopRequest[] | undefined;
   readonly mentorWorkshops: WorkshopItem[] | undefined;
+  readonly userStatus?: string;
 }
 
 export function MentorDashboard({
@@ -70,6 +85,7 @@ export function MentorDashboard({
   acceptedConnections,
   mentorWorkshopRequests,
   mentorWorkshops,
+  userStatus,
 }: MentorDashboardProps) {
   const router = useRouter();
   const [mentorCalendarDate, setMentorCalendarDate] = useState(new Date());
@@ -77,6 +93,23 @@ export function MentorDashboard({
     "month" | "week" | "day" | "agenda"
   >("month");
   const [showAllRequestsDialog, setShowAllRequestsDialog] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<WorkshopRequest | null>(null);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+
+  const utils = trpc.useUtils();
+
+  const rejectMutation = trpc.mentor.rejectRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande refusée");
+      utils.mentor.getReceivedRequests.invalidate();
+      setShowRejectDialog(false);
+      setSelectedRequest(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erreur lors du refus");
+    },
+  });
 
   const navigateCalendar = createNavigateCalendar(
     mentorCalendarDate,
@@ -97,9 +130,10 @@ export function MentorDashboard({
               <p className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-white">
                 Crédits gagnés
               </p>
+
               <div className="flex items-end gap-2 sm:gap-4 mb-4 sm:mb-6">
                 <p className="text-2xl sm:text-[28px] lg:text-[32px] font-medium leading-none">
-                  {mentorStats?.creditsEarned || 0}{" "}
+                  <RollingNumber value={mentorStats?.creditsEarned || 0} />{" "}
                   <span className="text-sm sm:text-base lg:text-[18px]">
                     crédits
                   </span>
@@ -113,14 +147,24 @@ export function MentorDashboard({
                   </div>
                 </div>
               </div>
-              <Button
-                variant="secondary"
-                className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-[#d6dae4]"
-                onClick={() => router.push("/my-workshops")}
-              >
-                Voir mes ateliers
-                <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2" />
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="secondary"
+                  className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-[#d6dae4]"
+                  onClick={() => router.push("/my-workshops")}
+                >
+                  Voir mes ateliers
+                  <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full text-white hover:bg-white/10 hover:text-white rounded-[32px] h-8 sm:h-9 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
+                  onClick={() => router.push("/mentor/analytics")}
+                >
+                  Analyse des gains
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -361,12 +405,36 @@ export function MentorDashboard({
                                 {formatWorkshopDate(request.preferredDate)}
                               </p>
                             </div>
-                            <div className="shrink-0">
-                              {request.status === "ACCEPTED" ||
-                              request.status === "PENDING" ||
-                              request.status === "REJECTED" ? (
+                            <div className="shrink-0 flex items-center gap-2">
+                              {request.status === "PENDING" ? (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    className="bg-green-600 hover:bg-green-700 text-white rounded-[32px] h-8 px-3"
+                                    onClick={() => {
+                                      setSelectedRequest(request);
+                                      setShowAcceptDialog(true);
+                                    }}
+                                  >
+                                    <Check className="h-4 w-4 mr-1" />
+                                    Accepter
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600 border-red-200 hover:bg-red-50 rounded-[32px] h-8 px-3"
+                                    onClick={() => {
+                                      setSelectedRequest(request);
+                                      setShowRejectDialog(true);
+                                    }}
+                                  >
+                                    <X className="h-4 w-4 mr-1" />
+                                    Refuser
+                                  </Button>
+                                </>
+                              ) : (
                                 <StatusBadge status={request.status} />
-                              ) : null}
+                              )}
                             </div>
                           </div>
                         ))}
@@ -536,6 +604,35 @@ export function MentorDashboard({
         onOpenChange={setShowAllRequestsDialog}
         requests={mentorWorkshopRequests}
       />
+
+      {selectedRequest && (
+        <>
+          <AcceptWorkshopRequestDialog
+            open={showAcceptDialog}
+            onOpenChange={setShowAcceptDialog}
+            requestId={selectedRequest.id}
+            requestTitle={selectedRequest.title}
+            preferredDate={
+              selectedRequest.preferredDate
+                ? new Date(selectedRequest.preferredDate)
+                : null
+            }
+            preferredTime={selectedRequest.preferredTime}
+            onSuccess={() => {
+              utils.mentor.getReceivedRequests.invalidate();
+              utils.workshop.getMyWorkshops.invalidate();
+            }}
+          />
+          <RejectWorkshopRequestDialog
+            open={showRejectDialog}
+            onOpenChange={setShowRejectDialog}
+            onConfirm={(reason) => rejectMutation.mutate({ requestId: selectedRequest.id, reason })}
+            isSubmitting={rejectMutation.isPending}
+            apprenticeName={selectedRequest.apprenticeName}
+            workshopTitle={selectedRequest.title}
+          />
+        </>
+      )}
     </>
   );
 }

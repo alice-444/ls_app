@@ -2,8 +2,13 @@ import type { INotificationService } from "../../../notifications/services/notif
 import type { IEmailService } from "../../../email/services/email.service.interface";
 import type { IWorkshopRequestRepository } from "../../repositories/workshop-request.repository.interface";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
-import { WorkshopEmailTemplates } from "../../../workshops/services/email/workshop-email.templates";
+import { renderEmailTemplate } from "../../../email/utils/render-email";
+import { WorkshopRequestAcceptedEmail } from "../../../email/templates/WorkshopRequestAccepted";
+import { WorkshopRequestRejectedEmail } from "../../../email/templates/WorkshopRequestRejected";
+import * as React from "react";
 import { logger } from "../../../common/logger";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export interface IWorkshopRequestNotificationService {
   notifyMentorOfNewRequest(
@@ -22,7 +27,8 @@ export interface IWorkshopRequestNotificationService {
   notifyAndEmailRejection(
     requestId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
+    reason?: string | null
   ): Promise<void>;
 
   notifyCancellation(
@@ -57,17 +63,17 @@ export class WorkshopRequestNotificationService
   ): Promise<void> {
     if (!this.notificationService) return;
 
-    const requestWithRelations = workshopRequest.mentor?.user?.id
+    const requestWithRelations = workshopRequest.mentor?.id
       ? workshopRequest
       : await this.workshopRequestRepository.findById(workshopRequest.id);
 
-    if (!requestWithRelations?.mentor?.user?.id) return;
+    if (!requestWithRelations?.mentor?.id) return;
 
     const apprenticeName =
-      requestWithRelations.apprentice?.user?.name || "un apprenti";
+      requestWithRelations.apprentice?.name || "un apprenti";
 
     await this.notificationService.createNotification(
-      requestWithRelations.mentor.user.id,
+      requestWithRelations.mentor.id,
       {
         type: "workshop",
         title: "Nouvelle demande d'atelier",
@@ -93,11 +99,12 @@ export class WorkshopRequestNotificationService
   async notifyAndEmailRejection(
     requestId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
+    reason?: string | null
   ): Promise<void> {
     await Promise.all([
-      this.notifyApprenticeOfRejection(requestId, requestTitle, userId),
-      this.sendRejectionEmail(requestId, requestTitle),
+      this.notifyApprenticeOfRejection(requestId, requestTitle, userId, reason),
+      this.sendRejectionEmail(requestId, requestTitle, reason),
     ]);
   }
 
@@ -112,11 +119,11 @@ export class WorkshopRequestNotificationService
     const requestWithRelations =
       await this.workshopRequestRepository.findById(requestId);
 
-    if (isApprentice && requestWithRelations?.mentor?.user?.id) {
+    if (isApprentice && requestWithRelations?.mentor?.id) {
       const apprenticeName =
-        requestWithRelations.apprentice?.user?.name || "un apprenti";
+        requestWithRelations.apprentice?.name || "un apprenti";
       await this.notificationService.createNotification(
-        requestWithRelations.mentor.user.id,
+        requestWithRelations.mentor.id,
         {
           type: "workshop",
           title: "Demande d'atelier annulée",
@@ -125,11 +132,11 @@ export class WorkshopRequestNotificationService
         },
         userId
       );
-    } else if (!isApprentice && requestWithRelations?.apprentice?.user?.id) {
+    } else if (!isApprentice && requestWithRelations?.apprentice?.id) {
       const mentorName =
-        requestWithRelations.mentor?.user?.name || "le mentor";
+        requestWithRelations.mentor?.name || "le mentor";
       await this.notificationService.createNotification(
-        requestWithRelations.apprentice.user.id,
+        requestWithRelations.apprentice.id,
         {
           type: "workshop",
           title: "Demande d'atelier annulée",
@@ -152,10 +159,10 @@ export class WorkshopRequestNotificationService
     const requestWithRelations =
       await this.workshopRequestRepository.findById(requestId);
 
-    if (!requestWithRelations?.mentor?.user?.id) return;
+    if (!requestWithRelations?.mentor?.id) return;
 
     const apprenticeName =
-      requestWithRelations.apprentice?.user?.name || "un apprenti";
+      requestWithRelations.apprentice?.name || "un apprenti";
 
     const changes: string[] = [];
     if (input.title !== undefined) changes.push("le titre");
@@ -172,7 +179,7 @@ export class WorkshopRequestNotificationService
         : " a mis à jour";
 
     await this.notificationService.createNotification(
-      requestWithRelations.mentor.user.id,
+      requestWithRelations.mentor.id,
       {
         type: "workshop",
         title: "Demande d'atelier modifiée",
@@ -197,7 +204,7 @@ export class WorkshopRequestNotificationService
     const requestWithRelations =
       await this.workshopRequestRepository.findById(requestId);
 
-    if (!requestWithRelations?.apprentice?.user?.id) {
+    if (!requestWithRelations?.apprentice?.id) {
       logger.warn("Cannot create notification: apprentice user not found", {
         requestId,
       });
@@ -205,12 +212,12 @@ export class WorkshopRequestNotificationService
     }
 
     const workshopDetails = await this.workshopRepository.findById(workshopId);
-    const mentorName = requestWithRelations.mentor?.user?.name || "le mentor";
+    const mentorName = requestWithRelations.mentor?.name || "le mentor";
     const workshopTitle = workshopDetails?.title || requestTitle;
 
     const notificationResult =
       await this.notificationService.createNotification(
-        requestWithRelations.apprentice.user.id,
+        requestWithRelations.apprentice.id,
         {
           type: "workshop",
           title: "Demande d'atelier acceptée",
@@ -238,36 +245,34 @@ export class WorkshopRequestNotificationService
       const requestWithRelations =
         await this.workshopRequestRepository.findById(requestId);
 
-      if (!requestWithRelations?.apprentice?.user?.id) return;
-
-      const { container } = await import("../../../di/container");
-      const apprenticeUser = await container.prisma.user.findUnique({
-        where: { id: requestWithRelations.apprentice.user.id },
-        select: { email: true, name: true },
-      });
-
-      if (!apprenticeUser?.email) return;
+      const apprentice = requestWithRelations?.apprentice;
+      if (!apprentice?.email || !requestWithRelations) return;
 
       const workshopDetails =
         await this.workshopRepository.findById(workshopId);
       const mentorName =
-        requestWithRelations.mentor?.user?.name || "le mentor";
+        requestWithRelations.mentor?.name || "le mentor";
 
-      const template = WorkshopEmailTemplates.requestAccepted({
-        recipientName: apprenticeUser.name || "Apprenti",
-        mentorName,
-        workshopTitle: workshopDetails?.title || requestTitle,
-        workshopDate: workshopDetails?.date || null,
-        workshopTime: workshopDetails?.time || null,
-        workshopDuration: workshopDetails?.duration || null,
-        workshopLocation: workshopDetails?.location || null,
-        isVirtual: workshopDetails?.isVirtual || false,
-        workshopId,
-      });
+      const formattedDate = workshopDetails?.date 
+        ? new Date(workshopDetails.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+        : "Date à confirmer";
+
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopRequestAcceptedEmail, {
+          userName: apprentice.name || "Apprenti",
+          mentorName,
+          workshopTitle: workshopDetails?.title || requestTitle,
+          date: formattedDate,
+          time: workshopDetails?.time || "Heure à confirmer",
+          workshopUrl: `${APP_URL}/workshop/${workshopId}`,
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
-        to: apprenticeUser.email,
-        ...template,
+        to: apprentice.email,
+        subject: `Demande acceptée - ${workshopDetails?.title || requestTitle}`,
+        html,
+        text,
       });
 
       if (!emailResult.ok) {
@@ -284,22 +289,27 @@ export class WorkshopRequestNotificationService
   private async notifyApprenticeOfRejection(
     requestId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
+    reason?: string | null
   ): Promise<void> {
     if (!this.notificationService) return;
 
     const requestWithRelations =
       await this.workshopRequestRepository.findById(requestId);
 
-    if (!requestWithRelations?.apprentice?.user?.id) return;
+    if (!requestWithRelations?.apprentice?.id) return;
 
-    const mentorName = requestWithRelations.mentor?.user?.name || "le mentor";
+    const mentorName = requestWithRelations.mentor?.name || "le mentor";
+    const message = reason 
+      ? `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}". Motif : ${reason}`
+      : `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}".`;
+
     await this.notificationService.createNotification(
-      requestWithRelations.apprentice.user.id,
+      requestWithRelations.apprentice.id,
       {
         type: "workshop",
         title: "Demande d'atelier rejetée",
-        message: `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}".`,
+        message,
         actionUrl: `/workshop-room`,
       },
       userId
@@ -308,7 +318,8 @@ export class WorkshopRequestNotificationService
 
   private async sendRejectionEmail(
     requestId: string,
-    requestTitle: string
+    requestTitle: string,
+    reason?: string | null
   ): Promise<void> {
     if (!this.emailService) return;
 
@@ -316,28 +327,27 @@ export class WorkshopRequestNotificationService
       const requestWithRelations =
         await this.workshopRequestRepository.findById(requestId);
 
-      if (!requestWithRelations?.apprentice?.user?.id) return;
-
-      const { container } = await import("../../../di/container");
-      const apprenticeUser = await container.prisma.user.findUnique({
-        where: { id: requestWithRelations.apprentice.user.id },
-        select: { email: true, name: true },
-      });
-
-      if (!apprenticeUser?.email) return;
+      const apprentice = requestWithRelations?.apprentice;
+      if (!apprentice?.email || !requestWithRelations) return;
 
       const mentorName =
-        requestWithRelations.mentor?.user?.name || "le mentor";
+        requestWithRelations.mentor?.name || "le mentor";
 
-      const template = WorkshopEmailTemplates.requestRejected({
-        recipientName: apprenticeUser.name || "Apprenti",
-        mentorName,
-        workshopTitle: requestTitle,
-      });
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopRequestRejectedEmail, {
+          userName: apprentice.name || "Apprenti",
+          mentorName,
+          workshopTitle: requestTitle,
+          reason,
+          workshopsUrl: `${APP_URL}/workshop-room`,
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
-        to: apprenticeUser.email,
-        ...template,
+        to: apprentice.email,
+        subject: `Mise à jour concernant votre demande - ${requestTitle}`,
+        html,
+        text,
       });
 
       if (!emailResult.ok) {

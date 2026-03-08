@@ -7,5 +7,11 @@ export interface IMentorContactService {
     message: string,
     subject?: string
   ): Promise<Result<{ success: boolean }>>;
+
+  contactMentor(
+    apprenticeId: string,
+    mentorId: string,
+    message?: string
+  ): Promise<Result<{ conversationId: string }>>;
 }
 

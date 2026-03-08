@@ -122,22 +122,22 @@ Enable users to block or report other users so that they can protect themselves 
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Block user → user blocked, no messages
-- [ ] Unblock user → user restored
-- [ ] Report user → report created
-- [ ] Blocked list in settings
-- [ ] Blocked users filtered from lists
+- [x] Block user → user blocked, no messages
+- [x] Unblock user → user restored
+- [x] Report user → report created
+- [x] Blocked list in settings
+- [x] Blocked users filtered from lists
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Block check in messaging, connection
-- [ ] No self-block, no duplicate block
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Block check in messaging, connection
+- [x] No self-block, no duplicate block
 
 ### Security Checklist
-- [ ] Cannot block self
-- [ ] Report validation (reason required)
-- [ ] Rate limit on report
+- [x] Cannot block self
+- [x] Report validation (reason required)
+- [x] Rate limit on report
 
 ### Testing Steps
 1. Block user → try messaging → blocked

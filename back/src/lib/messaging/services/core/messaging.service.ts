@@ -10,8 +10,10 @@ import type {
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IMessageValidationService } from "../validation/message-validation.service.interface";
 import type { IMessageEnrichmentService } from "../enrichment/message-enrichment.service.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
+import type { IEmailService } from "../../../email/services/email.service.interface";
 import { ConversationService } from "./conversation.service";
 import { MessageOperationsService } from "./message-operations.service";
 
@@ -30,8 +32,10 @@ export class MessagingService implements IMessagingService {
     validationService: IMessageValidationService,
     enrichmentService: IMessageEnrichmentService,
     userBlockService: IUserBlockService,
+    notificationService: INotificationService,
     workshopRepository?: IWorkshopRepository,
-    prismaClient?: PrismaClient
+    prismaClient?: PrismaClient,
+    emailService?: IEmailService
   ) {
     this.conversationService = new ConversationService(
       appUserRepository,
@@ -49,7 +53,9 @@ export class MessagingService implements IMessagingService {
       messageRepository,
       validationService,
       enrichmentService,
-      userBlockService
+      userBlockService,
+      notificationService,
+      emailService
     );
   }
 

@@ -1,13 +1,52 @@
 "use client";
 
-import { useState } from "react";
-import { Bell } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bell, Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
 
 export function NotificationsSection() {
-  const [notifications, setNotifications] = useState(true);
+  const { data: profile, isLoading, refetch } = trpc.user.getProfile.useQuery();
+  
+  const updateProfileMutation = trpc.accountSettings.updateProfile.useMutation({
+    onSuccess: () => {
+      toast.success("Préférences de notifications mises à jour");
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erreur lors de la mise à jour");
+    }
+  });
+
+  const [inAppNotifications, setInAppNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
+
+  useEffect(() => {
+    if (profile) {
+      setInAppNotifications(profile.inAppNotifications ?? true);
+      setEmailNotifications(profile.emailNotifications ?? true);
+    }
+  }, [profile]);
+
+  const handleInAppChange = (checked: boolean) => {
+    setInAppNotifications(checked);
+    updateProfileMutation.mutate({ inAppNotifications: checked });
+  };
+
+  const handleEmailChange = (checked: boolean) => {
+    setEmailNotifications(checked);
+    updateProfileMutation.mutate({ emailNotifications: checked });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-ls-muted" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -31,7 +70,11 @@ export function NotificationsSection() {
               Recevoir des notifications dans l&apos;application
             </p>
           </div>
-          <Switch checked={notifications} onCheckedChange={setNotifications} />
+          <Switch 
+            checked={inAppNotifications} 
+            onCheckedChange={handleInAppChange}
+            disabled={updateProfileMutation.isPending}
+          />
         </div>
 
         <div className="flex items-center justify-between">
@@ -45,7 +88,8 @@ export function NotificationsSection() {
           </div>
           <Switch
             checked={emailNotifications}
-            onCheckedChange={setEmailNotifications}
+            onCheckedChange={handleEmailChange}
+            disabled={updateProfileMutation.isPending}
           />
         </div>
       </div>

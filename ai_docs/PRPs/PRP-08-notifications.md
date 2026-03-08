@@ -115,17 +115,17 @@ Enable users to receive in-app notifications in real time (e.g. new request, mes
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Bell shows unread count
-- [ ] Dropdown shows recent notifications
-- [ ] Click notification → mark read, navigate to actionUrl
-- [ ] New notification arrives in real time
-- [ ] Full list page loads
+- [x] Bell shows unread count
+- [x] Dropdown shows recent notifications
+- [x] Click notification → mark read, navigate to actionUrl
+- [x] New notification arrives in real time
+- [x] Full list page loads
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Socket subscription on mount
-- [ ] Loading states
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Socket subscription on mount
+- [x] Loading states
 
 ### Testing Steps
 1. Trigger notification (e.g. create request) → mentor sees it

@@ -27,7 +27,7 @@ export function TippingModal({
   const [customAmount, setCustomAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
-  const { data: creditBalance, isLoading: isLoadingBalance } = trpc.user.getCreditBalance.useQuery();
+  const { data: creditBalance, isLoading: isLoadingBalance } = trpc.credits.getBalance.useQuery();
 
   const sendTipMutation = trpc.workshopFeedback.sendTip.useMutation({
     onSuccess: () => {

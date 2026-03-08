@@ -13,6 +13,7 @@ import {
   getStatusBadge,
   formatDate,
   formatTime,
+  isWorkshopEnded,
 } from "@/lib/workshop-utils";
 import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
 import {
@@ -83,6 +84,7 @@ export default function MyWorkshopsPage() {
     deleteMutation,
     publishMutation,
     unpublishMutation,
+    confirmAttendanceMutation,
     rejectRequest,
     utils,
     handleAcceptRequest,
@@ -91,6 +93,7 @@ export default function MyWorkshopsPage() {
     handleDelete,
     handlePublish,
     handleUnpublish,
+    handleConfirmComplete,
   } = useMyWorkshops();
 
   if (isSessionLoading || isLoading || isLoadingRole) {
@@ -435,6 +438,25 @@ export default function MyWorkshopsPage() {
                           <span className="lg:hidden xl:inline">Dépublier</span>
                         </Button>
                       )}
+                      {workshop.status === "PUBLISHED" &&
+                        isWorkshopEnded(
+                          workshop.date,
+                          workshop.time,
+                          workshop.duration
+                        ) && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handleConfirmComplete(workshop.id)}
+                            disabled={confirmAttendanceMutation.isPending}
+                            className="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 text-white rounded-[32px] shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                          >
+                            <CheckCircle className="w-4 h-4 lg:mr-0 xl:mr-2" />
+                            <span className="lg:hidden xl:inline">
+                              Terminer
+                            </span>
+                          </Button>
+                        )}
                       <Button
                         variant="destructive"
                         size="sm"

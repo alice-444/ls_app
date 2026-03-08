@@ -133,24 +133,24 @@ return handleServiceResult(result);
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Landing shows Connexion, Inscription links
-- [ ] Login success → redirect dashboard/onboarding
-- [ ] Login invalid credentials → error message
-- [ ] Sign-up success → redirect onboarding/dashboard
-- [ ] Onboarding role selection → redirect, role persisted
-- [ ] Next login skips onboarding if role set
+- [x] Landing shows Connexion, Inscription links
+- [x] Login success → redirect dashboard/onboarding
+- [x] Login invalid credentials → error message
+- [x] Sign-up success → redirect onboarding/dashboard
+- [x] Onboarding role selection → redirect, role persisted
+- [x] Next login skips onboarding if role set
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] No console errors
-- [ ] Loading states on forms
-- [ ] Error handling with toast
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] No console errors
+- [x] Loading states on forms
+- [x] Error handling with toast
 
 ### Security Checklist
-- [ ] Input validation (zod)
-- [ ] Rate limiting on sign-up/sign-in
-- [ ] No password in logs
+- [x] Input validation (zod)
+- [x] Rate limiting on sign-up/sign-in
+- [x] No password in logs
 
 ### Testing Steps
 1. Visit `/` → see CTAs

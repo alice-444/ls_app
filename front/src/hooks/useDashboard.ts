@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
-import { getUserRole } from "@/lib/api-client";
+import { getUserData } from "@/lib/api-client";
 import { toast } from "sonner";
 import { calculateEndTime, calculateCountdown } from "@/lib/workshop-utils";
 
@@ -15,6 +15,7 @@ interface WorkshopRequest {
   id: string;
   title: string;
   status: string;
+  rejectionReason?: string | null;
   [key: string]: unknown;
 }
 
@@ -29,11 +30,14 @@ export function useDashboard() {
   const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
 
-  const { data: actualUserRole } = useQuery({
-    queryKey: ["userRole", session?.user?.id],
-    queryFn: getUserRole,
+  const { data: userData } = useQuery({
+    queryKey: ["userData", session?.user?.id],
+    queryFn: getUserData,
     enabled: !!session?.user?.id,
   });
+
+  const actualUserRole = userData?.role || null;
+  const userStatus = userData?.status || "ACTIVE";
 
   const [userRole, setUserRole] = useState<UserRole>(() =>
     mapServerRole(actualUserRole || null)
@@ -44,8 +48,13 @@ export function useDashboard() {
       router.replace("/admin");
       return;
     }
-    if (actualUserRole) setUserRole(mapServerRole(actualUserRole));
-  }, [actualUserRole, router]);
+    if (actualUserRole) {
+      setUserRole(mapServerRole(actualUserRole));
+    } else if (session && !isPending && actualUserRole === null) {
+      // If user is logged in but has no role, redirect to onboarding
+      router.replace("/onboarding");
+    }
+  }, [actualUserRole, session, isPending, router]);
 
   const isMentor =
     (userRole === "mentor" || userRole === "both") &&
@@ -56,7 +65,7 @@ export function useDashboard() {
 
   // --- Apprentice data ---
   const { data: workshopRequests, refetch: refetchApprenticeRequests } =
-    trpc.mentor.getMyWorkshopRequests.useQuery(undefined, {
+    trpc.apprentice.getMyRequests.useQuery(undefined, {
       enabled: !!session && userRole === "apprenant" && isApprenant,
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
@@ -79,8 +88,9 @@ export function useDashboard() {
         }
         if (prevReq.status === "PENDING" && req.status === "REJECTED") {
           toast.error(`Votre demande "${req.title}" a été refusée`, {
-            description:
-              "Vous pouvez modifier et renvoyer votre demande ou choisir un autre mentor.",
+            description: req.rejectionReason
+              ? `Motif: ${req.rejectionReason}`
+              : "Vous pouvez modifier et renvoyer votre demande ou choisir un autre mentor.",
             duration: 8000,
           });
         }
@@ -93,7 +103,7 @@ export function useDashboard() {
   }, [workshopRequests]);
 
   const { data: confirmedWorkshops, refetch: refetchConfirmedWorkshops } =
-    trpc.workshop.getConfirmedWorkshops.useQuery(undefined, {
+    trpc.apprentice.getMyWorkshops.useQuery(undefined, {
       enabled: !!session && isApprenant,
     });
 
@@ -130,10 +140,9 @@ export function useDashboard() {
     },
   });
 
-  const cancelRequestMutation = trpc.mentor.cancelWorkshopRequest.useMutation({
+  const cancelRequestMutation = trpc.apprentice.cancelRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande annulée avec succès");
-      trpc.useUtils;
       refetchApprenticeRequests();
     },
     onError: (error: { message?: string }) => {
@@ -148,7 +157,7 @@ export function useDashboard() {
 
   // --- Mentor data ---
   const { data: mentorWorkshopRequests } =
-    trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
+    trpc.mentor.getReceivedRequests.useQuery(undefined, {
       enabled: !!session && isMentor,
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
@@ -292,6 +301,7 @@ export function useDashboard() {
     queryClient,
     userRole,
     actualUserRole,
+    userStatus,
     isMentor,
     isApprenant,
 

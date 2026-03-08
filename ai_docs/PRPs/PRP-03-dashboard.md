@@ -116,18 +116,18 @@ trpc.apprentice.getMyRequests.useQuery();
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Apprenant sees pending requests, workshops
-- [ ] Mentor sees received requests
-- [ ] Mentor can accept/refuse from dashboard
-- [ ] Links/buttons functional (cancel request, open workshop)
-- [ ] Credit balance shown if applicable
+- [x] Apprenant sees pending requests, workshops
+- [x] Mentor sees received requests
+- [x] Mentor can accept/refuse from dashboard
+- [x] Links/buttons functional (cancel request, open workshop)
+- [x] Credit balance shown if applicable
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Loading states
-- [ ] Error handling
-- [ ] Role-based redirect (no APPRENANT on mentor view)
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Loading states
+- [x] Error handling
+- [x] Role-based redirect (no APPRENANT on mentor view)
 
 ### Testing Steps
 1. Login as apprenant → dashboard with requests/workshops

@@ -114,12 +114,12 @@ export async function POST(req: NextRequest) {
       });
 
       try {
-        const user = await container.prisma.user.findUnique({
-          where: { id: userId },
+        const appUser = await (container.prisma as any).user.findUnique({
+          where: { userId },
           select: { email: true, name: true },
         });
 
-        if (user?.email) {
+        if (appUser?.email) {
           const amount = checkout.amount_total
             ? (checkout.amount_total / 100).toFixed(2)
             : checkout.metadata?.amount || "N/A";
@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
 
           const emailContent = await renderEmailTemplate(
             React.createElement(CreditPurchaseConfirmation, {
-              userName: user.name || "Utilisateur",
+              userName: appUser.name ?? "Utilisateur",
               creditsAmount,
               amount,
               currency,
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
           );
 
           const emailResult = await container.emailService.sendEmail({
-            to: user.email,
+            to: appUser.email,
             subject: `Confirmation d'achat - ${creditsAmount} crédits`,
             html: emailContent.html,
             text: emailContent.text,
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
           if (!emailResult.ok) {
             console.error("Failed to send purchase confirmation email", {
               userId,
-              email: user.email,
+              email: appUser.email,
               error: emailResult.error,
             });
           }

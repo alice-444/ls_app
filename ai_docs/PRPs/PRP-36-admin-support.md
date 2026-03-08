@@ -112,22 +112,22 @@ Enable admins to view and manage support requests (support_request) so that they
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Admin sees list of support requests
-- [ ] Filter by status
-- [ ] View full detail
-- [ ] Update status
-- [ ] Download attachments
-- [ ] Non-admin cannot access
+- [x] Admin sees list of support requests
+- [x] Filter by status
+- [x] View full detail
+- [x] Update status
+- [x] Download attachments
+- [x] Non-admin cannot access
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Role check on backend
-- [ ] Attachment auth check
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Role check on backend
+- [x] Attachment auth check
 
 ### Security Checklist
-- [ ] ADMIN role required
-- [ ] No bypass for attachments
+- [x] ADMIN role required
+- [x] No bypass for attachments
 
 ### Testing Steps
 1. Submit support request (user)

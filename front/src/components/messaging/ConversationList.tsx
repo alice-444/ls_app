@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { MessageSquare, Plus, Search, Pin } from "lucide-react";
@@ -37,6 +37,16 @@ export function ConversationList() {
     userId: string;
     userName: string;
   } | null>(null);
+
+  const otherUserIds = useMemo(() => 
+    localConversations.map(c => c.otherUserId),
+    [localConversations]
+  );
+
+  const { data: presenceMap } = trpc.messaging.getMultipleUsersPresence.useQuery(
+    { userIds: otherUserIds },
+    { enabled: otherUserIds.length > 0, refetchInterval: 60000 }
+  );
 
   const { data: acceptedConnections } =
     trpc.connection.getAcceptedConnections.useQuery(undefined, {
@@ -123,18 +133,22 @@ export function ConversationList() {
         const index = prev.findIndex(
           (c) => c.conversationId === updatedConversation.conversationId
         );
+        let newConversations: Conversation[];
         if (index >= 0) {
-          const newConversations = [...prev];
+          newConversations = [...prev];
           newConversations[index] = updatedConversation;
-          return newConversations.sort(
-            (a, b) =>
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
+        } else {
+          newConversations = [updatedConversation, ...prev];
         }
-        return [updatedConversation, ...prev].sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
+
+        return newConversations.sort((a, b) => {
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          
+          const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : new Date(a.updatedAt).getTime();
+          const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : new Date(b.updatedAt).getTime();
+          return timeB - timeA;
+        });
       });
     };
 
@@ -195,7 +209,10 @@ export function ConversationList() {
   const sortedConversations = [...filteredConversations].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
-    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    
+    const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : new Date(a.updatedAt).getTime();
+    const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : new Date(b.updatedAt).getTime();
+    return timeB - timeA;
   });
 
   const totalPages = Math.ceil(
@@ -268,16 +285,21 @@ export function ConversationList() {
               <p>Essayez de modifier ta recherche</p>
             </div>
           ) : (
-            paginatedConversations.map((conversation) => (
-              <ConversationRow
-                key={conversation.conversationId}
-                conversation={conversation}
-                onTogglePin={handleTogglePin}
-                onDelete={(id) => deleteMutation.mutate({ conversationId: id })}
-                onBlockUser={handleBlockUser}
-                isDeleting={deleteMutation.isPending}
-              />
-            ))
+            paginatedConversations.map((conversation) => {
+              const presence = presenceMap?.[conversation.otherUserId];
+              return (
+                <ConversationRow
+                  key={conversation.conversationId}
+                  conversation={conversation}
+                  onTogglePin={handleTogglePin}
+                  onDelete={(id) => deleteMutation.mutate({ conversationId: id })}
+                  onBlockUser={handleBlockUser}
+                  isDeleting={deleteMutation.isPending}
+                  isOnline={presence?.isOnline}
+                  lastSeen={presence?.lastSeen}
+                />
+              );
+            })
           )}
         </div>
 

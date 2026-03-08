@@ -15,23 +15,33 @@ import {
   createErrorContext,
 } from "../../../common/error-handler";
 import { isValidTimeFormat } from "../../utils/workshop-helpers";
-import { WorkshopEmailTemplates } from "../email/workshop-email.templates";
+import { renderEmailTemplate } from "../../../email/utils/render-email";
+import { WorkshopCancelledEmail } from "../../../email/templates/WorkshopCancelledEmail";
+import * as React from "react";
+import type { ICreditService } from "../../../credits/services/credit.service.interface";
+import type { PrismaClient } from '@/lib/prisma';
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   private readonly workshopNotificationService: WorkshopNotificationService;
   private readonly conflictChecker: ISchedulingConflictChecker;
+  private readonly WORKSHOP_REQUEST_COST = 10;
 
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly accessGuard: IWorkshopAccessGuard,
     private readonly dbNotificationService?: INotificationService,
     private readonly emailService?: IEmailService,
-    appUserRepository?: any
+    appUserRepository?: any,
+    private readonly creditService?: ICreditService,
+    private readonly prisma?: PrismaClient
   ) {
     this.workshopNotificationService = new WorkshopNotificationService(
       this.workshopRepository,
       this.dbNotificationService,
-      appUserRepository
+      appUserRepository,
+      this.emailService
     );
     this.conflictChecker = new SchedulingConflictChecker(this.workshopRepository);
   }
@@ -60,7 +70,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
         return failure("Atelier non trouvé", 404);
       }
 
-      const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+      const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       const isMentor =
         accessCheck.ok &&
         accessCheck.data.appUser !== null &&
@@ -125,9 +135,9 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     if (input.location !== undefined) changes.push("le lieu");
 
     if (changes.length > 0) {
-      const mentorName = updatedWorkshop.creator?.user?.name || "le mentor";
+      const mentorName = updatedWorkshop.creator?.name || "le mentor";
       await this.dbNotificationService!.createNotification(
-        updatedWorkshop.apprentice.user.id,
+        updatedWorkshop.apprentice.id,
         {
           type: "workshop",
           title: "Modification de l'atelier",
@@ -160,7 +170,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
 
       let isMentor = false;
       if (!isApprentice) {
-        const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+        const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
         isMentor =
           accessCheck.ok &&
           accessCheck.data.appUser !== null &&
@@ -203,18 +213,38 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     workshop: any,
     cancellationReason?: string
   ): Promise<Result<{ success: boolean }>> {
-    await this.workshopRepository.removeApprentice(workshopId);
+    if (this.prisma && this.creditService && workshop.apprenticeId) {
+      await this.prisma.$transaction(async (tx) => {
+        await this.workshopRepository.removeApprentice(workshopId, tx);
+
+        const apprentice = await (tx as any).user.findUnique({
+          where: { id: workshop.apprenticeId },
+          select: { userId: true },
+        });
+
+        if (apprentice) {
+          await this.creditService!.refundCreditsInTransaction(
+            apprentice.userId,
+            this.WORKSHOP_REQUEST_COST,
+            `Remboursement participation annulée: ${workshop.title}`,
+            tx
+          );
+        }
+      });
+    } else {
+      await this.workshopRepository.removeApprentice(workshopId);
+    }
 
     if (this.dbNotificationService) {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
-      if (cancelledWorkshop?.creator?.user?.id) {
-        const apprenticeName = cancelledWorkshop.apprentice?.user?.name || "un apprenti";
+      if (cancelledWorkshop?.creator?.id) {
+        const apprenticeName = cancelledWorkshop.apprentice?.name || "un apprenti";
         const message = cancellationReason
           ? `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}". Raison: ${cancellationReason}`
           : `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}".`;
 
         await this.dbNotificationService.createNotification(
-          cancelledWorkshop.creator.user.id,
+          cancelledWorkshop.creator.id,
           {
             type: "workshop",
             title: "Participation annulée",
@@ -244,14 +274,34 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     workshopId: string,
     workshop: any
   ): Promise<Result<{ success: boolean }>> {
-    await this.workshopRepository.update(workshopId, { status: "CANCELLED" });
+    if (this.prisma && this.creditService && workshop.apprenticeId) {
+      await this.prisma.$transaction(async (tx) => {
+        await this.workshopRepository.update(workshopId, { status: "CANCELLED" }, tx);
+
+        const apprentice = await (tx as any).user.findUnique({
+          where: { id: workshop.apprenticeId },
+          select: { userId: true },
+        });
+
+        if (apprentice) {
+          await this.creditService!.refundCreditsInTransaction(
+            apprentice.userId,
+            this.WORKSHOP_REQUEST_COST,
+            `Remboursement atelier annulé par mentor: ${workshop.title}`,
+            tx
+          );
+        }
+      });
+    } else {
+      await this.workshopRepository.update(workshopId, { status: "CANCELLED" });
+    }
 
     if (this.dbNotificationService) {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
-      if (cancelledWorkshop?.apprentice?.user?.id) {
-        const mentorName = cancelledWorkshop.creator?.user?.name || "le mentor";
+      if (cancelledWorkshop?.apprentice?.id) {
+        const mentorName = cancelledWorkshop.creator?.name || "le mentor";
         await this.dbNotificationService.createNotification(
-          cancelledWorkshop.apprentice.user.id,
+          cancelledWorkshop.apprentice.id,
           {
             type: "workshop",
             title: "Atelier annulé",
@@ -275,29 +325,29 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   ): Promise<void> {
     try {
       const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
-      if (!cancelledWorkshop?.creator?.user?.id || !this.emailService) return;
+      const creator = cancelledWorkshop?.creator;
+      if (!cancelledWorkshop || !creator?.email || !this.emailService) return;
 
-      const { container } = await import("../../../di/container");
-      const mentorUser = await container.prisma.user.findUnique({
-        where: { id: cancelledWorkshop.creator.user.id },
-        select: { email: true, name: true },
-      });
+      const formatDate = (date: Date | null) => 
+        date ? new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : "Date non définie";
 
-      if (!mentorUser?.email) return;
-
-      const template = WorkshopEmailTemplates.cancellation({
-        recipientName: mentorUser.name || "Mentor",
-        apprenticeName: cancelledWorkshop.apprentice?.user?.name || "un apprenti",
-        workshopTitle: cancelledWorkshop.title,
-        workshopDate: cancelledWorkshop.date,
-        workshopTime: cancelledWorkshop.time,
-        workshopId,
-        cancellationReason,
-      });
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopCancelledEmail, {
+          userName: creator.name || "Mentor",
+          workshopTitle: cancelledWorkshop.title,
+          date: formatDate(cancelledWorkshop.date),
+          time: cancelledWorkshop.time || "Heure non définie",
+          workshopsUrl: `${APP_URL}/dashboard/workshops`,
+          cancelledByName: cancelledWorkshop.apprentice?.name || "Un apprenti",
+          reason: cancellationReason,
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
-        to: mentorUser.email,
-        ...template,
+        to: creator.email,
+        subject: `Participation annulée - ${cancelledWorkshop.title}`,
+        html,
+        text,
       });
 
       if (!emailResult.ok) {
@@ -329,7 +379,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
         return failure("Atelier non trouvé", 404);
       }
 
-      const accessCheck = await this.accessGuard.verifyProfAccess(userId);
+      const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       if (!accessCheck.ok) {
         return accessCheck;
       }

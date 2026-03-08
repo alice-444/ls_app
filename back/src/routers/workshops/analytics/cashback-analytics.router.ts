@@ -1,9 +1,49 @@
 import { z } from "zod";
-import { router, protectedProcedure, adminProcedure } from "../../../lib/trpc";
+import { router, protectedProcedure, adminProcedure, mentorProcedure } from "../../../lib/trpc";
 import { container } from "../../../lib/di/container";
 import { handleRouterResult } from "../../shared/router-helpers";
 
 export const cashbackAnalyticsRouter = router({
+  getSummary: mentorProcedure
+    .input(
+      z
+        .object({
+          from: z.coerce.date().optional(),
+          to: z.coerce.date().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const result = await container.workshopCashbackService.getSummary(
+        ctx.appUser.id,
+        input
+      );
+      return handleRouterResult(result, {
+        operation: "getSummary",
+        mentorId: ctx.appUser.id,
+      });
+    }),
+
+  getHistory: mentorProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().int().min(1).max(100).optional(),
+          cursor: z.string().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const result = await container.workshopCashbackService.getHistory(
+        ctx.appUser.id,
+        input
+      );
+      return handleRouterResult(result, {
+        operation: "getHistory",
+        mentorId: ctx.appUser.id,
+      });
+    }),
+
   getProcessingDelays: adminProcedure
     .input(
       z

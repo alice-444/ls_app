@@ -4,7 +4,7 @@ import { config } from "dotenv";
 // Charger .env depuis le répertoire back/ (indépendant du cwd)
 config({ path: path.resolve(__dirname, "../../../.env") });
 
-import { PrismaClient } from "../../../prisma/generated/client/client";
+import { PrismaClient } from '@/lib/prisma';
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { RepositoriesContainer } from "./repositories.container";
@@ -270,12 +270,20 @@ class DIContainer {
     return this._services.deleteAccountEnhancedService;
   }
 
+  get exportDataService() {
+    return this._services.exportDataService;
+  }
+
   get adminService() {
     return this._services.adminService;
   }
 
   get supportRequestService() {
     return this._services.supportRequestService;
+  }
+
+  get maintenanceService() {
+    return this._services.maintenanceService;
   }
 
   get prisma(): PrismaClient {

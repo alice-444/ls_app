@@ -3,10 +3,11 @@ import Image from "next/image";
 import { Instagram, Linkedin } from "lucide-react";
 
 const footerLinks = [
+  { href: "/info", label: "Informations" },
+  { href: "/help", label: "Aide" },
   { href: "/legal", label: "Mentions" },
   { href: "/terms", label: "CGU" },
   { href: "/privacy", label: "Confidentialité" },
-  { href: "/privacy", label: "Cookies" },
 ];
 
 const socialLinks = [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -76,14 +76,19 @@ export function RequestWorkshopDialog({
     },
   });
 
+  useEffect(() => {
+    if (!open) {
+      reset();
+      setIsSubmitting(false);
+    }
+  }, [open, reset]);
+
   const requestMutation = trpc.mentor.submitWorkshopRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande d'atelier envoyée avec succès !", {
         description: "Votre demande a été transmise au mentor.",
       });
-      reset();
       onOpenChange(false);
-      setIsSubmitting(false);
     },
     onError: (error: { message?: string }) => {
       toast.error(
@@ -112,13 +117,7 @@ export function RequestWorkshopDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto"
-        onClose={() => {
-          reset();
-          onOpenChange(false);
-        }}
-      >
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
@@ -224,10 +223,7 @@ export function RequestWorkshopDialog({
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                reset();
-                onOpenChange(false);
-              }}
+              onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
               Annuler

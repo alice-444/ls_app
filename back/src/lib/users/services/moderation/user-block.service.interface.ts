@@ -37,6 +37,6 @@ export interface IUserBlockService {
   >;
 
   getAllBlockedAppUserIds(
-    appUserId: string
+    userId: string
   ): Promise<Result<{ blockedByUser: Set<string>; blockedUser: Set<string> }>>;
 }

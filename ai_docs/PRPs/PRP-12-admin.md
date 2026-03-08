@@ -106,22 +106,22 @@ Enable admins to moderate mentor feedbacks (reviews) that have been reported, so
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Admin page loads (ADMIN role only)
-- [ ] Non-admin redirected or 403
-- [ ] List of reported feedbacks
-- [ ] Approve → status ACTIVE
-- [ ] Delete → status DELETED
-- [ ] Refresh list after action
+- [x] Admin page loads (ADMIN role only)
+- [x] Non-admin redirected or 403
+- [x] List of reported feedbacks
+- [x] Approve → status ACTIVE
+- [x] Delete → status DELETED
+- [x] Refresh list after action
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Role check on backend
-- [ ] Role check on frontend (route guard)
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Role check on backend
+- [x] Role check on frontend (route guard)
 
 ### Security Checklist
-- [ ] ADMIN role required
-- [ ] No bypass for non-admin
+- [x] ADMIN role required
+- [x] No bypass for non-admin
 
 ### Testing Steps
 1. Login as admin → access page

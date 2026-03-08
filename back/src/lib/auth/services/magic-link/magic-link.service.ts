@@ -6,7 +6,7 @@ import type { AppUserRepository } from "../../../users/repositories";
 import type { IEmailService } from "../../../email/services/email.service.interface";
 import { AuthEmailTemplates } from "../email/auth-email.templates";
 import { generateSecureToken } from "../../../utils/token-generator";
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from '@/lib/prisma';
 
 const MAGIC_LINK_EXPIRATION_MINUTES = 15;
 
@@ -39,16 +39,20 @@ export class MagicLinkService implements IMagicLinkService {
       
       const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/magic-link-callback?token=${token}`;
 
-      await this.emailService.sendEmail(
-        AuthEmailTemplates.magicLinkLogin({
-          recipientEmail: email,
-          verificationUrl,
-        })
-      );
+      const template = AuthEmailTemplates.magicLinkLogin({
+        recipientEmail: email,
+        verificationUrl,
+      });
+      await this.emailService.sendEmail({
+        to: email,
+        subject: template.subject,
+        html: template.html,
+        text: template.text,
+      });
 
       return success({ success: true });
     } catch (error) {
-      return handleError(error, createErrorContext("requestMagicLink", { email }));
+      return handleError(error, createErrorContext("requestMagicLink", { details: { email } }));
     }
   }
 }

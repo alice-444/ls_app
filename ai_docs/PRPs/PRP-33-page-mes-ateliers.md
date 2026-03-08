@@ -94,18 +94,18 @@ Enable mentors to view and manage all their workshops in one dedicated page so t
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Mentor sees all their workshops
-- [ ] Filter by status works
-- [ ] Edit draft → workshop-editor
-- [ ] Cancel published → confirmation
-- [ ] View → workshop detail
-- [ ] Non-mentor redirected or 403
+- [x] Mentor sees all their workshops
+- [x] Filter by status works
+- [x] Edit draft → workshop-editor
+- [x] Cancel published → confirmation
+- [x] View → workshop detail
+- [x] Non-mentor redirected or 403
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Loading states
-- [ ] Empty state
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Loading states
+- [x] Empty state
 
 ### Testing Steps
 1. Login as mentor → my-workshops

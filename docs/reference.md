@@ -8,6 +8,17 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Vue d’ensemble système, flux, modèles de données : [architecture.md](architecture.md).
 - Schémas : système (front/back/DB), séquence des échanges, ER Prisma.
+- **Flux d'authentification** : inscription, connexion (email/mot de passe, magic link), récupération mot de passe, onboarding.
+- **Flux utilisateur** : états (non connecté → session → onboarding → dashboard), redirections par rôle (ADMIN/MENTOR/APPRENANT), RoleGate.
+- **Flux de données** : tRPC + TanStack Query, contexte session, procédures protégées, Socket.IO temps réel.
+- **Flux atelier** : création, publication, demande, acceptation, visio, feedback, cashback.
+- **Flux paiement/crédits** : achat Polar, webhook, crédit compte.
+- **Flux messagerie** : getOrCreateConversation, envoi (tRPC/Socket), temps réel.
+- **Flux visio** : Daily.co token, webhook, crons.
+- **Flux suppression compte** : demande, deletion_job, purge cron.
+- **Flux crons** : liste des jobs planifiés.
+- **Flux réseau** : connexions mentor-apprenant.
+- **Arborescence** : structure macro et micro (front, back) : [arborescence.md](arborescence.md).
 
 ---
 
@@ -31,8 +42,8 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Router racine : `back/src/routers/index.ts` (appRouter).
 - **Renommage** : `workshopFeedback.dismissReport` → `approveFeedback`.
-- Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
-- Procédures : `publicProcedure` (sans session), `protectedProcedure` (session requise), `profProcedure` (MENTOR actif), `adminProcedure` (ADMIN actif, audit log).
+- Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, community, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
+- Procédures : `publicProcedure` (sans session), `protectedProcedure` (session requise), `mentorProcedure` (MENTOR actif), `adminProcedure` (ADMIN actif, audit log).
 - Point d’entrée HTTP : `/trpc` (POST batch).
 
 ---
@@ -41,7 +52,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Auth : `/api/auth/*` (Better Auth), `/api/auth/magic-link-callback`, `/api/sign-up`, `/api/sign-in`.
 - Onboarding : `/api/onboarding/select-role`.
-- Profil : `/api/profile/role`, `/api/profile/role/prof`, `/api/profile/upload-photo`, `/api/profile/photo/[filename]`, `/api/profile/publish`, `/api/profile/delete`.
+- Profil : `/api/profile/role`, `/api/profile/role/mentor`, `/api/profile/upload-photo`, `/api/profile/photo/[filename]`, `/api/profile/publish`, `/api/profile/delete`.
 - Support : `/api/support-request`, `/api/support-request/attachments/[filename]`.
 - Crons : `/api/cron/*` (à appeler avec CRON_SECRET).
 - Webhooks : `/api/daily/webhook`, `/api/polar/webhook`.
@@ -52,7 +63,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ## Base de données (Prisma)
 
 - Schéma : `back/prisma/schema/schema.prisma`.
-- Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token.
+- Modèles principaux : account, user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token, deletion_job, workshop_cashback_queue, conversation_pin, student_deal, community_spot, community_event, community_poll, poll_vote.
 - Client généré : `back/prisma/generated/client`.
 
 ---

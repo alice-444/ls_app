@@ -24,36 +24,15 @@ export const creditsRouter = router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const limit = input?.limit || 50;
-      const offset = input?.offset || 0;
+      const result = await container.creditService.getHistory(ctx.session.user.id, {
+        limit: input?.limit,
+        offset: input?.offset,
+      });
 
-      const appUser = await container.appUserRepository.findByUserId(
-        ctx.session.user.id
-      );
-
-      if (!appUser) {
-        return { transactions: [], total: 0 };
-      }
-
-      const [transactions, total] = await Promise.all([
-        container.creditTransactionRepository.findManyByUserId(appUser.id, {
-          limit,
-          offset,
-          orderBy: "desc",
-        }),
-        container.creditTransactionRepository.countByUserId(appUser.id),
-      ]);
-
-      return {
-        transactions: transactions.map((t) => ({
-          id: t.id,
-          amount: t.amount,
-          type: t.type,
-          description: t.description,
-          createdAt: t.createdAt,
-        })),
-        total,
-      };
+      return handleRouterResult(result, {
+        operation: "getTransactionHistory",
+        userId: ctx.session.user.id,
+      });
     }),
 
   createCheckoutSession: protectedProcedure

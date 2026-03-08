@@ -28,6 +28,23 @@ export interface DataIntegrityIssue {
   issue: string;
 }
 
+export interface CashbackSummary {
+  totalEarned: number;
+  byMonth: { month: string; amount: number }[];
+}
+
+export interface CashbackItem {
+  id: string;
+  workshopId: string;
+  workshopTitle: string;
+  participantUserId: string;
+  participantName: string;
+  cashbackAmount: number;
+  status: string;
+  processedAt: Date | null;
+  createdAt: Date;
+}
+
 export interface IWorkshopCashbackService {
   processCashback(
     workshopId: string,
@@ -55,4 +72,14 @@ export interface IWorkshopCashbackService {
   retryFailedCashbacks(): Promise<
     Result<{ retried: number; stillFailed: number }>
   >;
+
+  getSummary(
+    mentorId: string,
+    options?: { from?: Date; to?: Date }
+  ): Promise<Result<CashbackSummary>>;
+
+  getHistory(
+    mentorId: string,
+    options?: { limit?: number; cursor?: string }
+  ): Promise<Result<{ items: CashbackItem[]; nextCursor?: string }>>;
 }

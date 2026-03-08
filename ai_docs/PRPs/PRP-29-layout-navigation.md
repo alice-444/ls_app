@@ -113,18 +113,18 @@ Provide a consistent layout (Header, Sidebar, Footer) and navigation with role-b
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Header visible on all pages
-- [ ] Footer with legal links
-- [ ] Sidebar shows role-appropriate items
-- [ ] UserMenu: profile, settings, logout
-- [ ] Unauthenticated → redirect login on protected
-- [ ] No role → redirect onboarding
-- [ ] Dark/light toggle works
+- [x] Header visible on all pages
+- [x] Footer with legal links
+- [x] Sidebar shows role-appropriate items
+- [x] UserMenu: profile, settings, logout
+- [x] Unauthenticated → redirect login on protected
+- [x] No role → redirect onboarding
+- [x] Dark/light toggle works
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
-- [ ] Mobile responsive (sidebar collapse)
+- [x] TypeScript compiles
+- [x] ESLint passes
+- [x] Mobile responsive (sidebar collapse)
 
 ### Testing Steps
 1. Visit protected page logged out → redirect login
