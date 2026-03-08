@@ -15,40 +15,24 @@ async function main() {
   }
 
   try {
-    // 1. Trouver l'utilisateur par email
-    const account = await prisma.account.findUnique({
-      where: { email },
-      include: { user: true }
+    // 1. Trouver l'utilisateur par email (table user, pas account)
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase().trim() },
     });
 
-    if (!account) {
-      console.error(`Compte avec l'email ${email} non trouvé.`);
+    if (!user) {
+      console.error(`Utilisateur avec l'email ${email} non trouvé.`);
       return;
     }
 
-    // 2. Mettre à jour ou créer l'user avec le rôle ADMIN
-    if (account.user) {
-      await prisma.user.update({
-        where: { userId: account.accountId },
-        data: { 
-          role: "ADMIN",
-          status: "ACTIVE" 
-        }
-      });
-    } else {
-      await prisma.user.create({
-        data: {
-          id: `admin_${account.accountId}`,
-          userId: account.accountId,
-          name: "Admin User",
-          email: account.email || `${account.accountId}@learnsup.com`,
-          role: "ADMIN",
-          status: "ACTIVE",
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-      });
-    }
+    // 2. Mettre à jour le rôle
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        role: "ADMIN",
+        status: "ACTIVE",
+      },
+    });
 
     console.log(`Succès ! L'utilisateur ${email} est maintenant ADMIN.`);
   } catch (error) {
