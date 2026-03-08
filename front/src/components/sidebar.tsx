@@ -190,14 +190,14 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Sidebar
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-300"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden transition-opacity duration-300"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed md:relative z-50 md:z-20 flex-shrink-0 h-full bg-white dark:bg-[#1a1720] border-r border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] transition-all duration-300 ${
-          isExpanded ? "w-64" : "w-20"
+        className={`fixed md:relative z-50 md:z-20 shrink-0 min-h-screen h-screen bg-card border-r-2 border-border shadow-2xl transition-all duration-300 w-full md:w-auto rounded-r-3xl md:mr-3 ${
+          isExpanded ? "md:w-64" : "md:w-24"
         } ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } flex flex-col`}
@@ -208,22 +208,22 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Sidebar
               <TitleIcon className="h-8 w-8 text-brand shrink-0 transition-transform duration-300 group-hover:scale-110" />
             ) : (
               <Image
-                src="/logo/logo.png"
+                src="/logo/icon.png"
                 alt="LearnSup Logo"
-                width={32}
-                height={32}
+                width={56}
+                height={56}
                 className="shrink-0 transition-transform duration-300 group-hover:scale-110"
               />
             )}
             {isExpanded && (
-              <span className="font-bold text-xl text-[#26547c] dark:text-[#e6e6e6] whitespace-nowrap">
+              <span className="font-bold text-xl text-ls-heading whitespace-nowrap">
                 {title || "LearnSup"}
               </span>
             )}
           </Link>
           <button 
             onClick={() => setIsExpanded(!isExpanded)} 
-            className="text-[#26547c] dark:text-[#e6e6e6] hover:text-[#ffb647] transition-colors ml-1"
+            className="text-ls-heading hover:text-brand transition-colors ml-1 rounded-full p-2 hover:bg-brand/20"
           >
             {isExpanded ? <ChevronLeft size={24} /> : <Menu size={24} />}
           </button>
@@ -241,17 +241,17 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Sidebar
               return (
                 <div key={item.key} className="relative group">
                   {isActive && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#ffb647] rounded-r-full shadow-[0_0_10px_rgba(255,182,71,0.5)]" />
+                    <div className="absolute left-0 top-0 bottom-0 w-3 bg-brand rounded-r-full shadow-[0_0_12px_rgba(255,182,71,0.6)]" />
                   )}
                   <Link
                     href={item.href}
-                    className={`flex items-center h-12 px-6 transition-all duration-300 ${
+                    className={`flex items-center h-12 px-6 mx-2 rounded-xl transition-all duration-300 ${
                       isActive
-                        ? "text-[#ffb647] font-bold bg-[#ffb647]/5"
-                        : "text-gray-500 dark:text-gray-400 hover:text-[#ffb647] hover:pl-8"
+                        ? "text-brand font-bold bg-brand/20"
+                        : "text-ls-heading hover:text-brand hover:bg-brand/15"
                     }`}
                   >
-                    <item.icon className={`h-5 w-5 shrink-0 transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110 group-hover:rotate-3"}`} />
+                    <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110 group-hover:rotate-3"}`} />
                     {isExpanded && <span className="ml-4 text-sm tracking-wide">{item.name}</span>}
                   </Link>
                 </div>
@@ -259,28 +259,28 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Sidebar
             })}
 
           {!customItems && (
-            <div className="pt-4 mt-6 border-t border-gray-100 dark:border-gray-800">
+            <div className="pt-4 mt-6 border-t-2 border-border">
               <Link
                 href="/help"
-                className={`flex items-center h-12 px-6 transition-all duration-300 group ${
+                className={`flex items-center h-12 px-6 mx-2 rounded-xl transition-all duration-300 group ${
                   pathname === "/help" 
-                    ? "text-[#26547c] font-bold bg-gray-50 dark:bg-gray-800/20" 
-                    : "text-gray-400 hover:text-[#26547c] hover:pl-8"
+                    ? "text-brand font-bold bg-brand/20" 
+                    : "text-ls-heading hover:text-brand hover:bg-brand/15"
                 }`}
               >
-                <HelpCircle className="h-5 w-5 shrink-0 transition-transform group-hover:rotate-12" />
+                <HelpCircle className="h-6 w-6 shrink-0 transition-transform group-hover:rotate-12" />
                 {isExpanded && <span className="ml-4 text-sm">Aide et support</span>}
               </Link>
 
               <Link
                 href="/legal"
-                className={`flex items-center h-12 px-6 transition-all duration-300 group ${
+                className={`flex items-center h-12 px-6 mx-2 rounded-xl transition-all duration-300 group ${
                   pathname === "/legal" 
-                    ? "text-[#26547c] font-bold bg-gray-50 dark:bg-gray-800/20" 
-                    : "text-gray-400 hover:text-[#26547c] hover:pl-8"
+                    ? "text-brand font-bold bg-brand/20" 
+                    : "text-ls-heading hover:text-brand hover:bg-brand/15"
                 }`}
               >
-                <Info className="h-5 w-5 shrink-0 transition-transform group-hover:scale-110" />
+                <Info className="h-6 w-6 shrink-0 transition-transform group-hover:scale-110" />
                 {isExpanded && <span className="ml-4 text-sm">Informations</span>}
               </Link>
             </div>

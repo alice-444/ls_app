@@ -135,6 +135,13 @@ export default function UserMenu() {
     });
   }, [menuLinks, userRole]);
 
+  const activeHref = useMemo(() => {
+    const matching = filteredMenuLinks
+      .filter((l) => pathname === l.href || pathname.startsWith(`${l.href}/`) || pathname.startsWith(`${l.href}?`))
+      .sort((a, b) => b.href.length - a.href.length)[0];
+    return matching?.href ?? null;
+  }, [filteredMenuLinks, pathname]);
+
   if (isPending) {
     return (
       <div className="flex items-center gap-2 rounded-full p-1">
@@ -185,13 +192,6 @@ export default function UserMenu() {
     if (role === "ADMIN") return "Administrateur";
     return role === "MENTOR" ? "Mentor" : "Apprenant";
   };
-
-  const activeHref = useMemo(() => {
-    const matching = filteredMenuLinks
-      .filter((l) => pathname === l.href || pathname.startsWith(`${l.href}/`) || pathname.startsWith(`${l.href}?`))
-      .sort((a, b) => b.href.length - a.href.length)[0];
-    return matching?.href ?? null;
-  }, [filteredMenuLinks, pathname]);
 
   const isActive = (href: string) => activeHref === href;
 

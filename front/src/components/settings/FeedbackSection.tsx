@@ -34,7 +34,7 @@ export function FeedbackSection() {
     createRequestMutation.mutate({
       subject: "Feedback utilisateur (Paramètres)",
       description: feedback,
-      category: "FEEDBACK",
+      problemType: "FEEDBACK",
     });
   };
 

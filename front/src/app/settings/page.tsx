@@ -15,8 +15,7 @@ import {
   NotificationsSection,
   SystemSettingsSection,
   FeedbackSection,
-  AboutSection,
-  HelpCenterSection,
+  SupportInfoSection,
   ExportDataSection,
 } from "@/components/settings";
 
@@ -61,8 +60,7 @@ export default function SettingsPage() {
     notifications: <NotificationsSection />,
     "parametres-systeme": <SystemSettingsSection />,
     feedback: <FeedbackSection />,
-    "a-propos": <AboutSection />,
-    "centre-aide": <HelpCenterSection />,
+    "support-info": <SupportInfoSection />,
     "export-donnees": <ExportDataSection />,
   };
 

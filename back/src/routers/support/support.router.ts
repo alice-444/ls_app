@@ -8,18 +8,17 @@ export const supportRouter = router({
       z.object({
         subject: z.string().min(3),
         description: z.string().min(5),
-        category: z.enum(["TECHNICAL", "BILLING", "ACCOUNT", "FEEDBACK", "OTHER"]),
+        problemType: z.enum(["TECHNICAL", "BILLING", "ACCOUNT", "FEEDBACK", "OTHER"]),
         attachments: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       return await container.supportRequestService.createSupportRequest({
         userId: ctx.session.user.id,
-        userName: ctx.session.user.name || "Utilisateur",
-        userEmail: ctx.session.user.email,
+        email: ctx.session.user.email,
         subject: input.subject,
         description: input.description,
-        category: input.category,
+        problemType: input.problemType,
         attachments: input.attachments || [],
       });
     }),
