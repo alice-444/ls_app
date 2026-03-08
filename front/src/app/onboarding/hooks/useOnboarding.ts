@@ -44,11 +44,11 @@ export function useOnboarding() {
       setIsSubmitting(false);
 
       if (selectedRole === "MENTOR") {
-        setCurrentStep("prof-form");
+        setCurrentStep("prof-form"); // Garder l'étape mais pour la fin ou la supprimer plus tard
       } else {
         setCurrentStep("apprenant-flow");
         setTimeout(() => {
-          router.push("/workshop-room");
+          router.push("/dashboard");
         }, 1500);
       }
     } catch (error) {

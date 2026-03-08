@@ -30,6 +30,8 @@ import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopR
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 
+import RollingNumber from "@/components/ui/RollingNumber";
+
 interface Connection {
   connectionId: string;
   otherUserId: string;
@@ -62,6 +64,9 @@ interface WorkshopRequest {
   apprenticeName?: string;
 }
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info, Lock } from "lucide-react";
+
 interface MentorDashboardProps {
   readonly mentorStats: {
     readonly creditsEarned: number;
@@ -71,6 +76,7 @@ interface MentorDashboardProps {
   readonly acceptedConnections: Connection[] | undefined;
   readonly mentorWorkshopRequests: WorkshopRequest[] | undefined;
   readonly mentorWorkshops: WorkshopItem[] | undefined;
+  readonly userStatus?: string;
 }
 
 export function MentorDashboard({
@@ -79,6 +85,7 @@ export function MentorDashboard({
   acceptedConnections,
   mentorWorkshopRequests,
   mentorWorkshops,
+  userStatus,
 }: MentorDashboardProps) {
   const router = useRouter();
   const [mentorCalendarDate, setMentorCalendarDate] = useState(new Date());
@@ -123,9 +130,10 @@ export function MentorDashboard({
               <p className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-white">
                 Crédits gagnés
               </p>
+
               <div className="flex items-end gap-2 sm:gap-4 mb-4 sm:mb-6">
                 <p className="text-2xl sm:text-[28px] lg:text-[32px] font-medium leading-none">
-                  {mentorStats?.creditsEarned || 0}{" "}
+                  <RollingNumber value={mentorStats?.creditsEarned || 0} />{" "}
                   <span className="text-sm sm:text-base lg:text-[18px]">
                     crédits
                   </span>
