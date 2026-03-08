@@ -11,6 +11,7 @@ interface ProfilePreviewCardProps {
   readonly bio?: string | null;
   readonly title?: string;
   readonly tags: string[];
+  readonly iceBreakers?: string[];
 }
 
 export function ProfilePreviewCard({
@@ -21,10 +22,11 @@ export function ProfilePreviewCard({
   bio,
   title,
   tags,
+  iceBreakers = [],
 }: ProfilePreviewCardProps) {
   return (
     <aside className="min-w-0 flex justify-center lg:flex-none lg:block lg:col-start-2 lg:row-start-1">
-      <div className="w-full max-w-[340px] lg:max-w-full sticky top-8 overflow-hidden rounded-xl lg:rounded-2xl border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[#1a1720] shadow-md lg:shadow-lg">
+      <div className="w-full max-w-[340px] lg:max-w-full sticky top-8 overflow-hidden rounded-xl lg:rounded-2xl border border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl">
         <div className="hidden lg:block h-1.5 w-full bg-linear-to-r from-[#FF8C42]/30 via-[#FF8C42]/50 to-[#FF8C42]/30" />
         <div className="p-3 lg:p-6 flex flex-col items-center text-center">
           <p className="text-[10px] lg:text-xs font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] uppercase tracking-wider mb-1 lg:mb-1">
@@ -69,6 +71,18 @@ export function ProfilePreviewCard({
           {bio && (
             <div className="hidden lg:block mt-3 text-sm text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] italic line-clamp-3">
               "{bio}"
+            </div>
+          )}
+          {iceBreakers.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-1 lg:gap-1.5 mt-3">
+              {iceBreakers.map((tag, i) => (
+                <span
+                  key={i}
+                  className="px-1.5 py-0.5 lg:px-2 lg:py-0.5 bg-[#26547c]/10 text-[#26547c] dark:text-blue-300 rounded-lg text-[9px] lg:text-[11px] font-bold border border-[#26547c]/20"
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
           )}
           {tags.length > 0 && (

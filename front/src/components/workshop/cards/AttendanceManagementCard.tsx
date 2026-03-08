@@ -108,15 +108,15 @@ export function AttendanceManagementCard({
 
   if (isLoading) {
     return (
-      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+      <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
+          <CardTitle className="flex items-center gap-2 text-ls-heading">
             <Users className="w-5 h-5" />
             Gestion de la présence
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">Chargement...</p>
+          <p className="text-sm text-ls-muted">Chargement...</p>
         </CardContent>
       </Card>
     );
@@ -124,20 +124,20 @@ export function AttendanceManagementCard({
 
   return (
     <>
-      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+      <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
+          <CardTitle className="flex items-center gap-2 text-ls-heading">
             <Users className="w-5 h-5" />
             Gestion de la présence
           </CardTitle>
-          <CardDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            Marquez si l'apprenant était présent ou absent
+          <CardDescription className="text-ls-muted">
+            Marque si l&apos;apprenant était présent ou absent
           </CardDescription>
         </CardHeader>
         <CardContent>
           {!hasParticipants ? (
-            <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-              <Users className="w-12 h-12 mx-auto mb-3 text-[rgba(38,84,124,0.32)] dark:text-[rgba(230,230,230,0.32)]" />
+            <div className="text-center py-8 text-ls-muted">
+              <Users className="w-12 h-12 mx-auto mb-3 text-ls-muted/50" />
               <p>Aucun participant inscrit</p>
             </div>
           ) : (
@@ -152,12 +152,12 @@ export function AttendanceManagementCard({
                   return (
                     <div
                       key={participant.id}
-                      className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between p-4 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] bg-white dark:bg-[rgba(255,255,255,0.08)] gap-4"
+                      className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between p-4 border border-border/50 rounded-2xl bg-card/80 gap-4"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm text-[#26547c] dark:text-[#e6e6e6]">
+                            <p className="font-medium text-sm text-ls-heading">
                               {participant.name || "Participant"}
                             </p>
                             {participant.title && (
@@ -170,7 +170,7 @@ export function AttendanceManagementCard({
                             )}
                           </div>
                           {participant.email && (
-                            <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                            <p className="text-xs text-ls-muted">
                               {participant.email}
                             </p>
                           )}
@@ -236,14 +236,14 @@ export function AttendanceManagementCard({
               </div>
 
               {hasUnsavedChanges && (
-                <div className="flex gap-2 pt-2 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
+                <div className="flex gap-2 pt-2 border-t border-border/50">
                   <Button
                     onClick={handleSave}
                     disabled={
                       updateAttendanceMutation.isPending ||
                       confirmAttendanceMutation.isPending
                     }
-                    className="flex-1 bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
+                    className="flex-1 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
                     size="sm"
                   >
                     <Save className="w-4 h-4 mr-2" />
@@ -252,7 +252,7 @@ export function AttendanceManagementCard({
                 </div>
               )}
 
-              <div className="pt-2 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
+                <div className="pt-2 border-t border-border/50">
                 <Button
                   onClick={handleConfirm}
                   disabled={
@@ -260,7 +260,7 @@ export function AttendanceManagementCard({
                     confirmAttendanceMutation.isPending ||
                     hasUnsavedChanges
                   }
-                  className="w-full bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
+                  className="w-full bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
                   variant="default"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />

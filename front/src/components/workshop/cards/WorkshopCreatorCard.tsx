@@ -23,11 +23,11 @@ export function WorkshopCreatorCard({
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-lg transition-shadow bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]"
+      className="cursor-pointer hover:shadow-xl transition-all bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl"
       onClick={() => router.push(`/mentors/${creator.id}`)}
     >
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6] text-lg">
+        <CardTitle className="flex items-center gap-2 text-ls-heading text-lg">
           <User className="w-5 h-5" />
           Mentor
         </CardTitle>
@@ -38,11 +38,11 @@ export function WorkshopCreatorCard({
             {creator.user?.name?.charAt(0).toUpperCase() || "?"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-base text-[#26547c] dark:text-[#e6e6e6] hover:underline mb-1">
+            <p className="font-semibold text-base text-ls-heading hover:underline mb-1">
               {creator.user?.name || "Mentor"}
             </p>
             {creator.bio && (
-              <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] line-clamp-2">
+              <p className="text-sm text-ls-muted line-clamp-2">
                 {creator.bio}
               </p>
             )}
@@ -50,7 +50,7 @@ export function WorkshopCreatorCard({
         </div>
         <button
           type="button"
-          className="w-full mt-3 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] font-semibold flex items-center justify-center gap-2 rounded-[32px] py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ffb647] focus:ring-offset-2"
+          className="w-full mt-3 border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand font-semibold flex items-center justify-center gap-2 rounded-full py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
           onClick={(e) => {
             e.stopPropagation();
             router.push(`/mentors/${creator.id}`);

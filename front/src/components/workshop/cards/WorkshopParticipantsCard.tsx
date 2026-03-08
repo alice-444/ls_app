@@ -32,13 +32,13 @@ export function WorkshopParticipantsCard({
     workshop.status === "PUBLISHED" && workshop.apprenticeId ? 1 : 0;
 
   return (
-    <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+    <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
           <Users className="w-5 h-5" />
           Participants inscrits
         </CardTitle>
-        <CardDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+        <CardDescription className="text-ls-muted">
           {participantCount} / {workshop.maxParticipants || "∞"} participants
         </CardDescription>
       </CardHeader>
@@ -49,7 +49,7 @@ export function WorkshopParticipantsCard({
           <div className="space-y-2">
             <button
               type="button"
-              className="w-fit max-w-full cursor-pointer hover:shadow-md transition-shadow bg-white dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-lg px-2.5 py-2 text-left focus:outline-none focus:ring-2 focus:ring-[#ffb647] focus:ring-offset-2"
+              className="w-fit max-w-full cursor-pointer hover:shadow-md transition-all bg-card/80 border border-border rounded-xl px-2.5 py-2 text-left focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 hover:border-brand"
               onClick={() => {
                 if (workshop.apprentice?.user?.id) {
                   onViewApprenticeProfile(workshop.apprentice.user.id);
@@ -69,20 +69,20 @@ export function WorkshopParticipantsCard({
                   <User className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-medium text-sm text-[#26547c] dark:text-[#e6e6e6] hover:underline whitespace-nowrap">
+                  <p className="font-medium text-sm text-ls-heading hover:underline whitespace-nowrap">
                     {workshop.apprentice.user?.name || "Apprenti"}
                   </p>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] shrink-0 ml-0.5" />
+                <ArrowRight className="w-3.5 h-3.5 text-ls-muted shrink-0 ml-0.5" />
               </div>
             </button>
           </div>
         ) : (
-          <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            <Users className="w-12 h-12 mx-auto mb-3 text-[rgba(38,84,124,0.32)] dark:text-[rgba(230,230,230,0.32)]" />
+          <div className="text-center py-8 text-ls-muted">
+            <Users className="w-12 h-12 mx-auto mb-3 text-ls-muted/50" />
             <p>
               {workshop.status === "DRAFT"
-                ? "Les participants seront visibles une fois l'atelier publié"
+                ? "Les participants seront visibles une fois l&apos;atelier publié"
                 : "Aucun participant inscrit pour le moment"}
             </p>
             {workshop.status === "PUBLISHED" && (

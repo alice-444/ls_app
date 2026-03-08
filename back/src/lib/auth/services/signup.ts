@@ -30,8 +30,6 @@ export class SignUpService {
       const { email, password, username } = validation.data;
       const name = validation.data.name ?? email.split("@")[0];
 
-      console.log("Attempting sign up with:", { email, name, username });
-
       const authResult = await auth.api.signUpEmail({
         body: { email, password, name, username },
         headers,
@@ -40,21 +38,30 @@ export class SignUpService {
         throw err;
       });
 
-      console.log("Auth result success:", { userId: authResult.user.id });
-
+      console.log("Better-auth result:", JSON.stringify(authResult.user, null, 2));
       const id = authResult.user.id;
 
-      // Synchronization of the user record created by better-auth
-      // to ensure business 'userId' matches technical 'id' and other defaults.
+      // Sync business fields: userId (for backward compat), status, role
+      // Utilisation d'un upsert pour être plus robuste si l'id n'est pas encore synchro
       await prisma.user.update({
         where: { id },
         data: {
-          userId: id, // Mapping business identity to auth identity
+          userId: id,
           status: "PENDING",
           role: null,
         },
+      }).catch(async (err: any) => {
+        console.warn("Prisma update by id failed, trying by email...", err.message);
+        return prisma.user.update({
+          where: { email },
+          data: {
+            userId: id,
+            status: "PENDING",
+            role: null,
+          },
+        });
       }).catch((err: any) => {
-        console.error("Prisma user synchronization error:", err);
+        console.error("Prisma user synchronization error (final):", err);
         throw err;
       });
 

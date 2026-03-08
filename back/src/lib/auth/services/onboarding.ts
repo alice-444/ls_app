@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { generateInternalId } from "../../utils/id-generator";
-import { Result, failure, success, validateInput, prisma } from "../../common";
+import { Result, failure, success, validateInput } from "../../common";
 import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../../users/repositories";
 import { verifyUserExists } from "./user-helpers";
+import { generateInternalId } from "../../utils/id-generator";
 
 export const selectRoleSchema = z.object({
   role: z.enum(["MENTOR", "APPRENANT"]),
@@ -40,17 +40,11 @@ export class OnboardingService {
           status: "ACTIVE",
         });
       } else {
-        if (appUser.role !== null) {
-          return failure(
-            "Rôle déjà assigné. Vous ne pouvez pas changer de rôle après l'onboarding.",
+        // Autoriser le changement de rôle tant que le compte n'est pas bloqué ou supprimé
+        if (appUser.status !== "PENDING" && appUser.status !== "ACTIVE") {
+           return failure(
+            "Votre compte n'est plus en état de modification de rôle.",
             403
-          );
-        }
-
-        if (appUser.status !== "PENDING") {
-          return failure(
-            "L'utilisateur doit être en statut PENDING pour sélectionner un rôle",
-            400
           );
         }
 
@@ -61,7 +55,7 @@ export class OnboardingService {
       }
 
       if (!appUser.role) {
-        return failure("Failed to assign role", 500);
+        return failure("Échec de l'assignation du rôle", 500);
       }
 
       return success({ role: appUser.role });

@@ -20,13 +20,19 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         topic: input.topic,
         location: input.location,
         isVirtual: input.isVirtual ?? false,
-        maxParticipants: input.maxParticipants,
-        materialsNeeded: input.materialsNeeded,
+        maxParticipants: input.maxParticipants ?? 10,
+        materialsNeeded: input.materialsNeeded ?? null,
         creditCost: input.creditCost ?? null,
-        creatorId: input.creatorId,
-        apprenticeId: input.apprenticeId ?? null,
-        requestId: input.requestId ?? null,
         updatedAt: now,
+        creator: {
+          connect: { id: input.creatorId }
+        },
+        ...(input.apprenticeId ? {
+          apprentice: {
+            connect: { id: input.apprenticeId }
+          }
+        } : {}),
+        ...(input.requestId ? { requestId: input.requestId } : {}),
       },
     });
   }

@@ -42,7 +42,7 @@ export function CalendarSection({
   onSelectEvent,
 }: CalendarSectionProps) {
   return (
-    <Card className="mb-6 bg-ls-surface border border-ls-border rounded-[16px]">
+    <Card className="mb-6 bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardHeader>
         <div className="flex flex-col gap-4 sm:gap-[16px]">
           <div>
@@ -51,7 +51,7 @@ export function CalendarSection({
               Vue calendrier
             </CardTitle>
             <CardDescription className="text-ls-muted">
-              Visualisez tous vos ateliers dans un calendrier
+              Visualise tous tes ateliers dans un calendrier
             </CardDescription>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
@@ -61,7 +61,7 @@ export function CalendarSection({
                   key={action}
                   variant="outline"
                   size="sm"
-                  className="border border-ls-border rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading"
+                  className="border border-ls-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading"
                   onClick={() => onNavigate(action)}
                 >
                   {action === "today"
@@ -72,8 +72,8 @@ export function CalendarSection({
                 </Button>
               ))}
             </div>
-            <div className="flex items-center">
-              {VIEW_OPTIONS.map(({ value, label }, idx) => (
+            <div className="flex flex-wrap gap-2">
+              {VIEW_OPTIONS.map(({ value, label }) => (
                 <Button
                   key={value}
                   variant={calendarView === value ? "default" : "outline"}
@@ -82,13 +82,7 @@ export function CalendarSection({
                     calendarView === value
                       ? "bg-brand border border-brand text-[#161616]"
                       : "border border-brand text-brand"
-                  } ${
-                    idx === 0
-                      ? "rounded-l-[8px] rounded-r-0"
-                      : idx === VIEW_OPTIONS.length - 1
-                      ? "rounded-r-[8px] rounded-l-0"
-                      : "rounded-none"
-                  } h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold`}
+                  } rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold`}
                   onClick={() => onViewChange(value)}
                 >
                   {label}

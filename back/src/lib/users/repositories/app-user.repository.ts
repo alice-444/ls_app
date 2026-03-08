@@ -74,11 +74,21 @@ const UPDATABLE_FIELDS = [
   "emailNotifications", "inAppNotifications",
 ] as const;
 
+const ARRAY_FIELDS = ["areasOfExpertise", "mentorshipTopics", "iceBreakerTags"] as const;
+
 function buildPrismaUpdateData(input: UpdateAppUserInput): Record<string, unknown> {
   const data: Record<string, unknown> = { updatedAt: new Date() };
+  
   for (const field of UPDATABLE_FIELDS) {
     if ((input as Record<string, unknown>)[field] !== undefined) {
-      data[field] = (input as Record<string, unknown>)[field];
+      const value = (input as Record<string, unknown>)[field];
+      
+      // Sécurité pour les tableaux : ne jamais envoyer null
+      if (ARRAY_FIELDS.includes(field as any) && value === null) {
+        data[field] = [];
+      } else {
+        data[field] = value;
+      }
     }
   }
   return data;
@@ -126,8 +136,9 @@ export class PrismaAppUserRepository implements AppUserRepository {
       throw new Error("Prisma client is not initialized");
     }
 
-    const appUser = await this.prisma.user.findUnique({
-      where: { userId },
+    // userId can be user.id or user.userId (business identifier)
+    const appUser = await this.prisma.user.findFirst({
+      where: { OR: [{ id: userId }, { userId }] },
       select: APP_USER_BASE_SELECT,
     });
 
@@ -162,14 +173,23 @@ export class PrismaAppUserRepository implements AppUserRepository {
 
   async create(input: CreateAppUserInput): Promise<AppUserData> {
     const now = new Date();
+    // Use input.userId as id - user is created by Better Auth with that id
     const appUser = await this.prisma.user.create({
       data: {
-        id: input.id,
+        id: input.userId,
         userId: input.userId,
+        name: "", // Required, will be updated
+        email: `temp-${input.userId}@temp.local`, // Required, will be updated
         status: input.status,
         role: input.role ?? null,
         createdAt: now,
         updatedAt: now,
+        areasOfExpertise: [],
+        mentorshipTopics: [],
+        iceBreakerTags: [],
+        accounts: {
+          connect: { accountId: input.userId }
+        }
       },
     });
 
@@ -181,7 +201,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     input: UpdateAppUserInput
   ): Promise<AppUserData> {
     const appUser = await this.prisma.user.update({
-      where: { userId },
+      where: { id: userId },
       data: buildPrismaUpdateData(input),
     });
 
@@ -195,14 +215,22 @@ export class PrismaAppUserRepository implements AppUserRepository {
   ): Promise<AppUserData> {
     const now = new Date();
     const appUser = await this.prisma.user.upsert({
-      where: { userId },
+      where: { id: createInput.userId },
       create: {
-        id: createInput.id,
+        id: createInput.userId,
         userId: createInput.userId,
+        name: "",
+        email: `temp-${createInput.userId}@temp.local`,
         status: createInput.status,
         role: createInput.role ?? null,
         createdAt: now,
         updatedAt: now,
+        areasOfExpertise: [],
+        mentorshipTopics: [],
+        iceBreakerTags: [],
+        accounts: {
+          connect: { accountId: createInput.userId }
+        }
       },
       update: buildPrismaUpdateData(updateInput),
     });
@@ -218,8 +246,8 @@ export class PrismaAppUserRepository implements AppUserRepository {
     photoUrl: string | null;
     iceBreakerTags: string[] | null;
   } | null> {
-    const appUser = await this.prisma.user.findUnique({
-      where: { userId },
+    const appUser = await this.prisma.user.findFirst({
+      where: { OR: [{ id: userId }, { userId }] },
       select: {
         displayName: true,
         studyDomain: true,
@@ -243,8 +271,8 @@ export class PrismaAppUserRepository implements AppUserRepository {
   }
 
   async findUserNameByUserId(userId: string): Promise<string | null> {
-    const user = await this.prisma.user.findUnique({
-      where: { userId },
+    const user = await this.prisma.user.findFirst({
+      where: { OR: [{ id: userId }, { userId }] },
       select: { name: true },
     });
 

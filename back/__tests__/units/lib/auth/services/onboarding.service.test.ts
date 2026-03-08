@@ -69,15 +69,27 @@ describe("OnboardingService", () => {
     }));
   });
 
-  it("should fail if user already has a role", async () => {
+  it("should allow changing role if user is ACTIVE (for back button support)", async () => {
     mockRepo.findByAppUserId.mockResolvedValue({ role: "APPRENANT", status: "ACTIVE" });
+    mockRepo.update.mockResolvedValue({ role: "MENTOR", status: "ACTIVE" });
 
     const result = await service.selectRole("user-1", { role: "MENTOR" });
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.role).toBe("MENTOR");
+    }
+  });
+
+  it("should fail if user status is not PENDING or ACTIVE", async () => {
+    mockRepo.findByAppUserId.mockResolvedValue({ role: "MENTOR", status: "BLOCKED" });
+
+    const result = await service.selectRole("user-1", { role: "APPRENANT" });
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.status).toBe(403);
-      expect(result.error).toContain("Rôle déjà assigné");
+      expect(result.error).toContain("état de modification de rôle");
     }
   });
 });

@@ -32,8 +32,8 @@ export function BlockedUsersSection() {
             Utilisateurs bloqués
           </h2>
         </div>
-        <p className="text-base text-ls-heading">
-          Gérez les utilisateurs que vous avez bloqués
+        <p className="text-base text-ls-muted">
+          Gère les utilisateurs que tu as bloqués
         </p>
         <div className="text-center py-8 text-muted-foreground">
           <p className="text-sm">Chargement...</p>
@@ -51,14 +51,14 @@ export function BlockedUsersSection() {
             Utilisateurs bloqués
           </h2>
         </div>
-        <p className="text-base text-ls-heading">
-          Gérez les utilisateurs que vous avez bloqués
+        <p className="text-base text-ls-muted">
+          Gère les utilisateurs que tu as bloqués
         </p>
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-8 text-ls-muted">
           <Ban className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p className="text-sm">Aucun utilisateur bloqué</p>
           <p className="text-xs mt-2">
-            Les utilisateurs que vous bloquez n'apparaîtront plus dans vos
+            Les utilisateurs que tu bloques n'apparaîtront plus dans tes
             conversations
           </p>
         </div>
@@ -74,15 +74,15 @@ export function BlockedUsersSection() {
           Utilisateurs bloqués
         </h2>
       </div>
-      <p className="text-base text-ls-heading">
-        Gérez les utilisateurs que vous avez bloqués ({blockedUsers.length})
+      <p className="text-base text-ls-muted">
+        Gère les utilisateurs que tu as bloqués ({blockedUsers.length})
       </p>
 
       <div className="space-y-3">
         {blockedUsers.map((blockedUser: { userId: string; photoUrl?: string; displayName?: string; name?: string; blockedAt: string }) => (
           <div
             key={blockedUser.userId}
-            className="flex items-center justify-between p-4 border border-ls-border rounded-lg hover:bg-muted/50 transition-colors"
+            className="flex items-center justify-between p-4 border border-border/50 rounded-2xl hover:bg-brand/5 transition-colors"
           >
             <div className="flex items-center gap-3 flex-1 min-w-0">
               {blockedUser.photoUrl ? (
@@ -100,7 +100,7 @@ export function BlockedUsersSection() {
                 <p className="font-medium text-sm truncate">
                   {blockedUser.displayName || blockedUser.name || "Utilisateur"}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-ls-muted">
                   Bloqué le{" "}
                   {new Date(blockedUser.blockedAt).toLocaleDateString("fr-FR")}
                 </p>
@@ -115,7 +115,7 @@ export function BlockedUsersSection() {
                 });
               }}
               disabled={unblockUserMutation.isPending}
-              className="ml-4"
+              className="ml-4 rounded-full hover:bg-brand/10 hover:border-brand"
             >
               <X className="h-4 w-4 mr-2" />
               {unblockUserMutation.isPending ? "Déblocage..." : "Débloquer"}

@@ -59,26 +59,26 @@ describe("SignInForm", () => {
 
   it("renders heading and form fields", () => {
     renderSignInForm();
-    expect(screen.getByRole("heading", { name: /welcome back/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /bienvenue/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /need an account\? sign up/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /forgot password\?/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/mot de passe/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^se connecter$/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /pas encore de compte/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /mot de passe oublié/i })).toBeInTheDocument();
   });
 
   it("calls onSwitchToSignUp when Sign Up link is clicked", async () => {
     const user = userEvent.setup();
     const onSwitchToSignUp = vi.fn();
     renderSignInForm(onSwitchToSignUp);
-    await user.click(screen.getByRole("button", { name: /need an account\? sign up/i }));
+    await user.click(screen.getByRole("button", { name: /pas encore de compte/i }));
     expect(onSwitchToSignUp).toHaveBeenCalledTimes(1);
   });
 
   it("calls router.push(/forgot-password) when Forgot Password is clicked", async () => {
     const user = userEvent.setup();
     renderSignInForm();
-    await user.click(screen.getByRole("button", { name: /forgot password\?/i }));
+    await user.click(screen.getByRole("button", { name: /mot de passe oublié/i }));
     expect(mockPush).toHaveBeenCalledWith("/forgot-password");
   });
 
@@ -89,8 +89,8 @@ describe("SignInForm", () => {
     });
     renderSignInForm();
     await user.type(screen.getByLabelText(/email/i), "a@b.co");
-    await user.type(screen.getByLabelText(/password/i), "password1");
-    await user.click(screen.getByRole("button", { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/mot de passe/i), "password1");
+    await user.click(screen.getByRole("button", { name: /^se connecter$/i }));
     expect(mockSignInEmail).toHaveBeenCalledWith(
       { email: "a@b.co", password: "password1" },
       expect.any(Object)

@@ -1,8 +1,29 @@
 import { z } from "zod";
-import { router, adminProcedure } from "../../lib/trpc";
+import { router, adminProcedure, protectedProcedure } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 
 export const supportRouter = router({
+  createRequest: protectedProcedure
+    .input(
+      z.object({
+        subject: z.string().min(3),
+        description: z.string().min(5),
+        category: z.enum(["TECHNICAL", "BILLING", "ACCOUNT", "FEEDBACK", "OTHER"]),
+        attachments: z.array(z.string()).optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await container.supportRequestService.createSupportRequest({
+        userId: ctx.session.user.id,
+        userName: ctx.session.user.name || "Utilisateur",
+        userEmail: ctx.session.user.email,
+        subject: input.subject,
+        description: input.description,
+        category: input.category,
+        attachments: input.attachments || [],
+      });
+    }),
+
   getAdminSupportQueue: adminProcedure
     .input(
       z.object({

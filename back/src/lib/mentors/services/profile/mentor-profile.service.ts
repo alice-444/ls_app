@@ -19,9 +19,15 @@ export class MentorProfileService implements IMentorProfileService {
         return mentorCheck;
       }
 
-      const mentor = await this.mentorRepository.findPublishedMentorById(
-        mentorId
-      );
+      // Autoriser le mentor à voir son propre profil même s'il n'est pas publié
+      let mentor = await this.mentorRepository.findPublishedMentorById(mentorId);
+      
+      if (!mentor && viewerUserId) {
+        const potentialMentor = await this.mentorRepository.findMentorById(mentorId);
+        if (potentialMentor && potentialMentor.userId === viewerUserId) {
+          mentor = potentialMentor;
+        }
+      }
 
       if (!mentor) {
         return failure("Mentor introuvable", 404);

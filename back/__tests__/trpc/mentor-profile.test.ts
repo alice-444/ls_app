@@ -14,20 +14,6 @@ describe("Mentor Public Profile Functional Validation", () => {
 
   beforeAll(async () => {
     // Setup Mentor
-    await prisma.account.upsert({
-      where: { accountId: "test-mentor-profile" },
-      update: {},
-      create: {
-        id: "test-mentor-profile",
-        accountId: "test-mentor-profile",
-        email: "mentor-profile@test.com",
-        isEmailVerified: true,
-        failedLoginAttempts: 0,
-        isLocked: false,
-        lastLogin: new Date(),
-      },
-    });
-
     const mentorUser = await prisma.user.upsert({
       where: { userId: "test-mentor-profile" },
       update: { role: "MENTOR", status: "ACTIVE", isPublished: true, publishedAt: new Date() },
@@ -44,14 +30,14 @@ describe("Mentor Public Profile Functional Validation", () => {
     mentorId = mentorUser.id;
     mentorUserId = mentorUser.userId;
 
-    // Setup Apprentice
     await prisma.account.upsert({
-      where: { accountId: "test-apprentice-profile" },
-      update: {},
+      where: { accountId: "test-mentor-profile" },
+      update: { userId: mentorId },
       create: {
-        id: "test-apprentice-profile",
-        accountId: "test-apprentice-profile",
-        email: "apprentice-profile@test.com",
+        id: "test-mentor-profile",
+        accountId: "test-mentor-profile",
+        userId: mentorId,
+        email: "mentor-profile@test.com",
         isEmailVerified: true,
         failedLoginAttempts: 0,
         isLocked: false,
@@ -59,6 +45,7 @@ describe("Mentor Public Profile Functional Validation", () => {
       },
     });
 
+    // Setup Apprentice
     const apprenticeUser = await prisma.user.upsert({
       where: { userId: "test-apprentice-profile" },
       update: { role: "APPRENANT", status: "ACTIVE" },
@@ -70,7 +57,22 @@ describe("Mentor Public Profile Functional Validation", () => {
         status: "ACTIVE",
       },
     });
-    apprenticeUserId = apprenticeUser.userId;
+    apprenticeUserId = apprenticeUser.id;
+
+    await prisma.account.upsert({
+      where: { accountId: "test-apprentice-profile" },
+      update: { userId: apprenticeUserId },
+      create: {
+        id: "test-apprentice-profile",
+        accountId: "test-apprentice-profile",
+        userId: apprenticeUserId,
+        email: "apprentice-profile@test.com",
+        isEmailVerified: true,
+        failedLoginAttempts: 0,
+        isLocked: false,
+        lastLogin: new Date(),
+      },
+    });
 
     // Create a workshop for the mentor
     await prisma.workshop.upsert({

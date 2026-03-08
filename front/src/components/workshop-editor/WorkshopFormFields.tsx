@@ -92,7 +92,7 @@ export function WorkshopFormFields({
           id="title"
           placeholder="Ex: Introduction à React"
           {...register("title")}
-          className={errors.title ? "border-red-500" : ""}
+          className={`rounded-full ${errors.title ? "border-red-500" : ""}`}
         />
         {errors.title?.message && (
           <p className="text-sm text-red-500">{String(errors.title.message)}</p>
@@ -109,7 +109,7 @@ export function WorkshopFormFields({
           rows={3}
           maxLength={100}
           {...register("description")}
-          className={errors.description ? "border-red-500" : ""}
+          className={`rounded-2xl ${errors.description ? "border-red-500" : ""}`}
         />
 
         <div className="space-y-1">
@@ -146,7 +146,7 @@ export function WorkshopFormFields({
           id="topic"
           placeholder="Ex: React, Mathématiques, Design, Programmation..."
           {...register("topic")}
-          className={errors.topic ? "border-red-500" : ""}
+          className={`rounded-full ${errors.topic ? "border-red-500" : ""}`}
         />
         {errors.topic?.message && (
           <p className="text-sm text-red-500">{String(errors.topic.message)}</p>
@@ -166,7 +166,7 @@ export function WorkshopFormFields({
             id="date"
             type="date"
             {...register("date")}
-            className={errors.date ? "border-red-500" : ""}
+            className={`rounded-full ${errors.date ? "border-red-500" : ""}`}
           />
           {errors.date?.message && (
             <p className="text-sm text-red-500">
@@ -190,7 +190,7 @@ export function WorkshopFormFields({
             id="time"
             type="time"
             {...register("time")}
-            className={errors.time ? "border-red-500" : ""}
+            className={`rounded-full ${errors.time ? "border-red-500" : ""}`}
           />
           {errors.time?.message && (
             <p className="text-sm text-red-500">
@@ -213,7 +213,7 @@ export function WorkshopFormFields({
                 max="8"
                 placeholder="0"
                 {...register("durationHours", { valueAsNumber: true })}
-                className={errors.durationHours ? "border-red-500" : ""}
+                className={`rounded-full ${errors.durationHours ? "border-red-500" : ""}`}
               />
               <p className="text-xs text-muted-foreground mt-1">Heures</p>
             </div>
@@ -226,7 +226,7 @@ export function WorkshopFormFields({
                 step="15"
                 placeholder="0"
                 {...register("durationMinutes", { valueAsNumber: true })}
-                className={errors.durationMinutes ? "border-red-500" : ""}
+                className={`rounded-full ${errors.durationMinutes ? "border-red-500" : ""}`}
               />
               <p className="text-xs text-muted-foreground mt-1">Minutes</p>
             </div>
@@ -242,7 +242,7 @@ export function WorkshopFormFields({
         </div>
       </div>
 
-      <div className="flex items-center justify-between p-4 border rounded-lg">
+      <div className="flex items-center justify-between p-4 border rounded-2xl">
         <div className="space-y-0.5">
           <Label htmlFor="isVirtual" className="text-base font-semibold">
             Atelier virtuel
@@ -277,7 +277,7 @@ export function WorkshopFormFields({
             id="location"
             placeholder="Ex: 123 Rue de la Paix, Paris"
             {...register("location")}
-            className={errors.location ? "border-red-500" : ""}
+            className={`rounded-full ${errors.location ? "border-red-500" : ""}`}
           />
           {errors.location?.message && (
             <p className="text-sm text-red-500">
@@ -300,12 +300,12 @@ export function WorkshopFormFields({
           type="number"
           min="1"
           max="1000"
-          placeholder="Ex: 5 (laissez vide si aucune limite)"
+          placeholder="Ex: 5 (laisse vide si aucune limite)"
           {...register("maxParticipants", {
             setValueAs: (v) =>
               v === "" || v === null ? undefined : parseInt(v, 10),
           })}
-          className={errors.maxParticipants ? "border-red-500" : ""}
+          className={`rounded-full ${errors.maxParticipants ? "border-red-500" : ""}`}
         />
         {errors.maxParticipants?.message && (
           <p className="text-sm text-red-500">
@@ -313,7 +313,7 @@ export function WorkshopFormFields({
           </p>
         )}
         <p className="text-sm text-muted-foreground">
-          Laissez vide si aucune limite
+          Laisse vide si aucune limite
         </p>
       </div>
 
@@ -330,7 +330,7 @@ export function WorkshopFormFields({
           placeholder="Ex: Ordinateur portable, logiciel(s) nécessaire(s),..."
           rows={3}
           {...register("materialsNeeded")}
-          className={errors.materialsNeeded ? "border-red-500" : ""}
+          className={`rounded-2xl ${errors.materialsNeeded ? "border-red-500" : ""}`}
         />
         {errors.materialsNeeded?.message && (
           <p className="text-sm text-red-500">
@@ -354,7 +354,7 @@ export function WorkshopFormFields({
           max={100}
           placeholder="20"
           {...register("creditCost", { valueAsNumber: true })}
-          className={errors.creditCost ? "border-red-500" : ""}
+          className={`rounded-full ${errors.creditCost ? "border-red-500" : ""}`}
         />
         <p className="text-xs text-muted-foreground">
           Le nombre minimum de crédits est 20 et le maximum est 100 (par défaut: 20)
