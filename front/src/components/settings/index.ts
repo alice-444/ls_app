@@ -1,4 +1,5 @@
 export { AccountSection } from "./AccountSection";
+export { AboutSection } from "./AboutSection";
 export { PersonalInformationSection } from "./PersonalInformationSection";
 export { NotificationsSection } from "./NotificationsSection";
 export { SystemSettingsSection } from "./SystemSettingsSection";
