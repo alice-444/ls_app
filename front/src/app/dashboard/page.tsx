@@ -17,6 +17,7 @@ export default function Dashboard() {
     queryClient,
     userRole,
     actualUserRole,
+    userStatus,
     isMentor,
     isApprenant,
     workshopRequests,
@@ -78,6 +79,7 @@ export default function Dashboard() {
           acceptedConnections={acceptedConnections}
           mentorWorkshopRequests={mentorWorkshopRequests}
           mentorWorkshops={mentorWorkshops}
+          userStatus={userStatus}
         />
       )}
 

@@ -147,6 +147,8 @@ function TitleCard({
   );
 }
 
+import RollingNumber from "@/components/ui/RollingNumber";
+
 function CreditBalanceCard({
   balance,
   router,
@@ -167,7 +169,7 @@ function CreditBalanceCard({
         </p>
         <div className="flex items-end gap-2 sm:gap-4 mb-4 sm:mb-6">
           <p className="text-2xl sm:text-[28px] lg:text-[32px] font-medium leading-none">
-            {balance}{" "}
+            <RollingNumber value={balance} />{" "}
             <span className="text-sm sm:text-base lg:text-[18px]">crédit(s)</span>
           </p>
           <div className="relative flex items-center h-[33px] w-[33.5px]">

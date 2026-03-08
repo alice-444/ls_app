@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
-import { getUserRole } from "@/lib/api-client";
+import { getUserData } from "@/lib/api-client";
 import { toast } from "sonner";
 import { calculateEndTime, calculateCountdown } from "@/lib/workshop-utils";
 
@@ -30,11 +30,14 @@ export function useDashboard() {
   const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
 
-  const { data: actualUserRole } = useQuery({
-    queryKey: ["userRole", session?.user?.id],
-    queryFn: getUserRole,
+  const { data: userData } = useQuery({
+    queryKey: ["userData", session?.user?.id],
+    queryFn: getUserData,
     enabled: !!session?.user?.id,
   });
+
+  const actualUserRole = userData?.role || null;
+  const userStatus = userData?.status || "ACTIVE";
 
   const [userRole, setUserRole] = useState<UserRole>(() =>
     mapServerRole(actualUserRole || null)
@@ -298,6 +301,7 @@ export function useDashboard() {
     queryClient,
     userRole,
     actualUserRole,
+    userStatus,
     isMentor,
     isApprenant,
 

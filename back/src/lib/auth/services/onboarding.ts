@@ -40,36 +40,24 @@ export class OnboardingService {
           status: "ACTIVE",
         });
       } else {
-        if (appUser.role !== null && appUser.role !== "APPRENANT") {
+        if (appUser.role !== null) {
           return failure(
-            "Role already assigned. Cannot change role after onboarding.",
+            "Rôle déjà assigné. Vous ne pouvez pas changer de rôle après l'onboarding.",
             403
           );
         }
 
-        if (appUser.role === "APPRENANT" && validation.data.role === "MENTOR") {
-          appUser = await this.appUserRepository.update(userId, {
-            role: validation.data.role,
-            status: "ACTIVE",
-          });
-        } else if (appUser.role === null) {
-          if (appUser.status !== "PENDING") {
-            return failure(
-              "User must be in PENDING status to select role",
-              400
-            );
-          }
-
-          appUser = await this.appUserRepository.update(userId, {
-            role: validation.data.role,
-            status: "ACTIVE",
-          });
-        } else {
+        if (appUser.status !== "PENDING") {
           return failure(
-            "Cannot change role. You can only upgrade from APPRENANT to MENTOR.",
-            403
+            "L'utilisateur doit être en statut PENDING pour sélectionner un rôle",
+            400
           );
         }
+
+        appUser = await this.appUserRepository.update(userId, {
+          role: validation.data.role,
+          status: "ACTIVE",
+        });
       }
 
       if (!appUser.role) {

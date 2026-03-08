@@ -60,8 +60,25 @@ Toutes les données collectées sont visibles par l'utilisateur via son profil e
 
 ---
 
-## 🛠️ Sécurité du Code
+## 🛠️ Sécurité du Code & Infrastructure
 
-- **Validation des Entrées** : Utilisation systématique de **Zod** pour valider chaque input tRPC ou API, prévenant les injections et les données malformées.
-- **Type Safety** : TypeScript assure que les données manipulées correspondent aux contrats définis, réduisant les erreurs logiques de sécurité.
-- **ORM Sécurisé** : Prisma prévient par défaut les injections SQL via l'utilisation de requêtes paramétrées.
+### Filtrage des Données Sortantes (Anti-Leakage)
+Pour prévenir les fuites de données sensibles (mots de passe, tokens, emails internes), le projet applique deux niveaux de filtrage :
+- **Au niveau tRPC** : Les procédures utilisent systématiquement la clause `select` de Prisma pour ne renvoyer que les champs strictement nécessaires à l'UI.
+- **Au niveau de la Session** : L'objet `ctx.session.user` fourni par Better Auth est pré-filtré par le framework pour ne contenir que les informations publiques de la session (id, name, email, image).
+
+### Sécurité des Uploads
+Le point d'entrée `/api/support-request` implémente une politique de sécurité stricte pour la gestion des fichiers :
+- **Validation MIME** : Seuls les types `image/*`, `application/pdf`, `text/plain` et les formats Office (`.doc`, `.docx`) sont autorisés via une liste blanche (`Set`).
+- **Limites de taille** : Max **10 Mo** par fichier et maximum **5 fichiers** par requête.
+- **Assainissement (Sanitization)** : Les noms de fichiers sont générés via `randomUUID()` et les extensions sont nettoyées pour empêcher toute exécution de script ou injection de chemin (`path traversal`).
+- **Stockage** : Actuellement stockés localement dans `/uploads/support/` avec un accès contrôlé. *Note : Une migration vers un stockage S3 avec URLs pré-signées est recommandée pour une isolation totale.*
+
+### Configuration CORS
+Le serveur (`server.ts`) implémente une gestion dynamique des headers CORS :
+- **En Développement** : Accepte l'origine par défaut `http://localhost:3001`.
+- **En Production** : Utilise la variable d'environnement `CORS_ORIGIN`. 
+*Note de sécurité : Il est crucial de ne jamais utiliser `*` en production pour garantir que seul le frontend officiel peut communiquer avec l'API.*
+
+### Headers de Sécurité (Recommandations)
+Le serveur HTTP principal ajoute manuellement les en-têtes essentiels pour la protection des échanges (Credentials, Allowed Methods). Pour une protection renforcée (CSP, HSTS), l'intégration de `Helmet.js` est prévue dans la roadmap de sécurisation.
