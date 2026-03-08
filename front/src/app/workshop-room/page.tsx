@@ -98,28 +98,22 @@ export default function WorkshopRoomPage() {
     }
   );
 
+  const allTopicsQuery = trpc.workshop.getAllTopics.useQuery();
+
   const workshops = isApprentice && session
     ? availableWorkshopsQuery.data
     : publishedWorkshopsQuery.data;
   const isLoading =
     (isApprentice && session
       ? availableWorkshopsQuery.isLoading
-      : publishedWorkshopsQuery.isLoading) || !userRole;
-  const error =
-    isApprentice && session
+      : publishedWorkshopsQuery.isLoading) || !userRole || allTopicsQuery.isLoading;
+  
+  const error = 
+    (isApprentice && session
       ? availableWorkshopsQuery.error
-      : publishedWorkshopsQuery.error;
-
-  const availableTopics = useMemo(() => {
-    if (!workshops) return [];
-    const topicSet = new Set<string>();
-    workshops.forEach((workshop: Workshop) => {
-      if (workshop.topic && typeof workshop.topic === "string" && workshop.topic.trim().length > 0) {
-        topicSet.add(workshop.topic.trim());
-      }
-    });
-    return Array.from(topicSet).sort((a, b) => a.localeCompare(b));
-  }, [workshops]);
+      : publishedWorkshopsQuery.error) || allTopicsQuery.error;
+  
+  const availableTopics = allTopicsQuery.data || [];
 
   const filteredWorkshops = useMemo(() => {
     if (!workshops) return [];

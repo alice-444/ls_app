@@ -75,6 +75,15 @@ export class WorkshopQueryService implements IWorkshopQueryService {
       );
     }
   }
+
+  async getAllTopics(): Promise<Result<string[]>> {
+    try {
+      const topics = await this.workshopRepository.getAllTopics();
+      return success(topics);
+    } catch (error) {
+      return handleError(error, createErrorContext("getAllTopics"));
+    }
+  }
 }
 
 export class WorkshopApprenticeQueryService

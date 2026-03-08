@@ -47,6 +47,7 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function MentorProfileViewPage() {
   const router = useRouter();
@@ -131,9 +132,18 @@ export default function MentorProfileViewPage() {
   const photoUrl = mentor.photoUrl ? `${API_BASE_URL}${mentor.photoUrl}` : null;
   const socialMediaLinks = mentor.socialMediaLinks || {};
 
+  const breadcrumbItems = [
+    { label: "Accueil", href: "/dashboard" },
+    { label: "Mentors", href: "/mentors" },
+    { label: mentor?.displayName || mentor?.name || "Profil", isCurrent: true },
+  ];
+
   return (
     <PageContainer>
-      <BackButton onClick={() => router.back()} />
+      <div className="flex flex-col gap-4 mb-6">
+        <Breadcrumb items={breadcrumbItems} />
+        <BackButton onClick={() => router.back()} />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 12 }}

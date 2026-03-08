@@ -100,6 +100,10 @@ const workshopCoreRouter = router({
         await container.workshopService.getWorkshopById(input.workshopId)
       )
     ),
+
+  getAllTopics: publicProcedure.query(async () =>
+    unwrapResult(await container.workshopService.getAllTopics())
+  ),
 });
 
 const workshopSchedulingRouter = router({
