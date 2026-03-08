@@ -9,6 +9,7 @@ ce qui existe et où le trouver
 - [README principal](../README.md) - installation et le quick start
 - [Architecture](#architecture) – Vue d’ensemble front/back
 - [Design Patterns](patterns.md) – Patterns utilisés dans le projet
+- [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
 - [PRD & EPTC](#prd--eptc) – Cahier des charges et plan de tests E2E (contexte Gemini)
 - [Front](#front) – Application Next.js, tRPC, auth
 - [Back](#back) – API, Prisma, auth
