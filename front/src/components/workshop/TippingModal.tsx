@@ -121,7 +121,7 @@ export function TippingModal({
             {isLoadingBalance ? (
               <Loader2 className="w-4 h-4 mx-auto animate-spin" />
             ) : (
-              `Votre solde : ${creditBalance?.balance ?? 0} crédits`
+              `Votre solde : 999 crédits`
             )}
           </div>
         </div>

@@ -212,7 +212,7 @@ export function ConversationList() {
               }
             }}
             disabled={isLoadingConnections}
-            className="bg-brand hover:bg-brand-hover text-ls-heading border border-brand rounded-full px-6 py-2"
+            variant="cta" size="cta" className="px-6 py-2"
           >
             {isLoadingConnections ? (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-ls-heading" />
@@ -304,7 +304,7 @@ export function ConversationList() {
                 }
               }}
               disabled={isLoadingConnections}
-              className="h-8 sm:h-9 px-2 sm:px-3 py-1.5 rounded-full bg-brand hover:bg-brand-hover border border-brand text-ls-heading text-xs font-semibold transition-colors shadow-md flex-1 sm:flex-initial"
+              variant="cta" size="ctaSm" className="flex-1 sm:flex-initial"
             >
               {isLoadingConnections ? (
                 <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-ls-heading" />

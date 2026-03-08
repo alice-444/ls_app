@@ -238,13 +238,14 @@ export function AttendanceManagementCard({
               {hasUnsavedChanges && (
                 <div className="flex gap-2 pt-2 border-t border-border/50">
                   <Button
+                    variant="cta"
+                    size="ctaSm"
                     onClick={handleSave}
                     disabled={
                       updateAttendanceMutation.isPending ||
                       confirmAttendanceMutation.isPending
                     }
-                    className="flex-1 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
-                    size="sm"
+                    className="flex-1"
                   >
                     <Save className="w-4 h-4 mr-2" />
                     Enregistrer les modifications
@@ -254,14 +255,15 @@ export function AttendanceManagementCard({
 
                 <div className="pt-2 border-t border-border/50">
                 <Button
+                  variant="cta"
+                  size="cta"
                   onClick={handleConfirm}
                   disabled={
                     updateAttendanceMutation.isPending ||
                     confirmAttendanceMutation.isPending ||
                     hasUnsavedChanges
                   }
-                  className="w-full bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
-                  variant="default"
+                  className="w-full"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
                   Valider et clôturer l'atelier

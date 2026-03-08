@@ -97,7 +97,7 @@ export function NewConversationDialog({
                       onOpenChange(false);
                       router.push(userRole === "MENTOR" ? "/network" : "/mentors");
                     }}
-                    className="bg-brand hover:bg-brand-hover text-ls-heading rounded-full"
+                    variant="cta" size="cta"
                   >
                     {userRole === "MENTOR" ? "Voir mon réseau" : "Trouver un mentor"}
                   </Button>
@@ -171,7 +171,7 @@ function ConnectionRow({
           )}
         </div>
       </div>
-      <Button size="sm" variant="outline" disabled={isPending} className="rounded-full border-brand text-brand hover:bg-brand/10">
+      <Button size="ctaSm" variant="ctaOutline" disabled={isPending}>
         <MessageSquare className="h-4 w-4 mr-2" />
         Message
       </Button>

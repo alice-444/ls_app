@@ -99,10 +99,11 @@ export function MessageInput({ onSend, conversationId }: MessageInputProps) {
         disabled={isSending}
       />
       <Button
+        variant="cta"
+        size="icon"
         onClick={handleSend}
         disabled={!message.trim() || isSending}
-        size="icon"
-        className="h-[60px] w-[60px] shrink-0 rounded-full bg-brand hover:bg-brand-hover"
+        className="h-[60px] w-[60px] shrink-0"
       >
         <Send className="h-5 w-5" />
       </Button>

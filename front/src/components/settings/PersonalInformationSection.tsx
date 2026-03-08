@@ -119,7 +119,7 @@ export function PersonalInformationSection() {
           <Button
             type="submit"
             disabled={isSaving}
-            className="h-10 px-4 py-3 bg-brand rounded-full gap-2 hover:bg-brand-hover"
+            variant="cta" size="cta" className="gap-2"
           >
             <span className="text-xs font-semibold text-white tracking-[-0.6px]">
               Sauvegarder les modifications

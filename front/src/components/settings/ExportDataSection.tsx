@@ -90,7 +90,7 @@ export function ExportDataSection() {
           <Button
             onClick={handleExport}
             disabled={isExporting}
-            className="bg-brand hover:bg-brand-hover text-white rounded-full px-6 py-2 h-auto flex items-center gap-2"
+            variant="cta" size="cta" className="px-6 py-2 h-auto"
           >
             {isExporting ? (
               <Loader2 className="w-4 h-4 animate-spin" />

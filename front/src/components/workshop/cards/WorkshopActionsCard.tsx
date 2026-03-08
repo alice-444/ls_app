@@ -40,8 +40,9 @@ export function WorkshopActionsCard({
           </p>
           {showContactMentor && onContactMentor && (
             <Button
-              variant="outline"
-              className="w-full gap-2 border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
+              variant="ctaOutline"
+              size="cta"
+              className="w-full gap-2"
               onClick={onContactMentor}
             >
               <MessageSquare className="h-4 w-4" />
@@ -76,7 +77,9 @@ export function WorkshopActionsCard({
             Tu souhaites participer à cet atelier ? Envoie une demande au mentor.
           </p>
           <Button
-            className="w-full gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
+            variant="cta"
+            size="cta"
+            className="w-full gap-2"
             onClick={onRequestParticipation}
           >
             <BookOpen className="h-4 w-4" />
@@ -84,8 +87,9 @@ export function WorkshopActionsCard({
           </Button>
           {showContactMentor && onContactMentor && (
             <Button
-              variant="outline"
-              className="w-full gap-2 border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
+              variant="ctaOutline"
+              size="cta"
+              className="w-full gap-2"
               onClick={onContactMentor}
             >
               <MessageSquare className="h-4 w-4" />
@@ -111,7 +115,9 @@ export function WorkshopActionsCard({
             Tu as une question sur cet atelier ? Contacte le mentor directement.
           </p>
           <Button
-            className="w-full gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
+            variant="cta"
+            size="cta"
+            className="w-full gap-2"
             onClick={onContactMentor}
           >
             <MessageSquare className="h-4 w-4" />

@@ -29,39 +29,39 @@ export function ProfilePreviewCard({
       <div className="w-full max-w-[340px] lg:max-w-full sticky top-8 overflow-hidden rounded-xl lg:rounded-2xl border border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl">
         <div className="hidden lg:block h-1.5 w-full bg-linear-to-r from-[#FF8C42]/30 via-[#FF8C42]/50 to-[#FF8C42]/30" />
         <div className="p-3 lg:p-6 flex flex-col items-center text-center">
-          <p className="text-[10px] lg:text-xs font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] uppercase tracking-wider mb-1 lg:mb-1">
+          <p className="text-[10px] lg:text-xs font-medium text-ls-muted uppercase tracking-wider mb-1 lg:mb-1">
             Aperçu
           </p>
-          <p className="hidden lg:block text-xs text-[rgba(38,84,124,0.5)] dark:text-[rgba(230,230,230,0.5)] mb-4 lg:mb-5">
+          <p className="hidden lg:block text-xs text-ls-muted mb-4 lg:mb-5">
             Comme les autres te verront
           </p>
           {previewPhoto ? (
             <img
               src={previewPhoto}
               alt=""
-              className="w-12 h-12 lg:w-24 lg:h-24 rounded-full object-cover ring-2 ring-[#FF8C42]/20 ring-offset-2 ring-offset-white dark:ring-offset-[#1a1720] mb-2 lg:mb-4 shrink-0"
+              className="w-12 h-12 lg:w-24 lg:h-24 rounded-full object-cover ring-2 ring-brand/20 ring-offset-2 ring-offset-background mb-2 lg:mb-4 shrink-0"
             />
           ) : (
-            <div className="w-12 h-12 lg:w-24 lg:h-24 rounded-full bg-[#e8eaef] dark:bg-white/10 flex items-center justify-center ring-2 ring-[#d6dae4] dark:ring-[rgba(214,218,228,0.32)] ring-offset-2 ring-offset-white dark:ring-offset-[#1a1720] mb-2 lg:mb-4 shrink-0">
-              <User className="h-6 w-6 lg:h-11 lg:w-11 text-[#64748b] dark:text-gray-400" />
+            <div className="w-12 h-12 lg:w-24 lg:h-24 rounded-full bg-brand/5 flex items-center justify-center ring-2 ring-border/50 ring-offset-2 ring-offset-background mb-2 lg:mb-4 shrink-0">
+              <User className="h-6 w-6 lg:h-11 lg:w-11 text-ls-muted" />
             </div>
           )}
-          <h3 className="text-xs lg:text-lg font-semibold text-[#26547c] dark:text-[#e6e6e6] wrap-break-word line-clamp-2 lg:line-clamp-none">
+          <h3 className="text-xs lg:text-lg font-semibold text-ls-heading wrap-break-word line-clamp-2 lg:line-clamp-none">
             {displayName || "Ton prénom"}
           </h3>
           {title && (
             <Badge
               variant="secondary"
-              className="mt-1 lg:mt-2 text-[10px] lg:text-xs bg-[#FF8C42]/10 text-[#FF8C42] border-0 shrink-0"
+              className="mt-1 lg:mt-2 text-[10px] lg:text-xs bg-brand/10 text-brand border-0 shrink-0 rounded-full"
             >
               {title}
             </Badge>
           )}
           {(studyDomain || studyProgram) && (
-            <div className="hidden lg:block mt-3 text-sm text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] space-y-1">
+            <div className="hidden lg:block mt-3 text-sm text-ls-muted space-y-1">
               {studyDomain && (
                 <p className="flex items-center justify-center gap-1.5">
-                  <GraduationCap className="h-4 w-4 text-[#FF8C42] shrink-0" />
+                  <GraduationCap className="h-4 w-4 text-brand shrink-0" />
                   {studyDomain}
                 </p>
               )}
@@ -69,7 +69,7 @@ export function ProfilePreviewCard({
             </div>
           )}
           {bio && (
-            <div className="hidden lg:block mt-3 text-sm text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] italic line-clamp-3">
+            <div className="hidden lg:block mt-3 text-sm text-ls-muted italic line-clamp-3">
               "{bio}"
             </div>
           )}
@@ -78,7 +78,7 @@ export function ProfilePreviewCard({
               {iceBreakers.map((tag, i) => (
                 <span
                   key={i}
-                  className="px-1.5 py-0.5 lg:px-2 lg:py-0.5 bg-[#26547c]/10 text-[#26547c] dark:text-blue-300 rounded-lg text-[9px] lg:text-[11px] font-bold border border-[#26547c]/20"
+                  className="px-1.5 py-0.5 lg:px-2 lg:py-0.5 bg-brand/10 text-brand rounded-full text-[9px] lg:text-[11px] font-bold border border-brand/20"
                 >
                   {tag}
                 </span>
@@ -90,7 +90,7 @@ export function ProfilePreviewCard({
               {tags.map((tag, i) => (
                 <span
                   key={i}
-                  className="px-1.5 py-0.5 lg:px-2.5 lg:py-1 bg-[#FF8C42]/10 text-[#FF8C42] rounded-full text-[10px] lg:text-xs font-medium"
+                  className="px-1.5 py-0.5 lg:px-2.5 lg:py-1 bg-brand/10 text-brand rounded-full text-[10px] lg:text-xs font-medium"
                 >
                   {tag}
                 </span>
