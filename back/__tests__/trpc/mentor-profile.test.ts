@@ -75,14 +75,18 @@ describe("Mentor Public Profile Functional Validation", () => {
     // Create a workshop for the mentor
     await prisma.workshop.upsert({
       where: { id: "test-workshop-id" },
-      update: {},
+      update: {
+        creatorId: mentorId,
+        status: "PUBLISHED",
+        date: new Date("2099-01-01"),
+      },
       create: {
         id: "test-workshop-id",
         creatorId: mentorId,
         title: "Test Workshop",
         description: "Test Description",
         status: "PUBLISHED",
-        date: new Date(Date.now() + 86400000), // Tomorrow
+        date: new Date("2099-01-01"),
         time: "10:00",
         domain: "Design",
       }

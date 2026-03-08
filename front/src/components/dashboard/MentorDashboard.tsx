@@ -64,9 +64,6 @@ interface WorkshopRequest {
   apprenticeName?: string;
 }
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info, Lock } from "lucide-react";
-
 interface MentorDashboardProps {
   readonly mentorStats: {
     readonly creditsEarned: number;

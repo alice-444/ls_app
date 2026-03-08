@@ -169,17 +169,13 @@ export default function SignInForm({
             )}
           </form.Field>
         </div>
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={!state.canSubmit || isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Sign In"}
-            </Button>
-          )}
-        </form.Subscribe>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Sign In"}
+        </Button>
       </form>
       <div className="mt-4 space-y-2 text-center">
         <Button

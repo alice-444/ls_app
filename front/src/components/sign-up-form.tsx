@@ -178,17 +178,13 @@ export default function SignUpForm({
 					</form.Field>
 				</div>
 
-				<form.Subscribe>
-					{(state) => (
-						<Button
-							type="submit"
-							className="w-full"
-							disabled={!state.canSubmit || isSubmitting}
-						>
-							{isSubmitting ? "Creating Account..." : "Sign Up"}
-						</Button>
-					)}
-				</form.Subscribe>
+				<Button
+					type="submit"
+					className="w-full"
+					disabled={isSubmitting}
+				>
+					{isSubmitting ? "Creating Account..." : "Sign Up"}
+				</Button>
 			</form>
 
 			<div className="mt-4 text-center">

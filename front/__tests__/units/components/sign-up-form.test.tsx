@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
+import type { AppRouter } from "@/types/trpc-router";
 import SignUpForm from "@/components/sign-up-form";
 
 const mockPush = vi.fn();
@@ -26,13 +30,37 @@ vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
+const trpc = createTRPCReact<AppRouter>();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+});
+const getClient = () =>
+  trpc.createClient({
+    links: [
+      httpBatchLink({
+        url: "http://localhost:3000/api/trpc",
+        fetch: () => Promise.resolve({ ok: true, json: () => ({}) } as Response),
+      }),
+    ],
+  });
+
+function renderSignUpForm(onSwitchToSignIn = vi.fn()) {
+  return render(
+    <trpc.Provider client={getClient()} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <SignUpForm onSwitchToSignIn={onSwitchToSignIn} />
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+}
+
 describe("SignUpForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("renders heading and form fields", () => {
-    render(<SignUpForm onSwitchToSignIn={vi.fn()} />);
+    renderSignUpForm();
     expect(screen.getByRole("heading", { name: /create account/i })).toBeInTheDocument();
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Username")).toBeInTheDocument();
@@ -45,7 +73,7 @@ describe("SignUpForm", () => {
   it("calls onSwitchToSignIn when Sign In link is clicked", async () => {
     const user = userEvent.setup();
     const onSwitchToSignIn = vi.fn();
-    render(<SignUpForm onSwitchToSignIn={onSwitchToSignIn} />);
+    renderSignUpForm(onSwitchToSignIn);
     await user.click(screen.getByRole("button", { name: /already have an account\? sign in/i }));
     expect(onSwitchToSignIn).toHaveBeenCalledTimes(1);
   });
@@ -56,7 +84,7 @@ describe("SignUpForm", () => {
     mockSignInEmail.mockImplementation((_cred, opts: { onSuccess?: () => void }) => {
       opts?.onSuccess?.();
     });
-    render(<SignUpForm onSwitchToSignIn={vi.fn()} />);
+    renderSignUpForm();
     await user.type(screen.getByLabelText("Name"), "Jane Doe");
     await user.type(screen.getByLabelText("Username"), "jane");
     await user.type(screen.getByLabelText("Email"), "jane@example.com");

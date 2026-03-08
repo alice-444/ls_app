@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { success, failure } from "@/lib/common/types";
 import { UserReportService } from "@/lib/users/services/moderation/user-report.service";
 
 describe("UserReportService", () => {
@@ -11,6 +10,7 @@ describe("UserReportService", () => {
   const mockAppUserRepo = {
     findByUserId: vi.fn(),
     findByAppUserId: vi.fn(),
+    findUserNameByUserId: vi.fn(),
   };
 
   const mockAuditLogService = {

@@ -1,0 +1,83 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { OnboardingService } from "@/lib/auth/services/onboarding";
+import type { AppUserRepository } from "@/lib/users/repositories";
+import * as userHelpers from "@/lib/auth/services/user-helpers";
+
+// Mock des helpers et utils
+vi.mock("../../utils/id-generator", () => ({
+  generateInternalId: () => "internal-id-123",
+}));
+
+vi.mock("@/lib/auth/services/user-helpers", () => ({
+  verifyUserExists: vi.fn(),
+}));
+
+describe("OnboardingService", () => {
+  let service: OnboardingService;
+  let mockRepo: any;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRepo = {
+      findByAppUserId: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+    };
+    service = new OnboardingService(mockRepo as unknown as AppUserRepository);
+    vi.mocked(userHelpers.verifyUserExists).mockResolvedValue({ ok: true } as any);
+  });
+
+  it("should create a new user with status ACTIVE for APPRENANT", async () => {
+    mockRepo.findByAppUserId.mockResolvedValue(null);
+    mockRepo.create.mockResolvedValue({ role: "APPRENANT", status: "ACTIVE" });
+
+    const result = await service.selectRole("user-1", { role: "APPRENANT" });
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.role).toBe("APPRENANT");
+    }
+    expect(mockRepo.create).toHaveBeenCalledWith(expect.objectContaining({
+      role: "APPRENANT",
+      status: "ACTIVE"
+    }));
+  });
+
+  it("should create a new user with status ACTIVE for MENTOR (instant activation)", async () => {
+    mockRepo.findByAppUserId.mockResolvedValue(null);
+    mockRepo.create.mockResolvedValue({ role: "MENTOR", status: "ACTIVE" });
+
+    const result = await service.selectRole("user-1", { role: "MENTOR" });
+
+    expect(result.ok).toBe(true);
+    expect(mockRepo.create).toHaveBeenCalledWith(expect.objectContaining({
+      role: "MENTOR",
+      status: "ACTIVE"
+    }));
+  });
+
+  it("should update an existing PENDING user to ACTIVE", async () => {
+    mockRepo.findByAppUserId.mockResolvedValue({ role: null, status: "PENDING" });
+    mockRepo.update.mockResolvedValue({ role: "MENTOR", status: "ACTIVE" });
+
+    const result = await service.selectRole("user-1", { role: "MENTOR" });
+
+    expect(result.ok).toBe(true);
+    expect(mockRepo.update).toHaveBeenCalledWith("user-1", expect.objectContaining({
+      role: "MENTOR",
+      status: "ACTIVE"
+    }));
+  });
+
+  it("should fail if user already has a role", async () => {
+    mockRepo.findByAppUserId.mockResolvedValue({ role: "APPRENANT", status: "ACTIVE" });
+
+    const result = await service.selectRole("user-1", { role: "MENTOR" });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.status).toBe(403);
+      expect(result.error).toContain("Rôle déjà assigné");
+    }
+  });
+});

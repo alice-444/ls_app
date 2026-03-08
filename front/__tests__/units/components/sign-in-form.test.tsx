@@ -3,6 +3,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { assertNoViolations } from "../lib/axe";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
+import type { AppRouter } from "@/types/trpc-router";
 import SignInForm from "@/components/sign-in-form";
 
 const mockPush = vi.fn();
@@ -25,12 +28,27 @@ vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-function renderSignInForm() {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+const trpc = createTRPCReact<AppRouter>();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+});
+const getClient = () =>
+  trpc.createClient({
+    links: [
+      httpBatchLink({
+        url: "http://localhost:3000/api/trpc",
+        fetch: () => Promise.resolve({ ok: true, json: () => ({}) } as Response),
+      }),
+    ],
+  });
+
+function renderSignInForm(onSwitchToSignUp = vi.fn()) {
   return render(
-    <QueryClientProvider client={queryClient}>
-      <SignInForm onSwitchToSignUp={vi.fn()} />
-    </QueryClientProvider>
+    <trpc.Provider client={getClient()} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <SignInForm onSwitchToSignUp={onSwitchToSignUp} />
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }
 
@@ -52,12 +70,7 @@ describe("SignInForm", () => {
   it("calls onSwitchToSignUp when Sign Up link is clicked", async () => {
     const user = userEvent.setup();
     const onSwitchToSignUp = vi.fn();
-    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-    render(
-      <QueryClientProvider client={queryClient}>
-        <SignInForm onSwitchToSignUp={onSwitchToSignUp} />
-      </QueryClientProvider>
-    );
+    renderSignInForm(onSwitchToSignUp);
     await user.click(screen.getByRole("button", { name: /need an account\? sign up/i }));
     expect(onSwitchToSignUp).toHaveBeenCalledTimes(1);
   });
