@@ -24,7 +24,7 @@ export interface IWorkshopAttendanceService {
     userId: string,
     workshopId: string,
     participantId: string,
-    attendanceStatus: "PENDING" | "PRESENT"
+    attendanceStatus: "PENDING" | "PRESENT" | "NO_SHOW"
   ): Promise<Result<AttendanceUpdateResult>>;
 
   confirmAttendance(

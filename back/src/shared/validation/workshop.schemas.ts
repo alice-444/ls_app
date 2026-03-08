@@ -128,6 +128,10 @@ export const deleteWorkshopSchema = z.object({
   workshopId: z.string().uuid(),
 });
 
+export const cancelWorkshopSchema = z.object({
+  workshopId: z.string().uuid(),
+});
+
 export type CreateWorkshopBackendInput = z.infer<
   typeof createWorkshopBackendSchema
 >;

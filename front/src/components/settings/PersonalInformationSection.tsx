@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { ProfilePhotoUpload } from "@/components/profil/ProfilePhotoUpload";
 
 export function PersonalInformationSection() {
   const { data: profileData, refetch: refetchProfile } =
@@ -17,6 +18,7 @@ export function PersonalInformationSection() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const updateProfileMutation = trpc.accountSettings.updateProfile.useMutation({
@@ -37,6 +39,7 @@ export function PersonalInformationSection() {
       const nameParts = fullName.split(" ");
       setFirstName(nameParts[0] || "");
       setLastName(nameParts.slice(1).join(" ") || "");
+      setPhotoUrl(profileData.photoUrl || null);
     }
   }, [profileData, session]);
 
@@ -44,7 +47,16 @@ export function PersonalInformationSection() {
     e.preventDefault();
     setIsSaving(true);
     const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
-    updateProfileMutation.mutate({ name: fullName || undefined });
+    updateProfileMutation.mutate({ 
+      name: fullName || undefined,
+      photoUrl: photoUrl || undefined
+    });
+  };
+
+  const handlePhotoChange = (url: string | null) => {
+    setPhotoUrl(url);
+    // Auto-save photo change
+    updateProfileMutation.mutate({ photoUrl: url });
   };
 
   return (
@@ -59,6 +71,14 @@ export function PersonalInformationSection() {
         <p className="text-base text-ls-heading tracking-[-0.8px] max-w-[330px]">
           Mettez à jour vos informations personnelles
         </p>
+      </div>
+
+      <div className="w-full max-w-md">
+        <ProfilePhotoUpload
+          previewPhoto={photoUrl}
+          onPhotoChange={handlePhotoChange}
+          blockCard="bg-white dark:bg-slate-900 rounded-2xl"
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">

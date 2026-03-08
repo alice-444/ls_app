@@ -22,12 +22,12 @@ export async function authenticatedFetch(
   });
 }
 
-export async function getProfProfile(): Promise<{
+export async function getMentorProfile(): Promise<{
   profile?: Record<string, unknown>;
   isPublished?: boolean;
 }> {
   const response = await authenticatedFetch(
-    `${API_BASE_URL}/api/profile/role/prof`,
+    `${API_BASE_URL}/api/profile/role/mentor`,
     {
       method: "GET",
     }

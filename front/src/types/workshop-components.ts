@@ -30,6 +30,28 @@ export interface WorkshopCalendarProps {
 }
 
 // ============================================================================
+// Mentor Types
+// ============================================================================
+
+export interface MentorBasic {
+  id: string;
+  name: string | null;
+  displayName: string | null;
+  bio: string | null;
+  domain: string | null;
+  photoUrl: string | null;
+  areasOfExpertise: string[] | null;
+  mentorshipTopics: string[] | null;
+  workshopsCount?: number;
+}
+
+export interface MentorCardProps {
+  mentor: MentorBasic;
+  onViewProfile?: (mentorId: string) => void;
+  className?: string;
+}
+
+// ============================================================================
 // Card Types
 // ============================================================================
 
@@ -42,6 +64,7 @@ export interface WorkshopCardProps {
   workshop: {
     id: string;
     title: string;
+    description?: string | null;
     date?: Date | string | null;
     time?: string | null;
     duration?: number | null;
@@ -51,14 +74,22 @@ export interface WorkshopCardProps {
     maxParticipants?: number | null;
     status?: string;
     averageRating?: number | null;
+    creator?: {
+      id: string;
+      user?: {
+        name: string | null;
+      } | null;
+    } | null;
   };
-  variant?: "default" | "hero" | "past";
+  variant?: "default" | "hero" | "past" | "catalogue";
   onViewDetails?: (workshopId: string) => void;
   onViewParticipants?: (workshopId: string) => void;
   onEdit?: (workshopId: string) => void;
   onReschedule?: (workshopId: string) => void;
   onDelete?: (workshopId: string) => void;
   onDuplicate?: (workshopId: string) => void;
+  onComplete?: (workshopId: string) => void;
+  onRequestParticipation?: (workshop: any) => void;
   showDropdown?: boolean;
   className?: string;
 }

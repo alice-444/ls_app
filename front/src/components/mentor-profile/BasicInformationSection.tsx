@@ -1,11 +1,12 @@
 "use client";
 
-import { User, Upload } from "lucide-react";
+import { User, Upload, Coffee } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { UseFormRegister, UseFormWatch, FieldErrors } from "react-hook-form";
 import type { MentorProfileFormData } from "./schema";
+import { TagListSection } from "./TagListSection";
 
 interface BasicInformationSectionProps {
   readonly register: UseFormRegister<MentorProfileFormData>;
@@ -15,6 +16,13 @@ interface BasicInformationSectionProps {
   readonly existingPhotoUrl: string | null;
   readonly watch: UseFormWatch<MentorProfileFormData>;
   readonly handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  readonly iceBreakers: {
+    add: (value: string) => void;
+    remove: (value: string) => void;
+  };
+  readonly selectedIceBreakers: string[];
+  readonly customIceBreaker: string;
+  readonly setCustomIceBreaker: (v: string) => void;
 }
 
 export function BasicInformationSection({
@@ -24,6 +32,10 @@ export function BasicInformationSection({
   previewPhoto,
   watch,
   handlePhotoChange,
+  iceBreakers,
+  selectedIceBreakers,
+  customIceBreaker,
+  setCustomIceBreaker,
 }: BasicInformationSectionProps) {
   return (
     <div className="flex flex-col gap-6">
@@ -50,6 +62,24 @@ export function BasicInformationSection({
           />
           {errors.name && (
             <p className="text-sm text-ls-error">{errors.name.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="displayName" className="text-ls-heading">
+            Nom d&apos;affichage (Optionnel)
+          </Label>
+          <Input
+            id="displayName"
+            {...register("displayName")}
+            placeholder="Ex: Prof. Jean, Mentor Dev..."
+            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-[32px]"
+          />
+          <p className="text-xs text-ls-muted">
+            Ce nom sera affiché publiquement sur votre profil
+          </p>
+          {errors.displayName && (
+            <p className="text-sm text-ls-error">{errors.displayName.message}</p>
           )}
         </div>
 
@@ -117,6 +147,29 @@ export function BasicInformationSection({
           <p className="text-xs text-ls-muted">
             Formats acceptés : JPG, PNG. Taille max : 5 Mo
           </p>
+        </div>
+
+        <div className="pt-4 border-t border-ls-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Coffee className="h-5 w-5 text-ls-heading" />
+            <h3 className="text-lg font-semibold text-ls-heading">
+              Ice-breakers
+            </h3>
+          </div>
+          <p className="text-sm text-ls-muted mb-4">
+            Ajoutez jusqu&apos;à 5 petits faits ou sujets pour briser la glace (ex: &quot;Fan de café&quot;, &quot;Joueur d&apos;échecs&quot;...)
+          </p>
+          <TagListSection
+            items={selectedIceBreakers}
+            customValue={customIceBreaker}
+            onCustomChange={setCustomIceBreaker}
+            onAdd={iceBreakers.add}
+            onRemove={iceBreakers.remove}
+            placeholder="Ajouter un ice-breaker..."
+            hint="Appuyez sur Entrée pour ajouter. Maximum 5."
+            error={errors.iceBreakerTags?.message}
+            variant="blue"
+          />
         </div>
       </div>
     </div>

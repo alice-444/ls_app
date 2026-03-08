@@ -84,7 +84,7 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 
 - **`src/app/`** — Routes (App Router). Chaque route = un dossier avec `page.tsx` ; `layout.tsx` à la racine enveloppe toute l’app (Providers, Sidebar, Header, Footer, ScrollToTopButton). Onboarding : `onboarding/` avec composants (RoleSelectionStep, ProfFormStep, ApprenantCompleteStep), hooks (`useOnboarding`), schémas. Pages d’erreur : `not-found.tsx` (404), `error.tsx` (500), `forbidden.tsx` (403), `405/page.tsx` (405).
 - **`src/components/`** — Composants organisés par domaine :
-  - `ui/` — Design system shadcn (boutons, cartes, dialogs, inputs, avatar, etc.).
+  - `ui/` — Design system shadcn (boutons, cartes, dialogs, inputs, avatar, tabs, etc.).
   - `layout/` — PageContainer, PageHeader, PageCard, SectionSidebar.
   - `header.tsx`, `sidebar.tsx`, `footer.tsx`, `back-button.tsx` — Shell de l'app.
   - `apprentice/` — Dashboard et ateliers apprenant (ApprenticeSidebar, UpcomingWorkshopsCard, AvailableWorkshopsGrid, ApprenticeWorkshopDashboard).
@@ -97,8 +97,9 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
   - `my-workshops/` — Gestion ateliers mentor (CalendarSection, NextWorkshopBanner, WorkshopFiltersBar).
   - `workshop/`, `workshop-editor/` — Détail et éditeur d'atelier.
   - `user/` — Composants transversaux (BlockUserDialog, ReportUserDialog).
+  - `community/` — Hub communauté : DealsGrid, EventsHubGrid, EventsTabs, MemberDirectory, ProposeDealForm, ProposeEventForm, ProposeSpotForm, SpotFinder, CommunityPoll, ImpactStats.
   - `network/`, `faq/` — Réseau et FAQ.
-- **`src/lib/`** — Clients et config : `auth-client.ts` (Better Auth + customAuthClient pour sign-up, onboarding, profil prof, upload photo, suppression de compte), `api-client.ts` (API_BASE_URL, authenticatedFetch, getProfProfile, getUserRole), `utils.ts` (cn, etc.).
+- **`src/lib/`** — Clients et config : `auth-client.ts` (Better Auth + customAuthClient pour sign-up, onboarding, profil mentor, upload photo, suppression de compte), `api-client.ts` (API_BASE_URL, authenticatedFetch, getMentorProfile, getUserRole), `utils.ts` (cn, etc.).
 - **`src/utils/trpc.ts`** — Création du client tRPC et du QueryClient (gestion des erreurs auth, toasts).
 - **`src/components/providers.tsx`** — ThemeProvider, TRPCProvider, QueryClientProvider, Toaster.
 - **`src/shared/`** — Validation et constantes partagées avec le back (Zod, password, workshop, file, date).
@@ -110,14 +111,15 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 ## Routes (pages) principales
 
 - **Publiques** : `/` (accueil), `/login` (email/mot de passe ou magic link), `/forgot-password`, `/reset-password`, `/verify-email-change`, `/legal`, `/terms`, `/privacy`, `/help`, `/info`.
-- **Auth / onboarding** : `/onboarding` (choix de rôle, formulaire prof ou apprenant).
+- **Auth / onboarding** : `/onboarding` (choix de rôle, formulaire mentor ou apprenant).
 - **Espace utilisateur** : `/dashboard`, `/my-profile`, `/profil`, `/mentor-profile`, `/settings` (profil, mot de passe, email, blocages, suppression de compte).
 - **Ateliers** : `/workshops`, `/workshop/[id]`, `/workshop/[id]/join-video`, `/workshop-editor`, `/my-workshops`, `/workshop-room`, `/paliers`, `/buy-credits`.
 - **Mentors / catalogue** : `/mentors`, `/mentors/[mentorId]` (profil public avec connexion réseau, demande d’atelier, feedbacks, liste d’ateliers), `/apprentice/[userId]`.
+- **Communauté** : `/community` (Hub : Events Hub, ateliers mentorat, bons plans, Spot Finder, sondage, annuaire membres).
 - **Réseau & messagerie** : `/network`, `/inbox`, `/inbox/[conversationId]`.
 - **Notifications** : `/notifications`.
 - **Support** : `/support-request`.
-- **Admin** : `/admin` (dashboard), `/admin/feedback-moderation`, `/admin/audit-logs`, `/admin/user-reports`, `/admin/support`, `/admin/onboarding`, `/admin/notifications`, `/admin/settings`.
+- **Admin** : `/admin` (dashboard), `/admin/community` (modération propositions), `/admin/feedback-moderation`, `/admin/audit-logs`, `/admin/user-reports`, `/admin/support`, `/admin/onboarding`, `/admin/notifications`, `/admin/settings`.
 - **Erreurs** : 404 (not-found), 500 (error), 403 (forbidden), 405 (`/405`).
 
 Navigation connectée (sidebar) selon le rôle — entrées de menu :
@@ -126,6 +128,7 @@ Navigation connectée (sidebar) selon le rôle — entrées de menu :
 flowchart LR
   subgraph Commun["Tous les rôles"]
     A[Dashboard]
+    B[Communauté]
   end
 
   subgraph Mentor["Si MENTOR"]
@@ -150,7 +153,7 @@ flowchart LR
   Sidebar --> Bas
 ```
 
-- **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l’interface admin via `/admin` (sidebar dédiée : Dashboard, Signalements, Modération, Support, Onboarding, Audit Logs, Notifications, Paramètres).
+- **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l’interface admin via `/admin` (sidebar dédiée : Dashboard, Signalements, Modération, Utilisateurs, Support, Communauté).
 - **e-Atelier** (APPRENANT) : sous-navigation Live (`/workshop-room/live`), Replay (`/workshop-room/replay`), Prochains ateliers (`/workshop-room/upcoming`). Ces sous-routes peuvent rediriger vers la page principale selon l’implémentation.
 
 Voir `src/components/sidebar.tsx` et `src/app/admin/layout.tsx`.
@@ -172,10 +175,10 @@ flowchart TB
     signUp[signUpEmail]
     selectRole[selectRole]
     signUp --> selectRole
-    selectRole --> FormProf[Formulaire prof]
+    selectRole --> FormMentor[Formulaire mentor]
     selectRole --> FormApp[Formulaire apprenant]
-    FormProf --> saveProf[saveProfProfile]
-    saveProf --> publish[publishProfile / unpublishProfile]
+    FormMentor --> saveMentor[saveMentorProfile]
+    saveMentor --> publish[publishProfile / unpublishProfile]
   end
 
   subgraph Profil["Profil"]
@@ -191,7 +194,7 @@ flowchart TB
 - **Session** : `authClient.useSession()` (Better Auth). Si pas de session (ou sur `/login`), la sidebar ne s’affiche pas.
 - **Magic link** : `trpc.auth.requestMagicLink.useMutation` envoie un lien par email ; l’utilisateur clique et est redirigé vers `/api/auth/magic-link-callback` puis `/dashboard`.
 - **Rôle** : `getUserRole()` (api-client) → `"MENTOR" | "APPRENANT" | "ADMIN" | null`. Utilisé pour la nav et l’affichage conditionnel. Si ADMIN, redirection vers `/admin` et sidebar principale masquée.
-- **Inscription / onboarding** : `customAuthClient.signUpEmail`, `customAuthClient.selectRole`, puis formulaires spécifiques (prof ou apprenant). Prof : `customAuthClient.saveProfProfile`, `customAuthClient.publishProfile` / `unpublishProfile`.
+- **Inscription / onboarding** : `customAuthClient.signUpEmail`, `customAuthClient.selectRole`, puis formulaires spécifiques (mentor ou apprenant). Mentor : `customAuthClient.saveMentorProfile`, `customAuthClient.publishProfile` / `unpublishProfile`.
 - **Photo de profil** : `customAuthClient.uploadPhoto` (POST multipart vers le back).
 - **Suppression de compte** : `customAuthClient.deleteAccount(reason?)`.
 

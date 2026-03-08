@@ -9,6 +9,8 @@ export const accountSettingsRouter = router({
         photoUrl: z.string().url().nullable().optional(),
         name: z.string().min(1).max(120).optional(),
         bio: z.string().max(300).nullable().optional(),
+        emailNotifications: z.boolean().optional(),
+        inAppNotifications: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -141,34 +143,13 @@ export const accountSettingsRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const checkResult =
-        await container.deleteAccountEnhancedService.checkCanDeleteAccount(
-          ctx.session.user.id
-        );
-
-      if (!checkResult.ok) {
-        throw new Error(checkResult.error);
-      }
-
-      if (!checkResult.data.canDelete) {
-        throw new Error(checkResult.data.reason || "Cannot delete account");
-      }
-
-      const appUser = await container.appUserRepository.findByUserId(
-        ctx.session.user.id
-      );
-
-      if (!appUser) {
-        throw new Error("App user not found");
-      }
-
-      const scrubResult = await container.deleteAccountEnhancedService.scrubPII(
+      const result = await container.deleteAccountEnhancedService.initiateDeletion(
         ctx.session.user.id,
-        appUser.id
+        input.reason
       );
 
-      if (!scrubResult.ok) {
-        throw new Error(scrubResult.error);
+      if (!result.ok) {
+        throw new Error(result.error);
       }
 
       return { success: true };

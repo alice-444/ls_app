@@ -41,8 +41,8 @@ export class MentorFeedbackService implements IMentorFeedbackService {
 
       return success({
         feedbacks: feedbacks.map((f) => {
-          const firstName = f.apprentice?.user?.name
-            ? f.apprentice.user.name.split(" ")[0]
+          const firstName = f.apprentice?.name
+            ? f.apprentice.name.split(" ")[0]
             : null;
           return {
             id: f.id,
@@ -58,10 +58,10 @@ export class MentorFeedbackService implements IMentorFeedbackService {
                   image: null,
                 }
               : {
-                  id: f.apprentice?.user?.id || null,
-                  name: f.apprentice?.user?.name || "Anonyme",
+                  id: f.apprentice?.id || null,
+                  name: f.apprentice?.name || "Anonyme",
                   firstName: firstName || "Anonyme",
-                  image: f.apprentice?.user?.image || null,
+                  image: f.apprentice?.photoUrl || null,
                 },
           };
         }),

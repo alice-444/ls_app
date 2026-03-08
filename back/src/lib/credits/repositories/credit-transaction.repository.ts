@@ -2,8 +2,8 @@ import type {
   ICreditTransactionRepository,
   CreditTransaction,
 } from "./credit-transaction.repository.interface";
-import type { PrismaClient } from "../../../../prisma/generated/client/client";
-import type { CreditTransactionType } from "../../../../prisma/generated/client/enums";
+import type { PrismaClient } from '@/lib/prisma';
+import type { CreditTransactionType } from '@/lib/prisma';
 
 export class PrismaCreditTransactionRepository
   implements ICreditTransactionRepository
@@ -19,7 +19,7 @@ export class PrismaCreditTransactionRepository
     }
   ): Promise<CreditTransaction[]> {
     const transactions = await this.prisma.credit_transaction.findMany({
-      where: { userId },
+      where: { userId: userId },
       orderBy: { createdAt: options?.orderBy || "desc" },
       take: options?.limit,
       skip: options?.offset,
@@ -44,7 +44,7 @@ export class PrismaCreditTransactionRepository
     }
   ): Promise<CreditTransaction | null> {
     const where: any = {
-      userId,
+      userId: userId,
       type,
     };
 
@@ -73,7 +73,7 @@ export class PrismaCreditTransactionRepository
 
   async countByUserId(userId: string): Promise<number> {
     return this.prisma.credit_transaction.count({
-      where: { userId },
+      where: { userId: userId },
     });
   }
 }

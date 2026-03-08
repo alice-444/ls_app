@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type {
   IMessageReactionRepository,
   MessageReactionEntity,

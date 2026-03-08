@@ -19,6 +19,7 @@ import { mentorRouter } from "./mentors/mentor.router";
 import { connectionRouter } from "./social/connection.router";
 import { messagingRouter } from "./social/messaging.router";
 import { notificationRouter } from "./social/notification.router";
+import { communityRouter } from "./social/community.router";
 
 // Credits
 import { creditsRouter } from "./credits/credits.router";
@@ -54,6 +55,7 @@ export const appRouter = router({
   accountSettings: accountSettingsRouter,
   admin: adminRouter,
   support: supportRouter,
+  community: communityRouter,
 });
 
 export type AppRouter = typeof appRouter;

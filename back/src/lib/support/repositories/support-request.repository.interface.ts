@@ -1,7 +1,4 @@
-import type {
-  support_request,
-  SupportRequestStatus,
-} from "../../../../prisma/generated/client/client";
+import type { support_request } from '@/lib/prisma';
 
 export interface CreateSupportRequestInput {
   userId?: string | null;
@@ -9,12 +6,14 @@ export interface CreateSupportRequestInput {
   subject: string;
   description: string;
   problemType: string;
-  status?: SupportRequestStatus;
-  attachments?: any; // Consider a more specific type if possible
+  status?: string;
+  attachments?: any;
 }
 
 export interface UpdateSupportRequestInput {
-  status?: SupportRequestStatus;
+  status?: string;
+  description?: string;
+  attachments?: any;
 }
 
 export interface ISupportRequestRepository {

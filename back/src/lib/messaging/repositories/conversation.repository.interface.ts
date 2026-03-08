@@ -2,7 +2,6 @@ export interface ConversationEntity {
   id: string;
   participant1Id: string;
   participant2Id: string;
-  workshopId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,14 +21,13 @@ export interface IConversationRepository {
   findById(conversationId: string): Promise<ConversationEntity | null>;
 
   findConversationsForUser(
-    appUserId: string
+    userId: string
   ): Promise<ConversationEntity[]>;
 
   create(data: {
     id: string;
     participant1Id: string;
     participant2Id: string;
-    workshopId?: string | null;
     updatedAt: Date;
   }): Promise<ConversationEntity>;
 
@@ -38,7 +36,6 @@ export interface IConversationRepository {
       id: string;
       participant1Id: string;
       participant2Id: string;
-      workshopId?: string | null;
       updatedAt: Date;
     },
     tx: any
@@ -46,18 +43,12 @@ export interface IConversationRepository {
 
   update(
     conversationId: string,
-    data: {
-      workshopId?: string | null;
-      updatedAt: Date;
-    }
+    data: { updatedAt: Date }
   ): Promise<ConversationEntity>;
 
   updateWithTransaction(
     conversationId: string,
-    data: {
-      workshopId?: string | null;
-      updatedAt: Date;
-    },
+    data: { updatedAt: Date },
     tx: any
   ): Promise<ConversationEntity>;
 

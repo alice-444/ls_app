@@ -1,4 +1,4 @@
-import type { PrismaClient } from "../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import type { RepositoriesContainer } from "./repositories.container";
 import { WorkshopService } from "../workshops/services/workshop.service";
 import { WorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service";
@@ -39,6 +39,7 @@ import { PasswordValidationService } from "../users/services/account/security/pa
 import { HttpClient } from "../users/services/account/shared/http-client";
 import { DeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service";
 import { EmailTemplateService } from "../users/services/account/shared/email-template.service";
+import { ExportDataService } from "../users/services/account/export-data.service";
 import { MagicLinkService } from "../auth/services/magic-link/magic-link.service";
 import type { IWorkshopService } from "../workshops/services/workshop.service.interface";
 import type { IWorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service.interface";
@@ -68,6 +69,7 @@ import type { IChangePasswordService } from "../users/services/account/security/
 import type { IChangeEmailService } from "../users/services/account/security/change-email.service.interface";
 import type { IForgotPasswordService } from "../users/services/account/security/forgot-password.service.interface";
 import type { IDeleteAccountEnhancedService } from "../users/services/account/deletion/delete-account-enhanced.service.interface";
+import type { IExportDataService } from "../users/services/account/export-data.service.interface";
 import type { DailyConfig } from "../daily/config/daily.config.interface";
 import { WorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service";
 import type { IWorkshopAttendanceService } from "../workshops/services/attendance/workshop-attendance.service.interface";
@@ -76,11 +78,14 @@ import type { IAdminService } from "../admin/services/admin.service.interface";
 import { SupportRequestService } from "../support/services/support-request.service";
 import type { ISupportRequestService } from "../support/services/support-request.service.interface";
 import type { IMagicLinkService } from "../auth/services/magic-link/magic-link.service.interface";
+import { MaintenanceService } from "../maintenance/services/maintenance.service";
+import type { IMaintenanceService } from "../maintenance/services/maintenance.service.interface";
 
 export class ServicesContainer {
   private _adminService?: IAdminService;
   private _supportRequestService?: ISupportRequestService;
   private _magicLinkService?: IMagicLinkService;
+  private _maintenanceService?: IMaintenanceService;
 
   private _workshopService?: IWorkshopService;
   private _workshopFeedbackService?: IWorkshopFeedbackService;
@@ -114,6 +119,7 @@ export class ServicesContainer {
   private _changeEmailService?: IChangeEmailService;
   private _forgotPasswordService?: IForgotPasswordService;
   private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
+  private _exportDataService?: IExportDataService;
   private _workshopAttendanceService?: IWorkshopAttendanceService;
 
   constructor(
@@ -134,10 +140,13 @@ export class ServicesContainer {
     this._workshopService ??= new WorkshopService(
       this.repositories.workshopRepository,
       this.repositories.appUserRepository,
+      this.userBlockService,
       this.repositories.workshopRequestRepository,
       this.notificationService,
       this.workshopVideoLinkService,
-      this.emailService
+      this.emailService,
+      this.creditService,
+      this.prisma
     );
     return this._workshopService;
   }
@@ -145,17 +154,17 @@ export class ServicesContainer {
   get workshopFeedbackService(): IWorkshopFeedbackService {
     this._workshopFeedbackService ??= new WorkshopFeedbackService(
       this.repositories.workshopFeedbackRepository,
-      this.repositories.workshopRepository,
-      this.repositories.mentorRepository,
-      this.notificationService,
-      this.creditService
+      this.workshopService,
+      this.creditService,
+      this.notificationService
     );
     return this._workshopFeedbackService;
   }
 
   get mentorProfileService(): IMentorProfileService {
     this._mentorProfileService ??= new MentorProfileService(
-      this.repositories.mentorRepository
+      this.repositories.mentorRepository,
+      this.userBlockService
     );
     return this._mentorProfileService;
   }
@@ -164,7 +173,8 @@ export class ServicesContainer {
     this._mentorContactService ??= new MentorContactService(
       this.repositories.mentorRepository,
       this.notificationService,
-      this.messagingService
+      this.messagingService,
+      this.userBlockService
     );
     return this._mentorContactService;
   }
@@ -204,7 +214,8 @@ export class ServicesContainer {
     this._apprenticeProfileService ??= new ApprenticeProfileService(
       this.repositories.appUserRepository,
       this.repositories.workshopRepository,
-      this.repositories.userConnectionRepository
+      this.repositories.userConnectionRepository,
+      this.userBlockService
     );
     return this._apprenticeProfileService;
   }
@@ -212,7 +223,9 @@ export class ServicesContainer {
   get userConnectionService(): UserConnectionService {
     this._userConnectionService ??= new UserConnectionService(
       this.repositories.appUserRepository,
-      this.repositories.userConnectionRepository
+      this.repositories.userConnectionRepository,
+      this.userBlockService,
+      this.notificationService
     );
     return this._userConnectionService;
   }
@@ -238,8 +251,10 @@ export class ServicesContainer {
       this.messageValidationService,
       this.messageEnrichmentService,
       this.userBlockService,
+      this.notificationService,
       this.repositories.workshopRepository,
-      this.prisma
+      this.prisma,
+      this.emailService
     );
     return this._messagingService;
   }
@@ -430,6 +445,11 @@ export class ServicesContainer {
     return this._deleteAccountEnhancedService;
   }
 
+  get exportDataService(): IExportDataService {
+    this._exportDataService ??= new ExportDataService(this.prisma);
+    return this._exportDataService;
+  }
+
   get adminService(): IAdminService {
     this._adminService ??= new AdminService(this.prisma);
     return this._adminService;
@@ -438,8 +458,14 @@ export class ServicesContainer {
   get supportRequestService(): ISupportRequestService {
     this._supportRequestService ??= new SupportRequestService(
       this.repositories.supportRequestRepository,
-      this.notificationService
+      this.notificationService,
+      this.emailService
     );
     return this._supportRequestService;
+  }
+
+  get maintenanceService(): IMaintenanceService {
+    this._maintenanceService ??= new MaintenanceService(this.prisma, this);
+    return this._maintenanceService;
   }
 }

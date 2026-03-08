@@ -98,15 +98,15 @@ export const adminRouter = router({
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Only users with `ADMIN` role can access `/admin`.
-- [ ] Counts correctly reflect database state.
-- [ ] Links navigate to the correct sub-pages.
-- [ ] Non-admin users are redirected to `/` or see a 403.
+- [x] Only users with `ADMIN` role can access `/admin`.
+- [x] Counts correctly reflect database state.
+- [x] Links navigate to the correct sub-pages.
+- [x] Non-admin users are redirected to `/` or see a 403.
 
 ### Technical Requirements
-- [ ] All procedures use `adminProcedure`.
-- [ ] Statistics fetch uses `Promise.all` for efficiency.
-- [ ] Frontend uses React Suspense or Skeleton loaders for stats.
+- [x] All procedures use `adminProcedure`.
+- [x] Statistics fetch uses `Promise.all` for efficiency.
+- [x] Frontend uses React Suspense or Skeleton loaders for stats.
 
 ### Testing Steps
 1. Create a few pending reports and support requests via DB or other UIs.

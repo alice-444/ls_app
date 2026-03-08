@@ -26,7 +26,15 @@ export interface IWorkshopService {
     input: unknown
   ): Promise<Result<{ success: boolean }>>;
 
-  getWorkshopsByCreator(userId: string): Promise<Result<any[]>>;
+  cancelWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>>;
+
+  getWorkshopsByCreator(
+    userId: string,
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+  ): Promise<Result<any[]>>;
 
   getPublishedWorkshops(): Promise<Result<any[]>>;
 

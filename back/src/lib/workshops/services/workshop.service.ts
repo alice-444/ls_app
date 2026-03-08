@@ -6,6 +6,9 @@ import type { INotificationService } from "../../notifications/services/notifica
 import type { IWorkshopService } from "./workshop.service.interface";
 import type { IWorkshopVideoLinkService } from "./video/workshop-video-link.service.interface";
 import type { IEmailService } from "../../email/services/email.service.interface";
+import type { IUserBlockService } from "../../users/services/moderation/user-block.service.interface";
+import type { ICreditService } from "../../credits/services/credit.service.interface";
+import type { PrismaClient } from '@/lib/prisma';
 import { WorkshopAccessGuard } from "./guards/workshop-access.guard";
 import { WorkshopLifecycleService } from "./lifecycle/workshop-lifecycle.service";
 import { WorkshopSchedulingService } from "./scheduling/workshop-scheduling.service";
@@ -21,6 +24,7 @@ import {
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
+  cancelWorkshopSchema,
   type CreateWorkshopBackendInput,
   type UpdateWorkshopBackendInput,
   type PublishWorkshopInput,
@@ -30,7 +34,12 @@ import { z } from "zod";
 
 export const createWorkshopSchema = createWorkshopBackendSchema;
 export const updateWorkshopSchema = updateWorkshopBackendSchema;
-export { publishWorkshopSchema, unpublishWorkshopSchema, deleteWorkshopSchema };
+export {
+  publishWorkshopSchema,
+  unpublishWorkshopSchema,
+  deleteWorkshopSchema,
+  cancelWorkshopSchema,
+};
 export type CreateWorkshopInput = CreateWorkshopBackendInput;
 export type UpdateWorkshopInput = UpdateWorkshopBackendInput;
 export type { PublishWorkshopInput, DeleteWorkshopInput };
@@ -49,10 +58,13 @@ export class WorkshopService implements IWorkshopService {
   constructor(
     workshopRepository: IWorkshopRepository,
     appUserRepository: AppUserRepository,
+    userBlockService: IUserBlockService,
     workshopRequestRepository?: IWorkshopRequestRepository,
     dbNotificationService?: INotificationService,
     workshopVideoLinkService?: IWorkshopVideoLinkService,
-    emailService?: IEmailService
+    emailService?: IEmailService,
+    creditService?: ICreditService,
+    prisma?: PrismaClient
   ) {
     const accessGuard = new WorkshopAccessGuard(
       appUserRepository,
@@ -61,7 +73,8 @@ export class WorkshopService implements IWorkshopService {
 
     this.lifecycleService = new WorkshopLifecycleService(
       workshopRepository,
-      accessGuard
+      accessGuard,
+      dbNotificationService
     );
 
     this.schedulingService = new WorkshopSchedulingService(
@@ -69,7 +82,9 @@ export class WorkshopService implements IWorkshopService {
       accessGuard,
       dbNotificationService,
       emailService,
-      appUserRepository
+      appUserRepository,
+      creditService,
+      prisma
     );
 
     const videoLinkService =
@@ -84,6 +99,7 @@ export class WorkshopService implements IWorkshopService {
     this.apprenticeQueryService = new WorkshopApprenticeQueryService(
       workshopRepository,
       accessGuard,
+      userBlockService,
       workshopRequestRepository
     );
   }
@@ -123,8 +139,18 @@ export class WorkshopService implements IWorkshopService {
     return this.lifecycleService.deleteWorkshop(userId, input);
   }
 
-  getWorkshopsByCreator(userId: string): Promise<Result<any[]>> {
-    return this.queryService.getWorkshopsByCreator(userId);
+  cancelWorkshop(
+    userId: string,
+    input: unknown
+  ): Promise<Result<{ success: boolean }>> {
+    return this.lifecycleService.cancelWorkshop(userId, input);
+  }
+
+  getWorkshopsByCreator(
+    userId: string,
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+  ): Promise<Result<any[]>> {
+    return this.queryService.getWorkshopsByCreator(userId, status);
   }
 
   getPublishedWorkshops(): Promise<Result<any[]>> {

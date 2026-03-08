@@ -1,4 +1,4 @@
-import type { CreditTransactionType as PrismaCreditTransactionType } from "../../../../prisma/generated/client/enums";
+import type { CreditTransactionType as PrismaCreditTransactionType } from '@/lib/prisma';
 
 export type CreditTransactionType = PrismaCreditTransactionType;
 

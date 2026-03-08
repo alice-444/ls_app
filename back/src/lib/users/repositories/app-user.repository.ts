@@ -1,26 +1,29 @@
-import type { Role, AppUserStatus } from "../../../../prisma/generated/client/client";
-
 export interface AppUserData {
   id: string;
   userId: string;
-  role: Role | null;
-  status: AppUserStatus;
+  name: string | null;
+  email: string | null;
+  displayName: string | null;
+  role: string | null;
+  status: string;
   createdAt: Date;
   updatedAt: Date;
   photoUrl?: string | null;
   deletedAt?: Date | null;
+  emailNotifications: boolean;
+  inAppNotifications: boolean;
 }
 
 export interface CreateAppUserInput {
   id: string;
   userId: string;
-  status: AppUserStatus;
-  role?: Role | null;
+  status: string;
+  role?: string | null;
 }
 
 export interface UpdateAppUserInput {
-  role?: Role;
-  status?: AppUserStatus;
+  role?: string;
+  status?: string;
   bio?: string | null;
   domain?: string | null;
   photoUrl?: string | null;
@@ -37,11 +40,14 @@ export interface UpdateAppUserInput {
   studyProgram?: string | null;
   iceBreakerTags?: string[] | null;
   deletedAt?: Date | null;
+  emailNotifications?: boolean;
+  inAppNotifications?: boolean;
 }
 
 export interface AppUserRepository {
   findByUserId(userId: string): Promise<AppUserData | null>;
-  findByAppUserId(appUserId: string): Promise<AppUserData | null>;
+  findByEmail(email: string): Promise<AppUserData | null>;
+  findByAppUserId(userId: string): Promise<AppUserData | null>;
   create(input: CreateAppUserInput): Promise<AppUserData>;
   update(userId: string, input: UpdateAppUserInput): Promise<AppUserData>;
   upsert(
@@ -53,6 +59,7 @@ export interface AppUserRepository {
     displayName: string | null;
     studyDomain: string | null;
     studyProgram: string | null;
+    bio: string | null;
     photoUrl: string | null;
     iceBreakerTags: string[] | null;
   } | null>;
@@ -64,6 +71,7 @@ const UPDATABLE_FIELDS = [
   "experience", "socialMediaLinks", "areasOfExpertise", "mentorshipTopics",
   "calendlyLink", "isPublished", "publishedAt", "displayName",
   "studyDomain", "studyProgram", "iceBreakerTags", "deletedAt",
+  "emailNotifications", "inAppNotifications",
 ] as const;
 
 function buildPrismaUpdateData(input: UpdateAppUserInput): Record<string, unknown> {
@@ -80,24 +88,34 @@ function mapToAppUserData(raw: any): AppUserData {
   return {
     id: raw.id,
     userId: raw.userId,
-    role: raw.role as Role | null,
+    name: raw.name || null,
+    email: raw.email || null,
+    displayName: raw.displayName || null,
+    role: raw.role,
     status: raw.status,
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,
     photoUrl: raw.photoUrl ?? null,
     deletedAt: raw.deletedAt ?? null,
+    emailNotifications: raw.emailNotifications ?? true,
+    inAppNotifications: raw.inAppNotifications ?? true,
   };
 }
 
 const APP_USER_BASE_SELECT = {
   id: true,
   userId: true,
+  name: true,
+  email: true,
+  displayName: true,
   role: true,
   status: true,
   createdAt: true,
   updatedAt: true,
   photoUrl: true,
   deletedAt: true,
+  emailNotifications: true,
+  inAppNotifications: true,
 } as const;
 
 export class PrismaAppUserRepository implements AppUserRepository {
@@ -108,7 +126,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
       throw new Error("Prisma client is not initialized");
     }
 
-    const appUser = await (this.prisma as any).app_user.findUnique({
+    const appUser = await this.prisma.user.findUnique({
       where: { userId },
       select: APP_USER_BASE_SELECT,
     });
@@ -116,13 +134,26 @@ export class PrismaAppUserRepository implements AppUserRepository {
     return appUser ? mapToAppUserData(appUser) : null;
   }
 
-  async findByAppUserId(appUserId: string): Promise<AppUserData | null> {
+  async findByEmail(email: string): Promise<AppUserData | null> {
     if (!this.prisma) {
       throw new Error("Prisma client is not initialized");
     }
 
-    const appUser = await (this.prisma as any).app_user.findUnique({
-      where: { id: appUserId },
+    const appUser = await this.prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: APP_USER_BASE_SELECT,
+    });
+
+    return appUser ? mapToAppUserData(appUser) : null;
+  }
+
+  async findByAppUserId(userId: string): Promise<AppUserData | null> {
+    if (!this.prisma) {
+      throw new Error("Prisma client is not initialized");
+    }
+
+    const appUser = await this.prisma.user.findUnique({
+      where: { id: userId },
       select: APP_USER_BASE_SELECT,
     });
 
@@ -131,7 +162,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
 
   async create(input: CreateAppUserInput): Promise<AppUserData> {
     const now = new Date();
-    const appUser = await (this.prisma as any).app_user.create({
+    const appUser = await this.prisma.user.create({
       data: {
         id: input.id,
         userId: input.userId,
@@ -149,7 +180,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     userId: string,
     input: UpdateAppUserInput
   ): Promise<AppUserData> {
-    const appUser = await (this.prisma as any).app_user.update({
+    const appUser = await this.prisma.user.update({
       where: { userId },
       data: buildPrismaUpdateData(input),
     });
@@ -163,7 +194,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
     updateInput: UpdateAppUserInput = {}
   ): Promise<AppUserData> {
     const now = new Date();
-    const appUser = await (this.prisma as any).app_user.upsert({
+    const appUser = await this.prisma.user.upsert({
       where: { userId },
       create: {
         id: createInput.id,
@@ -183,15 +214,17 @@ export class PrismaAppUserRepository implements AppUserRepository {
     displayName: string | null;
     studyDomain: string | null;
     studyProgram: string | null;
+    bio: string | null;
     photoUrl: string | null;
     iceBreakerTags: string[] | null;
   } | null> {
-    const appUser = await (this.prisma as any).app_user.findUnique({
+    const appUser = await this.prisma.user.findUnique({
       where: { userId },
       select: {
         displayName: true,
         studyDomain: true,
         studyProgram: true,
+        bio: true,
         photoUrl: true,
         iceBreakerTags: true,
       },
@@ -203,14 +236,15 @@ export class PrismaAppUserRepository implements AppUserRepository {
       displayName: appUser.displayName || null,
       studyDomain: appUser.studyDomain || null,
       studyProgram: appUser.studyProgram || null,
+      bio: appUser.bio || null,
       photoUrl: appUser.photoUrl || null,
       iceBreakerTags: (appUser.iceBreakerTags as string[]) || null,
     };
   }
 
   async findUserNameByUserId(userId: string): Promise<string | null> {
-    const user = await (this.prisma as any).user.findUnique({
-      where: { id: userId },
+    const user = await this.prisma.user.findUnique({
+      where: { userId },
       select: { name: true },
     });
 

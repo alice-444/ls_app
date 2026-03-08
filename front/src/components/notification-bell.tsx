@@ -1,6 +1,16 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { 
+  Bell, 
+  MessageSquare, 
+  GraduationCap, 
+  Coins, 
+  BookOpen, 
+  Users, 
+  Calendar, 
+  Star, 
+  Info 
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -16,6 +26,7 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
 export function NotificationBell() {
   const router = useRouter();
@@ -79,6 +90,36 @@ export function NotificationBell() {
     }
   };
 
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case "message":
+      case "MESSAGE":
+        return <MessageSquare className="h-4 w-4" />;
+      case "workshop":
+      case "WORKSHOP":
+      case "WORKSHOP_REQUEST":
+      case "REQUEST_ACCEPTED":
+      case "REQUEST_REJECTED":
+        return <GraduationCap className="h-4 w-4" />;
+      case "cashback":
+      case "CASHBACK":
+        return <Coins className="h-4 w-4" />;
+      case "learning":
+        return <BookOpen className="h-4 w-4" />;
+      case "social":
+        return <Users className="h-4 w-4" />;
+      case "reminder":
+      case "WORKSHOP_REMINDER":
+        return <Calendar className="h-4 w-4" />;
+      case "WORKSHOP_FEEDBACK_REQUEST":
+        return <Star className="h-4 w-4" />;
+      case "system":
+        return <Info className="h-4 w-4" />;
+      default:
+        return <Bell className="h-4 w-4" />;
+    }
+  };
+
   const count = unreadCount?.count || 0;
 
   return (
@@ -118,12 +159,21 @@ export function NotificationBell() {
                   <button
                     key={notification.id}
                     type="button"
-                    className={`w-full p-4 text-left cursor-pointer hover:bg-accent transition-colors ${
+                    className={cn(
+                      "w-full p-4 text-left cursor-pointer hover:bg-accent transition-colors flex gap-3",
                       notification.isRead ? "" : "bg-primary/5"
-                    }`}
+                    )}
                     onClick={() => handleNotificationClick(notification)}
                   >
-                    <div className="flex flex-col gap-1">
+                    <div className={cn(
+                      "p-2 rounded-full h-fit mt-0.5",
+                      notification.isRead 
+                        ? "bg-muted text-muted-foreground" 
+                        : "bg-[#ffb647]/20 text-[#26547c]"
+                    )}>
+                      {getNotificationIcon(notification.type || "")}
+                    </div>
+                    <div className="flex flex-col gap-1 flex-1">
                       <p
                         className={`text-sm font-medium ${
                           notification.isRead

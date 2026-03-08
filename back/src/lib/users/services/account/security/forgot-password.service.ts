@@ -21,7 +21,7 @@ export class ForgotPasswordService implements IForgotPasswordService {
   ): Promise<Result<{ success: boolean; message: string }>> {
     try {
       const result = await this.httpClient.post(
-        "/api/auth/forget-password/email-otp",
+        "/api/auth/forget-password",
         { email: input.email }
       );
 
@@ -56,11 +56,10 @@ export class ForgotPasswordService implements IForgotPasswordService {
       }
 
       const result = await this.httpClient.post(
-        "/api/auth/email-otp/reset-password",
+        "/api/auth/reset-password",
         {
-          email: input.email,
-          otp: input.otp,
-          password: input.newPassword,
+          newPassword: input.newPassword,
+          token: input.otp,
         }
       );
 

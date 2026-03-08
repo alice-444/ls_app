@@ -56,4 +56,19 @@ export interface IUserConnectionService {
       }>
     >
   >;
+
+  getPendingRequestsSent(userId: string): Promise<
+    Result<
+      Array<{
+        connectionId: string;
+        receiverUserId: string;
+        receiverName: string | null;
+        receiverDisplayName: string | null;
+        receiverPhotoUrl: string | null;
+        receiverRole: "MENTOR" | "APPRENANT" | "ADMIN" | null;
+        receiverAppId: string;
+        createdAt: Date;
+      }>
+    >
+  >;
 }

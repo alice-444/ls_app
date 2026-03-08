@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -12,46 +12,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, Eye, EyeOff, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/utils/trpc";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const resetPasswordMutation = trpc.accountSettings.resetPassword.useMutation({
-    onSuccess: () => {
-      toast.success("Mot de passe réinitialisé avec succès");
-      setIsSuccess(true);
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
-    },
-    onError: (error: { message?: string }) => {
-      toast.error(
-        error.message || "Erreur lors de la réinitialisation du mot de passe"
-      );
-    },
-  });
+  useEffect(() => {
+    if (!token) {
+      toast.error("Token de réinitialisation manquant");
+      router.push("/forgot-password");
+    }
+  }, [token, router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email) {
-      toast.error("Veuillez entrer votre email");
-      return;
-    }
-
-    if (!otp) {
-      toast.error("Veuillez entrer le code OTP");
+    if (!token) {
+      toast.error("Token manquant");
       return;
     }
 
@@ -65,17 +54,22 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    if (!/\d/.test(newPassword)) {
-      toast.error("Le mot de passe doit contenir au moins un chiffre");
-      return;
-    }
-
-    resetPasswordMutation.mutate({
-      email,
-      otp,
+    setIsLoading(true);
+    const { data, error } = await authClient.resetPassword({
       newPassword,
-      confirmPassword,
+      token,
     });
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(error.message || "Erreur lors de la réinitialisation");
+    } else {
+      toast.success("Mot de passe réinitialisé avec succès");
+      setIsSuccess(true);
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    }
   };
 
   if (isSuccess) {
@@ -105,42 +99,11 @@ export default function ResetPasswordPage() {
             Réinitialiser le mot de passe
           </CardTitle>
           <CardDescription className="text-center">
-            Entrez votre email, le code OTP reçu et votre nouveau mot de passe
+            Choisissez votre nouveau mot de passe
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="votre@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="otp">Code OTP</Label>
-              <Input
-                id="otp"
-                type="text"
-                placeholder="123456"
-                value={otp}
-                onChange={(e) =>
-                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                }
-                required
-                maxLength={6}
-                className="text-center text-2xl tracking-widest"
-              />
-              <p className="text-xs text-muted-foreground">
-                Entrez le code à 6 chiffres reçu par email
-              </p>
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="new-password">Nouveau mot de passe</Label>
               <div className="relative">
@@ -201,10 +164,14 @@ export default function ResetPasswordPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={resetPasswordMutation.isPending}
+              disabled={isLoading}
             >
-              <Lock className="h-4 w-4 mr-2" />
-              {resetPasswordMutation.isPending
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Lock className="h-4 w-4 mr-2" />
+              )}
+              {isLoading
                 ? "Réinitialisation..."
                 : "Réinitialiser le mot de passe"}
             </Button>
@@ -222,5 +189,17 @@ export default function ResetPasswordPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

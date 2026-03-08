@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextResponse } from "next/server";
 import { createRequest, getJson } from "../helpers/request";
 import { POST } from "@/app/api/support-request/route";
 

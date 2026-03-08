@@ -23,6 +23,7 @@ import * as Avatar from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { PresenceIndicator } from "./PresenceIndicator";
 
 interface ConversationData {
   conversationId: string;
@@ -32,6 +33,7 @@ interface ConversationData {
   otherUserPhotoUrl?: string;
   isPinned: boolean;
   updatedAt: string | Date;
+  unreadCount?: number;
   lastMessage?: {
     content: string;
     createdAt: string | Date;
@@ -44,6 +46,8 @@ interface ConversationRowProps {
   readonly onDelete: (conversationId: string) => void;
   readonly onBlockUser: (userId: string, displayName: string) => void;
   readonly isDeleting: boolean;
+  readonly isOnline?: boolean;
+  readonly lastSeen?: Date | string | null;
 }
 
 export function ConversationRow({
@@ -52,6 +56,8 @@ export function ConversationRow({
   onDelete,
   onBlockUser,
   isDeleting,
+  isOnline = false,
+  lastSeen = null,
 }: ConversationRowProps) {
   const router = useRouter();
 
@@ -88,7 +94,7 @@ export function ConversationRow({
           router.push(`/inbox/${conversation.conversationId}`)
         }
       >
-        <Avatar.Root className="h-10 w-10 sm:h-11 sm:w-11 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-white dark:border-gray-950 shrink-0">
+        <Avatar.Root className="h-10 w-10 sm:h-11 sm:w-11 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-white dark:border-gray-950 shrink-0 relative">
           <Avatar.Image
             src={conversation.otherUserPhotoUrl || undefined}
             alt={displayName}
@@ -97,6 +103,18 @@ export function ConversationRow({
           <Avatar.Fallback className="h-full w-full flex items-center justify-center text-xs font-medium">
             {initials}
           </Avatar.Fallback>
+          
+          <div className="absolute bottom-0 right-0">
+            <PresenceIndicator isOnline={isOnline} />
+          </div>
+
+          {conversation.unreadCount && conversation.unreadCount > 0 ? (
+            <div className="absolute top-0 right-0 h-3.5 w-3.5 bg-red-500 border-2 border-white dark:border-gray-950 rounded-full flex items-center justify-center">
+              <span className="text-[8px] font-bold text-white">
+                {conversation.unreadCount > 9 ? "9+" : conversation.unreadCount}
+              </span>
+            </div>
+          ) : null}
         </Avatar.Root>
 
         <div className="flex flex-col gap-0.5 min-w-0 flex-1">

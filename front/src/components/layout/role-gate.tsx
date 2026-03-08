@@ -14,7 +14,7 @@ export function RoleGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
 
-  const { data: userRole } = useQuery({
+  const { data: userRole, isLoading: isLoadingRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
     queryFn: getUserRole,
     enabled: !!session?.user?.id,
@@ -22,7 +22,15 @@ export function RoleGate({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
-    if (!session || !userRole) return;
+    if (!session) return;
+
+    // Handle onboarding redirect
+    if (!isLoadingRole && userRole === null && pathname !== "/onboarding") {
+      router.push("/onboarding");
+      return;
+    }
+
+    if (!userRole) return;
 
     // 1. Redirect ADMIN away from USER routes
     const isUserRoute = USER_ONLY_ROUTES.some(route => pathname.startsWith(isUserRoutePattern(route)));
@@ -40,7 +48,7 @@ export function RoleGate({ children }: { children: React.ReactNode }) {
       router.push("/dashboard");
       return;
     }
-  }, [session, userRole, pathname, router]);
+  }, [session, userRole, isLoadingRole, pathname, router]);
 
   return <>{children}</>;
 }

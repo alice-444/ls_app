@@ -103,14 +103,14 @@ Enable users to pin conversations in their inbox so that important chats stay at
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Pin conversation → appears at top
-- [ ] Unpin → back to date order
-- [ ] Pin icon/button visible
-- [ ] Only own pins
+- [x] Pin conversation → appears at top
+- [x] Unpin → back to date order
+- [x] Pin icon/button visible
+- [x] Only own pins
 
 ### Technical Requirements
-- [ ] TypeScript compiles
-- [ ] ESLint passes
+- [x] TypeScript compiles
+- [x] ESLint passes
 
 ### Testing Steps
 1. Pin conversation → list reorders

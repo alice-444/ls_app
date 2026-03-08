@@ -43,10 +43,7 @@ export class UpdateProfileService implements IUpdateProfileService {
       const appUser = await this.appUserRepository.findByUserId(userId);
 
       if (appUser) {
-        const updateData: {
-          bio?: string | null;
-          photoUrl?: string | null;
-        } = {};
+        const updateData: any = {};
 
         if (input.bio !== undefined) {
           updateData.bio = input.bio || null;
@@ -54,6 +51,14 @@ export class UpdateProfileService implements IUpdateProfileService {
 
         if (input.photoUrl !== undefined) {
           updateData.photoUrl = input.photoUrl || null;
+        }
+
+        if (input.emailNotifications !== undefined) {
+          updateData.emailNotifications = input.emailNotifications;
+        }
+
+        if (input.inAppNotifications !== undefined) {
+          updateData.inAppNotifications = input.inAppNotifications;
         }
 
         if (Object.keys(updateData).length > 0) {

@@ -10,73 +10,97 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Loader2, Eye, CheckCircle, Info, LifeBuoy } from "lucide-react";
+import { 
+  Loader2, 
+  ExternalLink, 
+  FileText, 
+  User, 
+  Mail, 
+  Clock, 
+  CheckCircle2, 
+  AlertCircle,
+  MoreVertical,
+  Download,
+  Info
+} from "lucide-react";
 import { toast } from "sonner";
-import { useState, useEffect, Suspense } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useState, Suspense } from "react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from "@/components/ui/dialog";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useSearchParams } from "next/navigation";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+
+type SupportRequestStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 
 function AdminSupportContent() {
-  const searchParams = useSearchParams();
-  const requestIdParam = searchParams.get("requestId");
-
-  const { data: supportRequests, isLoading, refetch } = trpc.support.getAdminSupportQueue.useQuery();
-  const updateStatusMutation = trpc.support.updateStatus.useMutation();
-
-  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<SupportRequestStatus | "ALL">("PENDING");
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
-  useEffect(() => {
-    if (requestIdParam && supportRequests) {
-      const request = supportRequests.find((r: any) => r.id === requestIdParam);
-      if (request) {
-        handleViewDetails(request);
-      }
-    }
-  }, [requestIdParam, supportRequests]);
+  const { data: requests, isLoading, refetch } = trpc.support.getAdminSupportQueue.useQuery({
+    status: statusFilter === "ALL" ? undefined : statusFilter,
+  });
 
-  const handleViewDetails = (request: any) => {
-    setSelectedRequest(request);
-    setIsDetailsDialogOpen(true);
-  };
-
-  const handleUpdateStatus = async (requestId: string, newStatus: any) => {
-    try {
-      await updateStatusMutation.mutateAsync({
-        requestId,
-        status: newStatus,
-      });
-      toast.success("Statut mis à jour.");
+  const updateStatusMutation = trpc.support.updateStatus.useMutation({
+    onSuccess: () => {
+      toast.success("Statut mis à jour");
       refetch();
-      if (selectedRequest?.id === requestId) {
-        setSelectedRequest({ ...selectedRequest, status: newStatus });
-      }
-    } catch (error) {
-      toast.error("Erreur lors de la mise à jour du statut.");
-      console.error(error);
+      setIsDetailDialogOpen(false);
+    },
+    onError: (error: any) => {
+      toast.error(`Erreur: ${error.message}`);
     }
+  });
+
+  const handleUpdateStatus = async (requestId: string, newStatus: SupportRequestStatus) => {
+    updateStatusMutation.mutate({ requestId, status: newStatus });
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "PENDING":
-        return <Badge variant="secondary">En attente</Badge>;
+        return <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 uppercase text-[10px]">En attente</Badge>;
       case "IN_PROGRESS":
-        return <Badge className="bg-blue-500 hover:bg-blue-500 text-white">En cours</Badge>;
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 uppercase text-[10px]">En cours</Badge>;
       case "RESOLVED":
-        return <Badge className="bg-emerald-500 hover:bg-emerald-500 text-white">Résolu</Badge>;
+        return <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 uppercase text-[10px]">Résolu</Badge>;
       case "CLOSED":
-        return <Badge variant="outline">Fermé</Badge>;
+        return <Badge variant="secondary" className="uppercase text-[10px]">Fermé</Badge>;
       default:
-        return <Badge>{status}</Badge>;
+        return <Badge variant="outline" className="uppercase text-[10px]">{status}</Badge>;
     }
+  };
+
+  const viewDetail = (request: any) => {
+    setSelectedRequest(request);
+    setIsDetailDialogOpen(true);
   };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-48">
+      <div className="flex justify-center items-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -84,48 +108,106 @@ function AdminSupportContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Demandes de Support</h1>
-          <p className="text-muted-foreground">Suivre et répondre aux demandes d'assistance des utilisateurs.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Support Client</h1>
+          <p className="text-muted-foreground">Gérer les demandes d'assistance des utilisateurs.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">Filtrer par statut:</span>
+          <Select 
+            value={statusFilter} 
+            onValueChange={(v) => setStatusFilter(v as any)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Tous les statuts" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Tous les statuts</SelectItem>
+              <SelectItem value="PENDING">En attente</SelectItem>
+              <SelectItem value="IN_PROGRESS">En cours</SelectItem>
+              <SelectItem value="RESOLVED">Résolu</SelectItem>
+              <SelectItem value="CLOSED">Fermé</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-white dark:bg-slate-900">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Date</TableHead>
               <TableHead>Sujet</TableHead>
-              <TableHead>Utilisateur / Email</TableHead>
+              <TableHead>Utilisateur</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Statut</TableHead>
-              <TableHead>Date</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {supportRequests?.length === 0 ? (
+            {!requests || requests.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                  Aucune demande de support.
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
+                  <div className="flex flex-col items-center gap-2">
+                    <CheckCircle2 className="h-8 w-8 text-muted-foreground/50" />
+                    <p>Aucune demande de support trouvée.</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
-              supportRequests?.map((request: any) => (
+              requests.map((request: any) => (
                 <TableRow key={request.id}>
-                  <TableCell className="font-medium max-w-[200px] truncate">{request.subject}</TableCell>
-                  <TableCell>{request.email}</TableCell>
-                  <TableCell>{request.problemType}</TableCell>
-                  <TableCell>{getStatusBadge(request.status)}</TableCell>
-                  <TableCell>{new Date(request.createdAt).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewDetails(request)}
-                    >
-                      <Eye className="h-4 w-4 mr-2" /> Voir
-                    </Button>
+                  <TableCell className="whitespace-nowrap text-xs">
+                    {format(new Date(request.createdAt), "dd MMM yyyy HH:mm", { locale: fr })}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    <div className="max-w-[250px] truncate" title={request.subject}>
+                      {request.subject}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span className="text-sm">{request.user?.displayName || request.user?.name || "Anonyme"}</span>
+                      <span className="text-xs text-muted-foreground">{request.email}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="font-normal">{request.problemType}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    {getStatusBadge(request.status)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => viewDetail(request)}>
+                        <Info className="h-4 w-4 mr-2" />
+                        Détails
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Changer statut</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(request.id, "PENDING")}>
+                            En attente
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(request.id, "IN_PROGRESS")}>
+                            En cours
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(request.id, "RESOLVED")}>
+                            Résolu
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(request.id, "CLOSED")}>
+                            Fermé
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -134,38 +216,107 @@ function AdminSupportContent() {
         </Table>
       </div>
 
-      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <LifeBuoy className="h-5 w-5 text-primary" />
-              Détails de la demande #{selectedRequest?.id.substring(0, 8)}
-            </DialogTitle>
-          </DialogHeader>
-          
+      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           {selectedRequest && (
-            <div className="space-y-4 py-4">
-              <div className="grid grid-cols-2 gap-4 text-sm border-b pb-4">
-                <div>
-                  <p className="text-muted-foreground">Utilisateur / Email</p>
-                  <p className="font-medium">{selectedRequest.email}</p>
+            <>
+              <DialogHeader>
+                <div className="flex items-center justify-between pr-6">
+                  <DialogTitle className="text-xl">{selectedRequest.subject}</DialogTitle>
+                  {getStatusBadge(selectedRequest.status)}
                 </div>
-                <div>
-                  <p className="text-muted-foreground">Type de problème</p>
-                  <p className="font-medium">{selectedRequest.problemType}</p>
+                <DialogDescription>
+                  Reçu le {format(new Date(selectedRequest.createdAt), "PPPP 'à' HH:mm", { locale: fr })}
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-6 py-4">
+                <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border">
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <User className="h-3 w-3" /> Utilisateur
+                    </p>
+                    <p className="text-sm font-medium">
+                      {selectedRequest.user ? (
+                        <span className="flex items-center gap-1">
+                          {selectedRequest.user.displayName || selectedRequest.user.name}
+                          <Badge variant="outline" className="ml-2 text-[10px]">ID: {selectedRequest.userId}</Badge>
+                        </span>
+                      ) : "Non connecté"}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Mail className="h-3 w-3" /> Email de contact
+                    </p>
+                    <p className="text-sm font-medium">{selectedRequest.email}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Info className="h-3 w-3" /> Type de problème
+                    </p>
+                    <p className="text-sm font-medium">{selectedRequest.problemType}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Dernière mise à jour
+                    </p>
+                    <p className="text-sm font-medium">
+                      {format(new Date(selectedRequest.updatedAt), "dd/MM/yyyy HH:mm")}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-muted-foreground">Date de création</p>
-                  <p className="font-medium">{new Date(selectedRequest.createdAt).toLocaleString()}</p>
+
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold flex items-center gap-2">
+                    <FileText className="h-4 w-4" /> Description du problème
+                  </h3>
+                  <div className="bg-white dark:bg-slate-950 p-4 rounded-md border text-sm whitespace-pre-wrap min-h-[100px]">
+                    {selectedRequest.description}
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">Statut actuel</p>
+
+                {selectedRequest.attachments && (selectedRequest.attachments as any[]).length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold flex items-center gap-2">
+                      <Download className="h-4 w-4" /> Pièces jointes ({(selectedRequest.attachments as any[]).length})
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {(selectedRequest.attachments as any[]).map((file: any, index: number) => (
+                        <a 
+                          key={index}
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-3 rounded-md border bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                            <div className="overflow-hidden">
+                              <p className="text-xs font-medium truncate" title={file.filename}>
+                                {file.filename}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {(file.size / 1024 / 1024).toFixed(2)} MB
+                              </p>
+                            </div>
+                          </div>
+                          <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter className="gap-2 flex-col sm:flex-row">
+                <div className="flex grow gap-2">
                   <Select 
-                    value={selectedRequest.status} 
-                    onValueChange={(value) => handleUpdateStatus(selectedRequest.id, value)}
+                    defaultValue={selectedRequest.status} 
+                    onValueChange={(v) => handleUpdateStatus(selectedRequest.id, v as any)}
                   >
-                    <SelectTrigger className="w-[150px] h-8">
-                      <SelectValue placeholder="Statut" />
+                    <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectValue placeholder="Changer le statut" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="PENDING">En attente</SelectItem>
@@ -175,43 +326,10 @@ function AdminSupportContent() {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <p className="font-bold text-lg">{selectedRequest.subject}</p>
-                <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border whitespace-pre-wrap text-sm italic">
-                  "{selectedRequest.description}"
-                </div>
-              </div>
-
-              {selectedRequest.attachments && (selectedRequest.attachments as any[]).length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Pièces jointes:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {(selectedRequest.attachments as any[]).map((file: any, i: number) => (
-                      <Button key={i} variant="outline" size="sm" asChild>
-                        <a href={file.url} target="_blank" rel="noopener noreferrer">
-                          <Info className="h-3 w-3 mr-2" />
-                          {file.filename}
-                        </a>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+                <Button variant="outline" onClick={() => setIsDetailDialogOpen(false)}>Fermer</Button>
+              </DialogFooter>
+            </>
           )}
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>Fermer</Button>
-            <Button 
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
-              onClick={() => handleUpdateStatus(selectedRequest.id, "RESOLVED")}
-              disabled={selectedRequest?.status === "RESOLVED"}
-            >
-              <CheckCircle className="h-4 w-4 mr-2" /> Marquer comme résolu
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
@@ -220,7 +338,7 @@ function AdminSupportContent() {
 
 export default function AdminSupportPage() {
   return (
-    <Suspense fallback={<div className="flex justify-center items-center h-48"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+    <Suspense fallback={<div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
       <AdminSupportContent />
     </Suspense>
   );

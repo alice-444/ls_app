@@ -67,6 +67,7 @@ export default function Dashboard() {
           onCancelRequest={(requestId) =>
             cancelRequestMutation.mutate({ requestId })
           }
+          onCancelConfirmed={(workshopId) => setShowCancelDialog(workshopId)}
         />
       )}
 

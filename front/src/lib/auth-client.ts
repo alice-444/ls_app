@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react";
+import { magicLinkClient, emailOTPClient, usernameClient } from "better-auth/client/plugins";
 import { API_BASE_URL } from "./api-client";
 
 const baseURL = API_BASE_URL;
@@ -6,6 +7,11 @@ const baseURL = API_BASE_URL;
 export const authClient = createAuthClient({
   baseURL,
   basePath: "/api/auth",
+  plugins: [
+    usernameClient(),
+    magicLinkClient(),
+    emailOTPClient(),
+  ],
 });
 
 export const customAuthClient = {
@@ -65,7 +71,7 @@ export const customAuthClient = {
 
     return response.json();
   },
-  async saveProfProfile(data: {
+  async saveMentorProfile(data: {
     name: string;
     bio: string;
     domain: string;
@@ -76,8 +82,10 @@ export const customAuthClient = {
     areasOfExpertise?: string[] | null;
     mentorshipTopics?: string[] | null;
     calendlyLink?: string | null;
+    displayName?: string | null;
+    iceBreakerTags?: string[] | null;
   }): Promise<{ success: boolean }> {
-		const response = await fetch(`${baseURL}/api/profile/role/prof`, {
+		const response = await fetch(`${baseURL}/api/profile/role/mentor`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

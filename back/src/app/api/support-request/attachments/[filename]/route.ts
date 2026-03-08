@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { existsSync } from "node:fs";
 import { getAuthenticatedSession } from "@/lib/api-helpers";
+import { prisma } from "@/lib/common";
 
 export async function GET(
   req: NextRequest,
@@ -12,6 +13,14 @@ export async function GET(
     const authResult = await getAuthenticatedSession(req);
     if (!authResult.ok) {
       return authResult.response;
+    }
+
+    const appUser = await prisma.user.findUnique({
+      where: { userId: authResult.userId },
+    });
+
+    if (!appUser || appUser.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { filename } = await params;

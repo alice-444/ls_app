@@ -18,7 +18,7 @@ describe("POST /api/daily/webhook", () => {
 
   it("returns 401 when DAILY_WEBHOOK_SECRET is set and signature is missing", async () => {
     process.env.DAILY_WEBHOOK_SECRET = "test-secret";
-    process.env.NODE_ENV = "production";
+    (process.env as any).NODE_ENV = "production";
     const req = createRequest("/api/daily/webhook", {
       method: "POST",
       body: JSON.stringify({ type: "participant-joined" }),
@@ -33,7 +33,7 @@ describe("POST /api/daily/webhook", () => {
 
   it("returns 200 when body is valid event in development without secret", async () => {
     process.env.DAILY_WEBHOOK_SECRET = "";
-    process.env.NODE_ENV = "development";
+    (process.env as any).NODE_ENV = "development";
     const req = createRequest("/api/daily/webhook", {
       method: "POST",
       body: JSON.stringify({

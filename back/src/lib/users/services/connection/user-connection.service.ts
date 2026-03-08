@@ -5,14 +5,19 @@ import type { AppUserRepository } from "../../repositories";
 import type { IUserConnectionRepository } from "../../repositories/connection/user-connection.repository.interface";
 import { verifyUserExists } from "../../../auth/services/user-helpers";
 import type { IUserConnectionService } from "./user-connection.service.interface";
+import type { IUserBlockService } from "../moderation/user-block.service.interface";
+import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import { UserInfoEnricher } from "./user-info-enricher";
+import { logger } from "../../../common/logger";
 
 export class UserConnectionService implements IUserConnectionService {
   private readonly enricher: UserInfoEnricher;
 
   constructor(
     private readonly appUserRepository: AppUserRepository,
-    private readonly userConnectionRepository: IUserConnectionRepository
+    private readonly userConnectionRepository: IUserConnectionRepository,
+    private readonly userBlockService: IUserBlockService,
+    private readonly notificationService: INotificationService
   ) {
     this.enricher = new UserInfoEnricher(appUserRepository);
   }
@@ -31,6 +36,16 @@ export class UserConnectionService implements IUserConnectionService {
 
       const receiverCheck = await verifyUserExists(receiverUserId);
       if (!receiverCheck.ok) return receiverCheck;
+
+      // Check for blocks
+      const blockResult = await this.userBlockService.areUsersBlocked(
+        requesterUserId,
+        receiverUserId
+      );
+      if (!blockResult.ok) return blockResult;
+      if (blockResult.data.user1BlockedUser2 || blockResult.data.user2BlockedUser1) {
+        return failure("Cannot send connection request to this user", 403);
+      }
 
       const requesterAppUser = await this.appUserRepository.findByUserId(
         requesterUserId
@@ -65,6 +80,19 @@ export class UserConnectionService implements IUserConnectionService {
         status: "PENDING",
         updatedAt: new Date(),
       });
+
+      // Trigger notification for the receiver
+      const requesterName = requesterAppUser.displayName || requesterAppUser.name || "Un utilisateur";
+      await this.notificationService.createNotification(
+        receiverUserId,
+        {
+          type: "social",
+          title: "Nouvelle demande de connexion",
+          message: `${requesterName} souhaite rejoindre votre réseau.`,
+          actionUrl: "/network",
+        },
+        requesterUserId
+      );
 
       return success({ success: true });
     } catch (error) {
@@ -103,10 +131,37 @@ export class UserConnectionService implements IUserConnectionService {
         return failure("Connection request is not pending", 400);
       }
 
+      // Check for blocks before accepting
+      const requesterAppUser = await this.appUserRepository.findByAppUserId(connection.requesterId);
+      if (requesterAppUser) {
+        const blockResult = await this.userBlockService.areUsersBlocked(
+          userId,
+          requesterAppUser.userId
+        );
+        if (blockResult.ok && (blockResult.data.user1BlockedUser2 || blockResult.data.user2BlockedUser1)) {
+          return failure("Cannot accept request from this user", 403);
+        }
+      }
+
       await this.userConnectionRepository.update(connectionId, {
         status: "ACCEPTED",
         updatedAt: new Date(),
       });
+
+      // Notify the requester
+      if (requesterAppUser) {
+        const accepterName = appUser.displayName || appUser.name || "Un utilisateur";
+        await this.notificationService.createNotification(
+          requesterAppUser.userId,
+          {
+            type: "social",
+            title: "Demande de connexion acceptée",
+            message: `${accepterName} a accepté votre demande de connexion.`,
+            actionUrl: "/network",
+          },
+          userId
+        );
+      }
 
       return success({ success: true });
     } catch (error) {
@@ -251,6 +306,8 @@ export class UserConnectionService implements IUserConnectionService {
       const appUser = await this.appUserRepository.findByUserId(userId);
       if (!appUser) return failure("User not found", 404);
 
+      const blockedAppUserIds = await this.getBlockedAppUserIds(appUser.id);
+
       const connections =
         await this.userConnectionRepository.findPendingRequestsReceivedBy(
           appUser.id
@@ -258,6 +315,8 @@ export class UserConnectionService implements IUserConnectionService {
 
       const requestsWithUserInfo = await Promise.all(
         connections.map(async (connection) => {
+          if (blockedAppUserIds.has(connection.requesterId)) return null;
+
           const info = await this.enricher.enrichByAppUserId(connection.requesterId);
           if (!info) return null;
 
@@ -306,6 +365,8 @@ export class UserConnectionService implements IUserConnectionService {
       const appUser = await this.appUserRepository.findByUserId(userId);
       if (!appUser) return failure("User not found", 404);
 
+      const blockedAppUserIds = await this.getBlockedAppUserIds(appUser.id);
+
       const connections =
         await this.userConnectionRepository.findAcceptedConnectionsFor(
           appUser.id
@@ -317,6 +378,8 @@ export class UserConnectionService implements IUserConnectionService {
             connection.requesterId === appUser.id
               ? connection.receiverId
               : connection.requesterId;
+
+          if (blockedAppUserIds.has(otherAppUserId)) return null;
 
           const info = await this.enricher.enrichByAppUserId(otherAppUserId);
           if (!info) return null;
@@ -366,6 +429,8 @@ export class UserConnectionService implements IUserConnectionService {
       const appUser = await this.appUserRepository.findByUserId(userId);
       if (!appUser) return failure("User not found", 404);
 
+      const blockedAppUserIds = await this.getBlockedAppUserIds(appUser.id);
+
       const connections =
         await this.userConnectionRepository.findPendingRequestsSentBy(
           appUser.id
@@ -373,6 +438,8 @@ export class UserConnectionService implements IUserConnectionService {
 
       const requestsWithUserInfo = await Promise.all(
         connections.map(async (connection) => {
+          if (blockedAppUserIds.has(connection.receiverId)) return null;
+
           const info = await this.enricher.enrichByAppUserId(connection.receiverId);
           if (!info) return null;
 
@@ -400,5 +467,26 @@ export class UserConnectionService implements IUserConnectionService {
         createErrorContext("getPendingRequestsSent", { userId })
       );
     }
+  }
+
+  private async getBlockedAppUserIds(appUserId: string): Promise<Set<string>> {
+    const blockedAppUserIds = new Set<string>();
+    const blockedUsersResult =
+      await this.userBlockService.getAllBlockedAppUserIds(appUserId);
+
+    if (blockedUsersResult.ok) {
+      blockedUsersResult.data.blockedByUser.forEach((id) =>
+        blockedAppUserIds.add(id)
+      );
+      blockedUsersResult.data.blockedUser.forEach((id) =>
+        blockedAppUserIds.add(id)
+      );
+    } else {
+      logger.warn("Error loading blocked users for connection filtering", {
+        userId: appUserId,
+        error: blockedUsersResult.error,
+      });
+    }
+    return blockedAppUserIds;
   }
 }

@@ -49,7 +49,7 @@ export function useMyWorkshops() {
   } as Record<string, unknown>);
 
   const { data: mentorRequests } =
-    trpc.mentor.getMentorWorkshopRequests.useQuery(undefined, {
+    trpc.mentor.getReceivedRequests.useQuery(undefined, {
       enabled: !!session,
     } as Record<string, unknown>);
 
@@ -61,6 +61,8 @@ export function useMyWorkshops() {
   const deleteMutation = trpc.workshop.delete.useMutation();
   const publishMutation = trpc.workshop.publish.useMutation();
   const unpublishMutation = trpc.workshop.unpublish.useMutation();
+  const confirmAttendanceMutation =
+    trpc.workshopAttendance.confirmAttendance.useMutation();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<{
@@ -88,7 +90,7 @@ export function useMyWorkshops() {
   );
 
   const utils = trpc.useUtils();
-  const rejectRequest = trpc.mentor.rejectWorkshopRequest.useMutation();
+  const rejectRequest = trpc.mentor.rejectRequest.useMutation();
 
   const handleAcceptRequest = (request: {
     id: string;
@@ -105,14 +107,14 @@ export function useMyWorkshops() {
     setShowRejectDialog(true);
   };
 
-  const confirmRejectRequest = () => {
+  const confirmRejectRequest = (reason?: string) => {
     if (requestToReject) {
       rejectRequest.mutate(
-        { requestId: requestToReject },
+        { requestId: requestToReject, reason },
         {
           onSuccess: () => {
             toast.success("Demande refusée avec succès");
-            utils.mentor.getWorkshopRequests.invalidate();
+            utils.mentor.getReceivedRequests.invalidate();
             setShowRejectDialog(false);
             setRequestToReject(null);
           },
@@ -250,6 +252,21 @@ export function useMyWorkshops() {
     );
   };
 
+  const handleConfirmComplete = (workshopId: string) => {
+    confirmAttendanceMutation.mutate(
+      { workshopId },
+      {
+        onSuccess: () => {
+          toast.success("Atelier marqué comme terminé avec succès");
+          refetch();
+        },
+        onError: (error: { message: string }) => {
+          toast.error(error.message || "Erreur lors de la validation");
+        },
+      }
+    );
+  };
+
   return {
     router,
     session,
@@ -296,6 +313,7 @@ export function useMyWorkshops() {
     deleteMutation,
     publishMutation,
     unpublishMutation,
+    confirmAttendanceMutation,
     rejectRequest,
     utils,
 
@@ -305,5 +323,6 @@ export function useMyWorkshops() {
     handleDelete,
     handlePublish,
     handleUnpublish,
+    handleConfirmComplete,
   };
 }

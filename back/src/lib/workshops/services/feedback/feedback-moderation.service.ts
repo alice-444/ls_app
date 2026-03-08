@@ -4,7 +4,9 @@ import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { IWorkshopFeedbackRepository } from "../../repositories/feedback/workshop-feedback.repository.interface";
 import type { IMentorRepository } from "../../../mentors/repositories/mentor.repository.interface";
 import type { IEmailService } from "../../../email/services/email.service.interface";
-import { WorkshopEmailTemplates } from "../email/workshop-email.templates";
+import { renderEmailTemplate } from "../../../email/utils/render-email";
+import { FeedbackWarningEmail } from "../../../email/templates/FeedbackWarningEmail";
+import * as React from "react";
 import { INotificationService } from "../../../notifications/services/notification.service.interface";
 
 export interface IFeedbackModerationService {
@@ -24,6 +26,8 @@ export interface IFeedbackModerationService {
   deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 
   warnUser(feedbackId: string): Promise<Result<{ success: boolean }>>;
+
+  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>>;
 }
 
 export class FeedbackModerationService implements IFeedbackModerationService {
@@ -72,7 +76,7 @@ export class FeedbackModerationService implements IFeedbackModerationService {
       // Notify admins
       await this.notificationService.notifyAdmin(
         "NEW_FEEDBACK_MODERATION",
-        `Un avis sur l'atelier "${feedback.workshop?.title || 'N/A'}" a été signalé pour modération par le mentor ${mentor.user?.name || userId}.`,
+        `Un avis sur l'atelier "${feedback.workshop?.title || 'N/A'}" a été signalé pour modération par le mentor ${mentor.name || userId}.`,
         `/admin/feedback-moderation?feedbackId=${feedbackId}`
       );
 
@@ -184,19 +188,24 @@ export class FeedbackModerationService implements IFeedbackModerationService {
         return failure("Avis introuvable", 404);
       }
 
-      if (!feedback.apprentice?.user?.email) {
+      const apprentice = feedback.apprentice;
+      if (!apprentice?.user?.email) {
         return failure("Email de l'utilisateur introuvable", 404);
       }
 
-      const template = WorkshopEmailTemplates.feedbackWarning({
-        recipientName: feedback.apprentice.user.name || "Utilisateur",
-        mentorName: feedback.mentor?.user?.name || "le mentor",
-        workshopTitle: feedback.workshop?.title || "l'atelier",
-      });
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(FeedbackWarningEmail, {
+          userName: apprentice.user.name || "Utilisateur",
+          mentorName: feedback.mentor?.user?.name || "le mentor",
+          workshopTitle: feedback.workshop?.title || "l'atelier",
+        })
+      );
 
       const emailResult = await this.emailService.sendEmail({
-        to: feedback.apprentice.user.email,
-        ...template,
+        to: apprentice.user.email,
+        subject: "Avertissement - Avis signalé",
+        html,
+        text,
       });
 
       if (!emailResult.ok) {
@@ -208,6 +217,32 @@ export class FeedbackModerationService implements IFeedbackModerationService {
       return handleError(
         error,
         createErrorContext("warnUser", {
+          resourceId: feedbackId,
+        })
+      );
+    }
+  }
+
+  async dismissReport(
+    feedbackId: string
+  ): Promise<Result<{ success: boolean }>> {
+    try {
+      const feedback = await this.feedbackRepository.findById(feedbackId);
+      if (!feedback) {
+        return failure("Avis introuvable", 404);
+      }
+
+      if (feedback.status !== "UNDER_REVIEW") {
+        return failure("Cet avis n'est pas en cours de modération", 400);
+      }
+
+      await this.feedbackRepository.updateStatus(feedbackId, "ACTIVE");
+
+      return success({ success: true });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("dismissReport", {
           resourceId: feedbackId,
         })
       );

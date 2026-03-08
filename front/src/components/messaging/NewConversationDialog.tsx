@@ -60,10 +60,7 @@ export function NewConversationDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent
-        className="max-w-2xl"
-        onClose={() => handleOpenChange(false)}
-      >
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Démarrer une nouvelle conversation</DialogTitle>
           <DialogDescription>

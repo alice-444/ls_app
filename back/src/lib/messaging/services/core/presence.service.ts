@@ -16,7 +16,7 @@ export class PresenceService {
       return;
     }
 
-    await (prisma as any).app_user.update({
+    await prisma.user.update({
       where: { id: appUser.id },
       data: {
         isOnline,
@@ -31,7 +31,7 @@ export class PresenceService {
       return null;
     }
 
-    const fullAppUser = await (prisma as any).app_user.findUnique({
+    const fullAppUser = await prisma.user.findUnique({
       where: { id: appUser.id },
       select: {
         userId: true,
@@ -62,7 +62,7 @@ export class PresenceService {
 
     for (const appUser of appUsers) {
       if (appUser) {
-        const fullAppUser = await (prisma as any).app_user.findUnique({
+        const fullAppUser = await prisma.user.findUnique({
           where: { id: appUser.id },
           select: {
             userId: true,

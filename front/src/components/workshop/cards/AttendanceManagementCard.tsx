@@ -74,22 +74,20 @@ export function AttendanceManagementCard({
   const hasParticipants = participants.length > 0;
   const hasUnsavedChanges = Object.keys(attendanceUpdates).length > 0;
 
-  const handleAttendanceChange = (participantId: string, checked: boolean) => {
+  const handleAttendanceChange = (participantId: string, status: "PRESENT" | "NO_SHOW" | "PENDING") => {
     setAttendanceUpdates((prev) => ({
       ...prev,
-      [participantId]: checked ? "PRESENT" : "PENDING",
+      [participantId]: status,
     }));
   };
 
   const handleSave = async () => {
     for (const [participantId, status] of Object.entries(attendanceUpdates)) {
-      if (status === "PENDING" || status === "PRESENT") {
-        await updateAttendanceMutation.mutateAsync({
-          workshopId,
-          participantId,
-          attendanceStatus: status,
-        });
-      }
+      await updateAttendanceMutation.mutateAsync({
+        workshopId,
+        participantId,
+        attendanceStatus: status,
+      });
     }
   };
 
@@ -133,7 +131,7 @@ export function AttendanceManagementCard({
             Gestion de la présence
           </CardTitle>
           <CardDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            Marquez les participants comme présents
+            Marquez si l'apprenant était présent ou absent
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -154,23 +152,9 @@ export function AttendanceManagementCard({
                   return (
                     <div
                       key={participant.id}
-                      className="flex items-center justify-between p-3 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] bg-white dark:bg-[rgba(255,255,255,0.08)]"
+                      className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between p-4 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] bg-white dark:bg-[rgba(255,255,255,0.08)] gap-4"
                     >
-                      <div className="flex items-center gap-3 flex-1">
-                        <Checkbox
-                          checked={isPresent}
-                          onCheckedChange={(checked) =>
-                            handleAttendanceChange(
-                              participant.id,
-                              checked as boolean
-                            )
-                          }
-                          disabled={
-                            updateAttendanceMutation.isPending ||
-                            confirmAttendanceMutation.isPending ||
-                            isNoShow
-                          }
-                        />
+                      <div className="flex items-center gap-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-sm text-[#26547c] dark:text-[#e6e6e6]">
@@ -199,7 +183,7 @@ export function AttendanceManagementCard({
                               ? "destructive"
                               : "secondary"
                           }
-                          className="flex items-center gap-1"
+                          className="flex items-center gap-1 shrink-0"
                         >
                           {isPresent ? (
                             <>
@@ -219,6 +203,33 @@ export function AttendanceManagementCard({
                           )}
                         </Badge>
                       </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant={isPresent ? "default" : "outline"}
+                          size="sm"
+                          className={`flex-1 sm:flex-none rounded-full h-8 text-xs font-semibold ${
+                            isPresent ? "bg-emerald-600 hover:bg-emerald-700 text-white border-0" : "text-[#26547c] border-[#26547c]/20"
+                          }`}
+                          onClick={() => handleAttendanceChange(participant.id, isPresent ? "PENDING" : "PRESENT")}
+                          disabled={updateAttendanceMutation.isPending}
+                        >
+                          Présent
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={isNoShow ? "destructive" : "outline"}
+                          size="sm"
+                          className={`flex-1 sm:flex-none rounded-full h-8 text-xs font-semibold ${
+                            isNoShow ? "bg-red-600 hover:bg-red-700 text-white border-0" : "text-red-600 border-red-200"
+                          }`}
+                          onClick={() => handleAttendanceChange(participant.id, isNoShow ? "PENDING" : "NO_SHOW")}
+                          disabled={updateAttendanceMutation.isPending}
+                        >
+                          Absent
+                        </Button>
+                      </div>
                     </div>
                   );
                 })}
@@ -232,7 +243,7 @@ export function AttendanceManagementCard({
                       updateAttendanceMutation.isPending ||
                       confirmAttendanceMutation.isPending
                     }
-                    className="flex-1 bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
+                    className="flex-1 bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
                     size="sm"
                   >
                     <Save className="w-4 h-4 mr-2" />
@@ -249,11 +260,11 @@ export function AttendanceManagementCard({
                     confirmAttendanceMutation.isPending ||
                     hasUnsavedChanges
                   }
-                  className="w-full bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
+                  className="w-full bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
                   variant="default"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Confirmer la présence
+                  Valider et clôturer l'atelier
                 </Button>
               </div>
             </div>

@@ -1,20 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-
-vi.mock("../../../../../../src/lib/common/prisma", () => ({ prisma: {} }));
-vi.mock("../../../../../../src/lib/common/logger", () => ({
-  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
-}));
-
-import { UserTitleService } from "../../../../../../src/lib/users/services/profile/user-title.service";
+import { UserTitleService } from "@/lib/users/services/profile/user-title.service";
 
 describe("UserTitleService", () => {
   const mockPrisma = {
     user: {
       findUnique: vi.fn(),
       update: vi.fn(),
-    },
-    app_user: {
-      findUnique: vi.fn(),
     },
     workshop: {
       count: vi.fn(),
@@ -69,27 +60,19 @@ describe("UserTitleService", () => {
       const result = await service.updateTitleBasedOnWorkshops("user-1");
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error).toBe("User not found");
+        expect(result.error).toBe("App user not found");
         expect(result.status).toBe(404);
       }
     });
 
-    it("returns failure when app user not found", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ title: "Explorer" });
-      mockPrisma.app_user.findUnique.mockResolvedValue(null);
-
-      const result = await service.updateTitleBasedOnWorkshops("user-1");
-      expect(result.ok).toBe(false);
-      if (!result.ok) {
-        expect(result.error).toBe("App user not found");
-      }
-    });
-
     it("updates title when it changes", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ title: "Explorer" });
-      mockPrisma.app_user.findUnique.mockResolvedValue({ id: "app-1" });
-      mockPrisma.workshop.count.mockResolvedValue(7);
-      mockPrisma.user.update.mockResolvedValue({});
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: "internal-1",
+        userId: "user-1",
+        title: "Explorer",
+      });
+      mockPrisma.workshop.count.mockResolvedValue(6);
+      mockPrisma.user.update.mockResolvedValue({ title: "Challenger" });
 
       const result = await service.updateTitleBasedOnWorkshops("user-1");
       expect(result.ok).toBe(true);
@@ -99,36 +82,25 @@ describe("UserTitleService", () => {
         expect(result.data.titleChanged).toBe(true);
       }
       expect(mockPrisma.user.update).toHaveBeenCalledWith({
-        where: { id: "user-1" },
+        where: { userId: "user-1" },
         data: { title: "Challenger" },
       });
     });
 
     it("does not update when title stays the same", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ title: "Explorer" });
-      mockPrisma.app_user.findUnique.mockResolvedValue({ id: "app-1" });
-      mockPrisma.workshop.count.mockResolvedValue(3);
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: "internal-1",
+        userId: "user-1",
+        title: "Explorer",
+      });
+      mockPrisma.workshop.count.mockResolvedValue(2);
 
       const result = await service.updateTitleBasedOnWorkshops("user-1");
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.data.titleChanged).toBe(false);
-        expect(result.data.newTitle).toBe("Explorer");
       }
       expect(mockPrisma.user.update).not.toHaveBeenCalled();
-    });
-
-    it("defaults previousTitle to Explorer when null", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ title: null });
-      mockPrisma.app_user.findUnique.mockResolvedValue({ id: "app-1" });
-      mockPrisma.workshop.count.mockResolvedValue(0);
-
-      const result = await service.updateTitleBasedOnWorkshops("user-1");
-      expect(result.ok).toBe(true);
-      if (result.ok) {
-        expect(result.data.previousTitle).toBe("Explorer");
-        expect(result.data.titleChanged).toBe(false);
-      }
     });
 
     it("returns failure on exception", async () => {

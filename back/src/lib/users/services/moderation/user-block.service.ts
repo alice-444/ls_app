@@ -353,12 +353,12 @@ export class UserBlockService implements IUserBlockService {
   }
 
   async getAllBlockedAppUserIds(
-    appUserId: string
+    userId: string
   ): Promise<Result<{ blockedByUser: Set<string>; blockedUser: Set<string> }>> {
     try {
       const [blocksByBlocker, blocksByBlocked] = await Promise.all([
-        this.userBlockRepository.findBlocksByBlocker(appUserId),
-        this.userBlockRepository.findBlocksByBlocked(appUserId),
+        this.userBlockRepository.findBlocksByBlocker(userId),
+        this.userBlockRepository.findBlocksByBlocked(userId),
       ]);
 
       const blockedByUser = new Set<string>(
@@ -376,7 +376,7 @@ export class UserBlockService implements IUserBlockService {
       return handleError(
         error,
         createErrorContext("getAllBlockedAppUserIds", {
-          resourceId: appUserId,
+          resourceId: userId,
         })
       );
     }

@@ -10,7 +10,7 @@ import { verifyUserExists } from "../../../auth/services/user-helpers";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IMessageEnrichmentService } from "../enrichment/message-enrichment.service.interface";
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
-import type { PrismaClient } from "../../../../../prisma/generated/client/client";
+import type { PrismaClient } from '@/lib/prisma';
 import { prisma } from "../../../common";
 import { logger } from "../../../common/logger";
 import { ConversationPinService } from "./conversation-pin.service";
@@ -30,7 +30,7 @@ export class ConversationService implements IConversationService {
   ) {
     this.pinService = new ConversationPinService(
       conversationRepository,
-      prismaClient
+      prismaClient || prisma
     );
   }
 
@@ -73,6 +73,7 @@ export class ConversationService implements IConversationService {
 
       const appUser = userResult.data.appUser;
       const blockedAppUserIds = await this.getBlockedAppUserIds(appUser);
+      const pinnedConversationIds = await this.pinService.getPinnedConversationIds(appUser.id);
 
       const conversations =
         await this.conversationRepository.findConversationsForUser(appUser.id);
@@ -89,15 +90,23 @@ export class ConversationService implements IConversationService {
           return this.buildConversationListItem(
             conversation,
             appUser,
-            otherAppUserId
+            otherAppUserId,
+            pinnedConversationIds.has(conversation.id)
           );
         })
       );
 
       return success(
-        conversationsWithDetails.filter(
-          (conv): conv is ConversationListItem => conv !== null
-        )
+        conversationsWithDetails
+          .filter((conv): conv is ConversationListItem => conv !== null)
+          .sort((a, b) => {
+            if (a.isPinned && !b.isPinned) return -1;
+            if (!a.isPinned && b.isPinned) return 1;
+            
+            const timeA = a.lastMessage?.createdAt || a.updatedAt;
+            const timeB = b.lastMessage?.createdAt || b.updatedAt;
+            return timeB.getTime() - timeA.getTime();
+          })
       );
     } catch (error) {
       return handleError(
@@ -131,21 +140,21 @@ export class ConversationService implements IConversationService {
   private async buildConversationListItem(
     conversation: any,
     appUser: any,
-    otherAppUserId: string
+    otherAppUserId: string,
+    isPinned: boolean
   ): Promise<ConversationListItem | null> {
     const otherAppUser = await this.appUserRepository.findByAppUserId(
       otherAppUserId
     );
     if (!otherAppUser) return null;
 
-    const [otherUserName, identityCard, lastMessage, unreadCount, workshopInfo, isPinned] =
+    const [otherUserName, identityCard, lastMessage, unreadCount, workshopInfo] =
       await Promise.all([
         this.appUserRepository.findUserNameByUserId(otherAppUser.userId),
         this.appUserRepository.findIdentityCardByUserId(otherAppUser.userId),
         this.messageRepository.findLastMessageForConversation(conversation.id),
         this.messageRepository.countUnreadMessagesForUser(conversation.id, appUser.id),
-        this.enrichWithWorkshopInfo(conversation.workshopId),
-        this.pinService.isConversationPinned(appUser.id, conversation.id),
+        this.enrichWithWorkshopInfo(null),
       ]);
 
     let formattedLastMessageContent: string | null = null;
@@ -160,7 +169,7 @@ export class ConversationService implements IConversationService {
       otherUserName,
       otherUserDisplayName: identityCard?.displayName || null,
       otherUserPhotoUrl: identityCard?.photoUrl || null,
-      otherUserRole: otherAppUser.role,
+      otherUserRole: otherAppUser.role as "MENTOR" | "APPRENANT" | "ADMIN" | null,
       lastMessage: lastMessage
         ? {
             content: formattedLastMessageContent || lastMessage.content,
@@ -169,7 +178,7 @@ export class ConversationService implements IConversationService {
         : null,
       unreadCount,
       updatedAt: conversation.updatedAt,
-      workshopId: conversation.workshopId,
+      workshopId: null,
       workshopTitle: workshopInfo.workshopTitle,
       workshopDate: workshopInfo.workshopDate,
       isPinned,
@@ -199,6 +208,18 @@ export class ConversationService implements IConversationService {
         return failure("One or both users not found", 404);
       }
 
+      // Check for blocks
+      const blockResult = await this.userBlockService.areUsersBlocked(
+        userId1,
+        userId2
+      );
+      if (!blockResult.ok) {
+        return blockResult;
+      }
+      if (blockResult.data.user1BlockedUser2 || blockResult.data.user2BlockedUser1) {
+        return failure("Cannot start conversation with this user", 403);
+      }
+
       const client = this.prismaClient || prisma;
       const result = await (client as any).$transaction(
         async (tx: any) => {
@@ -217,7 +238,6 @@ export class ConversationService implements IConversationService {
                     id: generateInternalId(),
                     participant1Id: appUser1.id,
                     participant2Id: appUser2.id,
-                    workshopId: workshopId || null,
                     updatedAt: new Date(),
                   },
                   tx
@@ -242,21 +262,6 @@ export class ConversationService implements IConversationService {
             }
 
             if (workshopId && conversation) {
-              await this.createWorkshopReferenceMessage(
-                conversation.id,
-                appUser1.id,
-                workshopId
-              );
-            }
-          } else if (workshopId) {
-            const previousWorkshopId = conversation.workshopId;
-            conversation =
-              await this.conversationRepository.updateWithTransaction(
-                conversation.id,
-                { workshopId, updatedAt: new Date() },
-                tx
-              );
-            if (previousWorkshopId !== workshopId) {
               await this.createWorkshopReferenceMessage(
                 conversation.id,
                 appUser1.id,
@@ -336,11 +341,11 @@ export class ConversationService implements IConversationService {
       }
 
       const { workshopTitle, workshopDate } = await this.enrichWithWorkshopInfo(
-        conversation.workshopId
+        null
       );
 
       return success({
-        workshopId: conversation.workshopId,
+        workshopId: null,
         workshopTitle,
         workshopDate,
       });

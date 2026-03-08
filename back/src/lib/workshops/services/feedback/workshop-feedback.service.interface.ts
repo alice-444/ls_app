@@ -1,14 +1,29 @@
 import type { Result } from "../../../common";
 
+export interface SubmitFeedbackInput {
+  workshopId: string;
+  rating: number;
+  comment?: string | null;
+  isAnonymous: boolean;
+}
+
+export interface WorkshopFeedbackEntity {
+  id: string;
+  mentorId: string;
+  apprenticeId: string;
+  workshopId: string;
+  rating: number;
+  comment: string | null;
+  isAnonymous: boolean;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface IWorkshopFeedbackService {
   submitFeedback(
     userId: string,
-    input: {
-      workshopId: string;
-      rating: number;
-      comment?: string | null;
-      isAnonymous: boolean;
-    }
+    input: SubmitFeedbackInput
   ): Promise<
     Result<{
       feedbackId: string;
@@ -41,7 +56,7 @@ export interface IWorkshopFeedbackService {
     offset?: number;
   }): Promise<Result<any>>;
 
-  dismissReport(feedbackId: string): Promise<Result<{ success: boolean }>>;
+  approveFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 
   deleteFeedback(feedbackId: string): Promise<Result<{ success: boolean }>>;
 

@@ -68,4 +68,15 @@ export interface ICashbackQueueRepository {
     id: string,
     input: UpdateCashbackQueueInput
   ): Promise<CashbackQueueEntity>;
+
+  findSummaryByMentor(
+    mentorId: string,
+    from?: Date,
+    to?: Date
+  ): Promise<{ totalEarned: number; byMonth: { month: string; amount: number }[] }>;
+
+  findHistoryByMentor(
+    mentorId: string,
+    options?: { limit?: number; cursor?: string }
+  ): Promise<{ items: (CashbackQueueEntity & { workshopTitle: string; participantName: string })[]; nextCursor?: string }>;
 }

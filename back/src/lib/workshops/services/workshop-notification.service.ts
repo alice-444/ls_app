@@ -3,11 +3,15 @@ import { failure, success } from "../../common";
 import type { IWorkshopRepository } from "../repositories/workshop.repository.interface";
 import type { INotificationService } from "../../notifications/services/notification.service.interface";
 import type { AppUserRepository } from "../../users/repositories";
+import type { IEmailService } from "../../email/services/email.service.interface";
 import { formatDateTime } from "../utils/date-formatters";
 import { logger } from "../../common/logger";
 import { handleError, createErrorContext } from "../../common/error-handler";
-import { container } from "../../di/container";
-import { WorkshopEmailTemplates } from "./email/workshop-email.templates";
+import { renderEmailTemplate } from "../../email/utils/render-email";
+import { WorkshopRescheduledEmail } from "../../email/templates/WorkshopRescheduledEmail";
+import * as React from "react";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export interface WorkshopRescheduleNotificationData {
   workshopId: string;
@@ -26,7 +30,8 @@ export class WorkshopNotificationService {
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly dbNotificationService?: INotificationService,
-    private readonly appUserRepository?: AppUserRepository
+    private readonly appUserRepository?: AppUserRepository,
+    private readonly emailService?: IEmailService
   ) {}
 
   async notifyWorkshopRescheduled(
@@ -47,16 +52,6 @@ export class WorkshopNotificationService {
         return success({ notifiedCount: 0 });
       }
 
-      let apprenticeUserId = workshop.apprentice.user?.id;
-      if (!apprenticeUserId && this.appUserRepository) {
-        const apprenticeAppUser = await this.appUserRepository.findByAppUserId(
-          workshop.apprentice.id
-        );
-        if (apprenticeAppUser) {
-          apprenticeUserId = apprenticeAppUser.userId;
-        }
-      }
-
       const notificationData: WorkshopRescheduleNotificationData = {
         workshopId: workshop.id,
         workshopTitle: workshop.title,
@@ -65,9 +60,9 @@ export class WorkshopNotificationService {
         newDate,
         newTime,
         apprenticeId: workshop.apprentice.id,
-        apprenticeEmail: workshop.apprentice.user?.email || null,
-        apprenticeName: workshop.apprentice.user?.name || null,
-        apprenticeUserId: apprenticeUserId || undefined,
+        apprenticeEmail: workshop.apprentice.email || null,
+        apprenticeName: workshop.apprentice.name || null,
+        apprenticeUserId: workshop.apprentice.userId,
       };
 
       await this.sendRescheduleNotification(notificationData, senderUserId);
@@ -127,15 +122,14 @@ export class WorkshopNotificationService {
   private async sendRescheduleEmail(
     data: WorkshopRescheduleNotificationData
   ): Promise<void> {
+    if (!this.emailService) return;
+
     try {
       let apprenticeEmail = data.apprenticeEmail;
 
-      if (!apprenticeEmail && data.apprenticeUserId) {
-        const apprenticeUser = await container.prisma.user.findUnique({
-          where: { id: data.apprenticeUserId },
-          select: { email: true },
-        });
-        apprenticeEmail = apprenticeUser?.email || null;
+      if (!apprenticeEmail && data.apprenticeUserId && this.appUserRepository) {
+        const apprenticeAppUser = await this.appUserRepository.findByUserId(data.apprenticeUserId);
+        apprenticeEmail = apprenticeAppUser?.email || null;
       }
 
       if (!apprenticeEmail) {
@@ -149,23 +143,26 @@ export class WorkshopNotificationService {
         return;
       }
 
-      const workshop = await this.workshopRepository.findById(data.workshopId);
+      const formatDate = (date: Date | null) => 
+        date ? new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : "Date à confirmer";
 
-      const emailTemplate = WorkshopEmailTemplates.reschedule({
-        recipientName: data.apprenticeName || "Participant",
-        workshopTitle: data.workshopTitle,
-        oldDate: data.oldDate,
-        oldTime: data.oldTime,
-        newDate: data.newDate,
-        newTime: data.newTime,
-        workshopLocation: workshop?.location || "Non spécifié",
-        workshopDuration: workshop?.duration ?? null,
-        workshopId: data.workshopId,
-      });
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopRescheduledEmail, {
+          userName: data.apprenticeName || "Apprenti",
+          workshopTitle: data.workshopTitle,
+          oldDate: formatDate(data.oldDate),
+          oldTime: data.oldTime || "Heure à confirmer",
+          newDate: formatDate(data.newDate),
+          newTime: data.newTime,
+          workshopUrl: `${APP_URL}/workshop/${data.workshopId}`,
+        })
+      );
 
-      const emailResult = await container.emailService.sendEmail({
+      const emailResult = await this.emailService.sendEmail({
         to: apprenticeEmail,
-        ...emailTemplate,
+        subject: `Changement d'horaire - ${data.workshopTitle}`,
+        html,
+        text,
       });
 
       if (!emailResult.ok) {

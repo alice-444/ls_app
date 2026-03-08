@@ -6,6 +6,7 @@ export interface WorkshopRequestEntity {
   preferredDate: Date | null;
   preferredTime: string | null;
   status: "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+  rejectionReason: string | null;
   apprenticeId: string;
   mentorId: string;
   workshopId: string | null;
@@ -13,19 +14,15 @@ export interface WorkshopRequestEntity {
   updatedAt: Date;
   apprentice?: {
     id: string;
-    user?: {
-      id: string;
-      name: string | null;
-      email: string | null;
-    };
+    name: string | null;
+    email: string | null;
+    userId: string;
   };
   mentor?: {
     id: string;
-    user?: {
-      id: string;
-      name: string | null;
-      email: string | null;
-    };
+    name: string | null;
+    email: string | null;
+    userId: string;
   };
 }
 
@@ -42,6 +39,7 @@ export interface CreateWorkshopRequestInput {
 
 export interface UpdateWorkshopRequestInput {
   status?: "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+  rejectionReason?: string | null;
   workshopId?: string | null;
   title?: string;
   description?: string | null;

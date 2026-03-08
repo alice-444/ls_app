@@ -14,14 +14,23 @@ import { Button } from "@/components/ui/button";
 import { Coins, ArrowLeft, Loader2, CheckCircle2, XCircle  } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 
 function BuyCreditsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, isPending } = authClient.useSession();
+  
+  const { data: userRole, isLoading: isLoadingRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session,
+  });
+
   const { data: creditBalance, refetch: refetchBalance } =
     trpc.credits.getBalance.useQuery(undefined, {
-      enabled: !!session,
+      enabled: !!session && userRole === "APPRENANT",
     });
 
   const createCheckoutSession = trpc.credits.createCheckoutSession.useMutation({
@@ -39,6 +48,12 @@ function BuyCreditsContent() {
       router.push("/login");
     }
   }, [session, isPending, router]);
+
+  useEffect(() => {
+    if (session && userRole && userRole !== "APPRENANT") {
+      router.replace("/dashboard");
+    }
+  }, [session, userRole, router]);
 
   useEffect(() => {
     const success = searchParams.get("success");
@@ -67,7 +82,7 @@ function BuyCreditsContent() {
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
 
-  if (isPending) {
+  if (isPending || isLoadingRole) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>

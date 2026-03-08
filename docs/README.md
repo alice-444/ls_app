@@ -8,9 +8,12 @@ ce qui existe et où le trouver
 
 - [README principal](../README.md) - installation et le quick start
 - [Architecture](#architecture) – Vue d’ensemble front/back
+- [Design Patterns](patterns.md) – Patterns utilisés dans le projet
+- [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
 - [PRD & EPTC](#prd--eptc) – Cahier des charges et plan de tests E2E (contexte Gemini)
 - [Front](#front) – Application Next.js, tRPC, auth
 - [Back](#back) – API, Prisma, auth
+- [Arborescence](#arborescence) – Structure macro et micro
 - [Guides](#guides) – Procédures (déploiement, DB, auth…)
 - [Référence](#référence) – Détails techniques par domaine
 
@@ -18,7 +21,15 @@ ce qui existe et où le trouver
 
 ## Architecture
 
-Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md).
+Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md). 
+Patterns de conception et principes SOLID appliqués : [patterns.md](patterns.md).
+Inclut les flux d'authentification, utilisateur, données, atelier, paiement, messagerie, visio, suppression compte, crons et réseau.
+
+---
+
+## Arborescence
+
+Structure macro (racine, front, back, infra) et micro (dossiers, fichiers) : [arborescence.md](arborescence.md).
 
 ---
 

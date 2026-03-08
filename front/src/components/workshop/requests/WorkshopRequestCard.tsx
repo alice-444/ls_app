@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
+import { Check, X, MessageSquare } from "lucide-react";
 import {
   getWorkshopRequestStatusLabel,
   getWorkshopRequestStatusColor,
@@ -81,6 +81,17 @@ export function WorkshopRequestCard({
       )}
       {request.message && (
         <p className={messageClass}>"{request.message}"</p>
+      )}
+      {request.status === "REJECTED" && request.rejectionReason && (
+        <div className="mt-2 p-2 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-md">
+          <p className="text-[10px] font-semibold text-red-700 dark:text-red-400 flex items-center gap-1">
+            <MessageSquare className="h-3 w-3" />
+            Motif du refus :
+          </p>
+          <p className="text-[11px] text-red-600 dark:text-red-300 italic mt-0.5">
+            "{request.rejectionReason}"
+          </p>
+        </div>
       )}
       {showPreferredDate && request.preferredDate && (
         <p className={dateClass}>

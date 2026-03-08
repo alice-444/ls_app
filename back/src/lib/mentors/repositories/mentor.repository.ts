@@ -9,17 +9,8 @@ export class PrismaMentorRepository implements IMentorRepository {
   constructor(private readonly prisma: any) {}
 
   async findPublishedMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await (this.prisma as any).app_user.findUnique({
+    const mentor = await this.prisma.user.findUnique({
       where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
 
     if (!mentor || !mentor.isPublished || mentor.role !== "MENTOR") {
@@ -30,18 +21,9 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await (this.prisma as any).app_user.findFirst({
+    const mentor = await this.prisma.user.findFirst({
       where: {
         OR: [{ id }, { userId: id }],
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
       },
     });
 
@@ -53,17 +35,8 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findApprenticeByUserId(userId: string): Promise<MentorEntity | null> {
-    const apprentice = await (this.prisma as any).app_user.findUnique({
+    const apprentice = await this.prisma.user.findUnique({
       where: { userId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
 
     return apprentice as MentorEntity | null;
@@ -87,15 +60,12 @@ export class PrismaMentorRepository implements IMentorRepository {
         createdAt: "desc",
       },
       include: {
-        app_user_mentor_feedback_apprenticeIdToapp_user: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
+        apprentice: {
+          select: {
+            id: true,
+            name: true,
+            photoUrl: true,
+            displayName: true,
           },
         },
         workshop: {
@@ -108,10 +78,7 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    return feedbacks.map((f: any) => ({
-      ...f,
-      apprentice: f.app_user_mentor_feedback_apprenticeIdToapp_user,
-    })) as MentorFeedbackEntity[];
+    return feedbacks as MentorFeedbackEntity[];
   }
 
   async findMentorPublicWorkshops(
@@ -123,7 +90,7 @@ export class PrismaMentorRepository implements IMentorRepository {
         status: "PUBLISHED",
       },
       include: {
-        mentor_feedback: {
+        mentorFeedbacks: {
           select: {
             rating: true,
           },
@@ -134,6 +101,48 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    return workshops as MentorWorkshopEntity[];
+    return workshops.map((w: any) => ({
+      ...w,
+      feedbacks: w.mentorFeedbacks,
+    })) as MentorWorkshopEntity[];
+  }
+
+  async findPublicMentors(filters?: {
+    domain?: string;
+    topic?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<MentorEntity[]> {
+    const where: any = {
+      role: "MENTOR",
+      isPublished: true,
+      status: "ACTIVE",
+    };
+
+    if (filters?.domain) {
+      where.domain = filters.domain;
+    }
+
+    if (filters?.topic) {
+      where.mentorshipTopics = {
+        has: filters.topic,
+      };
+    }
+
+    if (filters?.cursor) {
+      where.id = {
+        gt: filters.cursor,
+      };
+    }
+
+    const mentors = await (this.prisma as any).user.findMany({
+      where,
+      take: filters?.limit || 20,
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    return mentors as MentorEntity[];
   }
 }
