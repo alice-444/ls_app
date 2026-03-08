@@ -90,7 +90,8 @@ Vue simplifiée (ASCII) :
 - **Notifications** : notifs in-app, lien avec Socket.IO et routers tRPC dédiés.
 - **Crédits / Paiement** : crédits, achats (Polar), transactions. Webhook Polar côté back.
 - **Modération** : blocage d’utilisateurs, signalements (user block, user report). Côté back : routers tRPC + éventuels crons.
-- **Support** : formulaire de demande de support, pièces jointes, envoi d’emails (Resend).
+- **Support** : formulaire de demande de support, pièces jointes, envoi d'emails (Resend).
+- **Hub Communauté** : page `/community` — Events Hub (événements communautaires), ateliers mentorat, bons plans étudiants (student_deal), Spot Finder (lieux recommandés), sondage hebdomadaire (community_poll), annuaire membres. Propositions utilisateurs (events, deals, spots) avec modération admin.
 - **Admin** : modération des feedbacks, signalements, support, onboarding, audit logs, notifications, paramètres (interface dédiée `/admin`, rôle ADMIN).
 - **Métriques** : endpoint Prometheus (`/api/metrics`) pour monitoring.
 
@@ -526,10 +527,14 @@ erDiagram
   user }o--o{ workshop : "mentor crée"
   workshop ||--o{ workshop_request : has
   workshop ||--o{ mentor_feedback : has
+  workshop ||--o{ workshop_cashback_queue : has
+  user ||--o{ workshop_cashback_queue : "participant"
   user ||--o{ user_connection : "from"
   user ||--o{ user_connection : "to"
   user ||--o{ conversation : participates
   conversation ||--o{ message : has
+  conversation ||--o{ conversation_pin : has
+  user ||--o{ conversation_pin : "pins"
   message ||--o{ message_reaction : has
   user ||--o{ notification : receives
   user ||--o{ user_block : "blocker"
@@ -539,6 +544,12 @@ erDiagram
   user ||--o{ credit_transaction : has
   user ||--o{ audit_log : "admin"
   user ||--o{ deletion_job : "scheduled"
+  user ||--o{ student_deal : "propose"
+  user ||--o{ community_spot : "propose"
+  user ||--o{ community_event : "propose"
+  user ||--o{ community_poll : "propose"
+  community_poll ||--o{ poll_vote : has
+  user ||--o{ poll_vote : "votes"
   account {
     string accountId
     string email
@@ -575,9 +586,39 @@ erDiagram
     string senderId
     string content
   }
+  student_deal {
+    string id
+    string title
+    string category
+    string status
+  }
+  community_spot {
+    string id
+    string name
+    string tags
+    string status
+  }
+  community_event {
+    string id
+    string title
+    datetime date
+    string status
+  }
+  community_poll {
+    string id
+    string question
+    boolean active
+    string status
+  }
+  poll_vote {
+    string id
+    string pollId
+    string userId
+    string optionId
+  }
 ```
 
-Liste des modèles : `account`, `user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `deletion_job`. Détails dans `back/prisma/schema/schema.prisma`.
+Liste des modèles : `account`, `user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `deletion_job`, `workshop_cashback_queue`, `conversation_pin`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. Détails dans `back/prisma/schema/schema.prisma`.
 
 ---
 

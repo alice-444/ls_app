@@ -42,7 +42,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Router racine : `back/src/routers/index.ts` (appRouter).
 - **Renommage** : `workshopFeedback.dismissReport` → `approveFeedback`.
-- Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
+- Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, community, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
 - Procédures : `publicProcedure` (sans session), `protectedProcedure` (session requise), `mentorProcedure` (MENTOR actif), `adminProcedure` (ADMIN actif, audit log).
 - Point d’entrée HTTP : `/trpc` (POST batch).
 
@@ -63,7 +63,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ## Base de données (Prisma)
 
 - Schéma : `back/prisma/schema/schema.prisma`.
-- Modèles principaux : account, user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token, deletion_job.
+- Modèles principaux : account, user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token, deletion_job, workshop_cashback_queue, conversation_pin, student_deal, community_spot, community_event, community_poll, poll_vote.
 - Client généré : `back/prisma/generated/client`.
 
 ---

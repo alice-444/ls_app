@@ -19,7 +19,7 @@ Provide an all-in-one student hub where users can manage their academic life (Wo
 ## What
 
 ### Feature Description
-- **Page `/communaute`** : The central hub.
+- **Page `/community`** : The central hub.
 - **Events Hub (Ateliers)** :
   - Tabs: "À venir" / "Passés".
   - Clean cards showing the mentor and the topic.
@@ -35,7 +35,7 @@ Provide an all-in-one student hub where users can manage their academic life (Wo
 
 ### Scope
 **In Scope:**
-- Full layout for `/communauty`.
+- Full layout for `/community`.
 - CRUD/Listing for "Bons Plans" and "Bons Coins" (Admin curated or basic user submission).
 - Poll voting system (one vote per user).
 - Integration with Workshop router for events.
@@ -62,7 +62,7 @@ Provide an all-in-one student hub where users can manage their academic life (Wo
 
 | File | Action | Description |
 |------|--------|-------------|
-| `front/src/app/communauty/page.tsx` | CREATE | Hub main entry |
+| `front/src/app/community/page.tsx` | CREATE | Hub main entry |
 | `front/src/components/community/SpotFinder.tsx` | CREATE | List of spots with tags |
 | `front/src/components/community/CommunityPoll.tsx` | CREATE | Interactive poll widget |
 | `front/src/components/community/DealsGrid.tsx` | CREATE | Grid of student deals |
@@ -97,7 +97,7 @@ Provide an all-in-one student hub where users can manage their academic life (Wo
 ## Validation Criteria
 
 ### Functional Requirements
-- [ ] Page `/communauty` displays all 4 sections (Events, Deals, Spots, Poll).
+- [ ] Page `/community` displays all 4 sections (Events, Deals, Spots, Poll).
 - [ ] Voting in the poll updates the bars in real-time.
 - [ ] Spot Finder displays tags like "Ultra Calme" correctly.
 - [ ] Deals can be filtered by category.

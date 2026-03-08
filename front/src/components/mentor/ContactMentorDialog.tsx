@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,12 +59,17 @@ export function ContactMentorDialog({
     },
   });
 
+  useEffect(() => {
+    if (!open) {
+      reset();
+      setIsSubmitting(false);
+    }
+  }, [open, reset]);
+
   const contactMutation = trpc.mentor.contactMentor.useMutation({
     onSuccess: (data: { conversationId: string }) => {
       toast.success("Votre message a été envoyé ! Redirection vers la messagerie...");
-      reset();
       onOpenChange(false);
-      setIsSubmitting(false);
       router.push(`/inbox/${data.conversationId}`);
     },
     onError: (error: { message?: string }) => {
@@ -88,13 +93,7 @@ export function ContactMentorDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[500px]"
-        onClose={() => {
-          reset();
-          onOpenChange(false);
-        }}
-      >
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
             <MessageSquare className="h-5 w-5" />
@@ -130,10 +129,7 @@ export function ContactMentorDialog({
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                reset();
-                onOpenChange(false);
-              }}
+              onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
               className="rounded-full border-[#26547c]/20 text-[#26547c]"
             >

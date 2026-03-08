@@ -122,6 +122,7 @@ app/
 │   ├── page.tsx
 │   └── [conversationId]/page.tsx
 ├── network/page.tsx
+├── community/page.tsx
 ├── notifications/page.tsx
 ├── settings/page.tsx
 ├── buy-credits/page.tsx
@@ -130,6 +131,7 @@ app/
 ├── admin/
 │   ├── layout.tsx
 │   ├── page.tsx
+│   ├── community/
 │   ├── audit-logs/
 │   ├── feedback-moderation/
 │   ├── notifications/
@@ -169,6 +171,7 @@ components/
 ├── workshop-editor/         # CreateWorkshopForm, EditWorkshopForm, PublishWorkshopDialog
 ├── messaging/               # ChatWindow, ChatHeader, ConversationList, MessageReactions
 ├── network/                 # PendingRequestsList, AcceptedConnectionsList
+├── community/               # DealsGrid, EventsHubGrid, EventsTabs, MemberDirectory, ProposeDealForm, ProposeEventForm, ProposeSpotForm, SpotFinder, CommunityPoll, ImpactStats
 ├── faq/
 └── user/                   # BlockUserDialog, ReportUserDialog
 ```
@@ -269,6 +272,7 @@ routers/
 │   ├── workshop-feedback.router.ts
 │   └── analytics/cashback-analytics.router.ts
 ├── social/
+│   ├── community.router.ts
 │   ├── messaging.router.ts
 │   ├── messaging-conversation.router.ts
 │   ├── messaging-message.router.ts

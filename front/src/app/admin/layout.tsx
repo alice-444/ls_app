@@ -41,6 +41,11 @@ const ADMIN_NAV_ITEMS = [
     href: "/admin/support",
     icon: LifeBuoy,
   },
+  {
+    title: "Communauté",
+    href: "/admin/community",
+    icon: Users,
+  },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

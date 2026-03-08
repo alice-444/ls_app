@@ -112,6 +112,12 @@ const getNavItems = (
   },
   // --- COMMON ---
   {
+    key: "/community",
+    name: "Communauté",
+    href: "/community",
+    icon: Users,
+  },
+  {
     key: "/inbox",
     name: "Messages",
     href: "/inbox",

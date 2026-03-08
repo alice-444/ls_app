@@ -2,11 +2,14 @@ import { prisma } from "@/lib/common";
 import { Result, failure } from "@/lib/common";
 import type { AppUserRepository } from "@/lib/users/repositories";
 
+/**
+ * Verifies that a user exists by their userId (Account ID).
+ */
 export async function verifyUserExists(
   userId: string
-): Promise<Result<{ user: { id: string } }>> {
+): Promise<Result<{ user: { id: string; userId: string } }>> {
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { userId },
   });
 
   if (!user) {
