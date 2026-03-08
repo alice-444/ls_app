@@ -74,7 +74,7 @@ export function EventsHubGrid({ events }: EventsHubGridProps) {
           </CardContent>
           <CardFooter className="p-6 pt-0">
             {event.link ? (
-              <Button asChild className="w-full bg-brand hover:bg-brand-hover text-white font-bold h-11 rounded-full shadow-lg shadow-brand/20">
+              <Button asChild variant="cta" size="cta" className="w-full font-bold h-11">
                 <a href={event.link} target="_blank" rel="noopener noreferrer">
                   Rejoindre l'événement <ExternalLink className="w-4 h-4 ml-2" />
                 </a>

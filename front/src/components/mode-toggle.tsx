@@ -21,7 +21,7 @@ export function ModeToggle() {
   const isLight = theme === "light";
 
   return (
-    <div className="flex items-center p-1 border border-[#d6dae4] dark:border-gray-700 rounded-full bg-white dark:bg-gray-950">
+    <div className="flex items-center p-1 rounded-full bg-white/30 dark:bg-white/15 backdrop-blur-xl backdrop-saturate-150 border border-white/50 dark:border-white/30 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.12),0_4px_8px_-2px_rgba(0,0,0,0.08),inset_0_2px_0_0_rgba(255,255,255,0.6)] dark:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35),0_4px_8px_-2px_rgba(0,0,0,0.2),inset_0_2px_0_0_rgba(255,255,255,0.15)]">
       <Button
         variant="ghost"
         size="icon"

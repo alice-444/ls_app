@@ -204,7 +204,7 @@ export default function UserMenu() {
           aria-expanded={isOpen}
           aria-haspopup="menu"
         >
-          <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-brand overflow-hidden bg-card shadow-md ring-2 ring-transparent group-hover:ring-brand/40 group-hover:shadow-lg group-hover:shadow-brand/20 transition-all duration-200">
+          <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-brand/50 overflow-hidden bg-white/35 dark:bg-white/15 backdrop-blur-xl backdrop-saturate-150 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.12),0_4px_8px_-2px_rgba(0,0,0,0.08),inset_0_2px_0_0_rgba(255,255,255,0.6)] dark:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35),0_4px_8px_-2px_rgba(0,0,0,0.2),inset_0_2px_0_0_rgba(255,255,255,0.15)] ring-2 ring-transparent group-hover:ring-brand/40 group-hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,0.15),0_6px_12px_-4px_rgba(0,0,0,0.1),inset_0_2px_0_0_rgba(255,255,255,0.7),0_0_25px_-8px_rgba(255,182,71,0.35)] transition-all duration-200">
             {session.user.image ? (
               <img
                 src={session.user.image}

@@ -118,7 +118,7 @@ export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
               </div>
             ))}
             <Button 
-              className="w-full mt-4 bg-brand hover:bg-brand-hover text-white rounded-full h-11 font-bold shadow-sm"
+              variant="cta" size="cta" className="w-full mt-4 font-bold h-11"
               disabled={!selectedOption || voteMutation.isPending}
               onClick={handleVote}
             >

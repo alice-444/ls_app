@@ -101,7 +101,7 @@ const getNavItems = (
     name: "Mes crédits",
     href: "/buy-credits",
     icon: Coins,
-    roles: ["APPRENANT", "MENTOR"],
+    roles: ["APPRENANT"],
   },
   // --- COMMON ---
   {

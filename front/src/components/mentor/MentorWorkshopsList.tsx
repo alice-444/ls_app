@@ -61,7 +61,7 @@ export function MentorWorkshopsList({ mentorId }: MentorWorkshopsListProps) {
             <p className="text-sm text-ls-muted line-clamp-2 mb-6 min-h-[40px]">
               {workshop.description}
             </p>
-            <Button asChild className="w-full bg-brand hover:bg-brand-hover text-[#161616] font-bold h-11 rounded-full shadow-lg">
+            <Button asChild variant="cta" size="cta" className="w-full font-bold h-11">
                 <Link href={`/workshop/${workshop.id}`}>
                     Détails de l'atelier <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

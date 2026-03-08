@@ -61,7 +61,7 @@ export function MemberDirectory({ members }: MemberDirectoryProps) {
           ))}
         </div>
         <div className="p-4 pt-2">
-          <Button variant="outline" className="w-full rounded-full text-xs font-bold border-border text-ls-heading hover:border-brand hover:text-brand h-10" asChild>
+          <Button variant="ctaOutline" size="cta" className="w-full text-xs font-bold h-10" asChild>
             <Link href="/mentors">Voir tout le monde</Link>
           </Button>
         </div>

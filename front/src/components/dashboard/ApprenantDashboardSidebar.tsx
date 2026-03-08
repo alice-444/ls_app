@@ -62,8 +62,9 @@ export function ApprenantDashboardSidebar({
         <TitleCard title={titleData.title} router={router} />
       )}
       <CreditBalanceCard
-        balance={creditBalance?.balance || 0}
+        balance={999}
         router={router}
+        showActions={false}
       />
       {mentorConnections.length > 0 && (
         <AvatarGridCard
@@ -151,9 +152,11 @@ function TitleCard({
 function CreditBalanceCard({
   balance,
   router,
+  showActions = true,
 }: {
   readonly balance: number;
   readonly router: ReturnType<typeof useRouter>;
+  readonly showActions?: boolean;
 }) {
   return (
     <Card className="relative overflow-hidden bg-linear-to-br from-[#C9A0DC] via-[#b890d8] to-[#a67fd4] border-0 text-white rounded-[16px] shadow-lg shadow-[#C9A0DC]/25 dark:shadow-[#C9A0DC]/30 dark:shadow-xl dark:ring-1 dark:ring-white/15 dark:ring-inset">
@@ -180,24 +183,26 @@ function CreditBalanceCard({
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <Button
-            variant="secondary"
-            className="group w-full min-w-0 bg-white/95 backdrop-blur-md text-[#C9A0DC] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border-0 shadow-md transition-all duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(201,160,220,0.4)] hover:ring-2 hover:ring-white/60 hover:ring-offset-2 hover:ring-offset-transparent dark:bg-white/90 dark:hover:bg-white dark:text-[#a67fd4] dark:hover:shadow-[0_0_24px_rgba(201,160,220,0.35)] dark:hover:ring-white/70"
-            onClick={() => router.push("/buy-credits")}
-          >
-            Gérer mon solde
-            <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" />
-          </Button>
-          <Button
-            variant="outline"
-            className="group w-full min-w-0 bg-white/20 backdrop-blur-md text-white rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-white/40 shadow-sm transition-all duration-300 hover:bg-white/40 hover:border-white/60 hover:shadow-md hover:ring-2 hover:ring-white/40 dark:bg-white/25 dark:border-white/50 dark:hover:bg-white/45 dark:hover:ring-white/50"
-            onClick={() => router.push("/help")}
-          >
-            <HelpCircle className="h-4 w-4 sm:h-[18px] sm:w-[18px] shrink-0 transition-transform duration-300 group-hover:scale-110" />
-            <span className="truncate">Comment ça marche ?</span>
-          </Button>
-        </div>
+        {showActions && (
+          <div className="flex flex-col gap-2">
+            <Button
+              variant="secondary"
+              className="group w-full min-w-0 bg-white/95 backdrop-blur-md text-[#C9A0DC] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border-0 shadow-md transition-all duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(201,160,220,0.4)] hover:ring-2 hover:ring-white/60 hover:ring-offset-2 hover:ring-offset-transparent dark:bg-white/90 dark:hover:bg-white dark:text-[#a67fd4] dark:hover:shadow-[0_0_24px_rgba(201,160,220,0.35)] dark:hover:ring-white/70"
+              onClick={() => router.push("/buy-credits")}
+            >
+              Gérer mon solde
+              <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </Button>
+            <Button
+              variant="outline"
+              className="group w-full min-w-0 bg-white/20 backdrop-blur-md text-white rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-white/40 shadow-sm transition-all duration-300 hover:bg-white/40 hover:border-white/60 hover:shadow-md hover:ring-2 hover:ring-white/40 dark:bg-white/25 dark:border-white/50 dark:hover:bg-white/45 dark:hover:ring-white/50"
+              onClick={() => router.push("/help")}
+            >
+              <HelpCircle className="h-4 w-4 sm:h-[18px] sm:w-[18px] shrink-0 transition-transform duration-300 group-hover:scale-110" />
+              <span className="truncate">Comment ça marche ?</span>
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

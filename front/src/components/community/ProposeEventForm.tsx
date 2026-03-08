@@ -171,7 +171,7 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
         />
         <Button 
           type="submit" 
-          className="w-full bg-brand hover:bg-brand/90 text-white font-bold h-11 rounded-full"
+          variant="cta" size="cta" className="w-full font-bold h-11"
           disabled={proposeMutation.isPending}
         >
           {proposeMutation.isPending ? "Envoi..." : "Envoyer la proposition"}

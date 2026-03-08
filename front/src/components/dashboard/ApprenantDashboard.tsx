@@ -104,12 +104,11 @@ export function ApprenantDashboard({
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-[16px]">
         <ApprenantDashboardSidebar
           titleData={titleData}
-          creditBalance={creditBalance}
+          creditBalance={{ balance: 999 }}
           mentorConnections={mentorConnections}
           workshopHistory={workshopHistory}
           acceptedConnections={acceptedConnections}
         />
-
         <div className="flex flex-col gap-4 sm:gap-[16px] flex-1">
           {/* Section 1: Demandes en attente */}
           <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
@@ -219,8 +218,8 @@ export function ApprenantDashboard({
                           <div className="flex items-center gap-2">
                             <Button
                               asChild
-                              size="sm"
-                              className="rounded-full bg-brand hover:bg-brand-hover text-[#161616] font-bold h-9"
+                              variant="cta"
+                              size="ctaSm"
                             >
                               <a href={`/workshop/${workshop.id}`}>Rejoindre</a>
                             </Button>
