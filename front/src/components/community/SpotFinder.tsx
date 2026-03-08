@@ -28,13 +28,13 @@ export function SpotFinder({ initialSpots }: SpotFinderProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {initialSpots.length === 0 ? (
-        <div className="col-span-full text-center py-12 bg-ls-bg/50 border-2 border-dashed border-ls-border rounded-3xl">
+        <div className="col-span-full text-center py-12 bg-card/50 border-2 border-dashed border-border rounded-2xl backdrop-blur-sm">
           <MapPin className="w-12 h-12 mx-auto text-ls-muted mb-4 opacity-20" />
-          <p className="text-ls-muted">No spots recommended yet.</p>
+          <p className="text-ls-muted">Aucun spot recommandé pour l'instant.</p>
         </div>
       ) : (
         initialSpots.map((spot) => (
-          <Card key={spot.id} className="group hover:border-ls-success/30 transition-all border-ls-border bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md">
+          <Card key={spot.id} className="group hover:border-ls-success/30 transition-all border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl hover:shadow-xl">
             <CardHeader className="p-6 pb-2">
               <div className="flex justify-between items-start gap-4">
                 <CardTitle className="text-lg font-black text-ls-heading group-hover:text-ls-success transition-colors">
@@ -45,20 +45,20 @@ export function SpotFinder({ initialSpots }: SpotFinderProps) {
                   {spot.rating}
                 </div>
               </div>
-              <div className="flex items-center text-ls-text-light text-xs mt-1">
+              <div className="flex items-center text-ls-muted text-xs mt-1">
                 <MapPin className="w-3 h-3 mr-1" />
                 {spot.address}
               </div>
             </CardHeader>
             <CardContent className="p-6 pt-2">
-              <p className="text-sm text-ls-text-light line-clamp-2 mb-6">
+              <p className="text-sm text-ls-muted line-clamp-2 mb-6">
                 {spot.description}
               </p>
               <div className="flex flex-wrap gap-2">
                 {spot.tags.map(tag => {
                   const Icon = TAG_ICONS[tag] || MapPin;
                   return (
-                    <Badge key={tag} variant="secondary" className="bg-ls-bg text-ls-text-light border-none rounded-full px-3 py-1 text-[10px] font-bold">
+                    <Badge key={tag} variant="secondary" className="bg-muted/50 text-ls-muted border-none rounded-full px-3 py-1 text-[10px] font-bold">
                       <Icon className="w-3 h-3 mr-1" />
                       {tag}
                     </Badge>

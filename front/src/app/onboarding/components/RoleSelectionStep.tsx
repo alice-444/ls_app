@@ -32,18 +32,18 @@ export function RoleSelectionStep({
   onContinue,
 }: RoleSelectionStepProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-ls-bg p-4 overflow-hidden relative">
-      {/* Background decorations */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-ls-blue/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-ls-orange/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorations - consistent with LearnSup */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#26547c]/5 dark:bg-[#4A90E2]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#FFB647]/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <Card className="w-full max-w-2xl shadow-2xl border-ls-border/50 bg-white/80 backdrop-blur-sm relative z-10">
+      <Card className="w-full max-w-2xl shadow-2xl border-gray-100 dark:border-white/10 bg-white dark:bg-[#111827] relative z-10">
         <CardHeader className="text-center space-y-6">
           <ProgressIndicator
             currentStep={currentStep}
             selectedRole={selectedRole}
           />
-          <CardTitle className="text-4xl font-black tracking-tight text-ls-heading">
+          <CardTitle className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
             <DecryptedText 
               text="Bienvenue sur LearnSup !" 
               animateOn="view"
@@ -51,12 +51,12 @@ export function RoleSelectionStep({
               speed={40}
             />
           </CardTitle>
-          <CardDescription className="text-xl font-medium text-ls-text-light">
+          <CardDescription className="text-xl font-medium text-slate-500 dark:text-slate-400">
             Choisissez votre rôle pour commencer l'aventure
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-4">
+        <CardContent className="space-y-8">
+          <div className="grid md:grid-cols-2 gap-6">
             <RoleSelectionCard
               role="MENTOR"
               isSelected={selectedRole === "MENTOR"}
@@ -72,7 +72,7 @@ export function RoleSelectionStep({
           <Button
             onClick={onContinue}
             disabled={!selectedRole || isSubmitting}
-            className="w-full h-14 text-lg font-bold rounded-2xl bg-ls-blue hover:bg-ls-blue/90 transition-all shadow-lg hover:shadow-ls-blue/20"
+            className="w-full h-14 text-lg font-bold rounded-full bg-[#FFB647] hover:bg-[#FFB647]/90 text-[#26547c] transition-all shadow-lg shadow-[#FFB647]/20"
             size="lg"
           >
             {isSubmitting ? (
@@ -82,7 +82,7 @@ export function RoleSelectionStep({
               </>
             ) : (
               <>
-                <ShinyText text="Continuer l'aventure" speed={3} />
+                <ShinyText text="Continuer l'aventure" speed={3} className="text-[#26547c]" />
                 <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}

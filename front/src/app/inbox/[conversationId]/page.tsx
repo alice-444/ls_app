@@ -3,11 +3,12 @@
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Loader from "@/components/loader";
+import { PageContainer } from "@/components/layout";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BackButton } from "@/components/back-button";
+import { motion } from "framer-motion";
 
 export default function ConversationPage() {
   const router = useRouter();
@@ -24,43 +25,58 @@ export default function ConversationPage() {
 
   if (isSessionPending) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader />
-      </div>
+      <PageContainer>
+        <div className="flex flex-col justify-center items-center min-h-[400px] gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand" />
+          <p className="text-ls-muted">Chargement...</p>
+        </div>
+      </PageContainer>
     );
   }
 
   if (!conversationId) {
     return (
-      <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
-        <div className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] rounded-2xl p-12 text-center animate-in fade-in duration-500">
-          <div className="bg-gray-100 dark:bg-white/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <MessageSquare className="h-10 w-10 text-gray-400 dark:text-gray-500" />
+      <PageContainer>
+        <motion.div
+          className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl p-12 text-center shadow-xl"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="bg-brand/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <MessageSquare className="h-10 w-10 text-brand" />
           </div>
-          <h2 className="text-2xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-2">
+          <h2 className="text-2xl font-bold text-ls-heading mb-2">
             Conversation introuvable
           </h2>
-          <p className="text-gray-600 dark:text-[rgba(230,230,230,0.64)] mb-6 max-w-md mx-auto">
-            L'identifiant de conversation est manquant ou invalide
+          <p className="text-ls-muted mb-6 max-w-md mx-auto">
+            L'identifiant de conversation est manquant ou invalide.
           </p>
           <Button
             onClick={() => router.push("/inbox")}
-            className="bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-full px-6 shadow-md hover:shadow-lg transition-all"
+            className="bg-brand hover:bg-brand-hover text-ls-heading rounded-full px-6 shadow-md hover:shadow-lg transition-all"
           >
             Retour aux conversations
           </Button>
-        </div>
-      </div>
+        </motion.div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-3 max-w-7xl h-[calc(100vh-160px)] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <BackButton href="/inbox" label="Retour aux conversations" />
+    <PageContainer>
+      <motion.div
+        className="h-[calc(100vh-160px)] flex flex-col"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <BackButton href="/inbox" label="Retour aux conversations" />
 
-      <div className="flex-1 bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-0">
-        <ChatWindow conversationId={conversationId} />
-      </div>
-    </div>
+        <div className="flex-1 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl min-h-0">
+          <ChatWindow conversationId={conversationId} />
+        </div>
+      </motion.div>
+    </PageContainer>
   );
 }

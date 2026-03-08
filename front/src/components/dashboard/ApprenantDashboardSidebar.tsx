@@ -68,7 +68,7 @@ export function ApprenantDashboardSidebar({
       {mentorConnections.length > 0 && (
         <AvatarGridCard
           title={`${mentorConnections.length} mentor${mentorConnections.length > 1 ? "s" : ""} suivi${mentorConnections.length > 1 ? "s" : ""}`}
-          icon={<BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />}
+          icon={<BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />}
           connections={mentorConnections}
           keyPrefix="mentor"
           buttonLabel="Voir mes connexions"
@@ -84,7 +84,7 @@ export function ApprenantDashboardSidebar({
       {acceptedConnections && acceptedConnections.length > 0 && (
         <AvatarGridCard
           title={`${acceptedConnections.length} connexion${acceptedConnections.length > 1 ? "s" : ""}`}
-          icon={<Users className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />}
+          icon={<Users className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />}
           connections={acceptedConnections}
           keyPrefix="connection"
           buttonLabel="Voir les connexions"

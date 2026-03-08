@@ -58,7 +58,7 @@ export function BasicInformationSection({
             id="name"
             {...register("name")}
             placeholder="Ton nom"
-            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-[32px]"
+            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-full"
           />
           {errors.name && (
             <p className="text-sm text-ls-error">{errors.name.message}</p>
@@ -73,7 +73,7 @@ export function BasicInformationSection({
             id="displayName"
             {...register("displayName")}
             placeholder="Ex: Prof. Jean, Mentor Dev..."
-            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-[32px]"
+            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-full"
           />
           <p className="text-xs text-ls-muted">
             Ce nom sera affiché publiquement sur votre profil
@@ -93,7 +93,7 @@ export function BasicInformationSection({
             placeholder="Quelques mots sur toi et ton expertise..."
             rows={3}
             maxLength={250}
-            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-[16px]"
+            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-2xl"
           />
           <div className="flex justify-between items-center">
             {errors.bio && (
@@ -119,7 +119,7 @@ export function BasicInformationSection({
             />
             <Label
               htmlFor="photo"
-              className="flex items-center gap-2 px-4 py-2 border border-ls-border bg-ls-input-bg text-ls-heading rounded-[32px] cursor-pointer hover:bg-brand-soft hover:border-brand transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-ls-border bg-ls-input-bg text-ls-heading rounded-full cursor-pointer hover:bg-brand-soft hover:border-brand transition-colors"
             >
               <Upload className="h-4 w-4" />
               Choisir une photo

@@ -8,6 +8,9 @@ import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestW
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { PageContainer } from "@/components/layout";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
 import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
@@ -222,34 +225,37 @@ export default function WorkshopDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#26547c]"></div>
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4" />
+            <p className="text-ls-muted">Chargement de l&apos;atelier...</p>
+          </div>
+        </div>
+      </PageContainer>
     );
   }
 
   if (!workshop) {
     const backUrl = userRole === "MENTOR" ? "/my-workshops" : "/workshop-room";
     return (
-      <div className="min-h-screen bg-background">
-        <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12">
-          <div className="text-center py-12">
-            <h1 className="text-3xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-4">
-              Atelier introuvable
-            </h1>
-            <p className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] mb-6">
-              L'atelier que vous recherchez n'existe pas ou a été supprimé.
-            </p>
-            <Button
-              onClick={() => router.push(backUrl)}
-              className="bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Retour aux ateliers
-            </Button>
-          </div>
+      <PageContainer>
+        <div className="text-center py-12">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-4">
+            <ShinyText text="Atelier introuvable" />
+          </h1>
+          <p className="text-ls-muted mb-6">
+            L&apos;atelier que tu recherches n&apos;existe pas ou a été supprimé.
+          </p>
+          <Button
+            onClick={() => router.push(backUrl)}
+            className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Retour aux ateliers
+          </Button>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -303,9 +309,8 @@ export default function WorkshopDetailPage() {
     !isWorkshopPast(workshop);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="w-full max-w-[1127px] mx-auto py-8 px-6 sm:px-8 lg:px-12">
-        <WorkshopHeader
+    <PageContainer>
+      <WorkshopHeader
           workshop={workshop}
           isOwner={isOwner}
           canReschedule={Boolean(canReschedule)}
@@ -319,7 +324,12 @@ export default function WorkshopDetailPage() {
           isDeleting={deleteMutation.isPending}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
           <div className="lg:col-span-2 space-y-6">
             <WorkshopDescription
               description={workshop.description}
@@ -360,8 +370,8 @@ export default function WorkshopDetailPage() {
                 <DailyVideoCall
                   workshopId={workshop.id}
                   onLeave={() => {
-                    toast.info("Vous avez quitté la visioconférence", {
-                      description: "Vous pouvez rejoindre à tout moment.",
+                    toast.info("Tu as quitté la visioconférence", {
+                      description: "Tu peux rejoindre à tout moment.",
                     });
                     refetch();
                   }}
@@ -371,17 +381,17 @@ export default function WorkshopDetailPage() {
             {isApprentice &&
               isWorkshopPast(workshop) &&
               canSubmitFeedback?.canSubmit && (
-                <div className="bg-white dark:bg-[#1a1720] rounded-[16px] shadow-sm border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] p-6">
-                  <h3 className="text-lg font-semibold text-[#26547c] dark:text-[#e6e6e6] mb-2">
-                    Partagez votre avis
+                <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-xl border border-border/50 p-6">
+                  <h3 className="text-lg font-semibold text-ls-heading mb-2">
+                    Partage ton avis
                   </h3>
-                  <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] mb-4">
-                    Aidez le mentor à s'améliorer en partageant votre expérience
+                  <p className="text-sm text-ls-muted mb-4">
+                    Aide le mentor à s&apos;améliorer en partageant ton expérience
                     de cet atelier.
                   </p>
                   <Button
                     onClick={() => setShowFeedbackDialog(true)}
-                    className="bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-[32px] font-semibold"
+                    className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
                   >
                     Donner mon avis
                   </Button>
@@ -392,10 +402,10 @@ export default function WorkshopDetailPage() {
               isWorkshopPast(workshop) &&
               canSubmitFeedback &&
               !canSubmitFeedback.canSubmit && (
-                <div className="bg-white dark:bg-[#1a1720] rounded-[16px] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] p-4">
-                  <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                <div className="bg-card/95 backdrop-blur-md rounded-2xl border border-border/50 p-4">
+                  <p className="text-sm text-ls-muted">
                     {canSubmitFeedback.reason ||
-                      "Vous ne pouvez pas soumettre d'avis pour cet atelier."}
+                      "Tu ne peux pas soumettre d&apos;avis pour cet atelier."}
                   </p>
                 </div>
               )}
@@ -406,7 +416,7 @@ export default function WorkshopDetailPage() {
             />
           </div>
 
-          <div className="space-y-6">
+        <div className="space-y-6">
             <WorkshopDetailsCard
               topic={workshop.topic}
               date={workshop.date}
@@ -432,8 +442,7 @@ export default function WorkshopDetailPage() {
               isCancelling={cancelMutation.isPending}
             />
           </div>
-        </div>
-      </div>
+        </motion.div>
 
       <DeleteWorkshopDialog
         open={showDeleteDialog}
@@ -555,6 +564,6 @@ export default function WorkshopDetailPage() {
           }}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

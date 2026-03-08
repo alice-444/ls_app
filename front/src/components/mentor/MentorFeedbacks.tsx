@@ -76,14 +76,16 @@ export function MentorFeedbacks({
     setSelectedWorkshopId("all");
   };
 
+  const cardClassName = "bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl";
+
   if (isLoading) {
     return (
-      <Card>
+      <Card className={cardClassName}>
         <CardHeader>
-          <CardTitle>Commentaires et notes</CardTitle>
+          <CardTitle className="text-ls-heading">Commentaires et notes</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-ls-muted">
             Chargement...
           </div>
         </CardContent>
@@ -93,12 +95,12 @@ export function MentorFeedbacks({
 
   if (error) {
     return (
-      <Card>
+      <Card className={cardClassName}>
         <CardHeader>
-          <CardTitle>Commentaires et notes</CardTitle>
+          <CardTitle className="text-ls-heading">Commentaires et notes</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-ls-muted">
             Erreur lors du chargement des commentaires.
           </div>
         </CardContent>
@@ -108,12 +110,12 @@ export function MentorFeedbacks({
 
   if (!feedbackData) {
     return (
-      <Card>
+      <Card className={cardClassName}>
         <CardHeader>
-          <CardTitle>Commentaires et notes</CardTitle>
+          <CardTitle className="text-ls-heading">Commentaires et notes</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-ls-muted">
             Aucun commentaire disponible pour le moment.
           </div>
         </CardContent>
@@ -125,13 +127,13 @@ export function MentorFeedbacks({
   const hasFeedbacks = feedbacks.length > 0;
 
   return (
-    <Card>
+    <Card className={cardClassName}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Star className="h-5 w-5" />
+        <CardTitle className="flex items-center gap-2 text-ls-heading">
+          <Star className="h-5 w-5 text-brand" />
           Commentaires et notes
           {hasFeedbacks && (
-            <span className="text-base font-normal text-muted-foreground">
+            <span className="text-base font-normal text-ls-muted">
               ({feedbacks.length})
             </span>
           )}
@@ -149,7 +151,7 @@ export function MentorFeedbacks({
                   {renderStars(aggregate.averageRating, "md")}
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-ls-muted">
                 Basé sur {aggregate.totalCount} évaluation
                 {aggregate.totalCount > 1 ? "s" : ""}
               </p>
@@ -186,11 +188,11 @@ export function MentorFeedbacks({
           </div>
         ) : (
           <div className="text-center py-8">
-            <Star className="h-12 w-12 mx-auto text-muted-foreground mb-4 opacity-50" />
-            <p className="text-muted-foreground">
+            <Star className="h-12 w-12 mx-auto text-ls-muted mb-4 opacity-50" />
+            <p className="text-ls-muted">
               Aucune évaluation pour le moment.
             </p>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-ls-muted mt-2">
               Les commentaires apparaîtront ici une fois que des apprenants
               auront laissé des avis.
             </p>
@@ -207,7 +209,7 @@ export function MentorFeedbacks({
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
-                  className="ml-auto"
+                  className="ml-auto rounded-full"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Réinitialiser
@@ -308,7 +310,7 @@ export function MentorFeedbacks({
                               className="w-10 h-10 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white text-sm font-semibold">
+                            <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white text-sm font-semibold">
                               {initials}
                             </div>
                           )}

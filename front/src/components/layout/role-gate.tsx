@@ -18,15 +18,21 @@ export function RoleGate({ children }: { children: React.ReactNode }) {
     queryKey: ["userRole", session?.user?.id],
     queryFn: getUserRole,
     enabled: !!session?.user?.id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000, // Réduire à 30s pour éviter les lags de redirection après onboarding
   });
 
   useEffect(() => {
     if (!session) return;
 
-    // Handle onboarding redirect
+    // 1. Rediriger vers l'onboarding si ROLE est NULL
     if (!isLoadingRole && userRole === null && pathname !== "/onboarding") {
       router.push("/onboarding");
+      return;
+    }
+
+    // 2. Interdire l'onboarding si ROLE est déjà assigné (Sécurité & UX)
+    if (!isLoadingRole && userRole !== null && pathname === "/onboarding") {
+      router.push("/dashboard");
       return;
     }
 

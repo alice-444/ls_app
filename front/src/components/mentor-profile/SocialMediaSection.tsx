@@ -65,7 +65,7 @@ export function SocialMediaSection({ register }: SocialMediaSectionProps) {
               {...register(`socialMediaLinks.${id}`)}
               placeholder={placeholder}
               type="url"
-              className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-[32px]"
+              className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-full"
             />
           </div>
         ))}

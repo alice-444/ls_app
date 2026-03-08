@@ -1,11 +1,20 @@
 "use client";
 
-import { Loader2, Plus, BookOpen, GraduationCap, Briefcase } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { BackButton } from "@/components/back-button";
-import { PageHeader, PageContainer, SectionSidebar } from "@/components/layout";
+import { PageContainer, SectionSidebar } from "@/components/layout";
 import Loader from "@/components/loader";
+import ShinyText from "@/components/ui/ShinyText";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { PREDEFINED_TOPICS, SIDEBAR_ITEMS } from "@/components/mentor-profile/constants";
 import { useMentorProfile } from "@/hooks/useMentorProfile";
@@ -53,6 +62,7 @@ export default function MentorProfilePage() {
     customIceBreaker,
     setCustomIceBreaker,
     iceBreakers,
+    titleData,
     onSubmit,
     handlePublish,
     handleUnpublish,
@@ -68,28 +78,67 @@ export default function MentorProfilePage() {
   if (isSessionPending) return <Loader />;
   if (!session) return null;
 
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -8 },
+  };
+
   return (
     <PageContainer>
-      <PageHeader
-        title="Mon Profil Mentor"
-        subtitle="Remplis les informations pour créer ton profil"
-      />
+      <div className="mb-6 sm:mb-8 lg:mb-10">
+        <BackButton onClick={() => router.back()} />
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mt-4"
+        >
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+            <ShinyText text="Mon Profil Mentor" />
+          </h1>
+          <p className="text-base sm:text-lg text-ls-muted mt-2">
+            Remplis les informations pour créer ton profil
+          </p>
+        </motion.div>
+      </div>
 
-      <BackButton onClick={() => router.back()} />
-
-      <div className="flex flex-col lg:flex-row gap-0 lg:gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         <SectionSidebar
           items={SIDEBAR_ITEMS}
           activeSection={activeSection}
           onSelect={setActiveSection}
         />
 
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             <div className="xl:col-span-2">
-              <div className="bg-ls-surface border border-ls-border rounded-[10px] p-8">
+              <Card className="border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl overflow-hidden">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold text-ls-heading">
+                    {SIDEBAR_ITEMS.find((i) => i.id === activeSection)?.label}
+                  </CardTitle>
+                  <CardDescription className="text-ls-muted">
+                    {activeSection === "informations-base" && "Les informations essentielles de ton profil"}
+                    {activeSection === "domaines-expertise" && "Définis tes domaines d'expertise (min 1, max 10)"}
+                    {activeSection === "sujets-mentorat" && "Ajoute les sujets sur lesquels tu proposes du mentorat"}
+                    {activeSection === "qualifications-experience" && "Partage tes qualifications et ton expérience"}
+                    {activeSection === "reseaux-sociaux" && "Ajoute tes liens vers tes réseaux sociaux"}
+                    {activeSection === "publication" && "Gère la visibilité de ton profil dans le répertoire"}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                  <AnimatePresence mode="wait">
                   {activeSection === "informations-base" && (
+                    <motion.div
+                      key="informations-base"
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ duration: 0.25 }}
+                    >
                     <BasicInformationSection
                       register={register}
                       errors={errors}
@@ -103,19 +152,19 @@ export default function MentorProfilePage() {
                       customIceBreaker={customIceBreaker}
                       setCustomIceBreaker={setCustomIceBreaker}
                     />
+                    </motion.div>
                   )}
 
                   {activeSection === "domaines-expertise" && (
-                    <div className="flex flex-col gap-6">
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-8 w-8 text-ls-heading" />
-                        <h2 className="text-2xl font-semibold text-ls-heading">
-                          Domaines d&apos;expertise
-                        </h2>
-                      </div>
-                      <p className="text-base text-ls-muted">
-                        Définissez vos domaines d&apos;expertise (minimum 1, maximum 10)
-                      </p>
+                    <motion.div
+                      key="domaines-expertise"
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ duration: 0.25 }}
+                      className="flex flex-col gap-6"
+                    >
                       <TagListSection
                         items={selectedAreas}
                         customValue={customArea}
@@ -127,21 +176,19 @@ export default function MentorProfilePage() {
                         error={errors.areasOfExpertise?.message}
                         variant="blue"
                       />
-                    </div>
+                    </motion.div>
                   )}
 
                   {activeSection === "sujets-mentorat" && (
-                    <div className="flex flex-col gap-6">
-                      <div className="flex items-center gap-2">
-                        <GraduationCap className="h-8 w-8 text-ls-heading" />
-                        <h2 className="text-2xl font-semibold text-ls-heading">
-                          Sujets de mentorat
-                        </h2>
-                      </div>
-                      <p className="text-base text-ls-muted">
-                        Ajoutez les sujets sur lesquels vous souhaitez proposer du
-                        mentorat
-                      </p>
+                    <motion.div
+                      key="sujets-mentorat"
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ duration: 0.25 }}
+                      className="flex flex-col gap-6"
+                    >
                       <TagListSection
                         items={selectedTopics}
                         customValue={customTopic}
@@ -163,28 +210,26 @@ export default function MentorProfilePage() {
                             variant="outline"
                             size="sm"
                             onClick={() => topics.add(topic)}
-                            className="text-xs border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-[32px]"
+                            className="text-xs border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
                           >
                             <Plus className="h-3 w-3 mr-1" />
                             {topic}
                           </Button>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
                   {activeSection === "qualifications-experience" && (
-                    <div className="flex flex-col gap-6">
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="h-8 w-8 text-ls-heading" />
-                        <h2 className="text-2xl font-semibold text-ls-heading">
-                          Qualifications & Expérience
-                        </h2>
-                      </div>
-                      <p className="text-base text-ls-muted">
-                        Partagez vos qualifications et votre expérience
-                        professionnelle
-                      </p>
+                    <motion.div
+                      key="qualifications-experience"
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ duration: 0.25 }}
+                      className="flex flex-col gap-6"
+                    >
 
                       <div className="space-y-6">
                         <div className="space-y-4">
@@ -220,14 +265,31 @@ export default function MentorProfilePage() {
                           />
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
                   {activeSection === "reseaux-sociaux" && (
+                    <motion.div
+                      key="reseaux-sociaux"
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ duration: 0.25 }}
+                    >
                     <SocialMediaSection register={register} />
+                    </motion.div>
                   )}
 
                   {activeSection === "publication" && (
+                    <motion.div
+                      key="publication"
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ duration: 0.25 }}
+                    >
                     <PublicationSection
                       isPublished={isPublished}
                       isSubmitting={isSubmitting}
@@ -237,7 +299,9 @@ export default function MentorProfilePage() {
                       handlePublish={handlePublish}
                       handleUnpublish={handleUnpublish}
                     />
+                    </motion.div>
                   )}
+                  </AnimatePresence>
 
                   <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-ls-border">
                     <Button
@@ -248,7 +312,7 @@ export default function MentorProfilePage() {
                         isPublishing ||
                         isUnpublishing
                       }
-                      className="flex-1 bg-brand hover:bg-brand-hover text-[#161616] rounded-[32px] font-semibold"
+                      className="flex-1 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
                       size="lg"
                     >
                       {isSubmitting || isFormSubmitting ? (
@@ -262,7 +326,8 @@ export default function MentorProfilePage() {
                     </Button>
                   </div>
                 </form>
-              </div>
+                </CardContent>
+              </Card>
             </div>
 
             <div className="hidden xl:block">
@@ -271,7 +336,10 @@ export default function MentorProfilePage() {
                 displayName={watch("displayName") || watch("name") || "Mentor"}
                 studyDomain={selectedAreas[0] || ""}
                 studyProgram={watch("domain") || ""}
-                tags={selectedTopics.slice(0, 3)}
+                bio={watch("bio") || ""}
+                title={titleData?.title}
+                tags={selectedTopics.slice(0, 5)}
+                iceBreakers={selectedIceBreakers}
               />
             </div>
           </div>

@@ -33,7 +33,9 @@ import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopR
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
 import { WorkshopStatsCards } from "@/components/workshop/stats/WorkshopStatsCards";
 import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequests";
-import { PageHeader, PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/layout";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion, useReducedMotion } from "framer-motion";
 import type { WorkshopBasic } from "@/types/workshop";
 
 import { useMyWorkshops } from "@/hooks/useMyWorkshops";
@@ -96,11 +98,18 @@ export default function MyWorkshopsPage() {
     handleConfirmComplete,
   } = useMyWorkshops();
 
+  const prefersReducedMotion = useReducedMotion();
+
   if (isSessionLoading || isLoading || isLoadingRole) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary" />
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4" />
+            <p className="text-ls-muted">Chargement de tes ateliers...</p>
+          </div>
+        </div>
+      </PageContainer>
     );
   }
 
@@ -112,7 +121,7 @@ export default function MyWorkshopsPage() {
   if (userRole !== "MENTOR") {
     return (
       <PageContainer>
-        <Card className="border-brand bg-ls-surface border border-ls-border">
+        <Card className="border-border/50 bg-card/95 backdrop-blur-md shadow-xl">
           <CardHeader>
             <CardTitle className="text-brand">
               Accès réservé aux mentors
@@ -120,14 +129,14 @@ export default function MyWorkshopsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-ls-text mb-4">
-              Cette page est réservée aux mentors. Votre rôle actuel est :{" "}
+              Cette page est réservée aux mentors. Ton rôle actuel est :{" "}
               <strong>{userRole || "Non défini"}</strong>
             </p>
             <p className="text-sm text-ls-muted mb-4">
-              Si vous devriez avoir accès à cette page, veuillez vérifier votre
-              profil et sélectionner le rôle MENTOR.
+              Si tu devrais avoir accès à cette page, vérifie ton profil et
+              sélectionne le rôle MENTOR.
             </p>
-            <Button onClick={() => router.push("/dashboard")}>
+            <Button onClick={() => router.push("/dashboard")} className="rounded-full">
               Retour au dashboard
             </Button>
           </CardContent>
@@ -139,9 +148,9 @@ export default function MyWorkshopsPage() {
   if (workshopsError) {
     return (
       <PageContainer>
-        <Card className="border-ls-error bg-ls-surface border border-ls-border">
+        <Card className="border-destructive bg-card/95 backdrop-blur-md shadow-xl">
           <CardHeader>
-            <CardTitle className="text-ls-error">
+            <CardTitle className="text-destructive">
               Erreur d&apos;accès
             </CardTitle>
           </CardHeader>
@@ -149,7 +158,7 @@ export default function MyWorkshopsPage() {
             <p className="text-ls-text mb-4">
               {workshopsError.message || "Une erreur est survenue"}
             </p>
-            <Button onClick={() => router.push("/dashboard")}>
+            <Button onClick={() => router.push("/dashboard")} className="rounded-full">
               Retour au dashboard
             </Button>
           </CardContent>
@@ -160,16 +169,31 @@ export default function MyWorkshopsPage() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Mes Ateliers"
-        subtitle="Gère et organise tes ateliers"
-      />
+      <div className="mb-6 sm:mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+            <ShinyText text="Mes Ateliers" />
+          </h1>
+          <p className="text-base sm:text-lg text-ls-muted mt-2">
+            Gère et organise tes ateliers
+          </p>
+        </motion.div>
+      </div>
 
-      <div className="mb-8">
+      <motion.div
+        className="mb-8"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-6">
           <Button
             onClick={() => router.push("/workshop-editor")}
-            className="flex items-center gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-[32px] h-10 px-4 py-2 font-semibold"
+            className="flex items-center gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-full h-10 px-4 py-2 font-semibold shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
             Créer un atelier
@@ -189,54 +213,71 @@ export default function MyWorkshopsPage() {
           }
           pendingRequests={pendingRequestsCount}
         />
-      </div>
+      </motion.div>
 
       {nextWorkshop ? (
-        <NextWorkshopBanner
-          workshop={nextWorkshop}
-          countdown={countdown}
-          onViewDetails={(id) => router.push(`/workshop/${id}`)}
-        />
+          <NextWorkshopBanner
+            workshop={nextWorkshop}
+            countdown={countdown}
+            onViewDetails={(id) => router.push(`/workshop/${id}`)}
+          />
       ) : (
-        <Card className="mb-6 border-2 border-dashed border-ls-border bg-ls-surface rounded-[16px]">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+        <Card className="mb-6 border-2 border-dashed border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-lg hover:border-brand/30 transition-colors duration-300">
           <CardContent className="pt-12 pb-12 text-center">
             <Calendar className="w-16 h-16 mx-auto text-ls-muted mb-4" />
             <h3 className="text-xl font-semibold text-ls-text mb-2">
               Aucun atelier programmé
             </h3>
             <p className="text-ls-muted mb-6">
-              Créez votre premier atelier pour commencer à partager vos
+              Crée ton premier atelier pour commencer à partager tes
               connaissances
             </p>
             <Button
               onClick={() => router.push("/workshop-editor")}
               size="lg"
-              className="gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-[32px] font-semibold"
+              className="gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
             >
               <Plus className="w-5 h-5" />
               Créer un atelier
             </Button>
           </CardContent>
         </Card>
+        </motion.div>
       )}
 
       {upcomingWorkshops.length > 1 && (
-        <Card className="mb-6 bg-ls-surface border border-ls-border rounded-[16px]">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+        <Card className="mb-6 bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-ls-heading">
               <Calendar className="w-5 h-5" />
               Autres ateliers à venir ({upcomingWorkshops.length - 1})
             </CardTitle>
             <CardDescription className="text-ls-muted">
-              Vos prochains ateliers programmés
+              Tes prochains ateliers programmés
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {upcomingWorkshops.slice(1).map((workshop: typeof upcomingWorkshops[number]) => (
-                <Card
+              {upcomingWorkshops.slice(1).map((workshop: typeof upcomingWorkshops[number], idx) => (
+                <motion.div
                   key={workshop.id}
-                  className="hover:shadow-md transition-shadow cursor-pointer bg-ls-surface border border-ls-border rounded-[16px]"
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : idx * 0.05 }}
+                  whileHover={prefersReducedMotion ? undefined : { y: -4, transition: { duration: 0.2 } }}
+                >
+                <Card
+                  className="hover:shadow-xl transition-shadow duration-200 cursor-pointer bg-card/80 border border-border/50 rounded-2xl"
                   onClick={() => router.push(`/workshop/${workshop.id}`)}
                 >
                   <CardHeader>
@@ -282,26 +323,39 @@ export default function MyWorkshopsPage() {
                     </div>
                   </CardContent>
                 </Card>
+                </motion.div>
               ))}
             </div>
           </CardContent>
         </Card>
+        </motion.div>
       )}
 
-      <WorkshopFiltersBar
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-        sortField={sortField}
-        onSortFieldChange={setSortField}
-        sortOrder={sortOrder}
-        onSortOrderToggle={() =>
-          setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-        }
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <WorkshopFiltersBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          sortField={sortField}
+          onSortFieldChange={setSortField}
+          sortOrder={sortOrder}
+          onSortOrderToggle={() =>
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+          }
+        />
+      </motion.div>
 
-      <Card className="bg-ls-surface border border-ls-border rounded-[16px]">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+      <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
           <CardTitle className="text-ls-heading">Tous les ateliers</CardTitle>
           <CardDescription className="text-ls-muted">
@@ -323,7 +377,7 @@ export default function MyWorkshopsPage() {
               {!searchQuery && statusFilter === "all" && (
                 <Button
                   onClick={() => router.push("/workshop-editor")}
-                  className="bg-brand hover:bg-brand-hover text-[#161616] rounded-[32px] font-semibold"
+                  className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Créer un atelier
@@ -332,10 +386,16 @@ export default function MyWorkshopsPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredAndSortedWorkshops.map((workshop) => (
-                <div
+              {filteredAndSortedWorkshops.map((workshop, idx) => (
+                <motion.div
                   key={workshop.id}
-                  className="border border-ls-border rounded-[16px] p-4 hover:bg-brand-soft transition-colors bg-ls-surface"
+                  initial={prefersReducedMotion ? false : { opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : Math.min(idx * 0.03, 0.3) }}
+                  whileHover={prefersReducedMotion ? undefined : { x: 4, transition: { duration: 0.15 } }}
+                >
+                <div
+                  className="border border-border/50 rounded-2xl p-4 hover:bg-brand-soft transition-colors bg-card/50 hover:shadow-md"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -398,7 +458,7 @@ export default function MyWorkshopsPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => router.push(`/workshop/${workshop.id}`)}
-                        className="flex-1 lg:flex-none border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-[32px] transition-all"
+                        className="flex-1 lg:flex-none border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full transition-all"
                       >
                         <Eye className="w-4 h-4 lg:mr-0 xl:mr-2" />
                         <span className="lg:hidden xl:inline">Détails</span>
@@ -409,7 +469,7 @@ export default function MyWorkshopsPage() {
                         onClick={() =>
                           router.push(`/workshop-editor?id=${workshop.id}`)
                         }
-                        className="flex-1 lg:flex-none border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-[32px] transition-all"
+                        className="flex-1 lg:flex-none border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full transition-all"
                       >
                         <Edit className="w-4 h-4 lg:mr-0 xl:mr-2" />
                         <span className="lg:hidden xl:inline">Éditer</span>
@@ -420,7 +480,7 @@ export default function MyWorkshopsPage() {
                           size="sm"
                           onClick={() => handlePublish(workshop.id)}
                           disabled={publishMutation.isPending}
-                          className="flex-1 lg:flex-none bg-brand hover:bg-brand-hover text-[#161616] rounded-[32px] shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                          className="flex-1 lg:flex-none bg-brand hover:bg-brand-hover text-[#161616] rounded-full shadow-sm hover:shadow-md transition-all disabled:opacity-50"
                         >
                           <CheckCircle className="w-4 h-4 lg:mr-0 xl:mr-2" />
                           <span className="lg:hidden xl:inline">Publier</span>
@@ -432,7 +492,7 @@ export default function MyWorkshopsPage() {
                           size="sm"
                           onClick={() => handleUnpublish(workshop.id)}
                           disabled={unpublishMutation.isPending}
-                          className="flex-1 lg:flex-none border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-[32px] transition-all"
+                          className="flex-1 lg:flex-none border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full transition-all"
                         >
                           <EyeOff className="w-4 h-4 lg:mr-0 xl:mr-2" />
                           <span className="lg:hidden xl:inline">Dépublier</span>
@@ -449,7 +509,7 @@ export default function MyWorkshopsPage() {
                             size="sm"
                             onClick={() => handleConfirmComplete(workshop.id)}
                             disabled={confirmAttendanceMutation.isPending}
-                            className="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 text-white rounded-[32px] shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                            className="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 text-white rounded-full shadow-sm hover:shadow-md transition-all disabled:opacity-50"
                           >
                             <CheckCircle className="w-4 h-4 lg:mr-0 xl:mr-2" />
                             <span className="lg:hidden xl:inline">
@@ -462,7 +522,7 @@ export default function MyWorkshopsPage() {
                         size="sm"
                         onClick={() => setShowDeleteDialog(workshop.id)}
                         disabled={deleteMutation.isPending}
-                        className="flex-1 lg:flex-none bg-ls-error hover:bg-ls-error-hover text-white rounded-[32px] shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                        className="flex-1 lg:flex-none bg-ls-error hover:bg-ls-error-hover text-white rounded-full shadow-sm hover:shadow-md transition-all disabled:opacity-50"
                       >
                         <Trash2 className="w-4 h-4 lg:mr-0 xl:mr-2" />
                         <span className="lg:hidden xl:inline">Supprimer</span>
@@ -470,21 +530,29 @@ export default function MyWorkshopsPage() {
                     </div>
                   </div>
                 </div>
+                </motion.div>
               ))}
             </div>
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
-      <CalendarSection
-        workshops={(workshops || []) as unknown as WorkshopBasic[]}
-        calendarDate={calendarDate}
-        calendarView={calendarView}
-        onDateChange={setCalendarDate}
-        onViewChange={setCalendarView}
-        onNavigate={navigateCalendar}
-        onSelectEvent={(workshop) => router.push(`/workshop/${workshop.id}`)}
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <CalendarSection
+          workshops={(workshops || []) as unknown as WorkshopBasic[]}
+          calendarDate={calendarDate}
+          calendarView={calendarView}
+          onDateChange={setCalendarDate}
+          onViewChange={setCalendarView}
+          onNavigate={navigateCalendar}
+          onSelectEvent={(workshop) => router.push(`/workshop/${workshop.id}`)}
+        />
+      </motion.div>
 
       <DeleteWorkshopDialog
         open={showDeleteDialog !== null}

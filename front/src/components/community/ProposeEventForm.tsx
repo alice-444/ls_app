@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -20,11 +21,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle2, PartyPopper } from "lucide-react";
 
 const formSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  date: z.string().min(1, "Please select a date"),
-  location: z.string().min(3, "Location must be at least 3 characters"),
-  link: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
+  title: z.string().min(3, "Le titre doit faire au moins 3 caractères"),
+  description: z.string().min(10, "La description doit faire au moins 10 caractères"),
+  date: z.string().min(1, "Choisis une date"),
+  location: z.string().min(3, "Le lieu doit faire au moins 3 caractères"),
+  link: z.string().url("Entre une URL valide").optional().or(z.literal("")),
 });
 
 interface ProposeEventFormProps {
@@ -33,6 +34,7 @@ interface ProposeEventFormProps {
 
 export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,7 +50,7 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
   const proposeMutation = trpc.community.proposeEvent.useMutation({
     onSuccess: () => {
       setIsSubmitted(true);
-      toast.success("Event proposed successfully!");
+      toast.success("Événement proposé avec succès !");
     },
     onError: (err: any) => {
       toast.error(err.message);
@@ -65,21 +67,31 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
 
   if (isSubmitted) {
     return (
-      <div className="py-10 text-center space-y-4">
-        <div className="bg-ls-success/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+      <motion.div
+        className="py-10 text-center space-y-4"
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
+      >
+        <motion.div
+          className="bg-ls-success/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+          initial={prefersReducedMotion ? false : { scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+        >
           <CheckCircle2 className="w-10 h-10 text-ls-success" />
-        </div>
-        <h3 className="text-2xl font-black text-ls-heading">Thank you!</h3>
-        <p className="text-ls-text-light max-w-xs mx-auto">
-          Your event proposal has been sent to our moderators. It will appear in the Events Hub once approved.
+        </motion.div>
+        <h3 className="text-2xl font-black text-ls-heading">Merci !</h3>
+        <p className="text-ls-muted max-w-xs mx-auto">
+          Ta proposition a été envoyée aux modérateurs. Elle apparaîtra dans l'Events Hub une fois approuvée.
         </p>
         <Button 
           onClick={onSuccess}
           className="bg-ls-success hover:bg-ls-success/90 text-white font-bold h-11 rounded-full px-8 mt-4"
         >
-          Got it!
+          Compris !
         </Button>
-      </div>
+      </motion.div>
     );
   }
 
@@ -91,9 +103,9 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Event Title</FormLabel>
+              <FormLabel>Titre de l'événement</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Student Meetup - Data Science" {...field} />
+                <Input placeholder="ex. Meetup étudiant - Data Science" className="rounded-full" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -105,9 +117,9 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
             name="date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Date & Time</FormLabel>
+                <FormLabel>Date et heure</FormLabel>
                 <FormControl>
-                  <Input type="datetime-local" {...field} />
+                  <Input type="datetime-local" className="rounded-full" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -118,9 +130,9 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
             name="location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Location</FormLabel>
+                <FormLabel>Lieu</FormLabel>
                 <FormControl>
-                  <Input placeholder="Paris, Online, etc." {...field} />
+                  <Input placeholder="Paris, En ligne, etc." className="rounded-full" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -135,8 +147,8 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Describe the event (purpose, audience, etc.)" 
-                  className="min-h-[100px]"
+                  placeholder="Décris l'événement (objectif, public, etc.)" 
+                  className="min-h-[100px] rounded-2xl"
                   {...field} 
                 />
               </FormControl>
@@ -149,9 +161,9 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
           name="link"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>External Link (Registration, Info...)</FormLabel>
+              <FormLabel>Lien externe (inscription, infos...)</FormLabel>
               <FormControl>
-                <Input placeholder="https://..." {...field} />
+                <Input placeholder="https://..." className="rounded-full" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -162,7 +174,7 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
           className="w-full bg-brand hover:bg-brand/90 text-white font-bold h-11 rounded-full"
           disabled={proposeMutation.isPending}
         >
-          {proposeMutation.isPending ? "Sending..." : "Submit Proposal"}
+          {proposeMutation.isPending ? "Envoi..." : "Envoyer la proposition"}
         </Button>
       </form>
     </Form>

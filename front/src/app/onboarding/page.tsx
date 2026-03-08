@@ -12,6 +12,7 @@ import { ApprenantCompleteStep } from "./components/ApprenantCompleteStep";
 import type { Role } from "./types";
 
 import { Progress } from "@/components/ui/progress";
+import { ModeToggle } from "@/components/mode-toggle";
 
 function OnboardingContent() {
   const router = useRouter();
@@ -53,7 +54,12 @@ function OnboardingContent() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-[#0a0510] transition-colors duration-300">
+      {/* Floating Theme Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ModeToggle />
+      </div>
+
       <div className="w-full max-w-2xl mx-auto pt-8 px-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">

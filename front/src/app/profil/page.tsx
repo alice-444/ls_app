@@ -80,7 +80,11 @@ export default function ProfilPage() {
   }, [session, isSessionPending, router]);
 
   useEffect(() => {
-    if (userRole && userRole !== "APPRENANT") router.push("/dashboard");
+    if (userRole === "MENTOR") {
+      router.push("/mentor-profile");
+    } else if (userRole && userRole !== "APPRENANT") {
+      router.push("/dashboard");
+    }
   }, [userRole, router]);
 
   useEffect(() => {
@@ -210,7 +214,8 @@ export default function ProfilPage() {
           studyProgram={previewStudyProgram}
           bio={previewBio}
           title={titleData?.title}
-          tags={localTags}
+          tags={[]} // Apprenants use iceBreakers instead of topic tags
+          iceBreakers={localTags}
         />
       </div>
 

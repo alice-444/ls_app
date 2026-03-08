@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -27,10 +28,10 @@ import {
 import { CheckCircle2 } from "lucide-react";
 
 const formSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  category: z.string().min(1, "Please select a category"),
-  link: z.string().url("Please enter a valid URL"),
+  title: z.string().min(3, "Le titre doit faire au moins 3 caractères"),
+  description: z.string().min(10, "La description doit faire au moins 10 caractères"),
+  category: z.string().min(1, "Choisis une catégorie"),
+  link: z.string().url("Entre une URL valide"),
   promoCode: z.string().optional(),
 });
 
@@ -40,6 +41,7 @@ interface ProposeDealFormProps {
 
 export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,7 +57,7 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
   const proposeMutation = trpc.community.proposeDeal.useMutation({
     onSuccess: () => {
       setIsSubmitted(true);
-      toast.success("Deal proposed successfully!");
+      toast.success("Offre proposée avec succès !");
     },
     onError: (err: any) => {
       toast.error(err.message);
@@ -68,21 +70,31 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
 
   if (isSubmitted) {
     return (
-      <div className="py-10 text-center space-y-4">
-        <div className="bg-ls-blue/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+      <motion.div
+        className="py-10 text-center space-y-4"
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
+      >
+        <motion.div
+          className="bg-ls-blue/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+          initial={prefersReducedMotion ? false : { scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+        >
           <CheckCircle2 className="w-10 h-10 text-ls-blue" />
-        </div>
-        <h3 className="text-2xl font-black text-ls-heading">Awesome!</h3>
-        <p className="text-ls-text-light max-w-xs mx-auto">
-          Thanks for sharing this deal. Our team will review it and make it public for everyone soon.
+        </motion.div>
+        <h3 className="text-2xl font-black text-ls-heading">Super !</h3>
+        <p className="text-ls-muted max-w-xs mx-auto">
+          Merci pour cette offre. L'équipe va la vérifier et la publier pour tout le monde.
         </p>
         <Button 
           onClick={onSuccess}
           className="bg-ls-blue hover:bg-ls-blue/90 text-white font-bold h-11 rounded-full px-8 mt-4"
         >
-          Close
+          Fermer
         </Button>
-      </div>
+      </motion.div>
     );
   }
 
@@ -94,9 +106,9 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Deal Title</FormLabel>
+              <FormLabel>Titre de l'offre</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. 50% off at Burger King" {...field} />
+                <Input placeholder="ex. 50% chez Burger King" className="rounded-full" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -110,11 +122,11 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
               <FormLabel>Category</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="rounded-xl border-ls-border h-11">
-                    <SelectValue placeholder="Select a category" />
+                  <SelectTrigger className="rounded-full border-border h-11">
+                    <SelectValue placeholder="Choisis une catégorie" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent className="rounded-xl">
+                <SelectContent className="rounded-2xl">
                   <SelectItem value="FOOD">Food & Drink</SelectItem>
                   <SelectItem value="SOFTWARE">Software & Tech</SelectItem>
                   <SelectItem value="CULTURE">Culture & Leisure</SelectItem>
@@ -133,8 +145,8 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Tell us more about this deal..." 
-                  className="min-h-[100px] rounded-xl border-ls-border"
+                  placeholder="Dis-nous en plus sur cette offre..." 
+                  className="min-h-[100px] rounded-2xl border-border"
                   {...field} 
                 />
               </FormControl>
@@ -148,9 +160,9 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
             name="link"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>External Link</FormLabel>
+                <FormLabel>Lien externe</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://..." className="rounded-xl border-ls-border" {...field} />
+                  <Input placeholder="https://..." className="rounded-full border-border" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -161,9 +173,9 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
             name="promoCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Promo Code (Optional)</FormLabel>
+                <FormLabel>Code promo (optionnel)</FormLabel>
                 <FormControl>
-                  <Input placeholder="STUDENT20" className="rounded-xl border-ls-border" {...field} />
+                  <Input placeholder="STUDENT20" className="rounded-full border-border" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -175,7 +187,7 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
           className="w-full bg-ls-blue hover:bg-ls-blue/90 text-white font-bold h-11 rounded-full shadow-lg shadow-ls-blue/20"
           disabled={proposeMutation.isPending}
         >
-          {proposeMutation.isPending ? "Sending..." : "Submit Proposal"}
+          {proposeMutation.isPending ? "Envoi..." : "Envoyer la proposition"}
         </Button>
       </form>
     </Form>

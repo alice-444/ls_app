@@ -69,9 +69,9 @@ const getNavItems = (
   },
   {
     key: "/mentor-profile",
-    name: "Mon profil mentor",
+    name: "Mon profil",
     href: "/mentor-profile",
-    icon: Users,
+    icon: UserCircle,
     roles: ["MENTOR"],
   },
   // --- APPRENANT SPACE ---
@@ -140,6 +140,7 @@ const getNavItems = (
     name: "Profil",
     href: "/profil",
     icon: UserCircle,
+    roles: ["APPRENANT", "ADMIN"],
   },
 ];
 
@@ -173,6 +174,7 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Sidebar
     return null;
   }
 
+  const role = userRole ?? null;
   const navItems = customItems 
     ? customItems.map(item => ({ 
         key: item.href, 
@@ -181,7 +183,7 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Sidebar
         icon: item.icon,
         roles: undefined as ("MENTOR" | "APPRENANT" | "ADMIN")[] | undefined
       }))
-    : getNavItems(userRole ?? null);
+    : getNavItems(role);
 
   return (
     <>
@@ -231,7 +233,8 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Sidebar
           {navItems
             .filter((item) => {
               if (!item.roles) return true;
-              return userRole ? (item.roles as string[]).includes(userRole) : false;
+              if (!role) return false;
+              return item.roles.includes(role);
             })
             .map((item) => {
               const isActive = pathname === item.href || (item.href !== "/admin" && item.href !== "/" && pathname.startsWith(item.href));

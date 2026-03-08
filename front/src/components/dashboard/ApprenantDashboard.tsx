@@ -112,18 +112,18 @@ export function ApprenantDashboard({
 
         <div className="flex flex-col gap-4 sm:gap-[16px] flex-1">
           {/* Section 1: Demandes en attente */}
-          <Card className="border border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+          <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
-                    <Inbox className="h-6 w-6 text-[#26547c] dark:text-[#e6e6e6]" />
-                    <h3 className="text-xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <Inbox className="h-6 w-6 text-brand" />
+                    <h3 className="text-xl font-semibold text-ls-heading">
                       Mes demandes d&apos;atelier
                     </h3>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Suivez l'état de vos demandes envoyées aux mentors.
+                  <p className="text-sm text-ls-muted">
+                    Suis l&apos;état de tes demandes envoyées aux mentors.
                   </p>
                 </div>
 
@@ -164,7 +164,7 @@ export function ApprenantDashboard({
                       </div>
                     ))
                   ) : (
-                    <p className="text-center py-6 text-sm text-muted-foreground italic">
+                    <p className="text-center py-6 text-sm text-ls-muted italic">
                       Aucune demande en attente.
                     </p>
                   )}
@@ -173,19 +173,19 @@ export function ApprenantDashboard({
             </CardContent>
           </Card>
 
-          {/* Section 2: Ateliers Confirmés (Nouveau pour PRP 22) */}
-          <Card className="border border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+          {/* Section 2: Ateliers Confirmés */}
+          <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <Clock className="h-6 w-6 text-ls-success" />
-                    <h3 className="text-xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <h3 className="text-xl font-semibold text-ls-heading">
                       Prochains ateliers confirmés
                     </h3>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Vos rendez-vous de mentorat programmés.
+                  <p className="text-sm text-ls-muted">
+                    Tes rendez-vous de mentorat programmés.
                   </p>
                 </div>
 
@@ -194,24 +194,24 @@ export function ApprenantDashboard({
                     confirmedWorkshops.map((workshop) => (
                       <div
                         key={workshop.id}
-                        className="bg-white border border-ls-border rounded-2xl p-5 hover:shadow-sm transition-all"
+                        className="bg-card/80 border border-border/50 rounded-2xl p-5 hover:shadow-md transition-all"
                       >
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div className="space-y-1">
                             <h4 className="font-black text-ls-heading text-lg leading-tight">
                               {workshop.title}
                             </h4>
-                            <div className="flex flex-wrap items-center gap-4 text-xs text-ls-text-light font-medium pt-1">
+                            <div className="flex flex-wrap items-center gap-4 text-xs text-ls-muted font-medium pt-1">
                               <div className="flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5 text-ls-blue" />
+                                <Calendar className="w-3.5 h-3.5 text-brand" />
                                 {formatDate(workshop.date)}
                               </div>
                               <div className="flex items-center gap-1.5">
-                                <Clock className="w-3.5 h-3.5 text-ls-blue" />
+                                <Clock className="w-3.5 h-3.5 text-brand" />
                                 {formatTime(workshop.time)} ({workshop.duration} min)
                               </div>
                               <div className="flex items-center gap-1.5">
-                                <MapPin className="w-3.5 h-3.5 text-ls-blue" />
+                                <MapPin className="w-3.5 h-3.5 text-brand" />
                                 {workshop.isVirtual ? "En ligne" : workshop.location}
                               </div>
                             </div>
@@ -220,7 +220,7 @@ export function ApprenantDashboard({
                             <Button
                               asChild
                               size="sm"
-                              className="rounded-full bg-ls-blue hover:bg-ls-blue/90 font-bold h-9"
+                              className="rounded-full bg-brand hover:bg-brand-hover text-[#161616] font-bold h-9"
                             >
                               <a href={`/workshop/${workshop.id}`}>Rejoindre</a>
                             </Button>
@@ -238,14 +238,14 @@ export function ApprenantDashboard({
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-10 bg-ls-bg/20 border-2 border-dashed border-ls-border rounded-2xl">
-                      <p className="text-sm text-muted-foreground italic">
-                        Vous n'avez pas encore d'ateliers confirmés.
+                    <div className="text-center py-10 bg-card/50 border-2 border-dashed border-border/50 rounded-2xl">
+                      <p className="text-sm text-ls-muted italic">
+                        Tu n&apos;as pas encore d&apos;ateliers confirmés.
                       </p>
                       <Button 
                         variant="link" 
-                        className="text-ls-blue font-bold mt-2"
-                        onClick={() => router.push("/workshops")}
+                        className="text-brand font-bold mt-2"
+                        onClick={() => router.push("/workshop-room")}
                       >
                         Parcourir le catalogue
                       </Button>
@@ -257,13 +257,13 @@ export function ApprenantDashboard({
           </Card>
 
           {/* Section 3: Calendrier */}
-          <Card className="border border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+          <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-6 w-6 text-[#26547c] dark:text-[#e6e6e6]" />
-                    <h3 className="text-xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <Calendar className="h-6 w-6 text-brand" />
+                    <h3 className="text-xl font-semibold text-ls-heading">
                       Calendrier
                     </h3>
                   </div>

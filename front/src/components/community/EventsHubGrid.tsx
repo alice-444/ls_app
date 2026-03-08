@@ -23,13 +23,13 @@ interface EventsHubGridProps {
 export function EventsHubGrid({ events }: EventsHubGridProps) {
   if (events.length === 0) {
     return (
-      <div className="bg-ls-bg/50 border-2 border-dashed border-ls-border rounded-3xl p-12 text-center">
-        <div className="bg-ls-blue/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Calendar className="w-8 h-8 text-ls-blue" />
+      <div className="bg-card/50 border-2 border-dashed border-border rounded-2xl p-12 text-center backdrop-blur-sm">
+        <div className="bg-brand/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Calendar className="w-8 h-8 text-brand" />
         </div>
-        <h3 className="text-xl font-bold text-ls-heading mb-2">No Community Events Yet</h3>
-        <p className="text-ls-text-light max-w-sm mx-auto">
-          Be the first to propose a meetup, a webinar, or a student event to the community!
+        <h3 className="text-xl font-bold text-ls-heading mb-2">Aucun événement pour l'instant</h3>
+        <p className="text-ls-muted max-w-sm mx-auto">
+          Sois le premier à proposer un meetup, un webinar ou un événement étudiant !
         </p>
       </div>
     );
@@ -58,7 +58,7 @@ export function EventsHubGrid({ events }: EventsHubGridProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <p className="text-ls-text-light text-sm line-clamp-3 mb-4 min-h-[60px]">
+            <p className="text-ls-muted text-sm line-clamp-3 mb-4 min-h-[60px]">
               {event.description}
             </p>
             <div className="space-y-2">
@@ -74,14 +74,14 @@ export function EventsHubGrid({ events }: EventsHubGridProps) {
           </CardContent>
           <CardFooter className="p-6 pt-0">
             {event.link ? (
-              <Button asChild className="w-full bg-brand hover:bg-brand/90 text-white font-bold h-11 rounded-full shadow-lg shadow-brand/20">
+              <Button asChild className="w-full bg-brand hover:bg-brand-hover text-white font-bold h-11 rounded-full shadow-lg shadow-brand/20">
                 <a href={event.link} target="_blank" rel="noopener noreferrer">
-                  Join Event <ExternalLink className="w-4 h-4 ml-2" />
+                  Rejoindre l'événement <ExternalLink className="w-4 h-4 ml-2" />
                 </a>
               </Button>
             ) : (
               <Button variant="outline" className="w-full border-brand/20 text-brand font-bold h-11 rounded-full" disabled>
-                Check Details <Info className="w-4 h-4 ml-2" />
+                Voir les détails <Info className="w-4 h-4 ml-2" />
               </Button>
             )}
           </CardFooter>

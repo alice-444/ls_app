@@ -6,8 +6,17 @@ import Loader from "./loader";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "./ui/card";
+import ShinyText from "./ui/ShinyText";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function SignUpForm({
 	onSwitchToSignIn,
@@ -68,135 +77,195 @@ export default function SignUpForm({
 		},
 	});
 
+	const fieldVariants = {
+		hidden: { opacity: 0, y: 12 },
+		visible: (i: number) => ({
+			opacity: 1,
+			y: 0,
+			transition: { delay: i * 0.06, duration: 0.3 },
+		}),
+	};
+
 	if (isPending) {
 		return <Loader />;
 	}
 
 	return (
-		<div className="mx-auto w-full mt-10 max-w-md p-6">
-			<h1 className="mb-6 text-center text-3xl font-bold">Create Account</h1>
-
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-				className="space-y-4"
-			>
-				<div>
-					<form.Field name="name">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Name</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									disabled={isSubmitting}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<div>
-					<form.Field name="username">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Username</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									disabled={isSubmitting}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<div>
-					<form.Field name="email">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Email</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									type="email"
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									disabled={isSubmitting}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<div>
-					<form.Field name="password">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Password</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									type="password"
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									disabled={isSubmitting}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<Button
-					type="submit"
-					className="w-full"
-					disabled={isSubmitting}
+		<Card className="w-full border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl">
+			<CardHeader>
+				<CardTitle className="text-center">
+					<h1 className="text-3xl font-bold">
+						<ShinyText text="Créer un compte" />
+					</h1>
+				</CardTitle>
+				<CardDescription className="text-center">
+					Rejoins LearnSup et accède aux ateliers
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						form.handleSubmit();
+					}}
+					className="space-y-4"
 				>
-					{isSubmitting ? "Creating Account..." : "Sign Up"}
-				</Button>
-			</form>
+					<motion.div
+						variants={fieldVariants}
+						initial="hidden"
+						animate="visible"
+						custom={0}
+					>
+						<form.Field name="name">
+							{(field) => (
+								<div className="space-y-2">
+									<Label htmlFor={field.name}>Nom</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+										disabled={isSubmitting}
+										placeholder="Ton prénom"
+										className="rounded-full"
+									/>
+									{field.state.meta.errors.map((error) => (
+										<p key={error?.message} className="text-destructive text-sm">
+											{error?.message}
+										</p>
+									))}
+								</div>
+							)}
+						</form.Field>
+					</motion.div>
 
-			<div className="mt-4 text-center">
-				<Button
-					variant="link"
-					onClick={onSwitchToSignIn}
-					className="text-indigo-600 hover:text-indigo-800"
-					disabled={isSubmitting}
+					<motion.div
+						variants={fieldVariants}
+						initial="hidden"
+						animate="visible"
+						custom={1}
+					>
+						<form.Field name="username">
+							{(field) => (
+								<div className="space-y-2">
+									<Label htmlFor={field.name}>Nom d&apos;utilisateur</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+										disabled={isSubmitting}
+										placeholder="pseudo"
+										className="rounded-full"
+									/>
+									{field.state.meta.errors.map((error) => (
+										<p key={error?.message} className="text-destructive text-sm">
+											{error?.message}
+										</p>
+									))}
+								</div>
+							)}
+						</form.Field>
+					</motion.div>
+
+					<motion.div
+						variants={fieldVariants}
+						initial="hidden"
+						animate="visible"
+						custom={2}
+					>
+						<form.Field name="email">
+							{(field) => (
+								<div className="space-y-2">
+									<Label htmlFor={field.name}>Email</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										type="email"
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+										disabled={isSubmitting}
+										placeholder="ton@email.com"
+										className="rounded-full"
+									/>
+									{field.state.meta.errors.map((error) => (
+										<p key={error?.message} className="text-destructive text-sm">
+											{error?.message}
+										</p>
+									))}
+								</div>
+							)}
+						</form.Field>
+					</motion.div>
+
+					<motion.div
+						variants={fieldVariants}
+						initial="hidden"
+						animate="visible"
+						custom={3}
+					>
+						<form.Field name="password">
+							{(field) => (
+								<div className="space-y-2">
+									<Label htmlFor={field.name}>Mot de passe</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										type="password"
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+										disabled={isSubmitting}
+										placeholder="••••••••"
+										className="rounded-full"
+									/>
+									{field.state.meta.errors.map((error) => (
+										<p key={error?.message} className="text-destructive text-sm">
+											{error?.message}
+										</p>
+									))}
+								</div>
+							)}
+						</form.Field>
+					</motion.div>
+
+					<motion.div
+						variants={fieldVariants}
+						initial="hidden"
+						animate="visible"
+						custom={4}
+					>
+						<Button
+							type="submit"
+							className="w-full rounded-full bg-[#FFB647] hover:bg-[#FF9F1A] text-black font-semibold"
+							disabled={isSubmitting}
+						>
+							{isSubmitting ? "Création..." : "Créer mon compte"}
+						</Button>
+					</motion.div>
+				</form>
+
+				<motion.div
+					variants={fieldVariants}
+					initial="hidden"
+					animate="visible"
+					custom={5}
+					className="mt-6 text-center"
 				>
-					Already have an account? Sign In
-				</Button>
-			</div>
-		</div>
+					<Button
+						variant="link"
+						onClick={onSwitchToSignIn}
+						className="rounded-full text-[#26547c] hover:text-[#FF8C42] dark:text-[#4A90E2] dark:hover:text-[#FFB647]"
+						disabled={isSubmitting}
+					>
+						Déjà un compte ? Se connecter
+					</Button>
+				</motion.div>
+			</CardContent>
+		</Card>
 	);
 }
