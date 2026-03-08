@@ -247,10 +247,7 @@ export default function WorkshopDetailPage() {
           <p className="text-ls-muted mb-6">
             L&apos;atelier que tu recherches n&apos;existe pas ou a été supprimé.
           </p>
-          <Button
-            onClick={() => router.push(backUrl)}
-            className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
-          >
+          <Button variant="cta" size="cta" onClick={() => router.push(backUrl)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour aux ateliers
           </Button>
@@ -390,8 +387,9 @@ export default function WorkshopDetailPage() {
                     de cet atelier.
                   </p>
                   <Button
+                    variant="cta"
+                    size="cta"
                     onClick={() => setShowFeedbackDialog(true)}
-                    className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
                   >
                     Donner mon avis
                   </Button>

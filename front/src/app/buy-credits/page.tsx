@@ -165,7 +165,7 @@ function BuyCreditsContent() {
         )}
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-visible"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
@@ -176,10 +176,10 @@ function BuyCreditsContent() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.05 + index * 0.08 }}
-              className={pkg.popular ? "md:-mt-2 md:mb-2" : ""}
+              className={`overflow-visible ${pkg.popular ? "md:-mt-2 md:mb-2" : ""}`}
             >
               <Card
-                className={`relative rounded-2xl border bg-card/95 backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl ${
+                className={`relative rounded-2xl border bg-card/95 backdrop-blur-md shadow-xl transition-all duration-300 hover:shadow-2xl overflow-visible ${
                   pkg.popular
                     ? "border-brand shadow-brand/20 md:scale-105 ring-2 ring-brand/30"
                     : "border-border/50 shadow-black/5 hover:shadow-brand/10"
@@ -187,7 +187,7 @@ function BuyCreditsContent() {
               >
                 {pkg.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                    <span className="flex items-center gap-1 bg-brand text-[#161616] text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    <span className="flex items-center gap-1 bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
                       <Sparkles className="w-3 h-3" />
                       Populaire
                     </span>
@@ -208,8 +208,9 @@ function BuyCreditsContent() {
                 </CardHeader>
                 <CardContent>
                   <Button
-                    className={`w-full rounded-full ${pkg.popular ? "bg-brand hover:bg-brand-hover" : "border-border hover:bg-brand-soft hover:border-brand"}`}
-                    variant={pkg.popular ? "default" : "outline"}
+                    variant={pkg.popular ? "cta" : "ctaOutline"}
+                    size="cta"
+                    className="w-full"
                     onClick={() => handleBuyCredits(pkg.credits, pkg.price)}
                     disabled={
                       createCheckoutSession.isPending ||

@@ -96,7 +96,7 @@ export default function ApprenticeProfilePage() {
   };
 
   if (isSessionPending || isLoading) {
-    return <Loader />;
+    return <Loader fullScreen size="lg" />;
   }
 
   if (!session) {

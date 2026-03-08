@@ -139,7 +139,7 @@ export default function MyProfilePage() {
   };
 
   if (isSessionPending || isLoading) {
-    return <Loader />;
+    return <Loader fullScreen size="lg" />;
   }
 
   if (!session) {

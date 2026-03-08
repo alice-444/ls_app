@@ -188,10 +188,10 @@ export default function MentorProfileViewPage() {
           </div>
           {session && userRole === "APPRENANT" && mentor.userId !== session.user.id && (
             <div className="flex justify-center pt-2 gap-2 flex-wrap">
-              <Button onClick={() => setShowRequestDialog(true)} className="rounded-full bg-brand hover:bg-brand-hover text-[#161616]">
+              <Button variant="cta" size="cta" onClick={() => setShowRequestDialog(true)}>
                 <BookOpen className="h-4 w-4 mr-2" /> Participer à un atelier
               </Button>
-              <Button onClick={() => setShowContactDialog(true)} variant="outline" className="rounded-full border-border hover:bg-brand-soft hover:border-brand">
+              <Button variant="ctaOutline" size="cta" onClick={() => setShowContactDialog(true)}>
                 <MessageSquare className="h-4 w-4 mr-2" /> Contacter
               </Button>
               {connectionStatus?.status === 'ACCEPTED' ? (
@@ -203,7 +203,7 @@ export default function MentorProfileViewPage() {
                   <UserPlus className="h-4 w-4 mr-2" /> Demande envoyée
                 </Button>
               ) : (
-                <Button onClick={() => sendConnectionRequestMutation.mutate({ receiverUserId: mentor.userId! })} disabled={sendConnectionRequestMutation.isPending} variant="outline" className="rounded-full border-border hover:bg-brand-soft hover:border-brand">
+                <Button variant="ctaOutline" size="cta" onClick={() => sendConnectionRequestMutation.mutate({ receiverUserId: mentor.userId! })} disabled={sendConnectionRequestMutation.isPending}>
                   <UserPlus className="h-4 w-4 mr-2" /> {sendConnectionRequestMutation.isPending ? "Envoi..." : "Ajouter au réseau"}
                 </Button>
               )}

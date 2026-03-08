@@ -26,11 +26,11 @@ function LoginContent() {
   }, [session, isPending, router]);
 
   if (isPending) {
-    return <Loader />;
+    return <Loader fullScreen size="lg" />;
   }
 
   if (session) {
-    return <Loader />;
+    return <Loader fullScreen size="lg" />;
   }
 
   return (
@@ -64,7 +64,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Loader fullScreen size="lg" />}>
       <LoginContent />
     </Suspense>
   );

@@ -32,8 +32,18 @@ import {
 import { ProposeDealForm } from "@/components/community/ProposeDealForm";
 import { ProposeSpotForm } from "@/components/community/ProposeSpotForm";
 import { ProposeEventForm } from "@/components/community/ProposeEventForm";
+import { authClient } from "@/lib/auth-client";
+import { getUserRole } from "@/lib/api-client";
+import { useQuery } from "@tanstack/react-query";
 
 function CommunityHubContent() {
+  const { data: session } = authClient.useSession();
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
   const { data: hubData, isLoading, refetch } = trpc.community.getHubData.useQuery();
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isDealDialogOpen, setIsDealDialogOpen] = useState(false);
@@ -193,21 +203,23 @@ function CommunityHubContent() {
             />
           )}
 
-          {/* CTA: Create Workshop */}
-          <Card className="bg-ls-blue text-white rounded-2xl p-6 border-none shadow-xl shadow-ls-blue/20 backdrop-blur-md">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-white/20 p-2 rounded-2xl">
-                <Rocket className="w-6 h-6 text-white" />
+          {/* CTA: Create Workshop - Only for Mentors */}
+          {userRole === "MENTOR" && (
+            <Card className="bg-ls-blue text-white rounded-2xl p-6 border-none shadow-xl shadow-ls-blue/20 backdrop-blur-md">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-white/20 p-2 rounded-2xl">
+                  <Rocket className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-black">Tu veux partager tes connaissances ?</h3>
               </div>
-              <h3 className="text-lg font-black">Tu veux partager tes connaissances ?</h3>
-            </div>
-            <p className="text-white/80 text-sm mb-6">
-              Crée un atelier de mentorat et aide les autres à progresser. Gagne des crédits et de l'impact.
-            </p>
-            <Button asChild className="w-full bg-white text-ls-blue hover:bg-white/90 font-bold rounded-full">
-              <a href="/workshops/create">Créer un atelier</a>
-            </Button>
-          </Card>
+              <p className="text-white/80 text-sm mb-6">
+                Crée un atelier de mentorat et aide les autres à progresser. Gagne des crédits et de l'impact.
+              </p>
+              <Button asChild className="w-full bg-white text-ls-blue hover:bg-white/90 font-bold rounded-full">
+                <a href="/workshops/create">Créer un atelier</a>
+              </Button>
+            </Card>
+          )}
         </div>
       </div>
     </motion.div>

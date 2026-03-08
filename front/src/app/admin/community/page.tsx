@@ -134,7 +134,7 @@ export default function AdminCommunityPage() {
                           <Button size="sm" variant="outline" className="text-ls-error" onClick={() => handleAction("EVENT", event.id, "REJECT")}>
                             <X className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" className="bg-brand hover:bg-brand/90" onClick={() => handleAction("EVENT", event.id, "APPROVE")}>
+                          <Button variant="cta" size="ctaSm" onClick={() => handleAction("EVENT", event.id, "APPROVE")}>
                             <Check className="w-4 h-4" />
                           </Button>
                         </TableCell>

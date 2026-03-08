@@ -54,7 +54,7 @@ export default function ConversationPage() {
           </p>
           <Button
             onClick={() => router.push("/inbox")}
-            className="bg-brand hover:bg-brand-hover text-ls-heading rounded-full px-6 shadow-md hover:shadow-lg transition-all"
+            variant="cta" size="cta" className="px-6"
           >
             Retour aux conversations
           </Button>

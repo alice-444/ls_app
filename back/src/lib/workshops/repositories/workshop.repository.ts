@@ -157,6 +157,22 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
     return this.mapToEntity(workshop);
   }
 
+  async getAllTopics(): Promise<string[]> {
+    const results = await this.prisma.workshop.findMany({
+      where: {
+        topic: { not: null },
+        status: "PUBLISHED",
+      },
+      select: {
+        topic: true,
+      },
+      distinct: ["topic"],
+    });
+    return results
+      .map((r: any) => r.topic)
+      .filter((t: string | null): t is string => !!t);
+  }
+
   private mapToEntity(workshop: any): WorkshopEntity {
     return {
       id: workshop.id,

@@ -10,6 +10,7 @@ import {
   Zap,
 } from "lucide-react";
 import { BackButton } from "@/components/back-button";
+import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
@@ -198,13 +199,12 @@ export default function PaliersPage() {
           variants={itemVariants}
           className="flex justify-center pt-4"
         >
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-full bg-brand hover:bg-brand-hover text-white font-semibold px-6 py-3 text-sm sm:text-base transition-all duration-200 shadow-lg shadow-brand/25 hover:shadow-xl hover:shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background"
-          >
-            Retour au tableau de bord
-            <ChevronRight className="h-4 w-4" />
-          </Link>
+          <Button asChild variant="cta" size="cta" className="gap-2">
+            <Link href="/dashboard">
+              Retour au tableau de bord
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </motion.div>
       </motion.div>
     </PageContainer>
