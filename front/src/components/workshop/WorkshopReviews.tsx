@@ -55,7 +55,7 @@ export function WorkshopReviews({
     );
   }
 
-  if (!feedbackData || feedbackData.feedbacks.length === 0) {
+  if (!feedbackData || !feedbackData.feedbacks || feedbackData.feedbacks.length === 0) {
     return (
       <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <CardHeader>
@@ -80,7 +80,7 @@ export function WorkshopReviews({
           <Star className="h-5 w-5" />
           Avis des participants
           <span className="text-base font-normal text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            ({feedbackData.feedbacks.length})
+            ({feedbackData?.feedbacks?.length || 0})
           </span>
         </CardTitle>
       </CardHeader>

@@ -20,8 +20,7 @@ export type SettingsSection =
   | "notifications"
   | "parametres-systeme"
   | "feedback"
-  | "a-propos"
-  | "centre-aide"
+  | "support-info"
   | "export-donnees";
 
 export const SIDEBAR_ITEMS: ReadonlyArray<SidebarItem<SettingsSection>> = [
@@ -36,7 +35,6 @@ export const SIDEBAR_ITEMS: ReadonlyArray<SidebarItem<SettingsSection>> = [
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "parametres-systeme", label: "Paramètres système", icon: SettingsIcon },
   { id: "feedback", label: "Feedback", icon: MessageSquare },
-  { id: "a-propos", label: "A propos de LearnSup", icon: Info },
-  { id: "centre-aide", label: "Centre d'aide", icon: HelpCircle },
+  { id: "support-info", label: "Support & Informations", icon: HelpCircle },
   { id: "export-donnees", label: "Export des données", icon: Download },
 ];

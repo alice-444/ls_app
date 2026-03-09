@@ -8,11 +8,11 @@ export class ExportDataService implements IExportDataService {
 
   async exportUserData(userId: string): Promise<Result<UserDataExport>> {
     try {
-      // 1. Fetch User and Account
+      // 1. Fetch User and Account - Using internal ID (id) from session
       const user = await this.prisma.user.findUnique({
-        where: { userId },
+        where: { id: userId },
         include: {
-          account: true,
+          accounts: true,
         }
       });
 
@@ -23,34 +23,34 @@ export class ExportDataService implements IExportDataService {
       const internalId = user.id;
 
       // 2. Fetch Workshops
-      const workshopsAsMentor = await this.prisma.workshop.findMany({
+      const workshopsAsMentor = await (this.prisma as any).workshop.findMany({
         where: { creatorId: internalId }
       });
 
-      const workshopsAsApprentice = await this.prisma.workshop.findMany({
+      const workshopsAsApprentice = await (this.prisma as any).workshop.findMany({
         where: { apprenticeId: internalId }
       });
 
       // 3. Fetch Workshop Requests
-      const sentRequests = await this.prisma.workshop_request.findMany({
+      const sentRequests = await (this.prisma as any).workshop_request.findMany({
         where: { apprenticeId: internalId }
       });
 
-      const receivedRequests = await this.prisma.workshop_request.findMany({
+      const receivedRequests = await (this.prisma as any).workshop_request.findMany({
         where: { mentorId: internalId }
       });
 
       // 4. Fetch Feedbacks
-      const givenFeedbacks = await this.prisma.mentor_feedback.findMany({
+      const givenFeedbacks = await (this.prisma as any).mentor_feedback.findMany({
         where: { apprenticeId: internalId }
       });
 
-      const receivedFeedbacks = await this.prisma.mentor_feedback.findMany({
+      const receivedFeedbacks = await (this.prisma as any).mentor_feedback.findMany({
         where: { mentorId: internalId }
       });
 
       // 5. Fetch Messaging
-      const conversations = await this.prisma.conversation.findMany({
+      const conversations = await (this.prisma as any).conversation.findMany({
         where: {
           OR: [
             { participant1Id: internalId },
@@ -59,60 +59,60 @@ export class ExportDataService implements IExportDataService {
         }
       });
 
-      const messages = await this.prisma.message.findMany({
+      const messages = await (this.prisma as any).message.findMany({
         where: { senderId: internalId }
       });
 
       // 6. Fetch Connections
-      const sentConnections = await this.prisma.user_connection.findMany({
+      const sentConnections = await (this.prisma as any).user_connection.findMany({
         where: { requesterId: internalId }
       });
 
-      const receivedConnections = await this.prisma.user_connection.findMany({
+      const receivedConnections = await (this.prisma as any).user_connection.findMany({
         where: { receiverId: internalId }
       });
 
       // 7. Fetch Credits
-      const transactions = await this.prisma.credit_transaction.findMany({
+      const transactions = await (this.prisma as any).credit_transaction.findMany({
         where: { userId: internalId }
       });
 
       // 8. Fetch Notifications
-      const notifications = await this.prisma.notification.findMany({
+      const notifications = await (this.prisma as any).notification.findMany({
         where: { userId: internalId }
       });
 
       // 9. Fetch Moderation
-      const blocks = await this.prisma.user_block.findMany({
+      const blocks = await (this.prisma as any).user_block.findMany({
         where: { blockerId: internalId }
       });
 
-      const blockedBy = await this.prisma.user_block.findMany({
+      const blockedBy = await (this.prisma as any).user_block.findMany({
         where: { blockedId: internalId }
       });
 
-      const reportsMade = await this.prisma.user_report.findMany({
+      const reportsMade = await (this.prisma as any).user_report.findMany({
         where: { reporterUserId: internalId }
       });
 
-      const reportsReceived = await this.prisma.user_report.findMany({
+      const reportsReceived = await (this.prisma as any).user_report.findMany({
         where: { reportedUserId: internalId }
       });
 
       // Sanitize profile/account (exclude passwords, secrets)
-      const { account, ...profileData } = user;
-      const sanitizedAccount = account ? {
-        id: account.id,
-        accountId: account.accountId,
-        email: account.email,
-        isEmailVerified: account.isEmailVerified,
-        createdAt: account.createdAt,
-        updatedAt: account.updatedAt,
-      } : null;
+      const { accounts, ...profileData } = user;
+      const sanitizedAccounts = (accounts || []).map((acc: any) => ({
+        id: acc.id,
+        accountId: acc.accountId,
+        email: acc.email,
+        isEmailVerified: acc.isEmailVerified,
+        createdAt: acc.createdAt,
+        updatedAt: acc.updatedAt,
+      }));
 
       const exportData: UserDataExport = {
         profile: profileData,
-        account: sanitizedAccount,
+        account: sanitizedAccounts,
         workshops: {
           asMentor: workshopsAsMentor,
           asApprentice: workshopsAsApprentice,

@@ -6,6 +6,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
+import { AnimatePresence, motion } from "framer-motion";
 
 function LoginContent() {
   const router = useRouter();
@@ -25,23 +26,45 @@ function LoginContent() {
   }, [session, isPending, router]);
 
   if (isPending) {
-    return <Loader />;
+    return <Loader fullScreen size="lg" />;
   }
 
   if (session) {
-    return <Loader />;
+    return <Loader fullScreen size="lg" />;
   }
 
-  return showSignIn ? (
-    <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
-  ) : (
-    <SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
+  return (
+    <div className="w-full max-w-md">
+      <AnimatePresence mode="wait">
+        {showSignIn ? (
+          <motion.div
+            key="signin"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="signup"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Loader fullScreen size="lg" />}>
       <LoginContent />
     </Suspense>
   );

@@ -49,34 +49,34 @@ export function AcceptedConnectionsList({
   });
 
   return (
-    <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+    <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
-          <Users className="h-5 w-5" />
-          Mes Connexions
+        <CardTitle className="flex items-center gap-2 text-ls-heading">
+          <Users className="h-5 w-5 text-brand" />
+          Mes connexions
         </CardTitle>
-        <CardDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-          {connections.length} personne(s) dans votre réseau
+        <CardDescription className="text-ls-muted">
+          {connections.length} personne(s) dans ton réseau
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ls-muted" />
             <Input
-              placeholder="Rechercher dans votre réseau..."
+              placeholder="Rechercher dans ton réseau..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-[32px]"
+              className="pl-10 border border-border bg-card/80 text-ls-heading rounded-full"
             />
           </div>
         </div>
 
         {filteredConnections.length === 0 ? (
-          <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+          <div className="text-center py-8 text-ls-muted">
             {searchQuery
               ? "Aucun résultat trouvé"
-              : "Vous n'avez pas encore de connexions"}
+              : "Tu n'as pas encore de connexions"}
           </div>
         ) : (
           <div className="space-y-4">

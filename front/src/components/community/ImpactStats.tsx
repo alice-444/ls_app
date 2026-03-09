@@ -39,7 +39,7 @@ export function ImpactStats({ stats }: ImpactStatsProps) {
   return (
     <div className="grid grid-cols-1 gap-4">
       {impactItems.map((item) => (
-        <Card key={item.label} className="border-ls-border bg-ls-surface shadow-sm overflow-hidden group hover:border-brand/50 transition-all">
+        <Card key={item.label} className="border border-border/50 bg-card/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden group hover:border-brand/50 transition-all">
           <CardContent className="p-4 flex items-center gap-4">
             <div className={`${item.bgColor} p-3 rounded-xl transition-transform group-hover:scale-110`}>
               <item.icon className={`w-5 h-5 ${item.color}`} />

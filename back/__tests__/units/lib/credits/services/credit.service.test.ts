@@ -86,7 +86,8 @@ describe("CreditService", () => {
 
     it("succeeds and returns new balance", async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: "int-1", creditBalance: 50 });
-      mockPrisma.user.update.mockResolvedValue({ creditBalance: 40 });
+      mockPrisma.user.update.mockResolvedValue({ id: "int-1", creditBalance: 40 });
+      mockPrisma.credit_transaction.create.mockResolvedValue({ id: "tx-1" });
 
       const result = await service.debitCredits("user-1", 10, "test debit");
       expect(result.ok).toBe(true);
@@ -119,7 +120,8 @@ describe("CreditService", () => {
 
     it("succeeds and returns new balance", async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: "int-1", creditBalance: 10 });
-      mockPrisma.user.update.mockResolvedValue({ creditBalance: 20 });
+      mockPrisma.user.update.mockResolvedValue({ id: "int-1", creditBalance: 20 });
+      mockPrisma.credit_transaction.create.mockResolvedValue({ id: "tx-2" });
 
       const result = await service.creditCredits("user-1", 10, "test credit");
       expect(result.ok).toBe(true);

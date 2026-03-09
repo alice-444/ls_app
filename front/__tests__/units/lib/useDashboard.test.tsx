@@ -7,8 +7,9 @@ import type { AppRouter } from "@/types/trpc-router";
 import { useDashboard } from "@/hooks/useDashboard";
 
 const mockPush = vi.fn();
+const mockReplace = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ push: mockPush, replace: mockReplace }),
 }));
 
 vi.mock("@/lib/auth-client", () => ({
@@ -21,6 +22,7 @@ vi.mock("@/lib/auth-client", () => ({
 }));
 
 vi.mock("@/lib/api-client", () => ({
+  getUserData: vi.fn().mockResolvedValue({ role: "APPRENANT", status: "ACTIVE" }),
   getUserRole: vi.fn().mockResolvedValue("APPRENANT"),
 }));
 

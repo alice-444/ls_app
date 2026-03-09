@@ -50,8 +50,8 @@ export function AccountSection({
           <User className="h-8 w-8 text-ls-heading" />
           <h2 className="text-2xl font-semibold text-ls-heading">Compte</h2>
         </div>
-        <p className="text-base text-ls-heading tracking-[-0.8px]">
-          Gérez vos informations de compte et sécurité
+        <p className="text-base text-ls-muted tracking-[-0.8px]">
+          Gère tes informations de compte et sécurité
         </p>
       </div>
 
@@ -62,7 +62,7 @@ export function AccountSection({
             <Input
               value={session?.user?.email || ""}
               disabled
-              className="h-10 px-6 py-1.5 border-[0.75px] border-[rgba(127,127,127,0.32)] rounded-2xl text-xs text-ls-heading opacity-60"
+              className="h-10 px-6 py-1.5 border border-border rounded-full text-xs text-ls-heading opacity-60"
             />
           </div>
           <EmailChangeButton />
@@ -76,7 +76,7 @@ export function AccountSection({
             <Input
               value={profileData?.name || session?.user?.name || ""}
               disabled
-              className="h-10 px-6 py-1.5 border-[0.75px] border-[rgba(127,127,127,0.32)] rounded-2xl text-xs text-ls-heading opacity-60"
+              className="h-10 px-6 py-1.5 border border-border rounded-full text-xs text-ls-heading opacity-60"
             />
           </div>
           <div className="pt-6">
@@ -88,7 +88,7 @@ export function AccountSection({
                 });
                 globalThis.dispatchEvent(event);
               }}
-              className="h-10 px-4 py-2 border border-ls-border rounded-[32px] gap-2 shrink-0"
+              className="h-10 px-4 py-2 border border-border rounded-full gap-2 shrink-0 hover:bg-brand/10 hover:border-brand"
             >
               <span className="text-xs font-semibold text-ls-heading">
                 Modifier
@@ -115,8 +115,8 @@ export function AccountSection({
             <Label className="text-[15px] font-semibold text-ls-heading tracking-[-0.75px]">
               Confidentialité du compte
             </Label>
-            <p className="text-sm font-medium text-ls-heading tracking-[-0.7px] max-w-[505px]">
-              Seules vos relations peuvent voir vos l&apos;ensemble de vos
+            <p className="text-sm font-medium text-ls-muted tracking-[-0.7px] max-w-[505px]">
+              Seules tes relations peuvent voir l&apos;ensemble de tes
               informations personnelles (publications, médias, relations, etc.)
             </p>
           </div>
@@ -132,15 +132,15 @@ export function AccountSection({
             <Label className="text-[15px] font-semibold text-ls-heading tracking-[-0.75px]">
               Supprimer le compte
             </Label>
-            <p className="text-sm font-medium text-ls-heading tracking-[-0.7px]">
-              Cette action est irréversible et supprimera définitivement votre
+            <p className="text-sm font-medium text-ls-muted tracking-[-0.7px]">
+              Cette action est irréversible et supprimera définitivement ton
               compte
             </p>
           </div>
           <DeleteAccountButton />
         </div>
 
-        <div className="pt-4 border-t border-ls-border">
+        <div className="pt-4 border-t border-border">
           <SignOutButton />
         </div>
       </div>
@@ -159,7 +159,7 @@ function EmailChangeButton() {
       onSuccess: (data: { message?: string }) => {
         toast.success(
           data.message ||
-            "Un lien de vérification a été envoyé à votre nouvelle adresse email"
+            "Un lien de vérification a été envoyé à ta nouvelle adresse email"
         );
         setIsDialogOpen(false);
         setNewEmail("");
@@ -175,7 +175,7 @@ function EmailChangeButton() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmail || !currentPassword) {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error("Remplis tous les champs");
       return;
     }
     requestEmailChangeMutation.mutate({ newEmail, currentPassword });
@@ -203,7 +203,7 @@ function EmailChangeButton() {
               Modifier l&apos;adresse email
             </DialogTitle>
             <DialogDescription>
-              Entrez votre nouveau email et votre mot de passe actuel
+              Entre ton nouveau email et ton mot de passe actuel
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -215,6 +215,7 @@ function EmailChangeButton() {
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="nouveau@email.com"
+                className="rounded-full"
                 required
               />
             </div>
@@ -229,7 +230,7 @@ function EmailChangeButton() {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   required
-                  className="pr-10"
+                  className="pr-10 rounded-full"
                 />
                 <button
                   type="button"
@@ -254,12 +255,14 @@ function EmailChangeButton() {
                   setCurrentPassword("");
                 }}
                 disabled={requestEmailChangeMutation.isPending}
+                className="rounded-full"
               >
                 Annuler
               </Button>
               <Button
                 type="submit"
                 disabled={requestEmailChangeMutation.isPending}
+                className="rounded-full bg-brand hover:bg-brand-hover"
               >
                 {requestEmailChangeMutation.isPending
                   ? "Envoi..."
@@ -288,12 +291,12 @@ function PasswordChangeButton() {
       </Button>
       {isDialogOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-ls-surface rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
             <ChangePasswordSection />
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}
-              className="mt-4 w-full"
+              className="mt-4 w-full rounded-full"
             >
               Fermer
             </Button>
@@ -315,7 +318,7 @@ function DeleteAccountButton() {
     trpc.accountSettings.checkCanDeleteAccount.useQuery();
   const deleteAccountMutation = trpc.accountSettings.deleteAccount.useMutation({
     onSuccess: async () => {
-      toast.success("Votre compte a été supprimé avec succès");
+      toast.success("Ton compte a été supprimé avec succès");
       await authClient.signOut({
         fetchOptions: { onSuccess: () => router.push("/") },
       });
@@ -327,7 +330,7 @@ function DeleteAccountButton() {
 
   const handleDelete = async () => {
     if (confirmation !== "DELETE") {
-      toast.error('Veuillez taper "DELETE" pour confirmer');
+      toast.error('Tape "DELETE" pour confirmer');
       return;
     }
     deleteAccountMutation.mutate({
@@ -360,40 +363,39 @@ function DeleteAccountButton() {
       </Button>
 
       <Dialog open={isInfoDialogOpen} onOpenChange={setIsInfoDialogOpen}>
-        <DialogContent>
+        <DialogContent className="border border-border/50 bg-card/95 backdrop-blur-xl rounded-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
               <Info className="h-5 w-5" />
               Suppression de compte impossible
             </DialogTitle>
             <DialogDescription>
-              Votre compte ne peut pas être supprimé pour le moment
+              Ton compte ne peut pas être supprimé pour le moment
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="bg-muted/50 p-4 rounded-lg">
               <p className="text-sm font-medium mb-2">
                 {canDeleteData?.reason ||
-                  "Vous avez des réservations d'ateliers à venir qui doivent être annulées avant de pouvoir supprimer votre compte."}
+                  "Tu as des réservations d'ateliers à venir qui doivent être annulées avant de pouvoir supprimer ton compte."}
               </p>
-              <p className="text-sm text-muted-foreground">
-                Pour supprimer votre compte, vous devez d&apos;abord :
+              <p className="text-sm text-ls-muted">
+                Pour supprimer ton compte, tu dois d&apos;abord :
               </p>
-              <ul className="list-disc list-inside text-sm text-muted-foreground mt-2 space-y-1">
+              <ul className="list-disc list-inside text-sm text-ls-muted mt-2 space-y-1">
                 <li>
-                  Annuler toutes vos réservations d&apos;ateliers à venir
+                  Annuler toutes tes réservations d&apos;ateliers à venir
                 </li>
                 <li>
-                  Annuler tous les ateliers que vous avez créés et qui sont à
-                  venir
+                  Annuler tous les ateliers que tu as créés et qui sont à venir
                 </li>
               </ul>
             </div>
-            <div className="flex items-start gap-2 text-sm text-muted-foreground">
+            <div className="flex items-start gap-2 text-sm text-ls-muted">
               <Info className="h-4 w-4 mt-0.5 shrink-0" />
               <p>
-                Une fois toutes vos réservations annulées, vous pourrez
-                supprimer votre compte.
+                Une fois toutes tes réservations annulées, tu pourras
+                supprimer ton compte.
               </p>
             </div>
           </div>
@@ -401,6 +403,7 @@ function DeleteAccountButton() {
             <Button
               variant="outline"
               onClick={() => setIsInfoDialogOpen(false)}
+              className="rounded-full"
             >
               Compris
             </Button>
@@ -409,6 +412,7 @@ function DeleteAccountButton() {
                 setIsInfoDialogOpen(false);
                 router.push("/my-workshops");
               }}
+              className="rounded-full bg-brand hover:bg-brand-hover"
             >
               Voir mes ateliers
             </Button>
@@ -417,14 +421,14 @@ function DeleteAccountButton() {
       </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="border border-border/50 bg-card/95 backdrop-blur-xl rounded-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
               <Trash2 className="h-5 w-5" />
               Supprimer votre compte
             </DialogTitle>
             <DialogDescription>
-              Cette action est irréversible. Toutes vos données seront
+              Cette action est irréversible. Toutes tes données seront
               définitivement supprimées.
             </DialogDescription>
           </DialogHeader>
@@ -438,7 +442,8 @@ function DeleteAccountButton() {
               </Label>
               <Input
                 id="delete-confirmation"
-                placeholder='Tapez "DELETE" pour confirmer'
+                placeholder='Tape "DELETE" pour confirmer'
+                className="rounded-full"
                 value={confirmation}
                 onChange={(e) => setConfirmation(e.target.value)}
                 disabled={deleteAccountMutation.isPending}
@@ -451,7 +456,8 @@ function DeleteAccountButton() {
               </Label>
               <Textarea
                 id="delete-reason"
-                placeholder="Partagez avec nous la raison de votre départ (optionnel)..."
+                placeholder="Partage avec nous la raison de ton départ (optionnel)..."
+                className="rounded-2xl"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 className="min-h-[100px]"
@@ -468,12 +474,14 @@ function DeleteAccountButton() {
                 setReason("");
               }}
               disabled={deleteAccountMutation.isPending}
+              className="rounded-full"
             >
               Annuler
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
+              className="rounded-full"
               disabled={
                 deleteAccountMutation.isPending || confirmation !== "DELETE"
               }
@@ -507,7 +515,7 @@ function SignOutButton() {
     <Button
       variant="destructive"
       onClick={handleSignOut}
-      className="w-full h-12 text-base"
+      className="w-full h-12 text-base rounded-full"
     >
       <LogOut className="h-5 w-5 mr-2" />
       Se déconnecter

@@ -1,9 +1,10 @@
-import React from 'react';
+import React from "react";
 
 /**
  * ShinyText
- * 
+ *
  * A component that adds a "shiny" sweep effect to text.
+ * Uses brand colors for LearnSup compatibility.
  */
 
 interface ShinyTextProps {
@@ -13,28 +14,22 @@ interface ShinyTextProps {
   className?: string;
 }
 
-const ShinyText: React.FC<ShinyTextProps> = ({ text, disabled = false, speed = 5, className = '' }) => {
-  const animationDuration = `${speed}s`;
-
+const ShinyText: React.FC<ShinyTextProps> = ({
+  text,
+  disabled = false,
+  speed = 5,
+  className = "",
+}) => {
   return (
-    <div
-      className={`relative inline-block overflow-hidden bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 via-neutral-100 to-neutral-900 dark:from-neutral-100 dark:via-neutral-500 dark:to-neutral-100 ${className} ${disabled ? '' : 'animate-shiny'}`}
+    <span
+      className={`relative inline-block overflow-hidden bg-clip-text text-transparent bg-gradient-to-r from-[#26547c] via-[#FFB647] to-[#26547c] dark:from-[#e6e6e6] dark:via-[#FFB647] dark:to-[#e6e6e6] ${className} ${disabled ? "" : "animate-shiny-text"}`}
       style={{
-        backgroundSize: '200% 100%',
-        animationDuration: disabled ? '0s' : animationDuration,
+        backgroundSize: "200% 100%",
+        animationDuration: disabled ? "0s" : `${speed}s`,
       }}
     >
       {text}
-      <style jsx>{`
-        .animate-shiny {
-          animation: shiny 5s linear infinite;
-        }
-        @keyframes shiny {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-      `}</style>
-    </div>
+    </span>
   );
 };
 

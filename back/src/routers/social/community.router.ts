@@ -147,10 +147,10 @@ export const communityRouter = router({
   // --- Admin Procedures ---
   getPendingProposals: adminProcedure.query(async () => {
     const [events, deals, spots, polls] = await Promise.all([
-      prisma.community_event.findMany({ where: { status: "PENDING" }, include: { proposedBy: { select: { name: true, email: true } } } }),
-      prisma.student_deal.findMany({ where: { status: "PENDING" }, include: { proposedBy: { select: { name: true, email: true } } } }),
-      prisma.community_spot.findMany({ where: { status: "PENDING" }, include: { proposedBy: { select: { name: true, email: true } } } }),
-      prisma.community_poll.findMany({ where: { status: "PENDING" }, include: { proposedBy: { select: { name: true, email: true } } } }),
+      prisma.community_event.findMany({ include: { proposedBy: { select: { name: true, email: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.student_deal.findMany({ include: { proposedBy: { select: { name: true, email: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.community_spot.findMany({ include: { proposedBy: { select: { name: true, email: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.community_poll.findMany({ include: { proposedBy: { select: { name: true, email: true } } }, orderBy: { createdAt: "desc" } }),
     ]);
     return { events, deals, spots, polls };
   }),
@@ -168,6 +168,20 @@ export const communityRouter = router({
         case "DEAL": return await prisma.student_deal.update({ where: { id: input.id }, data: { status } });
         case "SPOT": return await prisma.community_spot.update({ where: { id: input.id }, data: { status } });
         case "POLL": return await prisma.community_poll.update({ where: { id: input.id }, data: { status, active: input.action === "APPROVE" } });
+      }
+    }),
+
+  deleteProposal: adminProcedure
+    .input(z.object({
+      type: z.enum(["EVENT", "DEAL", "SPOT", "POLL"]),
+      id: z.string(),
+    }))
+    .mutation(async ({ input }) => {
+      switch (input.type) {
+        case "EVENT": return await prisma.community_event.delete({ where: { id: input.id } });
+        case "DEAL": return await prisma.student_deal.delete({ where: { id: input.id } });
+        case "SPOT": return await prisma.community_spot.delete({ where: { id: input.id } });
+        case "POLL": return await prisma.community_poll.delete({ where: { id: input.id } });
       }
     }),
 });

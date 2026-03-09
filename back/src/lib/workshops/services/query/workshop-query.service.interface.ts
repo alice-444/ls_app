@@ -7,6 +7,7 @@ export interface IWorkshopQueryService {
   ): Promise<Result<any[]>>;
   getPublishedWorkshops(): Promise<Result<any[]>>;
   getWorkshopById(workshopId: string): Promise<Result<any>>;
+  getAllTopics(): Promise<Result<string[]>>;
 }
 
 export interface IWorkshopApprenticeQueryService {

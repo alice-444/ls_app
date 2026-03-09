@@ -14,20 +14,20 @@ export function WorkshopDescription({
 }: WorkshopDescriptionProps) {
   return (
     <>
-      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+      <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
+          <CardTitle className="flex items-center gap-2 text-ls-heading">
             <FileText className="w-5 h-5" />
             Description
           </CardTitle>
         </CardHeader>
         <CardContent>
           {description ? (
-            <p className="text-[#161616] dark:text-[#e6e6e6] whitespace-pre-wrap">
+            <p className="text-ls-text whitespace-pre-wrap">
               {description}
             </p>
           ) : (
-            <p className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] italic">
+            <p className="text-ls-muted italic">
               Aucune description disponible
             </p>
           )}
@@ -35,15 +35,15 @@ export function WorkshopDescription({
       </Card>
 
       {materialsNeeded && (
-        <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+        <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
+            <CardTitle className="flex items-center gap-2 text-ls-heading">
               <FileText className="w-5 h-5" />
               Matériel nécessaire
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-[#161616] dark:text-[#e6e6e6] whitespace-pre-wrap">
+            <p className="text-ls-text whitespace-pre-wrap">
               {materialsNeeded}
             </p>
           </CardContent>

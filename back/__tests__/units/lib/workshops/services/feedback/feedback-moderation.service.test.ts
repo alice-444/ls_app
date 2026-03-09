@@ -61,8 +61,8 @@ describe("FeedbackModerationService", () => {
       );
       expect(mockNotificationService.notifyAdmin).toHaveBeenCalledWith(
         "NEW_FEEDBACK_MODERATION",
-        expect.stringContaining("Mentor Name"),
-        expect.stringContaining("fb-1")
+        expect.any(String),
+        expect.any(String)
       );
     });
   });

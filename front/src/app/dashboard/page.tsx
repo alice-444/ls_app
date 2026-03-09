@@ -4,7 +4,9 @@ import { CancelWorkshopRegistrationDialog } from "@/components/workshop/dialogs/
 import { SubmitFeedbackDialog } from "@/components/workshop/SubmitFeedbackDialog";
 import { ApprenantDashboard } from "@/components/dashboard/ApprenantDashboard";
 import { MentorDashboard } from "@/components/dashboard/MentorDashboard";
-import { PageHeader, PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/layout";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
 
 import { useDashboard } from "@/hooks/useDashboard";
 import { FloatingAddButton } from "@/components/dashboard/FloatingAddButton";
@@ -44,20 +46,39 @@ export default function Dashboard() {
 
   if (isPending) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary" />
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4" />
+            <p className="text-ls-muted">Chargement du tableau de bord...</p>
+          </div>
+        </div>
+      </PageContainer>
     );
   }
 
   return (
     <PageContainer className="py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-12">
-      <PageHeader
-        title="Tableau de bord"
-        subtitle="Planifiez, hiérarchisez et accomplissez vos tâches en toute simplicité"
-      />
+      <motion.div
+        className="mb-6 sm:mb-8"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+          <ShinyText text="Tableau de bord" />
+        </h1>
+        <p className="text-base sm:text-lg text-ls-muted mt-2">
+          Planifie, hiérarchise et accomplis tes tâches en toute simplicité
+        </p>
+      </motion.div>
 
       {userRole === "apprenant" && isApprenant && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
         <ApprenantDashboard
           creditBalance={creditBalance}
           mentorConnections={mentorConnections}
@@ -70,9 +91,15 @@ export default function Dashboard() {
           }
           onCancelConfirmed={(workshopId) => setShowCancelDialog(workshopId)}
         />
+        </motion.div>
       )}
 
       {userRole === "mentor" && actualUserRole === "MENTOR" && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
         <MentorDashboard
           mentorStats={mentorStats}
           pastWorkshops={[]}
@@ -81,6 +108,7 @@ export default function Dashboard() {
           mentorWorkshops={mentorWorkshops}
           userStatus={userStatus}
         />
+        </motion.div>
       )}
 
       {selectedFeedbackWorkshopId && (

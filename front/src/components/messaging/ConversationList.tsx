@@ -12,10 +12,22 @@ import { BlockUserDialog } from "@/components/user/BlockUserDialog";
 import { cn } from "@/lib/utils";
 import { ConversationRow } from "./ConversationRow";
 import { NewConversationDialog } from "./NewConversationDialog";
+import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
 
 export function ConversationList() {
   const router = useRouter();
   const utils = trpc.useUtils();
+  const { data: session } = authClient.useSession();
+
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const {
     data: conversations,
     isLoading,
@@ -48,10 +60,12 @@ export function ConversationList() {
     { enabled: otherUserIds.length > 0, refetchInterval: 60000 }
   );
 
-  const { data: acceptedConnections } =
+  const { data: acceptedConnections, isLoading: isLoadingConnections } =
     trpc.connection.getAcceptedConnections.useQuery(undefined, {
-      enabled: showNewConversationDialog,
+      enabled: !!session,
     });
+
+  const hasConnections = !!(acceptedConnections && acceptedConnections.length > 0);
 
   const getOrCreateConversationMutation =
     trpc.messaging.getOrCreateConversation.useMutation({
@@ -170,8 +184,8 @@ export function ConversationList() {
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl p-8">
-        <div className="text-center text-muted-foreground dark:text-[#e6e6e6]">
+      <div className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl p-8 shadow-xl">
+        <div className="text-center text-ls-muted">
           Chargement...
         </div>
       </div>
@@ -179,18 +193,35 @@ export function ConversationList() {
   }
 
   if (!localConversations || localConversations.length === 0) {
+    const buttonText = !hasConnections 
+        ? (userRole === "MENTOR" ? "Voir mon réseau" : "Trouver un mentor")
+        : "Nouvelle conversation";
+
     return (
-      <div className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl p-8">
-        <div className="text-center py-12 text-muted-foreground dark:text-[#e6e6e6]">
+      <div className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl p-8 shadow-xl">
+        <div className="text-center py-12 text-ls-muted">
           <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p className="text-lg font-medium mb-2">Aucune conversation</p>
-          <p className="mb-4">Commencez à réseauter pour discuter !</p>
+          <p className="text-lg font-medium text-ls-heading mb-2">Aucune conversation</p>
+          <p className="mb-4">Commence à réseauter pour discuter !</p>
           <Button
-            onClick={() => setShowNewConversationDialog(true)}
-            className="bg-[#ffb647] hover:bg-[#ff9f1a] border border-[#ffb647] text-black rounded-full px-6 py-2"
+            onClick={() => {
+              if (!hasConnections) {
+                router.push(userRole === "MENTOR" ? "/network" : "/mentors");
+              } else {
+                setShowNewConversationDialog(true);
+              }
+            }}
+            disabled={isLoadingConnections}
+            variant="cta" size="cta" className="px-6 py-2"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Nouvelle conversation
+            {isLoadingConnections ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-ls-heading" />
+            ) : (
+              <>
+                <Plus className="h-4 w-4 mr-2" />
+                {buttonText}
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -229,7 +260,7 @@ export function ConversationList() {
 
   return (
     <>
-      <div className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl p-3 sm:p-5 space-y-4 sm:space-y-5">
+      <div className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl p-3 sm:p-5 space-y-4 sm:space-y-5 shadow-xl">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="flex-1 sm:max-w-md">
             <div className="relative">
@@ -237,9 +268,9 @@ export function ConversationList() {
                 placeholder="Rechercher..."
                 value={conversationSearchQuery}
                 onChange={(e) => setConversationSearchQuery(e.target.value)}
-                className="h-9 sm:h-10 pl-4 pr-10 rounded-full border border-[#d6dae4] bg-[rgba(214,218,228,0.16)] text-[#26547c] dark:text-[#e6e6e6] placeholder:text-[rgba(38,84,124,0.64)] dark:placeholder:text-[rgba(230,230,230,0.64)] text-xs"
+                className="h-9 sm:h-10 pl-4 pr-10 rounded-full border border-border bg-card/80 text-ls-heading placeholder:text-ls-muted text-xs"
               />
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-[18px] sm:w-[18px] text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]" />
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-[18px] sm:w-[18px] text-ls-muted" />
             </div>
           </div>
 
@@ -250,8 +281,8 @@ export function ConversationList() {
               className={cn(
                 "h-8 sm:h-9 px-2 sm:px-3 py-1.5 rounded-full border-2 text-xs font-semibold transition-all duration-200 flex-1 sm:flex-initial",
                 showOnlyPinned
-                  ? "bg-[#ffb647] dark:bg-[#ffb647] border-[#ffb647] text-[#161616] hover:bg-[#ff9f1a] dark:hover:bg-[#ff9f1a] shadow-md hover:shadow-lg"
-                  : "bg-white dark:bg-transparent border-[#d6dae4] dark:border-[#d6dae4] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[#ffb647]/10 hover:border-[#ff9f1a] hover:text-[#ff9f1a] dark:hover:bg-[#ffb647]/20 dark:hover:border-[#ffb647] dark:hover:text-[#ffb647] hover:shadow-sm"
+                  ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover shadow-md hover:shadow-lg"
+                  : "bg-transparent border-border text-ls-heading hover:bg-brand/10 hover:border-brand hover:text-brand"
               )}
             >
               <span className="hidden sm:inline">Conversations épinglées</span>
@@ -265,24 +296,43 @@ export function ConversationList() {
             </Button>
 
             <Button
-              onClick={() => setShowNewConversationDialog(true)}
-              className="h-8 sm:h-9 px-2 sm:px-3 py-1.5 rounded-full bg-[#ffb647] hover:bg-[#ff9f1a] border border-[#ffb647] text-[#161616] text-xs font-semibold transition-colors shadow-md flex-1 sm:flex-initial"
+              onClick={() => {
+                if (!hasConnections) {
+                  router.push(userRole === "MENTOR" ? "/network" : "/mentors");
+                } else {
+                  setShowNewConversationDialog(true);
+                }
+              }}
+              disabled={isLoadingConnections}
+              variant="cta" size="ctaSm" className="flex-1 sm:flex-initial"
             >
-              <span className="hidden sm:inline">Nouvelle conversation</span>
-              <span className="sm:hidden">Nouveau</span>
-              <Plus className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              {isLoadingConnections ? (
+                <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-ls-heading" />
+              ) : (
+                <>
+                  <span className="hidden sm:inline">
+                    {!hasConnections 
+                      ? (userRole === "MENTOR" ? "Mon réseau" : "Trouver un mentor")
+                      : "Nouvelle conversation"}
+                  </span>
+                  <span className="sm:hidden">
+                    Nouveau
+                  </span>
+                  <Plus className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </>
+              )}
             </Button>
           </div>
         </div>
 
         <div className="space-y-2.5">
           {paginatedConversations.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground dark:text-[#e6e6e6]">
+            <div className="text-center py-12 text-ls-muted">
               <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium mb-2">
+              <p className="text-lg font-medium text-ls-heading mb-2">
                 Aucune conversation trouvée
               </p>
-              <p>Essayez de modifier ta recherche</p>
+              <p>Essaie de modifier ta recherche</p>
             </div>
           ) : (
             paginatedConversations.map((conversation) => {
@@ -310,7 +360,7 @@ export function ConversationList() {
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className={cn(
-                "h-8 sm:h-9 px-2 sm:px-3 py-1.5 rounded-full bg-white dark:bg-white border border-[#d6dae4] text-[#26547c] dark:text-[#e6e6e6] text-xs sm:text-sm font-semibold capitalize",
+                "h-8 sm:h-9 px-2 sm:px-3 py-1.5 rounded-full bg-card border border-border text-ls-heading text-xs sm:text-sm font-semibold capitalize",
                 currentPage === 1 && "opacity-30"
               )}
             >
@@ -326,7 +376,7 @@ export function ConversationList() {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={cn(
-                    "w-7 sm:w-8 text-center text-xs sm:text-sm font-semibold text-[#26547c] dark:text-[#e6e6e6] transition-opacity",
+                    "w-7 sm:w-8 text-center text-xs sm:text-sm font-semibold text-ls-heading transition-opacity",
                     currentPage === page ? "opacity-100" : "opacity-60"
                   )}
                 >
@@ -341,7 +391,7 @@ export function ConversationList() {
                 setCurrentPage((p) => Math.min(totalPages, p + 1))
               }
               disabled={currentPage === totalPages}
-              className="h-8 sm:h-9 px-2 sm:px-3 py-1.5 rounded-full bg-white dark:bg-white border border-[#d6dae4] text-[#26547c] dark:text-[#e6e6e6] text-xs sm:text-sm font-semibold capitalize"
+              className="h-8 sm:h-9 px-2 sm:px-3 py-1.5 rounded-full bg-card border border-border text-ls-heading text-xs sm:text-sm font-semibold capitalize"
             >
               Suivant
             </Button>
@@ -358,6 +408,7 @@ export function ConversationList() {
           getOrCreateConversationMutation.mutate({ otherUserId })
         }
         isPending={getOrCreateConversationMutation.isPending}
+        userRole={userRole}
       />
 
       {userToBlock && (

@@ -115,7 +115,7 @@ describe("WorkshopCashbackService", () => {
     it("returns failure when attendance is not PRESENT", async () => {
       mockWorkshopRepo.findById.mockResolvedValue({
         apprenticeId: "app-1",
-        apprentice: { user: { id: "user-1" } },
+        apprentice: { userId: "user-1" },
         apprenticeAttendanceStatus: "PENDING",
       });
 
@@ -133,7 +133,7 @@ describe("WorkshopCashbackService", () => {
     it("returns success with queued:false when already PROCESSED", async () => {
       mockWorkshopRepo.findById.mockResolvedValue({
         apprenticeId: "app-1",
-        apprentice: { user: { id: "user-1" } },
+        apprentice: { userId: "user-1" },
         apprenticeAttendanceStatus: "PRESENT",
       });
       mockCashbackQueueRepo.findFirstByWorkshopAndUser.mockResolvedValue({
@@ -156,15 +156,15 @@ describe("WorkshopCashbackService", () => {
 
     it("processes immediate cashback when workshop is finished", async () => {
       const pastEnd = new Date(Date.now() - 60000);
-      mockWorkshopRepo.findById
-        .mockResolvedValueOnce({
-          apprenticeId: "app-1",
-          apprentice: { user: { id: "user-1" } },
-          apprenticeAttendanceStatus: "PRESENT",
-        })
-        .mockResolvedValueOnce({ creditCost: 40 });
+      mockWorkshopRepo.findById.mockResolvedValue({
+        id: "ws-1",
+        apprenticeId: "app-1",
+        apprentice: { userId: "user-1" },
+        apprenticeAttendanceStatus: "PRESENT",
+        creditCost: 40,
+      });
       mockCashbackQueueRepo.findFirstByWorkshopAndUser.mockResolvedValue(null);
-      mockCreditService.creditCredits.mockResolvedValue({ ok: true });
+      mockCreditService.creditCredits.mockResolvedValue({ ok: true, data: { newBalance: 10 } });
 
       const result = await service.processCashback(
         "ws-1",
@@ -180,13 +180,13 @@ describe("WorkshopCashbackService", () => {
 
     it("queues cashback when workshop is not yet finished", async () => {
       const futureEnd = new Date(Date.now() + 3600000);
-      mockWorkshopRepo.findById
-        .mockResolvedValueOnce({
-          apprenticeId: "app-1",
-          apprentice: { user: { id: "user-1" } },
-          apprenticeAttendanceStatus: "PRESENT",
-        })
-        .mockResolvedValueOnce({ creditCost: 40 });
+      mockWorkshopRepo.findById.mockResolvedValue({
+        id: "ws-1",
+        apprenticeId: "app-1",
+        apprentice: { userId: "user-1" },
+        apprenticeAttendanceStatus: "PRESENT",
+        creditCost: 40,
+      });
       mockCashbackQueueRepo.findFirstByWorkshopAndUser.mockResolvedValue(null);
       mockCashbackQueueRepo.create.mockResolvedValue({});
 
@@ -204,17 +204,18 @@ describe("WorkshopCashbackService", () => {
 
     it("returns failure when immediate credit fails", async () => {
       const pastEnd = new Date(Date.now() - 60000);
-      mockWorkshopRepo.findById
-        .mockResolvedValueOnce({
-          apprenticeId: "app-1",
-          apprentice: { user: { id: "user-1" } },
-          apprenticeAttendanceStatus: "PRESENT",
-        })
-        .mockResolvedValueOnce({ creditCost: 40 });
+      mockWorkshopRepo.findById.mockResolvedValue({
+        id: "ws-1",
+        apprenticeId: "app-1",
+        apprentice: { userId: "user-1" },
+        apprenticeAttendanceStatus: "PRESENT",
+        creditCost: 40,
+      });
       mockCashbackQueueRepo.findFirstByWorkshopAndUser.mockResolvedValue(null);
       mockCreditService.creditCredits.mockResolvedValue({
         ok: false,
         error: "insufficient",
+        status: 500
       });
 
       const result = await service.processCashback(

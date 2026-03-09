@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       for (const file of files) {
         const fileId = randomUUID();
         const extension = file.name.split(".").pop() || "";
-        const sanitizedExtension = extension.replaceAll(/[^a-zA-Z0-9]/, "");
+        const sanitizedExtension = extension.replaceAll(/[^a-zA-Z0-9]/g, "");
         const filename = `${fileId}.${sanitizedExtension}`;
         const filePath = join(uploadsDir, filename);
 

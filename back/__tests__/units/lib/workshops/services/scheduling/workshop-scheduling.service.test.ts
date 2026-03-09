@@ -221,7 +221,7 @@ describe("WorkshopSchedulingService", () => {
 
       const result = await service.cancelConfirmedWorkshop("user-1", "ws-1");
       expect(result.ok).toBe(true);
-      expect(mockWorkshopRepo.removeApprentice).toHaveBeenCalledWith("ws-1");
+      expect(mockWorkshopRepo.removeApprentice).toHaveBeenCalledWith("ws-1", expect.anything());
     });
 
     it("sets status to CANCELLED when cancelled by mentor", async () => {

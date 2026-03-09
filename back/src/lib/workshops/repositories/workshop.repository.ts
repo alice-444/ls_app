@@ -20,13 +20,19 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
         topic: input.topic,
         location: input.location,
         isVirtual: input.isVirtual ?? false,
-        maxParticipants: input.maxParticipants,
-        materialsNeeded: input.materialsNeeded,
+        maxParticipants: input.maxParticipants ?? 10,
+        materialsNeeded: input.materialsNeeded ?? null,
         creditCost: input.creditCost ?? null,
-        creatorId: input.creatorId,
-        apprenticeId: input.apprenticeId ?? null,
-        requestId: input.requestId ?? null,
         updatedAt: now,
+        creator: {
+          connect: { id: input.creatorId }
+        },
+        ...(input.apprenticeId ? {
+          apprentice: {
+            connect: { id: input.apprenticeId }
+          }
+        } : {}),
+        ...(input.requestId ? { requestId: input.requestId } : {}),
       },
     });
   }
@@ -149,6 +155,22 @@ export class PrismaWorkshopRepository implements IWorkshopRepository {
 
     if (!workshop) return null;
     return this.mapToEntity(workshop);
+  }
+
+  async getAllTopics(): Promise<string[]> {
+    const results = await this.prisma.workshop.findMany({
+      where: {
+        topic: { not: null },
+        status: "PUBLISHED",
+      },
+      select: {
+        topic: true,
+      },
+      distinct: ["topic"],
+    });
+    return results
+      .map((r: any) => r.topic)
+      .filter((t: string | null): t is string => !!t);
   }
 
   private mapToEntity(workshop: any): WorkshopEntity {

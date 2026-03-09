@@ -55,7 +55,10 @@ export const userReportRouter = router({
       }).optional()
     )
     .query(async ({ input }) => {
-      return await container.userReportService.getAdminReportQueue(input);
+      const result = await container.userReportService.getAdminReportQueue(input);
+      return handleRouterResult(result, {
+        operation: "getAdminReportQueue",
+      });
     }),
 
   reviewReport: adminProcedure
@@ -67,11 +70,16 @@ export const userReportRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await container.userReportService.reviewReport(
+      const result = await container.userReportService.reviewReport(
         input.reportId,
         input.status,
         ctx.session.user.id,
         input.adminNotes ?? undefined
       );
+      return handleRouterResult(result, {
+        operation: "reviewReport",
+        reportId: input.reportId,
+        adminUserId: ctx.session.user.id,
+      });
     }),
 });

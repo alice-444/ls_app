@@ -16,7 +16,7 @@ export const auth = betterAuth({
   trustedOrigins: [process.env.CORS_ORIGIN || ""],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: false,
     sendResetPassword: async ({ user, url, token }, request) => {
       const { html, text } = await renderEmailTemplate(
         React.createElement(AuthPasswordResetEmail, { url })

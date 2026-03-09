@@ -11,23 +11,11 @@ describe("Connection System Functional Validation (PRP 10)", () => {
 
   beforeAll(async () => {
     // Setup User 1 (Requester)
-    await prisma.account.upsert({
-      where: { accountId: "net-user-1" },
-      update: {},
-      create: {
-        id: "net-user-1",
-        accountId: "net-user-1",
-        email: "user1@net.com",
-        isEmailVerified: true,
-        failedLoginAttempts: 0,
-        isLocked: false,
-        lastLogin: new Date(),
-      },
-    });
     const u1 = await prisma.user.upsert({
       where: { userId: "net-user-1" },
       update: { role: "APPRENANT", status: "ACTIVE" },
       create: {
+        id: "net-user-1",
         userId: "net-user-1",
         name: "User 1",
         email: "user1@net.com",
@@ -35,26 +23,29 @@ describe("Connection System Functional Validation (PRP 10)", () => {
         status: "ACTIVE",
       },
     });
-    user1Id = u1.userId;
+    user1Id = u1.id;
 
-    // Setup User 2 (Receiver)
     await prisma.account.upsert({
-      where: { accountId: "net-user-2" },
-      update: {},
+      where: { accountId: "net-user-1" },
+      update: { userId: user1Id },
       create: {
-        id: "net-user-2",
-        accountId: "net-user-2",
-        email: "user2@net.com",
+        id: "net-user-1",
+        accountId: "net-user-1",
+        userId: user1Id,
+        email: "user1@net.com",
         isEmailVerified: true,
         failedLoginAttempts: 0,
         isLocked: false,
         lastLogin: new Date(),
       },
     });
+
+    // Setup User 2 (Receiver)
     const u2 = await prisma.user.upsert({
       where: { userId: "net-user-2" },
       update: { role: "MENTOR", status: "ACTIVE" },
       create: {
+        id: "net-user-2",
         userId: "net-user-2",
         name: "User 2",
         email: "user2@net.com",
@@ -62,7 +53,22 @@ describe("Connection System Functional Validation (PRP 10)", () => {
         status: "ACTIVE",
       },
     });
-    user2Id = u2.userId;
+    user2Id = u2.id;
+
+    await prisma.account.upsert({
+      where: { accountId: "net-user-2" },
+      update: { userId: user2Id },
+      create: {
+        id: "net-user-2",
+        accountId: "net-user-2",
+        userId: user2Id,
+        email: "user2@net.com",
+        isEmailVerified: true,
+        failedLoginAttempts: 0,
+        isLocked: false,
+        lastLogin: new Date(),
+      },
+    });
 
     // Clean up existing connections
     await prisma.user_connection.deleteMany({

@@ -48,10 +48,10 @@ export function ExportDataSection() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
-      toast.success("Votre export a été généré avec succès.");
+      toast.success("Ton export a été généré avec succès.");
     } catch (error) {
       console.error("Export error:", error);
-      toast.error("Impossible de générer l'export. Veuillez réessayer plus tard.");
+      toast.error("Impossible de générer l'export. Réessaie plus tard.");
     } finally {
       setIsExporting(false);
     }
@@ -69,28 +69,28 @@ export function ExportDataSection() {
         </div>
       </div>
 
-      <div className="bg-ls-surface border border-ls-border rounded-[12px] p-6 space-y-4">
+        <div className="bg-card/80 border border-border/50 rounded-2xl p-6 space-y-4">
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
           <div className="space-y-2">
             <p className="text-sm font-medium text-ls-heading">
               Qu'est-ce que l'export de données ?
             </p>
-            <p className="text-sm text-ls-text leading-relaxed">
-              Conformément au Règlement Général sur la Protection des Données (RGPD), vous avez le droit de récupérer vos données personnelles dans un format structuré, couramment utilisé et lisible par machine.
+            <p className="text-sm text-ls-muted leading-relaxed">
+              Conformément au Règlement Général sur la Protection des Données (RGPD), tu as le droit de récupérer tes données personnelles dans un format structuré, couramment utilisé et lisible par machine.
             </p>
           </div>
         </div>
 
         <div className="pt-2">
-          <p className="text-sm text-ls-text mb-4">
-            L'archive contiendra vos informations de profil, vos messages, vos ateliers, vos demandes ainsi que votre historique de crédits.
+          <p className="text-sm text-ls-muted mb-4">
+            L'archive contiendra tes informations de profil, tes messages, tes ateliers, tes demandes ainsi que ton historique de crédits.
           </p>
           
           <Button
             onClick={handleExport}
             disabled={isExporting}
-            className="bg-(--primary-orange) hover:bg-(--primary-orange-dark) text-white rounded-full px-6 py-2 h-auto flex items-center gap-2"
+            variant="cta" size="cta" className="px-6 py-2 h-auto"
           >
             {isExporting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -102,9 +102,9 @@ export function ExportDataSection() {
         </div>
       </div>
 
-      <div className="p-4 rounded-[12px] border border-ls-border bg-ls-surface/50">
-        <p className="text-xs text-ls-text opacity-60">
-          Note : La génération de l'export peut prendre quelques instants si vous avez beaucoup de données. Une fois prêt, le téléchargement commencera automatiquement dans votre navigateur.
+      <div className="p-4 rounded-2xl border border-border/50 bg-card/50">
+        <p className="text-xs text-ls-muted">
+          Note : La génération de l'export peut prendre quelques instants si tu as beaucoup de données. Une fois prêt, le téléchargement commencera automatiquement dans ton navigateur.
         </p>
       </div>
     </div>

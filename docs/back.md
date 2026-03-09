@@ -167,7 +167,7 @@ sequenceDiagram
   - `auth/services/magic-link/` — MagicLinkService (envoi lien par email).
   - `auth/`, `email/`, `daily/`, `di/`, `rate-limit/`, `logger/`, `metrics/` — Inchangés.
 - `**src/shared/**` — Schémas et validation partagés avec le front (Zod, workshop, password, date, etc.).
-- `**prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token, deletion_job, workshop_cashback_queue, conversation_pin, student_deal, community_spot, community_event, community_poll, poll_vote.
+- `**prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
 
 ---
 

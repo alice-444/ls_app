@@ -22,6 +22,7 @@ export interface IWorkshopRepository {
     mentorAppUserId: string,
     apprenticeAppUserId: string
   ): Promise<WorkshopEntity | null>;
+  getAllTopics(): Promise<string[]>;
 }
 
 export interface CreateWorkshopInput {

@@ -12,10 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ShinyText from "@/components/ui/ShinyText";
 import { Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -74,15 +76,19 @@ function ResetPasswordContent() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <Card className="w-full max-w-md">
+      <div className="w-full max-w-md">
+        <Card className="w-full border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle2 className="h-8 w-8 text-green-600" />
+            <div className="mx-auto mb-4 w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <CardTitle>Mot de passe réinitialisé</CardTitle>
+            <CardTitle>
+              <h1 className="text-2xl font-bold">
+                <ShinyText text="Mot de passe réinitialisé" />
+              </h1>
+            </CardTitle>
             <CardDescription>
-              Votre mot de passe a été réinitialisé avec succès. Redirection
+              Ton mot de passe a été réinitialisé avec succès. Redirection
               vers la page de connexion...
             </CardDescription>
           </CardHeader>
@@ -92,19 +98,26 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <Card className="w-full max-w-md">
+    <div className="w-full max-w-md">
+      <Card className="w-full border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            Réinitialiser le mot de passe
+          <CardTitle className="text-center">
+            <h1 className="text-3xl font-bold">
+              <ShinyText text="Réinitialiser le mot de passe" />
+            </h1>
           </CardTitle>
           <CardDescription className="text-center">
-            Choisissez votre nouveau mot de passe
+            Choisis ton nouveau mot de passe
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-2"
+            >
               <Label htmlFor="new-password">Nouveau mot de passe</Label>
               <div className="relative">
                 <Input
@@ -114,26 +127,33 @@ function ResetPasswordContent() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="pr-10"
+                  placeholder="••••••••"
+                  className="pr-10 rounded-full"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showNewPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
                   {showNewPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4" />
                   )}
                 </button>
               </div>
               <p className="text-xs text-muted-foreground">
                 Minimum 8 caractères, au moins un chiffre
               </p>
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08, duration: 0.3 }}
+              className="space-y-2"
+            >
               <Label htmlFor="confirm-password">
                 Confirmer le nouveau mot de passe
               </Label>
@@ -145,38 +165,51 @@ function ResetPasswordContent() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="pr-10"
+                  placeholder="••••••••"
+                  className="pr-10 rounded-full"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4" />
                   )}
                 </button>
               </div>
-            </div>
+            </motion.div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.16, duration: 0.3 }}
             >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Lock className="h-4 w-4 mr-2" />
-              )}
-              {isLoading
-                ? "Réinitialisation..."
-                : "Réinitialiser le mot de passe"}
-            </Button>
+              <Button
+                type="submit"
+                className="w-full rounded-full bg-[#FFB647] hover:bg-[#FF9F1A] text-black font-semibold"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Lock className="h-4 w-4 mr-2" />
+                )}
+                {isLoading
+                  ? "Réinitialisation..."
+                  : "Réinitialiser le mot de passe"}
+              </Button>
+            </motion.div>
 
-            <div className="text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.24, duration: 0.3 }}
+              className="text-center"
+            >
               <Link
                 href="/login"
                 className="text-sm text-muted-foreground hover:text-foreground flex items-center justify-center gap-2"
@@ -184,7 +217,7 @@ function ResetPasswordContent() {
                 <ArrowLeft className="h-4 w-4" />
                 Retour à la connexion
               </Link>
-            </div>
+            </motion.div>
           </form>
         </CardContent>
       </Card>
@@ -195,7 +228,7 @@ function ResetPasswordContent() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>

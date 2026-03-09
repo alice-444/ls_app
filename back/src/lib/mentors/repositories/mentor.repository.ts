@@ -27,7 +27,7 @@ export class PrismaMentorRepository implements IMentorRepository {
       },
     });
 
-    if (!mentor || !mentor.isPublished || mentor.role !== "MENTOR") {
+    if (!mentor || mentor.role !== "MENTOR") {
       return null;
     }
 

@@ -10,55 +10,51 @@ export class PrismaVerificationRepository implements IVerificationRepository {
     token: string,
     expiresAt: Date
   ): Promise<void> {
-    const identifier = `email-change:${userId}:${newEmail.toLowerCase()}`;
-
-    await (this.prisma as any).verification.upsert({
-      where: {
-        identifier_value: {
-          identifier,
-          value: token,
-        },
-      },
-      create: {
-        id: `email-change-${userId}-${Date.now()}`,
-        identifier,
-        value: token,
-        expiresAt,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      update: {
-        value: token,
-        expiresAt,
+    await (this.prisma as any).account.update({
+      where: { accountId: userId },
+      data: {
+        emailChangeToken: token,
+        emailChangeNewEmail: newEmail,
+        emailChangeTimestamp: expiresAt,
         updatedAt: new Date(),
       },
     });
   }
 
   async findEmailChangeToken(token: string) {
-    const verification = await (this.prisma as any).verification.findFirst({
+    const account = await (this.prisma as any).account.findFirst({
       where: {
-        value: token,
-        identifier: {
-          startsWith: "email-change:",
-        },
-        expiresAt: {
+        emailChangeToken: token,
+        emailChangeTimestamp: {
           gt: new Date(),
         },
       },
       select: {
-        id: true,
-        identifier: true,
-        expiresAt: true,
+        userId: true,
+        emailChangeNewEmail: true,
+        emailChangeTimestamp: true,
       },
     });
 
-    return verification;
+    if (!account) return null;
+
+    return {
+      id: account.userId,
+      identifier: `email-change:${account.userId}:${account.emailChangeNewEmail?.toLowerCase()}`,
+      expiresAt: account.emailChangeTimestamp,
+    };
   }
 
-  async deleteById(id: string): Promise<void> {
-    await (this.prisma as any).verification.delete({
-      where: { id },
+  async deleteById(userId: string): Promise<void> {
+    await (this.prisma as any).account.update({
+      where: { accountId: userId },
+      data: {
+        emailChangeToken: null,
+        emailChangeNewEmail: null,
+        emailChangeTimestamp: null,
+        passwordResetToken: null,
+        passwordResetTimestamp: null,
+      },
     });
   }
 
@@ -67,50 +63,36 @@ export class PrismaVerificationRepository implements IVerificationRepository {
     token: string,
     expiresAt: Date
   ): Promise<void> {
-    const identifier = `password-reset:${userId}`;
-
-    await (this.prisma as any).verification.upsert({
-      where: {
-        identifier_value: {
-          identifier,
-          value: token,
-        },
-      },
-      create: {
-        id: `password-reset-${userId}-${Date.now()}`,
-        identifier,
-        value: token,
-        expiresAt,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      update: {
-        value: token,
-        expiresAt,
+    await (this.prisma as any).account.update({
+      where: { accountId: userId },
+      data: {
+        passwordResetToken: token,
+        passwordResetTimestamp: expiresAt,
         updatedAt: new Date(),
       },
     });
   }
 
   async findPasswordResetToken(token: string) {
-    const verification = await (this.prisma as any).verification.findFirst({
+    const account = await (this.prisma as any).account.findFirst({
       where: {
-        value: token,
-        identifier: {
-          startsWith: "password-reset:",
-        },
-        expiresAt: {
+        passwordResetToken: token,
+        passwordResetTimestamp: {
           gt: new Date(),
         },
       },
       select: {
-        id: true,
-        identifier: true,
-        expiresAt: true,
+        userId: true,
+        passwordResetTimestamp: true,
       },
     });
 
-    return verification;
+    if (!account) return null;
+
+    return {
+      id: account.userId,
+      identifier: `password-reset:${account.userId}`,
+      expiresAt: account.passwordResetTimestamp,
+    };
   }
 }
-

@@ -57,7 +57,7 @@ export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
   };
 
   return (
-    <Card className="border-ls-border bg-ls-surface shadow-sm overflow-hidden relative">
+    <Card className="border border-border/50 bg-card/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden relative">
       <div className="absolute top-0 left-0 w-full h-1 bg-brand"></div>
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2 text-brand mb-1">
@@ -84,7 +84,7 @@ export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
                     </span>
                     <span className="font-bold text-ls-heading">{percentage}%</span>
                   </div>
-                  <div className="h-2 w-full bg-ls-border/30 rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-border/30 rounded-full overflow-hidden">
                     <div 
                       className={cn("h-full transition-all duration-1000", isUserChoice ? "bg-brand" : "bg-ls-muted/40")}
                       style={{ width: `${percentage}%` }}
@@ -104,21 +104,21 @@ export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
                 key={option.id}
                 onClick={() => setSelectedOption(option.id)}
                 className={cn(
-                  "p-3 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between group",
+                  "p-3 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between group",
                   selectedOption === option.id 
                     ? "border-brand bg-brand-soft text-ls-heading" 
-                    : "border-ls-border hover:border-brand/50 text-ls-text"
+                    : "border-border hover:border-brand/50 text-ls-text"
                 )}
               >
                 <span className="text-sm font-medium">{option.label}</span>
                 <div className={cn(
                   "w-4 h-4 rounded-full border-2 transition-all",
-                  selectedOption === option.id ? "border-brand bg-brand" : "border-ls-border"
+                  selectedOption === option.id ? "border-brand bg-brand" : "border-border"
                 )} />
               </div>
             ))}
             <Button 
-              className="w-full mt-4 bg-ls-heading hover:bg-ls-heading/90 text-white rounded-full h-11 font-bold shadow-sm"
+              variant="cta" size="cta" className="w-full mt-4 font-bold h-11"
               disabled={!selectedOption || voteMutation.isPending}
               onClick={handleVote}
             >

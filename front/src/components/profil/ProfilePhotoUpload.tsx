@@ -67,14 +67,14 @@ export function ProfilePhotoUpload({
 
   return (
     <div className={blockCard}>
-      <div className="flex items-center gap-2 mb-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#FF8C42]/10">
-          <Upload className="h-4 w-4 text-[#FF8C42]" />
+        <div className="flex items-center gap-2 mb-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand/15">
+            <Upload className="h-4 w-4 text-brand" />
+          </div>
+          <h2 className="text-sm font-semibold text-ls-heading uppercase tracking-wide">
+            Photo
+          </h2>
         </div>
-        <h2 className="text-sm font-semibold text-[#26547c] dark:text-[#e6e6e6] uppercase tracking-wide">
-          Photo
-        </h2>
-      </div>
       <Input
         id="photo"
         type="file"
@@ -116,8 +116,8 @@ export function ProfilePhotoUpload({
       >
         {isUploading ? (
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-10 w-10 animate-spin text-[#FF8C42]" />
-            <span className="text-xs text-[rgba(38,84,124,0.7)] dark:text-[rgba(230,230,230,0.7)]">
+            <Loader2 className="h-10 w-10 animate-spin text-brand" />
+            <span className="text-xs text-ls-muted">
               Envoi en cours...
             </span>
           </div>
@@ -127,7 +127,7 @@ export function ProfilePhotoUpload({
               <img
                 src={previewPhoto}
                 alt="Aperçu"
-                className="w-20 h-20 rounded-full object-cover ring-2 ring-[#FF8C42]/20"
+                className="w-20 h-20 rounded-full object-cover ring-2 ring-brand/20"
               />
               <button
                 type="button"
@@ -135,26 +135,26 @@ export function ProfilePhotoUpload({
                   e.stopPropagation();
                   onPhotoChange(null);
                 }}
-                className="absolute -top-0.5 -right-0.5 bg-[#FF8C42] text-white rounded-full p-1.5 hover:bg-[#e67d3a] shadow-md transition-colors"
+                className="absolute -top-0.5 -right-0.5 bg-brand text-white rounded-full p-1.5 hover:bg-brand-hover shadow-md transition-colors"
                 aria-label="Supprimer la photo"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
             </div>
-            <span className="text-sm text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)]">
+            <span className="text-sm text-ls-muted">
               Cliquer ou glisser pour remplacer &middot; JPG, PNG 5 Mo
             </span>
           </>
         ) : (
           <>
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FF8C42]/10 ring-2 ring-[#FF8C42]/20">
-              <Upload className="h-7 w-7 text-[#FF8C42]" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 ring-2 ring-brand/20">
+              <Upload className="h-7 w-7 text-brand" />
             </div>
             <div className="text-center sm:text-left space-y-0.5">
-              <p className="text-sm font-medium text-[#26547c] dark:text-[#e6e6e6]">
+              <p className="text-sm font-medium text-ls-heading">
                 Dépose ta photo ici
               </p>
-              <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+              <p className="text-xs text-ls-muted">
                 Glisser-déposer ou cliquer &middot; JPG, PNG 5 Mo max
               </p>
             </div>

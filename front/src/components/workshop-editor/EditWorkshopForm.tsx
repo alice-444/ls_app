@@ -107,11 +107,13 @@ export function EditWorkshopForm({
   };
 
   return (
-    <Card>
+    <Card className="border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl overflow-hidden">
       <CardHeader>
-        <CardTitle className="text-2xl">Modifier l'atelier</CardTitle>
-        <CardDescription>
-          Mettez à jour les informations de votre atelier
+        <CardTitle className="text-xl font-semibold text-ls-heading">
+          Modifier l&apos;atelier
+        </CardTitle>
+        <CardDescription className="text-ls-muted">
+          Mets à jour les informations de ton atelier
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -127,7 +129,7 @@ export function EditWorkshopForm({
           <div className="flex gap-4 pt-4">
             <Button
               type="submit"
-              className="flex-1"
+              className="flex-1 rounded-full font-semibold"
               disabled={isSubmitting || updateMutation.isPending}
             >
               {(isSubmitting || updateMutation.isPending) && (
@@ -141,6 +143,7 @@ export function EditWorkshopForm({
                 variant="outline"
                 onClick={onCancel}
                 disabled={isSubmitting || updateMutation.isPending}
+                className="rounded-full"
               >
                 Annuler
               </Button>

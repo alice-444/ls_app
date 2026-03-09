@@ -64,9 +64,6 @@ interface WorkshopRequest {
   apprenticeName?: string;
 }
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info, Lock } from "lucide-react";
-
 interface MentorDashboardProps {
   readonly mentorStats: {
     readonly creditsEarned: number;
@@ -121,7 +118,7 @@ export function MentorDashboard({
     <>
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-[16px]">
         <div className="flex flex-col gap-4 sm:gap-[16px] w-full lg:w-[300px] shrink-0">
-          <Card className="relative overflow-hidden bg-linear-to-br from-[#26547c] to-[#4A90E2] border-0 text-white rounded-[16px]">
+          <Card className="relative overflow-hidden bg-linear-to-br from-[#26547c] to-[#4A90E2] border-0 text-white rounded-2xl shadow-xl">
             <div className="absolute inset-0 opacity-20 pointer-events-none">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
@@ -150,7 +147,7 @@ export function MentorDashboard({
               <div className="flex flex-col gap-2">
                 <Button
                   variant="secondary"
-                  className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-[#d6dae4]"
+                  className="w-full bg-white text-[#26547c] hover:bg-white/90 rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border-0"
                   onClick={() => router.push("/my-workshops")}
                 >
                   Voir mes ateliers
@@ -158,7 +155,7 @@ export function MentorDashboard({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="w-full text-white hover:bg-white/10 hover:text-white rounded-[32px] h-8 sm:h-9 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
+                  className="w-full text-white hover:bg-white/10 hover:text-white rounded-full h-8 sm:h-9 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
                   onClick={() => router.push("/mentor/analytics")}
                 >
                   Analyse des gains
@@ -169,12 +166,12 @@ export function MentorDashboard({
           </Card>
 
           {mentorStats && mentorStats.studentsHelped > 0 && (
-            <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+            <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
               <CardContent className="p-4 sm:p-6 lg:p-8">
                 <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
                   <div className="flex items-center gap-2 sm:gap-[7.5px]">
-                    <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ls-heading">
                       {mentorStats.studentsHelped} apprenant
                       {mentorStats.studentsHelped > 1 ? "s" : ""} aidé(s)
                       {mentorStats.studentsHelped > 1 ? "s" : ""}
@@ -221,7 +218,7 @@ export function MentorDashboard({
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
+                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir mes ateliers
@@ -233,12 +230,12 @@ export function MentorDashboard({
           )}
 
           {pastWorkshops && pastWorkshops.length > 0 && (
-            <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+            <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
               <CardContent className="p-4 sm:p-6 lg:p-8">
                 <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
                   <div className="flex items-center gap-2 sm:gap-[7.5px]">
-                    <History className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <History className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ls-heading">
                       Ateliers passés
                     </h3>
                   </div>
@@ -265,7 +262,7 @@ export function MentorDashboard({
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
+                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir les ateliers
@@ -277,12 +274,12 @@ export function MentorDashboard({
           )}
 
           {acceptedConnections && acceptedConnections.length > 0 && (
-            <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+            <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
               <CardContent className="p-4 sm:p-6 lg:p-8">
                 <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
                   <div className="flex items-center gap-2 sm:gap-[7.5px]">
-                    <Users className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <Users className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ls-heading">
                       {acceptedConnections.length} connexion(s)
                       {acceptedConnections.length > 1 ? "s" : ""}
                     </h3>
@@ -345,7 +342,7 @@ export function MentorDashboard({
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
+                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
                     onClick={() => router.push("/network")}
                   >
                     Voir les connexions
@@ -358,27 +355,27 @@ export function MentorDashboard({
         </div>
 
         <div className="flex flex-col gap-4 sm:gap-[16px] flex-1">
-          <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+          <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
                 <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
                   <div className="flex items-center gap-2 sm:gap-[7.5px]">
-                    <Inbox className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <Inbox className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ls-heading">
                       Demande(s) reçue(s)
                     </h3>
                   </div>
-                  <p className="text-sm sm:text-base text-[#26547c] dark:text-[#e6e6e6] tracking-[-0.8px]">
-                    Les demandes d'ateliers que vous avez reçues
+                  <p className="text-sm sm:text-base text-ls-muted tracking-[-0.8px]">
+                    Les demandes d&apos;ateliers que tu as reçues
                   </p>
                 </div>
 
                 <div className="flex items-center justify-between gap-3 sm:gap-4">
-                  <div className="flex-1 border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 flex items-center gap-2 bg-white dark:bg-[rgba(255,255,255,0.08)]">
-                    <span className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                  <div className="flex-1 border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 flex items-center gap-2 bg-card/80">
+                    <span className="text-sm sm:text-base font-semibold text-ls-muted">
                       Rechercher...
                     </span>
-                    <Search className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-[#26547c] dark:text-[#e6e6e6]" />
+                    <Search className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-ls-muted" />
                   </div>
                 </div>
 
@@ -391,17 +388,17 @@ export function MentorDashboard({
                         .map((request) => (
                           <div
                             key={request.id}
-                            className="bg-white dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] min-h-[126px] px-3 sm:px-4 lg:px-5 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
+                            className="bg-card/80 border border-border/50 rounded-2xl min-h-[126px] px-3 sm:px-4 lg:px-5 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
                           >
                             <div className="flex flex-col gap-2 sm:gap-[8px] justify-center flex-1 min-w-0">
-                              <p className="text-sm sm:text-base font-bold text-[#26547c] dark:text-[#e6e6e6] truncate">
+                              <p className="text-sm sm:text-base font-bold text-ls-heading truncate">
                                 {request.title}
                               </p>
-                              <p className="text-xs sm:text-sm lg:text-base text-[#161616] dark:text-[#e6e6e6] line-clamp-2">
+                              <p className="text-xs sm:text-sm lg:text-base text-ls-text line-clamp-2">
                                 {request.description ||
                                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit"}
                               </p>
-                              <p className="text-xs sm:text-sm lg:text-base text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                              <p className="text-xs sm:text-sm lg:text-base text-ls-muted">
                                 {formatWorkshopDate(request.preferredDate)}
                               </p>
                             </div>
@@ -410,7 +407,7 @@ export function MentorDashboard({
                                 <>
                                   <Button
                                     size="sm"
-                                    className="bg-green-600 hover:bg-green-700 text-white rounded-[32px] h-8 px-3"
+                                    className="bg-green-600 hover:bg-green-700 text-white rounded-full h-8 px-3"
                                     onClick={() => {
                                       setSelectedRequest(request);
                                       setShowAcceptDialog(true);
@@ -422,7 +419,7 @@ export function MentorDashboard({
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="text-red-600 border-red-200 hover:bg-red-50 rounded-[32px] h-8 px-3"
+                                    className="text-red-600 border-red-200 hover:bg-red-50 rounded-full h-8 px-3"
                                     onClick={() => {
                                       setSelectedRequest(request);
                                       setShowRejectDialog(true);
@@ -441,7 +438,7 @@ export function MentorDashboard({
                       {mentorWorkshopRequests.length > 3 && (
                         <Button
                           variant="outline"
-                          className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
+                          className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
                           onClick={() => setShowAllRequestsDialog(true)}
                         >
                           <span className="truncate">
@@ -453,7 +450,7 @@ export function MentorDashboard({
                       )}
                     </>
                   ) : (
-                    <div className="text-center py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                    <div className="text-center py-8 text-ls-muted">
                       <p>Aucune demande reçue pour le moment</p>
                     </div>
                   )}
@@ -462,18 +459,18 @@ export function MentorDashboard({
             </CardContent>
           </Card>
 
-          <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+          <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
             <CardContent className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
                 <div className="flex flex-col gap-3 sm:gap-4 lg:gap-[16px]">
                   <div className="flex items-center gap-2 sm:gap-[7.5px]">
-                    <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                    <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ls-heading">
                       Calendrier de mes ateliers
                     </h3>
                   </div>
-                  <p className="text-sm sm:text-base text-[#26547c] dark:text-[#e6e6e6] tracking-[-0.8px]">
-                    Vue d'ensemble de vos ateliers
+                  <p className="text-sm sm:text-base text-ls-muted tracking-[-0.8px]">
+                    Vue d&apos;ensemble de tes ateliers
                   </p>
                 </div>
 
@@ -482,7 +479,7 @@ export function MentorDashboard({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]"
+                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
                       onClick={() => navigateCalendar("today")}
                     >
                       Aujourd'hui
@@ -490,7 +487,7 @@ export function MentorDashboard({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]"
+                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
                       onClick={() => navigateCalendar("prev")}
                     >
                       Précédent
@@ -498,7 +495,7 @@ export function MentorDashboard({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]"
+                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
                       onClick={() => navigateCalendar("next")}
                     >
                       Suivant

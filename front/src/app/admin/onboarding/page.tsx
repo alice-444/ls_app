@@ -113,8 +113,8 @@ export default function AdminOnboardingPage() {
                       <CheckCircle className="h-4 w-4 mr-2" /> Approuver
                     </Button>
                     <Button
-                      variant="destructive"
-                      size="sm"
+                      variant="ctaDestructive"
+                      size="ctaSm"
                       onClick={() => {
                         setSelectedUserId(appUser.id);
                         setIsRejectDialogOpen(true);
@@ -149,7 +149,7 @@ export default function AdminOnboardingPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsRejectDialogOpen(false)}>Annuler</Button>
-            <Button variant="destructive" onClick={handleReject}>Rejeter</Button>
+            <Button variant="ctaDestructive" size="cta" onClick={handleReject}>Rejeter</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

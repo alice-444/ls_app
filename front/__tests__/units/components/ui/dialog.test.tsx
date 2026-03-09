@@ -68,18 +68,18 @@ describe("Dialog", () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it("DialogContent with onClose renders close button and calls onClose when clicked", async () => {
+  it("calls onOpenChange(false) when close button is clicked", async () => {
     const user = userEvent.setup();
-    const onClose = vi.fn();
+    const onOpenChange = vi.fn();
     render(
-      <Dialog open onOpenChange={vi.fn()}>
-        <DialogContent onClose={onClose}>
+      <Dialog open onOpenChange={onOpenChange}>
+        <DialogContent>
           <span>Content</span>
         </DialogContent>
       </Dialog>
     );
     const closeButton = screen.getByRole("button", { name: /close/i });
     await user.click(closeButton);
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

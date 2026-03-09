@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
-import { PageHeader, PageContainer, SectionSidebar } from "@/components/layout";
+import { PageContainer, SectionSidebar } from "@/components/layout";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
 import { BlockedUsersSection } from "@/components/settings/BlockedUsersSection";
 import { CreditsHistorySection } from "@/components/settings/CreditsHistorySection";
 import { SIDEBAR_ITEMS, type SettingsSection } from "@/components/settings/constants";
@@ -13,8 +15,7 @@ import {
   NotificationsSection,
   SystemSettingsSection,
   FeedbackSection,
-  AboutSection,
-  HelpCenterSection,
+  SupportInfoSection,
   ExportDataSection,
 } from "@/components/settings";
 
@@ -59,19 +60,32 @@ export default function SettingsPage() {
     notifications: <NotificationsSection />,
     "parametres-systeme": <SystemSettingsSection />,
     feedback: <FeedbackSection />,
-    "a-propos": <AboutSection />,
-    "centre-aide": <HelpCenterSection />,
+    "support-info": <SupportInfoSection />,
     "export-donnees": <ExportDataSection />,
   };
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Paramètres"
-        subtitle="Gère tes préférences et paramètres de compte"
-      />
+      <motion.div
+        className="mb-6 sm:mb-8"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+          <ShinyText text="Paramètres" />
+        </h1>
+        <p className="text-base sm:text-lg text-ls-muted mt-2">
+          Gère tes préférences et paramètres de compte
+        </p>
+      </motion.div>
 
-      <div className="flex flex-col lg:flex-row gap-0 lg:gap-8">
+      <motion.div
+        className="flex flex-col lg:flex-row gap-0 lg:gap-8"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
         <SectionSidebar
           items={SIDEBAR_ITEMS}
           activeSection={activeSection}
@@ -79,11 +93,11 @@ export default function SettingsPage() {
         />
 
         <div className="flex-1">
-          <div className="bg-ls-surface border border-ls-border rounded-[10px] p-8">
+          <div className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl p-8 shadow-xl">
             {sectionContent[activeSection]}
           </div>
         </div>
-      </div>
+      </motion.div>
     </PageContainer>
   );
 }

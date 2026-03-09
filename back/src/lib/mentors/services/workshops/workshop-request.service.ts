@@ -84,25 +84,15 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         ? sanitizeString(input.message, { maxLength: 1000, trim: true })
         : null;
 
-      const workshopRequest =
-        this.prisma && this.creditService
-          ? await this.submitWithCredits(
-              userId,
-              apprentice,
-              mentor,
-              sanitizedTitle,
-              sanitizedDescription,
-              sanitizedMessage,
-              input
-            )
-          : await this.submitWithoutCredits(
-              apprentice,
-              mentor,
-              sanitizedTitle,
-              sanitizedDescription,
-              sanitizedMessage,
-              input
-            );
+      // Simulation de crédits illimités : on utilise toujours submitWithoutCredits
+      const workshopRequest = await this.submitWithoutCredits(
+        apprentice,
+        mentor,
+        sanitizedTitle,
+        sanitizedDescription,
+        sanitizedMessage,
+        input
+      );
 
       await this.notificationService.notifyMentorOfNewRequest(
         workshopRequest,

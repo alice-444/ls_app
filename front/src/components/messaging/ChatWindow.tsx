@@ -226,7 +226,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
   if (isLoading) {
     return (
       <div className="py-8">
-        <div className="text-center text-muted-foreground dark:text-[#e6e6e6]">
+        <div className="text-center text-ls-muted">
           Chargement des messages...
         </div>
       </div>
@@ -259,7 +259,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
         onShowBlockDialog={() => setShowBlockDialog(true)}
         onShowReportDialog={() => setShowReportDialog(true)}
       />
-      <div className="flex-1 flex flex-col p-0 overflow-hidden bg-white dark:bg-[#1a1720]">
+      <div className="flex-1 flex flex-col p-0 overflow-hidden bg-card">
         <div className="flex-1 overflow-y-auto p-4">
           <MessageList
             messages={localMessages}
@@ -276,7 +276,7 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
           )}
           <div ref={messagesEndRef} />
         </div>
-        <div className="border-t border-[#d6dae4] dark:border-[#d6dae4] p-4 shrink-0 bg-white dark:bg-[#1a1720]">
+        <div className="border-t border-border p-4 shrink-0 bg-card">
           {replyingToMessage && (
             <ReplyPreview
               message={replyingToMessage}

@@ -86,7 +86,7 @@ export class MentorProfileService {
       return failure("Invalid photo URL format", 400);
     }
 
-    const sanitizedFileName = fileName.replaceAll(/[^a-zA-Z0-9._-]/, "");
+    const sanitizedFileName = fileName.replaceAll(/[^a-zA-Z0-9._-]/g, "");
     if (sanitizedFileName !== fileName) {
       return failure("Invalid characters in file name", 400);
     }

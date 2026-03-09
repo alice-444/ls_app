@@ -127,9 +127,9 @@ export function NotificationBell() {
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="relative p-2 h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-white/30 dark:bg-white/15 backdrop-blur-xl backdrop-saturate-150 border border-white/50 dark:border-white/30 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.12),0_4px_8px_-2px_rgba(0,0,0,0.08),inset_0_2px_0_0_rgba(255,255,255,0.6)] dark:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35),0_4px_8px_-2px_rgba(0,0,0,0.2),inset_0_2px_0_0_rgba(255,255,255,0.15)] hover:bg-white/45 dark:hover:bg-white/25 hover:shadow-[0_8px_25px_-6px_rgba(0,0,0,0.15),inset_0_2px_0_0_rgba(255,255,255,0.7)] transition-all"
         >
-          <Bell className="h-12 w-12" strokeWidth={2.5} />
+          <Bell className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
           {count > 0 && (
             <Badge
               className="absolute top-0 right-0 h-5 min-w-5 flex items-center justify-center px-1.5 text-xs font-medium border-0 bg-[#FF8C42] text-white shadow-sm"

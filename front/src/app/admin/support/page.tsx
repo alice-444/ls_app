@@ -233,17 +233,17 @@ function AdminSupportContent() {
               <div className="space-y-6 py-4">
                 <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border">
                   <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <div className="text-xs text-muted-foreground flex items-center gap-1">
                       <User className="h-3 w-3" /> Utilisateur
-                    </p>
-                    <p className="text-sm font-medium">
+                    </div>
+                    <div className="text-sm font-medium">
                       {selectedRequest.user ? (
                         <span className="flex items-center gap-1">
                           {selectedRequest.user.displayName || selectedRequest.user.name}
                           <Badge variant="outline" className="ml-2 text-[10px]">ID: {selectedRequest.userId}</Badge>
                         </span>
                       ) : "Non connecté"}
-                    </p>
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground flex items-center gap-1">

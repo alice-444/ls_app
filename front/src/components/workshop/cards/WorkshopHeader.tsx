@@ -3,6 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, Calendar, EyeOff, Trash2 } from "lucide-react";
 import { formatDate, getStatusBadge } from "@/lib/workshop-utils";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 interface WorkshopHeaderProps {
   readonly workshop: {
@@ -38,15 +41,33 @@ export function WorkshopHeader({
   isDeleting,
 }: Readonly<WorkshopHeaderProps>) {
 
+  const breadcrumbItems = isOwner
+    ? [
+        { label: "Tableau de bord", href: "/dashboard" },
+        { label: "Mes ateliers", href: "/my-workshops" },
+        { label: workshop.title },
+      ]
+    : [
+        { label: "Tableau de bord", href: "/dashboard" },
+        { label: "e-Atelier", href: "/workshop-room" },
+        { label: workshop.title },
+      ];
+
   return (
-    <div className="mb-10">
+    <motion.div
+      className="mb-10"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Breadcrumb items={breadcrumbItems} className="mb-4" />
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[36px] lg:text-[44px] font-black text-[#26547c] dark:text-[#e6e6e6] leading-[1.2] sm:leading-[1.3] lg:leading-[1.4] mb-4">
-          {workshop.title}
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-4">
+          <ShinyText text={workshop.title} />
         </h1>
         <div className="flex items-center gap-3">
           {isOwner && getStatusBadge(workshop.status, "lg")}
-          <p className="text-[16px] sm:text-[18px] lg:text-[20px] text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+          <p className="text-base sm:text-lg text-ls-muted">
             Créé le {formatDate(workshop.createdAt, { includeWeekday: false })}
             {isOwner && workshop.publishedAt && (
               <span>
@@ -63,7 +84,7 @@ export function WorkshopHeader({
         <Button
           variant="outline"
           onClick={onBack}
-          className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+          className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Retour
@@ -74,7 +95,7 @@ export function WorkshopHeader({
             <Button
               variant="outline"
               onClick={onEdit}
-              className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+              className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
             >
               <Edit className="w-4 h-4 mr-2" />
               Éditer
@@ -85,7 +106,7 @@ export function WorkshopHeader({
                   variant="outline"
                   onClick={onReschedule}
                   disabled={isRescheduling}
-                  className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+                  className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   Reprogrammer
@@ -94,7 +115,7 @@ export function WorkshopHeader({
                   variant="outline"
                   onClick={onUnpublish}
                   disabled={isUnpublishing}
-                  className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+                  className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
                 >
                   <EyeOff className="w-4 h-4 mr-2" />
                   Dépublier
@@ -106,7 +127,7 @@ export function WorkshopHeader({
                 variant="outline"
                 onClick={onUnpublish}
                 disabled={isUnpublishing}
-                className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+                className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
               >
                 <EyeOff className="w-4 h-4 mr-2" />
                 Dépublier
@@ -116,7 +137,7 @@ export function WorkshopHeader({
               variant="destructive"
               onClick={onDelete}
               disabled={isDeleting}
-              className="bg-[#f44336] hover:bg-[#d32f2f] dark:bg-[#f44336] dark:hover:bg-[#d32f2f] text-white dark:text-white rounded-[32px]"
+              className="bg-destructive hover:bg-destructive/90 text-white rounded-full"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Supprimer
@@ -124,6 +145,6 @@ export function WorkshopHeader({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
