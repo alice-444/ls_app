@@ -54,6 +54,66 @@ export default function MentorsPage() {
     router.push(`/mentors/${mentorId}`);
   };
 
+  const renderMentorsContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-brand mx-auto mb-4" />
+            <p className="text-ls-muted">Chargement des mentors...</p>
+          </div>
+        </div>
+      );
+    }
+    if (filteredMentors.length > 0) {
+      return (
+        <>
+          <MentorsGrid
+            mentors={filteredMentors}
+            onViewProfile={handleViewProfile}
+          />
+
+          {hasNextPage && (
+            <div className="flex justify-center mt-12">
+              <Button
+                onClick={() => fetchNextPage()}
+                disabled={isFetching}
+                variant="ctaOutline" size="cta" className="min-w-[200px]"
+              >
+                {isFetching ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  "Charger plus de mentors"
+                )}
+              </Button>
+            </div>
+          )}
+        </>
+      );
+    }
+    return (
+      <div className="flex flex-col items-center justify-center py-20 rounded-2xl border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-6">
+          <Users className="h-10 w-10" />
+        </div>
+        <h2 className="text-xl font-semibold mb-2 text-ls-heading">Aucun mentor trouvé</h2>
+        <p className="text-ls-muted text-center max-w-md mb-6">
+          Essaie de modifier tes filtres ou ta recherche pour trouver ce que tu cherches.
+        </p>
+        <Button
+          onClick={() => {
+            setSearchQuery("");
+            setDomainFilter("");
+            setTopicFilter("");
+          }}
+          variant="ctaOutline" size="cta"
+        >
+          Réinitialiser les filtres
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <PageContainer className="py-4 sm:py-6 lg:py-8">
       <motion.div
@@ -87,57 +147,7 @@ export default function MentorsPage() {
         onTopicFilterChange={setTopicFilter}
       />
 
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-brand mx-auto mb-4" />
-            <p className="text-ls-muted">Chargement des mentors...</p>
-          </div>
-        </div>
-      ) : filteredMentors.length > 0 ? (
-        <>
-          <MentorsGrid
-            mentors={filteredMentors}
-            onViewProfile={handleViewProfile}
-          />
-
-          {hasNextPage && (
-            <div className="flex justify-center mt-12">
-              <Button
-                onClick={() => fetchNextPage()}
-                disabled={isFetching}
-                variant="ctaOutline" size="cta" className="min-w-[200px]"
-              >
-                {isFetching ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  "Charger plus de mentors"
-                )}
-              </Button>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-20 rounded-2xl border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-6">
-            <Users className="h-10 w-10" />
-          </div>
-          <h2 className="text-xl font-semibold mb-2 text-ls-heading">Aucun mentor trouvé</h2>
-          <p className="text-ls-muted text-center max-w-md mb-6">
-            Essaie de modifier tes filtres ou ta recherche pour trouver ce que tu cherches.
-          </p>
-          <Button
-            onClick={() => {
-              setSearchQuery("");
-              setDomainFilter("");
-              setTopicFilter("");
-            }}
-            variant="ctaOutline" size="cta"
-          >
-            Réinitialiser les filtres
-          </Button>
-        </div>
-      )}
+      {renderMentorsContent()}
       </motion.div>
     </PageContainer>
   );

@@ -37,16 +37,15 @@ const nextConfig: NextConfig = {
 		return config;
 	},
 	async headers() {
+		const corsHeaders = [
+			{ key: "Access-Control-Allow-Credentials", value: "true" },
+			{ key: "Access-Control-Allow-Origin", value: "http://localhost:3001" },
+			{ key: "Access-Control-Allow-Methods", value: "GET,POST,DELETE,OPTIONS" },
+			{ key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
+		];
 		return [
-			{
-				source: "/api/(.*)",
-				headers: [
-					{ key: "Access-Control-Allow-Credentials", value: "true" },
-					{ key: "Access-Control-Allow-Origin", value: "http://localhost:3001" },
-					{ key: "Access-Control-Allow-Methods", value: "GET,POST,DELETE,OPTIONS" },
-					{ key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
-				],
-			},
+			{ source: "/api/(.*)", headers: corsHeaders },
+			{ source: "/trpc/(.*)", headers: corsHeaders },
 		];
 	},
 };
