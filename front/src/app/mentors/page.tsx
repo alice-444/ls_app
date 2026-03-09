@@ -104,10 +104,9 @@ export default function MentorsPage() {
           {hasNextPage && (
             <div className="flex justify-center mt-12">
               <Button
-                variant="outline"
                 onClick={() => fetchNextPage()}
                 disabled={isFetching}
-                className="min-w-[200px] rounded-full border-border bg-card/80 hover:bg-brand-soft hover:border-brand"
+                variant="ctaOutline" size="cta" className="min-w-[200px]"
               >
                 {isFetching ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -128,13 +127,12 @@ export default function MentorsPage() {
             Essaie de modifier tes filtres ou ta recherche pour trouver ce que tu cherches.
           </p>
           <Button
-            variant="outline"
             onClick={() => {
               setSearchQuery("");
               setDomainFilter("");
               setTopicFilter("");
             }}
-            className="rounded-full border-border bg-card/80 hover:bg-brand-soft hover:border-brand"
+            variant="ctaOutline" size="cta"
           >
             Réinitialiser les filtres
           </Button>

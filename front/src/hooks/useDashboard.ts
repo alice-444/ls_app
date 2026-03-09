@@ -15,6 +15,9 @@ interface WorkshopRequest {
   id: string;
   title: string;
   status: string;
+  description?: string;
+  preferredDate?: string | Date | null;
+  preferredTime?: string | null;
   rejectionReason?: string | null;
   apprenticeName?: string;
   [key: string]: any;
@@ -23,13 +26,13 @@ interface WorkshopRequest {
 interface WorkshopItem {
   id: string;
   title: string;
-  description: string | null;
-  date: string | Date | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  maxParticipants: number | null;
+  description?: string | null;
+  date?: string | Date | null;
+  time?: string | null;
+  duration?: number | null;
+  location?: string | null;
+  isVirtual?: boolean;
+  maxParticipants?: number | null;
   status?: string;
   apprenticeId?: string | null;
 }
