@@ -100,6 +100,7 @@ export function SubmitFeedbackDialog({
     return (
       <Dialog open={open} onOpenChange={() => {}}>
         <DialogContent className="sm:max-w-[400px]">
+          <DialogTitle className="sr-only">Merci pour votre avis</DialogTitle>
           <div className="flex flex-col items-center justify-center py-8">
             <div className="relative mb-4">
               <div className="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-50 animate-pulse" />

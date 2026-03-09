@@ -217,8 +217,9 @@ export function MentorDashboard({
                     })}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
+                    variant="ctaOutline"
+                    size="cta"
+                    className="w-full"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir mes ateliers
@@ -245,24 +246,25 @@ export function MentorDashboard({
                       .map((workshop, index: number) => (
                         <div
                           key={workshop.id}
-                          className={`border-b border-[#d6dae4] dark:border-[#d6dae4] pb-3 sm:pb-4 ${
+                          className={`border-b border-border pb-3 sm:pb-4 ${
                             index === pastWorkshops.slice(0, 3).length - 1
                               ? "border-b-0 pb-0"
                               : ""
                           }`}
                         >
-                          <p className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] mb-1 sm:mb-2">
+                          <p className="text-sm sm:text-base font-semibold text-ls-heading mb-1 sm:mb-2">
                             {workshop.title}
                           </p>
-                          <p className="text-xs sm:text-sm lg:text-base text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                          <p className="text-xs sm:text-sm lg:text-base text-ls-muted">
                             {formatWorkshopDate(workshop.date)}
                           </p>
                         </div>
                       ))}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
+                    variant="ctaOutline"
+                    size="cta"
+                    className="w-full"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir les ateliers
@@ -341,8 +343,9 @@ export function MentorDashboard({
                       })}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
+                    variant="ctaOutline"
+                    size="cta"
+                    className="w-full"
                     onClick={() => router.push("/network")}
                   >
                     Voir les connexions
@@ -476,25 +479,22 @@ export function MentorDashboard({
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex flex-wrap gap-2">
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
+                      variant="ctaOutline"
+                      size="ctaSm"
                       onClick={() => navigateCalendar("today")}
                     >
-                      Aujourd'hui
+                      Aujourd&apos;hui
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
+                      variant="ctaOutline"
+                      size="ctaSm"
                       onClick={() => navigateCalendar("prev")}
                     >
                       Précédent
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
+                      variant="ctaOutline"
+                      size="ctaSm"
                       onClick={() => navigateCalendar("next")}
                     >
                       Suivant
