@@ -37,7 +37,7 @@ import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequest
 import { PageContainer } from "@/components/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion, useReducedMotion } from "framer-motion";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 
 import { useMyWorkshops } from "@/hooks/useMyWorkshops";
 import {
@@ -554,7 +554,7 @@ export default function MyWorkshopsPage() {
         transition={{ duration: 0.4 }}
       >
         <CalendarSection
-          workshops={(workshops || []) as unknown as WorkshopBasic[]}
+          workshops={(workshops || []) as unknown as WorkshopDetailed[]}
           calendarDate={calendarDate}
           calendarView={calendarView}
           onDateChange={setCalendarDate}

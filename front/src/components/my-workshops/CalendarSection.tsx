@@ -11,18 +11,18 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { formatCalendarMonthYear } from "@/lib/dashboard-utils";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 
 type CalendarView = "month" | "week" | "day" | "agenda";
 
 interface CalendarSectionProps {
-  readonly workshops: readonly WorkshopBasic[];
+  readonly workshops: readonly WorkshopDetailed[];
   readonly calendarDate: Date;
   readonly calendarView: CalendarView;
   readonly onDateChange: (date: Date) => void;
   readonly onViewChange: (view: CalendarView) => void;
   readonly onNavigate: (action: "prev" | "next" | "today") => void;
-  readonly onSelectEvent: (workshop: WorkshopBasic) => void;
+  readonly onSelectEvent: (workshop: WorkshopDetailed) => void;
 }
 
 const VIEW_OPTIONS: { value: CalendarView; label: string }[] = [

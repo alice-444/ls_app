@@ -40,11 +40,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BackButton } from "@/components/back-button";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopBase } from "@/types/workshop";
 
-type Workshop = WorkshopBasic & {
-  status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-};
+type Workshop = WorkshopBase;
 
 function WorkshopEditorContent() {
   const searchParams = useSearchParams();
@@ -404,15 +402,8 @@ function WorkshopEditorContent() {
           }
 
           return {
-            id: publishingWorkshop.id,
-            title: publishingWorkshop.title,
-            description: publishingWorkshop.description,
+            ...publishingWorkshop,
             date: convertedDate,
-            time: publishingWorkshop.time,
-            duration: publishingWorkshop.duration,
-            location: publishingWorkshop.location,
-            isVirtual: publishingWorkshop.isVirtual,
-            maxParticipants: publishingWorkshop.maxParticipants,
           };
         })()}
         open={!!publishingWorkshop}

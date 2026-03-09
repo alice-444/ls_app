@@ -23,10 +23,10 @@ import {
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { WORKSHOP_VALIDATION, isMinimumTomorrow } from "@/shared/validation";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopBase } from "@/types/workshop";
 
 interface PublishWorkshopDialogProps {
-  workshop: (Omit<WorkshopBasic, "date"> & { date: Date | null }) | null;
+  workshop: (Omit<WorkshopBase, "date"> & { date: Date | null }) | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
