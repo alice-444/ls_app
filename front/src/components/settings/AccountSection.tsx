@@ -262,7 +262,7 @@ function EmailChangeButton() {
               <Button
                 type="submit"
                 disabled={requestEmailChangeMutation.isPending}
-                className="rounded-full bg-brand hover:bg-brand-hover"
+                variant="cta" size="cta"
               >
                 {requestEmailChangeMutation.isPending
                   ? "Envoi..."
@@ -412,7 +412,7 @@ function DeleteAccountButton() {
                 setIsInfoDialogOpen(false);
                 router.push("/my-workshops");
               }}
-              className="rounded-full bg-brand hover:bg-brand-hover"
+              variant="cta" size="cta"
             >
               Voir mes ateliers
             </Button>
@@ -443,11 +443,10 @@ function DeleteAccountButton() {
               <Input
                 id="delete-confirmation"
                 placeholder='Tape "DELETE" pour confirmer'
-                className="rounded-full"
                 value={confirmation}
                 onChange={(e) => setConfirmation(e.target.value)}
                 disabled={deleteAccountMutation.isPending}
-                className="w-full"
+                className="rounded-full w-full"
               />
             </div>
             <div className="space-y-2">
@@ -457,10 +456,9 @@ function DeleteAccountButton() {
               <Textarea
                 id="delete-reason"
                 placeholder="Partage avec nous la raison de ton départ (optionnel)..."
-                className="rounded-2xl"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                className="min-h-[100px]"
+                className="rounded-2xl min-h-[100px]"
                 disabled={deleteAccountMutation.isPending}
               />
             </div>

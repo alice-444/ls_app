@@ -51,8 +51,7 @@ export function PublicationSection({
               handleUnpublish();
             }}
             disabled={isUnpublishing}
-            className="flex-1 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
-            size="lg"
+            variant="cta" size="cta" className="flex-1"
           >
             {isUnpublishing ? (
               <>
