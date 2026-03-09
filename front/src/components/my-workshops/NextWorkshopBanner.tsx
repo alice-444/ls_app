@@ -23,21 +23,10 @@ import {
   type CountdownResult,
 } from "@/lib/workshop-utils";
 import { motion } from "framer-motion";
-
-interface Workshop {
-  id: string;
-  title: string;
-  date: string | Date | null;
-  time: string | null;
-  duration: number | null;
-  isVirtual: boolean | null;
-  location: string | null;
-  apprenticeId: string | null;
-  maxParticipants: number | null;
-}
+import type { WorkshopBase } from "@/types/workshop";
 
 interface NextWorkshopBannerProps {
-  readonly workshop: Workshop;
+  readonly workshop: WorkshopBase & { apprenticeId?: string | null };
   readonly countdown: CountdownResult | null;
   readonly onViewDetails: (id: string) => void;
 }

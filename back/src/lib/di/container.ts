@@ -17,41 +17,27 @@ class DIContainer {
   private readonly _services: ServicesContainer;
 
   private constructor() {
-    const useAccelerate = !!process.env.PRISMA_ACCELERATE_URL;
-
-    if (useAccelerate) {
-      this._prisma = new PrismaClient({
-        accelerateUrl: process.env.PRISMA_ACCELERATE_URL!,
-        log:
-          process.env.NODE_ENV === "development"
-            ? ["error", "warn"]
-            : ["error"],
-      });
-    } else {
-      if (!process.env.DATABASE_URL) {
-        throw new Error(
-          "Either PRISMA_ACCELERATE_URL or DATABASE_URL environment variable must be set"
-        );
-      }
-      const pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        connectionTimeoutMillis: 10000,
-        idleTimeoutMillis: 30000,
-        max: 20,
-        // Désactive la vérification SSL en développement pour les certificats auto-signés
-        ssl: process.env.NODE_ENV === "development" 
+    if (!process.env.DATABASE_URL) {
+      throw new Error("DATABASE_URL environment variable must be set");
+    }
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      connectionTimeoutMillis: 10000,
+      idleTimeoutMillis: 30000,
+      max: 20,
+      ssl:
+        process.env.NODE_ENV === "development"
           ? { rejectUnauthorized: false }
           : undefined,
-      });
-      const adapter = new PrismaPg(pool);
-      this._prisma = new PrismaClient({
-        adapter,
-        log:
-          process.env.NODE_ENV === "development"
-            ? ["error", "warn"]
-            : ["error"],
-      });
-    }
+    });
+    const adapter = new PrismaPg(pool);
+    this._prisma = new PrismaClient({
+      adapter,
+      log:
+        process.env.NODE_ENV === "development"
+          ? ["error", "warn"]
+          : ["error"],
+    });
 
     this._repositories = new RepositoriesContainer(this._prisma);
     this._services = new ServicesContainer(this._prisma, this._repositories);

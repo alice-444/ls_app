@@ -37,8 +37,7 @@ export function SupportInfoSection() {
 
         <div className="flex flex-wrap gap-3">
           <Button
-            variant="outline"
-            className="rounded-full bg-brand text-ls-heading hover:bg-brand-hover border-brand shadow-sm"
+            variant="cta" size="cta"
             asChild
           >
             <Link href="/help">

@@ -18,7 +18,7 @@ export function FeedbackSection() {
       });
       setFeedback("");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erreur lors de l'envoi", {
         description: error.message || "Une erreur est survenue, réessaie plus tard.",
       });

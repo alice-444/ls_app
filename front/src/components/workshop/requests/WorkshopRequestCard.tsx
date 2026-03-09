@@ -126,22 +126,22 @@ export function WorkshopRequestCard({
             {isPending && onAccept && onReject && (
               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button
-                  size="sm"
-                  variant="default"
-                  className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
+                  variant="ctaSuccess"
+                  size="ctaSm"
+                  className="w-full sm:w-auto"
                   onClick={() => onAccept(request)}
                 >
-                  <Check className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
+                  <Check className="w-3 h-3 sm:w-3 sm:h-3" />
                   Accepter
                 </Button>
                 <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-700 rounded-[32px]"
+                  variant="ctaDestructive"
+                  size="ctaSm"
+                  className="w-full sm:w-auto"
                   onClick={() => onReject(request.id)}
                   disabled={isRejecting}
                 >
-                  <X className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
+                  <X className="w-3 h-3 sm:w-3 sm:h-3" />
                   Refuser
                 </Button>
               </div>
@@ -167,22 +167,22 @@ export function WorkshopRequestCard({
           {isPending && onAccept && onReject && (
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
-                size="sm"
-                variant="default"
-                className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
+                variant="ctaSuccess"
+                size="ctaSm"
+                className="w-full sm:w-auto"
                 onClick={() => onAccept(request)}
               >
-                <Check className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
+                <Check className="w-3 h-3 sm:w-3 sm:h-3" />
                 Accepter
               </Button>
               <Button
-                size="sm"
-                variant="outline"
-                className="text-xs sm:text-sm px-3 sm:px-2 h-8 sm:h-7 w-full sm:w-auto border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-700 rounded-[32px]"
+                variant="ctaDestructive"
+                size="ctaSm"
+                className="w-full sm:w-auto"
                 onClick={() => onReject(request.id)}
                 disabled={isRejecting}
               >
-                <X className="w-3 h-3 sm:w-3 sm:h-3 mr-1.5 sm:mr-1" />
+                <X className="w-3 h-3 sm:w-3 sm:h-3" />
                 Refuser
               </Button>
             </div>

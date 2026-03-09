@@ -45,7 +45,7 @@ export class PresenceService {
     }
 
     return {
-      userId: fullAppUser.userId,
+      userId: fullAppUser.userId || appUser.id,
       isOnline: fullAppUser.isOnline || false,
       lastSeen: fullAppUser.lastSeen || null,
     };
@@ -72,8 +72,9 @@ export class PresenceService {
         });
 
         if (fullAppUser) {
-          presenceMap.set(fullAppUser.userId, {
-            userId: fullAppUser.userId,
+          const uId = fullAppUser.userId || appUser.id;
+          presenceMap.set(uId, {
+            userId: uId,
             isOnline: fullAppUser.isOnline || false,
             lastSeen: fullAppUser.lastSeen || null,
           });

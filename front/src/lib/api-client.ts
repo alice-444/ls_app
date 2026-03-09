@@ -44,22 +44,23 @@ export async function getUserData(): Promise<{
   role: "MENTOR" | "APPRENANT" | "ADMIN" | null;
   status: "PENDING" | "ACTIVE" | "UNDER_REVIEW" | "BLOCKED" | null;
 } | null> {
-  try {
-    const response = await authenticatedFetch(
-      `${API_BASE_URL}/api/profile/role`,
-      {
-        method: "GET",
-      }
-    );
-    if (!response.ok) return null;
-    const data = await response.json();
-    return {
-      role: data.role || null,
-      status: data.status || null,
-    };
-  } catch {
-    return null;
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/api/profile/role`,
+    {
+      method: "GET",
+    }
+  );
+  
+  if (response.status === 401) return null;
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user data: ${response.statusText}`);
   }
+  
+  const data = await response.json();
+  return {
+    role: data.role || null,
+    status: data.status || null,
+  };
 }
 
 export async function getUserRole(): Promise<"MENTOR" | "APPRENANT" | "ADMIN" | null> {

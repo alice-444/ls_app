@@ -29,6 +29,7 @@ import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopR
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
+import type { WorkshopDetailed, WorkshopBase } from "@/types/workshop";
 
 import RollingNumber from "@/components/ui/RollingNumber";
 
@@ -39,19 +40,6 @@ interface Connection {
   otherUserDisplayName?: string;
   otherUserPhotoUrl?: string;
   otherUserRole?: string;
-}
-
-interface WorkshopItem {
-  id: string;
-  title: string;
-  description: string | null;
-  date: string | Date | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  maxParticipants: number | null;
-  status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 }
 
 interface WorkshopRequest {
@@ -69,10 +57,10 @@ interface MentorDashboardProps {
     readonly creditsEarned: number;
     readonly studentsHelped: number;
   };
-  readonly pastWorkshops: WorkshopItem[];
+  readonly pastWorkshops: WorkshopBase[];
   readonly acceptedConnections: Connection[] | undefined;
   readonly mentorWorkshopRequests: WorkshopRequest[] | undefined;
-  readonly mentorWorkshops: WorkshopItem[] | undefined;
+  readonly mentorWorkshops: WorkshopDetailed[] | undefined;
   readonly userStatus?: string;
 }
 
@@ -217,8 +205,9 @@ export function MentorDashboard({
                     })}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
+                    variant="ctaOutline"
+                    size="cta"
+                    className="w-full"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir mes ateliers
@@ -245,24 +234,25 @@ export function MentorDashboard({
                       .map((workshop, index: number) => (
                         <div
                           key={workshop.id}
-                          className={`border-b border-[#d6dae4] dark:border-[#d6dae4] pb-3 sm:pb-4 ${
+                          className={`border-b border-border pb-3 sm:pb-4 ${
                             index === pastWorkshops.slice(0, 3).length - 1
                               ? "border-b-0 pb-0"
                               : ""
                           }`}
                         >
-                          <p className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] mb-1 sm:mb-2">
+                          <p className="text-sm sm:text-base font-semibold text-ls-heading mb-1 sm:mb-2">
                             {workshop.title}
                           </p>
-                          <p className="text-xs sm:text-sm lg:text-base text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                          <p className="text-xs sm:text-sm lg:text-base text-ls-muted">
                             {formatWorkshopDate(workshop.date)}
                           </p>
                         </div>
                       ))}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
+                    variant="ctaOutline"
+                    size="cta"
+                    className="w-full"
                     onClick={() => router.push("/my-workshops")}
                   >
                     Voir les ateliers
@@ -341,8 +331,9 @@ export function MentorDashboard({
                       })}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-ls-heading flex items-center justify-center gap-2 bg-card/80 hover:bg-brand-soft hover:border-brand"
+                    variant="ctaOutline"
+                    size="cta"
+                    className="w-full"
                     onClick={() => router.push("/network")}
                   >
                     Voir les connexions
@@ -406,26 +397,25 @@ export function MentorDashboard({
                               {request.status === "PENDING" ? (
                                 <>
                                   <Button
-                                    size="sm"
-                                    className="bg-green-600 hover:bg-green-700 text-white rounded-full h-8 px-3"
+                                    variant="ctaSuccess"
+                                    size="ctaSm"
                                     onClick={() => {
                                       setSelectedRequest(request);
                                       setShowAcceptDialog(true);
                                     }}
                                   >
-                                    <Check className="h-4 w-4 mr-1" />
+                                    <Check className="h-4 w-4" />
                                     Accepter
                                   </Button>
                                   <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-red-600 border-red-200 hover:bg-red-50 rounded-full h-8 px-3"
+                                    variant="ctaDestructive"
+                                    size="ctaSm"
                                     onClick={() => {
                                       setSelectedRequest(request);
                                       setShowRejectDialog(true);
                                     }}
                                   >
-                                    <X className="h-4 w-4 mr-1" />
+                                    <X className="h-4 w-4" />
                                     Refuser
                                   </Button>
                                 </>
@@ -477,25 +467,22 @@ export function MentorDashboard({
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex flex-wrap gap-2">
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
+                      variant="ctaOutline"
+                      size="ctaSm"
                       onClick={() => navigateCalendar("today")}
                     >
-                      Aujourd'hui
+                      Aujourd&apos;hui
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
+                      variant="ctaOutline"
+                      size="ctaSm"
                       onClick={() => navigateCalendar("prev")}
                     >
                       Précédent
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="border border-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading hover:bg-brand-soft hover:border-brand"
+                      variant="ctaOutline"
+                      size="ctaSm"
                       onClick={() => navigateCalendar("next")}
                     >
                       Suivant
@@ -569,7 +556,7 @@ export function MentorDashboard({
 
                 <div className="overflow-x-auto">
                   <WorkshopCalendar
-                    workshops={mentorWorkshops || []}
+                    workshops={(mentorWorkshops || []) as unknown as WorkshopDetailed[]}
                     height="400px"
                     userRole="MENTOR"
                     controlledDate={mentorCalendarDate}

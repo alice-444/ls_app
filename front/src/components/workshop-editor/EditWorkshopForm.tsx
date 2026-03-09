@@ -22,10 +22,10 @@ import {
   convertDurationToMinutes,
   extractDurationParts,
 } from "./WorkshopFormFields";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 
 interface EditWorkshopFormProps {
-  workshop: WorkshopBasic;
+  workshop: WorkshopDetailed;
   onSuccess?: () => void;
   onCancel?: () => void;
 }

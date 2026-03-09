@@ -2,31 +2,33 @@
 
 import { Calendar, Clock, MapPin, LinkIcon, Users, Tag } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
+import type { WorkshopBase } from "@/types/workshop";
 
 interface WorkshopDetailsProps {
-  workshop: {
-    topic?: string | null;
-    date?: Date | string | null;
-    time?: string | null;
-    duration?: number | null;
-    location?: string | null;
-    isVirtual?: boolean;
+  workshop: Partial<WorkshopBase> & {
     apprenticeId?: string | null;
-    maxParticipants?: number | null;
   };
   variant?: "default" | "hero" | "catalogue";
 }
+
+/**
+ * WorkshopDetails Component
+ * Pure presentational component that renders workshop metadata.
+ */
+const TEXT_COLOR_BY_VARIANT: Record<
+  NonNullable<WorkshopDetailsProps["variant"]>,
+  string
+> = {
+  hero: "text-blue-100",
+  catalogue: "text-ls-muted",
+  default: "text-slate-600 dark:text-slate-400",
+};
 
 export function WorkshopDetails({
   workshop,
   variant = "default",
 }: WorkshopDetailsProps) {
-  const textColor =
-    variant === "hero"
-      ? "text-blue-100"
-      : variant === "catalogue"
-        ? "text-ls-muted"
-        : "text-slate-600 dark:text-slate-400";
+  const textColor = TEXT_COLOR_BY_VARIANT[variant ?? "default"];
   const iconSize = variant === "hero" ? "w-5 h-5" : "w-4 h-4";
   const textSize = variant === "hero" ? "font-medium" : "text-sm";
 
@@ -74,4 +76,3 @@ export function WorkshopDetails({
     </>
   );
 }
-

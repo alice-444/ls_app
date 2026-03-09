@@ -6,25 +6,21 @@ import { trpc } from "@/utils/trpc";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Plus,
-  Search,
   Trash2,
   Inbox,
   Calendar,
-  MessageSquare,
   Clock,
   MapPin,
   XCircle,
 } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import {
-  formatWorkshopDate,
-  formatCalendarMonthYear,
   createNavigateCalendar,
 } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";
 import { ApprenantDashboardSidebar } from "./ApprenantDashboardSidebar";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
+import type { WorkshopDetailed, WorkshopBase } from "@/types/workshop";
 
 interface Connection {
   connectionId: string;
@@ -35,40 +31,13 @@ interface Connection {
   otherUserRole?: string;
 }
 
-interface WorkshopHistoryItem {
-  id: string;
-  title: string;
-  date: string | Date | null;
-}
-
-interface WorkshopRequest {
-  id: string;
-  title: string;
-  description?: string;
-  status: string;
-  preferredDate: string | Date | null;
-  rejectionReason?: string | null;
-}
-
-interface ConfirmedWorkshop {
-  id: string;
-  title: string;
-  description: string | null;
-  date: string | Date | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  maxParticipants: number | null;
-}
-
 interface ApprenantDashboardProps {
   readonly creditBalance: { readonly balance: number } | undefined;
   readonly mentorConnections: Connection[];
-  readonly workshopHistory: WorkshopHistoryItem[] | undefined;
+  readonly workshopHistory: WorkshopBase[] | undefined;
   readonly acceptedConnections: Connection[] | undefined;
-  readonly workshopRequests: WorkshopRequest[] | undefined;
-  readonly confirmedWorkshops: ConfirmedWorkshop[] | undefined;
+  readonly workshopRequests: any[] | undefined;
+  readonly confirmedWorkshops: WorkshopDetailed[] | undefined;
   readonly onCancelRequest: (requestId: string) => void;
   readonly onCancelConfirmed: (workshopId: string) => void;
 }
@@ -150,12 +119,11 @@ export function ApprenantDashboard({
                           <StatusBadge status={request.status} />
                           {request.status === "PENDING" && (
                             <Button
-                              variant="outline"
-                              size="sm"
-                              className="rounded-full border-red-200 text-red-600 hover:bg-red-50 h-8"
+                              variant="ctaDestructive"
+                              size="ctaSm"
                               onClick={() => onCancelRequest(request.id)}
                             >
-                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              <Trash2 className="h-3.5 w-3.5" />
                               Annuler
                             </Button>
                           )}
@@ -224,12 +192,11 @@ export function ApprenantDashboard({
                               <a href={`/workshop/${workshop.id}`}>Rejoindre</a>
                             </Button>
                             <Button
-                              variant="outline"
-                              size="sm"
-                              className="rounded-full border-red-200 text-red-600 hover:bg-red-50 h-9 px-4"
+                              variant="ctaDestructive"
+                              size="ctaSm"
                               onClick={() => onCancelConfirmed(workshop.id)}
                             >
-                              <XCircle className="h-4 w-4 mr-2" />
+                              <XCircle className="h-4 w-4" />
                               Annuler
                             </Button>
                           </div>
@@ -267,15 +234,15 @@ export function ApprenantDashboard({
                     </h3>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="rounded-full h-8" onClick={() => navigateCalendar("prev")}>Précédent</Button>
-                    <Button variant="outline" size="sm" className="rounded-full h-8" onClick={() => navigateCalendar("today")}>Aujourd'hui</Button>
-                    <Button variant="outline" size="sm" className="rounded-full h-8" onClick={() => navigateCalendar("next")}>Suivant</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("prev")}>Précédent</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("today")}>Aujourd&apos;hui</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("next")}>Suivant</Button>
                   </div>
                 </div>
 
                 <div className="overflow-x-auto">
                   <WorkshopCalendar
-                    workshops={confirmedWorkshops || []}
+                    workshops={(confirmedWorkshops || []) as unknown as WorkshopDetailed[]}
                     height="450px"
                     userRole="APPRENANT"
                     controlledDate={apprenantCalendarDate}

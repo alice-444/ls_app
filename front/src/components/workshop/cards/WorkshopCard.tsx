@@ -1,24 +1,17 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  LinkIcon,
-  Users,
-  MoreVertical,
-  User,
-  BookOpen,
-} from "lucide-react";
-import { formatDate, formatTime, getStatusBadge } from "@/lib/workshop-utils";
+import { User } from "lucide-react";
 import { WorkshopDropdownMenu } from "../WorkshopDropdownMenu";
 import { WorkshopDetails } from "../WorkshopDetails";
-import { Star } from "lucide-react";
 import type { WorkshopCardProps } from "@/types/workshop-components";
 
+/**
+ * WorkshopCard Component
+ * Displays a summary of a workshop.
+ * Follows SRP by delegating details rendering to WorkshopDetails and actions to WorkshopDropdownMenu.
+ */
 export function WorkshopCard({
   workshop,
   variant = "default",
@@ -32,7 +25,7 @@ export function WorkshopCard({
   onRequestParticipation,
   showDropdown = true,
   className = "",
-}: WorkshopCardProps) {
+}: Readonly<WorkshopCardProps>) {
   const handleCardClick = () => {
     if (onViewDetails) {
       onViewDetails(workshop.id);
@@ -43,36 +36,29 @@ export function WorkshopCard({
   const isHero = variant === "hero";
   const isCatalogue = variant === "catalogue";
 
+  // Logic to get the creator's name from different possible structures
+  const creatorName = 
+    workshop.creator?.displayName || 
+    workshop.creator?.name || 
+    workshop.creator?.user?.name || 
+    "Mentor";
+
   return (
     <Card
       className={`hover:shadow-lg transition-shadow relative ${
         isHero ? "lg:col-span-full" : ""
       } ${isCatalogue ? "cursor-pointer" : ""} ${className}`}
-      onClick={isCatalogue ? handleCardClick : undefined}
     >
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className={isPast || isCatalogue ? "flex-1" : ""}>
-            <CardTitle className={`${isHero ? "text-2xl" : "text-lg"} pr-2`}>
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex-1 min-w-0">
+            <CardTitle className={`text-ls-heading ${isHero ? "text-3xl" : "text-xl"} truncate`}>
               {workshop.title}
             </CardTitle>
-            {isCatalogue && workshop.description && (
-              <CardDescription className="line-clamp-2 mt-1">
+            {workshop.description && !isHero && (
+              <CardDescription className="line-clamp-2 mt-2 text-ls-muted">
                 {workshop.description}
               </CardDescription>
-            )}
-            {isPast && (
-              <div className="mt-2 flex items-center gap-2">
-                {workshop.status && getStatusBadge(workshop.status)}
-                {workshop.averageRating && (
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
-                      {workshop.averageRating}/5
-                    </span>
-                  </div>
-                )}
-              </div>
             )}
           </div>
           {showDropdown && !isCatalogue && (
@@ -96,44 +82,43 @@ export function WorkshopCard({
         >
           {isCatalogue && workshop.creator && (
             <div className="flex items-center gap-2 text-sm mb-3">
-              <User className="h-4 w-4 text-slate-500" />
-              <span className="text-slate-600 dark:text-slate-400 font-medium">
-                {workshop.creator.user?.name || "Mentor"}
+              <User className="h-4 w-4 text-ls-muted" />
+              <span className="text-ls-heading font-medium">
+                {creatorName}
               </span>
             </div>
           )}
           <WorkshopDetails
             workshop={workshop}
-            variant={isHero ? "hero" : "default"}
+            variant={isHero ? "hero" : isCatalogue ? "catalogue" : "default"}
           />
         </div>
+        
         {isPast && onDuplicate && (
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-4 pt-4 border-t border-ls-border">
             <Button
-              variant="outline"
-              size="sm"
+              variant="ctaOutline"
+              size="cta"
               className="w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDuplicate(workshop.id);
-              }}
+              onClick={() => onDuplicate(workshop.id)}
             >
-              Dupliquer cet atelier
+              Reprogrammer cet atelier
             </Button>
           </div>
         )}
+
         {isCatalogue && onRequestParticipation && (
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-4 pt-4 border-t border-ls-border">
             <Button
-              size="sm"
-              className="w-full gap-2"
+              variant="cta"
+              size="cta"
+              className="w-full"
               onClick={(e) => {
                 e.stopPropagation();
                 onRequestParticipation(workshop);
               }}
             >
-              <BookOpen className="h-4 w-4" />
-              Demander à participer
+              Proposer un créneau
             </Button>
           </div>
         )}
@@ -141,4 +126,3 @@ export function WorkshopCard({
     </Card>
   );
 }
-

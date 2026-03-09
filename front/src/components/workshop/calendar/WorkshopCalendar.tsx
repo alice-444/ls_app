@@ -7,7 +7,7 @@ import { format, parse, getDay } from "date-fns";
 import { fr } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./WorkshopCalendar.css";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 import { calculateEndTime } from "@/lib/workshop-utils";
 import type { WorkshopCalendarProps } from "@/types/workshop-components";
 
@@ -109,8 +109,8 @@ export function WorkshopCalendar({
       .filter((event): event is NonNullable<typeof event> => event !== null);
   }, [workshops, showOnlyConfirmed, userRole]);
 
-  const eventStyleGetter = (event: { resource?: WorkshopBasic }) => {
-    const workshop = event.resource as WorkshopBasic;
+  const eventStyleGetter = (event: { resource?: WorkshopDetailed }) => {
+    const workshop = event.resource as WorkshopDetailed;
     let backgroundColor = workshop.isVirtual ? "#4A90E2" : "#26547C";
 
     if (userRole === "APPRENANT") {
@@ -130,7 +130,7 @@ export function WorkshopCalendar({
     };
   };
 
-  const handleSelectEvent = (event: { resource?: WorkshopBasic }) => {
+  const handleSelectEvent = (event: { resource?: WorkshopDetailed }) => {
     if (event.resource) {
       onSelectEvent(event.resource);
     }

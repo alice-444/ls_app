@@ -1,6 +1,6 @@
 import type { View } from "react-big-calendar";
 import DailyIframe from "@daily-co/daily-js";
-import type { WorkshopBasic, WorkshopRequest } from "./workshop";
+import type { WorkshopBase, WorkshopDetailed, WorkshopRequest } from "./workshop";
 
 // ============================================================================
 // Daily Video Call Types
@@ -18,9 +18,9 @@ export type DailyCallFrame = ReturnType<typeof DailyIframe.createFrame>;
 // ============================================================================
 
 export interface WorkshopCalendarProps {
-  readonly workshops: readonly WorkshopBasic[];
+  readonly workshops: readonly WorkshopDetailed[];
   readonly height?: string;
-  readonly onSelectEvent: (workshop: WorkshopBasic) => void;
+  readonly onSelectEvent: (workshop: WorkshopDetailed) => void;
   readonly showOnlyConfirmed?: boolean;
   readonly userRole?: "MENTOR" | "APPRENANT";
   readonly controlledDate?: Date;
@@ -61,26 +61,7 @@ export interface AttendanceManagementCardProps {
 }
 
 export interface WorkshopCardProps {
-  workshop: {
-    id: string;
-    title: string;
-    description?: string | null;
-    date?: Date | string | null;
-    time?: string | null;
-    duration?: number | null;
-    location?: string | null;
-    isVirtual?: boolean;
-    apprenticeId?: string | null;
-    maxParticipants?: number | null;
-    status?: string;
-    averageRating?: number | null;
-    creator?: {
-      id: string;
-      user?: {
-        name: string | null;
-      } | null;
-    } | null;
-  };
+  workshop: WorkshopDetailed;
   variant?: "default" | "hero" | "past" | "catalogue";
   onViewDetails?: (workshopId: string) => void;
   onViewParticipants?: (workshopId: string) => void;
@@ -89,7 +70,7 @@ export interface WorkshopCardProps {
   onDelete?: (workshopId: string) => void;
   onDuplicate?: (workshopId: string) => void;
   onComplete?: (workshopId: string) => void;
-  onRequestParticipation?: (workshop: any) => void;
+  onRequestParticipation?: (workshop: WorkshopDetailed) => void;
   showDropdown?: boolean;
   className?: string;
 }
@@ -158,17 +139,8 @@ export interface JoinVideoButtonProps {
 // ============================================================================
 
 export interface WorkshopListItemProps {
-  workshop: {
-    id: string;
-    title: string;
-    description?: string | null;
-    status: string;
-    date?: Date | string | null;
-    time?: string | null;
-    duration?: number | null;
-    maxParticipants?: number | null;
+  workshop: WorkshopBase & {
     apprenticeId?: string | null;
-    createdAt: Date | string;
   };
   expandedWorkshopId: string | null;
   onExpand: (id: string | null) => void;

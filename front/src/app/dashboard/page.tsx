@@ -36,6 +36,7 @@ export default function Dashboard() {
     mentorWorkshopRequests,
     mentorWorkshops,
     mentorStats,
+    pastWorkshops,
     showFeedbackDialog,
     setShowFeedbackDialog,
     selectedFeedbackWorkshopId,
@@ -84,8 +85,8 @@ export default function Dashboard() {
           mentorConnections={mentorConnections}
           workshopHistory={workshopHistory}
           acceptedConnections={acceptedConnections}
-          workshopRequests={workshopRequests}
-          confirmedWorkshops={confirmedWorkshops}
+          workshopRequests={workshopRequests as any}
+          confirmedWorkshops={confirmedWorkshops as any}
           onCancelRequest={(requestId) =>
             cancelRequestMutation.mutate({ requestId })
           }
@@ -102,10 +103,10 @@ export default function Dashboard() {
         >
         <MentorDashboard
           mentorStats={mentorStats}
-          pastWorkshops={[]}
+          pastWorkshops={pastWorkshops as any}
           acceptedConnections={acceptedConnections}
-          mentorWorkshopRequests={mentorWorkshopRequests}
-          mentorWorkshops={mentorWorkshops}
+          mentorWorkshopRequests={mentorWorkshopRequests as any}
+          mentorWorkshops={mentorWorkshops as any}
           userStatus={userStatus}
         />
         </motion.div>

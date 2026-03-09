@@ -23,8 +23,8 @@ import { formatDate, formatTime } from "@/lib/workshop-utils";
 import { renderStars } from "@/lib/rating-utils";
 import { useRouter } from "next/navigation";
 import type {
-  WorkshopBasic,
-  WorkshopWithFeedback,
+  WorkshopBase,
+  WorkshopDetailed,
 } from "@/types/workshop";
 import { RequestWorkshopParticipationDialog } from "./RequestWorkshopParticipationDialog";
 
@@ -153,7 +153,7 @@ export function MentorWorkshopHistory({
                   Ateliers à venir ({upcoming.length})
                 </h3>
                 <div className="space-y-4">
-                  {upcoming.map((workshop: WorkshopBasic) => (
+                  {upcoming.map((workshop: WorkshopBase) => (
                       <div
                         key={workshop.id}
                         className="p-4 border rounded-lg hover:shadow-md transition-shadow"
@@ -246,7 +246,7 @@ export function MentorWorkshopHistory({
                   Ateliers passés ({past.length})
                 </h3>
                 <div className="space-y-4">
-                  {past.map((workshop: WorkshopWithFeedback) => (
+                  {past.map((workshop: WorkshopDetailed) => (
                       <div
                         key={workshop.id}
                         className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-900/20"
@@ -304,7 +304,7 @@ export function MentorWorkshopHistory({
                             </span>
                           </div>
                         </div>
-                        {workshop.feedbackCount > 0 &&
+                        {(workshop.feedbackCount ?? 0) > 0 &&
                           workshop.averageRating && (
                             <div className="flex items-center gap-2 pt-3 border-t">
                               <div className="flex items-center">
@@ -314,8 +314,7 @@ export function MentorWorkshopHistory({
                                 {workshop.averageRating.toFixed(1)}
                               </span>
                               <span className="text-sm text-muted-foreground">
-                                ({workshop.feedbackCount} avis
-                                {workshop.feedbackCount > 1 ? "" : ""})
+                                ({workshop.feedbackCount} avis)
                               </span>
                             </div>
                           )}
@@ -340,7 +339,7 @@ export function MentorWorkshopHistory({
           }}
           mentorId={mentorId}
           mentorName={mentorName}
-          preselectedWorkshopId={selectedWorkshopId}
+          workshopId={selectedWorkshopId}
         />
       )}
     </Card>

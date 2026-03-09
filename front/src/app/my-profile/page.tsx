@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/card";
 import {
   Linkedin,
-  Twitter,
   Youtube,
+  X,
   Github,
   Calendar,
   Edit,
@@ -30,6 +30,7 @@ import { getMentorProfile, API_BASE_URL, getUserRole } from "@/lib/api-client";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
+import type { WorkshopDetailed } from "@/types/workshop";
 
 interface MentorProfile {
   name: string | null;
@@ -66,7 +67,7 @@ export default function MyProfilePage() {
     {
       enabled: !!session && userRole === "MENTOR",
     }
-  );
+  ) as { data: WorkshopDetailed[] | undefined };
 
   useEffect(() => {
     if (!session && !isSessionPending) {
@@ -266,9 +267,9 @@ export default function MyProfilePage() {
 
                   {profile.iceBreakerTags && profile.iceBreakerTags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {profile.iceBreakerTags.map((tag, index) => (
+                      {profile.iceBreakerTags.map((tag) => (
                         <span
-                          key={index}
+                          key={tag}
                           className="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold border border-indigo-100"
                         >
                           {tag}
@@ -295,9 +296,9 @@ export default function MyProfilePage() {
                   <div className="mt-8 pt-6 border-t border-[#d6dae4]/50">
                     <h3 className="font-bold text-[#26547c] mb-3">Domaines d'expertise</h3>
                     <div className="flex flex-wrap gap-2">
-                      {profile.areasOfExpertise.map((area, index) => (
+                      {profile.areasOfExpertise.map((area) => (
                         <span
-                          key={index}
+                          key={area}
                           className="px-3 py-1 bg-indigo-100/50 text-indigo-800 rounded-full text-sm font-medium"
                         >
                           {area}
@@ -312,9 +313,9 @@ export default function MyProfilePage() {
                   <div className="mt-6 pt-6 border-t border-[#d6dae4]/50">
                     <h3 className="font-bold text-[#26547c] mb-3">Sujets de mentorat</h3>
                     <div className="flex flex-wrap gap-2">
-                      {profile.mentorshipTopics.map((topic, index) => (
+                      {profile.mentorshipTopics.map((topic) => (
                         <span
-                          key={index}
+                          key={topic}
                           className="px-3 py-1 bg-purple-100/50 text-purple-800 rounded-full text-sm font-medium"
                         >
                           {topic}
@@ -384,8 +385,8 @@ export default function MyProfilePage() {
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-xl hover:bg-sky-100 transition-colors font-medium border border-sky-100"
                         >
-                          <Twitter className="h-5 w-5" />
-                          Twitter
+                          <X className="h-5 w-5" />
+                          X
                         </a>
                       )}
                       {profile.socialMediaLinks.github && (

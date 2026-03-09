@@ -9,11 +9,15 @@ export class PrismaMentorRepository implements IMentorRepository {
   constructor(private readonly prisma: any) {}
 
   async findPublishedMentorById(id: string): Promise<MentorEntity | null> {
-    const mentor = await this.prisma.user.findUnique({
-      where: { id },
+    const mentor = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ id }, { userId: id }],
+        role: "MENTOR",
+        isPublished: true,
+      },
     });
 
-    if (!mentor || !mentor.isPublished || mentor.role !== "MENTOR") {
+    if (!mentor) {
       return null;
     }
 
@@ -24,10 +28,11 @@ export class PrismaMentorRepository implements IMentorRepository {
     const mentor = await this.prisma.user.findFirst({
       where: {
         OR: [{ id }, { userId: id }],
+        role: "MENTOR",
       },
     });
 
-    if (!mentor || mentor.role !== "MENTOR") {
+    if (!mentor) {
       return null;
     }
 
@@ -35,8 +40,10 @@ export class PrismaMentorRepository implements IMentorRepository {
   }
 
   async findApprenticeByUserId(userId: string): Promise<MentorEntity | null> {
-    const apprentice = await this.prisma.user.findUnique({
-      where: { userId },
+    const apprentice = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ id: userId }, { userId: userId }],
+      },
     });
 
     return apprentice as MentorEntity | null;

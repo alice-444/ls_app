@@ -17,21 +17,14 @@ import {
 } from "lucide-react";
 import { Users } from "lucide-react";
 import { formatDate } from "@/lib/workshop-utils";
-
-interface Workshop {
-  id: string;
-  title: string;
-  date: Date | string | null;
-  status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-  apprenticeAttendanceStatus?: "PENDING" | "PRESENT" | "NO_SHOW" | null;
-}
+import type { WorkshopDetailed } from "@/types/workshop";
 
 interface ApprenticeSidebarProps {
-  readonly workshopHistory: Workshop[] | undefined;
+  readonly workshopHistory: WorkshopDetailed[] | undefined;
   readonly titleData: { title?: string } | undefined;
 }
 
-function getWorkshopFinalStatus(workshop: Workshop): string {
+function getWorkshopFinalStatus(workshop: WorkshopDetailed): string {
   if (workshop.status === "CANCELLED") return "Annulé";
   if (workshop.apprenticeAttendanceStatus === "NO_SHOW") return "Absent";
   return "Terminé";
@@ -149,7 +142,7 @@ function HistoryCard({
   workshopHistory,
   router,
 }: {
-  readonly workshopHistory: Workshop[] | undefined;
+  readonly workshopHistory: WorkshopDetailed[] | undefined;
   readonly router: ReturnType<typeof useRouter>;
 }) {
   return (

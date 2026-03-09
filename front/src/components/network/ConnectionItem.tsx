@@ -60,32 +60,29 @@ export function ConnectionItem({
       </div>
       <div className="flex flex-wrap gap-2">
         <Button
-          size="sm"
-          variant="outline"
+          variant="ctaOutline"
+          size="ctaSm"
           onClick={onViewProfile}
-          className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
         >
-          <UserCircle className="h-4 w-4 mr-2" />
+          <UserCircle className="h-4 w-4" />
           Voir le profil
         </Button>
         <Button
-          size="sm"
-          variant="outline"
+          variant="ctaOutline"
+          size="ctaSm"
           onClick={() => onMessage?.(connection.otherUserId)}
           disabled={!onMessage}
-          className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full disabled:opacity-50"
         >
-          <MessageSquare className="h-4 w-4 mr-2" />
+          <MessageSquare className="h-4 w-4" />
           Message
         </Button>
         <Button
-          size="sm"
-          variant="outline"
+          variant="ctaDestructive"
+          size="ctaSm"
           onClick={onRemove}
           disabled={isRemoving}
-          className="border border-destructive bg-card/80 text-destructive hover:bg-destructive/10 rounded-full"
         >
-          <UserMinus className="h-4 w-4 mr-2" />
+          <UserMinus className="h-4 w-4" />
           Retirer
         </Button>
       </div>
