@@ -19,19 +19,10 @@ import {
 } from "lucide-react";
 import { formatDate, formatTime, formatCountdown } from "@/lib/workshop-utils";
 import { useRouter } from "next/navigation";
+import type { WorkshopBase } from "@/types/workshop";
 
 interface NextWorkshopCardProps {
-  workshop: {
-    id: string;
-    title: string;
-    date: Date | string;
-    time: string;
-    duration?: number | null;
-    location?: string | null;
-    isVirtual: boolean;
-    maxParticipants?: number | null;
-    apprenticeId?: string | null;
-  };
+  workshop: WorkshopBase & { apprenticeId?: string | null };
   countdown: ReturnType<
     typeof import("@/lib/workshop-utils").calculateCountdown
   >;
