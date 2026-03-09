@@ -21,7 +21,7 @@ interface MemberDirectoryProps {
 
 export function MemberDirectory({ members }: MemberDirectoryProps) {
   return (
-    <Card className="border-ls-border bg-ls-surface shadow-sm overflow-hidden">
+    <Card className="border border-border/50 bg-card/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2 text-ls-blue mb-1">
           <Users className="w-4 h-4" />
@@ -32,12 +32,12 @@ export function MemberDirectory({ members }: MemberDirectoryProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="px-0">
-        <div className="divide-y divide-ls-border/30">
+        <div className="divide-y divide-border/30">
           {members.map((member) => (
-            <div key={member.id} className="flex items-center justify-between p-4 hover:bg-ls-blue-soft/10 transition-all group">
+            <div key={member.id} className="flex items-center justify-between p-4 hover:bg-brand-soft/30 transition-all group">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <Avatar className="w-10 h-10 border-2 border-ls-border group-hover:border-brand transition-colors">
+                  <Avatar className="w-10 h-10 border-2 border-border group-hover:border-brand transition-colors">
                     {member.photoUrl && <AvatarImage src={member.photoUrl} alt={member.name} />}
                     <AvatarFallback className="bg-ls-blue-soft text-ls-blue font-bold">
                       {member.name.charAt(0)}
@@ -61,7 +61,7 @@ export function MemberDirectory({ members }: MemberDirectoryProps) {
           ))}
         </div>
         <div className="p-4 pt-2">
-          <Button variant="outline" className="w-full rounded-full text-xs font-bold border-ls-border text-ls-heading hover:border-brand hover:text-brand h-10" asChild>
+          <Button variant="ctaOutline" size="cta" className="w-full text-xs font-bold h-10" asChild>
             <Link href="/mentors">Voir tout le monde</Link>
           </Button>
         </div>

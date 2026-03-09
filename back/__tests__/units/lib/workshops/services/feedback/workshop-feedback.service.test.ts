@@ -6,7 +6,7 @@ describe("WorkshopFeedbackService", () => {
   const mockFeedbackRepo = {
     create: vi.fn(),
     findByWorkshopId: vi.fn(),
-    findByApprenticeAndWorkshop: vi.fn(),
+    findByApprenticeIdAndWorkshopId: vi.fn(),
   };
   const mockWorkshopService = {
     getWorkshopById: vi.fn(),
@@ -50,7 +50,7 @@ describe("WorkshopFeedbackService", () => {
         status: "COMPLETED",
       };
       mockWorkshopService.getWorkshopById.mockResolvedValue(success(wsData as any));
-      mockFeedbackRepo.findByApprenticeAndWorkshop.mockResolvedValue(null);
+      mockFeedbackRepo.findByApprenticeIdAndWorkshopId.mockResolvedValue(null);
 
       const result = await service.canSubmitFeedback("user-1", "ws-1");
       expect(result.ok).toBe(true);
@@ -78,7 +78,7 @@ describe("WorkshopFeedbackService", () => {
         duration: 60,
       };
       mockWorkshopService.getWorkshopById.mockResolvedValue(success(wsData as any));
-      mockFeedbackRepo.findByApprenticeAndWorkshop.mockResolvedValue(null);
+      mockFeedbackRepo.findByApprenticeIdAndWorkshopId.mockResolvedValue(null);
       mockFeedbackRepo.create.mockResolvedValue({ id: "fb-new" });
       mockCreditService.creditCredits.mockResolvedValue(success({}));
 

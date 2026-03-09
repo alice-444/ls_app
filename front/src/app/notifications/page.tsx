@@ -26,9 +26,10 @@ import { useSocket } from "@/lib/socket-client";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageCard } from "@/components/layout/PageCard";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
 
 export default function NotificationsPage() {
   const router = useRouter();
@@ -199,22 +200,36 @@ export default function NotificationsPage() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Notifications"
-        subtitle="Restez informé de vos activités et mises à jour"
-      />
+      <motion.div
+        className="mb-6 sm:mb-8"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+          <ShinyText text="Notifications" />
+        </h1>
+        <p className="text-base sm:text-lg text-ls-muted mt-2">
+          Reste informé de tes activités et mises à jour
+        </p>
+      </motion.div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mb-6">
+      <motion.div
+        className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mb-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
         <div className="flex flex-wrap gap-3">
           <Button
             variant={filter === "all" ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter("all")}
-            className={`${
+            className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${
               filter === "all"
-                ? "bg-[#ffb647] border border-[#ffb647] text-[#161616] hover:bg-[#ff9f1a]"
-                : "border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] bg-white dark:bg-transparent"
-            } rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold`}
+                ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
+                : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
+            }`}
           >
             <Filter className="h-4 w-4 mr-2" />
             Toutes ({notifications?.length || 0})
@@ -223,11 +238,11 @@ export default function NotificationsPage() {
             variant={filter === "unread" ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter("unread")}
-            className={`${
+            className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${
               filter === "unread"
-                ? "bg-[#ffb647] border border-[#ffb647] text-[#161616] hover:bg-[#ff9f1a]"
-                : "border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] bg-white dark:bg-transparent"
-            } rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold`}
+                ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
+                : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
+            }`}
           >
             Non lues ({unreadCountValue})
           </Button>
@@ -237,7 +252,7 @@ export default function NotificationsPage() {
             variant="outline"
             size="sm"
             onClick={() => setShowSettings(!showSettings)}
-            className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold bg-white dark:bg-transparent flex items-center gap-2"
+            className="rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold border-border text-ls-heading hover:bg-brand/10 hover:border-brand flex items-center gap-2"
           >
             <Settings className="h-4 w-4" />
             Paramètres
@@ -252,28 +267,28 @@ export default function NotificationsPage() {
             size="sm"
             onClick={markAllAsRead}
             disabled={unreadCountValue === 0 || markAllAsReadMutation.isPending}
-            className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold bg-white dark:bg-transparent flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold border-border text-ls-heading hover:bg-brand/10 hover:border-brand flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <CheckCircle className="h-4 w-4" />
             Tout marquer comme lu
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {showSettings && (
         <PageCard
           title="Paramètres des notifications"
-          description="Configurez tes préférences de notifications"
-          className="mb-6"
+          description="Configure tes préférences de notifications"
+          className="mb-6 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl"
           headerClassName="flex items-center gap-2"
         >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="font-medium text-sm text-[#26547c] dark:text-[#e6e6e6]">
+                <p className="font-medium text-sm text-ls-heading">
                   Notifications par email
                 </p>
-                <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                <p className="text-xs text-ls-muted">
                   Recevoir des notifications par email
                 </p>
               </div>
@@ -290,11 +305,11 @@ export default function NotificationsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="font-medium text-sm text-[#26547c] dark:text-[#e6e6e6]">
+                <p className="font-medium text-sm text-ls-heading">
                   Nouveaux followers
                 </p>
-                <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-                  Quand quelqu'un vous suit
+                <p className="text-xs text-ls-muted">
+                  Quand quelqu'un te suit
                 </p>
               </div>
               <Switch
@@ -310,11 +325,11 @@ export default function NotificationsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="font-medium text-sm text-[#26547c] dark:text-[#e6e6e6]">
+                <p className="font-medium text-sm text-ls-heading">
                   Nouvelles évaluations
                 </p>
-                <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-                  Quand vous recevez une évaluation
+                <p className="text-xs text-ls-muted">
+                  Quand tu reçois une évaluation
                 </p>
               </div>
               <Switch
@@ -331,18 +346,23 @@ export default function NotificationsPage() {
         </PageCard>
       )}
 
-      <div className="space-y-4">
+      <motion.div
+        className="space-y-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+      >
         {filteredNotifications.length === 0 ? (
-          <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] shadow-lg">
+          <Card className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl">
             <CardContent className="text-center py-8 sm:py-12 px-4 sm:px-6">
-              <Bell className="h-12 w-16 sm:h-16 sm:w-16 mx-auto mb-4 text-[rgba(38,84,124,0.32)] dark:text-[rgba(230,230,230,0.32)]" />
-              <h3 className="text-base sm:text-lg font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">
+              <Bell className="h-12 w-16 sm:h-16 sm:w-16 mx-auto mb-4 text-ls-muted opacity-50" />
+              <h3 className="text-base sm:text-lg font-medium mb-2 text-ls-heading">
                 Aucune notification
               </h3>
-              <p className="text-xs sm:text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+              <p className="text-xs sm:text-sm text-ls-muted">
                 {filter === "unread"
-                  ? "Toutes vos notifications ont été lues"
-                  : "Vous n'avez pas encore de notifications"}
+                  ? "Toutes tes notifications ont été lues"
+                  : "Tu n'as pas encore de notifications"}
               </p>
             </CardContent>
           </Card>
@@ -361,13 +381,13 @@ export default function NotificationsPage() {
               return (
                 <Card
                   key={notification.id}
-                  className={`transition-all duration-200 bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] shadow-sm ${
+                  className={`transition-all duration-200 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl ${
                     isUnread
-                      ? "border-l-4 border-l-[#ffb647] bg-[rgba(255,182,71,0.05)] dark:bg-[rgba(255,182,71,0.1)]"
+                      ? "border-l-4 border-l-brand bg-brand/5"
                       : ""
                   } ${
                     notification.actionUrl
-                      ? "cursor-pointer hover:shadow-md"
+                      ? "cursor-pointer hover:shadow-lg hover:border-brand/30"
                       : ""
                   }`}
                   onClick={() => handleNotificationClick(notification)}
@@ -375,13 +395,13 @@ export default function NotificationsPage() {
                   <CardContent className="p-4 sm:p-5">
                     <div className="flex items-start gap-3 sm:gap-4">
                       <div
-                        className={`p-2 sm:p-3 rounded-[12px] shrink-0 ${
+                        className={`p-2 sm:p-3 rounded-2xl shrink-0 ${
                           isUnread
-                            ? "bg-[rgba(255,182,71,0.15)] dark:bg-[rgba(255,182,71,0.25)]"
-                            : "bg-[rgba(38,84,124,0.1)] dark:bg-[rgba(74,144,226,0.2)]"
+                            ? "bg-brand/15"
+                            : "bg-muted/50"
                         }`}
                       >
-                        <div className="text-[#26547c] dark:text-[#e6e6e6]">
+                        <div className={isUnread ? "text-brand" : "text-ls-muted"}>
                           {getNotificationIcon(notification.type)}
                         </div>
                       </div>
@@ -392,13 +412,13 @@ export default function NotificationsPage() {
                             <h3
                               className={`font-semibold text-sm sm:text-base mb-1 ${
                                 isUnread
-                                  ? "text-[#26547c] dark:text-[#e6e6e6]"
-                                  : "text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]"
+                                  ? "text-ls-heading"
+                                  : "text-ls-muted"
                               }`}
                             >
                               {notification.title}
                             </h3>
-                            <p className="text-xs sm:text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                            <p className="text-xs sm:text-sm text-ls-muted">
                               {notification.message}
                             </p>
                           </div>
@@ -406,15 +426,15 @@ export default function NotificationsPage() {
                           <div className="flex flex-wrap items-center gap-2">
                             <Badge
                               variant="outline"
-                              className="text-xs border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#26547c] dark:text-[#e6e6e6] bg-white dark:bg-transparent"
+                              className="text-xs border border-border text-ls-heading rounded-full"
                             >
                               {getTypeLabel(notification.type)}
                             </Badge>
                           </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 pt-2 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-                          <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 pt-2 border-t border-border">
+                          <span className="text-xs text-ls-muted">
                             {formatDistanceToNow(
                               new Date(notification.createdAt),
                               {
@@ -431,7 +451,7 @@ export default function NotificationsPage() {
                                 size="sm"
                                 onClick={(e) => markAsRead(notification.id, e)}
                                 disabled={markAsReadMutation.isPending}
-                                className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px] h-8 px-3 text-xs font-semibold bg-white dark:bg-transparent"
+                                className="rounded-full h-8 px-3 text-xs font-semibold border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
                               >
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 Marquer comme lu
@@ -446,7 +466,7 @@ export default function NotificationsPage() {
                                   e.stopPropagation();
                                   router.push(notification.actionUrl!);
                                 }}
-                                className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px] h-8 px-3 text-xs font-semibold bg-white dark:bg-transparent"
+                                className="rounded-full h-8 px-3 text-xs font-semibold border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
                               >
                                 Voir
                               </Button>
@@ -459,7 +479,7 @@ export default function NotificationsPage() {
                                 deleteNotification(notification.id, e)
                               }
                               disabled={deleteNotificationMutation.isPending}
-                              className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] text-[#f44336] dark:text-[#f44336] hover:bg-[rgba(244,67,54,0.1)] dark:hover:bg-[rgba(244,67,54,0.15)] hover:border-[#f44336] dark:hover:border-[#f44336] rounded-[32px] h-8 w-8 p-0 bg-white dark:bg-transparent"
+                              className="rounded-full h-8 w-8 p-0 border-border text-destructive hover:bg-destructive/10 hover:border-destructive"
                             >
                               <Trash2 className="h-3 w-3" />
                             </Button>
@@ -473,7 +493,7 @@ export default function NotificationsPage() {
             }
           )
         )}
-      </div>
+      </motion.div>
     </PageContainer>
   );
 }

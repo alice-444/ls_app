@@ -35,7 +35,7 @@ export function WorkshopFiltersBar({
   onSortOrderToggle,
 }: WorkshopFiltersBarProps) {
   return (
-    <Card className="mb-6 bg-ls-surface border border-ls-border rounded-[16px]">
+    <Card className="mb-6 bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardContent className="pt-6">
         <div className="flex flex-col gap-4">
           <div className="relative flex-1">
@@ -44,7 +44,7 @@ export function WorkshopFiltersBar({
               placeholder="Rechercher un atelier par titre ou description..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10 bg-ls-input-bg border-ls-border text-ls-text"
+              className="pl-10 bg-ls-input-bg border-ls-border text-ls-text rounded-full"
             />
           </div>
 
@@ -83,7 +83,7 @@ export function WorkshopFiltersBar({
             <Button
               variant="outline"
               onClick={onSortOrderToggle}
-              className="w-full md:w-auto border-ls-border text-ls-heading hover:bg-brand-soft rounded-[32px]"
+              className="w-full md:w-auto border-ls-border text-ls-heading hover:bg-brand-soft rounded-full"
             >
               {sortOrder === "asc" ? "↑ Croissant" : "↓ Décroissant"}
             </Button>

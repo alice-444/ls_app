@@ -31,19 +31,20 @@ export function DeleteConversationDialog({
         <DialogHeader>
           <DialogTitle>Supprimer la conversation</DialogTitle>
           <DialogDescription>
-            Êtes-vous sûr de vouloir supprimer {conversationName} ? Cette action
+            Es-tu sûr de vouloir supprimer {conversationName} ? Cette action
             est irréversible et tous les messages seront définitivement
             supprimés.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isDeleting}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isDeleting} className="rounded-full">
             Annuler
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             disabled={isDeleting}
+            className="rounded-full"
           >
             {isDeleting ? "Suppression..." : "Supprimer"}
           </Button>

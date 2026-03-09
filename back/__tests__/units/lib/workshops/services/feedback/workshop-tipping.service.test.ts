@@ -22,18 +22,22 @@ describe("WorkshopTippingService", () => {
   });
 
   describe("sendTip", () => {
-    it("returns failure for invalid amount (not 1 or 2)", async () => {
-      const result = await service.sendTip("from", "to", 3);
+    it("returns failure for invalid amount (less than 1)", async () => {
+      const result = await service.sendTip("from", "to", 0);
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error).toContain("1 ou 2");
+        expect(result.error).toContain("1 à 100");
         expect(result.status).toBe(400);
       }
     });
 
-    it("returns failure for amount of 0", async () => {
-      const result = await service.sendTip("from", "to", 0);
+    it("returns failure for invalid amount (more than 100)", async () => {
+      const result = await service.sendTip("from", "to", 101);
       expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error).toContain("1 à 100");
+        expect(result.status).toBe(400);
+      }
     });
 
     it("returns failure when balance check fails", async () => {

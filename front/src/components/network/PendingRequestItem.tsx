@@ -34,7 +34,7 @@ export function PendingRequestItem({
   isProcessing,
 }: PendingRequestItemProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] bg-white dark:bg-[rgba(255,255,255,0.08)] gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-border/50 rounded-2xl bg-card/80 gap-4">
       <div className="flex items-center gap-4">
         {request.requesterPhotoUrl ? (
           <Image
@@ -50,13 +50,13 @@ export function PendingRequestItem({
           </div>
         )}
         <div>
-          <p className="font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+          <p className="font-semibold text-ls-heading">
             {request.requesterDisplayName ||
               request.requesterName ||
               "Utilisateur"}
           </p>
-          <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            souhaite rejoindre votre réseau
+          <p className="text-sm text-ls-muted">
+            souhaite rejoindre ton réseau
           </p>
         </div>
       </div>
@@ -65,7 +65,7 @@ export function PendingRequestItem({
           size="sm"
           variant="outline"
           onClick={onViewProfile}
-          className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+          className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
         >
           <UserCircle className="h-4 w-4 mr-2" />
           Voir le profil
@@ -75,7 +75,7 @@ export function PendingRequestItem({
           variant="outline"
           disabled
           title="La messagerie sera disponible prochainement"
-          className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] rounded-[32px]"
+          className="border border-border bg-card/80 text-ls-muted rounded-full"
         >
           <MessageSquare className="h-4 w-4 mr-2" />
           Message
@@ -84,7 +84,7 @@ export function PendingRequestItem({
           size="sm"
           onClick={onAccept}
           disabled={isProcessing}
-          className="bg-[#34b162] hover:bg-[#2a9d52] dark:bg-[#34b162] dark:hover:bg-[#2a9d52] text-white rounded-[32px]"
+          className="bg-green-600 hover:bg-green-700 text-white rounded-full"
         >
           <CheckCircle className="h-4 w-4 mr-2" />
           Accepter
@@ -94,7 +94,7 @@ export function PendingRequestItem({
           variant="outline"
           onClick={onReject}
           disabled={isProcessing}
-          className="border border-[#f44336] dark:border-[#f44336] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#f44336] dark:text-[#f44336] hover:bg-[rgba(244,67,54,0.1)] dark:hover:bg-[rgba(244,67,54,0.15)] rounded-[32px]"
+          className="border border-destructive bg-card/80 text-destructive hover:bg-destructive/10 rounded-full"
         >
           <XCircle className="h-4 w-4 mr-2" />
           Refuser

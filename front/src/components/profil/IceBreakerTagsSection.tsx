@@ -57,16 +57,16 @@ export function IceBreakerTagsSection({
   return (
     <div className={blockCard}>
       <div className="flex items-center gap-2 mb-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#FF8C42]/10">
-          <Tag className="h-4 w-4 text-[#FF8C42]" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand/15">
+          <Tag className="h-4 w-4 text-brand" />
         </div>
         <div className="flex-1 flex items-center justify-between gap-2 flex-wrap">
-          <h2 className="text-sm font-semibold text-[#26547c] dark:text-[#e6e6e6] uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-ls-heading uppercase tracking-wide">
             Tags Ice Breaker
           </h2>
           <Badge
             variant="secondary"
-            className="text-xs bg-[#FF8C42]/10 text-[#FF8C42] border-0"
+            className="text-xs bg-brand/10 text-brand border-0 rounded-full"
           >
             {tags.length}/{MAX_TAGS}
           </Badge>
@@ -86,14 +86,14 @@ export function IceBreakerTagsSection({
           placeholder="Ex: Gamer, Football..."
           maxLength={30}
           disabled={tags.length >= MAX_TAGS}
-          className="flex-1"
+          className="flex-1 rounded-full border-border"
         />
         <Button
           type="button"
           onClick={addTag}
           disabled={tags.length >= MAX_TAGS || !tagInput.trim()}
           variant="outline"
-          className="sm:shrink-0 border-[#26547c]/50 text-[#26547c] hover:bg-[#26547c]/10 hover:border-[#26547c] dark:border-[#26547c]/60 dark:text-[#e6e6e6] dark:hover:bg-[#26547c]/20"
+          className="sm:shrink-0 rounded-full border-border hover:bg-brand-soft hover:border-brand"
         >
           Ajouter
         </Button>
@@ -110,8 +110,8 @@ export function IceBreakerTagsSection({
               className={cn(
                 "px-2.5 py-1 rounded-full text-xs font-medium transition-colors",
                 added
-                  ? "bg-[#FF8C42]/20 text-[#FF8C42] cursor-default"
-                  : "bg-[#FF8C42]/10 text-[#FF8C42] hover:bg-[#FF8C42]/20 disabled:opacity-50"
+                  ? "bg-brand/20 text-brand cursor-default"
+                  : "bg-brand/10 text-brand hover:bg-brand/20 disabled:opacity-50"
               )}
             >
               {suggestion}
@@ -125,13 +125,13 @@ export function IceBreakerTagsSection({
           {tags.map((tag, index) => (
             <span
               key={`${tag}-${index}`}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FF8C42]/10 text-[#FF8C42] rounded-full text-sm"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand/10 text-brand rounded-full text-sm"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => removeTag(index)}
-                className="rounded-full p-0.5 hover:bg-[#FF8C42]/20 focus:ring-2 focus:ring-[#FF8C42]"
+                className="rounded-full p-0.5 hover:bg-brand/20 focus:ring-2 focus:ring-brand"
                 aria-label={`Retirer ${tag}`}
               >
                 <X className="h-3 w-3" />

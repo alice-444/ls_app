@@ -47,18 +47,18 @@ describe("profFormSchema", () => {
   });
 
   describe("bio", () => {
-    it("should reject bio shorter than 20 chars", () => {
+    it("should reject bio shorter than 10 chars", () => {
       const result = profFormSchema.safeParse({
         ...validData,
-        bio: "Trop court",
+        bio: "Trop cour",
       });
       expect(result.success).toBe(false);
     });
 
-    it("should accept bio with exactly 20 chars", () => {
+    it("should accept bio with exactly 10 chars", () => {
       const result = profFormSchema.safeParse({
         ...validData,
-        bio: "A".repeat(20),
+        bio: "A".repeat(10),
       });
       expect(result.success).toBe(true);
     });

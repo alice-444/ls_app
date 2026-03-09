@@ -68,8 +68,8 @@ export function PersonalInformationSection() {
             Informations personnelles
           </h2>
         </div>
-        <p className="text-base text-ls-heading tracking-[-0.8px] max-w-[330px]">
-          Mettez à jour vos informations personnelles
+        <p className="text-base text-ls-muted tracking-[-0.8px] max-w-[330px]">
+          Mets à jour tes informations personnelles
         </p>
       </div>
 
@@ -77,7 +77,7 @@ export function PersonalInformationSection() {
         <ProfilePhotoUpload
           previewPhoto={photoUrl}
           onPhotoChange={handlePhotoChange}
-          blockCard="bg-white dark:bg-slate-900 rounded-2xl"
+          blockCard="bg-card/95 rounded-2xl border border-border/50"
         />
       </div>
 
@@ -89,7 +89,7 @@ export function PersonalInformationSection() {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="Andréa"
-              className="h-10 px-6 py-1.5 border-[0.75px] border-[rgba(127,127,127,0.32)] rounded-[32px] text-xs text-ls-muted tracking-[-0.6px]"
+              className="h-10 px-6 py-1.5 border border-border rounded-full text-xs text-ls-heading tracking-[-0.6px]"
             />
           </div>
           <div className="flex-1 flex flex-col gap-1.5">
@@ -98,7 +98,7 @@ export function PersonalInformationSection() {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Begozi"
-              className="h-10 px-6 py-1.5 border-[0.75px] border-[rgba(127,127,127,0.32)] rounded-[32px] text-xs text-ls-muted tracking-[-0.6px]"
+              className="h-10 px-6 py-1.5 border border-border rounded-full text-xs text-ls-heading tracking-[-0.6px]"
             />
           </div>
         </div>
@@ -110,7 +110,7 @@ export function PersonalInformationSection() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="06 35 36 90 91"
-              className="h-10 px-6 py-1.5 border-[0.75px] border-[rgba(127,127,127,0.32)] rounded-[32px] text-xs text-ls-muted tracking-[-0.6px]"
+              className="h-10 px-6 py-1.5 border border-border rounded-full text-xs text-ls-heading tracking-[-0.6px]"
             />
           </div>
         </div>
@@ -119,7 +119,7 @@ export function PersonalInformationSection() {
           <Button
             type="submit"
             disabled={isSaving}
-            className="h-10 px-4 py-3 bg-brand border-3 border-white rounded-[32px] gap-2 hover:bg-brand/90"
+            variant="cta" size="cta" className="gap-2"
           >
             <span className="text-xs font-semibold text-white tracking-[-0.6px]">
               Sauvegarder les modifications

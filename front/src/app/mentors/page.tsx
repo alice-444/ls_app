@@ -8,6 +8,9 @@ import { MentorFilters } from "@/components/mentor/MentorFilters";
 import { Button } from "@/components/ui/button";
 import { Loader2, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { PageContainer } from "@/components/layout";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
 import type { MentorBasic } from "@/types/workshop-components";
 
 export default function MentorsPage() {
@@ -52,14 +55,29 @@ export default function MentorsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Découvrez nos mentors</h1>
-        <p className="text-muted-foreground">
-          Trouvez l'expert qui vous accompagnera dans votre apprentissage.
+    <PageContainer className="py-4 sm:py-6 lg:py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="mb-6 sm:mb-8"
+      >
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold flex items-center gap-3">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-[#FF8C42] via-[#FFB647] to-[#FF8C42] text-white shadow-lg shadow-[#FF8C42]/25">
+            <Users className="h-6 w-6 sm:h-7 sm:w-7" />
+          </span>
+          <ShinyText text="Découvre nos mentors" />
+        </h1>
+        <p className="text-base sm:text-lg text-ls-muted mt-2">
+          Trouve l&apos;expert qui t&apos;accompagnera dans ton apprentissage.
         </p>
-      </div>
+      </motion.div>
 
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.05 }}
+      >
       <MentorFilters
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -70,9 +88,11 @@ export default function MentorsPage() {
       />
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-          <p className="text-muted-foreground">Chargement des mentors...</p>
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-brand mx-auto mb-4" />
+            <p className="text-ls-muted">Chargement des mentors...</p>
+          </div>
         </div>
       ) : filteredMentors.length > 0 ? (
         <>
@@ -87,7 +107,7 @@ export default function MentorsPage() {
                 variant="outline"
                 onClick={() => fetchNextPage()}
                 disabled={isFetching}
-                className="min-w-[200px]"
+                className="min-w-[200px] rounded-full border-border bg-card/80 hover:bg-brand-soft hover:border-brand"
               >
                 {isFetching ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -99,25 +119,28 @@ export default function MentorsPage() {
           )}
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 bg-muted/30 rounded-2xl border-2 border-dashed">
-          <Users className="w-12 h-12 text-muted-foreground mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Aucun mentor trouvé</h2>
-          <p className="text-muted-foreground text-center max-w-md">
-            Essayez de modifier vos filtres ou votre recherche pour trouver ce que vous cherchez.
+        <div className="flex flex-col items-center justify-center py-20 rounded-2xl border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-6">
+            <Users className="h-10 w-10" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2 text-ls-heading">Aucun mentor trouvé</h2>
+          <p className="text-ls-muted text-center max-w-md mb-6">
+            Essaie de modifier tes filtres ou ta recherche pour trouver ce que tu cherches.
           </p>
           <Button
-            variant="link"
+            variant="outline"
             onClick={() => {
               setSearchQuery("");
               setDomainFilter("");
               setTopicFilter("");
             }}
-            className="mt-2"
+            className="rounded-full border-border bg-card/80 hover:bg-brand-soft hover:border-brand"
           >
             Réinitialiser les filtres
           </Button>
         </div>
       )}
-    </div>
+      </motion.div>
+    </PageContainer>
   );
 }

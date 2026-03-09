@@ -83,5 +83,7 @@ export interface IWorkshopService {
       location?: string | null;
     }
   ): Promise<Result<{ success: boolean; oldDate: Date | null; oldTime: string | null }>>;
+
+  getAllTopics(): Promise<Result<string[]>>;
 }
 

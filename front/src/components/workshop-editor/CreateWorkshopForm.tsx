@@ -54,7 +54,7 @@ export function CreateWorkshopForm({
   const createMutation = trpc.workshop.create.useMutation({
     onSuccess: () => {
       toast.success("Atelier créé avec succès!", {
-        description: "Votre atelier a été créé en mode brouillon.",
+        description: "Ton atelier a été créé en mode brouillon.",
       });
       reset();
       onSuccess?.();
@@ -88,11 +88,13 @@ export function CreateWorkshopForm({
   };
 
   return (
-    <Card>
+    <Card className="border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl overflow-hidden">
       <CardHeader>
-        <CardTitle className="text-2xl">Créer un nouvel atelier</CardTitle>
-        <CardDescription>
-          Remplissez les informations pour créer votre atelier
+        <CardTitle className="text-xl font-semibold text-ls-heading">
+          Créer un nouvel atelier
+        </CardTitle>
+        <CardDescription className="text-ls-muted">
+          Remplis les informations pour créer ton atelier
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -108,7 +110,7 @@ export function CreateWorkshopForm({
           <div className="flex gap-4 pt-4">
             <Button
               type="submit"
-              className="flex-1"
+              className="flex-1 rounded-full font-semibold"
               disabled={isSubmitting || createMutation.isPending}
             >
               {(isSubmitting || createMutation.isPending) && (
@@ -122,6 +124,7 @@ export function CreateWorkshopForm({
                 variant="outline"
                 onClick={onCancel}
                 disabled={isSubmitting || createMutation.isPending}
+                className="rounded-full"
               >
                 Annuler
               </Button>

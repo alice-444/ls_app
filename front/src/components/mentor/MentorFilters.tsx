@@ -30,16 +30,16 @@ export function MentorFilters({
   onTopicFilterChange,
 }: MentorFiltersProps) {
   return (
-    <Card className="mb-8">
+    <Card className="mb-8 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl shadow-black/5 overflow-hidden">
       <CardContent className="pt-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ls-muted" />
             <Input
               placeholder="Rechercher un mentor par nom ou expertise..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10"
+              className="pl-10 rounded-full border-border bg-card/80 focus:ring-brand"
             />
           </div>
 
@@ -50,13 +50,13 @@ export function MentorFilters({
                 onDomainFilterChange(value === "all" ? "" : value)
               }
             >
-              <SelectTrigger className="w-full sm:w-48">
+              <SelectTrigger className="w-full sm:w-48 rounded-full border-border bg-card/80">
                 <div className="flex items-center gap-2">
                   <Filter className="w-3 h-3" />
                   <SelectValue placeholder="Domaine" />
                 </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-2xl border-border/50 bg-card/95 backdrop-blur-md">
                 <SelectItem value="all">Tous les domaines</SelectItem>
                 {/* We could dynamically get domains, but let's use some common ones or leave as search for now */}
                 <SelectItem value="Informatique">Informatique</SelectItem>
@@ -74,13 +74,13 @@ export function MentorFilters({
                 onTopicFilterChange(value === "all" ? "" : value)
               }
             >
-              <SelectTrigger className="w-full sm:w-48">
+              <SelectTrigger className="w-full sm:w-48 rounded-full border-border bg-card/80">
                 <div className="flex items-center gap-2">
                   <Filter className="w-3 h-3" />
                   <SelectValue placeholder="Sujet" />
                 </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-2xl border-border/50 bg-card/95 backdrop-blur-md">
                 <SelectItem value="all">Tous les sujets</SelectItem>
                 {PREDEFINED_TOPICS.map((topic) => (
                   <SelectItem key={topic} value={topic}>

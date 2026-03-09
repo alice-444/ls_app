@@ -27,13 +27,13 @@ export function WorkshopRequestsCard({
   const pendingRequests = requests.filter((r) => r.status === "PENDING");
 
   return (
-    <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+    <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardHeader className="p-4 sm:p-6">
-        <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6] text-lg sm:text-xl">
+        <CardTitle className="flex items-center gap-2 text-ls-heading text-lg sm:text-xl">
           <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
           Demandes de participation
         </CardTitle>
-        <CardDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] text-sm sm:text-base mt-1">
+        <CardDescription className="text-ls-muted text-sm sm:text-base mt-1">
           {pendingRequests.length} demande(s) en attente
         </CardDescription>
       </CardHeader>
@@ -51,8 +51,8 @@ export function WorkshopRequestsCard({
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 sm:py-8 text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 text-[rgba(38,84,124,0.32)] dark:text-[rgba(230,230,230,0.32)]" />
+          <div className="text-center py-6 sm:py-8 text-ls-muted">
+            <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 text-ls-muted/50" />
             <p className="text-sm sm:text-base">Aucune demande de participation pour le moment</p>
           </div>
         )}

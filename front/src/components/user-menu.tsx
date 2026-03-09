@@ -30,6 +30,7 @@ import {
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 interface MenuLink {
   href: string;
@@ -44,6 +45,7 @@ export default function UserMenu() {
   const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const { data: userRole, isLoading: isLoadingRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
@@ -133,8 +135,20 @@ export default function UserMenu() {
     });
   }, [menuLinks, userRole]);
 
+  const activeHref = useMemo(() => {
+    const matching = filteredMenuLinks
+      .filter((l) => pathname === l.href || pathname.startsWith(`${l.href}/`) || pathname.startsWith(`${l.href}?`))
+      .sort((a, b) => b.href.length - a.href.length)[0];
+    return matching?.href ?? null;
+  }, [filteredMenuLinks, pathname]);
+
   if (isPending) {
-    return <Skeleton className="h-9 w-24" />;
+    return (
+      <div className="flex items-center gap-2 rounded-full p-1">
+        <Skeleton className="h-9 w-9 rounded-full" />
+        <Skeleton className="h-5 w-5 rounded" />
+      </div>
+    );
   }
 
   if (!session) {
@@ -157,7 +171,12 @@ export default function UserMenu() {
   }
 
   if (isLoadingRole) {
-    return <Skeleton className="h-9 w-24" />;
+    return (
+      <div className="flex items-center gap-2 rounded-full p-1">
+        <Skeleton className="h-9 w-9 rounded-full" />
+        <Skeleton className="h-5 w-5 rounded" />
+      </div>
+    );
   }
 
   const getRoleIcon = (role: "MENTOR" | "APPRENANT" | "ADMIN" | null) => {
@@ -174,82 +193,142 @@ export default function UserMenu() {
     return role === "MENTOR" ? "Mentor" : "Apprenant";
   };
 
+  const isActive = (href: string) => activeHref === href;
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-[#FFB647] focus:ring-offset-2 rounded-full p-1">
-          <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-[#FFB647] overflow-hidden bg-white dark:bg-[#1a1720] shadow-sm">
+        <button
+          className="group flex items-center gap-2 sm:gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background rounded-full p-1 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+          aria-label="Menu utilisateur"
+          aria-expanded={isOpen}
+          aria-haspopup="menu"
+        >
+          <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-brand/50 overflow-hidden bg-white/35 dark:bg-white/15 backdrop-blur-xl backdrop-saturate-150 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.12),0_4px_8px_-2px_rgba(0,0,0,0.08),inset_0_2px_0_0_rgba(255,255,255,0.6)] dark:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35),0_4px_8px_-2px_rgba(0,0,0,0.2),inset_0_2px_0_0_rgba(255,255,255,0.15)] ring-2 ring-transparent group-hover:ring-brand/40 group-hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,0.15),0_6px_12px_-4px_rgba(0,0,0,0.1),inset_0_2px_0_0_rgba(255,255,255,0.7),0_0_25px_-8px_rgba(255,182,71,0.35)] transition-all duration-200">
             {session.user.image ? (
               <img
                 src={session.user.image}
-                alt={session.user.name || "User"}
+                alt={session.user.name || "Avatar"}
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full flex items-center justify-center bg-[#26547c]/10 dark:bg-[#26547c]/20">
-                <User className="h-5 w-5 text-[#26547c] dark:text-[#e6e6e6]" />
+              <div className="h-full w-full flex items-center justify-center bg-brand/10">
+                <User className="h-5 w-5 text-brand" aria-hidden />
               </div>
             )}
           </div>
           <ChevronDown
-            className={`h-5 w-5 sm:h-6 sm:w-6 text-[#26547c] dark:text-[#e6e6e6] transition-transform duration-200 ${
+            className={`h-5 w-5 sm:h-6 sm:w-6 text-ls-heading transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
+            aria-hidden
           />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] shadow-lg p-2">
-        <DropdownMenuLabel className="px-3 py-2 text-[#26547c] dark:text-[#e6e6e6] font-semibold text-sm">
-          Mon Compte
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
-        <DropdownMenuItem className="px-3 py-2 text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] cursor-default focus:bg-transparent">
-          {session.user.email}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
-        {filteredMenuLinks.map((link, index) => {
-          const Icon = link.icon;
-          return (
-            <div key={link.href}>
-              {link.separatorBefore && index > 0 && (
-                <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        className="w-72 bg-card/95 dark:bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl shadow-black/10 p-0 min-w-[18rem] overflow-hidden"
+      >
+        {/* Header avec avatar + nom */}
+        <div className="relative px-4 py-4 bg-linear-to-br from-brand/5 via-transparent to-brand/5 border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-full border-2 border-brand overflow-hidden bg-card shadow-md shrink-0">
+              {session.user.image ? (
+                <img
+                  src={session.user.image}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center bg-brand/10">
+                  <User className="h-6 w-6 text-brand" />
+                </div>
               )}
-              <DropdownMenuItem
-                asChild
-                className="px-3 py-2 text-sm text-[#26547c] dark:text-[#e6e6e6] rounded-[8px] hover:bg-[#ffb647]/10 dark:hover:bg-[#ffb647]/20 focus:bg-[#ffb647]/10 dark:focus:bg-[#ffb647]/20 transition-colors"
-              >
-                <Link href={link.href}>
-                  <Icon className="h-4 w-4" />
-                  {link.label}
-                </Link>
-              </DropdownMenuItem>
             </div>
-          );
-        })}
-        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
-        {userRole && (
-          <DropdownMenuItem className="px-3 py-2 text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] cursor-default focus:bg-transparent">
-            {getRoleIcon(userRole)}
-            <span>Rôle : {getRoleLabel(userRole)}</span>
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuSeparator className="bg-[#d6dae4] dark:bg-[rgba(214,218,228,0.32)]" />
-        <div className="px-2 py-1">
-          <Button
-            variant="destructive"
-            className="w-full h-9 rounded-[8px] text-sm font-semibold bg-[#f44336] hover:bg-[#d32f2f] dark:bg-[#f44336]/80 dark:hover:bg-[#d32f2f]/90 text-white border-0 shadow-sm"
-            onClick={() => {
-              authClient.signOut({
-                fetchOptions: {
-                  onSuccess: () => {
-                    router.push("/");
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-ls-heading truncate">
+                {session.user.name || "Utilisateur"}
+              </p>
+              <p className="text-xs text-ls-muted truncate">{session.user.email}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-2 max-h-[min(70vh,400px)] overflow-y-auto">
+          <DropdownMenuLabel className="px-3 py-2 text-xs font-medium uppercase tracking-wider text-ls-muted">
+            Navigation
+          </DropdownMenuLabel>
+          <AnimatePresence>
+            {filteredMenuLinks.map((link, index) => {
+              const Icon = link.icon;
+              const active = isActive(link.href);
+              return (
+                <motion.div
+                  key={link.href}
+                  initial={prefersReducedMotion ? false : { opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.2, delay: prefersReducedMotion ? 0 : index * 0.02 }}
+                >
+                  {link.separatorBefore && index > 0 && (
+                    <DropdownMenuSeparator className="bg-border/50 my-1" />
+                  )}
+                  <DropdownMenuItem
+                    asChild
+                    className={`px-3 py-2.5 text-sm rounded-xl transition-all cursor-pointer w-full flex items-center ${
+                      active
+                        ? "bg-brand/15 text-brand font-medium focus:bg-brand/20"
+                        : "text-ls-heading hover:bg-brand/10 focus:bg-brand/10"
+                    }`}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center w-full gap-2"
+                    >
+                      <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                      <span className="flex-1">{link.label}</span>
+                      {active && (
+                        <span
+                          className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand"
+                          aria-hidden
+                        />
+                      )}
+                    </Link>
+                  </DropdownMenuItem>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+
+          <DropdownMenuSeparator className="bg-border/50 my-2" />
+
+          {userRole && (
+            <div className="px-3 py-2 flex items-center gap-2 text-sm text-ls-muted rounded-xl bg-muted/30">
+              {getRoleIcon(userRole)}
+              <span>Rôle : {getRoleLabel(userRole)}</span>
+            </div>
+          )}
+
+          <DropdownMenuSeparator className="bg-border/50 my-2" />
+
+          <div className="px-2 py-1.5">
+            <Button
+              variant="destructive"
+              className="w-full h-9 rounded-full text-sm font-semibold"
+              onClick={() => {
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      router.push("/");
+                    },
                   },
-                },
-              });
-            }}
-          >
-            Se déconnecter
-          </Button>
+                });
+              }}
+            >
+              Se déconnecter
+            </Button>
+          </div>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

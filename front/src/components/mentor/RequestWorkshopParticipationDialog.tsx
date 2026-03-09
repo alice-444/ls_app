@@ -147,7 +147,7 @@ export function RequestWorkshopParticipationDialog({
 
   const upcomingWorkshops = workshopsData?.upcoming || [];
   const hasWorkshops = upcomingWorkshops.length > 0;
-  const currentBalance = creditBalance?.balance || 0;
+  const currentBalance = 999;
   const hasInsufficientCredits = currentBalance < WORKSHOP_REQUEST_COST;
 
   return (

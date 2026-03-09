@@ -56,7 +56,7 @@ export function NotificationsSection() {
           Notifications
         </h2>
       </div>
-      <p className="text-base text-ls-heading">
+      <p className="text-base text-ls-muted">
         Gère tes préférences de notifications
       </p>
 
@@ -66,7 +66,7 @@ export function NotificationsSection() {
             <Label className="text-base font-semibold">
               Notifications push
             </Label>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-ls-muted">
               Recevoir des notifications dans l&apos;application
             </p>
           </div>
@@ -82,7 +82,7 @@ export function NotificationsSection() {
             <Label className="text-base font-semibold">
               Notifications email
             </Label>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-ls-muted">
               Recevoir des notifications par email
             </p>
           </div>

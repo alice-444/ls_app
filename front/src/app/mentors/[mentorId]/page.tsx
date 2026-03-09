@@ -7,6 +7,8 @@ import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
 import {
   Calendar,
   Linkedin,
@@ -24,7 +26,6 @@ import {
   Star,
 } from "lucide-react";
 import { API_BASE_URL, getUserRole } from "@/lib/api-client";
-import Loader from "@/components/loader";
 import { ContactMentorDialog } from "@/components/mentor/ContactMentorDialog";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 import { MentorFeedbacks } from "@/components/mentor/MentorFeedbacks";
@@ -34,7 +35,6 @@ import { ReportUserDialog } from "@/components/user/ReportUserDialog";
 import { toast } from "sonner";
 import { BackButton } from "@/components/back-button";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { PageCard } from "@/components/layout/PageCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -43,6 +43,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Ban, Flag } from "lucide-react";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function MentorProfileViewPage() {
   const router = useRouter();
@@ -93,18 +98,31 @@ export default function MentorProfileViewPage() {
   });
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4" />
+            <p className="text-ls-muted">Chargement du profil...</p>
+          </div>
+        </div>
+      </PageContainer>
+    );
   }
 
   if (error || !mentor) {
     return (
       <PageContainer>
         <div className="text-center py-12">
-          <h1 className="text-3xl font-bold mb-4">Profil introuvable</h1>
-          <p className="text-muted-foreground mb-6">
-            Le profil du mentor que vous recherchez n'existe pas ou n'est pas publié.
+          <h1 className="text-2xl sm:text-3xl font-bold mb-4">
+            <ShinyText text="Profil introuvable" />
+          </h1>
+          <p className="text-ls-muted mb-6">
+            Le profil du mentor que tu recherches n&apos;existe pas ou n&apos;est pas publié.
           </p>
-          <Button onClick={() => router.push("/")}>Retour à l'accueil</Button>
+          <Button onClick={() => router.push("/")} className="rounded-full">
+            Retour à l&apos;accueil
+          </Button>
         </div>
       </PageContainer>
     );
@@ -114,20 +132,35 @@ export default function MentorProfileViewPage() {
   const photoUrl = mentor.photoUrl ? `${API_BASE_URL}${mentor.photoUrl}` : null;
   const socialMediaLinks = mentor.socialMediaLinks || {};
 
+  const breadcrumbItems = [
+    { label: "Accueil", href: "/dashboard" },
+    { label: "Mentors", href: "/mentors" },
+    { label: mentor?.displayName || mentor?.name || "Profil", isCurrent: true },
+  ];
+
   return (
     <PageContainer>
-      <BackButton onClick={() => router.back()} />
+      <div className="flex flex-col gap-4 mb-6">
+        <Breadcrumb items={breadcrumbItems} />
+        <BackButton onClick={() => router.back()} />
+      </div>
 
-      <PageCard>
-        <div className="absolute top-4 right-4">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+      <Card className="relative bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl overflow-hidden">
+        <CardContent className="p-0">
+        <div className="absolute top-4 right-4 z-10">
           {session && mentor.userId !== session.user.id && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="rounded-full">
                   <MoreVertical className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="rounded-2xl border-border/50 backdrop-blur-xl">
                 <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-ls-error">
                   <Flag className="h-4 w-4 mr-2" /> Signaler
                 </DropdownMenuItem>
@@ -138,9 +171,9 @@ export default function MentorProfileViewPage() {
             </DropdownMenu>
           )}
         </div>
-        <div className="text-center space-y-4 pb-6">
+        <div className="text-center space-y-4 pb-6 pt-6">
           <div className="flex justify-center">
-             <Avatar className="w-32 h-32 border-4 border-primary shadow-lg">
+             <Avatar className="w-32 h-32 border-4 border-brand shadow-lg">
               <AvatarImage src={photoUrl || undefined} alt={mentor.displayName || 'Mentor'} />
               <AvatarFallback className="text-5xl">
                 {mentor.displayName?.charAt(0).toUpperCase() || "?"}
@@ -148,27 +181,29 @@ export default function MentorProfileViewPage() {
             </Avatar>
           </div>
           <div>
-            <h1 className="text-3xl font-bold mb-2">{mentor.displayName || "Mentor"}</h1>
-            {mentor.domain && <p className="text-lg text-muted-foreground">{mentor.domain}</p>}
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+              <ShinyText text={mentor.displayName || "Mentor"} />
+            </h1>
+            {mentor.domain && <p className="text-lg text-ls-muted">{mentor.domain}</p>}
           </div>
           {session && userRole === "APPRENANT" && mentor.userId !== session.user.id && (
             <div className="flex justify-center pt-2 gap-2 flex-wrap">
-              <Button onClick={() => setShowRequestDialog(true)}>
+              <Button variant="cta" size="cta" onClick={() => setShowRequestDialog(true)}>
                 <BookOpen className="h-4 w-4 mr-2" /> Participer à un atelier
               </Button>
-              <Button onClick={() => setShowContactDialog(true)} variant="outline">
+              <Button variant="ctaOutline" size="cta" onClick={() => setShowContactDialog(true)}>
                 <MessageSquare className="h-4 w-4 mr-2" /> Contacter
               </Button>
               {connectionStatus?.status === 'ACCEPTED' ? (
-                <Button onClick={() => removeConnectionMutation.mutate({ otherUserId: mentor.userId! })} disabled={removeConnectionMutation.isPending} variant="destructive" >
+                <Button onClick={() => removeConnectionMutation.mutate({ otherUserId: mentor.userId! })} disabled={removeConnectionMutation.isPending} variant="destructive" className="rounded-full">
                   <UserMinus className="h-4 w-4 mr-2" /> {removeConnectionMutation.isPending ? "Suppression..." : "Supprimer la connexion"}
                 </Button>
               ) : connectionStatus?.status === 'PENDING' ? (
-                <Button disabled variant="outline">
+                <Button disabled variant="outline" className="rounded-full">
                   <UserPlus className="h-4 w-4 mr-2" /> Demande envoyée
                 </Button>
               ) : (
-                <Button onClick={() => sendConnectionRequestMutation.mutate({ receiverUserId: mentor.userId! })} disabled={sendConnectionRequestMutation.isPending} variant="outline" >
+                <Button variant="ctaOutline" size="cta" onClick={() => sendConnectionRequestMutation.mutate({ receiverUserId: mentor.userId! })} disabled={sendConnectionRequestMutation.isPending}>
                   <UserPlus className="h-4 w-4 mr-2" /> {sendConnectionRequestMutation.isPending ? "Envoi..." : "Ajouter au réseau"}
                 </Button>
               )}
@@ -176,44 +211,58 @@ export default function MentorProfileViewPage() {
           )}
         </div>
 
-        <div className="space-y-6 border-t border-border p-6">
+        <div className="space-y-6 border-t border-border/50 p-6">
             {mentor.bio && (
                 <div>
-                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2"><BookOpen className="h-5 w-5" />À propos</h3>
-                    <p className="whitespace-pre-wrap text-muted-foreground">{mentor.bio}</p>
+                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2 text-ls-heading"><BookOpen className="h-5 w-5 text-brand" />À propos</h3>
+                    <p className="whitespace-pre-wrap text-ls-muted">{mentor.bio}</p>
                 </div>
             )}
             {mentor.areasOfExpertise && mentor.areasOfExpertise.length > 0 && (
                 <div>
-                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2"><Award className="h-5 w-5" />Domaines d'expertise</h3>
+                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-ls-heading"><Award className="h-5 w-5 text-brand" />Domaines d&apos;expertise</h3>
                     <div className="flex flex-wrap gap-2">
-                        {mentor.areasOfExpertise.map((area: string) => <Badge key={area} variant="secondary">{area}</Badge>)}
+                        {mentor.areasOfExpertise.map((area: string) => <Badge key={area} variant="secondary" className="rounded-full">{area}</Badge>)}
                     </div>
                 </div>
             )}
             {mentor.qualifications && (
                 <div>
-                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2"><GraduationCap className="h-5 w-5" />Qualifications</h3>
-                    <p className="whitespace-pre-wrap text-muted-foreground">{mentor.qualifications}</p>
+                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2 text-ls-heading"><GraduationCap className="h-5 w-5 text-brand" />Qualifications</h3>
+                    <p className="whitespace-pre-wrap text-ls-muted">{mentor.qualifications}</p>
                 </div>
             )}
             {mentor.experience && (
                 <div>
-                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2"><Briefcase className="h-5 w-5" />Expérience</h3>
-                    <p className="whitespace-pre-wrap text-muted-foreground">{mentor.experience}</p>
+                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2 text-ls-heading"><Briefcase className="h-5 w-5 text-brand" />Expérience</h3>
+                    <p className="whitespace-pre-wrap text-ls-muted">{mentor.experience}</p>
                 </div>
             )}
         </div>
-      </PageCard>
+        </CardContent>
+      </Card>
+      </motion.div>
 
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Ateliers proposés</h2>
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
+        <h2 className="text-2xl font-bold mb-4">
+          <ShinyText text="Ateliers proposés" />
+        </h2>
         <MentorWorkshopsList mentorId={mentorId} />
-      </div>
+      </motion.div>
 
-      <div className="mt-8">
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+      >
         <MentorFeedbacks mentorId={mentorId} mentorUserId={mentor?.userId} />
-      </div>
+      </motion.div>
 
       <ContactMentorDialog open={showContactDialog} onOpenChange={setShowContactDialog} mentorId={mentorId} mentorName={mentor.displayName || "ce mentor"} />
       <RequestWorkshopParticipationDialog open={showRequestDialog} onOpenChange={setShowRequestDialog} mentorId={mentorId} mentorName={mentor.displayName || "ce mentor"} />

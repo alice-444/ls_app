@@ -90,18 +90,19 @@ export function MessageInput({ onSend, conversationId }: MessageInputProps) {
         value={message}
         onChange={(e) => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Tapez votre message..."
+        placeholder="Écris ton message..."
         className={cn(
-          "min-h-[60px] max-h-[200px] resize-none",
-          "focus:ring-2 focus:ring-primary"
+          "min-h-[60px] max-h-[200px] resize-none rounded-2xl border-border",
+          "focus:ring-2 focus:ring-brand"
         )}
         rows={1}
         disabled={isSending}
       />
       <Button
+        variant="cta"
+        size="icon"
         onClick={handleSend}
         disabled={!message.trim() || isSending}
-        size="icon"
         className="h-[60px] w-[60px] shrink-0"
       >
         <Send className="h-5 w-5" />

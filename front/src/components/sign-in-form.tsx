@@ -7,11 +7,20 @@ import Loader from "./loader";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import ShinyText from "./ui/ShinyText";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getUserRole } from "@/lib/api-client";
 import { trpc } from "@/utils/trpc";
 import { Mail } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function SignInForm({
   onSwitchToSignUp,
@@ -27,7 +36,7 @@ export default function SignInForm({
 
   const requestMagicLinkMutation = trpc.auth.requestMagicLink.useMutation({
     onSuccess: () => {
-      toast.success("Un lien de connexion a été envoyé à votre adresse email.");
+      toast.success("Un lien de connexion a été envoyé à ton adresse email.");
     },
     onError: (error: { message: string }) => {
       toast.error(error.message || "Erreur lors de l'envoi du lien.");
@@ -78,138 +87,216 @@ export default function SignInForm({
     return <Loader />;
   }
 
+  const fieldVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.08, duration: 0.3 },
+    }),
+  };
+
   if (isMagicLinkFlow) {
     return (
-        <div className="mx-auto w-full mt-10 max-w-md p-6">
-            <h1 className="mb-6 text-center text-3xl font-bold">Connexion par Magic Link</h1>
-            <p className="text-center text-muted-foreground mb-6">Entrez votre email pour recevoir un lien de connexion direct.</p>
-            <form onSubmit={(e) => {
-                e.preventDefault();
-                requestMagicLinkMutation.mutate({ email: magicLinkEmail });
-            }} className="space-y-4">
-                <div>
-                    <Label htmlFor="magic-email">Email</Label>
-                    <Input
-                        id="magic-email"
-                        type="email"
-                        value={magicLinkEmail}
-                        onChange={(e) => setMagicLinkEmail(e.target.value)}
-                        required
-                        placeholder="votre@email.com"
-                        disabled={requestMagicLinkMutation.isPending}
-                    />
-                </div>
-                <Button type="submit" className="w-full" disabled={requestMagicLinkMutation.isPending}>
-                    {requestMagicLinkMutation.isPending ? "Envoi..." : "Envoyer le lien"}
-                </Button>
-            </form>
-            <Button variant="link" onClick={() => setIsMagicLinkFlow(false)} className="mt-4 w-full">
-                Retour à la connexion par mot de passe
-            </Button>
-        </div>
+      <Card className="w-full border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-center">
+            <h1 className="text-2xl font-bold">
+              <ShinyText text="Connexion par Magic Link" />
+            </h1>
+          </CardTitle>
+          <CardDescription className="text-center">
+            Entre ton email pour recevoir un lien de connexion direct.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              requestMagicLinkMutation.mutate({ email: magicLinkEmail });
+            }}
+            className="space-y-4"
+          >
+            <motion.div
+              variants={fieldVariants}
+              initial="hidden"
+              animate="visible"
+              custom={0}
+            >
+              <Label htmlFor="magic-email">Email</Label>
+              <Input
+                id="magic-email"
+                type="email"
+                value={magicLinkEmail}
+                onChange={(e) => setMagicLinkEmail(e.target.value)}
+                required
+                placeholder="ton@email.com"
+                disabled={requestMagicLinkMutation.isPending}
+                className="mt-2 rounded-full"
+              />
+            </motion.div>
+            <motion.div
+              variants={fieldVariants}
+              initial="hidden"
+              animate="visible"
+              custom={1}
+            >
+              <Button
+                type="submit"
+                className="w-full rounded-full"
+                disabled={requestMagicLinkMutation.isPending}
+              >
+                {requestMagicLinkMutation.isPending ? "Envoi..." : "Envoyer le lien"}
+              </Button>
+            </motion.div>
+          </form>
+          <Button
+            variant="link"
+            onClick={() => setIsMagicLinkFlow(false)}
+            className="w-full rounded-full text-muted-foreground hover:text-foreground"
+          >
+            Retour à la connexion par mot de passe
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">Welcome Back</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-        className="space-y-4"
-      >
-        <div>
-          <form.Field name="email">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="email"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  required
-                  disabled={isSubmitting}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
-        <div>
-          <form.Field name="password">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Password</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  required
-                  disabled={isSubmitting}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
-        <form.Subscribe>
-          {(state) => (
+    <Card className="w-full border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl">
+      <CardHeader>
+        <CardTitle className="text-center">
+          <h1 className="text-3xl font-bold">
+            <ShinyText text="Bienvenue" />
+          </h1>
+        </CardTitle>
+        <CardDescription className="text-center">
+          Connecte-toi pour accéder à ton tableau de bord
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
+        >
+          <motion.div
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            custom={0}
+          >
+            <form.Field name="email">
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name}>Email</Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="email"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                    disabled={isSubmitting}
+                    placeholder="ton@email.com"
+                    className="rounded-full"
+                  />
+                  {field.state.meta.errors.map((error) => (
+                    <p key={error?.message} className="text-destructive text-sm">
+                      {error?.message}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </form.Field>
+          </motion.div>
+          <motion.div
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+          >
+            <form.Field name="password">
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name}>Mot de passe</Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                    disabled={isSubmitting}
+                    placeholder="••••••••"
+                    className="rounded-full"
+                  />
+                  {field.state.meta.errors.map((error) => (
+                    <p key={error?.message} className="text-destructive text-sm">
+                      {error?.message}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </form.Field>
+          </motion.div>
+          <motion.div
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            custom={2}
+          >
             <Button
               type="submit"
-              className="w-full"
-              disabled={!state.canSubmit || isSubmitting}
+              className="w-full rounded-full bg-[#FFB647] hover:bg-[#FF9F1A] text-black font-semibold"
+              disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Sign In"}
+              {isSubmitting ? "Connexion..." : "Se connecter"}
             </Button>
-          )}
-        </form.Subscribe>
-      </form>
-      <div className="mt-4 space-y-2 text-center">
-        <Button
-            variant="outline"
-            onClick={() => setIsMagicLinkFlow(true)}
-            className="w-full"
-            disabled={isSubmitting}
-        >
-            <Mail className="mr-2 h-4 w-4" />
-            Se connecter avec un Magic Link
-        </Button>
-        <Button
-          variant="link"
-          onClick={onSwitchToSignUp}
-          className="text-indigo-600 hover:text-indigo-800"
-          disabled={isSubmitting}
-        >
-          Need an account? Sign Up
-        </Button>
-        <div>
-          <Button
-            variant="link"
-            onClick={() => router.push("/forgot-password")}
-            className="text-sm text-muted-foreground hover:text-foreground"
-            disabled={isSubmitting}
+          </motion.div>
+        </form>
+        <div className="mt-6 space-y-3">
+          <motion.div
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            custom={3}
           >
-            Forgot Password?
-          </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsMagicLinkFlow(true)}
+              className="w-full rounded-full"
+              disabled={isSubmitting}
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              Se connecter avec un Magic Link
+            </Button>
+          </motion.div>
+          <div className="flex flex-col items-center gap-1">
+            <Button
+              variant="link"
+              onClick={onSwitchToSignUp}
+              className="rounded-full text-[#26547c] hover:text-[#FF8C42] dark:text-[#4A90E2] dark:hover:text-[#FFB647]"
+              disabled={isSubmitting}
+            >
+              Pas encore de compte ? S&apos;inscrire
+            </Button>
+            <Button
+              variant="link"
+              onClick={() => router.push("/forgot-password")}
+              className="rounded-full text-sm text-muted-foreground hover:text-foreground"
+              disabled={isSubmitting}
+            >
+              Mot de passe oublié ?
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -68,7 +68,7 @@ export function TagListSection({
             onAdd(customValue.trim());
           }
         }}
-        className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-[32px]"
+        className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-full"
       />
       <p className="text-xs text-ls-muted">{hint}</p>
       {error && <p className="text-sm text-ls-error">{error}</p>}

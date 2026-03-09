@@ -42,8 +42,8 @@ export function ApprenticeSidebar({
   titleData,
 }: ApprenticeSidebarProps) {
   const router = useRouter();
-  const creditBalance = 150;
-  const isLowBalance = creditBalance <= 0 || creditBalance < 50;
+  const creditBalance = 999;
+  const isLowBalance = false;
 
   return (
     <div className="lg:col-span-4 space-y-6">

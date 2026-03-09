@@ -3,27 +3,29 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import {
   Save,
   Sparkles,
   Loader2,
   CheckCircle,
+  User,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { BackButton } from "@/components/back-button";
-import { PageContainer, PageHeader, PageCard } from "@/components/layout";
+import { PageContainer, PageCard } from "@/components/layout";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
 import { ProfilePhotoUpload } from "@/components/profil/ProfilePhotoUpload";
 import { ProfilePreviewCard } from "@/components/profil/ProfilePreviewCard";
 import { IceBreakerTagsSection } from "@/components/profil/IceBreakerTagsSection";
 import { ApprenticeProfileForm } from "@/components/profil/ApprenticeProfileForm";
 
 const BLOCK_CARD =
-  "rounded-2xl border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[#1a1720] p-5 sm:p-6 shadow-sm transition-shadow hover:shadow-md";
+  "rounded-2xl border border-border/50 bg-card/95 backdrop-blur-md p-5 sm:p-6 shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-brand/5";
 
 export default function ProfilPage() {
   const router = useRouter();
@@ -80,7 +82,11 @@ export default function ProfilPage() {
   }, [session, isSessionPending, router]);
 
   useEffect(() => {
-    if (userRole && userRole !== "APPRENANT") router.push("/dashboard");
+    if (userRole === "MENTOR") {
+      router.push("/mentor-profile");
+    } else if (userRole && userRole !== "APPRENANT") {
+      router.push("/dashboard");
+    }
   }, [userRole, router]);
 
   useEffect(() => {
@@ -96,7 +102,18 @@ export default function ProfilPage() {
     }
   }, [identityCard]);
 
-  if (isSessionPending || isLoading) return <Loader />;
+  if (isSessionPending || isLoading) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-brand mx-auto mb-4" />
+            <p className="text-ls-muted">Chargement du profil...</p>
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
   if (!session || userRole !== "APPRENANT") return null;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -145,11 +162,33 @@ export default function ProfilPage() {
   const previewBio = bioVal || identityCard?.bio || "";
 
   return (
-    <PageContainer>
-      <PageHeader title="Mon profil" />
-      <BackButton href="/dashboard" />
+    <PageContainer className="py-4 sm:py-6 lg:py-8">
+      <div className="mb-6 sm:mb-8">
+        <BackButton href="/dashboard" />
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-4 sm:mb-6"
+        >
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold flex items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-[#FF8C42] via-[#FFB647] to-[#FF8C42] text-white shadow-lg shadow-[#FF8C42]/25">
+              <User className="h-6 w-6 sm:h-7 sm:w-7" />
+            </span>
+            <ShinyText text="Mon profil" />
+          </h1>
+          <p className="text-base sm:text-lg text-ls-muted mt-2">
+            Personnalise ton identité et ton parcours
+          </p>
+        </motion.div>
+      </div>
 
-      <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4 lg:gap-12">
+      <motion.div
+        className="w-full grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4 lg:gap-12"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.05 }}
+      >
         <form
           onSubmit={handleSubmit}
           className="space-y-6 min-w-0 lg:col-start-1 lg:row-start-1"
@@ -181,8 +220,10 @@ export default function ProfilPage() {
 
           <Button
             type="submit"
+            variant="cta"
+            size="cta"
             disabled={saveMutation.isPending}
-            className="w-full sm:w-auto bg-[#FF8C42] hover:bg-[#e67d3a] text-white min-w-[180px] h-11 font-semibold shadow-sm hover:shadow-md transition-shadow rounded-full"
+            className="w-full sm:w-auto min-w-[180px]"
           >
             {saveMutation.isPending ? (
               <>
@@ -210,43 +251,10 @@ export default function ProfilPage() {
           studyProgram={previewStudyProgram}
           bio={previewBio}
           title={titleData?.title}
-          tags={localTags}
+          tags={[]} // Apprenants use iceBreakers instead of topic tags
+          iceBreakers={localTags}
         />
-      </div>
-
-      {userRole === "APPRENANT" && (
-        <section className="mt-10" aria-labelledby="devenir-mentor-title">
-          <PageCard className="border-[#FF8C42]/40 bg-linear-to-r from-[#FF8C42]/5 to-[#FF8C42]/10 dark:from-[#FF8C42]/10 dark:to-[#FF8C42]/5 overflow-hidden">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-6 sm:gap-8 p-1">
-              <div className="flex items-start gap-4 min-w-0">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#FF8C42]/15 shadow-sm">
-                  <Sparkles className="h-6 w-6 text-[#FF8C42]" aria-hidden />
-                </div>
-                <div className="min-w-0">
-                  <h2
-                    id="devenir-mentor-title"
-                    className="font-semibold text-lg text-[#26547c] dark:text-[#e6e6e6] leading-tight"
-                  >
-                    Envie de partager vos compétences ?
-                  </h2>
-                  <p className="text-sm text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] mt-2 leading-relaxed">
-                    Devenez mentor et créez votre premier atelier pour aider
-                    d&apos;autres apprenants comme toi.
-                  </p>
-                </div>
-              </div>
-              <Button
-                onClick={() =>
-                  router.push("/onboarding?role=MENTOR&step=confirm-features")
-                }
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm hover:shadow-md transition-shadow shrink-0 w-full sm:w-auto sm:min-w-[180px] h-11 rounded-full border-0"
-              >
-                Devenir Mentor
-              </Button>
-            </div>
-          </PageCard>
-        </section>
-      )}
+      </motion.div>
     </PageContainer>
   );
 }

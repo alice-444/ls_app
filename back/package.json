@@ -2,13 +2,12 @@
 	"name": "back",
 	"private": true,
 	"prisma": {
-		"schema": "./prisma/schema/schema.prisma"
+		"schema": "./.prisma/schema/schema.prisma"
 	},
 	"scripts": {
-		"dev": "concurrently \"pnpm run dev:server\" \"pnpm run dev:next\"",
-		"dev:server": "PORT_BACKEND=3002 tsx watch server.ts",
+		"dev": "concurrently \"pnpm run dev:socket\" \"pnpm run dev:next\"",
+		"dev:socket": "PORT_BACKEND=5050 tsx watch server.ts",
 		"dev:next": "NEXT_STANDALONE=true next dev --port 4500",
-		"dev:all": "concurrently \"pnpm run dev:server\" \"pnpm run dev:next\"",
 		"dev:turbo": "next dev --turbopack",
 		"build": "next build",
 		"start": "NODE_ENV=production node --import tsx ./server.ts",

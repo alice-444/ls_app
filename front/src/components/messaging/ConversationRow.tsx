@@ -86,7 +86,7 @@ export function ConversationRow({
     : "";
 
   return (
-    <div className="bg-white dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] rounded-2xl h-[90px] sm:h-[90px] flex items-center justify-between px-2 sm:px-4 py-2 hover:shadow-md transition-shadow">
+    <div className="bg-card/80 dark:bg-card/90 border border-border/50 rounded-2xl h-[90px] sm:h-[90px] flex items-center justify-between px-2 sm:px-4 py-2 hover:shadow-lg hover:border-brand/30 transition-all backdrop-blur-sm">
       <button
         type="button"
         className="flex items-center gap-2 sm:gap-3 flex-1 cursor-pointer text-left min-w-0"
@@ -94,7 +94,7 @@ export function ConversationRow({
           router.push(`/inbox/${conversation.conversationId}`)
         }
       >
-        <Avatar.Root className="h-10 w-10 sm:h-11 sm:w-11 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-white dark:border-gray-950 shrink-0 relative">
+        <Avatar.Root className="h-10 w-10 sm:h-11 sm:w-11 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-border shrink-0 relative">
           <Avatar.Image
             src={conversation.otherUserPhotoUrl || undefined}
             alt={displayName}
@@ -109,7 +109,7 @@ export function ConversationRow({
           </div>
 
           {conversation.unreadCount && conversation.unreadCount > 0 ? (
-            <div className="absolute top-0 right-0 h-3.5 w-3.5 bg-red-500 border-2 border-white dark:border-gray-950 rounded-full flex items-center justify-center">
+            <div className="absolute top-0 right-0 h-3.5 w-3.5 bg-red-500 border-2 border-background rounded-full flex items-center justify-center">
               <span className="text-[8px] font-bold text-white">
                 {conversation.unreadCount > 9 ? "9+" : conversation.unreadCount}
               </span>
@@ -118,15 +118,15 @@ export function ConversationRow({
         </Avatar.Root>
 
         <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-          <h3 className="text-[#26547c] dark:text-[#e6e6e6] text-sm font-bold truncate">
+          <h3 className="text-ls-heading text-sm font-bold truncate">
             {displayName}
           </h3>
           <div className="flex items-start gap-1 sm:gap-2">
-            <p className="text-[#26547c] dark:text-[#e6e6e6] text-xs truncate flex-1">
+            <p className="text-ls-muted text-xs truncate flex-1">
               {lastMessagePreview}
             </p>
             {timestamp && (
-              <span className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] text-xs whitespace-nowrap hidden sm:inline">
+              <span className="text-ls-muted text-xs whitespace-nowrap hidden sm:inline">
                 &bull; {timestamp}
               </span>
             )}
@@ -140,7 +140,7 @@ export function ConversationRow({
           onClick={() =>
             onTogglePin(conversation.conversationId, conversation.isPinned)
           }
-          className="hidden md:flex h-8 px-2.5 py-1 rounded-full border bg-white dark:bg-transparent border-[#d9d9d9] dark:border-[#d6dae4] text-[#26547c] dark:text-[#e6e6e6] text-xs font-semibold transition-colors capitalize hover:bg-gray-50 dark:hover:bg-white/10"
+          className="hidden md:flex h-8 px-2.5 py-1 rounded-full border border-border bg-card/50 text-ls-heading text-xs font-semibold transition-colors capitalize hover:bg-brand/10 hover:border-brand"
         >
           <span>
             {conversation.isPinned ? "désépingler" : "épingler"}
@@ -156,7 +156,7 @@ export function ConversationRow({
         <Button
           variant="outline"
           onClick={() => onDelete(conversation.conversationId)}
-          className="hidden md:flex h-8 px-2.5 py-1 rounded-full bg-white dark:bg-transparent border border-[#d9d9d9] dark:border-[#d9d9d9] text-[#d84242] dark:text-red-400 text-xs font-semibold transition-colors capitalize hover:bg-red-50 dark:hover:bg-red-500/10"
+          className="hidden md:flex h-8 px-2.5 py-1 rounded-full bg-card/50 border border-border text-destructive text-xs font-semibold transition-colors capitalize hover:bg-destructive/10 hover:border-destructive/50"
           disabled={isDeleting}
         >
           <span>Supprimer</span>
@@ -199,29 +199,29 @@ function ConversationDropdownMenu({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+          className="h-8 w-8 rounded-full hover:bg-brand/10 transition-colors"
           title="Plus d'options"
         >
-          <MoreVertical className="h-4 w-4 text-gray-600 dark:text-[#e6e6e6]" />
+          <MoreVertical className="h-4 w-4 text-ls-heading" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-56 bg-white dark:bg-[#1a1720] border border-[#d6dae4] rounded-xl shadow-lg"
+        className="w-56 bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl"
       >
-        <DropdownMenuLabel className="text-xs font-semibold text-gray-500 dark:text-[rgba(230,230,230,0.64)] px-3 py-2">
+        <DropdownMenuLabel className="text-xs font-semibold text-ls-muted px-3 py-2">
           Actions
         </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-[#d6dae4]" />
+        <DropdownMenuSeparator className="bg-border" />
 
         <DropdownMenuItem
           onClick={() =>
             router.push(`/inbox/${conversation.conversationId}`)
           }
-          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg mx-1"
+          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-brand/10 rounded-xl mx-1"
         >
-          <MessageSquare className="h-4 w-4 text-[#26547c] dark:text-[#e6e6e6]" />
-          <span className="text-sm text-gray-700 dark:text-[#e6e6e6]">
+          <MessageSquare className="h-4 w-4 text-brand" />
+          <span className="text-sm text-ls-heading">
             Ouvrir la conversation
           </span>
         </DropdownMenuItem>
@@ -230,35 +230,35 @@ function ConversationDropdownMenu({
           onClick={() =>
             onTogglePin(conversation.conversationId, conversation.isPinned)
           }
-          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg mx-1"
+          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-brand/10 rounded-xl mx-1"
         >
           <Pin
             className={cn(
-              "h-4 w-4 text-[#26547c] dark:text-[#e6e6e6]",
+              "h-4 w-4 text-brand",
               conversation.isPinned && "fill-current"
             )}
           />
-          <span className="text-sm text-gray-700 dark:text-[#e6e6e6]">
+          <span className="text-sm text-ls-heading">
             {conversation.isPinned ? "Désépingler" : "Épingler"}
           </span>
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="bg-[#d6dae4]" />
+        <DropdownMenuSeparator className="bg-border" />
 
         <DropdownMenuItem
           onClick={() =>
             router.push(`/apprentice/${conversation.otherUserId}`)
           }
-          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg mx-1"
+          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-brand/10 rounded-xl mx-1"
         >
           <User className="h-4 w-4 text-[#26547c] dark:text-[#e6e6e6]" />
-          <span className="text-sm text-gray-700 dark:text-[#e6e6e6]">
+          <span className="text-sm text-ls-heading">
             Voir le profil
           </span>
-          <ExternalLink className="h-3 w-3 ml-auto text-gray-400 dark:text-[rgba(230,230,230,0.64)]" />
+          <ExternalLink className="h-3 w-3 ml-auto text-ls-muted" />
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="bg-[#d6dae4]" />
+        <DropdownMenuSeparator className="bg-border" />
 
         <DropdownMenuItem
           onClick={() =>
@@ -267,10 +267,10 @@ function ConversationDropdownMenu({
               displayName
             )
           }
-          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg mx-1"
+          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-destructive/10 rounded-xl mx-1"
         >
-          <UserX className="h-4 w-4 text-red-600 dark:text-red-400" />
-          <span className="text-sm text-red-600 dark:text-red-400">
+          <UserX className="h-4 w-4 text-destructive" />
+          <span className="text-sm text-destructive">
             Bloquer l&apos;utilisateur
           </span>
         </DropdownMenuItem>
@@ -278,10 +278,10 @@ function ConversationDropdownMenu({
         <DropdownMenuItem
           onClick={() => onDelete(conversation.conversationId)}
           disabled={isDeleting}
-          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg mx-1"
+          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-destructive/10 rounded-xl mx-1"
         >
-          <Trash2 className="h-4 w-4 text-red-600 dark:text-red-400" />
-          <span className="text-sm text-red-600 dark:text-red-400">
+          <Trash2 className="h-4 w-4 text-destructive" />
+          <span className="text-sm text-destructive">
             Supprimer la conversation
           </span>
         </DropdownMenuItem>

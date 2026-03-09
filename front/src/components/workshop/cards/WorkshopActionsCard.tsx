@@ -27,22 +27,22 @@ export function WorkshopActionsCard({
 }: WorkshopActionsCardProps) {
   if (isRegistered && !isWorkshopPast) {
     return (
-      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+      <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
+            <CardTitle className="flex items-center gap-2 text-ls-heading">
             <CheckCircle className="w-5 h-5 text-[#34b162]" />
             Vous êtes inscrit à cet atelier
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            Vous êtes inscrit à cet atelier. Vous pouvez annuler votre
-            inscription si nécessaire.
+          <p className="text-sm text-ls-muted">
+            Tu es inscrit à cet atelier. Tu peux annuler ton inscription si nécessaire.
           </p>
           {showContactMentor && onContactMentor && (
             <Button
-              variant="outline"
-              className="w-full gap-2 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+              variant="ctaOutline"
+              size="cta"
+              className="w-full gap-2"
               onClick={onContactMentor}
             >
               <MessageSquare className="h-4 w-4" />
@@ -51,7 +51,7 @@ export function WorkshopActionsCard({
           )}
           <Button
             variant="destructive"
-            className="w-full gap-2 bg-[#f44336] hover:bg-[#d32f2f] dark:bg-[#f44336] dark:hover:bg-[#d32f2f] text-white dark:text-white rounded-[32px]"
+            className="w-full gap-2 bg-destructive hover:bg-destructive/90 text-white rounded-full"
             onClick={onCancelRegistration}
             disabled={isCancelling}
           >
@@ -65,20 +65,21 @@ export function WorkshopActionsCard({
 
   if (canRequestParticipation) {
     return (
-      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+      <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
+            <CardTitle className="flex items-center gap-2 text-ls-heading">
             <BookOpen className="w-5 h-5" />
             Participer à cet atelier
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
-            Vous souhaitez participer à cet atelier ? Envoyez une demande au
-            mentor.
+          <p className="text-sm text-ls-muted">
+            Tu souhaites participer à cet atelier ? Envoie une demande au mentor.
           </p>
           <Button
-            className="w-full gap-2 bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
+            variant="cta"
+            size="cta"
+            className="w-full gap-2"
             onClick={onRequestParticipation}
           >
             <BookOpen className="h-4 w-4" />
@@ -86,8 +87,9 @@ export function WorkshopActionsCard({
           </Button>
           {showContactMentor && onContactMentor && (
             <Button
-              variant="outline"
-              className="w-full gap-2 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+              variant="ctaOutline"
+              size="cta"
+              className="w-full gap-2"
               onClick={onContactMentor}
             >
               <MessageSquare className="h-4 w-4" />
@@ -101,20 +103,21 @@ export function WorkshopActionsCard({
 
   if (showContactMentor && onContactMentor) {
     return (
-      <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+      <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#26547c] dark:text-[#e6e6e6]">
+            <CardTitle className="flex items-center gap-2 text-ls-heading">
             <MessageSquare className="w-5 h-5" />
             Contacter le mentor
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] mb-4">
-            Vous avez une question sur cet atelier ? Contactez le mentor
-            directement.
+          <p className="text-sm text-ls-muted mb-4">
+            Tu as une question sur cet atelier ? Contacte le mentor directement.
           </p>
           <Button
-            className="w-full gap-2 bg-[#ffb647] hover:bg-[#ff9f1a] dark:bg-[#ffb647] dark:hover:bg-[#ff9f1a] text-[#161616] dark:text-[#161616] rounded-[32px] font-semibold"
+            variant="cta"
+            size="cta"
+            className="w-full gap-2"
             onClick={onContactMentor}
           >
             <MessageSquare className="h-4 w-4" />

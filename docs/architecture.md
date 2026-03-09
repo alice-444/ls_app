@@ -147,7 +147,7 @@ flowchart TB
     A2[SignUpForm]
     A3[POST /api/sign-up]
     A4[Better Auth signUpEmail]
-    A5[Création account + user]
+    A5[Création account + app_user]
     A6[Email bienvenue + lien onboarding]
     A1 --> A2 --> A3 --> A4 --> A5 --> A6
   end
@@ -182,7 +182,7 @@ flowchart TB
     D2[Redirection /onboarding]
     D3[selectRole MENTOR ou APPRENANT]
     D4[POST /api/onboarding/select-role]
-    D5[user.role + user.status ACTIVE]
+    D5[app_user.role + app_user.status ACTIVE]
     D6[Redirection /dashboard]
     D1 --> D2 --> D3 --> D4 --> D5 --> D6
   end
@@ -203,7 +203,7 @@ Séquences détaillées :
 
 **Changement email** : lien dans email → `/verify-email-change?token=xxx` (Better Auth).
 
-**Onboarding** : si session OK et `user.role === null` → redirect `/onboarding` → choix MENTOR ou APPRENANT → POST `/api/onboarding/select-role` → `user.role` et `user.status = ACTIVE` → redirect `/dashboard`.
+**Onboarding** : si session OK et `app_user.role === null` → redirect `/onboarding` → choix MENTOR ou APPRENANT → POST `/api/onboarding/select-role` → `app_user.role` et `app_user.status = ACTIVE` → redirect `/dashboard`.
 
 ---
 
@@ -523,43 +523,43 @@ Schéma relationnel simplifié (principales entités et relations) :
 
 ```mermaid
 erDiagram
-  account ||--o| user : has
-  user }o--o{ workshop : "mentor crée"
+  account ||--o| app_user : has
+  app_user }o--o{ workshop : "mentor crée"
   workshop ||--o{ workshop_request : has
   workshop ||--o{ mentor_feedback : has
   workshop ||--o{ workshop_cashback_queue : has
-  user ||--o{ workshop_cashback_queue : "participant"
-  user ||--o{ user_connection : "from"
-  user ||--o{ user_connection : "to"
-  user ||--o{ conversation : participates
+  app_user ||--o{ workshop_cashback_queue : "participant"
+  app_user ||--o{ user_connection : "from"
+  app_user ||--o{ user_connection : "to"
+  app_user ||--o{ conversation : participates
   conversation ||--o{ message : has
-  conversation ||--o{ conversation_pin : has
-  user ||--o{ conversation_pin : "pins"
   message ||--o{ message_reaction : has
-  user ||--o{ notification : receives
-  user ||--o{ user_block : "blocker"
-  user ||--o{ user_block : "blocked"
-  user ||--o{ user_report : "reporter"
-  user ||--o{ support_request : creates
-  user ||--o{ credit_transaction : has
-  user ||--o{ audit_log : "admin"
-  user ||--o{ deletion_job : "scheduled"
-  user ||--o{ student_deal : "propose"
-  user ||--o{ community_spot : "propose"
-  user ||--o{ community_event : "propose"
-  user ||--o{ community_poll : "propose"
+  app_user ||--o{ notification : receives
+  app_user ||--o{ user_block : "blocker"
+  app_user ||--o{ user_block : "blocked"
+  app_user ||--o{ user_report : "reporter"
+  app_user ||--o{ support_request : creates
+  app_user ||--o{ credit_transaction : has
+  app_user ||--o{ audit_log : "admin"
+  app_user ||--o{ student_deal : "propose"
+  app_user ||--o{ community_spot : "propose"
+  app_user ||--o{ community_event : "propose"
+  app_user ||--o{ community_poll : "propose"
   community_poll ||--o{ poll_vote : has
-  user ||--o{ poll_vote : "votes"
+  app_user ||--o{ poll_vote : "votes"
   account {
     string accountId
     string email
     string password
   }
-  user {
+  app_user {
     string id
     string userId
+    string name
+    string email
     string role
     string status
+    string title
     string bio
     string photoUrl
     boolean isPublished
@@ -568,6 +568,7 @@ erDiagram
     string id
     string title
     string creatorId
+    string apprenticeId
     string status
     datetime date
   }
@@ -579,6 +580,8 @@ erDiagram
   }
   conversation {
     string id
+    string participant1Id
+    string participant2Id
   }
   message {
     string id
@@ -618,7 +621,7 @@ erDiagram
   }
 ```
 
-Liste des modèles : `account`, `user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `deletion_job`, `workshop_cashback_queue`, `conversation_pin`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. Détails dans `back/prisma/schema/schema.prisma`.
+Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `workshop_cashback_queue`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. Détails dans `back/prisma/schema/schema.prisma`.
 
 ---
 

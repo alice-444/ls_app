@@ -220,4 +220,8 @@ export class WorkshopService implements IWorkshopService {
   > {
     return this.schedulingService.rescheduleWorkshop(userId, workshopId, input);
   }
+
+  getAllTopics(): Promise<Result<string[]>> {
+    return this.queryService.getAllTopics();
+  }
 }

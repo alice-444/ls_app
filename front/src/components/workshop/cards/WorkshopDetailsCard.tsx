@@ -24,42 +24,42 @@ export function WorkshopDetailsCard({
   maxParticipants,
 }: WorkshopDetailsCardProps) {
   return (
-    <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+    <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardHeader>
-        <CardTitle className="text-[#26547c] dark:text-[#e6e6e6]">Détails de l'atelier</CardTitle>
+        <CardTitle className="text-ls-heading">Détails de l&apos;atelier</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {topic && (
           <div className="flex items-start gap-3">
-            <Tag className="w-5 h-5 text-[#26547c] dark:text-[#e6e6e6] mt-0.5" />
+            <Tag className="w-5 h-5 text-brand mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+              <p className="text-sm font-medium text-ls-muted">
                 Thème / Topic
               </p>
-              <p className="text-[#161616] dark:text-[#e6e6e6]">{topic}</p>
+              <p className="text-ls-text">{topic}</p>
             </div>
           </div>
         )}
 
         <div className="flex items-start gap-3">
-          <Calendar className="w-5 h-5 text-[#26547c] dark:text-[#e6e6e6] mt-0.5" />
+          <Calendar className="w-5 h-5 text-brand mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+            <p className="text-sm font-medium text-ls-muted">
               Date
             </p>
-            <p className="text-[#161616] dark:text-[#e6e6e6]">
+            <p className="text-ls-text">
               {formatDate(date, { includeWeekday: true })}
             </p>
           </div>
         </div>
 
         <div className="flex items-start gap-3">
-          <Clock className="w-5 h-5 text-[#26547c] dark:text-[#e6e6e6] mt-0.5" />
+          <Clock className="w-5 h-5 text-brand mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+            <p className="text-sm font-medium text-ls-muted">
               Heure
             </p>
-            <p className="text-[#161616] dark:text-[#e6e6e6]">
+            <p className="text-ls-text">
               {formatTime(time)}
             </p>
           </div>
@@ -67,12 +67,12 @@ export function WorkshopDetailsCard({
 
         {duration && (
           <div className="flex items-start gap-3">
-            <Clock className="w-5 h-5 text-[#26547c] dark:text-[#e6e6e6] mt-0.5" />
+            <Clock className="w-5 h-5 text-brand mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+              <p className="text-sm font-medium text-ls-muted">
                 Durée
               </p>
-              <p className="text-[#161616] dark:text-[#e6e6e6]">
+              <p className="text-ls-text">
                 {duration} minutes
               </p>
             </div>
@@ -81,15 +81,15 @@ export function WorkshopDetailsCard({
 
         <div className="flex items-start gap-3">
           {isVirtual ? (
-            <Video className="w-5 h-5 text-[#26547c] dark:text-[#e6e6e6] mt-0.5" />
+            <Video className="w-5 h-5 text-brand mt-0.5" />
           ) : (
-            <MapPin className="w-5 h-5 text-[#26547c] dark:text-[#e6e6e6] mt-0.5" />
+            <MapPin className="w-5 h-5 text-brand mt-0.5" />
           )}
           <div>
-            <p className="text-sm font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+            <p className="text-sm font-medium text-ls-muted">
               {isVirtual ? "En ligne" : "Lieu"}
             </p>
-            <p className="text-[#161616] dark:text-[#e6e6e6]">
+            <p className="text-ls-text">
               {location || "Non spécifié"}
             </p>
           </div>
@@ -97,12 +97,12 @@ export function WorkshopDetailsCard({
 
         {maxParticipants && (
           <div className="flex items-start gap-3">
-            <Users className="w-5 h-5 text-[#26547c] dark:text-[#e6e6e6] mt-0.5" />
+            <Users className="w-5 h-5 text-brand mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+              <p className="text-sm font-medium text-ls-muted">
                 Participants max
               </p>
-              <p className="text-[#161616] dark:text-[#e6e6e6]">
+              <p className="text-ls-text">
                 {maxParticipants} personnes
               </p>
             </div>

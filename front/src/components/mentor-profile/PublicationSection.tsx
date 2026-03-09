@@ -33,7 +33,7 @@ export function PublicationSection({
       </p>
 
       {isPublished && (
-        <div className="flex items-center gap-2 p-3 bg-ls-success-soft border border-ls-success rounded-[16px]">
+          <div className="flex items-center gap-2 p-3 bg-ls-success-soft border border-ls-success rounded-2xl">
           <CheckCircle2 className="h-5 w-5 text-ls-success" />
           <span className="text-sm font-medium text-ls-success">
             Votre profil est publié et visible dans le répertoire des mentors
@@ -51,7 +51,7 @@ export function PublicationSection({
               handleUnpublish();
             }}
             disabled={isUnpublishing}
-            className="flex-1 bg-brand hover:bg-brand-hover text-[#161616] rounded-[32px] font-semibold"
+            className="flex-1 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
             size="lg"
           >
             {isUnpublishing ? (
@@ -71,7 +71,7 @@ export function PublicationSection({
             type="button"
             onClick={handlePublish}
             disabled={isPublishing || isSubmitting || isFormSubmitting}
-            className="flex-1 bg-ls-success hover:bg-ls-success/90 text-white rounded-[32px] font-semibold"
+            className="flex-1 bg-ls-success hover:bg-ls-success/90 text-white rounded-full font-semibold"
             size="lg"
           >
             {isPublishing ? (

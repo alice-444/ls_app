@@ -23,20 +23,20 @@ interface ReplyPreviewProps {
 
 export function ReplyPreview({ message, onCancel }: ReplyPreviewProps) {
   return (
-    <div className="mb-2 p-2 bg-gray-100 dark:bg-white/10 rounded-lg flex items-center justify-between">
+    <div className="mb-2 p-2 bg-muted/50 rounded-2xl flex items-center justify-between">
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-gray-600 dark:text-[rgba(230,230,230,0.64)] mb-1">
-          Répondre à:
+        <p className="text-xs text-ls-muted mb-1">
+          Répondre à :
         </p>
         {message.workshopReference ? (
-          <div className="flex items-center gap-2 text-sm text-[#26547c] dark:text-[#e6e6e6]">
-            <BookOpen className="h-3.5 w-3.5 shrink-0 text-gray-600 dark:text-[rgba(230,230,230,0.64)]" />
+          <div className="flex items-center gap-2 text-sm text-ls-heading">
+            <BookOpen className="h-3.5 w-3.5 shrink-0 text-ls-muted" />
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate">
                 {message.workshopReference.workshopTitle || "Atelier"}
               </p>
               {message.workshopReference.workshopDate && (
-                <p className="text-xs text-gray-600 dark:text-[rgba(230,230,230,0.64)]">
+                <p className="text-xs text-ls-muted">
                   {format(
                     new Date(message.workshopReference.workshopDate),
                     "d MMM yyyy",
@@ -47,7 +47,7 @@ export function ReplyPreview({ message, onCancel }: ReplyPreviewProps) {
             </div>
           </div>
         ) : (
-          <p className="text-sm truncate text-[#26547c] dark:text-[#e6e6e6]">
+          <p className="text-sm truncate text-ls-heading">
             {message.content}
           </p>
         )}
@@ -55,7 +55,7 @@ export function ReplyPreview({ message, onCancel }: ReplyPreviewProps) {
       <Button
         size="icon"
         variant="ghost"
-        className="h-6 w-6 shrink-0"
+        className="h-6 w-6 shrink-0 rounded-full"
         onClick={onCancel}
       >
         <X className="h-4 w-4" />

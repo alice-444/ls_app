@@ -20,8 +20,8 @@ export function SectionSidebar<T extends string>({
   onSelect,
 }: SectionSidebarProps<T>) {
   return (
-    <div className="w-full lg:w-[300px] mb-6 lg:mb-0">
-      <div className="bg-ls-surface border border-ls-border rounded-2xl overflow-hidden">
+    <div className="w-full lg:w-[280px] shrink-0 mb-6 lg:mb-0">
+      <div className="bg-card/95 dark:bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-lg overflow-hidden">
         {items.map((item, index) => {
           const Icon = item.icon;
           const isActive = activeSection === item.id;
@@ -34,17 +34,17 @@ export function SectionSidebar<T extends string>({
               type="button"
               onClick={() => onSelect(item.id)}
               className={cn(
-                "w-full flex items-center gap-2 h-12 px-8 py-4 transition-colors text-sm",
+                "w-full flex items-center gap-3 h-12 px-6 py-4 transition-all duration-200 text-sm",
                 isFirst && "rounded-tl-2xl rounded-tr-2xl",
                 isLast && "rounded-bl-2xl rounded-br-2xl",
                 isActive
-                  ? "bg-brand text-white"
-                  : "bg-ls-surface text-ls-heading border-t border-ls-border-soft",
-                !isFirst && !isActive && "border-t border-ls-border-soft"
+                  ? "bg-brand text-ls-heading font-semibold shadow-sm"
+                  : "bg-transparent text-ls-heading hover:bg-brand/10 border-t border-border/30",
+                !isFirst && !isActive && "border-t border-border/30"
               )}
             >
               <Icon className="h-[18px] w-[18px] shrink-0" />
-              <span className="text-xs font-semibold">{item.label}</span>
+              <span className="text-sm font-medium truncate">{item.label}</span>
             </button>
           );
         })}

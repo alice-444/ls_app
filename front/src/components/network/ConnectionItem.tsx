@@ -29,7 +29,7 @@ export function ConnectionItem({
   isRemoving,
 }: ConnectionItemProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] bg-white dark:bg-[rgba(255,255,255,0.08)] hover:bg-[rgba(255,182,71,0.05)] dark:hover:bg-[rgba(255,182,71,0.08)] transition-colors gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-border/50 rounded-2xl bg-card/80 hover:bg-brand-soft/30 transition-colors gap-4">
       <div className="flex items-center gap-4">
         {connection.otherUserPhotoUrl ? (
           <Image
@@ -47,12 +47,12 @@ export function ConnectionItem({
           </div>
         )}
         <div>
-          <p className="font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+          <p className="font-semibold text-ls-heading">
             {connection.otherUserDisplayName ||
               connection.otherUserName ||
               "Utilisateur"}
           </p>
-          <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+          <p className="text-sm text-ls-muted">
             Connecté depuis le{" "}
             {new Date(connection.updatedAt).toLocaleDateString("fr-FR")}
           </p>
@@ -63,7 +63,7 @@ export function ConnectionItem({
           size="sm"
           variant="outline"
           onClick={onViewProfile}
-          className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px]"
+          className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
         >
           <UserCircle className="h-4 w-4 mr-2" />
           Voir le profil
@@ -73,7 +73,7 @@ export function ConnectionItem({
           variant="outline"
           onClick={() => onMessage?.(connection.otherUserId)}
           disabled={!onMessage}
-          className="border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] hover:bg-[rgba(255,182,71,0.1)] dark:hover:bg-[rgba(255,182,71,0.15)] hover:border-[#ffb647] dark:hover:border-[#ffb647] rounded-[32px] disabled:opacity-50"
+          className="border border-border bg-card/80 text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full disabled:opacity-50"
         >
           <MessageSquare className="h-4 w-4 mr-2" />
           Message
@@ -83,7 +83,7 @@ export function ConnectionItem({
           variant="outline"
           onClick={onRemove}
           disabled={isRemoving}
-          className="border border-[#f44336] dark:border-[#f44336] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#f44336] dark:text-[#f44336] hover:bg-[rgba(244,67,54,0.1)] dark:hover:bg-[rgba(244,67,54,0.15)] rounded-[32px]"
+          className="border border-destructive bg-card/80 text-destructive hover:bg-destructive/10 rounded-full"
         >
           <UserMinus className="h-4 w-4 mr-2" />
           Retirer

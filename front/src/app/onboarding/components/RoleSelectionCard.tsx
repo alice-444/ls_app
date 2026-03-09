@@ -22,22 +22,22 @@ export function RoleSelectionCard({
 
   const borderClass = isSelected
     ? role === "MENTOR"
-      ? "border-ls-blue bg-ls-blue/5 shadow-ls-blue/10"
-      : "border-ls-orange bg-ls-orange/5 shadow-ls-orange/10"
-    : "border-ls-border hover:border-ls-blue/50 bg-white/50";
+      ? "border-[#26547c] bg-[#26547c]/5 shadow-[#26547c]/10 dark:border-blue-400 dark:bg-blue-400/10"
+      : "border-[#FFB647] bg-[#FFB647]/5 shadow-[#FFB647]/10 dark:border-orange-400 dark:bg-orange-400/10"
+    : "border-gray-200 dark:border-white/10 hover:border-[#26547c]/50 dark:hover:border-blue-400/50 bg-white/50 dark:bg-white/5";
 
   const iconBgClass = isSelected
     ? role === "MENTOR"
-      ? "bg-ls-blue text-white"
-      : "bg-ls-orange text-white"
+      ? "bg-[#26547c] text-white"
+      : "bg-[#FFB647] text-white"
     : role === "MENTOR"
-    ? "bg-ls-blue/10 text-ls-blue"
-    : "bg-ls-orange/10 text-ls-orange";
+    ? "bg-[#26547c]/10 text-[#26547c] dark:bg-blue-400/20 dark:text-blue-300"
+    : "bg-[#FFB647]/10 text-[#FFB647] dark:bg-orange-400/20 dark:text-orange-300";
 
   const checkIconClass = isSelected
     ? role === "MENTOR"
-      ? "text-ls-blue"
-      : "text-ls-orange"
+      ? "text-[#26547c] dark:text-blue-400"
+      : "text-[#FFB647] dark:text-orange-400"
     : "";
 
   return (
@@ -51,8 +51,8 @@ export function RoleSelectionCard({
           <Icon className="h-10 w-10" />
         </div>
         <div className="text-center space-y-2">
-          <h3 className="text-2xl font-black text-ls-heading">Je suis {config.label}</h3>
-          <p className="text-sm text-ls-text-light font-medium leading-relaxed">
+          <h3 className="text-2xl font-black text-[#26547c] dark:text-white">Je suis {config.label}</h3>
+          <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
             {config.description}
           </p>
         </div>

@@ -21,10 +21,16 @@ function parseStringOrArray(value: unknown): string[] {
   return [];
 }
 
+import { trpc } from "@/utils/trpc";
+
 export function useMentorProfile() {
   const router = useRouter();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
+
+  const { data: titleData } = trpc.user.getTitle.useQuery(undefined, {
+    enabled: !!session,
+  });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -312,7 +318,7 @@ export function useMentorProfile() {
         "Profil publié avec succès ! Il est maintenant visible dans le répertoire des mentors."
       );
       setIsPublished(true);
-      setTimeout(() => router.push("/mentors"), 1500);
+      setTimeout(() => router.push("/dashboard"), 1500);
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -387,8 +393,10 @@ export function useMentorProfile() {
     setCustomIceBreaker,
     iceBreakers,
 
+    titleData,
     onSubmit,
     handlePublish,
     handleUnpublish,
   };
 }
+
