@@ -14,7 +14,6 @@ import { FloatingAddButton } from "@/components/dashboard/FloatingAddButton";
 export default function Dashboard() {
   const {
     router,
-    session,
     isPending,
     queryClient,
     userRole,
@@ -85,8 +84,8 @@ export default function Dashboard() {
           mentorConnections={mentorConnections}
           workshopHistory={workshopHistory}
           acceptedConnections={acceptedConnections}
-          workshopRequests={workshopRequests as any}
-          confirmedWorkshops={confirmedWorkshops as any}
+          workshopRequests={workshopRequests}
+          confirmedWorkshops={confirmedWorkshops}
           onCancelRequest={(requestId) =>
             cancelRequestMutation.mutate({ requestId })
           }
@@ -103,10 +102,10 @@ export default function Dashboard() {
         >
         <MentorDashboard
           mentorStats={mentorStats}
-          pastWorkshops={pastWorkshops as any}
+          pastWorkshops={pastWorkshops as Parameters<typeof MentorDashboard>[0]["pastWorkshops"]}
           acceptedConnections={acceptedConnections}
-          mentorWorkshopRequests={mentorWorkshopRequests as any}
-          mentorWorkshops={mentorWorkshops as any}
+          mentorWorkshopRequests={mentorWorkshopRequests as Parameters<typeof MentorDashboard>[0]["mentorWorkshopRequests"]}
+          mentorWorkshops={mentorWorkshops as Parameters<typeof MentorDashboard>[0]["mentorWorkshops"]}
           userStatus={userStatus}
         />
         </motion.div>
