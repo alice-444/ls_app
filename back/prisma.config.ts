@@ -7,6 +7,6 @@ export default {
     path: path.join(".prisma", "migrations"),
   },
   datasource: {
-    url: process.env.DATABASE_URL || process.env.PRISMA_ACCELERATE_URL,
+    url: process.env.DATABASE_URL,
   },
 } as const;
