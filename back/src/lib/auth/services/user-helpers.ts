@@ -8,15 +8,25 @@ import type { AppUserRepository } from "@/lib/users/repositories";
 export async function verifyUserExists(
   userId: string
 ): Promise<Result<{ user: { id: string; userId: string } }>> {
-  const user = await prisma.user.findUnique({
-    where: { userId },
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [{ id: userId }, { userId }],
+    },
   });
 
   if (!user) {
     return failure("User not found", 404);
   }
 
-  return { ok: true, data: { user } };
+  return {
+    ok: true,
+    data: {
+      user: {
+        id: user.id,
+        userId: user.userId || user.id,
+      },
+    },
+  };
 }
 
 export async function verifyMentorUser(

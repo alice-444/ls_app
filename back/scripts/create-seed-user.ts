@@ -1,4 +1,4 @@
-import { prisma } from '../src/lib/prisma';
+import { prisma } from '../src/lib/common/prisma';
 
 async function main() {
   console.log('Creating initial admin user...');
@@ -6,35 +6,34 @@ async function main() {
   const accountId = 'admin-123';
   const email = 'admin@learnsup.com';
 
-  // Create account first (required for user relation)
-  const account = await prisma.account.upsert({
-    where: { accountId },
-    update: {},
+  // Create user with nested account (cleaner and respects relations)
+  await prisma.user.upsert({
+    where: { email },
+    update: { 
+      role: 'ADMIN', 
+      status: 'ACTIVE',
+      userId: accountId // Ensure business ID is set
+    },
     create: {
       id: accountId,
-      accountId,
-      email,
-      isEmailVerified: true,
-      failedLoginAttempts: 0,
-      isLocked: false,
-      lastLogin: new Date(),
-    }
-  });
-
-  // Create user
-  await prisma.user.upsert({
-    where: { userId: accountId },
-    update: { role: 'ADMIN', status: 'ACTIVE' },
-    create: {
       userId: accountId,
-      name: 'Admin Solidarity',
+      name: 'Admin LearnSup',
       email,
       role: 'ADMIN',
       status: 'ACTIVE',
+      emailVerified: true,
+      accounts: {
+        create: {
+          accountId: accountId,
+          email: email,
+          isEmailVerified: true,
+          providerId: 'credential',
+        }
+      }
     }
   });
 
-  console.log('Admin user created successfully!');
+  console.log('Admin user and account created successfully!');
 }
 
 main()

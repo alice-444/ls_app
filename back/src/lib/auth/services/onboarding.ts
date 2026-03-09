@@ -30,25 +30,20 @@ export class OnboardingService {
         return userCheck;
       }
 
-      let appUser = await this.appUserRepository.findByAppUserId(userId);
+      // Utiliser findByUserId pour être sûr de trouver l'utilisateur (id ou userId)
+      let appUser = await this.appUserRepository.findByUserId(userId);
 
       if (!appUser) {
+        // Si vraiment pas trouvé (étrange si session active), on le crée
         appUser = await this.appUserRepository.create({
-          id: generateInternalId(),
+          id: userId,
           userId: userId,
           role: validation.data.role,
           status: "ACTIVE",
         });
       } else {
-        // Autoriser le changement de rôle tant que le compte n'est pas bloqué ou supprimé
-        if (appUser.status !== "PENDING" && appUser.status !== "ACTIVE") {
-           return failure(
-            "Votre compte n'est plus en état de modification de rôle.",
-            403
-          );
-        }
-
-        appUser = await this.appUserRepository.update(userId, {
+        // Mettre à jour l'utilisateur existant
+        appUser = await this.appUserRepository.update(appUser.id, {
           role: validation.data.role,
           status: "ACTIVE",
         });
