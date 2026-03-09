@@ -40,11 +40,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BackButton } from "@/components/back-button";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 
-type Workshop = WorkshopBasic & {
-  status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-};
+type Workshop = WorkshopDetailed;
 
 function WorkshopEditorContent() {
   const searchParams = useSearchParams();
@@ -60,7 +58,12 @@ function WorkshopEditorContent() {
     isLoading,
     error,
     refetch,
-  } = trpc.workshop.getMyWorkshops.useQuery(undefined);
+  } = trpc.workshop.getMyWorkshops.useQuery(undefined) as {
+    data: WorkshopDetailed[] | undefined;
+    isLoading: boolean;
+    error: any;
+    refetch: () => void;
+  };
 
   // Open form automatically if "new" query parameter is present
   useEffect(() => {
@@ -191,9 +194,8 @@ function WorkshopEditorContent() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-6">
           {hasWorkshops && (
             <Button
-              size="lg"
               onClick={() => setShowForm(true)}
-              className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold flex items-center gap-2"
+              variant="cta" size="cta" className="flex items-center gap-2"
             >
               <Plus className="h-5 w-5" />
               Nouvel atelier
@@ -373,9 +375,8 @@ function WorkshopEditorContent() {
             </CardHeader>
             <CardContent className="flex justify-center">
               <Button
-                size="lg"
                 onClick={() => setShowForm(true)}
-                className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold flex items-center gap-2"
+                variant="cta" size="cta" className="flex items-center gap-2"
               >
                 <Plus className="h-5 w-5" />
                 Créer ton premier atelier
@@ -406,15 +407,8 @@ function WorkshopEditorContent() {
           }
 
           return {
-            id: publishingWorkshop.id,
-            title: publishingWorkshop.title,
-            description: publishingWorkshop.description,
+            ...publishingWorkshop,
             date: convertedDate,
-            time: publishingWorkshop.time,
-            duration: publishingWorkshop.duration,
-            location: publishingWorkshop.location,
-            isVirtual: publishingWorkshop.isVirtual,
-            maxParticipants: publishingWorkshop.maxParticipants,
           };
         })()}
         open={!!publishingWorkshop}

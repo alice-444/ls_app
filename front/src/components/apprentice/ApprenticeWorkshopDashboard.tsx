@@ -22,30 +22,7 @@ import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalenda
 import { ApprenticeSidebar } from "./ApprenticeSidebar";
 import { UpcomingWorkshopsCard } from "./UpcomingWorkshopsCard";
 import { AvailableWorkshopsGrid } from "./AvailableWorkshopsGrid";
-
-interface Workshop {
-  id: string;
-  title: string;
-  description: string | null;
-  date: Date | string | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-  apprenticeAttendanceStatus?: "PENDING" | "PRESENT" | "NO_SHOW" | null;
-  topic?: string | null;
-  maxParticipants?: number | null;
-  apprenticeId?: string | null;
-  creator?: {
-    id?: string;
-    user?: {
-      name: string | null;
-    };
-  };
-  requestId?: string | null;
-  createdAt?: Date | string;
-}
+import type { WorkshopDetailed } from "@/types/workshop";
 
 export function ApprenticeWorkshopDashboard() {
   const router = useRouter();
@@ -58,7 +35,7 @@ export function ApprenticeWorkshopDashboard() {
   });
 
   const [cancelDialogWorkshop, setCancelDialogWorkshop] =
-    useState<Workshop | null>(null);
+    useState<WorkshopDetailed | null>(null);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [selectedWorkshopForRequest, setSelectedWorkshopForRequest] = useState<{
     workshopId: string | null;
@@ -70,13 +47,13 @@ export function ApprenticeWorkshopDashboard() {
     trpc.workshop.getUpcomingWorkshops.useQuery(undefined, {
       enabled: !!session && userRole === "APPRENANT",
       refetchOnWindowFocus: true,
-    });
+    }) as { data: WorkshopDetailed[] | undefined; isLoading: boolean };
 
   const { data: availableWorkshops, isLoading: isLoadingAvailable } =
     trpc.workshop.getAvailableWorkshops.useQuery(undefined, {
       enabled: !!session && userRole === "APPRENANT",
       refetchOnWindowFocus: true,
-    }) as { data: Workshop[] | undefined; isLoading: boolean };
+    }) as { data: WorkshopDetailed[] | undefined; isLoading: boolean };
 
   const { data: workshopHistory, isLoading: isLoadingHistory } =
     trpc.workshop.getWorkshopHistory.useQuery(undefined, {
@@ -110,12 +87,13 @@ export function ApprenticeWorkshopDashboard() {
     }
   };
 
-  const handleJoinWorkshop = (workshop: { id: string; creator?: { id?: string; user?: { name: string | null } } }) => {
-    if (workshop.creator?.id && workshop.creator?.user?.name) {
+  const handleJoinWorkshop = (workshop: WorkshopDetailed) => {
+    const mentorName = workshop.creator?.displayName || workshop.creator?.name || workshop.creator?.user?.name;
+    if (workshop.creator?.id && mentorName) {
       setSelectedWorkshopForRequest({
         workshopId: workshop.id,
         mentorId: workshop.creator.id,
-        mentorName: workshop.creator.user.name,
+        mentorName: mentorName,
       });
       setShowRequestDialog(true);
     }
@@ -214,7 +192,7 @@ export function ApprenticeWorkshopDashboard() {
           }}
           mentorId={selectedWorkshopForRequest.mentorId}
           mentorName={selectedWorkshopForRequest.mentorName}
-          preselectedWorkshopId={selectedWorkshopForRequest.workshopId}
+          workshopId={selectedWorkshopForRequest.workshopId}
           onSuccess={() => {
             utils.workshop.getAvailableWorkshops.invalidate();
             utils.workshop.getUpcomingWorkshops.invalidate();

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -36,7 +37,7 @@ import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequest
 import { PageContainer } from "@/components/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion, useReducedMotion } from "framer-motion";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 
 import { useMyWorkshops } from "@/hooks/useMyWorkshops";
 import {
@@ -100,6 +101,12 @@ export default function MyWorkshopsPage() {
 
   const prefersReducedMotion = useReducedMotion();
 
+  useEffect(() => {
+    if (!isSessionLoading && !session) {
+      router.push("/login");
+    }
+  }, [session, isSessionLoading, router]);
+
   if (isSessionLoading || isLoading || isLoadingRole) {
     return (
       <PageContainer>
@@ -114,7 +121,6 @@ export default function MyWorkshopsPage() {
   }
 
   if (!session) {
-    router.push("/login");
     return null;
   }
 
@@ -192,8 +198,10 @@ export default function MyWorkshopsPage() {
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-6">
           <Button
+            variant="cta"
+            size="cta"
             onClick={() => router.push("/workshop-editor")}
-            className="flex items-center gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-full h-10 px-4 py-2 font-semibold shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Créer un atelier
@@ -238,9 +246,10 @@ export default function MyWorkshopsPage() {
               connaissances
             </p>
             <Button
+              variant="cta"
+              size="cta"
               onClick={() => router.push("/workshop-editor")}
-              size="lg"
-              className="gap-2 bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
+              className="gap-2"
             >
               <Plus className="w-5 h-5" />
               Créer un atelier
@@ -268,7 +277,7 @@ export default function MyWorkshopsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {upcomingWorkshops.slice(1).map((workshop: typeof upcomingWorkshops[number], idx) => (
+              {upcomingWorkshops.slice(1).map((workshop: typeof upcomingWorkshops[number], idx: number) => (
                 <motion.div
                   key={workshop.id}
                   initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
@@ -376,8 +385,9 @@ export default function MyWorkshopsPage() {
               </p>
               {!searchQuery && statusFilter === "all" && (
                 <Button
+                  variant="cta"
+                  size="cta"
                   onClick={() => router.push("/workshop-editor")}
-                  className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Créer un atelier
@@ -476,11 +486,11 @@ export default function MyWorkshopsPage() {
                       </Button>
                       {workshop.status === "DRAFT" && (
                         <Button
-                          variant="default"
-                          size="sm"
+                          variant="cta"
+                          size="ctaSm"
                           onClick={() => handlePublish(workshop.id)}
                           disabled={publishMutation.isPending}
-                          className="flex-1 lg:flex-none bg-brand hover:bg-brand-hover text-[#161616] rounded-full shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                          className="flex-1 lg:flex-none"
                         >
                           <CheckCircle className="w-4 h-4 lg:mr-0 xl:mr-2" />
                           <span className="lg:hidden xl:inline">Publier</span>
@@ -544,7 +554,7 @@ export default function MyWorkshopsPage() {
         transition={{ duration: 0.4 }}
       >
         <CalendarSection
-          workshops={(workshops || []) as unknown as WorkshopBasic[]}
+          workshops={(workshops || []) as unknown as WorkshopDetailed[]}
           calendarDate={calendarDate}
           calendarView={calendarView}
           onDateChange={setCalendarDate}

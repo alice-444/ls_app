@@ -69,6 +69,7 @@ export function MentorProfileModal({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
+          <DialogTitle className="sr-only">Chargement du profil mentor</DialogTitle>
           <Loader size="sm" />
         </DialogContent>
       </Dialog>

@@ -25,33 +25,18 @@ import {
   formatTimeRange,
   calculateEndTime,
 } from "@/lib/workshop-utils";
-
-interface Workshop {
-  id: string;
-  title: string;
-  description: string | null;
-  date: Date | string | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-  creator?: {
-    id?: string;
-    user?: { name: string | null };
-  };
-}
+import type { WorkshopDetailed } from "@/types/workshop";
 
 interface UpcomingWorkshopsCardProps {
-  readonly workshops: Workshop[] | undefined;
-  readonly onCancelClick: (workshop: Workshop) => void;
+  readonly workshops: WorkshopDetailed[] | undefined;
+  readonly onCancelClick: (workshop: WorkshopDetailed) => void;
 }
 
-function getWorkshopStatus(workshop: Workshop): "confirmed" | "pending" {
+function getWorkshopStatus(workshop: WorkshopDetailed): "confirmed" | "pending" {
   return workshop.date && workshop.time ? "confirmed" : "pending";
 }
 
-function isWorkshopPast(workshop: Workshop): boolean {
+function isWorkshopPast(workshop: WorkshopDetailed): boolean {
   if (!workshop.date || !workshop.time) return false;
   const endTime = calculateEndTime(workshop.date, workshop.time, workshop.duration);
   return endTime ? endTime < new Date() : false;
@@ -116,9 +101,9 @@ function WorkshopItem({
   onCancelClick,
   onDetailsClick,
 }: {
-  readonly workshop: Workshop;
+  readonly workshop: WorkshopDetailed;
   readonly status: "confirmed" | "pending";
-  readonly onCancelClick: (workshop: Workshop) => void;
+  readonly onCancelClick: (workshop: WorkshopDetailed) => void;
   readonly onDetailsClick: () => void;
 }) {
   return (

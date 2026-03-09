@@ -214,6 +214,7 @@ function UserReportsContent() {
       {/* Detail Dialog */}
       <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
         <DialogContent className="max-w-2xl">
+          <DialogTitle className="sr-only">Détails du Signalement</DialogTitle>
           {selectedReport && (
             <>
               <DialogHeader>

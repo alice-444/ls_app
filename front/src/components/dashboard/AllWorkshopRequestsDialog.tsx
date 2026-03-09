@@ -35,7 +35,7 @@ export function AllWorkshopRequestsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold text-[#26547c]">
+          <DialogTitle className="text-2xl font-semibold text-ls-heading">
             Demandes reçues ({requests?.length || 0})
           </DialogTitle>
           <DialogDescription>
@@ -47,17 +47,17 @@ export function AllWorkshopRequestsDialog({
             requests.map((request) => (
               <div
                 key={request.id}
-                className="bg-white border border-[#d6dae4] rounded-[16px] h-[126px] px-5 py-2 flex items-center justify-between"
+                className="bg-card/80 border border-border/50 rounded-2xl min-h-[126px] px-5 py-2 flex items-center justify-between"
               >
                 <div className="flex flex-col gap-[8px] justify-center">
-                  <p className="text-base font-bold text-[#26547c]">
+                  <p className="text-base font-bold text-ls-heading">
                     {request.title}
                   </p>
-                  <p className="text-base text-[#161616]">
+                  <p className="text-base text-ls-text">
                     {request.description ||
                       "Lorem ipsum dolor sit amet, consectetur adipiscing elit"}
                   </p>
-                  <p className="text-base text-[rgba(38,84,124,0.64)]">
+                  <p className="text-base text-ls-muted">
                     {formatWorkshopDate(request.preferredDate)}
                   </p>
                   {request.status === "REJECTED" && request.rejectionReason && (
@@ -75,7 +75,7 @@ export function AllWorkshopRequestsDialog({
               </div>
             ))
           ) : (
-            <div className="text-center py-8 text-[rgba(38,84,124,0.64)]">
+            <div className="text-center py-8 text-ls-muted">
               <p>Aucune demande reçue pour le moment</p>
             </div>
           )}

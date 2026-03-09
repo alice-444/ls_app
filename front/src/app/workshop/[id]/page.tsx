@@ -455,7 +455,7 @@ export default function WorkshopDetailPage() {
           onOpenChange={setShowRequestDialog}
           mentorId={workshop.creator.id}
           mentorName={workshop.creator.user?.name || "Mentor"}
-          preselectedWorkshopId={workshop.id}
+          workshopId={workshop.id}
         />
       )}
 

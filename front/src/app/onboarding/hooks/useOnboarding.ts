@@ -2,12 +2,14 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { customAuthClient } from "@/lib/auth-client";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Role, Step } from "../types";
 import type { ProfFormData } from "../schemas";
 
 export function useOnboarding() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<Step>("select");
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,10 +43,15 @@ export function useOnboarding() {
     setIsSubmitting(true);
     try {
       await customAuthClient.selectRole(selectedRole);
+      
+      // Invalider les requêtes de rôle pour que RoleGate voie le changement immédiatement
+      await queryClient.invalidateQueries({ queryKey: ["userRole"] });
+      await queryClient.invalidateQueries({ queryKey: ["userData"] });
+      
       setIsSubmitting(false);
 
       if (selectedRole === "MENTOR") {
-        setCurrentStep("prof-form"); // Garder l'étape mais pour la fin ou la supprimer plus tard
+        setCurrentStep("prof-form");
       } else {
         setCurrentStep("apprenant-flow");
         setTimeout(() => {
@@ -59,7 +66,7 @@ export function useOnboarding() {
       );
       setIsSubmitting(false);
     }
-  }, [selectedRole, router]);
+  }, [selectedRole, router, queryClient]);
 
   const handleProfFormSubmit = useCallback(
     async (data: ProfFormData) => {
@@ -93,6 +100,9 @@ export function useOnboarding() {
           areasOfExpertise: [data.domain], // Use domain as first expertise area
         });
 
+        // Invalider à nouveau après sauvegarde profil
+        await queryClient.invalidateQueries({ queryKey: ["userData"] });
+
         toast.success("Profil créé avec succès !");
         setIsSubmitting(false);
         setTimeout(() => {
@@ -107,7 +117,7 @@ export function useOnboarding() {
         setIsSubmitting(false);
       }
     },
-    [router]
+    [router, queryClient]
   );
 
   const handleGoBack = useCallback(() => {
@@ -133,4 +143,3 @@ export function useOnboarding() {
     handleGoBack,
   };
 }
-

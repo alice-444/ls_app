@@ -4,13 +4,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
 import { useRouter } from "next/navigation";
 import { Calendar, History } from "lucide-react";
+import type { WorkshopDetailed } from "@/types/workshop";
 
 interface EventsTabsProps {
-  upcoming: any[];
-  past: any[];
+  upcoming: WorkshopDetailed[];
+  past: WorkshopDetailed[];
 }
 
-export function EventsTabs({ upcoming, past }: EventsTabsProps) {
+/**
+ * EventsTabs Component
+ * Displays workshops separated by upcoming and past status.
+ */
+export function EventsTabs({ upcoming, past }: Readonly<EventsTabsProps>) {
   const router = useRouter();
 
   return (

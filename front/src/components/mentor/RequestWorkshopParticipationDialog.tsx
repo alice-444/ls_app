@@ -33,7 +33,7 @@ import {
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
-import type { WorkshopBasic } from "@/types/workshop";
+import type { WorkshopBase } from "@/types/workshop";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
 
@@ -54,7 +54,7 @@ interface RequestWorkshopParticipationDialogProps {
   onOpenChange: (open: boolean) => void;
   mentorId: string;
   mentorName: string;
-  preselectedWorkshopId?: string | null;
+  workshopId?: string | null;
   onSuccess?: () => void;
 }
 
@@ -65,9 +65,9 @@ export function RequestWorkshopParticipationDialog({
   onOpenChange,
   mentorId,
   mentorName,
-  preselectedWorkshopId,
+  workshopId,
   onSuccess,
-}: RequestWorkshopParticipationDialogProps) {
+}: Readonly<RequestWorkshopParticipationDialogProps>) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -107,21 +107,21 @@ export function RequestWorkshopParticipationDialog({
   });
 
   useEffect(() => {
-    if (preselectedWorkshopId && workshopsData?.upcoming) {
+    if (workshopId && workshopsData?.upcoming) {
       const workshopExists = workshopsData.upcoming.some(
-        (w: WorkshopBasic) => w.id === preselectedWorkshopId
+        (w: WorkshopBase) => w.id === workshopId
       );
       if (workshopExists) {
-        form.setValue("workshopId", preselectedWorkshopId);
+        form.setValue("workshopId", workshopId);
       }
     }
-  }, [preselectedWorkshopId, workshopsData, form]);
+  }, [workshopId, workshopsData, form]);
 
   const onSubmit = async (data: RequestParticipationFormData) => {
     setIsSubmitting(true);
 
     const selectedWorkshop = workshopsData?.upcoming.find(
-      (w: WorkshopBasic) => w.id === data.workshopId
+      (w: WorkshopBase) => w.id === data.workshopId
     );
 
     if (!selectedWorkshop) {
@@ -150,35 +150,28 @@ export function RequestWorkshopParticipationDialog({
   const currentBalance = 999;
   const hasInsufficientCredits = currentBalance < WORKSHOP_REQUEST_COST;
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            Demander à participer à un atelier
-          </DialogTitle>
-          <DialogDescription>
-            Choisissez un atelier publié par {mentorName} et envoyez une demande
-            de participation.
-          </DialogDescription>
-        </DialogHeader>
-
-        {isLoadingWorkshops ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          </div>
-        ) : !hasWorkshops ? (
-          <div className="py-8 text-center">
-            <p className="text-muted-foreground mb-4">
-              Aucun atelier à venir disponible pour le moment.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Les ateliers publiés par {mentorName} apparaîtront ici une fois
-              qu'ils seront disponibles.
-            </p>
-          </div>
-        ) : (
+  const renderDialogContent = () => {
+    if (isLoadingWorkshops) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      );
+    }
+    if (!hasWorkshops) {
+      return (
+        <div className="py-8 text-center">
+          <p className="text-muted-foreground mb-4">
+            Aucun atelier à venir disponible pour le moment.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Les ateliers publiés par {mentorName} apparaîtront ici une fois
+            qu&apos;ils seront disponibles.
+          </p>
+        </div>
+      );
+    }
+    return (
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="workshopId">
@@ -192,7 +185,7 @@ export function RequestWorkshopParticipationDialog({
                   <SelectValue placeholder="Choisir un atelier" />
                 </SelectTrigger>
                 <SelectContent>
-                  {upcomingWorkshops.map((workshop: WorkshopBasic) => (
+                  {upcomingWorkshops.map((workshop: WorkshopBase) => (
                     <SelectItem key={workshop.id} value={workshop.id}>
                       <div className="flex flex-col">
                         <span className="font-medium">{workshop.title}</span>
@@ -226,7 +219,7 @@ export function RequestWorkshopParticipationDialog({
               <div className="p-4 bg-muted rounded-lg space-y-2">
                 {(() => {
                   const selectedWorkshop = upcomingWorkshops.find(
-                    (w: WorkshopBasic) => w.id === form.watch("workshopId")
+                    (w: WorkshopBase) => w.id === form.watch("workshopId")
                   );
                   if (!selectedWorkshop) return null;
                   return (
@@ -340,7 +333,24 @@ export function RequestWorkshopParticipationDialog({
               </Button>
             </DialogFooter>
           </form>
-        )}
+    );
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5" />
+            Demander à participer à un atelier
+          </DialogTitle>
+          <DialogDescription>
+            Choisissez un atelier publié par {mentorName} et envoyez une demande
+            de participation.
+          </DialogDescription>
+        </DialogHeader>
+
+        {renderDialogContent()}
       </DialogContent>
     </Dialog>
   );
