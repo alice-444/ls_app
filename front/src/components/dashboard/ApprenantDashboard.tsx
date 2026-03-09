@@ -69,8 +69,7 @@ export function ApprenantDashboard({
   );
 
   return (
-    <>
-      <div className="flex flex-col lg:flex-row gap-4 sm:gap-[16px]">
+    <div className="flex flex-col lg:flex-row gap-4 sm:gap-[16px]">
         <ApprenantDashboardSidebar
           titleData={titleData}
           creditBalance={{ balance: 999 }}
@@ -261,6 +260,5 @@ export function ApprenantDashboard({
           </Card>
         </div>
       </div>
-    </>
   );
 }
