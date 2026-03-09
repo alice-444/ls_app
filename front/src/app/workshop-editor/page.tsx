@@ -191,9 +191,8 @@ function WorkshopEditorContent() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-6">
           {hasWorkshops && (
             <Button
-              size="lg"
               onClick={() => setShowForm(true)}
-              className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold flex items-center gap-2"
+              variant="cta" size="cta" className="flex items-center gap-2"
             >
               <Plus className="h-5 w-5" />
               Nouvel atelier
@@ -373,9 +372,8 @@ function WorkshopEditorContent() {
             </CardHeader>
             <CardContent className="flex justify-center">
               <Button
-                size="lg"
                 onClick={() => setShowForm(true)}
-                className="bg-brand hover:bg-brand-hover text-[#161616] rounded-full font-semibold flex items-center gap-2"
+                variant="cta" size="cta" className="flex items-center gap-2"
               >
                 <Plus className="h-5 w-5" />
                 Créer ton premier atelier

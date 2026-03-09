@@ -405,7 +405,7 @@ export default function WorkshopRoomPage() {
                         </div>
                       ) : (
                         <div className="max-h-64 overflow-y-auto">
-                          {availableTopics.map((topic) => (
+                          {availableTopics.map((topic: string) => (
                             <DropdownMenuCheckboxItem
                               key={topic}
                               checked={selectedTopics.includes(topic)}
@@ -488,13 +488,13 @@ export default function WorkshopRoomPage() {
                 selectedTopics.length > 0 ||
                 hasDateFilter()) && (
                 <Button
-                  variant="outline"
+                  variant="ctaOutline"
+                  size="cta"
                   onClick={() => {
                     clearMentorFilter();
                     clearTopicFilter();
                     clearDateFilter();
                   }}
-                  className="rounded-full border-border bg-card/80 hover:bg-brand-soft hover:border-brand"
                 >
                   Réinitialiser tous les filtres
                 </Button>
