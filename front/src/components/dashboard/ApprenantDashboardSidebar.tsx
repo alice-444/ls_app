@@ -224,12 +224,12 @@ function AvatarGridCard({
   readonly onButtonClick: () => void;
 }) {
   return (
-    <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+    <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
       <CardContent className="p-4 sm:p-6 lg:p-8">
         <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
           <div className="flex items-center gap-2 sm:gap-[7.5px]">
             {icon}
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ls-heading">
               {title}
             </h3>
           </div>
@@ -264,8 +264,9 @@ function AvatarGridCard({
             })}
           </div>
           <Button
-            variant="outline"
-            className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
+            variant="ctaOutline"
+            size="cta"
+            className="w-full"
             onClick={onButtonClick}
           >
             {buttonLabel}
@@ -285,12 +286,12 @@ function WorkshopHistoryCard({
   readonly router: ReturnType<typeof useRouter>;
 }) {
   return (
-    <Card className="border border-[#d6dae4] dark:border-[#d6dae4] rounded-[16px] bg-white dark:bg-[#1a1720]">
+    <Card className="border border-border/50 rounded-2xl bg-card/95 backdrop-blur-md shadow-xl">
       <CardContent className="p-4 sm:p-6 lg:p-8">
         <div className="flex flex-col gap-6 sm:gap-8 lg:gap-[32px]">
           <div className="flex items-center gap-2 sm:gap-[7.5px]">
-            <History className="h-6 w-6 sm:h-8 sm:w-8 text-[#26547c] dark:text-[#e6e6e6]" />
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+            <History className="h-6 w-6 sm:h-8 sm:w-8 text-brand" />
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ls-heading">
               Ateliers passés
             </h3>
           </div>
@@ -298,24 +299,25 @@ function WorkshopHistoryCard({
             {workshopHistory.slice(0, 3).map((workshop, index) => (
               <div
                 key={workshop.id}
-                className={`border-b border-[#d6dae4] dark:border-[#d6dae4] pb-3 sm:pb-4 ${
+                className={`border-b border-border pb-3 sm:pb-4 ${
                   index === Math.min(workshopHistory.length, 3) - 1
                     ? "border-b-0 pb-0"
                     : ""
                 }`}
               >
-                <p className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] mb-1 sm:mb-2">
+                <p className="text-sm sm:text-base font-semibold text-ls-heading mb-1 sm:mb-2">
                   {workshop.title}
                 </p>
-                <p className="text-xs sm:text-sm lg:text-base text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                <p className="text-xs sm:text-sm lg:text-base text-ls-muted">
                   {formatWorkshopDate(workshop.date)}
                 </p>
               </div>
             ))}
           </div>
           <Button
-            variant="outline"
-            className="w-full border border-[#d6dae4] dark:border-[#d6dae4] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6] flex items-center justify-center gap-2 bg-white dark:bg-transparent"
+            variant="ctaOutline"
+            size="cta"
+            className="w-full"
             onClick={() => router.push("/workshop-room")}
           >
             Accéder à l&apos;e-Atelier

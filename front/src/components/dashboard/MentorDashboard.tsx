@@ -406,26 +406,25 @@ export function MentorDashboard({
                               {request.status === "PENDING" ? (
                                 <>
                                   <Button
-                                    size="sm"
-                                    className="bg-green-600 hover:bg-green-700 text-white rounded-full h-8 px-3"
+                                    variant="ctaSuccess"
+                                    size="ctaSm"
                                     onClick={() => {
                                       setSelectedRequest(request);
                                       setShowAcceptDialog(true);
                                     }}
                                   >
-                                    <Check className="h-4 w-4 mr-1" />
+                                    <Check className="h-4 w-4" />
                                     Accepter
                                   </Button>
                                   <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-red-600 border-red-200 hover:bg-red-50 rounded-full h-8 px-3"
+                                    variant="ctaDestructive"
+                                    size="ctaSm"
                                     onClick={() => {
                                       setSelectedRequest(request);
                                       setShowRejectDialog(true);
                                     }}
                                   >
-                                    <X className="h-4 w-4 mr-1" />
+                                    <X className="h-4 w-4" />
                                     Refuser
                                   </Button>
                                 </>

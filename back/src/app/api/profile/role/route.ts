@@ -13,13 +13,16 @@ export async function GET(req: NextRequest) {
     }
     const { userId } = authResult;
 
-    const appUser = await appUserRepository.findByAppUserId(userId);
+    const appUser = await appUserRepository.findByUserId(userId);
 
     if (!appUser) {
-      return NextResponse.json({ role: null });
+      return NextResponse.json({ role: null, status: null });
     }
 
-    return NextResponse.json({ role: appUser.role });
+    return NextResponse.json({ 
+      role: appUser.role,
+      status: appUser.status 
+    });
   } catch (error) {
     return handleRouteError(error);
   }

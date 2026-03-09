@@ -14,18 +14,20 @@ export function RoleGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
 
-  const { data: userRole, isLoading: isLoadingRole } = useQuery({
+  const { data: userRole, isLoading: isLoadingRole, isError: isErrorRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
     queryFn: getUserRole,
     enabled: !!session?.user?.id,
-    staleTime: 30 * 1000, // Réduire à 30s pour éviter les lags de redirection après onboarding
+    staleTime: 60 * 1000, // Augmenter à 1min
+    retry: 1,
   });
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || isLoadingRole || isErrorRole) return;
 
-    // 1. Rediriger vers l'onboarding si ROLE est NULL
-    if (!isLoadingRole && userRole === null && pathname !== "/onboarding") {
+    // 1. Rediriger vers l'onboarding uniquement si ROLE est explicitement NULL
+    if (userRole === null && pathname !== "/onboarding") {
+      console.log("RoleGate: No role found, redirecting to onboarding");
       router.push("/onboarding");
       return;
     }

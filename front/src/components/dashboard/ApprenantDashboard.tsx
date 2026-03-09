@@ -150,12 +150,11 @@ export function ApprenantDashboard({
                           <StatusBadge status={request.status} />
                           {request.status === "PENDING" && (
                             <Button
-                              variant="outline"
-                              size="sm"
-                              className="rounded-full border-red-200 text-red-600 hover:bg-red-50 h-8"
+                              variant="ctaDestructive"
+                              size="ctaSm"
                               onClick={() => onCancelRequest(request.id)}
                             >
-                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              <Trash2 className="h-3.5 w-3.5" />
                               Annuler
                             </Button>
                           )}
@@ -224,12 +223,11 @@ export function ApprenantDashboard({
                               <a href={`/workshop/${workshop.id}`}>Rejoindre</a>
                             </Button>
                             <Button
-                              variant="outline"
-                              size="sm"
-                              className="rounded-full border-red-200 text-red-600 hover:bg-red-50 h-9 px-4"
+                              variant="ctaDestructive"
+                              size="ctaSm"
                               onClick={() => onCancelConfirmed(workshop.id)}
                             >
-                              <XCircle className="h-4 w-4 mr-2" />
+                              <XCircle className="h-4 w-4" />
                               Annuler
                             </Button>
                           </div>
@@ -267,9 +265,9 @@ export function ApprenantDashboard({
                     </h3>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="rounded-full h-8" onClick={() => navigateCalendar("prev")}>Précédent</Button>
-                    <Button variant="outline" size="sm" className="rounded-full h-8" onClick={() => navigateCalendar("today")}>Aujourd'hui</Button>
-                    <Button variant="outline" size="sm" className="rounded-full h-8" onClick={() => navigateCalendar("next")}>Suivant</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("prev")}>Précédent</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("today")}>Aujourd&apos;hui</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("next")}>Suivant</Button>
                   </div>
                 </div>
 

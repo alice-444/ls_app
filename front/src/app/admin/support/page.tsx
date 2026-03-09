@@ -218,6 +218,7 @@ function AdminSupportContent() {
 
       <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogTitle className="sr-only">Détails du Ticket</DialogTitle>
           {selectedRequest && (
             <>
               <DialogHeader>
