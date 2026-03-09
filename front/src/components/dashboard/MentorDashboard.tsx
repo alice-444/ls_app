@@ -29,6 +29,7 @@ import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopR
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
+import type { WorkshopDetailed, WorkshopBase } from "@/types/workshop";
 
 import RollingNumber from "@/components/ui/RollingNumber";
 
@@ -39,19 +40,6 @@ interface Connection {
   otherUserDisplayName?: string;
   otherUserPhotoUrl?: string;
   otherUserRole?: string;
-}
-
-interface WorkshopItem {
-  id: string;
-  title: string;
-  description: string | null;
-  date: string | Date | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  maxParticipants: number | null;
-  status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 }
 
 interface WorkshopRequest {
@@ -69,10 +57,10 @@ interface MentorDashboardProps {
     readonly creditsEarned: number;
     readonly studentsHelped: number;
   };
-  readonly pastWorkshops: WorkshopItem[];
+  readonly pastWorkshops: WorkshopBase[];
   readonly acceptedConnections: Connection[] | undefined;
   readonly mentorWorkshopRequests: WorkshopRequest[] | undefined;
-  readonly mentorWorkshops: WorkshopItem[] | undefined;
+  readonly mentorWorkshops: WorkshopDetailed[] | undefined;
   readonly userStatus?: string;
 }
 
@@ -568,7 +556,7 @@ export function MentorDashboard({
 
                 <div className="overflow-x-auto">
                   <WorkshopCalendar
-                    workshops={mentorWorkshops || []}
+                    workshops={(mentorWorkshops || []) as unknown as WorkshopDetailed[]}
                     height="400px"
                     userRole="MENTOR"
                     controlledDate={mentorCalendarDate}

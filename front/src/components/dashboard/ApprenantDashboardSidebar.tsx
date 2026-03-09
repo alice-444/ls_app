@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import RollingNumber from "@/components/ui/RollingNumber";
+import type { WorkshopBase } from "@/types/workshop";
 
 const getAvatarColorClass = (index: number) => {
   if (index % 4 === 0) return "bg-linear-to-br from-blue-400 to-blue-600";
@@ -33,17 +34,11 @@ interface Connection {
   otherUserRole?: string;
 }
 
-interface WorkshopHistoryItem {
-  id: string;
-  title: string;
-  date: string | Date | null;
-}
-
 interface ApprenantDashboardSidebarProps {
   readonly titleData: { title?: string } | undefined;
   readonly creditBalance: { readonly balance: number } | undefined;
   readonly mentorConnections: Connection[];
-  readonly workshopHistory: WorkshopHistoryItem[] | undefined;
+  readonly workshopHistory: WorkshopBase[] | undefined;
   readonly acceptedConnections: Connection[] | undefined;
 }
 
@@ -282,7 +277,7 @@ function WorkshopHistoryCard({
   workshopHistory,
   router,
 }: {
-  readonly workshopHistory: WorkshopHistoryItem[];
+  readonly workshopHistory: WorkshopBase[];
   readonly router: ReturnType<typeof useRouter>;
 }) {
   return (

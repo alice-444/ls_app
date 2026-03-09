@@ -6,25 +6,21 @@ import { trpc } from "@/utils/trpc";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Plus,
-  Search,
   Trash2,
   Inbox,
   Calendar,
-  MessageSquare,
   Clock,
   MapPin,
   XCircle,
 } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import {
-  formatWorkshopDate,
-  formatCalendarMonthYear,
   createNavigateCalendar,
 } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";
 import { ApprenantDashboardSidebar } from "./ApprenantDashboardSidebar";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
+import type { WorkshopDetailed, WorkshopBase } from "@/types/workshop";
 
 interface Connection {
   connectionId: string;
@@ -35,40 +31,13 @@ interface Connection {
   otherUserRole?: string;
 }
 
-interface WorkshopHistoryItem {
-  id: string;
-  title: string;
-  date: string | Date | null;
-}
-
-interface WorkshopRequest {
-  id: string;
-  title: string;
-  description?: string;
-  status: string;
-  preferredDate: string | Date | null;
-  rejectionReason?: string | null;
-}
-
-interface ConfirmedWorkshop {
-  id: string;
-  title: string;
-  description: string | null;
-  date: string | Date | null;
-  time: string | null;
-  duration: number | null;
-  location: string | null;
-  isVirtual: boolean;
-  maxParticipants: number | null;
-}
-
 interface ApprenantDashboardProps {
   readonly creditBalance: { readonly balance: number } | undefined;
   readonly mentorConnections: Connection[];
-  readonly workshopHistory: WorkshopHistoryItem[] | undefined;
+  readonly workshopHistory: WorkshopBase[] | undefined;
   readonly acceptedConnections: Connection[] | undefined;
-  readonly workshopRequests: WorkshopRequest[] | undefined;
-  readonly confirmedWorkshops: ConfirmedWorkshop[] | undefined;
+  readonly workshopRequests: any[] | undefined;
+  readonly confirmedWorkshops: WorkshopDetailed[] | undefined;
   readonly onCancelRequest: (requestId: string) => void;
   readonly onCancelConfirmed: (workshopId: string) => void;
 }
@@ -273,7 +242,7 @@ export function ApprenantDashboard({
 
                 <div className="overflow-x-auto">
                   <WorkshopCalendar
-                    workshops={confirmedWorkshops || []}
+                    workshops={(confirmedWorkshops || []) as unknown as WorkshopDetailed[]}
                     height="450px"
                     userRole="APPRENANT"
                     controlledDate={apprenantCalendarDate}

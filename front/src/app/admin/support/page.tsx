@@ -17,8 +17,7 @@ import {
   User, 
   Mail, 
   Clock, 
-  CheckCircle2, 
-  AlertCircle,
+  CheckCircle2,
   MoreVertical,
   Download,
   Info
@@ -54,9 +53,23 @@ import { fr } from "date-fns/locale";
 
 type SupportRequestStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 
+interface SupportRequest {
+  id: string;
+  subject: string;
+  status: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  email: string;
+  problemType: string;
+  description: string;
+  userId?: string | null;
+  user?: { displayName?: string; name?: string } | null;
+  attachments?: { url: string; filename: string; size: number }[];
+}
+
 function AdminSupportContent() {
   const [statusFilter, setStatusFilter] = useState<SupportRequestStatus | "ALL">("PENDING");
-  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<SupportRequest | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   const { data: requests, isLoading, refetch } = trpc.support.getAdminSupportQueue.useQuery({
@@ -93,7 +106,7 @@ function AdminSupportContent() {
     }
   };
 
-  const viewDetail = (request: any) => {
+  const viewDetail = (request: SupportRequest) => {
     setSelectedRequest(request);
     setIsDetailDialogOpen(true);
   };
@@ -117,7 +130,7 @@ function AdminSupportContent() {
           <span className="text-sm font-medium">Filtrer par statut:</span>
           <Select 
             value={statusFilter} 
-            onValueChange={(v) => setStatusFilter(v as any)}
+            onValueChange={(v) => setStatusFilter(v as SupportRequestStatus | "ALL")}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Tous les statuts" />
@@ -156,7 +169,7 @@ function AdminSupportContent() {
                 </TableCell>
               </TableRow>
             ) : (
-              requests.map((request: any) => (
+              requests.map((request: SupportRequest) => (
                 <TableRow key={request.id}>
                   <TableCell className="whitespace-nowrap text-xs">
                     {format(new Date(request.createdAt), "dd MMM yyyy HH:mm", { locale: fr })}
@@ -277,22 +290,22 @@ function AdminSupportContent() {
                   </div>
                 </div>
 
-                {selectedRequest.attachments && (selectedRequest.attachments as any[]).length > 0 && (
+                {selectedRequest.attachments && selectedRequest.attachments.length > 0 && (
                   <div className="space-y-2">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
-                      <Download className="h-4 w-4" /> Pièces jointes ({(selectedRequest.attachments as any[]).length})
+                      <Download className="h-4 w-4" /> Pièces jointes ({selectedRequest.attachments.length})
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {(selectedRequest.attachments as any[]).map((file: any, index: number) => (
+                      {selectedRequest.attachments.map((file) => (
                         <a 
-                          key={index}
+                          key={file.url}
                           href={file.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center justify-between p-3 rounded-md border bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors group"
                         >
                           <div className="flex items-center gap-3 overflow-hidden">
-                            <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                            <FileText className="h-4 w-4 text-blue-500 shrink-0" />
                             <div className="overflow-hidden">
                               <p className="text-xs font-medium truncate" title={file.filename}>
                                 {file.filename}
@@ -314,7 +327,7 @@ function AdminSupportContent() {
                 <div className="flex grow gap-2">
                   <Select 
                     defaultValue={selectedRequest.status} 
-                    onValueChange={(v) => handleUpdateStatus(selectedRequest.id, v as any)}
+                    onValueChange={(v) => handleUpdateStatus(selectedRequest.id, v as SupportRequestStatus)}
                   >
                     <SelectTrigger className="w-full sm:w-[200px]">
                       <SelectValue placeholder="Changer le statut" />

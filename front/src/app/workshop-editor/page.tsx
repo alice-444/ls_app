@@ -40,9 +40,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BackButton } from "@/components/back-button";
-import type { WorkshopBase } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 
-type Workshop = WorkshopBase;
+type Workshop = WorkshopDetailed;
 
 function WorkshopEditorContent() {
   const searchParams = useSearchParams();
@@ -58,7 +58,12 @@ function WorkshopEditorContent() {
     isLoading,
     error,
     refetch,
-  } = trpc.workshop.getMyWorkshops.useQuery(undefined);
+  } = trpc.workshop.getMyWorkshops.useQuery(undefined) as {
+    data: WorkshopDetailed[] | undefined;
+    isLoading: boolean;
+    error: any;
+    refetch: () => void;
+  };
 
   // Open form automatically if "new" query parameter is present
   useEffect(() => {
