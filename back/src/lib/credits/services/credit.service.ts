@@ -6,6 +6,8 @@ import {
   CreditOperationResult,
 } from "./credit.service.interface";
 import { generateInternalId } from "../../utils/id-generator";
+import { creditsExchangedTotal } from "../../metrics/prometheus";
+import { logger } from "../../common/logger";
 
 export class CreditService implements ICreditService {
   constructor(private readonly prisma: PrismaClient) {}
@@ -19,6 +21,7 @@ export class CreditService implements ICreditService {
 
       return success({ balance: user?.creditBalance || 0 });
     } catch (error) {
+      logger.error("Failed to get balance", error, { userId });
       return failure("Une erreur est survenue lors de la récupération du solde.", 500);
     }
   }
@@ -39,6 +42,7 @@ export class CreditService implements ICreditService {
         hasEnough: balance >= requiredAmount,
       });
     } catch (error) {
+      logger.error("Failed to check balance", error, { userId, requiredAmount });
       return failure("Une erreur est survenue lors de la vérification du solde.", 500);
     }
   }
@@ -77,6 +81,7 @@ export class CreditService implements ICreditService {
           },
         });
 
+        creditsExchangedTotal.labels("usage").inc(amount);
         return success({
           userId,
           newBalance: updatedUser.creditBalance,
@@ -85,6 +90,7 @@ export class CreditService implements ICreditService {
       });
     } catch (error: any) {
       if (error.ok === false) return error;
+      logger.error("Failed to debit credits", error, { userId, amount });
       return failure(error.message || "Une erreur inattendue s'est produite lors de debitCredits. Veuillez réessayer.", 500);
     }
   }
@@ -122,6 +128,7 @@ export class CreditService implements ICreditService {
       },
     });
 
+    creditsExchangedTotal.labels("usage").inc(amount);
     return success({
       newBalance: updatedUser.creditBalance,
       transactionId: transaction.id,
@@ -158,6 +165,7 @@ export class CreditService implements ICreditService {
       },
     });
 
+    creditsExchangedTotal.labels("refund").inc(amount);
     return success({
       newBalance: updatedUser.creditBalance,
       transactionId: transaction.id,
@@ -200,6 +208,7 @@ export class CreditService implements ICreditService {
           },
         });
 
+        creditsExchangedTotal.labels("top_up").inc(amount);
         return success({
           userId,
           newBalance: updatedUser.creditBalance,
@@ -208,6 +217,7 @@ export class CreditService implements ICreditService {
       });
     } catch (error: any) {
       if (error.ok === false) return error;
+      logger.error("Failed to credit credits", error, { userId, amount });
       return failure(error.message || "Une erreur inattendue s'est produite lors de creditCredits. Veuillez réessayer.", 500);
     }
   }
@@ -243,6 +253,7 @@ export class CreditService implements ICreditService {
           },
         });
 
+        creditsExchangedTotal.labels("refund").inc(amount);
         return success({
           userId,
           newBalance: updatedUser.creditBalance,
@@ -251,6 +262,7 @@ export class CreditService implements ICreditService {
       });
     } catch (error: any) {
       if (error.ok === false) return error;
+      logger.error("Failed to refund credits", error, { userId, amount });
       return failure(error.message || "Une erreur inattendue s'est produite lors de refundCredits. Veuillez réessayer.", 500);
     }
   }
@@ -301,6 +313,7 @@ export class CreditService implements ICreditService {
         total,
       });
     } catch (error) {
+      logger.error("Failed to get history", error, { userId, params });
       return failure("Une erreur est survenue lors de la récupération de l'historique.", 500);
     }
   }

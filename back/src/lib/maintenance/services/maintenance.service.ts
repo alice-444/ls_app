@@ -41,7 +41,6 @@ export class MaintenanceService implements IMaintenanceService {
               bio: null,
               qualifications: null,
               experience: null,
-              calendlyLink: null,
               status: "DELETED",
               deletedAt: now,
             },
