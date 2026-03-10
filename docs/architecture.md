@@ -61,9 +61,14 @@ flowchart LR
     API[/api/profile, sign-up, cron…]
     SOCKET_S[Socket.IO]
     PRISMA[Prisma]
+    STORAGE[Storage (Cloudinary/Local)]
   end
 
   subgraph DB[(PostgreSQL)]
+  end
+
+  subgraph CLOUD[Cloud Storage]
+    CLOUDINARY[Cloudinary]
   end
 
   UI --> tRPC_C
