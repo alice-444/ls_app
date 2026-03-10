@@ -16,6 +16,17 @@ export default defineConfig({
         process.env.DATABASE_URL ||
         "postgresql://user:password@localhost:5432/test?schema=public",
     },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      include: ["src/**/*.ts"],
+      exclude: [
+        "**/*.test.ts",
+        "**/*.d.ts",
+        "**/__tests__/**",
+        "**/node_modules/**",
+      ],
+    },
   },
   resolve: {
     alias: {

@@ -59,11 +59,12 @@ describe("Dialog", () => {
     render(
       <Dialog open onOpenChange={onOpenChange}>
         <DialogContent>
+          <DialogTitle className="sr-only">Title</DialogTitle>
           <span>Content</span>
         </DialogContent>
       </Dialog>
     );
-    const overlay = document.querySelector(".bg-black\\/80");
+    const overlay = document.querySelector(".fixed.inset-0");
     if (overlay) await user.click(overlay as HTMLElement);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
@@ -74,6 +75,7 @@ describe("Dialog", () => {
     render(
       <Dialog open onOpenChange={onOpenChange}>
         <DialogContent>
+          <DialogTitle className="sr-only">Title</DialogTitle>
           <span>Content</span>
         </DialogContent>
       </Dialog>

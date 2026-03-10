@@ -39,25 +39,25 @@ describe("ProposeSpotForm", () => {
 
   it("renders all form fields", () => {
     renderForm();
-    expect(screen.getByLabelText(/spot name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/address/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/nom du spot/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/adresse/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
     expect(screen.getByText(/tags/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /submit recommendation/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /envoyer la recommandation/i })).toBeInTheDocument();
   });
 
   it("validates form and submits when valid", async () => {
     const user = userEvent.setup();
     renderForm();
     
-    await user.type(screen.getByLabelText(/spot name/i), "My Spot");
-    await user.type(screen.getByLabelText(/address/i), "123 Street, City");
+    await user.type(screen.getByLabelText(/nom du spot/i), "My Spot");
+    await user.type(screen.getByLabelText(/adresse/i), "123 Street, City");
     await user.type(screen.getByLabelText(/description/i), "A very quiet place to work with good coffee.");
     
     // Select a tag
     await user.click(screen.getByText("Ultra Calme"));
     
-    await user.click(screen.getByRole("button", { name: /submit recommendation/i }));
+    await user.click(screen.getByRole("button", { name: /envoyer la recommandation/i }));
     
     expect(mockProposeMutate).toHaveBeenCalledWith({
       name: "My Spot",
@@ -71,11 +71,11 @@ describe("ProposeSpotForm", () => {
     const user = userEvent.setup();
     renderForm();
     
-    await user.click(screen.getByRole("button", { name: /submit recommendation/i }));
+    await user.click(screen.getByRole("button", { name: /envoyer la recommandation/i }));
     
-    expect(await screen.findByText(/name must be at least 3 characters/i)).toBeInTheDocument();
-    expect(await screen.findByText(/description must be at least 10 characters/i)).toBeInTheDocument();
-    expect(await screen.findByText(/address must be at least 5 characters/i)).toBeInTheDocument();
-    expect(await screen.findByText(/please select at least one tag/i)).toBeInTheDocument();
+    expect(await screen.findByText(/le nom doit faire au moins 3 caractères/i)).toBeInTheDocument();
+    expect(await screen.findByText(/la description doit faire au moins 10 caractères/i)).toBeInTheDocument();
+    expect(await screen.findByText(/l'adresse doit faire au moins 5 caractères/i)).toBeInTheDocument();
+    expect(await screen.findByText(/choisis au moins un tag/i)).toBeInTheDocument();
   });
 });

@@ -11,6 +11,7 @@
 		"check-types": "turbo check-types",
 		"test:unit": "turbo test",
 		"test:integration": "turbo test",
+		"test:coverage": "turbo test:coverage",
 		"dev:front": "turbo -F front dev",
 		"dev:back": "turbo -F back dev",
 		"db:push": "turbo -F back db:push",
@@ -19,6 +20,7 @@
 		"db:migrate": "turbo -F back db:migrate"
 	},
 	"devDependencies": {
+		"@vitest/coverage-v8": "^4.0.18",
 		"cypress": "^15.11.0",
 		"turbo": "^2.8.14"
 	},

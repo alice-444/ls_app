@@ -63,13 +63,14 @@ Exemples de routes :
 
 La CI (`.github/workflows/tests.yml`) exécute des tests unitaires, d’intégration et E2E. En local, les scripts doivent être définis à la racine (ou dans les workspaces).
 
-- **Tests unitaires** : `pnpm run test:unit` (à la racine). Les jobs CI s’attendent à ce script. À définir dans `package.json` si absent (ex. via Jest ou Vitest sur `front/` et `back/`).
-- **Tests d’intégration** : `pnpm run test:integration`. Idem, prévu par la CI.
+- **Tests unitaires** : `pnpm run test:unit`  (Vitest, front + back via Turbo).
+- **Tests avec couverture** : `pnpm run test:coverage` (rapports HTML + LCOV dans `coverage/`).
+- **Tests d'intégration** : `pnpm run test:integration`. Prévu par la CI.
 - **E2E (Cypress)** : configuration à la racine dans `cypress.config.js`. Les specs sont attendues dans `cypress/e2e/` (ex. `cypress/e2e/**/*.cy.{js,ts}`) et `cypress/e2e/smoke/` pour les smoke tests. En CI, Cypress est lancé après le build ; en local, lancer l’app puis exécuter Cypress selon la config du projet.
 
-Emplacements typiques des tests (à adapter selon le framework) :
-- **Front** : `front/src/**/__tests__/*.test.ts(x)` ou `*.spec.ts(x)`.
-- **Back** : `back/src/**/__tests__/*.test.ts` ou `*.spec.ts`.
+Emplacements des tests :
+- **Front** : `front/__tests__/units/**/*.test.{ts,tsx}`
+- **Back** : `back/__tests__/units/**/*.test.ts`, `back/__tests__/api/**/*.test.ts`, `back/__tests__/trpc/**/*.test.ts`
 - **E2E** : `cypress/e2e/**/*.cy.{js,jsx,ts,tsx}`.
 
 Résultats et artefacts (coverage, junit, screenshots/videos Cypress) sont publiés par la CI. Voir le workflow pour les chemins exacts.
