@@ -250,6 +250,10 @@ class DIContainer {
     return this._services.maintenanceService;
   }
 
+  get fileStorageService() {
+    return this._services.fileStorageService;
+  }
+
   get prisma(): PrismaClient {
     return this._prisma;
   }

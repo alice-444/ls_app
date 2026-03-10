@@ -34,6 +34,8 @@ import { ChangePasswordService } from "../users/services/account/security/change
 import { ChangeEmailService } from "../users/services/account/security/change-email.service";
 import { BetterAuthService } from "../users/services/account/shared/auth.service";
 import { LocalFileStorageService } from "../users/services/account/shared/file-storage.service";
+import { CloudinaryFileStorageService } from "../users/services/account/shared/cloudinary-file-storage.service";
+import type { IFileStorageService } from "../users/services/account/shared/file-storage.service.interface";
 import { ForgotPasswordService } from "../users/services/account/security/forgot-password.service";
 import { PasswordValidationService } from "../users/services/account/security/password-validation.service";
 import { HttpClient } from "../users/services/account/shared/http-client";
@@ -121,12 +123,24 @@ export class ServicesContainer {
   private _deleteAccountEnhancedService?: IDeleteAccountEnhancedService;
   private _exportDataService?: IExportDataService;
   private _workshopAttendanceService?: IWorkshopAttendanceService;
+  private _fileStorageService?: IFileStorageService;
 
   constructor(
     private readonly prisma: PrismaClient,
     private readonly repositories: RepositoriesContainer
   ) {}
-  
+
+  get fileStorageService(): IFileStorageService {
+    if (!this._fileStorageService) {
+      if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY) {
+        this._fileStorageService = new CloudinaryFileStorageService();
+      } else {
+        this._fileStorageService = new LocalFileStorageService();
+      }
+    }
+    return this._fileStorageService;
+  }
+
   get magicLinkService(): IMagicLinkService {
     this._magicLinkService ??= new MagicLinkService(
       this.prisma,
