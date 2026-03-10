@@ -96,31 +96,39 @@ describe("WorkshopVideoLinkService", () => {
     });
 
     it("returns true when workshop starts within 3 hours", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-06-15T12:00:00")); // 2h before 14:00
+
       const workshopDate = new Date("2025-06-15");
       const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
 
-      const startTime = new Date("2025-06-15T14:00:00");
-      const twoHoursBefore = new Date(startTime.getTime() - 2 * 60 * 60 * 1000);
+      expect(service.shouldExposeLink(workshop)).toBe(true);
 
-      expect(service.shouldExposeLink(workshop, twoHoursBefore)).toBe(true);
+      vi.useRealTimers();
     });
 
     it("returns true when workshop has already started", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-06-15T15:00:00")); // 1h after 14:00 start
+
       const workshopDate = new Date("2025-06-15");
       const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
 
-      const afterStart = new Date("2025-06-15T15:00:00");
-      expect(service.shouldExposeLink(workshop, afterStart)).toBe(true);
+      expect(service.shouldExposeLink(workshop)).toBe(true);
+
+      vi.useRealTimers();
     });
 
     it("returns false when workshop is more than 3 hours away", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-06-15T10:00:00")); // 4h before 14:00
+
       const workshopDate = new Date("2025-06-15");
       const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
 
-      const startTime = new Date("2025-06-15T14:00:00");
-      const fourHoursBefore = new Date(startTime.getTime() - 4 * 60 * 60 * 1000);
+      expect(service.shouldExposeLink(workshop)).toBe(false);
 
-      expect(service.shouldExposeLink(workshop, fourHoursBefore)).toBe(false);
+      vi.useRealTimers();
     });
   });
 

@@ -19,7 +19,7 @@ describe("OnboardingService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRepo = {
-      findByAppUserId: vi.fn(),
+      findByUserId: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
     };
@@ -28,7 +28,7 @@ describe("OnboardingService", () => {
   });
 
   it("should create a new user with status ACTIVE for APPRENANT", async () => {
-    mockRepo.findByAppUserId.mockResolvedValue(null);
+    mockRepo.findByUserId.mockResolvedValue(null);
     mockRepo.create.mockResolvedValue({ role: "APPRENANT", status: "ACTIVE" });
 
     const result = await service.selectRole("user-1", { role: "APPRENANT" });
@@ -44,7 +44,7 @@ describe("OnboardingService", () => {
   });
 
   it("should create a new user with status ACTIVE for MENTOR (instant activation)", async () => {
-    mockRepo.findByAppUserId.mockResolvedValue(null);
+    mockRepo.findByUserId.mockResolvedValue(null);
     mockRepo.create.mockResolvedValue({ role: "MENTOR", status: "ACTIVE" });
 
     const result = await service.selectRole("user-1", { role: "MENTOR" });
@@ -57,20 +57,20 @@ describe("OnboardingService", () => {
   });
 
   it("should update an existing PENDING user to ACTIVE", async () => {
-    mockRepo.findByAppUserId.mockResolvedValue({ role: null, status: "PENDING" });
+    mockRepo.findByUserId.mockResolvedValue({ id: "app-1", role: null, status: "PENDING" });
     mockRepo.update.mockResolvedValue({ role: "MENTOR", status: "ACTIVE" });
 
     const result = await service.selectRole("user-1", { role: "MENTOR" });
 
     expect(result.ok).toBe(true);
-    expect(mockRepo.update).toHaveBeenCalledWith("user-1", expect.objectContaining({
+    expect(mockRepo.update).toHaveBeenCalledWith("app-1", expect.objectContaining({
       role: "MENTOR",
       status: "ACTIVE"
     }));
   });
 
   it("should allow changing role if user is ACTIVE (for back button support)", async () => {
-    mockRepo.findByAppUserId.mockResolvedValue({ role: "APPRENANT", status: "ACTIVE" });
+    mockRepo.findByUserId.mockResolvedValue({ id: "app-1", role: "APPRENANT", status: "ACTIVE" });
     mockRepo.update.mockResolvedValue({ role: "MENTOR", status: "ACTIVE" });
 
     const result = await service.selectRole("user-1", { role: "MENTOR" });
@@ -82,14 +82,14 @@ describe("OnboardingService", () => {
   });
 
   it("should fail if user status is not PENDING or ACTIVE", async () => {
-    mockRepo.findByAppUserId.mockResolvedValue({ role: "MENTOR", status: "BLOCKED" });
+    mockRepo.findByUserId.mockResolvedValue({ id: "app-1", role: "MENTOR", status: "BLOCKED" });
 
     const result = await service.selectRole("user-1", { role: "APPRENANT" });
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.status).toBe(403);
-      expect(result.error).toContain("état de modification de rôle");
+      expect(result.error).toContain("modification de rôle");
     }
   });
 });

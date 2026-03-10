@@ -4,9 +4,7 @@ import { config } from "dotenv";
 // Charger .env depuis le répertoire back/ (indépendant du cwd)
 config({ path: path.resolve(__dirname, "../../../.env") });
 
-import { PrismaClient } from '@/lib/prisma';
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { prisma, PrismaClient } from '@/lib/prisma';
 import { RepositoriesContainer } from "./repositories.container";
 import { ServicesContainer } from "./services.container";
 
@@ -17,27 +15,7 @@ class DIContainer {
   private readonly _services: ServicesContainer;
 
   private constructor() {
-    if (!process.env.DATABASE_URL) {
-      throw new Error("DATABASE_URL environment variable must be set");
-    }
-    const pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-      max: 20,
-      ssl:
-        process.env.NODE_ENV === "development"
-          ? { rejectUnauthorized: false }
-          : undefined,
-    });
-    const adapter = new PrismaPg(pool);
-    this._prisma = new PrismaClient({
-      adapter,
-      log:
-        process.env.NODE_ENV === "development"
-          ? ["error", "warn"]
-          : ["error"],
-    });
+    this._prisma = prisma;
 
     this._repositories = new RepositoriesContainer(this._prisma);
     this._services = new ServicesContainer(this._prisma, this._repositories);
