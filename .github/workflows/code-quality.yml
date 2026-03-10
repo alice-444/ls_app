@@ -79,7 +79,7 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
-          NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+          NEXT_PUBLIC_SERVER_URL: http://localhost:4500
           DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
           SKIP_ENV_VALIDATION: true
 
