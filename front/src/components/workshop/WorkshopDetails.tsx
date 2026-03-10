@@ -2,13 +2,11 @@
 
 import { Calendar, Clock, MapPin, LinkIcon, Users, Tag } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
-import type { WorkshopBase } from "@/types/workshop";
+import type { WorkshopDetailed } from "@/types/workshop";
 
 interface WorkshopDetailsProps {
-  workshop: Partial<WorkshopBase> & {
-    apprenticeId?: string | null;
-  };
-  variant?: "default" | "hero" | "catalogue";
+  readonly workshop: Partial<WorkshopDetailed>;
+  readonly variant?: "default" | "hero" | "catalogue";
 }
 
 /**
@@ -73,6 +71,11 @@ export function WorkshopDetails({
         {variant === "hero" ? "Inscrits: " : ""}
         {workshop.apprenticeId ? 1 : 0} / {workshop.maxParticipants || "∞"}
       </div>
+      {workshop.averageRating != null && (
+        <div className={`flex items-center gap-2 ${textSize} ${textColor}`}>
+          {workshop.averageRating}/5
+        </div>
+      )}
     </>
   );
 }

@@ -35,13 +35,16 @@ export function WorkshopCard({
   const isPast = variant === "past";
   const isHero = variant === "hero";
   const isCatalogue = variant === "catalogue";
+  const isCardClickable = !isCatalogue && onViewDetails;
 
-  // Logic to get the creator's name from different possible structures
-  const creatorName = 
-    workshop.creator?.displayName || 
-    workshop.creator?.name || 
-    workshop.creator?.user?.name || 
-    "Mentor";
+  const getWorkshopDetailsVariant = (): "hero" | "catalogue" | "default" => {
+    if (isHero) return "hero";
+    if (isCatalogue) return "catalogue";
+    return "default";
+  };
+
+  // Logic to get the creator's name - now simplified thanks to DTOs
+  const creatorName = workshop.creator?.displayName || "Mentor";
 
   return (
     <Card
@@ -76,23 +79,31 @@ export function WorkshopCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div
-          className={`space-y-2 ${onViewDetails && !isCatalogue ? "cursor-pointer" : ""}`}
-          onClick={!isCatalogue ? handleCardClick : undefined}
-        >
-          {isCatalogue && workshop.creator && (
-            <div className="flex items-center gap-2 text-sm mb-3">
-              <User className="h-4 w-4 text-ls-muted" />
-              <span className="text-ls-heading font-medium">
-                {creatorName}
-              </span>
-            </div>
-          )}
-          <WorkshopDetails
-            workshop={workshop}
-            variant={isHero ? "hero" : isCatalogue ? "catalogue" : "default"}
-          />
-        </div>
+        {isCardClickable ? (
+          <button
+            type="button"
+            className="w-full text-left space-y-2 cursor-pointer border-none bg-transparent p-0 font-inherit"
+            onClick={handleCardClick}
+          >
+            <WorkshopDetails
+              workshop={workshop}
+              variant={getWorkshopDetailsVariant()}
+            />
+          </button>
+        ) : (
+          <div className="space-y-2">
+            {isCatalogue && workshop.creator && (
+              <div className="flex items-center gap-2 text-sm mb-3">
+                <User className="h-4 w-4 text-ls-muted" />
+                <span className="text-ls-heading font-medium">{creatorName}</span>
+              </div>
+            )}
+            <WorkshopDetails
+              workshop={workshop}
+              variant={getWorkshopDetailsVariant()}
+            />
+          </div>
+        )}
         
         {isPast && onDuplicate && (
           <div className="mt-4 pt-4 border-t border-ls-border">
