@@ -181,7 +181,6 @@ Index : `userId`
 | domain, areasOfExpertise, mentorshipTopics | | | |
 | qualifications, experience | String? | | |
 | socialMediaLinks     | Json?     |             |                                |
-| calendlyLink         | String?   |             |                                |
 | studyDomain, studyProgram | String? | | Apprenant                 |
 | iceBreakerTags       | String[]  |             |                                |
 | isPublished          | Boolean   | DEFAULT false | Profil publié              |

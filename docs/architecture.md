@@ -792,7 +792,7 @@ sequenceDiagram
 
 **Route** : DELETE `/api/profile/delete?reason=...` — `buildDeletionPlan` (rétention 30j) → `DeleteUserAccountService.execute` : soft delete (deletedAt, deletionReason), désactivation auth, révocation sessions, unlink accounts → création `deletion_job` (PENDING, runAt = now + 30 jours) → signOut.
 
-**Cron** : GET/POST `/api/cron/purge-deletions` (CRON_SECRET) → `purgeScheduledDeletions` → jobs `runAt <= now` et `status = PENDING` → anonymisation PII (name, email, displayName, photoUrl, bio, qualifications, experience, calendlyLink) → `deletion_job` COMPLETED.
+**Cron** : GET/POST `/api/cron/purge-deletions` (CRON_SECRET) → `purgeScheduledDeletions` → jobs `runAt <= now` et `status = PENDING` → anonymisation PII (name, email, displayName, photoUrl, bio, qualifications, experience) → `deletion_job` COMPLETED.
 
 ---
 

@@ -31,7 +31,7 @@ export const customAuthClient = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.json().catch(() => ({}));
       throw new Error(error.error || "Sign up failed");
     }
 
@@ -48,7 +48,7 @@ export const customAuthClient = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.json().catch(() => ({}));
       throw new Error(error.error || "Failed to select role");
     }
 
@@ -65,7 +65,7 @@ export const customAuthClient = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.json().catch(() => ({}));
       throw new Error(error.error || "Failed to upload photo");
     }
 
@@ -81,7 +81,6 @@ export const customAuthClient = {
     socialMediaLinks?: Record<string, string> | null;
     areasOfExpertise?: string[] | null;
     mentorshipTopics?: string[] | null;
-    calendlyLink?: string | null;
     displayName?: string | null;
     iceBreakerTags?: string[] | null;
   }): Promise<{ success: boolean }> {
@@ -95,7 +94,7 @@ export const customAuthClient = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.json().catch(() => ({}));
       throw new Error(error.error || "Failed to save profile");
     }
 
@@ -111,7 +110,7 @@ export const customAuthClient = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.json().catch(() => ({}));
       throw new Error(error.error || "Failed to publish profile");
     }
 
@@ -178,7 +177,7 @@ export const customAuthClient = {
     } catch (error) {
       if (error instanceof TypeError && error.message === "Failed to fetch") {
         throw new Error(
-          `Unable to connect to server. Please check that the server is running at database`
+          `Unable to connect to server. Please check that the server is running at ${baseURL}`
         );
       }
       throw error;
