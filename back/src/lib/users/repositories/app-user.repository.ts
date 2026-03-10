@@ -33,7 +33,6 @@ export interface UpdateAppUserInput {
   socialMediaLinks?: Record<string, string> | null;
   areasOfExpertise?: string[] | null;
   mentorshipTopics?: string[] | null;
-  calendlyLink?: string | null;
   isPublished?: boolean;
   publishedAt?: Date | null;
   displayName?: string | null;
@@ -70,7 +69,6 @@ export interface AppUserRepository {
 const UPDATABLE_FIELDS = [
   "role", "status", "bio", "domain", "photoUrl", "qualifications",
   "experience", "socialMediaLinks", "areasOfExpertise", "mentorshipTopics",
-  "calendlyLink", "isPublished", "publishedAt", "displayName",
   "studyDomain", "studyProgram", "iceBreakerTags", "deletedAt",
   "emailNotifications", "inAppNotifications",
 ] as const;

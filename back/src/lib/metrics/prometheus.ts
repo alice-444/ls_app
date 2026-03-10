@@ -48,3 +48,40 @@ export const socketConnections = new Gauge({
   help: "Number of active socket connections",
   registers: [register],
 });
+
+// --- Business Metrics ---
+export const connectedUsers = new Gauge({
+  name: "connected_users_total",
+  help: "Number of currently connected users by role",
+  labelNames: ["role"],
+  registers: [register],
+});
+
+export const workshopsTotal = new Counter({
+  name: "workshops_total",
+  help: "Total number of workshops events",
+  labelNames: ["status"], // created, completed, cancelled
+  registers: [register],
+});
+
+export const creditsExchangedTotal = new Counter({
+  name: "credits_exchanged_total",
+  help: "Total volume of credits exchanged on the platform",
+  labelNames: ["type"], // top_up, usage, refund
+  registers: [register],
+});
+
+// --- Security & Reliability Metrics ---
+export const authFailuresTotal = new Counter({
+  name: "auth_failures_total",
+  help: "Total number of authentication failures",
+  labelNames: ["reason"], // invalid_credentials, rate_limited, locked
+  registers: [register],
+});
+
+export const externalApiErrorsTotal = new Counter({
+  name: "external_api_errors_total",
+  help: "Total number of errors when calling external services",
+  labelNames: ["service"], // daily, resend, polar
+  registers: [register],
+});

@@ -33,7 +33,6 @@ export interface AppUserEntity {
   socialMediaLinks: any;
   areasOfExpertise: any;
   mentorshipTopics: any;
-  calendlyLink: string | null;
   isPublished: boolean;
   publishedAt: Date | null;
 }
@@ -49,7 +48,6 @@ export interface AppUserUpdateData {
   socialMediaLinks?: any;
   areasOfExpertise?: any;
   mentorshipTopics?: any;
-  calendlyLink?: string | null;
   isPublished?: boolean;
   publishedAt?: Date | null;
   displayName?: string | null;
