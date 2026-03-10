@@ -17,6 +17,7 @@
 		"db:studio": "prisma studio",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
+		"test:db": "node test-db.mjs",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage"

@@ -1,4 +1,5 @@
 import type { Result } from "../../common";
+import type { WorkshopResponseDTO } from "../dto/workshop.dto";
 
 export interface IWorkshopService {
   createWorkshop(
@@ -34,15 +35,15 @@ export interface IWorkshopService {
   getWorkshopsByCreator(
     userId: string,
     status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
-  ): Promise<Result<any[]>>;
+  ): Promise<Result<WorkshopResponseDTO[]>>;
 
-  getPublishedWorkshops(): Promise<Result<any[]>>;
+  getPublishedWorkshops(): Promise<Result<WorkshopResponseDTO[]>>;
 
-  getWorkshopById(workshopId: string): Promise<Result<any>>;
+  getWorkshopById(workshopId: string): Promise<Result<WorkshopResponseDTO>>;
 
   getConfirmedWorkshopsForApprentice(
     userId: string
-  ): Promise<Result<any[]>>;
+  ): Promise<Result<WorkshopResponseDTO[]>>;
 
   updateWorkshopScheduling(
     userId: string,
@@ -63,15 +64,15 @@ export interface IWorkshopService {
 
   getUpcomingWorkshopsForApprentice(
     userId: string
-  ): Promise<Result<any[]>>;
+  ): Promise<Result<WorkshopResponseDTO[]>>;
 
   getWorkshopHistoryForApprentice(
     userId: string
-  ): Promise<Result<any[]>>;
+  ): Promise<Result<WorkshopResponseDTO[]>>;
 
   getAvailableWorkshopsForApprentice(
     userId: string
-  ): Promise<Result<any[]>>;
+  ): Promise<Result<WorkshopResponseDTO[]>>;
 
   rescheduleWorkshop(
     userId: string,
@@ -86,4 +87,3 @@ export interface IWorkshopService {
 
   getAllTopics(): Promise<Result<string[]>>;
 }
-

@@ -89,7 +89,7 @@ describe("OnboardingService", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.status).toBe(403);
-      expect(result.error).toContain("modification de rôle");
+      expect(result.error).toContain("désactivé ou supprimé");
     }
   });
 });

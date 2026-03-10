@@ -137,17 +137,17 @@ export class ServicesContainer {
   }
 
   get workshopService(): IWorkshopService {
-    this._workshopService ??= new WorkshopService(
-      this.repositories.workshopRepository,
-      this.repositories.appUserRepository,
-      this.userBlockService,
-      this.repositories.workshopRequestRepository,
-      this.notificationService,
-      this.workshopVideoLinkService,
-      this.emailService,
-      this.creditService,
-      this.prisma
-    );
+    this._workshopService ??= new WorkshopService({
+      workshopRepository: this.repositories.workshopRepository,
+      appUserRepository: this.repositories.appUserRepository,
+      userBlockService: this.userBlockService,
+      workshopRequestRepository: this.repositories.workshopRequestRepository,
+      dbNotificationService: this.notificationService,
+      workshopVideoLinkService: this.workshopVideoLinkService,
+      emailService: this.emailService,
+      creditService: this.creditService,
+      prisma: this.prisma,
+    });
     return this._workshopService;
   }
 
