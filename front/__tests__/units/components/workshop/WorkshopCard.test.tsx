@@ -6,15 +6,19 @@ import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
 const baseWorkshop = {
   id: "w1",
   title: "Test Workshop",
+  description: null,
+  topic: null,
   date: "2025-03-01",
   time: "14:00",
   duration: 60,
   location: null,
   isVirtual: true,
+  creatorId: "creator-1",
   apprenticeId: null,
   maxParticipants: 10,
-  status: "PUBLISHED",
+  status: "PUBLISHED" as const,
   averageRating: null,
+  createdAt: "2025-01-01T00:00:00Z",
 };
 
 describe("WorkshopCard", () => {
@@ -40,7 +44,7 @@ describe("WorkshopCard", () => {
     expect(menuTrigger).not.toBeInTheDocument();
   });
 
-  it("renders Dupliquer button when variant is past and onDuplicate is provided", () => {
+  it("renders Reprogrammer button when variant is past and onDuplicate is provided", () => {
     render(
       <WorkshopCard
         workshop={{ ...baseWorkshop, status: "COMPLETED" }}
@@ -48,7 +52,7 @@ describe("WorkshopCard", () => {
         onDuplicate={vi.fn()}
       />
     );
-    expect(screen.getByRole("button", { name: /dupliquer cet atelier/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /reprogrammer cet atelier/i })).toBeInTheDocument();
   });
 
   it("renders average rating when variant is past and workshop has averageRating", () => {
