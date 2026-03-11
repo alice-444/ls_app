@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -38,10 +39,12 @@ export function WorkshopCreatorCard({
       <CardContent className="pt-0">
         <div className="flex items-start gap-3 mb-3">
           {creator.photoUrl ? (
-            <img 
-              src={creator.photoUrl} 
-              alt={mentorName} 
-              className="w-10 h-10 rounded-full object-cover shrink-0" 
+            <Image
+              src={creator.photoUrl}
+              alt={mentorName}
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full object-cover shrink-0"
             />
           ) : (
             <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#26547c] to-[#4A90E2] flex items-center justify-center text-white font-semibold text-sm shrink-0">
@@ -74,7 +77,7 @@ export function WorkshopCreatorCard({
             }
           }}
         >
-          Voir le profil complet
+          Voir le profil
           <ArrowRight className="w-4 h-4" />
         </button>
       </CardContent>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -86,9 +87,11 @@ export function BlockedUsersSection() {
           >
             <div className="flex items-center gap-3 flex-1 min-w-0">
               {blockedUser.photoUrl ? (
-                <img
+                <Image
                   src={blockedUser.photoUrl}
                   alt={blockedUser.displayName || blockedUser.name || "User"}
+                  width={40}
+                  height={40}
                   className="h-10 w-10 rounded-full object-cover"
                 />
               ) : (

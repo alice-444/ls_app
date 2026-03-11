@@ -43,6 +43,27 @@ function mapServerRole(role: "MENTOR" | "APPRENANT" | "ADMIN" | null): UserRole 
   return "both";
 }
 
+function notifyWorkshopRequestStatusChanges(
+  prev: WorkshopRequest[],
+  current: WorkshopRequest[],
+) {
+  for (const req of current) {
+    const prevReq = prev.find((r) => r.id === req.id);
+    if (!prevReq) continue;
+    if (prevReq.status === "PENDING" && req.status === "ACCEPTED") {
+      toast.success(`Votre demande "${req.title}" a été acceptée !`, {
+        description: "L'atelier a été programmé.",
+        duration: 6000,
+      });
+    } else if (prevReq.status === "PENDING" && req.status === "REJECTED") {
+      toast.error(`Votre demande "${req.title}" a été refusée`, {
+        description: req.rejectionReason || "Consultez le dashboard pour plus d'infos.",
+        duration: 8000,
+      });
+    }
+  }
+}
+
 export function useDashboard() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -56,10 +77,7 @@ export function useDashboard() {
 
   const actualUserRole = userData?.role || null;
   const userStatus = userData?.status || "ACTIVE";
-
-  const [userRole, setUserRole] = useState<UserRole>(() =>
-    mapServerRole(actualUserRole || null)
-  );
+  const userRole = mapServerRole(actualUserRole);
 
   useEffect(() => {
     if (isLoadingUserData || isPending || !session) return;
@@ -68,10 +86,7 @@ export function useDashboard() {
       router.replace("/admin");
       return;
     }
-    if (actualUserRole) {
-      setUserRole(mapServerRole(actualUserRole));
-    } else {
-      // Uniquement si les données sont chargées et que le rôle est vraiment null
+    if (!actualUserRole) {
       router.replace("/onboarding");
     }
   }, [actualUserRole, session, isPending, isLoadingUserData, router]);
@@ -97,25 +112,11 @@ export function useDashboard() {
   useEffect(() => {
     const prev = previousApprenticeRequestsRef.current;
     if (workshopRequests && prev) {
-      for (const req of workshopRequests) {
-        const prevReq = prev.find((r) => r.id === req.id);
-        if (!prevReq) continue;
-        if (prevReq.status === "PENDING" && req.status === "ACCEPTED") {
-          toast.success(`Votre demande "${req.title}" a été acceptée !`, {
-            description: "L'atelier a été programmé.",
-            duration: 6000,
-          });
-        }
-        if (prevReq.status === "PENDING" && req.status === "REJECTED") {
-          toast.error(`Votre demande "${req.title}" a été refusée`, {
-            description: req.rejectionReason || "Consultez le dashboard pour plus d'infos.",
-            duration: 8000,
-          });
-        }
-      }
+      notifyWorkshopRequestStatusChanges(prev, workshopRequests);
     }
-    if (workshopRequests)
+    if (workshopRequests) {
       previousApprenticeRequestsRef.current = [...workshopRequests];
+    }
   }, [workshopRequests]);
 
   const { data: confirmedWorkshops, refetch: refetchConfirmedWorkshops } =
