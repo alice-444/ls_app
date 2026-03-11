@@ -24,7 +24,7 @@ export function EmailLayout({
   preview,
   title,
   children,
-  headerColor = "#2563eb",
+  headerColor = "#FFB647",
 }: EmailLayoutProps) {
   return (
     <Html>
@@ -43,10 +43,12 @@ export function EmailLayout({
             <Text style={footerText}>
               Cordialement,
               <br />
-              L&apos;équipe LearnSup
+              <strong>L&apos;équipe LearnSup</strong>
             </Text>
             <Text style={footerNote}>
-              Cet email est envoyé automatiquement, merci de ne pas y répondre.
+              Cet email est envoyé automatiquement par LearnSup.
+              <br />
+              Merci de ne pas y répondre directement.
             </Text>
             <EmailFooter />
           </Section>
@@ -57,53 +59,56 @@ export function EmailLayout({
 }
 
 const main = {
-  fontFamily: "Arial, sans-serif",
-  backgroundColor: "#f6f9fc",
-  padding: "20px",
+  fontFamily: "'Omnes', 'Arial', sans-serif",
+  backgroundColor: "#f9fafb",
+  padding: "40px 0",
 };
 
 const container = {
   backgroundColor: "#ffffff",
-  borderRadius: "8px",
-  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  borderRadius: "12px",
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
   maxWidth: "600px",
   margin: "0 auto",
+  overflow: "hidden" as const,
 };
 
 const header = {
-  padding: "20px",
-  borderRadius: "8px 8px 0 0",
+  padding: "40px 20px",
   textAlign: "center" as const,
 };
 
 const headerTitle = {
   color: "#ffffff",
-  fontSize: "24px",
+  fontSize: "28px",
   fontWeight: "bold",
   margin: "0",
+  textShadow: "0 1px 2px rgba(0,0,0,0.1)",
 };
 
 const content = {
-  padding: "20px",
+  padding: "40px 30px",
   lineHeight: "1.6",
-  color: "#333333",
+  color: "#161616",
+  fontSize: "16px",
 };
 
 const footer = {
-  padding: "20px",
-  borderTop: "1px solid #e5e7eb",
-  marginTop: "30px",
+  padding: "30px",
+  backgroundColor: "#fcfcfc",
+  borderTop: "1px solid #f1f1f1",
 };
 
 const footerText = {
-  fontSize: "14px",
-  color: "#333333",
-  margin: "0 0 10px 0",
+  fontSize: "15px",
+  color: "#26547C",
+  margin: "0 0 20px 0",
 };
 
 const footerNote = {
   fontSize: "12px",
-  color: "#6b7280",
+  color: "#9ca3af",
   textAlign: "center" as const,
-  margin: "0",
+  margin: "20px 0 0 0",
+  lineHeight: "1.5",
 };

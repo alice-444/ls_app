@@ -6,7 +6,8 @@ ce qui existe et où le trouver
 
 ## Sommaire
 
-- [README principal](../README.md) - installation et le quick start
+- [README principal](../README.md) — Installation et quick start
+- [Stack technique](tech-stack.md) — Technologies, langages et choix technologiques
 - [Architecture](#architecture) – Vue d’ensemble front/back
 - [Design Patterns](patterns.md) – Patterns utilisés dans le projet
 - [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
@@ -23,6 +24,7 @@ ce qui existe et où le trouver
 
 Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md). 
 Patterns de conception et principes SOLID appliqués : [patterns.md](patterns.md).
+**Modèle physique de données (MPD)** : [mpd.md](mpd.md) — tables, colonnes, types, clés, index.
 Inclut les flux d'authentification, utilisateur, données, atelier, paiement, messagerie, visio, suppression compte, crons et réseau.
 
 ---

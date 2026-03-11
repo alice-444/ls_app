@@ -24,9 +24,19 @@ vi.mock("@/lib/auth-client", () => ({
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
+vi.mock("@/utils/trpc", () => ({
+  trpc: {
+    user: {
+      getTitle: {
+        useQuery: () => ({ data: { title: "Test Mentor" }, isLoading: false }),
+      },
+    },
+  },
+}));
+
 const mockFetch = vi.fn();
 beforeEach(() => {
-  global.fetch = mockFetch;
+  globalThis.fetch = mockFetch;
   mockFetch.mockResolvedValue({ ok: false }); // no existing profile
 });
 

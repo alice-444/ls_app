@@ -75,13 +75,13 @@ Enable users to manage their profile (photo, personal info) and account settings
 
 ```typescript
 // getAuthenticatedSession(req) for protected routes
-// FileStorageService for photo upload
+// IFileStorageService (Cloudinary / Local) for photo upload
 // DeleteAccountService: soft-delete, deletion_job
 ```
 
 ### Dependencies
 - Better Auth (password, email)
-- FileStorageService
+- IFileStorageService (Cloudinary support)
 - DeleteAccountService, DeleteAccountEnhancedService
 
 ## Implementation Details

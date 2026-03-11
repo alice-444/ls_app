@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Check, X } from "lucide-react";
+import { Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 
@@ -59,7 +59,7 @@ export function AcceptWorkshopRequestDialog({
   preferredDate,
   preferredTime,
   onSuccess,
-}: AcceptWorkshopRequestDialogProps) {
+}: Readonly<AcceptWorkshopRequestDialogProps>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -96,7 +96,7 @@ export function AcceptWorkshopRequestDialog({
     onError: (error: { message?: string }) => {
       toast.error(
         error.message ||
-          "Erreur lors de l'acceptation de la demande. Veuillez réessayer."
+        "Erreur lors de l'acceptation de la demande. Veuillez réessayer."
       );
       setIsSubmitting(false);
     },

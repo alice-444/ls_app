@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import * as z from "zod/v3";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ interface ProposeSpotFormProps {
 
 const AVAILABLE_TAGS = ["Ultra Calme", "Prises dispo", "Café pas cher", "Ouvert tard", "Wi-Fi Gratuit"];
 
-export function ProposeSpotForm({ onSuccess }: ProposeSpotFormProps) {
+export function ProposeSpotForm({ onSuccess }: Readonly<ProposeSpotFormProps>) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
@@ -93,7 +93,7 @@ export function ProposeSpotForm({ onSuccess }: ProposeSpotFormProps) {
         <p className="text-ls-muted max-w-xs mx-auto">
           Merci pour cette recommandation. On va vérifier et l'ajouter au Spot Finder très bientôt.
         </p>
-        <Button 
+        <Button
           onClick={onSuccess}
           className="bg-ls-success hover:bg-ls-success/90 text-white font-bold h-11 rounded-full px-8 mt-4"
         >
@@ -139,10 +139,10 @@ export function ProposeSpotForm({ onSuccess }: ProposeSpotFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Pourquoi recommandes-tu cet endroit ?" 
+                <Textarea
+                  placeholder="Pourquoi recommandes-tu cet endroit ?"
                   className="min-h-[80px] rounded-2xl border-border"
-                  {...field} 
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -174,8 +174,8 @@ export function ProposeSpotForm({ onSuccess }: ProposeSpotFormProps) {
             </FormItem>
           )}
         />
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="w-full bg-ls-success hover:bg-ls-success/90 text-white font-bold h-11 rounded-full mt-4 shadow-lg shadow-ls-success/20"
           disabled={proposeMutation.isPending}
         >

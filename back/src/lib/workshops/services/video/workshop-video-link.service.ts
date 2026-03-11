@@ -1,6 +1,7 @@
 import type { IWorkshopVideoLinkService } from "./workshop-video-link.service.interface";
-import type { IWorkshopRepository } from "../../repositories/workshop.repository.interface";
-import type { WorkshopEntity } from "../../repositories/workshop.repository.interface";
+import type { IWorkshopRepository, WorkshopEntity } from "../../repositories/workshop.repository.interface";
+import { WorkshopDomain } from "../../domain/workshop.domain";
+import { logger } from "../../../common/logger";
 
 export class WorkshopVideoLinkService implements IWorkshopVideoLinkService {
   private readonly TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
@@ -20,6 +21,7 @@ export class WorkshopVideoLinkService implements IWorkshopVideoLinkService {
       workshopDate.setHours(hours, minutes, 0, 0);
       return workshopDate;
     } catch (error) {
+      logger.warn("Failed to parse workshop date/time", { workshopId: workshop.id, error });
       return null;
     }
   }
@@ -45,20 +47,14 @@ export class WorkshopVideoLinkService implements IWorkshopVideoLinkService {
   }
 
   shouldExposeLink(
-    workshop: WorkshopEntity,
-    currentTime: Date = new Date()
+    workshop: WorkshopEntity
   ): boolean {
-    if (!workshop.isVirtual || !workshop.date || !workshop.time) {
+    if (!workshop.isVirtual) {
       return false;
     }
 
-    const startTime = this.calculateWorkshopStartTime(workshop);
-    if (!startTime) {
-      return false;
-    }
-
-    const timeUntilStart = startTime.getTime() - currentTime.getTime();
-    return timeUntilStart <= this.THREE_HOURS_MS;
+    // Standard window for exposing the link is 3 hours before start
+    return WorkshopDomain.isLive(workshop, 180);
   }
 
   async findWorkshopsEligibleForLinkGeneration(): Promise<WorkshopEntity[]> {

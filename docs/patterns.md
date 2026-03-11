@@ -4,6 +4,20 @@ Ce document répertorie les patterns d'architecture et de conception utilisés d
 
 ---
 
+## Principes SOLID
+
+**Pourquoi SOLID ?** Ces principes structurent le code pour limiter le couplage et faciliter l'évolution. Un domaine métier riche (ateliers, messagerie, crédits, communauté) multiplie les cas particuliers ; sans découpage clair, les services deviennent monolithiques et difficiles à tester ou modifier. SOLID permet d'ajouter des fonctionnalités (ex. nouveau type de notification) sans toucher au code existant, de remplacer une implémentation (ex. Prisma par un autre ORM) via les interfaces, et de tester chaque brique isolément avec des mocks. Le coût initial (interfaces, DI, sous-services) est compensé par une maintenance plus simple et des régressions moins fréquentes.
+
+| Principe | Application dans LearnSup                                                                 |
+| -------- | ------------------------------------------------------------------------------------------ |
+| **S** — Single Responsibility | `WorkshopService` délègue à des sous-services (lifecycle, scheduling, query). `WorkshopCard` délègue le rendu à `WorkshopDetails` et les actions à `WorkshopDropdownMenu`. Chaque service/repository a une responsabilité unique. |
+| **O** — Open/Closed | Repositories exposés via interfaces : on peut ajouter de nouvelles implémentations (ex. cache, mock) sans modifier le code existant. Procédures tRPC extensibles par composition de routers. |
+| **L** — Liskov Substitution | Les implémentations Prisma (`PrismaWorkshopRepository`, etc.) sont interchangeables avec leurs interfaces (`IWorkshopRepository`). Les tests utilisent des mocks conformes aux mêmes contrats. |
+| **I** — Interface Segregation | Interfaces ciblées par domaine : `IWorkshopRepository`, `IMessageRepository`, `IWorkshopRequestService`, etc. Pas d'interface « god » regroupant tout. |
+| **D** — Dependency Inversion | Services dépendent d'interfaces, pas d'implémentations. Le conteneur DI (`container.ts`) injecte les dépendances. Les routers appellent `container.workshopService` sans connaître l'implémentation. |
+
+---
+
 ## 🏗️ Architecture Globale
 
 ### Monorepo (Turbo/pnpm)

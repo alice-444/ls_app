@@ -1,11 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextResponse } from "next/server";
+import { describe, it, expect, vi } from "vitest";
 import { createRequest, getJson } from "../../../helpers/request";
 import { GET } from "@/app/api/profile/photo/[filename]/route";
 
 vi.mock("@/lib/api-helpers", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("@/lib/api-helpers")>();
+  const actual = await importOriginal<typeof import("@/lib/api-helpers")>();
   return {
     ...actual,
     getAuthenticatedSession: vi.fn(),

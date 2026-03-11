@@ -1,23 +1,13 @@
 import { RateLimiterPostgres, RateLimiterMemory } from "rate-limiter-flexible";
-import { Pool } from "pg";
+import { pool } from "../prisma";
 
-let pgPool: Pool | null = null;
 let rateLimiterPostgres: RateLimiterPostgres | null = null;
 let rateLimiterMemory: RateLimiterMemory | null = null;
 
 try {
-  const databaseUrl = process.env.DATABASE_URL;
-
-  if (databaseUrl) {
-    pgPool = new Pool({
-      connectionString: databaseUrl,
-      max: 10,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
-    });
-
+  if (pool) {
     rateLimiterPostgres = new RateLimiterPostgres({
-      storeClient: pgPool,
+      storeClient: pool,
       tableName: "rate_limiter",
       points: 10,
       duration: 60,
@@ -41,9 +31,9 @@ if (!rateLimiterPostgres) {
 
 export const mutationRateLimiter = rateLimiterPostgres || rateLimiterMemory!;
 
-export const apiRateLimiter = pgPool
+export const apiRateLimiter = pool
   ? new RateLimiterPostgres({
-      storeClient: pgPool,
+      storeClient: pool,
       tableName: "rate_limiter_api",
       points: 100,
       duration: 60,
@@ -55,9 +45,9 @@ export const apiRateLimiter = pgPool
       blockDuration: 0,
     });
 
-export const authRateLimiter = pgPool
+export const authRateLimiter = pool
   ? new RateLimiterPostgres({
-      storeClient: pgPool,
+      storeClient: pool,
       tableName: "rate_limiter_auth",
       points: 5,
       duration: 60,

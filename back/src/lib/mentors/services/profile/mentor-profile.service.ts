@@ -61,7 +61,6 @@ export class MentorProfileService implements IMentorProfileService {
         socialMediaLinks: mentor.socialMediaLinks || null,
         areasOfExpertise: mentor.areasOfExpertise || null,
         mentorshipTopics: mentor.mentorshipTopics || null,
-        calendlyLink: mentor.calendlyLink || null,
         publishedAt: mentor.publishedAt || null,
         workshops: workshops.map(w => ({
           id: w.id,

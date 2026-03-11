@@ -1,7 +1,11 @@
-import { unlink } from "fs/promises";
-import { resolve } from "path";
+import { unlink, writeFile, mkdir } from "fs/promises";
+import { resolve, join } from "path";
 import { existsSync } from "fs";
-import type { IFileStorageService } from "./file-storage.service.interface";
+import { randomUUID } from "crypto";
+import type {
+  IFileStorageService,
+  FileUploadOptions,
+} from "./file-storage.service.interface";
 import { Result, failure, success } from "../../../../common";
 
 export class LocalFileStorageService implements IFileStorageService {
@@ -12,16 +16,48 @@ export class LocalFileStorageService implements IFileStorageService {
       uploadsDir || resolve(process.cwd(), "uploads", "profiles");
   }
 
-  async deleteFile(filePath: string): Promise<Result<{ success: boolean }>> {
+  async uploadFile(
+    file: Buffer | string,
+    options?: FileUploadOptions,
+  ): Promise<Result<{ url: string }>> {
     try {
-      if (!filePath.startsWith("/uploads/")) {
-        return failure("Invalid file path: must start with /uploads/", 400);
+      if (!existsSync(this.uploadsDir)) {
+        await mkdir(this.uploadsDir, { recursive: true });
       }
 
-      const fullPath = resolve(process.cwd(), filePath.substring(1));
+      const fileExtension = "jpg"; // Default
+      const fileName = options?.publicId
+        ? `${options.publicId}.${fileExtension}`
+        : `${randomUUID()}.${fileExtension}`;
+
+      const filePath = join(this.uploadsDir, fileName);
+
+      const buffer = Buffer.isBuffer(file)
+        ? file
+        : Buffer.from(file.replace(/^data:image\/\w+;base64,/, ""), "base64");
+
+      await writeFile(filePath, buffer);
+
+      // In local dev, we return a path that our API can serve
+      const relativePath = `/api/profile/photo/${fileName}`;
+      return success({ url: relativePath });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      return failure(`Failed to upload file locally: ${errorMessage}`, 500);
+    }
+  }
+
+  async deleteFile(filePath: string): Promise<Result<{ success: boolean }>> {
+    try {
+      // If it's a full API URL, extract the filename
+      const fileName = filePath.split("/").pop();
+      if (!fileName) return failure("Invalid file path", 400);
+
+      const fullPath = join(this.uploadsDir, fileName);
       const resolvedUploadsDir = resolve(this.uploadsDir);
 
-      if (!fullPath.startsWith(resolvedUploadsDir)) {
+      if (!resolve(fullPath).startsWith(resolvedUploadsDir)) {
         return failure("Invalid file path: outside uploads directory", 400);
       }
 
@@ -40,17 +76,10 @@ export class LocalFileStorageService implements IFileStorageService {
 
   async fileExists(filePath: string): Promise<Result<{ exists: boolean }>> {
     try {
-      if (!filePath.startsWith("/uploads/")) {
-        return failure("Invalid file path: must start with /uploads/", 400);
-      }
+      const fileName = filePath.split("/").pop();
+      if (!fileName) return failure("Invalid file path", 400);
 
-      const fullPath = resolve(process.cwd(), filePath.substring(1));
-      const resolvedUploadsDir = resolve(this.uploadsDir);
-
-      if (!fullPath.startsWith(resolvedUploadsDir)) {
-        return failure("Invalid file path: outside uploads directory", 400);
-      }
-
+      const fullPath = join(this.uploadsDir, fileName);
       const exists = existsSync(fullPath);
       return success({ exists });
     } catch (error) {

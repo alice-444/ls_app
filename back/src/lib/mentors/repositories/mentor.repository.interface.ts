@@ -13,7 +13,6 @@ export interface MentorEntity {
   socialMediaLinks: any;
   areasOfExpertise: any;
   mentorshipTopics: any;
-  calendlyLink: string | null;
   isPublished: boolean;
   publishedAt: Date | null;
 }

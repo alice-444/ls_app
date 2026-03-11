@@ -2,6 +2,7 @@ import type { IDailyService } from "./daily.service.interface";
 import type { DailyConfig } from "../config/daily.config.interface";
 import type { Result } from "../../common";
 import { success, failure } from "../../common/types";
+import { externalApiErrorsTotal } from "../../metrics/prometheus";
 
 export class DailyService implements IDailyService {
   private readonly apiKey: string;
@@ -38,11 +39,12 @@ export class DailyService implements IDailyService {
     });
 
     if (!response.ok) {
+      externalApiErrorsTotal.labels("daily").inc();
       const error = await response.json().catch(() => ({}));
-      throw {
-        status: response.status,
-        message: error.error || response.statusText,
-      };
+      const message = error.error || response.statusText;
+      const dailyError = new Error(message);
+      (dailyError as any).status = response.status;
+      throw dailyError;
     }
 
     return response.json();
@@ -79,7 +81,7 @@ export class DailyService implements IDailyService {
         }
       }
 
-      if (!room || !room.id || !room.url) {
+      if (!room?.id || !room?.url) {
         return failure("Failed to create or retrieve Daily.co room");
       }
 
@@ -104,7 +106,7 @@ export class DailyService implements IDailyService {
   ): Promise<Result<{ token: string; roomUrl: string }>> {
     try {
       const room = await this.apiRequest(`/rooms/${roomId}`);
-      if (!room || !room.url) {
+      if (!room?.url) {
         return failure("Room not found");
       }
 

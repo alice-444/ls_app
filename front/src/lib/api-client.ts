@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4500";
 
 export const authenticatedFetchOptions: RequestInit = {
   credentials: "include",
@@ -55,7 +55,7 @@ export async function getUserData(): Promise<{
   if (!response.ok) {
     throw new Error(`Failed to fetch user data: ${response.statusText}`);
   }
-  
+
   const data = await response.json();
   return {
     role: data.role || null,

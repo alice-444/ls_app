@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import {
   Dialog,
   DialogContent,
@@ -56,7 +56,7 @@ export function RequestWorkshopDialog({
   onOpenChange,
   mentorId,
   mentorName,
-}: RequestWorkshopDialogProps) {
+}: Readonly<RequestWorkshopDialogProps>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -93,7 +93,7 @@ export function RequestWorkshopDialog({
     onError: (error: { message?: string }) => {
       toast.error(
         error.message ||
-          "Erreur lors de l'envoi de la demande. Veuillez réessayer plus tard."
+        "Erreur lors de l'envoi de la demande. Veuillez réessayer plus tard."
       );
       setIsSubmitting(false);
     },

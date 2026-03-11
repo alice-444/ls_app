@@ -17,33 +17,38 @@ import {
   WorkshopApprenticeQueryService,
 } from "./query/workshop-query.service";
 import { container as diContainer } from "../../di/container";
+import type { WorkshopResponseDTO } from "../dto/workshop.dto";
 
-import {
-  createWorkshopBackendSchema,
-  updateWorkshopBackendSchema,
-  publishWorkshopSchema,
-  unpublishWorkshopSchema,
-  deleteWorkshopSchema,
-  cancelWorkshopSchema,
-  type CreateWorkshopBackendInput,
-  type UpdateWorkshopBackendInput,
-  type PublishWorkshopInput,
-  type DeleteWorkshopInput,
-} from "../../../shared/validation";
+import { unpublishWorkshopSchema } from "../../../shared/validation";
 import { z } from "zod";
 
-export const createWorkshopSchema = createWorkshopBackendSchema;
-export const updateWorkshopSchema = updateWorkshopBackendSchema;
 export {
+  createWorkshopBackendSchema as createWorkshopSchema,
+  updateWorkshopBackendSchema as updateWorkshopSchema,
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
   cancelWorkshopSchema,
-};
-export type CreateWorkshopInput = CreateWorkshopBackendInput;
-export type UpdateWorkshopInput = UpdateWorkshopBackendInput;
-export type { PublishWorkshopInput, DeleteWorkshopInput };
+} from "../../../shared/validation";
+export type {
+  CreateWorkshopBackendInput as CreateWorkshopInput,
+  UpdateWorkshopBackendInput as UpdateWorkshopInput,
+  PublishWorkshopInput,
+  DeleteWorkshopInput,
+} from "../../../shared/validation";
 export type UnpublishWorkshopInput = z.infer<typeof unpublishWorkshopSchema>;
+
+export interface WorkshopServiceDependencies {
+  readonly workshopRepository: IWorkshopRepository;
+  readonly appUserRepository: AppUserRepository;
+  readonly userBlockService: IUserBlockService;
+  readonly workshopRequestRepository?: IWorkshopRequestRepository;
+  readonly dbNotificationService?: INotificationService;
+  readonly workshopVideoLinkService?: IWorkshopVideoLinkService;
+  readonly emailService?: IEmailService;
+  readonly creditService?: ICreditService;
+  readonly prisma?: PrismaClient;
+}
 
 /**
  * Facade that composes specialized sub-services while preserving
@@ -55,17 +60,18 @@ export class WorkshopService implements IWorkshopService {
   private readonly queryService: WorkshopQueryService;
   private readonly apprenticeQueryService: WorkshopApprenticeQueryService;
 
-  constructor(
-    workshopRepository: IWorkshopRepository,
-    appUserRepository: AppUserRepository,
-    userBlockService: IUserBlockService,
-    workshopRequestRepository?: IWorkshopRequestRepository,
-    dbNotificationService?: INotificationService,
-    workshopVideoLinkService?: IWorkshopVideoLinkService,
-    emailService?: IEmailService,
-    creditService?: ICreditService,
-    prisma?: PrismaClient
-  ) {
+  constructor(deps: WorkshopServiceDependencies) {
+    const {
+      workshopRepository,
+      appUserRepository,
+      userBlockService,
+      workshopRequestRepository,
+      dbNotificationService,
+      workshopVideoLinkService,
+      emailService,
+      creditService,
+      prisma,
+    } = deps;
     const accessGuard = new WorkshopAccessGuard(
       appUserRepository,
       workshopRepository
@@ -149,19 +155,19 @@ export class WorkshopService implements IWorkshopService {
   getWorkshopsByCreator(
     userId: string,
     status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
-  ): Promise<Result<any[]>> {
+  ): Promise<Result<WorkshopResponseDTO[]>> {
     return this.queryService.getWorkshopsByCreator(userId, status);
   }
 
-  getPublishedWorkshops(): Promise<Result<any[]>> {
+  getPublishedWorkshops(): Promise<Result<WorkshopResponseDTO[]>> {
     return this.queryService.getPublishedWorkshops();
   }
 
-  getWorkshopById(workshopId: string): Promise<Result<any>> {
+  getWorkshopById(workshopId: string): Promise<Result<WorkshopResponseDTO>> {
     return this.queryService.getWorkshopById(workshopId);
   }
 
-  getConfirmedWorkshopsForApprentice(userId: string): Promise<Result<any[]>> {
+  getConfirmedWorkshopsForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
     return this.apprenticeQueryService.getConfirmedWorkshopsForApprentice(userId);
   }
 
@@ -194,15 +200,15 @@ export class WorkshopService implements IWorkshopService {
     );
   }
 
-  getUpcomingWorkshopsForApprentice(userId: string): Promise<Result<any[]>> {
+  getUpcomingWorkshopsForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
     return this.apprenticeQueryService.getUpcomingWorkshopsForApprentice(userId);
   }
 
-  getWorkshopHistoryForApprentice(userId: string): Promise<Result<any[]>> {
+  getWorkshopHistoryForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
     return this.apprenticeQueryService.getWorkshopHistoryForApprentice(userId);
   }
 
-  getAvailableWorkshopsForApprentice(userId: string): Promise<Result<any[]>> {
+  getAvailableWorkshopsForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
     return this.apprenticeQueryService.getAvailableWorkshopsForApprentice(userId);
   }
 

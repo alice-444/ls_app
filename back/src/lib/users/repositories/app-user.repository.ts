@@ -4,6 +4,7 @@ export interface AppUserData {
   name: string | null;
   email: string | null;
   displayName: string | null;
+  title: string | null;
   role: string | null;
   status: string;
   createdAt: Date;
@@ -32,7 +33,6 @@ export interface UpdateAppUserInput {
   socialMediaLinks?: Record<string, string> | null;
   areasOfExpertise?: string[] | null;
   mentorshipTopics?: string[] | null;
-  calendlyLink?: string | null;
   isPublished?: boolean;
   publishedAt?: Date | null;
   displayName?: string | null;
@@ -69,7 +69,6 @@ export interface AppUserRepository {
 const UPDATABLE_FIELDS = [
   "role", "status", "bio", "domain", "photoUrl", "qualifications",
   "experience", "socialMediaLinks", "areasOfExpertise", "mentorshipTopics",
-  "calendlyLink", "isPublished", "publishedAt", "displayName",
   "studyDomain", "studyProgram", "iceBreakerTags", "deletedAt",
   "emailNotifications", "inAppNotifications",
 ] as const;
@@ -101,6 +100,7 @@ function mapToAppUserData(raw: any): AppUserData {
     name: raw.name || null,
     email: raw.email || null,
     displayName: raw.displayName || null,
+    title: raw.title || null,
     role: raw.role,
     status: raw.status,
     createdAt: raw.createdAt,
@@ -118,6 +118,7 @@ const APP_USER_BASE_SELECT = {
   name: true,
   email: true,
   displayName: true,
+  title: true,
   role: true,
   status: true,
   createdAt: true,

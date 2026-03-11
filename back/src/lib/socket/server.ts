@@ -3,6 +3,7 @@ import type { Server as HTTPServer } from "http";
 import { auth } from "../auth";
 import { container } from "../di/container";
 import { SocketMessageHandler } from "./handlers/message.handler";
+import { socketConnections, connectedUsers } from "../metrics/prometheus";
 
 let io: SocketIOServer | null = null;
 
@@ -67,6 +68,20 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       return;
     }
 
+    socketConnections.inc();
+    
+    // Track user role for business metrics
+    let userRole = "UNKNOWN";
+    try {
+      const appUser = await container.appUserRepository.findByUserId(userId);
+      if (appUser?.role) {
+        userRole = appUser.role;
+        connectedUsers.labels(userRole).inc();
+      }
+    } catch (e) {
+      console.error("Failed to fetch user role for metrics:", e);
+    }
+
     socket.join(`user:${userId}`);
     await container.presenceService.updateUserPresence(userId, true);
     socket.broadcast.emit("user-online", { userId });
@@ -74,6 +89,11 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
     messageHandler.registerHandlers(socket, userId);
 
     socket.on("disconnect", async () => {
+      socketConnections.dec();
+      if (userRole !== "UNKNOWN") {
+        connectedUsers.labels(userRole).dec();
+      }
+      
       await container.presenceService.updateUserPresence(userId, false);
       socket.broadcast.emit("user-offline", { userId });
     });

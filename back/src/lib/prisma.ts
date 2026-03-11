@@ -9,33 +9,28 @@ import { PrismaClient } from "../../.prisma/generated/client/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-// Instance principale de Prisma (connexion directe via DATABASE_URL)
-const createPrismaClient = (): PrismaClient => {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL environment variable must be set");
-  }
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    connectionTimeoutMillis: 10000,
-    idleTimeoutMillis: 30000,
-    max: 20,
-    ssl:
-      process.env.NODE_ENV === "development"
-        ? { rejectUnauthorized: false }
-        : undefined,
-  });
-  const adapter = new PrismaPg(pool);
-  return new PrismaClient({
-    adapter,
-    log:
-      process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-  });
-};
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable must be set");
+}
 
-// Instance principale pour l'application
-export const prisma = createPrismaClient();
+// Un seul pool de connexions pour toute l'application
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
+  max: 10, // Réduit à 10 pour être sûr de ne pas saturer la DB
+  ssl:
+    process.env.NODE_ENV === "development"
+      ? { rejectUnauthorized: false }
+      : undefined,
+});
 
-// Instance séparée pour l'authentification (better-auth)
-export const authPrisma = createPrismaClient();
+const adapter = new PrismaPg(pool);
+
+// Instance unique de Prisma
+export const prisma = new PrismaClient({
+  adapter,
+  log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+});
 
 export default prisma;

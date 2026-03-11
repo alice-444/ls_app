@@ -3,7 +3,6 @@ import { Result, failure, success, validateInput } from "../../common";
 import { handleError, createErrorContext } from "../../common/error-handler";
 import type { AppUserRepository } from "../../users/repositories";
 import { verifyUserExists } from "./user-helpers";
-import { generateInternalId } from "../../utils/id-generator";
 
 export const selectRoleSchema = z.object({
   role: z.enum(["MENTOR", "APPRENANT"]),
@@ -33,17 +32,24 @@ export class OnboardingService {
       // Utiliser findByUserId pour être sûr de trouver l'utilisateur (id ou userId)
       let appUser = await this.appUserRepository.findByUserId(userId);
 
-      if (!appUser) {
-        // Si vraiment pas trouvé (étrange si session active), on le crée
-        appUser = await this.appUserRepository.create({
-          id: userId,
-          userId: userId,
+      if (appUser && appUser.status !== "PENDING" && appUser.status !== "ACTIVE") {
+        return failure(
+          "Le choix du rôle n'est possible que lors de l'inscription.",
+          403
+        );
+      }
+
+      if (appUser) {
+        // Mettre à jour l'utilisateur existant
+        appUser = await this.appUserRepository.update(appUser.id, {
           role: validation.data.role,
           status: "ACTIVE",
         });
       } else {
-        // Mettre à jour l'utilisateur existant
-        appUser = await this.appUserRepository.update(appUser.id, {
+        // Si vraiment pas trouvé (étrange si session active), on le crée
+        appUser = await this.appUserRepository.create({
+          id: userId,
+          userId: userId,
           role: validation.data.role,
           status: "ACTIVE",
         });

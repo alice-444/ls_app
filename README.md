@@ -68,7 +68,8 @@ pnpm dev
 
 **URLs :**
 - Frontend : [http://localhost:3001](http://localhost:3001)
-- Backend : [http://localhost:3000](http://localhost:3000)
+- Backend (Next.js) : [http://localhost:4500](http://localhost:4500)
+- Socket.IO : [http://localhost:5050](http://localhost:5050)
 
 ---
 
@@ -86,7 +87,8 @@ CRON_SECRET="your-secret-key-min-32-chars"
 
 **`front/.env`**
 ```env
-NEXT_PUBLIC_API_URL="http://localhost:3000"
+NEXT_PUBLIC_SERVER_URL="http://localhost:4500"
+NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
 ```
 
 ---
@@ -104,6 +106,7 @@ NEXT_PUBLIC_API_URL="http://localhost:3000"
 | `pnpm db:migrate` | Applique les migrations (prod) |
 | `pnpm db:generate` | Génère le client Prisma |
 | `pnpm db:studio` | Ouvre Prisma Studio |
+| `pnpm test:coverage` | Lance les tests avec couverture de code (Vitest) |
 
 ---
 
@@ -117,25 +120,29 @@ NEXT_PUBLIC_API_URL="http://localhost:3000"
 - **[Turborepo](https://turbo.build/)** – Build et tâches du monorepo
 
 ### Frontend
-- **[Tailwind CSS](https://tailwindcss.com/)** – Styles
+- **[React 19](https://react.dev/)** – UI
+- **[Tailwind CSS 4](https://tailwindcss.com/)** – Styles (design tokens)
 - **[shadcn/ui](https://ui.shadcn.com/)** – Composants UI (Radix)
 - **[TanStack Query](https://tanstack.com/query)** – Données serveur et cache
 - **[tRPC](https://trpc.io/)** – API type-safe
 - **[Better Auth](https://www.better-auth.com/)** – Authentification (client)
+- **[Vitest](https://vitest.dev/)** – Tests unitaires
 
 ### Backend
 - **[Better Auth](https://www.better-auth.com/)** – Authentification
 - **[Zod](https://zod.dev/)** – Validation
-- **[Sharp](https://sharp.pixelplumbing.com/)** – Traitement d’images (si utilisé)
-- **[Resend](https://resend.com/)** – Envoi d’emails
-- **[Daily.co](https://www.daily.co/)** – Visioconférence (intégration)
+- **[Sharp](https://sharp.pixelplumbing.com/)** – Traitement d’images - **[Resend](https://resend.com/)** – Envoi d’emails
+- **[Daily.co](https://www.daily.co/)** – Visioconférence
+- **[Socket.IO](https://socket.io/)** – Temps réel (messagerie, notifications)
+- **[Vitest](https://vitest.dev/)** – Tests unitaires
 
 ### DevOps
-- **[pnpm](https://pnpm.io/)** – Gestion des paquets
+- **[pnpm](https://pnpm.io/)** – Gestion des paquets (workspaces)
 - **[GitHub Actions](https://github.com/features/actions)** – CI/CD
 - **[Docker](https://www.docker.com/)** – Conteneurisation (infra)
 - **[Cypress](https://www.cypress.io/)** – Tests E2E
-- **SonarQube** – Qualité de code
+- **[Vitest](https://vitest.dev/)** – Tests unitaires + couverture (LCOV pour SonarQube)
+- **SonarQube / SonarCloud** – Qualité de code
 
 ---
 
@@ -156,7 +163,9 @@ ls_app/
 └── sonar-project.properties
 ```
 
-Documentation complémentaire : [docs/README.md](./docs/README.md).
+Documentation complémentaire :
+- [docs/README.md](./docs/README.md) — Sommaire de la doc technique
+- [docs/tech-stack.md](./docs/tech-stack.md) — Stack technique détaillée et choix technologiques
 
 ---
 

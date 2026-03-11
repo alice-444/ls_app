@@ -1,11 +1,19 @@
+# AI & IDE
+.cursor
+.vibe
+.agents
+.vscode
+
+# Testing
 cypress.config.js
 sonar-project.properties
+
+# Local files
 .DS_Store
 node_modules
+.pnpm-store
+coverage
 .turbo
 .alchemy
 .env
 .turbo
-.cursor
-.pnpm-store
-.agents

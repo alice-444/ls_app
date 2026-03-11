@@ -7,18 +7,22 @@ import {
   verifyMentorAccess,
   calculateAverageRating,
 } from "../../utils/mentor-helpers";
+import { WorkshopResponseDTO, mapWorkshopToDTO } from "../../../workshops/dto/workshop.dto";
 
 export class MentorWorkshopService implements IMentorWorkshopService {
   constructor(private readonly mentorRepository: IMentorRepository) {}
 
-  async getMentorPublicWorkshops(mentorId: string): Promise<Result<any>> {
+  async getMentorPublicWorkshops(mentorId: string): Promise<Result<{
+    upcoming: WorkshopResponseDTO[];
+    past: WorkshopResponseDTO[];
+  }>> {
     try {
       const mentorCheck = await verifyMentorAccess(
         this.mentorRepository,
         mentorId
       );
       if (!mentorCheck.ok) {
-        return mentorCheck;
+        return mentorCheck as any;
       }
 
       const now = new Date();
@@ -28,37 +32,28 @@ export class MentorWorkshopService implements IMentorWorkshopService {
         mentorId
       );
 
-      const upcoming: any[] = [];
-      const past: any[] = [];
+      const upcoming: WorkshopResponseDTO[] = [];
+      const past: WorkshopResponseDTO[] = [];
 
       for (const workshop of workshops) {
         const workshopDate = workshop.date ? new Date(workshop.date) : null;
         const isPast = workshopDate && workshopDate < now;
 
         const feedbacks = workshop.feedbacks || [];
-        const ratings = feedbacks.map((f) => f.rating);
+        const ratings = feedbacks.map((f: any) => f.rating);
         const averageRating =
           ratings.length > 0 ? calculateAverageRating(ratings) : null;
 
-        const workshopData = {
-          id: workshop.id,
-          title: workshop.title,
-          description: workshop.description,
-          date: workshop.date,
-          time: workshop.time,
-          duration: workshop.duration,
-          location: workshop.location,
-          isVirtual: workshop.isVirtual,
-          maxParticipants: workshop.maxParticipants,
-          publishedAt: workshop.publishedAt,
+        const workshopDTO = mapWorkshopToDTO({
+          ...workshop,
           feedbackCount: feedbacks.length,
           averageRating,
-        };
+        });
 
         if (isPast) {
-          past.push(workshopData);
+          past.push(workshopDTO);
         } else {
-          upcoming.push(workshopData);
+          upcoming.push(workshopDTO);
         }
       }
 

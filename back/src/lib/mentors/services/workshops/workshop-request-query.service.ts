@@ -3,11 +3,12 @@ import { failure, success } from "../../../common";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { IWorkshopRequestRepository } from "../../repositories/workshop-request.repository.interface";
 import type { IMentorRepository } from "../../repositories/mentor.repository.interface";
+import { WorkshopRequestResponseDTO, mapWorkshopRequestToDTO } from "../../../workshops/dto/workshop.dto";
 
 export interface IWorkshopRequestQueryService {
-  getApprenticeRequests(userId: string): Promise<Result<Array<any>>>;
-  getMentorRequests(userId: string): Promise<Result<Array<any>>>;
-  getWorkshopRequests(workshopId: string): Promise<Result<Array<any>>>;
+  getApprenticeRequests(userId: string): Promise<Result<WorkshopRequestResponseDTO[]>>;
+  getMentorRequests(userId: string): Promise<Result<WorkshopRequestResponseDTO[]>>;
+  getWorkshopRequests(workshopId: string): Promise<Result<WorkshopRequestResponseDTO[]>>;
 }
 
 export class WorkshopRequestQueryService implements IWorkshopRequestQueryService {
@@ -16,7 +17,7 @@ export class WorkshopRequestQueryService implements IWorkshopRequestQueryService
     private readonly mentorRepository: IMentorRepository
   ) {}
 
-  async getApprenticeRequests(userId: string): Promise<Result<Array<any>>> {
+  async getApprenticeRequests(userId: string): Promise<Result<WorkshopRequestResponseDTO[]>> {
     try {
       const apprentice =
         await this.mentorRepository.findApprenticeByUserId(userId);
@@ -26,7 +27,7 @@ export class WorkshopRequestQueryService implements IWorkshopRequestQueryService
 
       const requests =
         await this.workshopRequestRepository.findByApprenticeId(apprentice.id);
-      return success(requests);
+      return success(requests.map(mapWorkshopRequestToDTO));
     } catch (error) {
       return handleError(
         error,
@@ -35,7 +36,7 @@ export class WorkshopRequestQueryService implements IWorkshopRequestQueryService
     }
   }
 
-  async getMentorRequests(userId: string): Promise<Result<Array<any>>> {
+  async getMentorRequests(userId: string): Promise<Result<WorkshopRequestResponseDTO[]>> {
     try {
       const mentor = await this.mentorRepository.findMentorById(userId);
       if (!mentor) {
@@ -44,7 +45,7 @@ export class WorkshopRequestQueryService implements IWorkshopRequestQueryService
 
       const requests =
         await this.workshopRequestRepository.findByMentorId(mentor.id);
-      return success(requests);
+      return success(requests.map(mapWorkshopRequestToDTO));
     } catch (error) {
       return handleError(
         error,
@@ -53,11 +54,11 @@ export class WorkshopRequestQueryService implements IWorkshopRequestQueryService
     }
   }
 
-  async getWorkshopRequests(workshopId: string): Promise<Result<Array<any>>> {
+  async getWorkshopRequests(workshopId: string): Promise<Result<WorkshopRequestResponseDTO[]>> {
     try {
       const requests =
         await this.workshopRequestRepository.findByWorkshopId(workshopId);
-      return success(requests);
+      return success(requests.map(mapWorkshopRequestToDTO));
     } catch (error) {
       return handleError(
         error,

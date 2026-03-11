@@ -62,7 +62,8 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 ## Base de données (Prisma)
 
-- Schéma : `back/prisma/schema/schema.prisma`.
+- Schéma : `back/.prisma/schema/schema.prisma`.
+- **MPD (modèle physique)** : [mpd.md](mpd.md) — tables, colonnes, types, clés, index.
 - Modèles principaux : account, app_user (profil utilisateur, lié à account via userId), workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
 - Client généré : `back/prisma/generated/client`.
 
@@ -82,14 +83,16 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - `pnpm build` — build des workspaces
 - `pnpm check-types`
 - `pnpm db:push` / `pnpm db:migrate` / `pnpm db:generate` / `pnpm db:studio`
+- `pnpm test:coverage` — tests avec couverture (Vitest, LCOV pour SonarQube)
 
 ### Tests
 
-- `pnpm run test:unit` — tests unitaires (attendu par la CI ; à définir dans `package.json` si besoin).
+- `pnpm run test:unit` — tests unitaires (Vitest, front + back). Attendu par la CI.
 - `pnpm run test:integration` — tests d’intégration (attendu par la CI).
-- E2E : Cypress, config dans `cypress.config.js`, specs dans `cypress/e2e/` et `cypress/e2e/smoke/`.
+- `pnpm run test:coverage` — tests avec couverture (rapports HTML + LCOV dans `coverage/`).
+- E2E : Cypress, config dans `cypress.config.js`, specs dans `cypress/e2e/`.
 
-Détail et emplacements des tests : [procedure.md](procedure.md) § Lancer les tests.
+Emplacements : `front/__tests__/units/`, `back/__tests__/units/`, `back/__tests__/api/`, `back/__tests__/trpc/`. Détail : [procedure.md](procedure.md) § Lancer les tests.
 
 ---
 

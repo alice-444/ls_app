@@ -18,6 +18,7 @@ import {
   handleError,
   createErrorContext,
 } from "../../../common/error-handler";
+import { WorkshopDomain } from "../../domain/workshop.domain";
 
 export class WorkshopLifecycleService implements IWorkshopLifecycleService {
   constructor(
@@ -111,6 +112,36 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
     }
   }
 
+  private buildUpdateWorkshopData(
+    validationData: { workshopId: string } & Record<string, unknown>,
+    sanitized: ReturnType<WorkshopLifecycleService["sanitizeWorkshopFields"]>
+  ): Result<Record<string, unknown>> {
+    const updateData: Record<string, unknown> = {};
+    const assignIfDefined = (key: string, value: unknown) => {
+      if (value !== undefined) updateData[key] = value;
+    };
+
+    assignIfDefined("title", sanitized.title);
+    assignIfDefined("description", sanitized.description);
+    assignIfDefined("location", sanitized.location);
+    assignIfDefined("materialsNeeded", sanitized.materialsNeeded);
+    assignIfDefined("time", validationData.time);
+    assignIfDefined("duration", validationData.duration);
+    assignIfDefined("isVirtual", validationData.isVirtual);
+    assignIfDefined("maxParticipants", validationData.maxParticipants);
+    assignIfDefined("topic", validationData.topic);
+    assignIfDefined("creditCost", validationData.creditCost);
+
+    if (validationData.date !== undefined) {
+      if (!isMinimumTomorrow(validationData.date as string)) {
+        return failure("La date doit être au minimum demain", 400);
+      }
+      updateData.date = validationData.date;
+    }
+
+    return success(updateData);
+  }
+
   async updateWorkshop(
     userId: string,
     input: unknown
@@ -137,37 +168,17 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         materialsNeeded: validation.data.materialsNeeded,
       });
 
-      const updateData: any = {};
-
-      if (sanitized.title !== undefined) updateData.title = sanitized.title;
-      if (sanitized.description !== undefined)
-        updateData.description = sanitized.description;
-      if (validation.data.date !== undefined) {
-        if (!isMinimumTomorrow(validation.data.date)) {
-          return failure("La date doit être au minimum demain", 400);
-        }
-        updateData.date = validation.data.date;
+      const updateResult = this.buildUpdateWorkshopData(
+        validation.data as { workshopId: string } & Record<string, unknown>,
+        sanitized
+      );
+      if (!updateResult.ok) {
+        return updateResult;
       }
-      if (validation.data.time !== undefined)
-        updateData.time = validation.data.time;
-      if (validation.data.duration !== undefined)
-        updateData.duration = validation.data.duration;
-      if (sanitized.location !== undefined)
-        updateData.location = sanitized.location;
-      if (validation.data.isVirtual !== undefined)
-        updateData.isVirtual = validation.data.isVirtual;
-      if (validation.data.maxParticipants !== undefined)
-        updateData.maxParticipants = validation.data.maxParticipants;
-      if (sanitized.materialsNeeded !== undefined)
-        updateData.materialsNeeded = sanitized.materialsNeeded;
-      if (validation.data.topic !== undefined)
-        updateData.topic = validation.data.topic;
-      if (validation.data.creditCost !== undefined)
-        updateData.creditCost = validation.data.creditCost;
 
       await this.workshopRepository.update(
         validation.data.workshopId,
-        updateData
+        updateResult.data as any
       );
 
       return success({ success: true });
@@ -208,44 +219,11 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         return failure("Atelier introuvable", 404);
       }
 
-      const missingFields: string[] = [];
+      const { can, reasons } = WorkshopDomain.canBePublished(workshop);
 
-      if (
-        !workshop.title ||
-        workshop.title.trim().length < WORKSHOP_VALIDATION.title.min
-      ) {
-        missingFields.push(
-          `titre (minimum ${WORKSHOP_VALIDATION.title.min} caractères)`
-        );
-      }
-      if (!workshop.description || workshop.description.trim().length < 30) {
-        missingFields.push("description (minimum 30 caractères recommandé)");
-      }
-      if (!workshop.date) {
-        missingFields.push("date");
-      } else if (!isMinimumTomorrow(workshop.date)) {
+      if (!can) {
         return failure(
-          "La date doit être au minimum demain pour publier l'atelier",
-          400
-        );
-      }
-      if (!workshop.time) {
-        missingFields.push("heure");
-      }
-      if (
-        !workshop.duration ||
-        workshop.duration < WORKSHOP_VALIDATION.duration.min
-      ) {
-        missingFields.push(
-          `durée (minimum ${WORKSHOP_VALIDATION.duration.min} minutes)`
-        );
-      }
-
-      if (missingFields.length > 0) {
-        return failure(
-          `Impossible de publier l'atelier. Champs manquants ou invalides : ${missingFields.join(
-            ", "
-          )}`,
+          `Impossible de publier l'atelier. Raisons : ${reasons.join(", ")}`,
           400
         );
       }

@@ -191,7 +191,7 @@ describe("WorkshopLifecycleService", () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         expect(result.status).toBe(400);
-        expect(result.error).toContain("Champs manquants");
+        expect(result.error).toContain("Impossible de publier");
       }
     });
 
@@ -206,6 +206,7 @@ describe("WorkshopLifecycleService", () => {
       mockWorkshopRepo.findById.mockResolvedValue({
         title: "Mon atelier complet",
         description: "Une description suffisamment longue pour passer la validation minimum",
+        topic: "Informatique",
         date: new Date("2025-06-20"),
         time: "14:00",
         duration: 60,

@@ -68,6 +68,7 @@ flowchart TB
 - **Zod** — Validation des entrées (routers, shared).
 - **Resend** — Envoi d’emails (templates React Email dans `lib/email/templates/`).
 - **Sharp** — Traitement d’images (photos de profil, upload).
+- **Cloudinary** — Stockage cloud des images (si configuré, sinon repli sur stockage local).
 - **Daily.co** — Création de salles / liens visio, webhooks. Service dans `lib/daily/`.
 - **Socket.io** — Notifications et messagerie temps réel. Initialisation dans `lib/socket/server`, monté sur le même serveur HTTP que Next.
 - **rate-limiter-flexible** — Limitation de requêtes (middleware / routes sensibles).
@@ -265,6 +266,7 @@ Fichier : `back/.env` (voir `back/.env.example`).
 - **POLAR_API_KEY**, **POLAR_WEBHOOK_SECRET**, **POLAR_PRODUCT_ID**, **POLAR_API_URL** — Polar (paiement crédits)
 - **RESEND_API_KEY**, **RESEND_FROM_EMAIL** — Resend (emails).
 - **DAILY_API_KEY**, **DAILY_API_BASE_URL** — Daily.co (visio).
+- **CLOUDINARY_CLOUD_NAME**, **CLOUDINARY_API_KEY**, **CLOUDINARY_API_SECRET** — Cloudinary (stockage images). Si absent, le système utilise le stockage local.
 
 Le serveur utilise aussi `PORT_BACKEND` (ou défaut dans le code) et `HOSTNAME_BACKEND` pour l’écoute.
 
