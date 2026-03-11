@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -15,12 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { User, Upload, X, Lock, Save } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
-import { authClient } from "@/lib/auth-client";
 import { usePhotoUpload } from "@/hooks/use-photo-upload";
-import {
-  PROFILE_VALIDATION,
-  PROFILE_ERROR_MESSAGES,
-} from "@/shared/validation/profile.constants";
+import { PROFILE_VALIDATION } from "@/shared/validation/profile.constants";
 
 export function UpdateProfileSection() {
   const { data: titleData } = trpc.user.getTitle.useQuery();
@@ -103,10 +100,13 @@ export function UpdateProfileSection() {
               </Label>
               {previewPhoto && (
                 <div className="relative group">
-                  <img
+                  <Image
                     src={previewPhoto}
                     alt="Preview"
+                    width={80}
+                    height={80}
                     className="w-20 h-20 rounded-full object-cover border-2"
+                    unoptimized={previewPhoto.startsWith("data:")}
                   />
                   <button
                     type="button"

@@ -1,10 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: "standalone",
   turbopack: {},
-  // Removed outputFileTracingRoot to avoid nested standalone structure in Docker
-  // The backend files are already copied in the Dockerfile, so this isn't needed
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" },
+      { protocol: "https", hostname: "**.cloudinary.com", pathname: "/**" },
+      { protocol: "http", hostname: "localhost", pathname: "/**" },
+    ],
+  },
 };
 
 export default nextConfig;
