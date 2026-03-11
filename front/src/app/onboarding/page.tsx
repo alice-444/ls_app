@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 import { useOnboarding } from "./hooks/useOnboarding";
@@ -9,13 +9,11 @@ import { RoleSelectionStep } from "./components/RoleSelectionStep";
 import { RoleConfirmationStep } from "./components/RoleConfirmationStep";
 import { ProfFormStep } from "./components/ProfFormStep";
 import { ApprenantCompleteStep } from "./components/ApprenantCompleteStep";
-import type { Role } from "./types";
 
 import { Progress } from "@/components/ui/progress";
 import { ModeToggle } from "@/components/mode-toggle";
 
 function OnboardingContent() {
-  const router = useRouter();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
 
@@ -39,19 +37,8 @@ function OnboardingContent() {
   };
   const progress = stepProgress[currentStep] || 0;
 
-  useEffect(() => {
-    if (!session && !isSessionPending) {
-      router.push("/login");
-    }
-  }, [session, isSessionPending, router]);
-
-  if (isSessionPending) {
-    return <Loader />;
-  }
-
-  if (!session) {
-    return null;
-  }
+  if (isSessionPending) return <Loader />;
+  if (!session) redirect("/login");
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-[#0a0510] transition-colors duration-300">

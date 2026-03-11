@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { User, Upload, Coffee } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -126,16 +127,19 @@ export function BasicInformationSection({
             </Label>
             {previewPhoto && (
               <div className="relative">
-                <img
+                <Image
                   src={previewPhoto}
                   alt="Preview"
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-full object-cover border-2 border-ls-border"
+                  unoptimized={previewPhoto.startsWith("data:")}
                 />
               </div>
             )}
             {watch("photo") && !previewPhoto && (
               <span className="text-sm text-ls-muted">
-                {(watch("photo") as File)?.name}
+                {watch("photo")?.name}
               </span>
             )}
           </div>

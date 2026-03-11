@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
+import Image from "next/image";
 import { trpc } from "@/utils/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, Filter, X, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -30,7 +30,7 @@ export function MentorFeedbacks({
   mentorId,
   workshops = [],
   mentorUserId,
-}: MentorFeedbacksProps) {
+}: Readonly<MentorFeedbacksProps>) {
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string>("all");
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(
@@ -63,7 +63,7 @@ export function MentorFeedbacks({
   } = trpc.mentor.getFeedbacks.useQuery(
     {
       mentorId,
-      workshopId: selectedWorkshopId !== "all" ? selectedWorkshopId : undefined,
+      workshopId: selectedWorkshopId === "all" ? undefined : selectedWorkshopId,
     },
     {
       enabled: !!mentorId,
@@ -170,11 +170,10 @@ export function MentorFeedbacks({
                         <div
                           className="bg-yellow-400 h-2 rounded-full"
                           style={{
-                            width: `${
-                              aggregate.totalCount > 0
+                            width: `${aggregate.totalCount > 0
                                 ? (dist.count / aggregate.totalCount) * 100
                                 : 0
-                            }%`,
+                              }%`,
                           }}
                         />
                       </div>
@@ -270,11 +269,13 @@ export function MentorFeedbacks({
                       image?: string | null;
                     };
                   }) => {
-                    const avatarUrl = feedback.apprentice.image
-                      ? feedback.apprentice.image.startsWith("http")
-                        ? feedback.apprentice.image
-                        : `${API_BASE_URL}${feedback.apprentice.image}`
-                      : null;
+                    let avatarUrl: string | null = null;
+                    if (feedback.apprentice.image) {
+                      const img = feedback.apprentice.image;
+                      avatarUrl = img.startsWith("http")
+                        ? img
+                        : `${API_BASE_URL}${img}`;
+                    }
                     const displayName =
                       feedback.apprentice.firstName || feedback.apprentice.name;
                     const initials = displayName
@@ -291,22 +292,37 @@ export function MentorFeedbacks({
                       }
                     );
 
+                    let ratingClassName: string;
+                    if (feedback.rating >= 4) {
+                      ratingClassName =
+                        "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800";
+                    } else if (feedback.rating <= 2) {
+                      ratingClassName =
+                        "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800";
+                    } else {
+                      ratingClassName =
+                        "bg-gray-50 dark:bg-gray-900/10 border-gray-200 dark:border-gray-800";
+                    }
+
+                    let ratingIcon: ReactNode = null;
+                    if (feedback.rating >= 4) {
+                      ratingIcon = <ThumbsUp className="h-4 w-4 text-green-600" />;
+                    } else if (feedback.rating <= 2) {
+                      ratingIcon = <ThumbsDown className="h-4 w-4 text-red-600" />;
+                    }
+
                     return (
                       <div
                         key={feedback.id}
-                        className={`p-4 rounded-lg border ${
-                          feedback.rating >= 4
-                            ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800"
-                            : feedback.rating <= 2
-                            ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800"
-                            : "bg-gray-50 dark:bg-gray-900/10 border-gray-200 dark:border-gray-800"
-                        }`}
+                        className={`p-4 rounded-lg border ${ratingClassName}`}
                       >
                         <div className="flex items-start gap-3 mb-2">
                           {avatarUrl ? (
-                            <img
+                            <Image
                               src={avatarUrl}
                               alt={displayName}
+                              width={40}
+                              height={40}
                               className="w-10 h-10 rounded-full object-cover"
                             />
                           ) : (
@@ -316,11 +332,7 @@ export function MentorFeedbacks({
                           )}
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              {feedback.rating >= 4 ? (
-                                <ThumbsUp className="h-4 w-4 text-green-600" />
-                              ) : feedback.rating <= 2 ? (
-                                <ThumbsDown className="h-4 w-4 text-red-600" />
-                              ) : null}
+                              {ratingIcon}
                               <div className="flex items-center">
                                 {renderStars(feedback.rating, "md")}
                               </div>

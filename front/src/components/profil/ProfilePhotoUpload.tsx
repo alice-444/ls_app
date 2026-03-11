@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import { Upload, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -67,14 +68,14 @@ export function ProfilePhotoUpload({
 
   return (
     <div className={blockCard}>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand/15">
-            <Upload className="h-4 w-4 text-brand" />
-          </div>
-          <h2 className="text-sm font-semibold text-ls-heading uppercase tracking-wide">
-            Photo
-          </h2>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand/15">
+          <Upload className="h-4 w-4 text-brand" />
         </div>
+        <h2 className="text-sm font-semibold text-ls-heading uppercase tracking-wide">
+          Photo
+        </h2>
+      </div>
       <Input
         id="photo"
         type="file"
@@ -83,9 +84,8 @@ export function ProfilePhotoUpload({
         disabled={isUploading}
         className="hidden"
       />
-      <div
-        role="button"
-        tabIndex={0}
+      <button
+        type="button"
         onDragOver={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -97,70 +97,76 @@ export function ProfilePhotoUpload({
           setIsDragging(false);
         }}
         onDrop={handlePhotoDrop}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            document.getElementById("photo")?.click();
-          }
-        }}
+        onClick={() =>
+          !isUploading && document.getElementById("photo")?.click()
+        }
+        disabled={isUploading}
+        aria-label="Choisir ou glisser une photo"
         className={cn(
           "flex flex-col sm:flex-row items-center justify-center gap-4 p-6 sm:p-8 rounded-xl border-2 border-dashed transition-all cursor-pointer min-h-[120px]",
           isDragging
             ? "border-[#FF8C42] bg-[#FF8C42]/10 scale-[0.99]"
             : "border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] hover:border-[#FF8C42]/50 hover:bg-[#FF8C42]/5"
         )}
-        onClick={() =>
-          !isUploading && document.getElementById("photo")?.click()
-        }
-        aria-label="Choisir ou glisser une photo"
       >
-        {isUploading ? (
-          <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-10 w-10 animate-spin text-brand" />
-            <span className="text-xs text-ls-muted">
-              Envoi en cours...
-            </span>
-          </div>
-        ) : previewPhoto ? (
-          <>
-            <div className="relative shrink-0">
-              <img
-                src={previewPhoto}
-                alt="Aperçu"
-                className="w-20 h-20 rounded-full object-cover ring-2 ring-brand/20"
-              />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPhotoChange(null);
-                }}
-                className="absolute -top-0.5 -right-0.5 bg-brand text-white rounded-full p-1.5 hover:bg-brand-hover shadow-md transition-colors"
-                aria-label="Supprimer la photo"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-            <span className="text-sm text-ls-muted">
-              Cliquer ou glisser pour remplacer &middot; JPG, PNG 5 Mo
-            </span>
-          </>
-        ) : (
-          <>
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 ring-2 ring-brand/20">
-              <Upload className="h-7 w-7 text-brand" />
-            </div>
-            <div className="text-center sm:text-left space-y-0.5">
-              <p className="text-sm font-medium text-ls-heading">
-                Dépose ta photo ici
-              </p>
-              <p className="text-xs text-ls-muted">
-                Glisser-déposer ou cliquer &middot; JPG, PNG 5 Mo max
-              </p>
-            </div>
-          </>
-        )}
-      </div>
+        {(() => {
+          if (isUploading) {
+            return (
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-10 w-10 animate-spin text-brand" />
+                <span className="text-xs text-ls-muted">
+                  Envoi en cours...
+                </span>
+              </div>
+            );
+          }
+          if (previewPhoto) {
+            return (
+              <>
+                <div className="relative shrink-0 w-20 h-20">
+                  <Image
+                    src={previewPhoto}
+                    alt="Aperçu"
+                    width={80}
+                    height={80}
+                    className="rounded-full object-cover ring-2 ring-brand/20"
+                    unoptimized={previewPhoto.startsWith("data:")}
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPhotoChange(null);
+                    }}
+                    className="absolute -top-0.5 -right-0.5 bg-brand text-white rounded-full p-1.5 hover:bg-brand-hover shadow-md transition-colors"
+                    aria-label="Supprimer la photo"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <span className="text-sm text-ls-muted">
+                  Cliquer ou glisser pour remplacer &middot; JPG, PNG 5 Mo
+                </span>
+              </>
+            );
+          }
+          return (
+            <>
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 ring-2 ring-brand/20">
+                <Upload className="h-7 w-7 text-brand" />
+              </div>
+              <div className="text-center sm:text-left space-y-0.5">
+                <p className="text-sm font-medium text-ls-heading">
+                  Dépose ta photo ici
+                </p>
+                <p className="text-xs text-ls-muted">
+                  Glisser-déposer ou cliquer &middot; JPG, PNG 5 Mo max
+                </p>
+              </div>
+            </>
+          );
+        })()}
+      </button>
     </div>
   );
 }
