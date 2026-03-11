@@ -6,8 +6,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient, customAuthClient } from "@/lib/auth-client";
 import { API_BASE_URL } from "@/lib/api-client";
+import { formatPhotoUrl } from "@/utils/photo";
 import { toast } from "sonner";
-import { mentorProfileSchema, type MentorProfileFormData } from "@/components/mentor-profile/schema";
+import {
+  mentorProfileSchema,
+  type MentorProfileFormData,
+} from "@/components/mentor-profile/schema";
 import type { ProfileSection } from "@/components/mentor-profile/constants";
 
 function parseStringOrArray(value: unknown): string[] {
@@ -91,10 +95,13 @@ export function useMentorProfile() {
     const loadProfile = async () => {
       if (!session?.user?.id) return;
       try {
-        const response = await fetch(`${API_BASE_URL}/api/profile/role/mentor`, {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/profile/role/mentor`,
+          {
+            method: "GET",
+            credentials: "include",
+          },
+        );
 
         if (!response.ok) return;
 
@@ -141,7 +148,7 @@ export function useMentorProfile() {
 
           if (p.photoUrl) {
             setExistingPhotoUrl(p.photoUrl);
-            setPreviewPhoto(`${API_BASE_URL}${p.photoUrl}`);
+            setPreviewPhoto(formatPhotoUrl(p.photoUrl));
           }
         }
       } catch {
@@ -168,7 +175,7 @@ export function useMentorProfile() {
     setSelected: (v: string[]) => void,
     formField: keyof MentorProfileFormData,
     setCustom: (v: string) => void,
-    max?: number
+    max?: number,
   ) => ({
     add: (value: string) => {
       if (!value || selected.includes(value)) return;
@@ -190,35 +197,35 @@ export function useMentorProfile() {
     setSelectedTopics,
     "mentorshipTopics",
     setCustomTopic,
-    15
+    15,
   );
   const areas = createTagManager(
     selectedAreas,
     setSelectedAreas,
     "areasOfExpertise",
     setCustomArea,
-    10
+    10,
   );
   const qualifications = createTagManager(
     selectedQualifications,
     setSelectedQualifications,
     "qualifications",
     setCustomQualification,
-    20
+    20,
   );
   const experience = createTagManager(
     selectedExperience,
     setSelectedExperience,
     "experience",
     setCustomExperience,
-    20
+    20,
   );
   const iceBreakers = createTagManager(
     selectedIceBreakers,
     setSelectedIceBreakers,
     "iceBreakerTags",
     setCustomIceBreaker,
-    5
+    5,
   );
 
   const reloadProfileStatus = async () => {
@@ -230,66 +237,61 @@ export function useMentorProfile() {
       const data = await response.json();
       if (data.profile?.photoUrl) {
         setExistingPhotoUrl(data.profile.photoUrl);
-        setPreviewPhoto(`${API_BASE_URL}${data.profile.photoUrl}`);
+        setPreviewPhoto(formatPhotoUrl(data.profile.photoUrl));
       }
       setIsPublished(data.isPublished || false);
     }
   };
 
+  const processPhoto = async (
+    photo: File | null | undefined,
+  ): Promise<string | null> => {
+    if (!photo) return existingPhotoUrl;
+    try {
+      const { photoUrl } = await customAuthClient.uploadPhoto(photo);
+      return photoUrl;
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de l'upload de la photo",
+      );
+    }
+  };
+
+  const processSocialLinks = (
+    links: MentorProfileFormData["socialMediaLinks"],
+  ) => {
+    if (!links) return null;
+    const filtered = Object.fromEntries(
+      Object.entries(links).filter(([, value]) => value?.trim()),
+    );
+    return Object.keys(filtered).length > 0
+      ? (filtered as Record<string, string>)
+      : null;
+  };
+
   const onSubmit = async (data: MentorProfileFormData) => {
     setIsSubmitting(true);
     try {
-      let photoUrl: string | null = null;
-
-      if (data.photo) {
-        try {
-          const uploadResult = await customAuthClient.uploadPhoto(data.photo);
-          photoUrl = uploadResult.photoUrl;
-        } catch (error) {
-          toast.error(
-            error instanceof Error
-              ? error.message
-              : "Erreur lors de l'upload de la photo"
-          );
-          setIsSubmitting(false);
-          return;
-        }
-      } else if (existingPhotoUrl) {
-        photoUrl = existingPhotoUrl;
-      }
-
-      const socialLinks =
-        data.socialMediaLinks &&
-        Object.values(data.socialMediaLinks).some(
-          (v) => v && v.trim() !== ""
-        )
-          ? Object.fromEntries(
-              Object.entries(data.socialMediaLinks).filter(
-                ([, value]) => value && value.trim() !== ""
-              )
-            )
-          : null;
-
-      if (!data.areasOfExpertise || data.areasOfExpertise.length === 0) {
+      if (!data.areasOfExpertise?.length) {
         toast.error("Au moins un domaine d'expertise est requis");
-        setIsSubmitting(false);
         return;
       }
+
+      const photoUrl = await processPhoto(data.photo);
+      const socialLinks = processSocialLinks(data.socialMediaLinks);
 
       await customAuthClient.saveMentorProfile({
         name: data.name,
         bio: data.bio,
         domain: data.areasOfExpertise[0] || "",
         photoUrl: photoUrl || undefined,
-        qualifications:
-          data.qualifications && data.qualifications.length > 0
-            ? data.qualifications.join(", ")
-            : null,
-        experience:
-          data.experience && data.experience.length > 0
-            ? data.experience.join(", ")
-            : null,
-        socialMediaLinks: socialLinks as Record<string, string> | null,
+        qualifications: data.qualifications?.length
+          ? data.qualifications.join(", ")
+          : null,
+        experience: data.experience?.length ? data.experience.join(", ") : null,
+        socialMediaLinks: socialLinks,
         areasOfExpertise: data.areasOfExpertise,
         mentorshipTopics: data.mentorshipTopics || null,
         displayName: data.displayName || null,
@@ -303,7 +305,7 @@ export function useMentorProfile() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Erreur lors de la sauvegarde du profil"
+          : "Erreur lors de la sauvegarde du profil",
       );
     } finally {
       setIsSubmitting(false);
@@ -315,7 +317,7 @@ export function useMentorProfile() {
     try {
       await customAuthClient.publishProfile();
       toast.success(
-        "Profil publié avec succès ! Il est maintenant visible dans le répertoire des mentors."
+        "Profil publié avec succès ! Il est maintenant visible dans le répertoire des mentors.",
       );
       setIsPublished(true);
       setTimeout(() => router.push("/dashboard"), 1500);
@@ -323,7 +325,7 @@ export function useMentorProfile() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Erreur lors de la publication du profil"
+          : "Erreur lors de la publication du profil",
       );
     } finally {
       setIsPublishing(false);
@@ -335,7 +337,7 @@ export function useMentorProfile() {
     try {
       await customAuthClient.unpublishProfile();
       toast.success(
-        "Profil dépublié avec succès. Il n'est plus visible dans le répertoire des mentors."
+        "Profil dépublié avec succès. Il n'est plus visible dans le répertoire des mentors.",
       );
       setIsPublished(false);
       await reloadProfileStatus();
@@ -343,7 +345,7 @@ export function useMentorProfile() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Erreur lors de la dépublication du profil"
+          : "Erreur lors de la dépublication du profil",
       );
     } finally {
       setIsUnpublishing(false);
@@ -399,4 +401,3 @@ export function useMentorProfile() {
     handleUnpublish,
   };
 }
-
