@@ -68,7 +68,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: cd back && pnpm prisma generate --schema=prisma/schema/schema.prisma
+        run: cd back && pnpm prisma generate
         env:
           NODE_ENV: production
           DATABASE_URL: postgresql://user:password@localhost:5432/dbname?schema=public
