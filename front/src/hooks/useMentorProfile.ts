@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +25,69 @@ function parseStringOrArray(value: unknown): string[] {
   return [];
 }
 
+type ProfileLoadState = {
+  isPublished: boolean;
+  selectedQualifications: string[];
+  selectedExperience: string[];
+  selectedAreas: string[];
+  selectedTopics: string[];
+  selectedIceBreakers: string[];
+  existingPhotoUrl: string | null;
+  previewPhoto: string | null;
+};
+
+function buildFormResetData(p: Record<string, unknown>): MentorProfileFormData {
+  const quals = parseStringOrArray(p.qualifications);
+  const exp = parseStringOrArray(p.experience);
+  return {
+    name: (p.name as string) || "",
+    bio: (p.bio as string) || "",
+    domain: p.domain as string | undefined,
+    displayName: (p.displayName as string) || "",
+    photo: null,
+    qualifications: quals,
+    experience: exp,
+    areasOfExpertise: Array.isArray(p.areasOfExpertise)
+      ? p.areasOfExpertise
+      : [],
+    mentorshipTopics: Array.isArray(p.mentorshipTopics)
+      ? p.mentorshipTopics
+      : [],
+    iceBreakerTags: Array.isArray(p.iceBreakerTags) ? p.iceBreakerTags : [],
+    socialMediaLinks: p.socialMediaLinks
+      ? {
+          linkedin:
+            (p.socialMediaLinks as Record<string, string>).linkedin || "",
+          twitter: (p.socialMediaLinks as Record<string, string>).twitter || "",
+          youtube: (p.socialMediaLinks as Record<string, string>).youtube || "",
+          github: (p.socialMediaLinks as Record<string, string>).github || "",
+        }
+      : { linkedin: "", twitter: "", youtube: "", github: "" },
+  };
+}
+
+function buildLoadPayload(data: {
+  isPublished?: boolean;
+  profile?: Record<string, unknown>;
+}): Partial<ProfileLoadState> {
+  const p = data.profile;
+  return {
+    isPublished: !!data.isPublished,
+    selectedQualifications: p ? parseStringOrArray(p.qualifications) : [],
+    selectedExperience: p ? parseStringOrArray(p.experience) : [],
+    selectedAreas: Array.isArray(p?.areasOfExpertise) ? p.areasOfExpertise : [],
+    selectedTopics: Array.isArray(p?.mentorshipTopics)
+      ? p.mentorshipTopics
+      : [],
+    selectedIceBreakers: Array.isArray(p?.iceBreakerTags)
+      ? p.iceBreakerTags
+      : [],
+    existingPhotoUrl: typeof p?.photoUrl === "string" ? p.photoUrl : null,
+    previewPhoto:
+      typeof p?.photoUrl === "string" ? formatPhotoUrl(p.photoUrl) : null,
+  };
+}
+
 import { trpc } from "@/utils/trpc";
 
 export function useMentorProfile() {
@@ -39,21 +102,43 @@ export function useMentorProfile() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isUnpublishing, setIsUnpublishing] = useState(false);
-  const [isPublished, setIsPublished] = useState(false);
-  const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
-  const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
+  const initialProfileState: ProfileLoadState = {
+    isPublished: false,
+    selectedQualifications: [],
+    selectedExperience: [],
+    selectedAreas: [],
+    selectedTopics: [],
+    selectedIceBreakers: [],
+    existingPhotoUrl: null,
+    previewPhoto: null,
+  };
+  function profileLoadReducer(
+    state: ProfileLoadState,
+    action: { type: "LOAD" | "UPDATE"; payload: Partial<ProfileLoadState> },
+  ): ProfileLoadState {
+    if (action.type === "LOAD" || action.type === "UPDATE")
+      return { ...state, ...action.payload };
+    return state;
+  }
+  const [profileState, dispatchProfile] = useReducer(
+    profileLoadReducer,
+    initialProfileState,
+  );
+  const {
+    isPublished,
+    selectedQualifications,
+    selectedExperience,
+    selectedAreas,
+    selectedTopics,
+    selectedIceBreakers,
+    existingPhotoUrl,
+    previewPhoto,
+  } = profileState;
 
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [customTopic, setCustomTopic] = useState("");
-  const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const [customArea, setCustomArea] = useState("");
-  const [selectedQualifications, setSelectedQualifications] = useState<
-    string[]
-  >([]);
   const [customQualification, setCustomQualification] = useState("");
-  const [selectedExperience, setSelectedExperience] = useState<string[]>([]);
   const [customExperience, setCustomExperience] = useState("");
-  const [selectedIceBreakers, setSelectedIceBreakers] = useState<string[]>([]);
   const [customIceBreaker, setCustomIceBreaker] = useState("");
 
   const [activeSection, setActiveSection] =
@@ -97,82 +182,43 @@ export function useMentorProfile() {
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/profile/role/mentor`,
-          {
-            method: "GET",
-            credentials: "include",
-          },
+          { method: "GET", credentials: "include" },
         );
-
         if (!response.ok) return;
 
         const data = await response.json();
-        if (data.isPublished) setIsPublished(true);
-
-        if (data.profile) {
-          const p = data.profile;
-          setValue("name", p.name || "");
-          setValue("bio", p.bio || "");
-          setValue("displayName", p.displayName || "");
-
-          const quals = parseStringOrArray(p.qualifications);
-          setSelectedQualifications(quals);
-          setValue("qualifications", quals);
-
-          const exp = parseStringOrArray(p.experience);
-          setSelectedExperience(exp);
-          setValue("experience", exp);
-
-          if (Array.isArray(p.areasOfExpertise)) {
-            setSelectedAreas(p.areasOfExpertise);
-            setValue("areasOfExpertise", p.areasOfExpertise);
-          }
-
-          if (Array.isArray(p.mentorshipTopics)) {
-            setSelectedTopics(p.mentorshipTopics);
-            setValue("mentorshipTopics", p.mentorshipTopics);
-          }
-
-          if (Array.isArray(p.iceBreakerTags)) {
-            setSelectedIceBreakers(p.iceBreakerTags);
-            setValue("iceBreakerTags", p.iceBreakerTags);
-          }
-
-          if (p.socialMediaLinks) {
-            setValue("socialMediaLinks", {
-              linkedin: p.socialMediaLinks.linkedin || "",
-              twitter: p.socialMediaLinks.twitter || "",
-              youtube: p.socialMediaLinks.youtube || "",
-              github: p.socialMediaLinks.github || "",
-            });
-          }
-
-          if (p.photoUrl) {
-            setExistingPhotoUrl(p.photoUrl);
-            setPreviewPhoto(formatPhotoUrl(p.photoUrl));
-          }
-        }
+        const p = data.profile;
+        if (p) form.reset(buildFormResetData(p));
+        dispatchProfile({ type: "LOAD", payload: buildLoadPayload(data) });
       } catch {
         // Profile not yet created
       }
     };
 
     if (session?.user) loadProfile();
-  }, [session, setValue]);
+  }, [session, form]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     if (file) {
       setValue("photo", file, { shouldValidate: true });
-      setExistingPhotoUrl(null);
+      dispatchProfile({
+        type: "UPDATE",
+        payload: { existingPhotoUrl: null },
+      });
       const reader = new FileReader();
-      reader.onloadend = () => setPreviewPhoto(reader.result as string);
+      reader.onloadend = () =>
+        dispatchProfile({
+          type: "UPDATE",
+          payload: { previewPhoto: reader.result as string },
+        });
       reader.readAsDataURL(file);
     }
   };
 
   const createTagManager = (
     selected: string[],
-    setSelected: (v: string[]) => void,
+    dispatchSelected: (v: string[]) => void,
     formField: keyof MentorProfileFormData,
     setCustom: (v: string) => void,
     max?: number,
@@ -181,48 +227,60 @@ export function useMentorProfile() {
       if (!value || selected.includes(value)) return;
       if (max && selected.length >= max) return;
       const next = [...selected, value];
-      setSelected(next);
+      dispatchSelected(next);
       setValue(formField, next as never);
       setCustom("");
     },
     remove: (value: string) => {
       const next = selected.filter((v) => v !== value);
-      setSelected(next);
+      dispatchSelected(next);
       setValue(formField, next as never);
     },
   });
 
   const topics = createTagManager(
     selectedTopics,
-    setSelectedTopics,
+    (v) => dispatchProfile({ type: "UPDATE", payload: { selectedTopics: v } }),
     "mentorshipTopics",
     setCustomTopic,
     15,
   );
   const areas = createTagManager(
     selectedAreas,
-    setSelectedAreas,
+    (v) => dispatchProfile({ type: "UPDATE", payload: { selectedAreas: v } }),
     "areasOfExpertise",
     setCustomArea,
     10,
   );
   const qualifications = createTagManager(
     selectedQualifications,
-    setSelectedQualifications,
+    (v) =>
+      dispatchProfile({
+        type: "UPDATE",
+        payload: { selectedQualifications: v },
+      }),
     "qualifications",
     setCustomQualification,
     20,
   );
   const experience = createTagManager(
     selectedExperience,
-    setSelectedExperience,
+    (v) =>
+      dispatchProfile({
+        type: "UPDATE",
+        payload: { selectedExperience: v },
+      }),
     "experience",
     setCustomExperience,
     20,
   );
   const iceBreakers = createTagManager(
     selectedIceBreakers,
-    setSelectedIceBreakers,
+    (v) =>
+      dispatchProfile({
+        type: "UPDATE",
+        payload: { selectedIceBreakers: v },
+      }),
     "iceBreakerTags",
     setCustomIceBreaker,
     5,
@@ -235,11 +293,16 @@ export function useMentorProfile() {
     });
     if (response.ok) {
       const data = await response.json();
-      if (data.profile?.photoUrl) {
-        setExistingPhotoUrl(data.profile.photoUrl);
-        setPreviewPhoto(formatPhotoUrl(data.profile.photoUrl));
-      }
-      setIsPublished(data.isPublished || false);
+      dispatchProfile({
+        type: "UPDATE",
+        payload: {
+          existingPhotoUrl: data.profile?.photoUrl ?? null,
+          previewPhoto: data.profile?.photoUrl
+            ? formatPhotoUrl(data.profile.photoUrl)
+            : null,
+          isPublished: data.isPublished || false,
+        },
+      });
     }
   };
 
@@ -299,7 +362,11 @@ export function useMentorProfile() {
       });
 
       toast.success("Profil sauvegardé avec succès !");
-      if (photoUrl) setExistingPhotoUrl(photoUrl);
+      if (photoUrl)
+        dispatchProfile({
+          type: "UPDATE",
+          payload: { existingPhotoUrl: photoUrl },
+        });
       await reloadProfileStatus();
     } catch (error) {
       toast.error(
@@ -319,7 +386,7 @@ export function useMentorProfile() {
       toast.success(
         "Profil publié avec succès ! Il est maintenant visible dans le répertoire des mentors.",
       );
-      setIsPublished(true);
+      dispatchProfile({ type: "UPDATE", payload: { isPublished: true } });
       setTimeout(() => router.push("/dashboard"), 1500);
     } catch (error) {
       toast.error(
@@ -339,7 +406,7 @@ export function useMentorProfile() {
       toast.success(
         "Profil dépublié avec succès. Il n'est plus visible dans le répertoire des mentors.",
       );
-      setIsPublished(false);
+      dispatchProfile({ type: "UPDATE", payload: { isPublished: false } });
       await reloadProfileStatus();
     } catch (error) {
       toast.error(
