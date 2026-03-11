@@ -35,8 +35,9 @@
 *.pem
 *.local
 
-# Sentry Config File
+# Sentry
 .env.sentry-build-plugin
+.sentryclirc
 
 # Logs
 npm-debug.log*
@@ -63,5 +64,3 @@ dev-dist
 .open-next
 
 .cursor
-# Sentry Config File
-.env.sentry-build-plugin
