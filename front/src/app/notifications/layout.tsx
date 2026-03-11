@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Notifications | LearnSup",
+  description: "Consultez tes notifications LearnSup.",
+};
+
+export default function NotificationsLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return <>{children}</>;
+}
