@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mes ateliers | LearnSup",
-  description: "Gère tes ateliers en tant que mentor sur LearnSup.",
+  title: "Paliers | LearnSup",
+  description: "Découvrez les paliers et avantages LearnSup.",
 };
 
-export default function MyWorkshopsLayout({
+export default function PaliersLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return <>{children}</>;
