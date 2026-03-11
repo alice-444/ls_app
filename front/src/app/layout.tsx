@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "../index.css";
 import Providers from "@/components/providers";
 import { RoleGate } from "@/components/layout/role-gate";
 import { LayoutSwitch } from "@/components/layout/layout-switch";
+import Loader from "@/components/loader";
 
 export const metadata: Metadata = {
   title: "Learning Solidarity",
@@ -19,7 +21,9 @@ export default function RootLayout({
       <body className="font-sans antialiased bg-white dark:bg-[#0a0510] text-[#26547c] dark:text-[#e6e6e6] transition-colors duration-300">
         <Providers>
           <RoleGate>
-            <LayoutSwitch>{children}</LayoutSwitch>
+            <Suspense fallback={<Loader fullScreen size="lg" />}>
+              <LayoutSwitch>{children}</LayoutSwitch>
+            </Suspense>
           </RoleGate>
         </Providers>
       </body>

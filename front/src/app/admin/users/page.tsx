@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useState, Suspense } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import {
   Dialog,
@@ -214,9 +215,11 @@ function UsersContent() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       {user.photoUrl ? (
-                        <img
+                        <Image
                           src={user.photoUrl}
                           alt={user.name ?? ""}
+                          width={36}
+                          height={36}
                           className="h-9 w-9 rounded-full object-cover"
                         />
                       ) : (
