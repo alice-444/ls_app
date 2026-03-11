@@ -1,5 +1,5 @@
 export function isMinimumTomorrow(date: Date | string | null | undefined): boolean {
-  if (!date) return false;
+  if (!date) return true;
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
