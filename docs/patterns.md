@@ -121,8 +121,36 @@ Transformation des données brutes du serveur en formats adaptés à la consomma
 ### Provider Pattern
 Utilisation de contextes React pour diffuser des configurations transversales (Auth, Thème, tRPC) sans "prop drilling".
 
+### Safe-Hydration Pattern (Hydratation Sécurisée)
+Utilisation d'un état `mounted` pour éviter les erreurs d'hydratation Next.js sur les composants dépendant de données client-side (session, pathname, localStorage). Le composant affiche un squelette ou un état neutre sur le serveur et ne bascule vers le rendu dynamique qu'après le montage côté client.
+
+```tsx
+export default function SafeComponent() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <Skeleton />;
+  return <RealContent />;
+}
+```
+
 ### Micro-interactions & Animations (React Bits)
 L'interface utilise des patterns d'animation avancés basés sur **Framer Motion** pour améliorer l'engagement utilisateur :
+
+---
+
+## 📈 Observabilité & Monitoring
+
+### Full-stack Observability (Sentry)
+Surveillance unifiée du frontend et du backend pour une résolution rapide des bugs :
+
+- **Error Tracking** : Capture automatique des exceptions (JS, React errors, tRPC, Prisma).
+- **Performance Tracing** : Analyse de la latence (Next.js server side, API routes, DB queries).
+- **Session Replay** : Reproduction vidéo des sessions utilisateur lors d'une erreur.
+- **Tunneling Pattern** : Routage des requêtes Sentry via `/api/sentry` pour éviter les bloqueurs de publicité et garantir 100% de visibilité.
+
+---
+
+## 🔄 Communication & Validation
 
 ```mermaid
 flowchart TD
