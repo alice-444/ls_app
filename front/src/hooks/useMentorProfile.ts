@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useReducer, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient, customAuthClient } from "@/lib/auth-client";
@@ -164,11 +164,7 @@ export function useMentorProfile() {
   const { setValue, watch } = form;
   const bioLength = watch("bio")?.length || 0;
 
-  useEffect(() => {
-    if (!session && !isSessionPending) {
-      router.push("/login");
-    }
-  }, [session, isSessionPending, router]);
+  if (!isSessionPending && !session) redirect("/login");
 
   useEffect(() => {
     if (session?.user?.name) {

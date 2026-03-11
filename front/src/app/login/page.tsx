@@ -3,13 +3,12 @@
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 import { AnimatePresence, motion } from "framer-motion";
 
 function LoginContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
   const { data: session, isPending } = authClient.useSession();
@@ -19,19 +18,8 @@ function LoginContent() {
     setShowSignIn(mode === "signin");
   }, [mode]);
 
-  useEffect(() => {
-    if (session && !isPending) {
-      router.replace("/dashboard");
-    }
-  }, [session, isPending, router]);
-
-  if (isPending) {
-    return <Loader fullScreen size="lg" />;
-  }
-
-  if (session) {
-    return <Loader fullScreen size="lg" />;
-  }
+  if (isPending) return <Loader fullScreen size="lg" />;
+  if (session) redirect("/dashboard");
 
   return (
     <div className="w-full max-w-md">
