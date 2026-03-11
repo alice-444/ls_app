@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Search, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +63,16 @@ export function NewConversationDialog({
     if (!isOpen) setSearchQuery("");
   };
 
+  let emptyStateMessage: string;
+  if (searchQuery) {
+    emptyStateMessage = "Aucun résultat trouvé";
+  } else if (connections.length === 0) {
+    emptyStateMessage = "Tu n'as pas encore de connections acceptées";
+  } else {
+    emptyStateMessage =
+      "Toutes tes connexions ont déjà une conversation active";
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl rounded-2xl">
@@ -84,13 +95,7 @@ export function NewConversationDialog({
           <div className="max-h-[400px] overflow-y-auto space-y-2">
             {availableConnections.length === 0 ? (
               <div className="text-center py-10 space-y-4">
-                <div className="text-ls-muted">
-                  {searchQuery
-                    ? "Aucun résultat trouvé"
-                    : connections.length === 0
-                    ? "Tu n'as pas encore de connections acceptées"
-                    : "Toutes tes connexions ont déjà une conversation active"}
-                </div>
+                <div className="text-ls-muted">{emptyStateMessage}</div>
                 {!searchQuery && (
                   <Button
                     onClick={() => {
@@ -152,9 +157,11 @@ function ConnectionRow({
     >
       <div className="flex items-center gap-3">
         {connection.otherUserPhotoUrl ? (
-          <img
+          <Image
             src={connection.otherUserPhotoUrl}
             alt={displayName}
+            width={40}
+            height={40}
             className="w-10 h-10 rounded-full object-cover"
           />
         ) : (
