@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 
 export const mentorProfileSchema = z.object({
   name: z
@@ -24,13 +24,13 @@ export const mentorProfileSchema = z.object({
         .refine(
           (file) =>
             ["image/jpeg", "image/jpg", "image/png"].includes(
-              file.type.toLowerCase()
+              file.type.toLowerCase(),
             ),
-          "Le fichier doit être au format JPG ou PNG"
+          "Le fichier doit être au format JPG ou PNG",
         )
         .refine(
           (file) => file.size <= 5 * 1024 * 1024,
-          "La photo ne doit pas dépasser 5 Mo"
+          "La photo ne doit pas dépasser 5 Mo",
         ),
       z.null(),
       z.undefined(),

@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
+import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
   Save,
-  Sparkles,
   Loader2,
   CheckCircle,
   User,
@@ -16,7 +15,7 @@ import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { BackButton } from "@/components/back-button";
-import { PageContainer, PageCard } from "@/components/layout";
+import { PageContainer } from "@/components/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import { ProfilePhotoUpload } from "@/components/profil/ProfilePhotoUpload";
@@ -27,8 +26,35 @@ import { ApprenticeProfileForm } from "@/components/profil/ApprenticeProfileForm
 const BLOCK_CARD =
   "rounded-2xl border border-border/50 bg-card/95 backdrop-blur-md p-5 sm:p-6 shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-brand/5";
 
+function getSaveButtonContent(
+  isPending: boolean,
+  savedSuccess: boolean
+): ReactNode {
+  if (isPending) {
+    return (
+      <>
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Sauvegarde...
+      </>
+    );
+  }
+  if (savedSuccess) {
+    return (
+      <>
+        <CheckCircle className="mr-2 h-4 w-4" />
+        Sauvegardé
+      </>
+    );
+  }
+  return (
+    <>
+      <Save className="mr-2 h-4 w-4" />
+      Sauvegarder
+    </>
+  );
+}
+
 export default function ProfilPage() {
-  const router = useRouter();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
@@ -40,7 +66,7 @@ export default function ProfilPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  const { data: userRole } = useQuery({
+  const { data: userRole, isLoading: isLoadingRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
     queryFn: getUserRole,
     enabled: !!session?.user?.id,
@@ -77,17 +103,9 @@ export default function ProfilPage() {
     },
   });
 
-  useEffect(() => {
-    if (!session && !isSessionPending) router.push("/login");
-  }, [session, isSessionPending, router]);
-
-  useEffect(() => {
-    if (userRole === "MENTOR") {
-      router.push("/mentor-profile");
-    } else if (userRole && userRole !== "APPRENANT") {
-      router.push("/dashboard");
-    }
-  }, [userRole, router]);
+  if (!isSessionPending && !session) redirect("/login");
+  if (userRole === "MENTOR") redirect("/mentor-profile");
+  if (userRole && userRole !== "APPRENANT") redirect("/dashboard");
 
   useEffect(() => {
     if (identityCard?.photoUrl) setPreviewPhoto(identityCard.photoUrl);
@@ -102,7 +120,7 @@ export default function ProfilPage() {
     }
   }, [identityCard]);
 
-  if (isSessionPending || isLoading) {
+  if (isSessionPending || isLoadingRole || isLoading) {
     return (
       <PageContainer>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -128,7 +146,7 @@ export default function ProfilPage() {
     if (!studyDomain) errors.studyDomain = "Le domaine d'étude est requis";
     if (!studyProgram) errors.studyProgram = "Le cursus est requis";
     if (bio.length > 500) errors.bio = "La bio ne peut dépasser 500 caractères";
-    
+
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -225,22 +243,7 @@ export default function ProfilPage() {
             disabled={saveMutation.isPending}
             className="w-full sm:w-auto min-w-[180px]"
           >
-            {saveMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sauvegarde...
-              </>
-            ) : savedSuccess ? (
-              <>
-                <CheckCircle className="mr-2 h-4 w-4" />
-                Sauvegardé
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 h-4 w-4" />
-                Sauvegarder
-              </>
-            )}
+            {getSaveButtonContent(saveMutation.isPending, savedSuccess)}
           </Button>
         </form>
 

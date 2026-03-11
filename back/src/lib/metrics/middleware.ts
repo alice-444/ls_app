@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { httpRequestDuration, httpRequestTotal } from "./prometheus";
 
 export function metricsMiddleware(
-  handler: (req: NextRequest) => Promise<NextResponse>
+  handler: (req: NextRequest) => Promise<Response>
 ) {
-  return async (req: NextRequest): Promise<NextResponse> => {
+  return async (req: NextRequest): Promise<Response> => {
     const start = Date.now();
     const method = req.method;
     const url = new URL(req.url);

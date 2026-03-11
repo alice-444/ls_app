@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -91,9 +92,11 @@ export function MiniProfileModal({
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             {miniProfile.photoUrl ? (
-              <img
+              <Image
                 src={miniProfile.photoUrl}
                 alt={miniProfile.displayName || "Apprenti"}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full object-cover border-2 border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]"
               />
             ) : (
@@ -147,7 +150,7 @@ export function MiniProfileModal({
 
           {session && apprenticeUserId !== session?.user?.id && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] space-y-2">
-              {connectionStatus?.status === "ACCEPTED" ? (
+              {connectionStatus?.status === "ACCEPTED" && (
                 <Button
                   variant="outline"
                   className="w-full border border-[#f44336] dark:border-[#f44336] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#f44336] dark:text-[#f44336] hover:bg-[rgba(244,67,54,0.1)] dark:hover:bg-[rgba(244,67,54,0.15)] rounded-[32px]"
@@ -176,7 +179,8 @@ export function MiniProfileModal({
                     ? "Suppression..."
                     : "Retirer la connexion"}
                 </Button>
-              ) : connectionStatus?.status === "PENDING" ? (
+              )}
+              {connectionStatus?.status === "PENDING" && (
                 <Button
                   variant="outline"
                   className="w-full border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] rounded-[32px]"
@@ -185,35 +189,37 @@ export function MiniProfileModal({
                   <UserPlus className="h-4 w-4 mr-2" />
                   Demande en attente
                 </Button>
-              ) : (
-                <Button
-                  className="w-full bg-[#34b162] hover:bg-[#2a9d52] dark:bg-[#34b162] dark:hover:bg-[#2a9d52] text-white rounded-[32px]"
-                  onClick={() => {
-                    sendConnectionRequestMutation.mutate(
-                      {
-                        receiverUserId: apprenticeUserId,
-                      },
-                      {
-                        onSuccess: () => {
-                          toast.success("Demande d'invitation envoyée");
-                          refetchConnectionStatus();
-                        },
-                        onError: (error: { message: string }) => {
-                          toast.error("Erreur lors de l'envoi", {
-                            description: error.message,
-                          });
-                        },
-                      }
-                    );
-                  }}
-                  disabled={sendConnectionRequestMutation.isPending}
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  {sendConnectionRequestMutation.isPending
-                    ? "Envoi..."
-                    : "Connecter"}
-                </Button>
               )}
+              {connectionStatus?.status !== "ACCEPTED" &&
+                connectionStatus?.status !== "PENDING" && (
+                  <Button
+                    className="w-full bg-[#34b162] hover:bg-[#2a9d52] dark:bg-[#34b162] dark:hover:bg-[#2a9d52] text-white rounded-[32px]"
+                    onClick={() => {
+                      sendConnectionRequestMutation.mutate(
+                        {
+                          receiverUserId: apprenticeUserId,
+                        },
+                        {
+                          onSuccess: () => {
+                            toast.success("Demande d'invitation envoyée");
+                            refetchConnectionStatus();
+                          },
+                          onError: (error: { message: string }) => {
+                            toast.error("Erreur lors de l'envoi", {
+                              description: error.message,
+                            });
+                          },
+                        }
+                      );
+                    }}
+                    disabled={sendConnectionRequestMutation.isPending}
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    {sendConnectionRequestMutation.isPending
+                      ? "Envoi..."
+                      : "Connecter"}
+                  </Button>
+                )}
               <div className="flex gap-2">
                 <Button
                   variant="outline"

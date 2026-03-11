@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, beforeEach, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MessageInput } from "@/components/messaging/MessageInput";
@@ -20,7 +20,7 @@ describe("MessageInput", () => {
     render(
       <MessageInput onSend={vi.fn()} conversationId="conv-1" />
     );
-    expect(screen.getByPlaceholderText("Tapez votre message...")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Écris ton message...")).toBeInTheDocument();
     expect(screen.getByRole("button")).toBeInTheDocument();
   });
 
@@ -36,7 +36,7 @@ describe("MessageInput", () => {
     render(
       <MessageInput onSend={vi.fn()} conversationId="conv-1" />
     );
-    const textarea = screen.getByPlaceholderText("Tapez votre message...");
+    const textarea = screen.getByPlaceholderText("Écris ton message...");
     await user.type(textarea, "Hello");
     expect(textarea).toHaveValue("Hello");
     expect(screen.getByRole("button")).not.toBeDisabled();
@@ -48,7 +48,7 @@ describe("MessageInput", () => {
     render(
       <MessageInput onSend={onSend} conversationId="conv-1" />
     );
-    await user.type(screen.getByPlaceholderText("Tapez votre message..."), "Hi");
+    await user.type(screen.getByPlaceholderText("Écris ton message..."), "Hi");
     await user.click(screen.getByRole("button"));
     expect(onSend).toHaveBeenCalledWith("Hi");
   });
@@ -58,7 +58,7 @@ describe("MessageInput", () => {
     render(
       <MessageInput onSend={vi.fn()} conversationId="conv-1" />
     );
-    const textarea = screen.getByPlaceholderText("Tapez votre message...");
+    const textarea = screen.getByPlaceholderText("Écris ton message...");
     await user.type(textarea, "Hi");
     await user.click(screen.getByRole("button"));
     expect(textarea).toHaveValue("");

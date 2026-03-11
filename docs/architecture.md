@@ -6,6 +6,43 @@ Vue d’ensemble du monorepo : front, back et base de données.
 
 ## Schéma système
 
+### Vue macro (généraliste)
+
+*Client (interface) → trois canaux (tRPC, REST, Socket) → Serveur → Base de données.*
+
+```mermaid
+flowchart LR
+  subgraph Client["Client"]
+    UI[Interface]
+  end
+
+  subgraph Canaux["Canaux"]
+    C1[tRPC]
+    C2[REST]
+    C3[Socket.IO]
+  end
+
+  subgraph Serveur["Serveur"]
+    API[API]
+  end
+
+  subgraph Persistance["Persistance"]
+    DB[(PostgreSQL)]
+  end
+
+  UI --> C1
+  UI --> C2
+  UI --> C3
+  C1 --> API
+  C2 --> API
+  C3 <--> API
+  API --> DB
+```
+
+---
+
+### Vue micro (technique)
+
 ```mermaid
 flowchart LR
   subgraph Front["Front (Next.js :3001)"]
@@ -24,9 +61,14 @@ flowchart LR
     API[/api/profile, sign-up, cron…]
     SOCKET_S[Socket.IO]
     PRISMA[Prisma]
+    STORAGE[Storage (Cloudinary/Local)]
   end
 
   subgraph DB[(PostgreSQL)]
+  end
+
+  subgraph CLOUD[Cloud Storage]
+    CLOUDINARY[Cloudinary]
   end
 
   UI --> tRPC_C
@@ -47,6 +89,8 @@ flowchart LR
   API --> PRISMA
   PRISMA --> DB
 ```
+
+**Correspondance macro → micro** : tRPC (données métier) → `/trpc` ; REST (auth, profil) → `/api/auth/*`, `/api/profile/*`, `/api/sign-up` ; Socket.IO (temps réel) → serveur Socket sur port 5050.
 
 Vue simplifiée (ASCII) :
 
@@ -76,8 +120,10 @@ Vue simplifiée (ASCII) :
 ## Ports et URLs en dev
 
 - **Front** : `http://localhost:3001`
-- **Back** : selon config (souvent `http://localhost:3000` ou `http://localhost:4500`). Le front doit pointer vers cette URL via `NEXT_PUBLIC_SERVER_URL`.
-- **Socket.IO** : même origine que le back, path `/socket.io`.
+- **Back (Next.js)** : `http://localhost:4500` (API tRPC, routes API) - Le front doit pointer 
+vers cette URL via `NEXT_PUBLIC_SERVER_URL`.
+- **Back (Socket.IO)** : `http://localhost:5050` (serveur custom `server.ts`)
+- **Variables front** : `NEXT_PUBLIC_SERVER_URL` (back Next), `NEXT_PUBLIC_SOCKET_URL` (Socket.IO)
 
 ---
 
@@ -97,7 +143,29 @@ Vue simplifiée (ASCII) :
 
 ---
 
-## Flux principaux
+## Flux général (cycle de données)
+
+*Utilisateur → interface → API → base de données (+ temps réel).*
+
+### Vue macro (généraliste)
+
+L'utilisateur interagit avec l'interface, qui appelle l'API ; le serveur valide la session, lit/écrit en base, et renvoie les données. Un canal temps réel complète pour les mises à jour live.
+
+```mermaid
+flowchart LR
+  U[Utilisateur] --> UI[Interface]
+  UI --> Req[Requêtes API]
+  Req --> B[Back]
+  B --> DB[(DB)]
+  DB --> B
+  B --> UI
+  UI <--> RT[Temps réel]
+  RT <--> B
+```
+
+---
+
+### Vue micro (technique)
 
 ```mermaid
 sequenceDiagram
@@ -140,58 +208,72 @@ sequenceDiagram
 
 ## Flux d'authentification
 
+### Vue macro (généraliste)
+
+*Utilisateur → Formulaire → API Auth → Session → Dashboard (+ Onboarding si rôle manquant).*
+
+Quatre parcours possibles au formulaire : inscription (création compte + email), connexion (session), récupération (MDP oublié). La session mène au Dashboard ; si le rôle est manquant, redirection vers Onboarding (choix MENTOR/APPRENANT) puis Dashboard.
+
 ```mermaid
-flowchart TB
-  subgraph Inscription["Inscription"]
-    A1[Page /login mode signup]
-    A2[SignUpForm]
-    A3[POST /api/sign-up]
-    A4[Better Auth signUpEmail]
-    A5[Création account + app_user]
-    A6[Email bienvenue + lien onboarding]
-    A1 --> A2 --> A3 --> A4 --> A5 --> A6
-  end
-
-  subgraph Connexion["Connexion"]
-    B1[Page /login mode signin]
-    B2[SignInForm]
-    B2a[Email + mot de passe]
-    B2b[Magic link tRPC]
-    B3[Better Auth signIn / magic-link/verify]
-    B4[Session cookie]
-    B5[getUserRole → redirection]
-    B1 --> B2
-    B2 --> B2a
-    B2 --> B2b
-    B2a --> B3
-    B2b --> B3
-    B3 --> B4 --> B5
-  end
-
-  subgraph Récupération["Récupération compte"]
-    C1[/forgot-password]
-    C2[Better Auth sendResetPassword]
-    C3[Email avec lien]
-    C4[/reset-password?token=xxx]
-    C5[Nouveau mot de passe]
-    C1 --> C2 --> C3 --> C4 --> C5
-  end
-
-  subgraph Onboarding["Onboarding"]
-    D1[Session OK + role null]
-    D2[Redirection /onboarding]
-    D3[selectRole MENTOR ou APPRENANT]
-    D4[POST /api/onboarding/select-role]
-    D5[app_user.role + app_user.status ACTIVE]
-    D6[Redirection /dashboard]
-    D1 --> D2 --> D3 --> D4 --> D5 --> D6
-  end
-
-  A6 -.->|"Utilisateur clique"| B1
-  B5 -->|ADMIN| E1["/admin"]
-  B5 -->|role null| D1
-  B5 -->|MENTOR/APPRENANT| E2["/dashboard"]
+flowchart LR
+  U[Utilisateur] --> F[Formulaire]
+  F --> A[API Auth]
+  A --> S[Session]
+  S --> D[Dashboard]
+  S -.-> O[Onboarding]
+  O -.-> D
 ```
+
+---
+
+### Vue micro (technique)
+
+```mermaid
+sequenceDiagram
+  participant U as Utilisateur
+  participant F as Front
+  participant API as API
+  participant Auth as Better Auth
+  participant DB as PostgreSQL
+
+  Note over U,DB: Parcours 1 — Inscription
+  U->>F: /login (mode signup)
+  F->>API: POST /api/sign-up
+  API->>Auth: signUpEmail
+  Auth->>DB: account + user (PENDING, role null)
+  API->>U: Email bienvenue + lien onboarding
+
+  Note over U,DB: Parcours 2 — Connexion
+  U->>F: /login (mode signin)
+  alt Email + mot de passe
+    F->>Auth: POST /api/auth/sign-in/email
+    Auth->>DB: session
+  else Magic link
+    F->>API: trpc.auth.requestMagicLink
+    API->>U: Email avec lien
+    U->>Auth: /api/auth/magic-link/verify
+    Auth->>DB: session
+  end
+  F->>API: GET /api/profile/role
+  API-->>F: role
+  F->>U: Redirect /dashboard ou /admin ou /onboarding
+
+  Note over U,DB: Parcours 3 — Récupération MDP
+  U->>F: /forgot-password
+  F->>Auth: forgetPassword
+  Auth->>U: Email avec lien reset
+  U->>Auth: /reset-password?token=xxx
+  Auth->>DB: nouveau mot de passe
+
+  Note over U,DB: Parcours 4 — Onboarding
+  U->>F: /onboarding (session OK, role null)
+  F->>API: POST /api/onboarding/select-role
+  API->>DB: app_user.role, app_user.status = ACTIVE
+  API-->>F: OK
+  F->>U: Redirect /dashboard
+```
+
+**Routes et procédures** : POST `/api/sign-up`, `/api/auth/sign-in/email`, `/api/auth/magic-link/verify`, `trpc.auth.requestMagicLink`, GET `/api/profile/role`, POST `/api/onboarding/select-role`, `/forgot-password`, `/reset-password`.
 
 Séquences détaillées :
 
@@ -208,6 +290,24 @@ Séquences détaillées :
 ---
 
 ## Flux utilisateur
+
+### Vue macro (généraliste)
+
+Machine à états : Non connecté → Connexion/Inscription → Session active → (si rôle manquant) Onboarding → Espace selon rôle (Dashboard, Admin, Mentor, Apprenant).
+
+```mermaid
+flowchart LR
+  NC[Non connecté] --> S[Session]
+  S --> O{role ?}
+  O -->|null| OB[Onboarding]
+  O -->|défini| D[Dashboard]
+  OB --> D
+  D --> A[Admin / Mentor / Apprenant]
+```
+
+---
+
+### Vue micro (technique)
 
 ```mermaid
 stateDiagram-v2
@@ -246,44 +346,98 @@ stateDiagram-v2
 
 ## Flux de données
 
+### Vue macro (généraliste)
+
+Vue d'ensemble applicable à toute architecture client-serveur avec trois canaux de données : requêtes/réponses (CRUD), authentification, temps réel.
+
 ```mermaid
-flowchart TB
-  subgraph Front["Front"]
-    UI[Composants React]
-    Hooks[trpc.*.useQuery / useMutation]
-    QC[TanStack QueryClient]
-    TC[trpcClient httpBatchLink]
-    Auth[Better Auth useSession]
-    Socket[Socket.IO client]
+flowchart LR
+  subgraph Client["Client"]
+    UI[Interface utilisateur]
   end
 
-  subgraph Back["Back"]
-    TRPC[/trpc]
-    Ctx[createContext]
-    Session[auth.api.getSession]
-    Proc[Procédures public / protected / mentor / admin]
-    Prisma[Prisma]
-    SockS[Socket.IO serveur]
+  subgraph Canaux["Canaux"]
+    C1[CRUD / Données métier]
+    C2[Auth / Profil]
+    C3[Temps réel]
   end
 
-  subgraph DB[(PostgreSQL)]
+  subgraph Serveur["Serveur"]
+    API[API]
   end
 
-  UI --> Hooks
-  Hooks --> QC
-  QC --> TC
-  TC -->|"POST batch, credentials: include"| TRPC
-  TRPC --> Ctx
-  Ctx --> Session
-  Session --> Proc
-  Proc --> Prisma
-  Prisma --> DB
+  subgraph Persistance["Persistance"]
+    DB[(Base de données)]
+  end
 
-  UI --> Auth
-  UI --> Socket
-  Socket <--> SockS
-  SockS --> Prisma
+  UI --> C1
+  UI --> C2
+  UI --> C3
+  C1 -->|"Requêtes / Réponses"| API
+  C2 -->|"Session, upload"| API
+  C3 <-->|"Événements bidirectionnels"| API
+  API --> DB
 ```
+
+**Principe** : l'interface déclenche les trois types de flux. Le canal CRUD sert aux données métier (lecture/écriture). Le canal Auth gère la session et les opérations sensibles (inscription, profil). Le canal Temps réel assure la synchronisation live (messages, notifications) sans polling.
+
+---
+
+### Vue micro (technique)
+
+Détail des composants et des technologies utilisées dans LearnSup.
+
+```mermaid
+sequenceDiagram
+  participant UI as Composants
+  participant QC as TanStack Query
+  participant TC as tRPCClient
+  participant F as Front
+  participant T as tRPC
+  participant B as Back
+  participant P as Prisma
+  participant DB as PostgreSQL
+  participant S as Socket.IO
+  participant API as REST API
+
+  Note over UI,DB: Canal 1 — tRPC (CRUD)
+  UI->>QC: trpc.*.useQuery / useMutation
+  QC->>TC: requête (si cache stale)
+  TC->>T: POST /trpc (batch, credentials: include)
+  T->>B: createContext
+  B->>B: auth.api.getSession
+  B->>P: procédure (public / protected / mentor / admin)
+  P->>DB: SQL
+  DB-->>P: données
+  P-->>TC: JSON typé
+  TC->>QC: cache
+  QC-->>UI: données
+
+  Note over UI,DB: Canal 2 — REST (Auth, profil)
+  UI->>F: fetch /api/profile, sign-up, onboarding…
+  F->>API: credentials: include
+  API->>B: getAuthenticatedSession
+  B->>P: lecture/écriture
+  P->>DB: SQL
+  DB-->>P: données
+  P-->>API: réponse
+  API-->>UI: JSON
+
+  Note over UI,DB: Canal 3 — Socket.IO (temps réel)
+  UI->>S: socket.emit (événement)
+  S->>B: Socket serveur
+  B->>P: lecture/écriture si besoin
+  B->>S: broadcast
+  S-->>UI: socket.on (new-message, notif…)
+```
+
+**Correspondance macro → micro** :
+
+| Canal macro           | Implémentation micro      | Technologies                                                       |
+| --------------------- | ------------------------- | ------------------------------------------------------------------ |
+| CRUD / Données métier | tRPC + TanStack Query     | `trpc.*.useQuery` / `useMutation`, `httpBatchLink`, Prisma         |
+| Auth / Profil         | REST + Better Auth       | `fetch` vers `/api/*`, `useSession`, `getAuthenticatedSession`      |
+| Temps réel            | Socket.IO                | `socket.emit` / `socket.on`, broadcast serveur                      |
 
 **Données via tRPC** :
 
@@ -302,49 +456,103 @@ flowchart TB
 
 ## Flux atelier (workshop)
 
+### Vue macro (généraliste)
+
+Cycle mentor-apprenant : création (brouillon) → publication → demande apprenant (débit crédits) → acceptation/rejet mentor → atelier réalisé → feedback → cashback apprenant.
+
 ```mermaid
-flowchart TB
-  subgraph Mentor["Mentor"]
-    M1[Créer atelier]
-    M2[workshop.create tRPC]
-    M3[Status DRAFT]
-    M4[Publier]
-    M5[workshop.publish]
-    M6[Status PUBLISHED]
-    M7[Recevoir demande]
-    M8[Accepter / Rejeter]
-  end
-
-  subgraph Apprenant["Apprenant"]
-    A1[Demander atelier]
-    A2[mentor.submitWorkshopRequest]
-    A3[Débit crédits si activé]
-    A4[workshop_request PENDING]
-    A5[Si accepté: workshop créé]
-    A6[Rejoindre visio]
-    A7[Soumettre feedback]
-  end
-
-  subgraph Cashback["Cashback"]
-    C1[Cron process-cashback-queue]
-    C2[Crédit apprenant]
-  end
-
-  M1 --> M2 --> M3 --> M4 --> M5 --> M6
-  M6 --> M7
-  A1 --> A2 --> A3 --> A4
-  M7 --> A4
-  M8 --> A5
-  A5 --> A6
-  A6 --> A7
-  A7 --> C1 --> C2
+flowchart LR
+  M1[Mentor crée] --> M2[Publie]
+  M2 --> A1[Apprenant demande]
+  A1 --> M3[Mentor accepte/rejette]
+  M3 --> A2[Visio + feedback]
+  A2 --> CB[Cashback]
 ```
 
-**Cycle de vie** : Mentor crée (DRAFT) → publie (PUBLISHED). Apprenant envoie une demande (`submitWorkshopRequest`) → débit de 10 crédits → `workshop_request` PENDING. Mentor accepte ou rejette. Si accepté : création du `workshop` lié (date, lieu, visio), notification. Apprenant rejoint la visio (Daily.co), participe, soumet un feedback. Cron `process-cashback-queue` crédite l'apprenant (cashback).
+---
+
+### Vue micro (technique)
+
+```mermaid
+sequenceDiagram
+  participant M as Mentor
+  participant F as Front
+  participant T as tRPC
+  participant B as Back
+  participant DB as PostgreSQL
+  participant D as Daily.co
+  participant A as Apprenant
+  participant CRON as Cron
+
+  Note over M,DB: Phase 1 — Création et publication
+  M->>F: Créer atelier
+  F->>T: workshop.create
+  T->>B: mutation
+  B->>DB: workshop (status DRAFT)
+  M->>F: Publier
+  F->>T: workshop.publish
+  T->>B: mutation
+  B->>DB: workshop (status PUBLISHED)
+
+  Note over A,DB: Phase 2 — Demande apprenant
+  A->>F: Demander atelier
+  F->>T: mentor.submitWorkshopRequest
+  T->>B: mutation
+  B->>DB: débit 10 crédits
+  B->>DB: workshop_request (status PENDING)
+  B->>M: Notification
+
+  Note over M,DB: Phase 3 — Acceptation ou rejet
+  M->>F: Accepter (date, heure, lieu)
+  F->>T: mentor.acceptRequest
+  T->>B: acceptWorkshopRequest
+  B->>DB: workshop créé/mis à jour, apprenticeId
+  B->>DB: workshop_request (status ACCEPTED)
+  B->>A: Notification + email
+
+  Note over A,D: Phase 4 — Visio et feedback
+  A->>F: Rejoindre visio
+  F->>T: workshop-video.getDailyToken
+  T->>B: getDailyToken
+  B->>D: Création salle si absente
+  B-->>F: token
+  F->>A: Redirect /workshop/[id]/join-video
+  A->>F: Soumettre feedback
+  F->>T: workshopFeedback.submitFeedback
+  T->>B: mutation
+  B->>DB: mentor_feedback
+
+  Note over CRON,DB: Phase 5 — Cashback
+  CRON->>B: /api/cron/process-cashback-queue
+  B->>DB: workshop_cashback_queue → PROCESSED
+  B->>DB: credit_transaction (crédit apprenant)
+```
+
+**Procédures tRPC** : `workshop.create`, `workshop.publish`, `mentor.submitWorkshopRequest`, `mentor.acceptRequest`, `mentor.rejectRequest`, `workshop-video.getDailyToken`, `workshopFeedback.submitFeedback`.
+
+**Cycle de vie** : Mentor crée (DRAFT) → publie (PUBLISHED). Apprenant envoie une demande (`mentor.submitWorkshopRequest`) → débit de 10 crédits → `workshop_request` PENDING. Mentor accepte (`mentor.acceptRequest`) ou rejette (`mentor.rejectRequest`). Si accepté : création ou mise à jour du `workshop` (date, lieu, visio), notification. Apprenant rejoint la visio (Daily.co via `workshop-video.getDailyToken`), participe, soumet un feedback (`workshopFeedback.submitFeedback`). Cron `process-cashback-queue` crédite l'apprenant.
 
 ---
 
 ## Flux paiement / crédits
+
+### Vue macro (généraliste)
+
+Achat : utilisateur initie → redirection vers prestataire paiement → paiement externe → webhook confirme → crédit compte. Utilisation : débit lors d'une action métier (ex. demande atelier).
+
+```mermaid
+flowchart LR
+  U[Utilisateur] --> R[Redirection paiement]
+  R --> P[Prestataire]
+  P --> W[Webhook]
+  W --> C[Crédit compte]
+  U --> A[Action métier]
+  A --> D[Débit crédits]
+```
+
+---
+
+### Vue micro (technique)
 
 ```mermaid
 sequenceDiagram
@@ -376,114 +584,242 @@ sequenceDiagram
 
 ## Flux messagerie
 
+### Vue macro (généraliste)
+
+Trois phases : initialisation (création conversation si absente), envoi (validation → persistance → notification → broadcast), temps réel (typing, réactions, lecture). Canal bidirectionnel pour la synchro live.
+
 ```mermaid
 flowchart LR
-  subgraph Init["Initialisation"]
-    I1[getOrCreateConversation]
-    I2[mentor.getOrCreateConversation ou messaging]
-    I3[Conversation créée si absente]
-  end
-
-  subgraph Envoi["Envoi message"]
-    E1[tRPC messaging.sendMessage]
-    E2[OU Socket send-message]
-    E3[MessageOperationsService]
-    E4[DB + notification]
-    E5[Socket broadcast new-message]
-  end
-
-  subgraph TempsRéel["Temps réel"]
-    T1[join-conversation]
-    T2[typing-start / typing-stop]
-    T3[add-reaction / remove-reaction]
-    T4[mark-messages-read]
-  end
-
-  I1 --> I2 --> I3
-  E1 --> E3
-  E2 --> E3
-  E3 --> E4 --> E5
-  T1 --> E5
+  I[Init conversation] --> E[Envoi]
+  E --> V[Validation]
+  V --> P[Persistance]
+  P --> B[Broadcast]
+  E <--> T[Temps réel]
 ```
 
-**Connexion Socket** : authentification via cookie session → `join-conversation` pour recevoir les messages d'une conversation. Événements : `send-message`, `new-message`, `typing-start`, `typing-stop`, `add-reaction`, `remove-reaction`, `mark-messages-read`, `messages-read`.
+---
 
-**Envoi** : tRPC `messaging.sendMessage` ou Socket `send-message` → validation (accès, blocage, contenu) → création message en DB → notification au destinataire → broadcast Socket `new-message` aux participants.
+### Vue micro (technique)
+
+```mermaid
+sequenceDiagram
+  participant A as Utilisateur A
+  participant F as Front
+  participant T as tRPC
+  participant S as Socket.IO
+  participant B as Back
+  participant DB as PostgreSQL
+  participant N as Notification
+  participant B2 as Utilisateur B
+
+  Note over A,DB: Phase 1 — Initialisation
+  A->>F: Ouvrir conversation
+  F->>T: messaging.getOrCreateConversation
+  T->>B: mutation
+  B->>DB: conversation créée si absente
+  B-->>F: conversationId
+
+  Note over A,B2: Phase 2 — Connexion temps réel
+  A->>S: join-conversation
+  S->>B: join room conversation:{id}
+  B2->>S: join-conversation
+  S->>B: join room
+
+  Note over A,B2: Phase 3 — Envoi message (tRPC ou Socket)
+  A->>F: Envoyer message
+  F->>T: messaging.sendMessage
+  T->>B: MessageOperationsService
+  B->>B: validation (accès, blocage, contenu)
+  B->>DB: message créé
+  B->>N: notification destinataire
+  B->>S: broadcast new-message
+  S-->>B2: new-message (temps réel)
+
+  Note over A,B2: Alternative — Envoi via Socket
+  A->>S: send-message
+  S->>B: MessageOperationsService.sendMessage
+  B->>DB: message créé
+  B->>S: broadcast new-message
+  S-->>B2: new-message
+
+  Note over A,B2: Phase 4 — Événements temps réel
+  A->>S: typing-start
+  S->>B2: user-typing
+  A->>S: typing-stop
+  S->>B2: user-stopped-typing
+  A->>S: add-reaction / remove-reaction
+  S->>B: MessageReactionService
+  B->>DB: message_reaction
+  B->>S: broadcast
+  A->>S: mark-messages-read
+  S->>B2: messages-read
+```
+
+**Procédures tRPC** : `messaging.getOrCreateConversation`, `messaging.getConversations`, `messaging.getMessages`, `messaging.sendMessage`, `messaging.markMessagesAsRead`, `messaging.updateMessage`, `messaging.deleteMessage`.
+
+**Événements Socket** : `join-conversation`, `leave-conversation`, `send-message`, `new-message`, `typing-start`, `typing-stop`, `user-typing`, `user-stopped-typing`, `add-reaction`, `remove-reaction`, `mark-messages-read`, `messages-read`.
+
+**Envoi** : tRPC `messaging.sendMessage` ou Socket `send-message` → `MessageOperationsService` → validation (accès, blocage, contenu) → création message en DB → notification destinataire → broadcast Socket `new-message` aux participants de la room.
 
 ---
 
 ## Flux visio (Daily.co)
 
+### Vue macro (généraliste)
+
+Accès : utilisateur demande token → salle créée si absente → token généré → redirection vers player. Vie de la salle : webhooks (présence) et crons (nettoyage salles inactives).
+
 ```mermaid
-flowchart TB
-  subgraph Accès["Accès salle"]
-    A1[Mentor ou Apprenant]
-    A2[workshop-video.getDailyToken]
-    A3[Salle existe ?]
-    A4[DailyService.getOrCreateRoomForWorkshop]
-    A5[workshop-{id}]
-    A6[generateToken]
-    A7[Redirect /workshop/[id]/join-video]
-  end
-
-  subgraph Webhook["Webhook Daily"]
-    W1[participant-joined / participant-left]
-    W2[POST /api/daily/webhook]
-    W3[room name = workshop-{id}]
-    W4[update dailyRoomLastActivityAt]
-  end
-
-  subgraph Cron["Crons"]
-    C1[generate-video-links]
-    C2[cleanup-inactive-rooms]
-  end
-
-  A1 --> A2 --> A3
-  A3 -->|Non| A4 --> A5
-  A3 -->|Oui| A5
-  A5 --> A6 --> A7
-  W1 --> W2 --> W3 --> W4
-  C1 --> A4
-  C2 --> W4
+flowchart LR
+  U[Utilisateur] --> T[Demande token]
+  T --> S{Salle ?}
+  S -->|Non| C[Création salle]
+  S -->|Oui| G[Génération token]
+  C --> G
+  G --> P[Player visio]
+  WH[Webhooks présence] --> M[Mise à jour activité]
+  CR[Cron nettoyage] --> M
 ```
 
-**Token** : `workshop-video.getDailyToken(workshopId)` → si pas de `dailyRoomId`, création salle via API Daily (`workshop-{workshopId}`) → génération token (owner pour mentor) → front redirige vers `/workshop/[id]/join-video` avec daily-js.
+---
 
-**Webhook** : Daily envoie `participant-joined` / `participant-left` → back met à jour `dailyRoomLastActivityAt`. Cron `cleanup-inactive-rooms` ferme les salles inactives.
+### Vue micro (technique)
+
+```mermaid
+sequenceDiagram
+  participant U as Utilisateur
+  participant F as Front
+  participant T as tRPC
+  participant B as Back
+  participant DB as PostgreSQL
+  participant D as Daily.co API
+  participant CRON as Cron
+
+  Note over U,DB: Phase 1 — Accès salle (Mentor ou Apprenant)
+  U->>F: Rejoindre visio
+  F->>T: workshop.getDailyToken
+  T->>B: query
+  B->>DB: workshop (vérifier creatorId ou apprenticeId)
+  alt Pas de dailyRoomId
+    B->>D: GET /rooms/workshop-{id} (404)
+    B->>D: POST /rooms (name: workshop-{id})
+    D-->>B: roomId, roomUrl
+    B->>DB: workshop.dailyRoomId, dailyRoomLastActivityAt
+  else Salle existe
+    B->>DB: workshop.dailyRoomLastActivityAt = now
+  end
+  B->>D: generateToken (owner si mentor)
+  D-->>B: token, roomUrl
+  B-->>F: token, roomUrl
+  F->>U: Redirect /workshop/[id]/join-video (daily-js)
+
+  Note over D,DB: Phase 2 — Webhook présence
+  D->>B: POST /api/daily/webhook (participant-joined/left)
+  B->>B: vérifier signature (DAILY_WEBHOOK_SECRET)
+  B->>B: room name = workshop-{id} ?
+  B->>DB: workshop.dailyRoomLastActivityAt = now
+
+  Note over B,DB: Phase 3 — Crons
+  CRON->>B: /api/cron/generate-video-links
+  B->>DB: workshops sans dailyRoomId
+  B->>D: POST /rooms pour chaque
+  B->>DB: dailyRoomId
+
+  CRON->>B: /api/cron/cleanup-inactive-rooms
+  B->>DB: workshops avec dailyRoomId, lastActivity > 30min
+  B->>D: getRoomInfo (participantCount)
+  alt participantCount === 0
+    B->>D: deleteRoom
+    B->>DB: dailyRoomId = null
+  end
+```
+
+**Procédure tRPC** : `workshop.getDailyToken(workshopId)` — vérifie accès (mentor ou apprenant), crée salle Daily si absente (`workshop-{workshopId}`), génère token (owner pour mentor), met à jour `dailyRoomLastActivityAt`.
+
+**Webhook** : POST `/api/daily/webhook` — événements `participant-joined` / `participant-left` → mise à jour `dailyRoomLastActivityAt` si room name = `workshop-{id}`.
+
+**Crons** : `generate-video-links` (pré-création salles pour ateliers à venir), `cleanup-inactive-rooms` (fermeture salles inactives > 30 min, 0 participant).
 
 ---
 
 ## Flux suppression de compte
 
+### Vue macro (généraliste)
+
+Deux phases : demande (soft delete, désactivation auth, job planifié à J+30) et purge (cron exécute les jobs échus → anonymisation PII → suppression définitive). Rétention légale respectée.
+
 ```mermaid
-flowchart TB
-  subgraph Demande["Demande utilisateur"]
-    D1[/settings → DeleteAccountSection]
-    D2[DELETE /api/profile/delete]
-    D3[buildDeletionPlan]
-    D4[softDelete + disable auth]
-    D5[deletion_job créé runAt +30j]
-  end
-
-  subgraph Purge["Purge planifiée"]
-    P1[Cron purge-deletions]
-    P2[Jobs runAt <= now]
-    P3[Anonymisation PII]
-    P4[name, email, bio → anonyme]
-    P5[deletion_job COMPLETED]
-  end
-
-  D1 --> D2 --> D3 --> D4 --> D5
-  P1 --> P2 --> P3 --> P4 --> P5
+flowchart LR
+  D[Demande utilisateur] --> S[Soft delete]
+  S --> J[Job planifié J+30]
+  J --> C[Cron purge]
+  C --> A[Anonymisation PII]
+  A --> F[Finalisé]
 ```
 
-**Demande** : DELETE `/api/profile/delete?reason=...` → `buildDeletionPlan` (rétention 30j) → soft delete user, désactivation compte auth, révocation sessions → création `deletion_job` (status PENDING, runAt = now + 30 jours).
+---
 
-**Purge** : cron `purge-deletions` (CRON_SECRET) → jobs échus → anonymisation (name, email, displayName, photoUrl, bio, etc.) → status COMPLETED.
+### Vue micro (technique)
+
+```mermaid
+sequenceDiagram
+  participant U as Utilisateur
+  participant F as Front
+  participant B as Back
+  participant DB as PostgreSQL
+  participant CRON as Cron
+
+  Note over U,DB: Phase 1 — Demande suppression
+  U->>F: /settings → DeleteAccountSection
+  F->>B: DELETE /api/profile/delete?reason=...
+  B->>B: getAuthenticatedSession
+  B->>DB: app_user (findByAuthUserId)
+  B->>B: buildDeletionPlan (rétention 30j)
+  B->>DB: transaction
+  Note over B,DB: softDelete (deletedAt, deletionReason)
+  B->>DB: disable auth user
+  B->>DB: revoke sessions
+  B->>DB: unlink accounts
+  B->>DB: deletion_job (runAt = now + 30j, PENDING)
+  B->>U: auth.api.signOut
+  B-->>F: 204 No Content
+
+  Note over CRON,DB: Phase 2 — Purge planifiée
+  CRON->>B: GET/POST /api/cron/purge-deletions (CRON_SECRET)
+  B->>DB: deletion_job (runAt <= now, PENDING)
+  loop Pour chaque job échu
+    B->>DB: user.update (anonymisation PII)
+    Note over B,DB: name, email, displayName, photoUrl, bio, etc. → anonyme
+    B->>DB: deletion_job (status COMPLETED)
+  end
+  B-->>CRON: { processed, errors }
+```
+
+**Route** : DELETE `/api/profile/delete?reason=...` — `buildDeletionPlan` (rétention 30j) → `DeleteUserAccountService.execute` : soft delete (deletedAt, deletionReason), désactivation auth, révocation sessions, unlink accounts → création `deletion_job` (PENDING, runAt = now + 30 jours) → signOut.
+
+**Cron** : GET/POST `/api/cron/purge-deletions` (CRON_SECRET) → `purgeScheduledDeletions` → jobs `runAt <= now` et `status = PENDING` → anonymisation PII (name, email, displayName, photoUrl, bio, qualifications, experience) → `deletion_job` COMPLETED.
 
 ---
 
 ## Flux crons (jobs planifiés)
+
+### Vue macro (généraliste)
+
+Planificateur externe (cron système, Vercel Cron, etc.) appelle les routes avec secret → exécution des jobs (vidéo, cashback, purge, etc.) → mise à jour des données.
+
+```mermaid
+flowchart LR
+  P[Planificateur externe] --> R[Routes /api/cron/*]
+  R --> J[Jobs]
+  J --> V[Vidéo: salles, nettoyage]
+  J --> C[Cashback]
+  J --> D[Purge suppressions]
+  J --> N[Notifications]
+```
+
+---
+
+### Vue micro (technique)
 
 Les routes sous `/api/cron/*` sont appelées par un planificateur externe avec `CRON_SECRET`.
 
@@ -502,6 +838,24 @@ Route `all` : exécute l'ensemble des jobs en une seule requête.
 ---
 
 ## Flux réseau (connexions)
+
+### Vue macro (généraliste)
+
+Demande de connexion entre utilisateurs : A envoie → B reçoit (PENDING) → B accepte ou rejette. Si accepté : messagerie et demandes d'atelier débloquées entre A et B.
+
+```mermaid
+flowchart LR
+  A[Utilisateur A] --> D[Demande]
+  D --> B[Utilisateur B]
+  B --> R{Accepte ?}
+  R -->|Oui| OK[Connexion active]
+  R -->|Non| KO[Rejeté]
+  OK --> M[Messagerie + ateliers]
+```
+
+---
+
+### Vue micro (technique)
 
 ```mermaid
 flowchart LR
@@ -621,7 +975,7 @@ erDiagram
   }
 ```
 
-Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `workshop_cashback_queue`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. Détails dans `back/prisma/schema/schema.prisma`.
+Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `workshop_cashback_queue`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. **Modèle physique (MPD)** : [mpd.md](mpd.md). Schéma source : `back/.prisma/schema/schema.prisma`.
 
 ---
 

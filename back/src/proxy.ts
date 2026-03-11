@@ -32,5 +32,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-	matcher: "/:path*",
+	matcher: "/((?!api|trpc|_next/static|_next/image|favicon.ico|public|logo|bg|typo).*)",
 };

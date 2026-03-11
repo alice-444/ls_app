@@ -77,12 +77,25 @@ describe("WorkshopQueryService", () => {
 
   describe("getPublishedWorkshops", () => {
     it("returns all published workshops", async () => {
-      const workshops = [{ id: "ws-1" }];
+      const workshops = [
+        {
+          id: "ws-1",
+          title: "Workshop 1",
+          status: "PUBLISHED",
+          creatorId: "c1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
       mockWorkshopRepo.findPublished.mockResolvedValue(workshops);
 
       const result = await service.getPublishedWorkshops();
       expect(result.ok).toBe(true);
-      if (result.ok) expect(result.data).toEqual(workshops);
+      if (result.ok) {
+        expect(result.data).toHaveLength(1);
+        expect(result.data[0].id).toBe("ws-1");
+        expect(result.data[0].title).toBe("Workshop 1");
+      }
     });
   });
 
@@ -96,14 +109,25 @@ describe("WorkshopQueryService", () => {
     });
 
     it("returns workshop with filtered video link", async () => {
-      const workshop = { id: "ws-1", dailyRoomId: "room-1" };
-      const filtered = { id: "ws-1", dailyRoomId: null };
+      const workshop = {
+        id: "ws-1",
+        dailyRoomId: "room-1",
+        title: "Test",
+        status: "PUBLISHED",
+        creatorId: "c1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const filtered = { ...workshop, dailyRoomId: null };
       mockWorkshopRepo.findById.mockResolvedValue(workshop);
       mockVideoLinkService.filterVideoLink.mockReturnValue(filtered);
 
       const result = await service.getWorkshopById("ws-1");
       expect(result.ok).toBe(true);
-      if (result.ok) expect(result.data).toEqual(filtered);
+      if (result.ok) {
+        expect(result.data.id).toBe("ws-1");
+        expect(result.data.dailyRoomId).toBeNull();
+      }
       expect(mockVideoLinkService.filterVideoLink).toHaveBeenCalledWith(workshop);
     });
   });
@@ -289,9 +313,9 @@ describe("WorkshopApprenticeQueryService", () => {
         expect(result.data).toHaveLength(1);
         expect(result.data[0].id).toBe("ws-available");
       }
-      });
+    });
 
-      it("filters out workshops from blocked mentors", async () => {
+    it("filters out workshops from blocked mentors", async () => {
       mockAccessGuard.verifyApprenticeAccess.mockResolvedValue({
         ok: true,
         data: { appUser: { id: "app-1" } },
@@ -313,6 +337,6 @@ describe("WorkshopApprenticeQueryService", () => {
         expect(result.data).toHaveLength(1);
         expect(result.data[0].id).toBe("ws-ok");
       }
-      });
-      });
-      });
+    });
+  });
+});

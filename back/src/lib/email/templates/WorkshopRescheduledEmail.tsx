@@ -23,41 +23,106 @@ export function WorkshopRescheduledEmail({
 }: WorkshopRescheduledEmailProps) {
   return (
     <EmailLayout
-      title="Changement d'horaire pour votre atelier"
+      title="Changement d'horaire"
       preview={`L'atelier "${workshopTitle}" a été reprogrammé.`}
-      headerColor="#3b82f6"
     >
       <Text>Bonjour {userName},</Text>
       <Text>
-        Nous vous informons que l'atelier <strong>{workshopTitle}</strong> a été reprogrammé par le mentor.
+        Nous vous informons que l&apos;atelier <strong>{workshopTitle}</strong> a été reprogrammé par le mentor.
       </Text>
       
-      <Section className="bg-red-50 rounded-lg p-4 my-4 border-l-4 border-red-500">
-        <Text className="m-0 font-semibold text-red-700">Ancien horaire :</Text>
-        <Text className="m-0 text-red-600">
-          {oldDate} à {oldTime}
+      <Section style={oldTimeBox}>
+        <Text style={label}>Ancien horaire :</Text>
+        <Text style={oldTimeText}>
+          <s>{oldDate} à {oldTime}</s>
         </Text>
       </Section>
 
-      <Section className="bg-blue-50 rounded-lg p-4 my-4 border-l-4 border-blue-500">
-        <Text className="m-0 font-semibold text-blue-700">Nouvel horaire :</Text>
-        <Text className="m-0 text-blue-600 font-bold text-lg">
+      <Section style={newTimeBox}>
+        <Text style={label}>Nouvel horaire :</Text>
+        <Text style={newTimeText}>
           {newDate} à {newTime}
         </Text>
       </Section>
 
-      <Text className="bg-yellow-50 p-3 rounded text-sm text-yellow-800 italic">
-        ⚠️ Votre participation est maintenue par défaut. Si le nouvel horaire ne vous convient pas, vous pouvez annuler votre inscription depuis les détails de l'atelier.
-      </Text>
+      <Section style={warningBox}>
+        <Text style={warningText}>
+          ⚠️ Votre participation est maintenue par défaut. Si le nouvel horaire ne vous convient pas, vous pouvez annuler votre inscription depuis les détails de l&apos;atelier.
+        </Text>
+      </Section>
 
-      <Section className="text-center mt-6">
+      <Section style={buttonContainer}>
         <Button
           href={workshopUrl}
-          className="bg-[#3b82f6] text-white px-6 py-3 rounded-full font-bold no-underline"
+          style={button}
         >
-          Voir les détails de l'atelier
+          Voir les détails de l&apos;atelier
         </Button>
       </Section>
     </EmailLayout>
   );
 }
+
+const oldTimeBox = {
+  backgroundColor: "#f9fafb",
+  borderRadius: "8px",
+  padding: "16px",
+  margin: "16px 0",
+  borderLeft: "4px solid #9ca3af",
+};
+
+const newTimeBox = {
+  backgroundColor: "#FFF9F0",
+  borderRadius: "8px",
+  padding: "16px",
+  margin: "16px 0",
+  borderLeft: "4px solid #FFB647",
+};
+
+const label = {
+  margin: "0",
+  fontSize: "14px",
+  fontWeight: "bold",
+  color: "#4b5563",
+};
+
+const oldTimeText = {
+  margin: "4px 0 0 0",
+  color: "#6b7280",
+};
+
+const newTimeText = {
+  margin: "4px 0 0 0",
+  color: "#26547C",
+  fontWeight: "bold",
+  fontSize: "18px",
+};
+
+const warningBox = {
+  backgroundColor: "#FEFCE8",
+  padding: "12px",
+  borderRadius: "8px",
+  margin: "24px 0",
+};
+
+const warningText = {
+  margin: "0",
+  fontSize: "14px",
+  color: "#854d0e",
+  fontStyle: "italic" as const,
+};
+
+const buttonContainer = {
+  textAlign: "center" as const,
+  margin: "32px 0",
+};
+
+const button = {
+  backgroundColor: "#FFB647",
+  color: "#ffffff",
+  padding: "14px 28px",
+  borderRadius: "30px",
+  fontWeight: "bold",
+  textDecoration: "none",
+  display: "inline-block",
+};

@@ -18,11 +18,10 @@ export function WelcomeEmail({
     <EmailLayout
       preview="Bienvenue sur LearnSup !"
       title="Bienvenue sur LearnSup !"
-      headerColor="#2563eb"
     >
       <Text>Bonjour {name},</Text>
       <Text>
-        Nous sommes ravis de vous accueillir sur LearnSup, la plateforme qui
+        Nous sommes ravis de vous accueillir sur <strong>LearnSup</strong>, la plateforme qui
         connecte les mentors et les apprentis pour des ateliers enrichissants.
       </Text>
       <Section style={infoBox}>
@@ -34,18 +33,18 @@ export function WelcomeEmail({
           Email : <strong>{email}</strong>
         </Text>
       </Section>
-      <Text>
+      <Text style={subHeading}>
         <strong>Prochaines étapes :</strong>
       </Text>
       <Text style={listItem}>
         1. Complétez votre profil pour que les autres utilisateurs puissent vous
-        découvrir
+        découvrir.
       </Text>
       <Text style={listItem}>
-        2. Choisissez votre rôle : Mentor ou Apprenti
+        2. Choisissez votre rôle : Mentor ou Apprenti.
       </Text>
       <Text style={listItem}>
-        3. Explorez les ateliers disponibles ou créez le vôtre
+        3. Explorez les ateliers disponibles ou créez le vôtre !
       </Text>
       <Section style={buttonContainer}>
         <Button style={button} href={onboardingUrl}>
@@ -60,38 +59,49 @@ export function WelcomeEmail({
   );
 }
 
+const subHeading = {
+  color: "#26547C",
+  fontSize: "18px",
+  margin: "20px 0 10px 0",
+};
+
 const infoBox = {
-  backgroundColor: "#f1f5f9",
-  padding: "15px",
-  borderRadius: "5px",
-  margin: "20px 0",
+  backgroundColor: "#FFF9F0",
+  padding: "20px",
+  borderRadius: "8px",
+  margin: "25px 0",
+  border: "1px solid #FFE4BC",
 };
 
 const infoTitle = {
   margin: "0 0 10px 0",
   fontWeight: "bold",
+  color: "#26547C",
 };
 
 const infoText = {
   margin: "5px 0",
+  color: "#161616",
 };
 
 const listItem = {
-  margin: "5px 0",
+  margin: "8px 0",
   paddingLeft: "10px",
+  color: "#161616",
 };
 
 const buttonContainer = {
   textAlign: "center" as const,
-  margin: "30px 0",
+  margin: "35px 0",
 };
 
 const button = {
-  backgroundColor: "#2563eb",
+  backgroundColor: "#FFB647",
   color: "#ffffff",
-  padding: "12px 24px",
+  padding: "14px 28px",
   textDecoration: "none",
-  borderRadius: "5px",
+  borderRadius: "30px",
   display: "inline-block",
   fontWeight: "bold",
+  fontSize: "16px",
 };

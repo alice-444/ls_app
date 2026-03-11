@@ -59,19 +59,21 @@ describe("ExportDataService", () => {
 
   it("should aggregate all user data correctly", async () => {
     const mockUser = {
-      id: "internal-1",
+      id: "user-1",
       userId: "user-1",
       name: "John Doe",
       email: "john@example.com",
       creditBalance: 100,
-      account: {
-        id: "acc-1",
-        accountId: "user-1",
-        email: "john@example.com",
-        isEmailVerified: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
+      accounts: [
+        {
+          id: "acc-1",
+          accountId: "user-1",
+          email: "john@example.com",
+          isEmailVerified: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
     };
 
     mockPrisma.user.findUnique.mockResolvedValue(mockUser);
@@ -91,7 +93,7 @@ describe("ExportDataService", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data.profile.name).toBe("John Doe");
-      expect(result.data.account?.email).toBe("john@example.com");
+      expect(result.data.account?.[0]?.email).toBe("john@example.com");
       expect(result.data.conversations).toHaveLength(1);
       expect(result.data.messages).toHaveLength(1);
       expect(result.data.credits.balance).toBe(100);
@@ -101,7 +103,7 @@ describe("ExportDataService", () => {
 
     // Verify Prisma calls
     expect(mockPrisma.user.findUnique).toHaveBeenCalledWith(expect.objectContaining({
-      where: { userId: "user-1" }
+      where: { id: "user-1" }
     }));
     expect(mockPrisma.workshop.findMany).toHaveBeenCalledTimes(2); // as mentor and as apprentice
   });

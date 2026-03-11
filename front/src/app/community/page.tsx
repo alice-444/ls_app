@@ -10,28 +10,24 @@ import { EventsHubGrid } from "@/components/community/EventsHubGrid";
 import { DealsGrid } from "@/components/community/DealsGrid";
 import { SpotFinder } from "@/components/community/SpotFinder";
 import { CommunityPoll } from "@/components/community/CommunityPoll";
-import { MemberDirectory } from "@/components/community/MemberDirectory";
 import { ImpactStats } from "@/components/community/ImpactStats";
 import { Loader2, PlusCircle, Rocket, Calendar, Tag, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
 } from "@/components/ui/card";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { ProposeDealForm } from "@/components/community/ProposeDealForm";
 import { ProposeSpotForm } from "@/components/community/ProposeSpotForm";
 import { ProposeEventForm } from "@/components/community/ProposeEventForm";
+import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { getUserRole } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
@@ -71,8 +67,8 @@ function CommunityHubContent() {
           <section id="events-hub">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-black text-ls-heading flex items-center gap-2">
-                <span className="w-2 h-8 bg-brand rounded-full"></span>
-                Events Hub
+                <span className="w-2 h-8 bg-brand rounded-full" aria-hidden="true" />
+                <span>Events Hub</span>
               </h2>
               <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
                 <DialogTrigger asChild>
@@ -107,11 +103,11 @@ function CommunityHubContent() {
           {/* Section 2: Mentorship Workshops (Automatique) */}
           <section id="workshops">
             <h2 className="text-2xl font-black text-ls-heading mb-6 flex items-center gap-2">
-              <span className="w-2 h-8 bg-ls-blue rounded-full"></span>
-              Mentorship Workshops
+              <span className="w-2 h-8 bg-ls-blue rounded-full" aria-hidden="true" />
+              <span>Mentorship Workshops</span>
             </h2>
-            <EventsTabs 
-              upcoming={hubData?.upcomingWorkshops || []} 
+            <EventsTabs
+              upcoming={hubData?.upcomingWorkshops || []}
               past={[]} // On focus on upcoming here
             />
           </section>
@@ -120,8 +116,8 @@ function CommunityHubContent() {
           <section id="deals">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-black text-ls-heading flex items-center gap-2">
-                <span className="w-2 h-8 bg-amber-500 rounded-full"></span>
-                Student Deals
+                <span className="w-2 h-8 bg-amber-500 rounded-full" aria-hidden="true" />
+                <span>Student Deals</span>
               </h2>
               <Dialog open={isDealDialogOpen} onOpenChange={setIsDealDialogOpen}>
                 <DialogTrigger asChild>
@@ -157,8 +153,8 @@ function CommunityHubContent() {
           <section id="spots">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-black text-ls-heading flex items-center gap-2">
-                <span className="w-2 h-8 bg-ls-success rounded-full"></span>
-                Spot Finder
+                <span className="w-2 h-8 bg-ls-success rounded-full" aria-hidden="true" />
+                <span>Spot Finder</span>
               </h2>
               <Dialog open={isSpotDialogOpen} onOpenChange={setIsSpotDialogOpen}>
                 <DialogTrigger asChild>
@@ -197,9 +193,9 @@ function CommunityHubContent() {
 
           {/* Weekly Poll */}
           {hubData?.activePoll && (
-            <CommunityPoll 
-              poll={hubData.activePoll} 
-              onVoteSuccess={refetch} 
+            <CommunityPoll
+              poll={hubData.activePoll}
+              onVoteSuccess={refetch}
             />
           )}
 
@@ -216,7 +212,7 @@ function CommunityHubContent() {
                 Crée un atelier de mentorat et aide les autres à progresser. Gagne des crédits et de l'impact.
               </p>
               <Button asChild className="w-full bg-white text-ls-blue hover:bg-white/90 font-bold rounded-full">
-                <a href="/workshops/create">Créer un atelier</a>
+                <Link href="/workshops/create">Créer un atelier</Link>
               </Button>
             </Card>
           )}

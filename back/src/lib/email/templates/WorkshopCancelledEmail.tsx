@@ -29,32 +29,32 @@ export function WorkshopCancelledEmail({
     >
       <Text>Bonjour {userName},</Text>
       <Text>
-        Nous vous informons que <strong>{cancelledByName}</strong> a annulé sa participation à l'atelier suivant :
+        Nous vous informons que <strong>{cancelledByName}</strong> a annulé sa participation à l&apos;atelier suivant :
       </Text>
       
-      <Section className="bg-gray-50 rounded-lg p-4 my-4">
-        <Text className="m-0 font-semibold text-gray-700">Atelier :</Text>
-        <Text className="m-0 text-gray-900 font-bold">{workshopTitle}</Text>
-        <Text className="mt-2 mb-0 text-sm text-gray-600">
+      <Section style={workshopBox}>
+        <Text style={label}>Atelier :</Text>
+        <Text style={titleText}>{workshopTitle}</Text>
+        <Text style={dateText}>
           Initialement prévu le {date} à {time}
         </Text>
       </Section>
 
       {reason && (
-        <Section className="bg-yellow-50 rounded-lg p-4 my-4">
-          <Text className="m-0 font-semibold text-yellow-700">Raison de l'annulation :</Text>
-          <Text className="m-0 text-yellow-800 italic">{reason}</Text>
+        <Section style={reasonBox}>
+          <Text style={reasonLabel}>Raison de l&apos;annulation :</Text>
+          <Text style={reasonText}>{reason}</Text>
         </Section>
       )}
 
       <Text>
-        Le créneau a été libéré et d'autres participants peuvent désormais s'inscrire si l'atelier est toujours maintenu.
+        Le créneau a été libéré et d&apos;autres participants peuvent désormais s&apos;inscrire si l&apos;atelier est toujours maintenu.
       </Text>
 
-      <Section className="text-center mt-6">
+      <Section style={buttonContainer}>
         <Button
           href={workshopsUrl}
-          className="bg-[#dc2626] text-white px-6 py-3 rounded-full font-bold no-underline"
+          style={button}
         >
           Gérer mes ateliers
         </Button>
@@ -62,3 +62,66 @@ export function WorkshopCancelledEmail({
     </EmailLayout>
   );
 }
+
+const workshopBox = {
+  backgroundColor: "#f9fafb",
+  borderRadius: "8px",
+  padding: "20px",
+  margin: "24px 0",
+};
+
+const label = {
+  margin: "0",
+  fontSize: "14px",
+  fontWeight: "bold",
+  color: "#4b5563",
+};
+
+const titleText = {
+  margin: "4px 0",
+  fontSize: "18px",
+  fontWeight: "bold",
+  color: "#161616",
+};
+
+const dateText = {
+  margin: "0",
+  fontSize: "14px",
+  color: "#6b7280",
+};
+
+const reasonBox = {
+  backgroundColor: "#FEFCE8",
+  borderRadius: "8px",
+  padding: "16px",
+  margin: "16px 0",
+  borderLeft: "4px solid #eab308",
+};
+
+const reasonLabel = {
+  margin: "0",
+  fontSize: "14px",
+  fontWeight: "bold",
+  color: "#854d0e",
+};
+
+const reasonText = {
+  margin: "4px 0 0 0",
+  fontStyle: "italic" as const,
+  color: "#a16207",
+};
+
+const buttonContainer = {
+  textAlign: "center" as const,
+  margin: "32px 0",
+};
+
+const button = {
+  backgroundColor: "#dc2626",
+  color: "#ffffff",
+  padding: "14px 28px",
+  borderRadius: "30px",
+  fontWeight: "bold",
+  textDecoration: "none",
+  display: "inline-block",
+};

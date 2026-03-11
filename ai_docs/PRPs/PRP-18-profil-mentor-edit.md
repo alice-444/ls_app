@@ -18,7 +18,7 @@ Enable mentors to edit their profile (bio, domains, topics, photo, social links)
 ## What
 
 ### Feature Description
-- **Édition profil** : Bio, domain, areasOfExpertise, mentorshipTopics, qualifications, experience, socialMediaLinks, calendlyLink, displayName, iceBreakerTags
+- **Édition profil** : Bio, domain, areasOfExpertise, mentorshipTopics, qualifications, experience, socialMediaLinks, displayName, iceBreakerTags
 - **Photo** : Upload (via ProfilePhotoUpload, see PRP-14)
 - **Publication** : Toggle isPublished → profile visible in catalogue
 - **Aperçu** : Preview card before publishing
@@ -95,7 +95,6 @@ Enable mentors to edit their profile (bio, domains, topics, photo, social links)
   qualifications?: string
   experience?: string
   socialMediaLinks?: Record<string, string>
-  calendlyLink?: string
   displayName?: string
   iceBreakerTags?: string[]
 }
@@ -115,7 +114,7 @@ Enable mentors to edit their profile (bio, domains, topics, photo, social links)
 **Auth:** Required (MENTOR)
 
 ### Database
-- `app_user`: bio, domain, areasOfExpertise, mentorshipTopics, qualifications, experience, socialMediaLinks, calendlyLink, displayName, iceBreakerTags, isPublished, publishedAt
+- `app_user`: bio, domain, areasOfExpertise, mentorshipTopics, qualifications, experience, socialMediaLinks, displayName, iceBreakerTags, isPublished, publishedAt
 
 ### Components
 

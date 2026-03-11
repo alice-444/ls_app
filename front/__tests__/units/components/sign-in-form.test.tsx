@@ -28,7 +28,12 @@ vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-const trpc = createTRPCReact<AppRouter>();
+vi.mock("@/lib/api-client", () => ({
+  getUserRole: vi.fn(() => Promise.resolve("MENTOR")),
+}));
+
+// @ts-expect-error - AppRouter type stub doesn't satisfy Router constraint (_def, createCaller); real types from backend
+const trpc = createTRPCReact<AppRouter>() as any;
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
 });

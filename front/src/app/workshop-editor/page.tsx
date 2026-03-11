@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Card,
@@ -46,8 +46,9 @@ type Workshop = WorkshopDetailed;
 
 function WorkshopEditorContent() {
   const searchParams = useSearchParams();
-  const [showForm, setShowForm] = useState(false);
-  const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
+  const [userClickedCreate, setUserClickedCreate] = useState(false);
+  const [userSelectedWorkshop, setUserSelectedWorkshop] =
+    useState<Workshop | null>(null);
   const [deletingWorkshop, setDeletingWorkshop] = useState<Workshop | null>(null);
   const [publishingWorkshop, setPublishingWorkshop] = useState<Workshop | null>(
     null
@@ -65,26 +66,23 @@ function WorkshopEditorContent() {
     refetch: () => void;
   };
 
-  // Open form automatically if "new" query parameter is present
-  useEffect(() => {
-    const newParam = searchParams.get("new");
+  const showFormFromUrl =
+    searchParams.get("new") === "true" || searchParams.get("new") === "1";
+  const editingWorkshopFromUrl = useMemo(() => {
     const editId = searchParams.get("id");
-    
-    if (newParam === "true" || newParam === "1") {
-      setShowForm(true);
-    } else if (editId && workshops) {
-      const workshopToEdit = workshops.find((w: { id: string }) => w.id === editId);
-      if (workshopToEdit) {
-        setEditingWorkshop(workshopToEdit as Workshop);
-      }
-    }
+    if (!editId || !workshops) return null;
+    const w = workshops.find((item: { id: string }) => item.id === editId);
+    return w ?? null;
   }, [searchParams, workshops]);
+
+  const showForm = showFormFromUrl || userClickedCreate;
+  const editingWorkshop = userSelectedWorkshop ?? editingWorkshopFromUrl;
 
   if (showForm) {
     return (
       <PageContainer>
         <div className="mb-6 sm:mb-8 lg:mb-10">
-          <BackButton onClick={() => setShowForm(false)} />
+          <BackButton onClick={() => setUserClickedCreate(false)} />
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -101,12 +99,12 @@ function WorkshopEditorContent() {
         </div>
 
         <CreateWorkshopForm
-            onSuccess={() => {
-              setShowForm(false);
-              refetch();
-            }}
-            onCancel={() => setShowForm(false)}
-          />
+          onSuccess={() => {
+            setUserClickedCreate(false);
+            refetch();
+          }}
+          onCancel={() => setUserClickedCreate(false)}
+        />
       </PageContainer>
     );
   }
@@ -115,7 +113,7 @@ function WorkshopEditorContent() {
     return (
       <PageContainer>
         <div className="mb-6 sm:mb-8 lg:mb-10">
-          <BackButton onClick={() => setEditingWorkshop(null)} />
+          <BackButton onClick={() => setUserSelectedWorkshop(null)} />
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -132,13 +130,13 @@ function WorkshopEditorContent() {
         </div>
 
         <EditWorkshopForm
-            workshop={editingWorkshop}
-            onSuccess={() => {
-              setEditingWorkshop(null);
-              refetch();
-            }}
-            onCancel={() => setEditingWorkshop(null)}
-          />
+          workshop={editingWorkshop}
+          onSuccess={() => {
+            setUserSelectedWorkshop(null);
+            refetch();
+          }}
+          onCancel={() => setUserSelectedWorkshop(null)}
+        />
       </PageContainer>
     );
   }
@@ -192,46 +190,46 @@ function WorkshopEditorContent() {
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-6">
-          {hasWorkshops && (
-            <Button
-              onClick={() => setShowForm(true)}
-              variant="cta" size="cta" className="flex items-center gap-2"
-            >
-              <Plus className="h-5 w-5" />
-              Nouvel atelier
-            </Button>
-          )}
-        </div>
-
-        {hasWorkshops ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+        {hasWorkshops && (
+          <Button
+            onClick={() => setUserClickedCreate(true)}
+            variant="cta" size="cta" className="flex items-center gap-2"
           >
-            {workshopsList.map((workshop, index) => {
-              let badgeVariant: "default" | "secondary" | "outline" = "outline";
-              if (workshop.status === "PUBLISHED") {
-                badgeVariant = "default";
-              } else if (workshop.status === "DRAFT") {
-                badgeVariant = "secondary";
-              }
+            <Plus className="h-5 w-5" />
+            Nouvel atelier
+          </Button>
+        )}
+      </div>
 
-              let statusLabel: string = workshop.status;
-              if (workshop.status === "PUBLISHED") {
-                statusLabel = "Publié";
-              } else if (workshop.status === "DRAFT") {
-                statusLabel = "Brouillon";
-              }
+      {hasWorkshops ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+        >
+          {workshopsList.map((workshop, index) => {
+            let badgeVariant: "default" | "secondary" | "outline" = "outline";
+            if (workshop.status === "PUBLISHED") {
+              badgeVariant = "default";
+            } else if (workshop.status === "DRAFT") {
+              badgeVariant = "secondary";
+            }
 
-              return (
-                <motion.div
-                  key={workshop.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
+            let statusLabel: string = workshop.status;
+            if (workshop.status === "PUBLISHED") {
+              statusLabel = "Publié";
+            } else if (workshop.status === "DRAFT") {
+              statusLabel = "Brouillon";
+            }
+
+            return (
+              <motion.div
+                key={workshop.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
                 <Card
                   className="hover:shadow-xl transition-all duration-200 border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md rounded-2xl overflow-hidden"
                 >
@@ -268,7 +266,7 @@ function WorkshopEditorContent() {
                           )}
                           <DropdownMenuItem
                             onClick={() => {
-                              setEditingWorkshop(workshop);
+                              setUserSelectedWorkshop(workshop);
                             }}
                             className="text-[#26547c] dark:text-[#e6e6e6]"
                           >
@@ -351,16 +349,16 @@ function WorkshopEditorContent() {
                     </div>
                   </CardContent>
                 </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <Card className="border-dashed border-2 border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl">
             <CardHeader className="text-center">
               <div className="mx-auto p-4 bg-linear-to-br from-[#26547c] to-[#4A90E2] rounded-full w-fit mb-4">
@@ -375,7 +373,7 @@ function WorkshopEditorContent() {
             </CardHeader>
             <CardContent className="flex justify-center">
               <Button
-                onClick={() => setShowForm(true)}
+                onClick={() => setUserClickedCreate(true)}
                 variant="cta" size="cta" className="flex items-center gap-2"
               >
                 <Plus className="h-5 w-5" />
@@ -383,8 +381,8 @@ function WorkshopEditorContent() {
               </Button>
             </CardContent>
           </Card>
-          </motion.div>
-        )}
+        </motion.div>
+      )}
       <DeleteWorkshopDialog
         workshop={deletingWorkshop}
         open={!!deletingWorkshop}

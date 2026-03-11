@@ -15,33 +15,32 @@ export function AuthEmailVerification({
     <EmailLayout
       preview="Vérifiez votre adresse email sur LearnSup"
       title="Vérification de votre compte"
-      headerColor="#2563eb"
     >
       <Text>Bonjour,</Text>
       <Text>
-        Bienvenue sur LearnSup ! Pour finaliser la création de votre compte ou valider votre adresse email, veuillez suivre les instructions ci-dessous.
+        Bienvenue sur <strong>LearnSup</strong> ! Pour finaliser la création de votre compte ou valider votre adresse email, veuillez suivre les instructions ci-dessous.
       </Text>
 
       {otp && (
-        <Section className="bg-gray-50 rounded-lg p-6 my-6 text-center">
-          <Text className="m-0 text-sm text-gray-500 uppercase tracking-wider">Votre code de vérification</Text>
-          <Text className="m-2 text-3xl font-bold text-[#2563eb] tracking-[8px]">
+        <Section style={codeBox}>
+          <Text style={codeLabel}>Votre code de vérification</Text>
+          <Text style={codeText}>
             {otp}
           </Text>
-          <Text className="m-0 text-xs text-gray-400">Ce code est valable pendant 10 minutes.</Text>
+          <Text style={codeExpiry}>Ce code est valable pendant 10 minutes.</Text>
         </Section>
       )}
 
       {url && (
-        <Section className="text-center my-8">
+        <Section style={buttonContainer}>
           <Button
             href={url}
-            className="bg-[#2563eb] text-white px-8 py-3 rounded-md font-bold no-underline"
+            style={button}
           >
             Vérifier mon adresse email
           </Button>
-          <Text className="mt-4 text-xs text-gray-500">
-            Ou copiez-collez ce lien : <Link href={url} className="text-[#2563eb] underline">{url}</Link>
+          <Text style={linkText}>
+            Ou copiez-collez ce lien : <Link href={url} style={link}>{url}</Link>
           </Text>
         </Section>
       )}
@@ -52,3 +51,60 @@ export function AuthEmailVerification({
     </EmailLayout>
   );
 }
+
+const codeBox = {
+  backgroundColor: "#FFF9F0",
+  borderRadius: "8px",
+  padding: "24px",
+  margin: "24px 0",
+  textAlign: "center" as const,
+  border: "1px solid #FFE4BC",
+};
+
+const codeLabel = {
+  margin: "0",
+  fontSize: "14px",
+  color: "#9ca3af",
+  textTransform: "uppercase" as const,
+  letterSpacing: "1px",
+};
+
+const codeText = {
+  margin: "10px 0",
+  fontSize: "32px",
+  fontWeight: "bold",
+  color: "#FFB647",
+  letterSpacing: "8px",
+};
+
+const codeExpiry = {
+  margin: "0",
+  fontSize: "12px",
+  color: "#9ca3af",
+};
+
+const buttonContainer = {
+  textAlign: "center" as const,
+  margin: "32px 0",
+};
+
+const button = {
+  backgroundColor: "#FFB647",
+  color: "#ffffff",
+  padding: "14px 28px",
+  borderRadius: "30px",
+  fontWeight: "bold",
+  textDecoration: "none",
+  display: "inline-block",
+};
+
+const linkText = {
+  marginTop: "16px",
+  fontSize: "12px",
+  color: "#9ca3af",
+};
+
+const link = {
+  color: "#FFB647",
+  textDecoration: "underline",
+};

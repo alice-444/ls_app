@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import * as z from "zod/v3";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { CheckCircle2 } from "lucide-react";
 
@@ -39,7 +39,7 @@ interface ProposeDealFormProps {
   onSuccess: () => void;
 }
 
-export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
+export function ProposeDealForm({ onSuccess }: Readonly<ProposeDealFormProps>) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
@@ -88,7 +88,7 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
         <p className="text-ls-muted max-w-xs mx-auto">
           Merci pour cette offre. L'équipe va la vérifier et la publier pour tout le monde.
         </p>
-        <Button 
+        <Button
           onClick={onSuccess}
           className="bg-ls-blue hover:bg-ls-blue/90 text-white font-bold h-11 rounded-full px-8 mt-4"
         >
@@ -144,10 +144,10 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Dis-nous en plus sur cette offre..." 
+                <Textarea
+                  placeholder="Dis-nous en plus sur cette offre..."
                   className="min-h-[100px] rounded-2xl border-border"
-                  {...field} 
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -182,8 +182,8 @@ export function ProposeDealForm({ onSuccess }: ProposeDealFormProps) {
             )}
           />
         </div>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="w-full bg-ls-blue hover:bg-ls-blue/90 text-white font-bold h-11 rounded-full shadow-lg shadow-ls-blue/20"
           disabled={proposeMutation.isPending}
         >

@@ -126,7 +126,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     input: { date?: Date | null; time?: string | null; duration?: number | null; location?: string | null }
   ): Promise<void> {
     const updatedWorkshop = await this.workshopRepository.findById(workshopId);
-    if (!updatedWorkshop?.apprentice?.user?.id) return;
+    if (!updatedWorkshop?.apprentice?.id) return;
 
     const changes: string[] = [];
     if (input.date !== undefined) changes.push("la date");

@@ -13,27 +13,25 @@ export function EmailChangeVerification({
   return (
     <EmailLayout
       preview="Vérifiez votre nouvelle adresse email"
-      title="Verify Your New Email"
-      headerColor="#2563eb"
+      title="Vérifiez votre email"
     >
-      <Text>Hello,</Text>
+      <Text>Bonjour,</Text>
       <Text>
-        You requested to change your email address on LearnSup. To complete this
-        change, please click the button below:
+        Vous avez demandé à changer votre adresse email sur <strong>LearnSup</strong>. Pour valider ce
+        changement, veuillez cliquer sur le bouton ci-dessous :
       </Text>
       <Section style={buttonContainer}>
         <Button style={button} href={verificationUrl}>
-          Verify Email Address
+          Vérifier l&apos;adresse email
         </Button>
       </Section>
-      <Text>Or copy and paste this link into your browser:</Text>
+      <Text>Ou copiez et collez ce lien dans votre navigateur :</Text>
       <Link href={verificationUrl} style={link}>
         {verificationUrl}
       </Link>
-      <Text>This link will expire in {tokenExpiryHours} hours.</Text>
+      <Text style={expiryText}>Ce lien expirera dans {tokenExpiryHours} heures.</Text>
       <Text>
-        If you did not request this change, please ignore this email or contact
-        support.
+        Si vous n&apos;avez pas demandé ce changement, vous pouvez ignorer cet email en toute sécurité.
       </Text>
     </EmailLayout>
   );
@@ -41,21 +39,29 @@ export function EmailChangeVerification({
 
 const buttonContainer = {
   textAlign: "center" as const,
-  margin: "30px 0",
+  margin: "35px 0",
 };
 
 const button = {
-  backgroundColor: "#2563eb",
+  backgroundColor: "#FFB647",
   color: "#ffffff",
-  padding: "12px 24px",
+  padding: "14px 28px",
   textDecoration: "none",
-  borderRadius: "5px",
+  borderRadius: "30px",
   display: "inline-block",
   fontWeight: "bold",
+  fontSize: "16px",
 };
 
 const link = {
   wordBreak: "break-all" as const,
-  color: "#2563eb",
+  color: "#FFB647",
   textDecoration: "underline",
+  fontSize: "12px",
+};
+
+const expiryText = {
+  fontSize: "14px",
+  color: "#9ca3af",
+  fontStyle: "italic" as const,
 };

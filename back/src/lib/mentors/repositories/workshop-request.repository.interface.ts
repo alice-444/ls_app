@@ -1,3 +1,5 @@
+import type { AppUserData } from "../../users/repositories/app-user.repository";
+
 export interface WorkshopRequestEntity {
   id: string;
   title: string;
@@ -12,18 +14,8 @@ export interface WorkshopRequestEntity {
   workshopId: string | null;
   createdAt: Date;
   updatedAt: Date;
-  apprentice?: {
-    id: string;
-    name: string | null;
-    email: string | null;
-    userId: string;
-  };
-  mentor?: {
-    id: string;
-    name: string | null;
-    email: string | null;
-    userId: string;
-  };
+  apprentice?: AppUserData;
+  mentor?: AppUserData;
 }
 
 export interface CreateWorkshopRequestInput {

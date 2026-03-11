@@ -21,7 +21,6 @@ export function SupportRequestConfirmation({
     <EmailLayout
       preview="Confirmation de votre demande de support"
       title="Confirmation de votre demande"
-      headerColor="#2563eb"
     >
       <Text>Bonjour,</Text>
       <Text>
@@ -57,12 +56,14 @@ export function SupportRequestConfirmation({
 }
 
 const infoBox = {
-  backgroundColor: "#f1f5f9",
-  padding: "15px",
-  borderRadius: "5px",
-  margin: "20px 0",
+  backgroundColor: "#FFF9F0",
+  padding: "20px",
+  borderRadius: "8px",
+  margin: "25px 0",
+  border: "1px solid #FFE4BC",
 };
 
 const infoText = {
   margin: "5px 0",
+  color: "#161616",
 };

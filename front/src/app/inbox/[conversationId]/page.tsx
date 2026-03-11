@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { PageContainer } from "@/components/layout";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
@@ -17,11 +16,7 @@ export default function ConversationPage() {
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
 
-  useEffect(() => {
-    if (!session && !isSessionPending) {
-      router.push("/login");
-    }
-  }, [session, isSessionPending, router]);
+  if (!isSessionPending && !session) redirect("/login");
 
   if (isSessionPending) {
     return (

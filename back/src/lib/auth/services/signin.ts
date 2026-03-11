@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { authFailuresTotal } from "@/lib/metrics/prometheus";
 
 export const signInInputSchema = z.object({
 	email: z.string().email("Invalid email address"),
@@ -23,13 +24,23 @@ export class SignInService {
 		try {
 			const { email, password } = parsed.data;
 			const data = await auth.api.signInEmail({ body: { email, password }, headers });
-			if (!data || !data.user) {
+			if (!data?.user) {
+        authFailuresTotal.labels("unexpected_response").inc();
 				return { ok: false, error: "Unexpected authentication response", status: 500 };
 			}
 			return { ok: true, data: { userId: data.user.id } };
 		} catch (error) {
 			const anyErr = error as any;
 			const status = typeof anyErr?.status === "number" ? anyErr.status : undefined;
+      
+      // Map common error reasons for metrics
+      let reason: string;
+      if (status === 401) reason = "invalid_credentials";
+      else if (status === 429) reason = "rate_limited";
+      else reason = "unknown";
+      
+      authFailuresTotal.labels(reason).inc();
+      
 			return { ok: false, error: (error as Error).message, status };
 		}
 	}

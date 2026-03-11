@@ -1,17 +1,17 @@
-import { Result, success } from "../../../common";
+import { Result, success, failure } from "../../../common";
 import type { IWorkshopRepository } from "../../repositories/workshop.repository.interface";
 import type { IWorkshopAccessGuard } from "../guards/workshop-access.guard";
 import type { IWorkshopQueryService, IWorkshopApprenticeQueryService } from "./workshop-query.service.interface";
 import type { IWorkshopRequestRepository } from "../../../mentors/repositories/workshop-request.repository.interface";
 import type { IWorkshopVideoLinkService } from "../video/workshop-video-link.service.interface";
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
-import { failure } from "../../../common";
 import {
   handleError,
   createErrorContext,
 } from "../../../common/error-handler";
 import { logger } from "../../../common/logger";
 import { calculateWorkshopEndTime } from "../../utils/workshop-helpers";
+import { WorkshopResponseDTO, mapWorkshopToDTO } from "../../dto/workshop.dto";
 
 export class WorkshopQueryService implements IWorkshopQueryService {
   constructor(
@@ -23,7 +23,7 @@ export class WorkshopQueryService implements IWorkshopQueryService {
   async getWorkshopsByCreator(
     userId: string,
     status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
-  ): Promise<Result<any[]>> {
+  ): Promise<Result<WorkshopResponseDTO[]>> {
     try {
       const accessCheck = await this.accessGuard.verifyMentorAccess(userId);
       if (!accessCheck.ok) {
@@ -39,7 +39,7 @@ export class WorkshopQueryService implements IWorkshopQueryService {
         appUser.id,
         status
       );
-      return success(workshops);
+      return success(workshops.map(mapWorkshopToDTO));
     } catch (error) {
       return handleError(
         error,
@@ -48,16 +48,16 @@ export class WorkshopQueryService implements IWorkshopQueryService {
     }
   }
 
-  async getPublishedWorkshops(): Promise<Result<any[]>> {
+  async getPublishedWorkshops(): Promise<Result<WorkshopResponseDTO[]>> {
     try {
       const workshops = await this.workshopRepository.findPublished();
-      return success(workshops);
+      return success(workshops.map(mapWorkshopToDTO));
     } catch (error) {
       return handleError(error, createErrorContext("getPublishedWorkshops"));
     }
   }
 
-  async getWorkshopById(workshopId: string): Promise<Result<any>> {
+  async getWorkshopById(workshopId: string): Promise<Result<WorkshopResponseDTO>> {
     try {
       const workshop = await this.workshopRepository.findById(workshopId);
       if (!workshop) {
@@ -67,7 +67,7 @@ export class WorkshopQueryService implements IWorkshopQueryService {
       const filteredWorkshop =
         this.workshopVideoLinkService.filterVideoLink(workshop);
 
-      return success(filteredWorkshop);
+      return success(mapWorkshopToDTO(filteredWorkshop));
     } catch (error) {
       return handleError(
         error,
@@ -98,7 +98,7 @@ export class WorkshopApprenticeQueryService
 
   async getConfirmedWorkshopsForApprentice(
     userId: string
-  ): Promise<Result<any[]>> {
+  ): Promise<Result<WorkshopResponseDTO[]>> {
     try {
       const accessCheck = await this.accessGuard.verifyApprenticeAccess(userId);
       if (!accessCheck.ok) {
@@ -112,7 +112,7 @@ export class WorkshopApprenticeQueryService
         (w) => w.date && w.time && w.status !== "CANCELLED"
       );
 
-      return success(confirmedWorkshops);
+      return success(confirmedWorkshops.map(mapWorkshopToDTO));
     } catch (error) {
       return handleError(
         error,
@@ -123,7 +123,7 @@ export class WorkshopApprenticeQueryService
 
   async getUpcomingWorkshopsForApprentice(
     userId: string
-  ): Promise<Result<any[]>> {
+  ): Promise<Result<WorkshopResponseDTO[]>> {
     try {
       const accessCheck = await this.accessGuard.verifyApprenticeAccess(userId);
       if (!accessCheck.ok) {
@@ -152,7 +152,7 @@ export class WorkshopApprenticeQueryService
           return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         });
 
-      return success(upcomingWorkshops);
+      return success(upcomingWorkshops.map(mapWorkshopToDTO));
     } catch (error) {
       return handleError(
         error,
@@ -163,7 +163,7 @@ export class WorkshopApprenticeQueryService
 
   async getWorkshopHistoryForApprentice(
     userId: string
-  ): Promise<Result<any[]>> {
+  ): Promise<Result<WorkshopResponseDTO[]>> {
     try {
       const accessCheck = await this.accessGuard.verifyApprenticeAccess(userId);
       if (!accessCheck.ok) {
@@ -185,7 +185,7 @@ export class WorkshopApprenticeQueryService
           return b.date.getTime() - a.date.getTime();
         });
 
-      return success(historyWorkshops);
+      return success(historyWorkshops.map(mapWorkshopToDTO));
     } catch (error) {
       return handleError(
         error,
@@ -196,7 +196,7 @@ export class WorkshopApprenticeQueryService
 
   async getAvailableWorkshopsForApprentice(
     userId: string
-  ): Promise<Result<any[]>> {
+  ): Promise<Result<WorkshopResponseDTO[]>> {
     try {
       const accessCheck = await this.accessGuard.verifyApprenticeAccess(userId);
       if (!accessCheck.ok) {
@@ -233,7 +233,7 @@ export class WorkshopApprenticeQueryService
           !blockedAppUserIds.has(w.creatorId)
       );
 
-      return success(availableWorkshops);
+      return success(availableWorkshops.map(mapWorkshopToDTO));
     } catch (error) {
       return handleError(
         error,
