@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import * as z from "zod/v3";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, PartyPopper } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 const formSchema = z.object({
   title: z.string().min(3, "Le titre doit faire au moins 3 caractères"),
@@ -32,10 +32,10 @@ interface ProposeEventFormProps {
   onSuccess: () => void;
 }
 
-export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
+export function ProposeEventForm({ onSuccess }: Readonly<ProposeEventFormProps>) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -85,7 +85,7 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
         <p className="text-ls-muted max-w-xs mx-auto">
           Ta proposition a été envoyée aux modérateurs. Elle apparaîtra dans l'Events Hub une fois approuvée.
         </p>
-        <Button 
+        <Button
           onClick={onSuccess}
           className="bg-ls-success hover:bg-ls-success/90 text-white font-bold h-11 rounded-full px-8 mt-4"
         >
@@ -146,10 +146,10 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Décris l'événement (objectif, public, etc.)" 
+                <Textarea
+                  placeholder="Décris l'événement (objectif, public, etc.)"
                   className="min-h-[100px] rounded-2xl"
-                  {...field} 
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -169,8 +169,8 @@ export function ProposeEventForm({ onSuccess }: ProposeEventFormProps) {
             </FormItem>
           )}
         />
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           variant="cta" size="cta" className="w-full font-bold h-11"
           disabled={proposeMutation.isPending}
         >
