@@ -1,5 +1,4 @@
 import { Button, Link, Section, Text } from "@react-email/components";
-import * as React from "react";
 import { EmailLayout } from "./EmailLayout";
 
 interface AuthMagicLinkEmailProps {

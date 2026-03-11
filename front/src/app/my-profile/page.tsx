@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { redirect, useRouter } from "next/navigation";
 import { authClient, customAuthClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
@@ -69,11 +70,7 @@ export default function MyProfilePage() {
     }
   ) as { data: WorkshopDetailed[] | undefined };
 
-  useEffect(() => {
-    if (!session && !isSessionPending) {
-      router.push("/login");
-    }
-  }, [session, isSessionPending, router]);
+  if (!isSessionPending && !session) redirect("/login");
 
   const loadProfile = useCallback(async () => {
     if (!session?.user?.id) return;
@@ -239,9 +236,11 @@ export default function MyProfilePage() {
               <div className="flex flex-col md:flex-row gap-6">
                 {photoUrl ? (
                   <div className="shrink-0">
-                    <img
+                    <Image
                       src={photoUrl}
                       alt={profile.name || "Photo de profil"}
+                      width={128}
+                      height={128}
                       className="w-32 h-32 rounded-full object-cover border-4 border-indigo-50 shadow-md"
                     />
                   </div>

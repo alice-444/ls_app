@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -96,9 +97,11 @@ export function MentorProfileModal({
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             {mentor.photoUrl ? (
-              <img
+              <Image
                 src={mentor.photoUrl}
                 alt={mentor.name || "Mentor"}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full object-cover border-2 border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]"
               />
             ) : (

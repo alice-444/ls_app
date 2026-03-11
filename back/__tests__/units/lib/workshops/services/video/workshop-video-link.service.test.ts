@@ -9,7 +9,9 @@ describe("WorkshopVideoLinkService", () => {
 
   let service: WorkshopVideoLinkService;
 
-  const createWorkshop = (overrides: Partial<WorkshopEntity> = {}): WorkshopEntity => ({
+  const createWorkshop = (
+    overrides: Partial<WorkshopEntity> = {},
+  ): WorkshopEntity => ({
     id: "ws-1",
     title: "Test Workshop",
     description: null,
@@ -31,6 +33,29 @@ describe("WorkshopVideoLinkService", () => {
     dailyRoomId: null,
     ...overrides,
   });
+
+  const createWorkshopAt14h = (
+    overrides: Partial<WorkshopEntity> = {},
+  ): WorkshopEntity =>
+    createWorkshop({
+      date: new Date("2025-06-15"),
+      time: "14:00",
+      ...overrides,
+    });
+
+  const startTime14h = new Date("2025-06-15T14:00:00");
+  const hoursBeforeStart = (hours: number) =>
+    new Date(startTime14h.getTime() - hours * 60 * 60 * 1000);
+
+  const withFakeTimers = (systemTime: Date, fn: () => void) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(systemTime);
+    try {
+      fn();
+    } finally {
+      vi.useRealTimers();
+    }
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -54,33 +79,24 @@ describe("WorkshopVideoLinkService", () => {
     });
 
     it("returns true when workshop is ~12h away (within ±30min window)", () => {
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
-
-      const startTime = new Date("2025-06-15T14:00:00");
-      const twelveHoursBefore = new Date(startTime.getTime() - 12 * 60 * 60 * 1000);
-
-      expect(service.shouldGenerateLink(workshop, twelveHoursBefore)).toBe(true);
+      const workshop = createWorkshopAt14h();
+      expect(service.shouldGenerateLink(workshop, hoursBeforeStart(12))).toBe(
+        true,
+      );
     });
 
     it("returns false when workshop is more than 12.5h away", () => {
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
-
-      const startTime = new Date("2025-06-15T14:00:00");
-      const tooEarly = new Date(startTime.getTime() - 13 * 60 * 60 * 1000);
-
-      expect(service.shouldGenerateLink(workshop, tooEarly)).toBe(false);
+      const workshop = createWorkshopAt14h();
+      expect(service.shouldGenerateLink(workshop, hoursBeforeStart(13))).toBe(
+        false,
+      );
     });
 
     it("returns false when workshop is less than 11.5h away", () => {
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
-
-      const startTime = new Date("2025-06-15T14:00:00");
-      const tooLate = new Date(startTime.getTime() - 11 * 60 * 60 * 1000);
-
-      expect(service.shouldGenerateLink(workshop, tooLate)).toBe(false);
+      const workshop = createWorkshopAt14h();
+      expect(service.shouldGenerateLink(workshop, hoursBeforeStart(11))).toBe(
+        false,
+      );
     });
   });
 
@@ -96,124 +112,79 @@ describe("WorkshopVideoLinkService", () => {
     });
 
     it("returns true when workshop starts within 3 hours", () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-15T12:00:00")); // 2h before 14:00
-
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
-
-      expect(service.shouldExposeLink(workshop)).toBe(true);
-
-      vi.useRealTimers();
+      withFakeTimers(new Date("2025-06-15T12:00:00"), () => {
+        const workshop = createWorkshopAt14h();
+        expect(service.shouldExposeLink(workshop)).toBe(true);
+      });
     });
 
     it("returns true when workshop has already started", () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-15T15:00:00")); // 1h after 14:00 start
-
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
-
-      expect(service.shouldExposeLink(workshop)).toBe(true);
-
-      vi.useRealTimers();
+      withFakeTimers(new Date("2025-06-15T15:00:00"), () => {
+        const workshop = createWorkshopAt14h();
+        expect(service.shouldExposeLink(workshop)).toBe(true);
+      });
     });
 
     it("returns false when workshop is more than 3 hours away", () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-15T10:00:00")); // 4h before 14:00
-
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({ date: workshopDate, time: "14:00" });
-
-      expect(service.shouldExposeLink(workshop)).toBe(false);
-
-      vi.useRealTimers();
+      withFakeTimers(new Date("2025-06-15T10:00:00"), () => {
+        const workshop = createWorkshopAt14h();
+        expect(service.shouldExposeLink(workshop)).toBe(false);
+      });
     });
   });
 
+  const expectNoEligibleWorkshops = async (workshops: WorkshopEntity[]) => {
+    mockWorkshopRepo.findPublished.mockResolvedValue(workshops);
+    const result = await service.findWorkshopsEligibleForLinkGeneration();
+    expect(result).toHaveLength(0);
+  };
+
   describe("findWorkshopsEligibleForLinkGeneration", () => {
     it("filters out non-virtual workshops", async () => {
-      mockWorkshopRepo.findPublished.mockResolvedValue([
-        createWorkshop({ isVirtual: false }),
-      ]);
-
-      const result = await service.findWorkshopsEligibleForLinkGeneration();
-      expect(result).toHaveLength(0);
+      await expectNoEligibleWorkshops([createWorkshop({ isVirtual: false })]);
     });
 
     it("filters out workshops with missing date/time", async () => {
-      mockWorkshopRepo.findPublished.mockResolvedValue([
+      await expectNoEligibleWorkshops([
         createWorkshop({ date: null }),
         createWorkshop({ time: null }),
       ]);
-
-      const result = await service.findWorkshopsEligibleForLinkGeneration();
-      expect(result).toHaveLength(0);
     });
 
     it("filters out workshops that already have a dailyRoomId", async () => {
-      mockWorkshopRepo.findPublished.mockResolvedValue([
+      await expectNoEligibleWorkshops([
         createWorkshop({ dailyRoomId: "existing-room" }),
       ]);
-
-      const result = await service.findWorkshopsEligibleForLinkGeneration();
-      expect(result).toHaveLength(0);
     });
   });
 
   describe("filterVideoLink", () => {
     it("preserves dailyRoomId when link should be exposed", () => {
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({
-        date: workshopDate,
-        time: "14:00",
-        dailyRoomId: "room-123",
+      const workshop = createWorkshopAt14h({ dailyRoomId: "room-123" });
+      withFakeTimers(hoursBeforeStart(1), () => {
+        const result = service.filterVideoLink(workshop);
+        expect(result.dailyRoomId).toBe("room-123");
       });
-
-      const startTime = new Date("2025-06-15T14:00:00");
-      const withinWindow = new Date(startTime.getTime() - 1 * 60 * 60 * 1000);
-
-      vi.useFakeTimers();
-      vi.setSystemTime(withinWindow);
-
-      const result = service.filterVideoLink(workshop);
-      expect(result.dailyRoomId).toBe("room-123");
-
-      vi.useRealTimers();
     });
 
     it("nullifies dailyRoomId when link should not be exposed", () => {
-      const workshopDate = new Date("2025-06-15");
-      const workshop = createWorkshop({
-        date: workshopDate,
-        time: "14:00",
-        dailyRoomId: "room-123",
+      const workshop = createWorkshopAt14h({ dailyRoomId: "room-123" });
+      withFakeTimers(hoursBeforeStart(5), () => {
+        const result = service.filterVideoLink(workshop);
+        expect(result.dailyRoomId).toBeNull();
       });
-
-      const startTime = new Date("2025-06-15T14:00:00");
-      const tooEarly = new Date(startTime.getTime() - 5 * 60 * 60 * 1000);
-
-      vi.useFakeTimers();
-      vi.setSystemTime(tooEarly);
-
-      const result = service.filterVideoLink(workshop);
-      expect(result.dailyRoomId).toBeNull();
-
-      vi.useRealTimers();
     });
 
     it("returns a new object without mutating the original", () => {
-      const workshop = createWorkshop({ dailyRoomId: "room-123", isVirtual: false });
-
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-06-15T10:00:00"));
-
-      const result = service.filterVideoLink(workshop);
-      expect(result).not.toBe(workshop);
-      expect(workshop.dailyRoomId).toBe("room-123");
-
-      vi.useRealTimers();
+      const workshop = createWorkshop({
+        dailyRoomId: "room-123",
+        isVirtual: false,
+      });
+      withFakeTimers(new Date("2025-06-15T10:00:00"), () => {
+        const result = service.filterVideoLink(workshop);
+        expect(result).not.toBe(workshop);
+        expect(workshop.dailyRoomId).toBe("room-123");
+      });
     });
   });
 });

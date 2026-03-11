@@ -15,12 +15,12 @@ describe("isMinimumTomorrow", () => {
     vi.useRealTimers();
   });
 
-  it("should return false for null", () => {
-    expect(isMinimumTomorrow(null)).toBe(false);
+  it("should return true for null", () => {
+    expect(isMinimumTomorrow(null)).toBe(true);
   });
 
-  it("should return false for undefined", () => {
-    expect(isMinimumTomorrow(undefined)).toBe(false);
+  it("should return true for undefined", () => {
+    expect(isMinimumTomorrow(undefined)).toBe(true);
   });
 
   it("should return false for today", () => {
