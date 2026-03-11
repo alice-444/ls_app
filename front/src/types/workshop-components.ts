@@ -1,6 +1,10 @@
 import type { View } from "react-big-calendar";
 import DailyIframe from "@daily-co/daily-js";
-import type { WorkshopBase, WorkshopDetailed, WorkshopRequest } from "./workshop";
+import type {
+  WorkshopBase,
+  WorkshopDetailed,
+  WorkshopRequest,
+} from "./workshop";
 
 // ============================================================================
 // Daily Video Call Types
@@ -101,23 +105,23 @@ export interface ReportFeedbackDialogProps {
 }
 
 export interface EditWorkshopRequestDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  request: {
-    id: string;
-    title: string;
-    description?: string | null;
-    message?: string | null;
-    preferredDate?: Date | string | null;
-    preferredTime?: string | null;
-    mentorId: string;
-    mentor?: {
-      user?: {
-        name: string | null;
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
+  readonly request: {
+    readonly id: string;
+    readonly title: string;
+    readonly description?: string | null;
+    readonly message?: string | null;
+    readonly preferredDate?: Date | string | null;
+    readonly preferredTime?: string | null;
+    readonly mentorId: string;
+    readonly mentor?: {
+      readonly user?: {
+        readonly name: string | null;
       };
     };
   };
-  onSuccess?: () => void;
+  readonly onSuccess?: () => void;
 }
 
 // ============================================================================

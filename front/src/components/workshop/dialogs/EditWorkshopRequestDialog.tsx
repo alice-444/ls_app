@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import {
   Dialog,
   DialogContent,
@@ -47,7 +47,7 @@ export function EditWorkshopRequestDialog({
   onOpenChange,
   request,
   onSuccess,
-}: EditWorkshopRequestDialogProps) {
+}: Readonly<EditWorkshopRequestDialogProps>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const updateRequest = trpc.mentor.updateWorkshopRequest.useMutation({
