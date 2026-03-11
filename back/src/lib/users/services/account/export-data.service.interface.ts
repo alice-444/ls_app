@@ -37,4 +37,13 @@ export interface UserDataExport {
 
 export interface IExportDataService {
   exportUserData(userId: string): Promise<Result<UserDataExport>>;
+  sendExportEmail(
+    userId: string,
+    downloadUrl: string,
+    expiresAt: string,
+  ): Promise<Result<{ messageId: string }>>;
+  createExportToken(
+    userId: string,
+  ): Promise<Result<{ token: string; expiresAt: Date }>>;
+  verifyExportToken(token: string): Promise<Result<{ userId: string }>>;
 }

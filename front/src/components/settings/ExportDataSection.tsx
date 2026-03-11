@@ -12,46 +12,26 @@ export function ExportDataSection() {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      // Direct download via window.location.href or a hidden link
-      // This works well for GET endpoints that return attachment
       const exportUrl = `${API_BASE_URL}/api/profile/export`;
-      
-      // Using fetch to handle errors better before triggering download
+
       const response = await fetch(exportUrl, {
         method: "GET",
         headers: {
           "Accept": "application/json",
         },
-        // Better auth might need credentials
         credentials: "include",
       });
 
       if (!response.ok) {
-        throw new Error("Erreur lors de la génération de l'export");
+        throw new Error("Erreur lors de la demande d'export");
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      
-      // Get filename from header if possible
-      const contentDisposition = response.headers.get("Content-Disposition");
-      let filename = "learnsup-export.json";
-      if (contentDisposition && contentDisposition.indexOf("filename=") !== -1) {
-        filename = contentDisposition.split("filename=")[1].replace(/"/g, "");
-      }
-      
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      toast.success("Ton export a été généré avec succès.");
+      const result = await response.json();
+
+      toast.success(result.message || "Un email de téléchargement vous a été envoyé.");
     } catch (error) {
       console.error("Export error:", error);
-      toast.error("Impossible de générer l'export. Réessaie plus tard.");
+      toast.error("Impossible de demander l'export. Réessaie plus tard.");
     } finally {
       setIsExporting(false);
     }
@@ -69,15 +49,15 @@ export function ExportDataSection() {
         </div>
       </div>
 
-        <div className="bg-card/80 border border-border/50 rounded-2xl p-6 space-y-4">
+      <div className="bg-card/80 border border-border/50 rounded-2xl p-6 space-y-4">
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
           <div className="space-y-2">
             <p className="text-sm font-medium text-ls-heading">
-              Qu'est-ce que l'export de données ?
+              Comment fonctionne l'export ?
             </p>
             <p className="text-sm text-ls-muted leading-relaxed">
-              Conformément au Règlement Général sur la Protection des Données (RGPD), tu as le droit de récupérer tes données personnelles dans un format structuré, couramment utilisé et lisible par machine.
+              Pour ta sécurité, le lien de téléchargement te sera envoyé par email. Ce lien est personnel et expirera après 24 heures.
             </p>
           </div>
         </div>
@@ -86,7 +66,7 @@ export function ExportDataSection() {
           <p className="text-sm text-ls-muted mb-4">
             L'archive contiendra tes informations de profil, tes messages, tes ateliers, tes demandes ainsi que ton historique de crédits.
           </p>
-          
+
           <Button
             onClick={handleExport}
             disabled={isExporting}
@@ -104,7 +84,7 @@ export function ExportDataSection() {
 
       <div className="p-4 rounded-2xl border border-border/50 bg-card/50">
         <p className="text-xs text-ls-muted">
-          Note : La génération de l'export peut prendre quelques instants si tu as beaucoup de données. Une fois prêt, le téléchargement commencera automatiquement dans ton navigateur.
+          Note : Par mesure de sécurité, nous vérifions ton identité avant d'autoriser le téléchargement. Vérifie tes emails (et tes spams) après avoir cliqué sur le bouton.
         </p>
       </div>
     </div>

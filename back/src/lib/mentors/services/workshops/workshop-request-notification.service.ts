@@ -5,6 +5,7 @@ import type { IWorkshopRepository } from "../../../workshops/repositories/worksh
 import { renderEmailTemplate } from "../../../email/utils/render-email";
 import { WorkshopRequestAcceptedEmail } from "../../../email/templates/WorkshopRequestAccepted";
 import { WorkshopRequestRejectedEmail } from "../../../email/templates/WorkshopRequestRejected";
+import { WorkshopRequestReceivedEmail } from "../../../email/templates/WorkshopRequestReceivedEmail";
 import * as React from "react";
 import { logger } from "../../../common/logger";
 
@@ -14,52 +15,61 @@ export interface IWorkshopRequestNotificationService {
   notifyMentorOfNewRequest(
     workshopRequest: any,
     userId: string,
-    title: string
+    title: string,
   ): Promise<void>;
 
   notifyAndEmailAcceptance(
     requestId: string,
     workshopId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
   ): Promise<void>;
 
   notifyAndEmailRejection(
     requestId: string,
     requestTitle: string,
     userId: string,
-    reason?: string | null
+    reason?: string | null,
   ): Promise<void>;
 
   notifyCancellation(
     requestId: string,
     requestTitle: string,
     userId: string,
-    isApprentice: boolean
+    isApprentice: boolean,
   ): Promise<void>;
 
   notifyMentorOfUpdate(
     requestId: string,
     request: any,
     input: any,
-    userId: string
+    userId: string,
   ): Promise<void>;
 }
 
-export class WorkshopRequestNotificationService
-  implements IWorkshopRequestNotificationService
-{
+export class WorkshopRequestNotificationService implements IWorkshopRequestNotificationService {
   constructor(
     private readonly workshopRequestRepository: IWorkshopRequestRepository,
     private readonly workshopRepository: IWorkshopRepository,
     private readonly notificationService?: INotificationService,
-    private readonly emailService?: IEmailService
+    private readonly emailService?: IEmailService,
   ) {}
 
   async notifyMentorOfNewRequest(
     workshopRequest: any,
     userId: string,
-    title: string
+    title: string,
+  ): Promise<void> {
+    await Promise.all([
+      this.notifyMentorOfNewRequestInternal(workshopRequest, userId, title),
+      this.sendNewRequestEmail(workshopRequest.id, title),
+    ]);
+  }
+
+  private async notifyMentorOfNewRequestInternal(
+    workshopRequest: any,
+    userId: string,
+    title: string,
   ): Promise<void> {
     if (!this.notificationService) return;
 
@@ -80,18 +90,67 @@ export class WorkshopRequestNotificationService
         message: `${apprenticeName} vous a envoyé une demande pour l'atelier "${title}".`,
         actionUrl: `/dashboard/workshop-requests`,
       },
-      userId
+      userId,
     );
+  }
+
+  private async sendNewRequestEmail(
+    requestId: string,
+    workshopTitle: string,
+  ): Promise<void> {
+    if (!this.emailService) return;
+
+    try {
+      const requestWithRelations =
+        await this.workshopRequestRepository.findById(requestId);
+
+      const mentor = requestWithRelations?.mentor;
+      if (!mentor?.email || !requestWithRelations) return;
+
+      const mentorName = mentor.name || "Mentor";
+      const apprenticeName =
+        requestWithRelations.apprentice?.name || "un apprenti";
+
+      const { html, text } = await renderEmailTemplate(
+        React.createElement(WorkshopRequestReceivedEmail, {
+          mentorName,
+          apprenticeName,
+          workshopTitle,
+          viewRequestUrl: `${APP_URL}/dashboard/workshop-requests`,
+        }),
+      );
+
+      const emailResult = await this.emailService.sendEmail({
+        to: mentor.email,
+        subject: `Nouvelle demande de participation - ${workshopTitle}`,
+        html,
+        text,
+      });
+
+      if (!emailResult.ok) {
+        logger.error("Failed to send new request email", {
+          requestId,
+          error: emailResult.error,
+        });
+      }
+    } catch (error) {
+      logger.error("Error sending new request email", { requestId, error });
+    }
   }
 
   async notifyAndEmailAcceptance(
     requestId: string,
     workshopId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
   ): Promise<void> {
     await Promise.all([
-      this.notifyApprenticeOfAcceptance(requestId, workshopId, requestTitle, userId),
+      this.notifyApprenticeOfAcceptance(
+        requestId,
+        workshopId,
+        requestTitle,
+        userId,
+      ),
       this.sendAcceptanceEmail(requestId, workshopId, requestTitle),
     ]);
   }
@@ -100,7 +159,7 @@ export class WorkshopRequestNotificationService
     requestId: string,
     requestTitle: string,
     userId: string,
-    reason?: string | null
+    reason?: string | null,
   ): Promise<void> {
     await Promise.all([
       this.notifyApprenticeOfRejection(requestId, requestTitle, userId, reason),
@@ -112,7 +171,7 @@ export class WorkshopRequestNotificationService
     requestId: string,
     requestTitle: string,
     userId: string,
-    isApprentice: boolean
+    isApprentice: boolean,
   ): Promise<void> {
     if (!this.notificationService) return;
 
@@ -130,11 +189,10 @@ export class WorkshopRequestNotificationService
           message: `${apprenticeName} a annulé sa demande pour l'atelier "${requestTitle}".`,
           actionUrl: `/dashboard/workshop-requests`,
         },
-        userId
+        userId,
       );
     } else if (!isApprentice && requestWithRelations?.apprentice?.id) {
-      const mentorName =
-        requestWithRelations.mentor?.name || "le mentor";
+      const mentorName = requestWithRelations.mentor?.name || "le mentor";
       await this.notificationService.createNotification(
         requestWithRelations.apprentice.id,
         {
@@ -143,7 +201,7 @@ export class WorkshopRequestNotificationService
           message: `${mentorName} a annulé votre demande pour l'atelier "${requestTitle}".`,
           actionUrl: `/workshop-room`,
         },
-        userId
+        userId,
       );
     }
   }
@@ -152,7 +210,7 @@ export class WorkshopRequestNotificationService
     requestId: string,
     request: any,
     input: any,
-    userId: string
+    userId: string,
   ): Promise<void> {
     if (!this.notificationService) return;
 
@@ -174,9 +232,7 @@ export class WorkshopRequestNotificationService
       changes.push("le mentor");
 
     const changesText =
-      changes.length > 0
-        ? ` a modifié ${changes.join(", ")}`
-        : " a mis à jour";
+      changes.length > 0 ? ` a modifié ${changes.join(", ")}` : " a mis à jour";
 
     await this.notificationService.createNotification(
       requestWithRelations.mentor.id,
@@ -186,7 +242,7 @@ export class WorkshopRequestNotificationService
         message: `${apprenticeName}${changesText} de sa demande pour l'atelier "${requestWithRelations.title || request.title}".`,
         actionUrl: `/dashboard/workshop-requests`,
       },
-      userId
+      userId,
     );
   }
 
@@ -194,7 +250,7 @@ export class WorkshopRequestNotificationService
     requestId: string,
     workshopId: string,
     requestTitle: string,
-    userId: string
+    userId: string,
   ): Promise<void> {
     if (!this.notificationService) {
       logger.warn("Notification service not available", { requestId });
@@ -224,7 +280,7 @@ export class WorkshopRequestNotificationService
           message: `${mentorName} a accepté votre demande pour l'atelier "${workshopTitle}".`,
           actionUrl: `/workshop/${workshopId}`,
         },
-        userId
+        userId,
       );
 
     if (!notificationResult.ok) {
@@ -237,7 +293,7 @@ export class WorkshopRequestNotificationService
   private async sendAcceptanceEmail(
     requestId: string,
     workshopId: string,
-    requestTitle: string
+    requestTitle: string,
   ): Promise<void> {
     if (!this.emailService) return;
 
@@ -250,11 +306,14 @@ export class WorkshopRequestNotificationService
 
       const workshopDetails =
         await this.workshopRepository.findById(workshopId);
-      const mentorName =
-        requestWithRelations.mentor?.name || "le mentor";
+      const mentorName = requestWithRelations.mentor?.name || "le mentor";
 
-      const formattedDate = workshopDetails?.date 
-        ? new Date(workshopDetails.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+      const formattedDate = workshopDetails?.date
+        ? new Date(workshopDetails.date).toLocaleDateString("fr-FR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })
         : "Date à confirmer";
 
       const { html, text } = await renderEmailTemplate(
@@ -265,7 +324,7 @@ export class WorkshopRequestNotificationService
           date: formattedDate,
           time: workshopDetails?.time || "Heure à confirmer",
           workshopUrl: `${APP_URL}/workshop/${workshopId}`,
-        })
+        }),
       );
 
       const emailResult = await this.emailService.sendEmail({
@@ -290,7 +349,7 @@ export class WorkshopRequestNotificationService
     requestId: string,
     requestTitle: string,
     userId: string,
-    reason?: string | null
+    reason?: string | null,
   ): Promise<void> {
     if (!this.notificationService) return;
 
@@ -300,7 +359,7 @@ export class WorkshopRequestNotificationService
     if (!requestWithRelations?.apprentice?.id) return;
 
     const mentorName = requestWithRelations.mentor?.name || "le mentor";
-    const message = reason 
+    const message = reason
       ? `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}". Motif : ${reason}`
       : `${mentorName} a rejeté votre demande pour l'atelier "${requestTitle}".`;
 
@@ -312,14 +371,14 @@ export class WorkshopRequestNotificationService
         message,
         actionUrl: `/workshop-room`,
       },
-      userId
+      userId,
     );
   }
 
   private async sendRejectionEmail(
     requestId: string,
     requestTitle: string,
-    reason?: string | null
+    reason?: string | null,
   ): Promise<void> {
     if (!this.emailService) return;
 
@@ -330,8 +389,7 @@ export class WorkshopRequestNotificationService
       const apprentice = requestWithRelations?.apprentice;
       if (!apprentice?.email || !requestWithRelations) return;
 
-      const mentorName =
-        requestWithRelations.mentor?.name || "le mentor";
+      const mentorName = requestWithRelations.mentor?.name || "le mentor";
 
       const { html, text } = await renderEmailTemplate(
         React.createElement(WorkshopRequestRejectedEmail, {
@@ -340,7 +398,7 @@ export class WorkshopRequestNotificationService
           workshopTitle: requestTitle,
           reason,
           workshopsUrl: `${APP_URL}/workshop-room`,
-        })
+        }),
       );
 
       const emailResult = await this.emailService.sendEmail({
