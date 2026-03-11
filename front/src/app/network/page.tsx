@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { redirect, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 import { PageContainer } from "@/components/layout";
@@ -73,11 +73,7 @@ export default function NetworkPage() {
     );
   };
 
-  useEffect(() => {
-    if (!session && !isSessionPending) {
-      router.push("/login");
-    }
-  }, [session, isSessionPending, router]);
+  if (!isSessionPending && !session) redirect("/login");
 
   if (isSessionPending || isLoadingPending || isLoadingConnections || isLoadingSent) {
     return (
@@ -156,86 +152,86 @@ export default function NetworkPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-          {pendingRequests && pendingRequests.length > 0 && (
-            <PendingRequestsList
-              requests={pendingRequests}
-              onViewProfile={(request) => {
-                const role = (request as any).requesterRole;
-                const appId = (request as any).requesterAppId;
-                handleViewProfile(request.requesterUserId, role, appId);
-              }}
-              onAccept={(connectionId) => {
-                acceptMutation.mutate(
-                  { connectionId },
-                  {
-                    onSuccess: () => {
-                      toast.success("Demande acceptée");
-                      refetchPending();
-                      refetchConnections();
-                      refetchSent();
-                    },
-                    onError: (error: { message: string }) => {
-                      toast.error("Erreur lors de l'acceptation", {
-                        description: error.message,
-                      });
-                    },
-                  }
-                );
-              }}
-              onReject={(connectionId) => {
-                rejectMutation.mutate(
-                  { connectionId },
-                  {
-                    onSuccess: () => {
-                      toast.success("Demande refusée");
-                      refetchPending();
-                    },
-                    onError: (error: { message: string }) => {
-                      toast.error("Erreur lors du refus", {
-                        description: error.message,
-                      });
-                    },
-                  }
-                );
-              }}
-              isProcessing={acceptMutation.isPending || rejectMutation.isPending}
-            />
-          )}
-
-          {sentRequests && sentRequests.length > 0 && (
-            <SentRequestsList
-              requests={sentRequests}
-              onCancel={(connectionId) => {
-                  rejectMutation.mutate(
-                    { connectionId },
-                    {
-                        onSuccess: () => {
-                            toast.success("Demande annulée");
-                            refetchSent();
-                        },
-                        onError: (error: { message: string }) => {
-                            toast.error("Erreur lors de l'annulation", {
-                                description: error.message,
-                            });
-                        }
-                    }
-                  )
-              }}
-              isCanceling={rejectMutation.isPending}
-            />
-          )}
-
-          <AcceptedConnectionsList
-            connections={acceptedConnections || []}
-            onViewProfile={(connection) => {
-              const role = (connection as any).otherUserRole;
-              const appId = (connection as any).otherUserAppId;
-              handleViewProfile(connection.otherUserId, role, appId);
+        {pendingRequests && pendingRequests.length > 0 && (
+          <PendingRequestsList
+            requests={pendingRequests}
+            onViewProfile={(request) => {
+              const role = (request as any).requesterRole;
+              const appId = (request as any).requesterAppId;
+              handleViewProfile(request.requesterUserId, role, appId);
             }}
-            onRemove={handleRemoveConnection}
-            onMessage={handleMessage}
-            isRemoving={removeConnectionMutation.isPending}
+            onAccept={(connectionId) => {
+              acceptMutation.mutate(
+                { connectionId },
+                {
+                  onSuccess: () => {
+                    toast.success("Demande acceptée");
+                    refetchPending();
+                    refetchConnections();
+                    refetchSent();
+                  },
+                  onError: (error: { message: string }) => {
+                    toast.error("Erreur lors de l'acceptation", {
+                      description: error.message,
+                    });
+                  },
+                }
+              );
+            }}
+            onReject={(connectionId) => {
+              rejectMutation.mutate(
+                { connectionId },
+                {
+                  onSuccess: () => {
+                    toast.success("Demande refusée");
+                    refetchPending();
+                  },
+                  onError: (error: { message: string }) => {
+                    toast.error("Erreur lors du refus", {
+                      description: error.message,
+                    });
+                  },
+                }
+              );
+            }}
+            isProcessing={acceptMutation.isPending || rejectMutation.isPending}
           />
+        )}
+
+        {sentRequests && sentRequests.length > 0 && (
+          <SentRequestsList
+            requests={sentRequests}
+            onCancel={(connectionId) => {
+              rejectMutation.mutate(
+                { connectionId },
+                {
+                  onSuccess: () => {
+                    toast.success("Demande annulée");
+                    refetchSent();
+                  },
+                  onError: (error: { message: string }) => {
+                    toast.error("Erreur lors de l'annulation", {
+                      description: error.message,
+                    });
+                  }
+                }
+              )
+            }}
+            isCanceling={rejectMutation.isPending}
+          />
+        )}
+
+        <AcceptedConnectionsList
+          connections={acceptedConnections || []}
+          onViewProfile={(connection) => {
+            const role = (connection as any).otherUserRole;
+            const appId = (connection as any).otherUserAppId;
+            handleViewProfile(connection.otherUserId, role, appId);
+          }}
+          onRemove={handleRemoveConnection}
+          onMessage={handleMessage}
+          isRemoving={removeConnectionMutation.isPending}
+        />
 
         <ProfileModalManager
           open={showProfileModal}

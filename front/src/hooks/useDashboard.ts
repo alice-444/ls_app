@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
@@ -37,7 +37,9 @@ interface WorkshopItem {
   apprenticeId?: string | null;
 }
 
-function mapServerRole(role: "MENTOR" | "APPRENANT" | "ADMIN" | null): UserRole {
+function mapServerRole(
+  role: "MENTOR" | "APPRENANT" | "ADMIN" | null,
+): UserRole {
   if (role === "MENTOR") return "mentor";
   if (role === "APPRENANT") return "apprenant";
   return "both";
@@ -57,7 +59,8 @@ function notifyWorkshopRequestStatusChanges(
       });
     } else if (prevReq.status === "PENDING" && req.status === "REJECTED") {
       toast.error(`Votre demande "${req.title}" a été refusée`, {
-        description: req.rejectionReason || "Consultez le dashboard pour plus d'infos.",
+        description:
+          req.rejectionReason || "Consultez le dashboard pour plus d'infos.",
         duration: 8000,
       });
     }
@@ -79,17 +82,22 @@ export function useDashboard() {
   const userStatus = userData?.status || "ACTIVE";
   const userRole = mapServerRole(actualUserRole);
 
-  useEffect(() => {
-    if (isLoadingUserData || isPending || !session) return;
-
-    if (actualUserRole === "ADMIN") {
-      router.replace("/admin");
-      return;
-    }
-    if (!actualUserRole) {
-      router.replace("/onboarding");
-    }
-  }, [actualUserRole, session, isPending, isLoadingUserData, router]);
+  if (
+    !isLoadingUserData &&
+    !isPending &&
+    session !== undefined &&
+    actualUserRole === "ADMIN"
+  ) {
+    redirect("/admin");
+  }
+  if (
+    !isLoadingUserData &&
+    !isPending &&
+    session &&
+    actualUserRole === undefined
+  ) {
+    redirect("/onboarding");
+  }
 
   const isMentor =
     (userRole === "mentor" || userRole === "both") &&
@@ -105,7 +113,10 @@ export function useDashboard() {
       refetchInterval: 10000,
     });
 
-  const workshopRequests = useMemo(() => rawWorkshopRequests as WorkshopRequest[] | undefined, [rawWorkshopRequests]);
+  const workshopRequests = useMemo(
+    () => rawWorkshopRequests as WorkshopRequest[] | undefined,
+    [rawWorkshopRequests],
+  );
 
   const previousApprenticeRequestsRef = useRef<WorkshopRequest[] | null>(null);
 
@@ -126,7 +137,7 @@ export function useDashboard() {
 
   const { data: workshopHistory } = trpc.workshop.getWorkshopHistory.useQuery(
     undefined,
-    { enabled: !!session && isApprenant }
+    { enabled: !!session && isApprenant },
   );
 
   const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
@@ -142,7 +153,7 @@ export function useDashboard() {
   const mentorConnections = useMemo(() => {
     if (!acceptedConnections) return [];
     return acceptedConnections.filter(
-      (conn: any) => conn.otherUserRole === "MENTOR"
+      (conn: any) => conn.otherUserRole === "MENTOR",
     );
   }, [acceptedConnections]);
 
@@ -162,34 +173,37 @@ export function useDashboard() {
   });
 
   const [showCancelDialog, setShowCancelDialog] = useState<string | null>(null);
-  const selectedCancellationWorkshop = (confirmedWorkshops as WorkshopItem[] | undefined)?.find(
-    (w) => w.id === showCancelDialog
-  );
+  const selectedCancellationWorkshop = (
+    confirmedWorkshops as WorkshopItem[] | undefined
+  )?.find((w) => w.id === showCancelDialog);
 
   // --- Mentor data ---
-  const { data: rawMentorRequests } =
-    trpc.mentor.getReceivedRequests.useQuery(undefined, {
+  const { data: rawMentorRequests } = trpc.mentor.getReceivedRequests.useQuery(
+    undefined,
+    {
       enabled: !!session && isMentor,
       refetchInterval: 10000,
-    });
+    },
+  );
 
   const mentorWorkshopRequests = useMemo(() => {
     if (!rawMentorRequests) return undefined;
-    return (rawMentorRequests as any[]).map(req => ({
+    return (rawMentorRequests as any[]).map((req) => ({
       ...req,
-      apprenticeName: req.apprentice?.displayName || req.apprentice?.name || "Un apprenti"
+      apprenticeName:
+        req.apprentice?.displayName || req.apprentice?.name || "Un apprenti",
     })) as WorkshopRequest[];
   }, [rawMentorRequests]);
 
   const { data: mentorWorkshops } = trpc.workshop.getMyWorkshops.useQuery(
     undefined,
-    { enabled: !!session && isMentor }
+    { enabled: !!session && isMentor },
   );
 
   const pastWorkshops = useMemo(() => {
     if (!mentorWorkshops) return [];
     const now = new Date();
-    return (mentorWorkshops as WorkshopItem[]).filter(w => {
+    return (mentorWorkshops as WorkshopItem[]).filter((w) => {
       if (w.status === "COMPLETED") return true;
       if (w.status === "PUBLISHED" && w.date && w.time) {
         const endTime = calculateEndTime(w.date, w.time, w.duration || 60);
@@ -202,13 +216,31 @@ export function useDashboard() {
   // Mentor Stats
   const mentorStats = useMemo(() => {
     if (!mentorWorkshops)
-      return { totalWorkshops: 0, completedWorkshops: 0, creditsEarned: 0, creditsPending: 0, studentsHelped: 0, hoursTaught: 0 };
+      return {
+        totalWorkshops: 0,
+        completedWorkshops: 0,
+        creditsEarned: 0,
+        creditsPending: 0,
+        studentsHelped: 0,
+        hoursTaught: 0,
+      };
 
     const now = new Date();
     const workshops = mentorWorkshops as WorkshopItem[];
-    const completed = workshops.filter(w => w.status === "COMPLETED" || (w.status === "PUBLISHED" && calculateEndTime(w.date!, w.time!, w.duration || 60)! < now));
-    const pending = workshops.filter(w => w.status === "PUBLISHED" && calculateEndTime(w.date!, w.time!, w.duration || 60)! >= now);
-    const students = new Set(workshops.map(w => w.apprenticeId).filter(Boolean));
+    const completed = workshops.filter(
+      (w) =>
+        w.status === "COMPLETED" ||
+        (w.status === "PUBLISHED" &&
+          calculateEndTime(w.date!, w.time!, w.duration || 60)! < now),
+    );
+    const pending = workshops.filter(
+      (w) =>
+        w.status === "PUBLISHED" &&
+        calculateEndTime(w.date!, w.time!, w.duration || 60)! >= now,
+    );
+    const students = new Set(
+      workshops.map((w) => w.apprenticeId).filter(Boolean),
+    );
 
     return {
       totalWorkshops: workshops.length,
@@ -216,7 +248,10 @@ export function useDashboard() {
       creditsEarned: completed.length * 20,
       creditsPending: pending.length * 20,
       studentsHelped: students.size,
-      hoursTaught: Math.round(completed.reduce((acc, w) => acc + (w.duration || 60) / 60, 0) * 10) / 10
+      hoursTaught:
+        Math.round(
+          completed.reduce((acc, w) => acc + (w.duration || 60) / 60, 0) * 10,
+        ) / 10,
     };
   }, [mentorWorkshops]);
 
@@ -228,11 +263,18 @@ export function useDashboard() {
     });
 
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
-  const [selectedFeedbackWorkshopId, setSelectedFeedbackWorkshopId] = useState<string | null>(null);
+  const [selectedFeedbackWorkshopId, setSelectedFeedbackWorkshopId] = useState<
+    string | null
+  >(null);
   const [hasShownFeedbackModal, setHasShownFeedbackModal] = useState(false);
 
   useEffect(() => {
-    if (eligibleWorkshops?.length > 0 && !showFeedbackDialog && !hasShownFeedbackModal && session?.user?.id) {
+    if (
+      eligibleWorkshops?.length > 0 &&
+      !showFeedbackDialog &&
+      !hasShownFeedbackModal &&
+      session?.user?.id
+    ) {
       const latest = eligibleWorkshops[0];
       if (latest?.shouldShowImmediately || latest?.hoursSinceEnd >= 1) {
         setSelectedFeedbackWorkshopId(latest.workshopId);
@@ -240,18 +282,45 @@ export function useDashboard() {
         setHasShownFeedbackModal(true);
       }
     }
-  }, [eligibleWorkshops, showFeedbackDialog, hasShownFeedbackModal, session?.user?.id]);
+  }, [
+    eligibleWorkshops,
+    showFeedbackDialog,
+    hasShownFeedbackModal,
+    session?.user?.id,
+  ]);
 
-  useEffect(() => {
-    if (!session && !isPending) router.push("/login");
-  }, [session, isPending, router]);
+  if (!isPending && !session) redirect("/login");
 
   return {
-    router, session, isPending, queryClient, userRole, actualUserRole, userStatus, isMentor, isApprenant,
-    workshopRequests, confirmedWorkshops, workshopHistory, creditBalance, acceptedConnections, mentorConnections,
-    cancelWorkshopMutation, cancelRequestMutation, showCancelDialog, setShowCancelDialog, selectedCancellationWorkshop,
-    mentorWorkshopRequests, mentorWorkshops, mentorStats, pastWorkshops,
-    showFeedbackDialog, setShowFeedbackDialog, selectedFeedbackWorkshopId, setSelectedFeedbackWorkshopId,
-    hasShownFeedbackModal, setHasShownFeedbackModal,
+    router,
+    session,
+    isPending,
+    queryClient,
+    userRole,
+    actualUserRole,
+    userStatus,
+    isMentor,
+    isApprenant,
+    workshopRequests,
+    confirmedWorkshops,
+    workshopHistory,
+    creditBalance,
+    acceptedConnections,
+    mentorConnections,
+    cancelWorkshopMutation,
+    cancelRequestMutation,
+    showCancelDialog,
+    setShowCancelDialog,
+    selectedCancellationWorkshop,
+    mentorWorkshopRequests,
+    mentorWorkshops,
+    mentorStats,
+    pastWorkshops,
+    showFeedbackDialog,
+    setShowFeedbackDialog,
+    selectedFeedbackWorkshopId,
+    setSelectedFeedbackWorkshopId,
+    hasShownFeedbackModal,
+    setHasShownFeedbackModal,
   };
 }
