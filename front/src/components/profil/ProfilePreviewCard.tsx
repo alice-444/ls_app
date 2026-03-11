@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { User, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -36,10 +37,13 @@ export function ProfilePreviewCard({
             Comme les autres te verront
           </p>
           {previewPhoto ? (
-            <img
+            <Image
               src={previewPhoto}
               alt=""
+              width={96}
+              height={96}
               className="w-12 h-12 lg:w-24 lg:h-24 rounded-full object-cover ring-2 ring-brand/20 ring-offset-2 ring-offset-background mb-2 lg:mb-4 shrink-0"
+              unoptimized={previewPhoto.startsWith("data:")}
             />
           ) : (
             <div className="w-12 h-12 lg:w-24 lg:h-24 rounded-full bg-brand/5 flex items-center justify-center ring-2 ring-border/50 ring-offset-2 ring-offset-background mb-2 lg:mb-4 shrink-0">
@@ -75,9 +79,9 @@ export function ProfilePreviewCard({
           )}
           {iceBreakers.length > 0 && (
             <div className="flex flex-wrap justify-center gap-1 lg:gap-1.5 mt-3">
-              {iceBreakers.map((tag, i) => (
+              {iceBreakers.map((tag) => (
                 <span
-                  key={i}
+                  key={tag}
                   className="px-1.5 py-0.5 lg:px-2 lg:py-0.5 bg-brand/10 text-brand rounded-full text-[9px] lg:text-[11px] font-bold border border-brand/20"
                 >
                   {tag}
@@ -87,9 +91,9 @@ export function ProfilePreviewCard({
           )}
           {tags.length > 0 && (
             <div className="flex flex-wrap justify-center gap-1 lg:gap-1.5 mt-2 lg:mt-4">
-              {tags.map((tag, i) => (
+              {tags.map((tag) => (
                 <span
-                  key={i}
+                  key={tag}
                   className="px-1.5 py-0.5 lg:px-2.5 lg:py-1 bg-brand/10 text-brand rounded-full text-[10px] lg:text-xs font-medium"
                 >
                   {tag}

@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import Image from "next/image";
 import { trpc } from "@/utils/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Flag } from "lucide-react";
+import { Star, Flag, ThumbsUp, ThumbsDown } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { renderStars } from "@/lib/rating-utils";
 import { API_BASE_URL } from "@/lib/api-client";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { ReportFeedbackDialog } from "@/components/workshop/ReportFeedbackDialog";
 import { authClient } from "@/lib/auth-client";
 
-interface WorkshopReviewsProps {
+type WorkshopReviewsProps = Readonly<{
   workshopId: string;
   creatorUserId?: string;
-}
+}>;
 
 export function WorkshopReviews({
   workshopId,
@@ -55,7 +55,7 @@ export function WorkshopReviews({
     );
   }
 
-  if (!feedbackData || !feedbackData.feedbacks || feedbackData.feedbacks.length === 0) {
+  if (!feedbackData?.feedbacks?.length) {
     return (
       <Card className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <CardHeader>
@@ -99,11 +99,13 @@ export function WorkshopReviews({
                 image: string | null;
               };
             }) => {
-              const avatarUrl = feedback.apprentice.image
-                ? feedback.apprentice.image.startsWith("http")
-                  ? feedback.apprentice.image
-                  : `${API_BASE_URL}${feedback.apprentice.image}`
-                : null;
+              let avatarUrl: string | null = null;
+              if (feedback.apprentice.image) {
+                const img = feedback.apprentice.image;
+                avatarUrl = img.startsWith("http")
+                  ? img
+                  : `${API_BASE_URL}${img}`;
+              }
               const displayName = feedback.apprentice.name;
               const firstName = displayName.split(" ")[0];
               const initials = displayName
@@ -120,22 +122,37 @@ export function WorkshopReviews({
                 }
               );
 
+              let ratingClassName: string;
+              if (feedback.rating >= 4) {
+                ratingClassName =
+                  "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800";
+              } else if (feedback.rating <= 2) {
+                ratingClassName =
+                  "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800";
+              } else {
+                ratingClassName =
+                  "bg-gray-50 dark:bg-gray-900/10 border-gray-200 dark:border-gray-800";
+              }
+
+              let ratingIcon: ReactNode = null;
+              if (feedback.rating >= 4) {
+                ratingIcon = <ThumbsUp className="h-4 w-4 text-green-600" />;
+              } else if (feedback.rating <= 2) {
+                ratingIcon = <ThumbsDown className="h-4 w-4 text-red-600" />;
+              }
+
               return (
                 <div
                   key={feedback.id}
-                  className={`p-4 rounded-lg border ${
-                    feedback.rating >= 4
-                      ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800"
-                      : feedback.rating <= 2
-                      ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800"
-                      : "bg-gray-50 dark:bg-gray-900/10 border-gray-200 dark:border-gray-800"
-                  }`}
+                  className={`p-4 rounded-lg border ${ratingClassName}`}
                 >
                   <div className="flex items-start gap-3 mb-2">
                     {avatarUrl ? (
-                      <img
+                      <Image
                         src={avatarUrl}
                         alt={displayName}
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     ) : (
@@ -145,11 +162,7 @@ export function WorkshopReviews({
                     )}
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        {feedback.rating >= 4 ? (
-                          <ThumbsUp className="h-4 w-4 text-green-600" />
-                        ) : feedback.rating <= 2 ? (
-                          <ThumbsDown className="h-4 w-4 text-red-600" />
-                        ) : null}
+                        {ratingIcon}
                         <div className="flex items-center">
                           {renderStars(feedback.rating, "md")}
                         </div>
@@ -198,7 +211,7 @@ export function WorkshopReviews({
             }
           }}
           feedbackId={selectedFeedbackId}
-          onSuccess={() => {}}
+          onSuccess={() => { }}
         />
       )}
     </Card>

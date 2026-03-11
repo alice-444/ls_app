@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -206,9 +207,11 @@ export default function UserMenu() {
         >
           <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-brand/50 overflow-hidden bg-white/35 dark:bg-white/15 backdrop-blur-xl backdrop-saturate-150 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.12),0_4px_8px_-2px_rgba(0,0,0,0.08),inset_0_2px_0_0_rgba(255,255,255,0.6)] dark:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35),0_4px_8px_-2px_rgba(0,0,0,0.2),inset_0_2px_0_0_rgba(255,255,255,0.15)] ring-2 ring-transparent group-hover:ring-brand/40 group-hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,0.15),0_6px_12px_-4px_rgba(0,0,0,0.1),inset_0_2px_0_0_rgba(255,255,255,0.7),0_0_25px_-8px_rgba(255,182,71,0.35)] transition-all duration-200">
             {session.user.image ? (
-              <img
+              <Image
                 src={session.user.image}
                 alt={session.user.name || "Avatar"}
+                width={40}
+                height={40}
                 className="h-full w-full object-cover"
               />
             ) : (
@@ -235,9 +238,11 @@ export default function UserMenu() {
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 rounded-full border-2 border-brand overflow-hidden bg-card shadow-md shrink-0">
               {session.user.image ? (
-                <img
+                <Image
                   src={session.user.image}
                   alt=""
+                  width={48}
+                  height={48}
                   className="h-full w-full object-cover"
                 />
               ) : (

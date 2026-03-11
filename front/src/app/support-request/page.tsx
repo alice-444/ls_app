@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -72,10 +72,11 @@ export default function SupportRequestPage() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [fileErrors, setFileErrors] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
   const MAX_TOTAL_FILES = 5;
-  const ALLOWED_MIME_TYPES = [
+  const ALLOWED_MIME_TYPES = new Set([
     "image/jpeg",
     "image/jpg",
     "image/png",
@@ -83,7 +84,7 @@ export default function SupportRequestPage() {
     "text/plain",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  ];
+  ]);
 
   const validateFiles = (
     newFiles: File[]
@@ -102,7 +103,7 @@ export default function SupportRequestPage() {
         continue;
       }
 
-      if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+      if (!ALLOWED_MIME_TYPES.has(file.type)) {
         errors.push(
           `${file.name} : Type de fichier non autorisé. Types acceptés : JPG, PNG, PDF, TXT, DOC, DOCX`
         );
@@ -133,7 +134,7 @@ export default function SupportRequestPage() {
     });
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsDragging(false);
     const droppedFiles = Array.from(e.dataTransfer.files);
@@ -153,7 +154,7 @@ export default function SupportRequestPage() {
     });
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
@@ -377,18 +378,22 @@ export default function SupportRequestPage() {
                 (max {MAX_TOTAL_FILES} fichiers, 10 MB chacun)
               </span>
             </Label>
-            <div
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
+              aria-label="Zone de dépôt de fichiers. Glissez-déposez des fichiers ou cliquez pour les sélectionner."
               className={cn(
-                "border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-200",
+                "w-full border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-200 bg-transparent cursor-pointer",
                 isDragging
                   ? "border-[#FF8C42] bg-[#FF8C42]/5"
                   : "border-[#d6dae4] dark:border-[#d6dae4] hover:border-[#FF8C42]/50"
               )}
             >
               <input
+                ref={fileInputRef}
                 id="attachments"
                 type="file"
                 multiple
@@ -396,10 +401,7 @@ export default function SupportRequestPage() {
                 className="hidden"
                 accept=".jpg,.jpeg,.png,.pdf,.txt,.doc,.docx"
               />
-              <label
-                htmlFor="attachments"
-                className="cursor-pointer flex flex-col items-center gap-3"
-              >
+              <span className="flex flex-col items-center gap-3">
                 <div className="w-16 h-16 rounded-full bg-[#FF8C42]/10 dark:bg-[#FF8C42]/20 flex items-center justify-center">
                   <Upload className="w-8 h-8 text-[#FF8C42]" />
                 </div>
@@ -411,13 +413,13 @@ export default function SupportRequestPage() {
                     JPG, PNG, PDF, TXT, DOC, DOCX
                   </span>
                 </div>
-              </label>
-            </div>
+              </span>
+            </button>
             {fileErrors.length > 0 && (
               <div className="space-y-1">
-                {fileErrors.map((error, index) => (
+                {fileErrors.map((error) => (
                   <p
-                    key={index}
+                    key={error}
                     className="text-sm text-red-600 dark:text-red-400"
                   >
                     {error}
@@ -432,7 +434,7 @@ export default function SupportRequestPage() {
                 </p>
                 {files.map((file, index) => (
                   <div
-                    key={index}
+                    key={`${file.name}-${file.size}-${file.lastModified}`}
                     className="flex items-center justify-between p-3 bg-[rgba(214,218,228,0.16)] dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] dark:border-[#d6dae4] rounded-xl text-sm"
                   >
                     <span className="truncate flex-1 text-[#26547c] dark:text-[#e6e6e6]">

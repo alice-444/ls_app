@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -31,12 +31,7 @@ function ResetPasswordContent() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!token) {
-      toast.error("Token de réinitialisation manquant");
-      router.push("/forgot-password");
-    }
-  }, [token, router]);
+  if (!token) redirect("/forgot-password");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

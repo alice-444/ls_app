@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { trpc } from "@/utils/trpc";
 import {
   Table,
@@ -92,7 +93,13 @@ export default function AdminOnboardingPage() {
                 <TableRow key={appUser.id}>
                   <TableCell className="font-medium flex items-center gap-2">
                     {appUser.user.image ? (
-                      <img src={appUser.user.image} alt={appUser.user.name} className="h-8 w-8 rounded-full object-cover" />
+                      <Image
+                        src={appUser.user.image}
+                        alt={appUser.user.name}
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
                     ) : (
                       <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center">
                         <User className="h-4 w-4 text-slate-500" />

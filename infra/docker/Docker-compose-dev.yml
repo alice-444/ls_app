@@ -8,7 +8,7 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+      - NEXT_PUBLIC_SERVER_URL=http://localhost:9080
     # volumes:
     #   - ../../front:/app
     depends_on:
@@ -22,7 +22,7 @@ services:
       context: ../../
       dockerfile: ./infra/docker/back/Dockerfile.dev
     ports:
-      - "3000:3000"
+      - "9080:3000"
     environment:
       - NODE_ENV=development
       - NEXT_TELEMETRY_DISABLED=1

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import Image from "next/image";
+import { redirect, useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
@@ -77,11 +78,7 @@ export default function ApprenticeProfilePage() {
     }
   );
 
-  useEffect(() => {
-    if (!session && !isSessionPending) {
-      router.push("/login");
-    }
-  }, [session, isSessionPending, router]);
+  if (!isSessionPending && !session) redirect("/login");
 
   const handleSendConnectionRequest = async () => {
     if (!userId) return;
@@ -162,9 +159,11 @@ export default function ApprenticeProfilePage() {
             <div className="space-y-6">
               <div className="flex items-center gap-6">
                 {hasFullAccess && profile.photoUrl ? (
-                  <img
+                  <Image
                     src={profile.photoUrl}
                     alt={displayName}
+                    width={96}
+                    height={96}
                     className="w-24 h-24 rounded-full object-cover border-4 border-indigo-200"
                   />
                 ) : (
@@ -233,9 +232,9 @@ export default function ApprenticeProfilePage() {
                           Tags
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                          {profile.iceBreakerTags.map((tag: string, index: number) => (
+                          {profile.iceBreakerTags.map((tag: string) => (
                             <span
-                              key={index}
+                              key={tag}
                               className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-sm"
                             >
                               {tag}
@@ -289,7 +288,7 @@ export default function ApprenticeProfilePage() {
                         >
                           <UserPlus className="mr-2 h-4 w-4" />
                           {isSendingRequest ||
-                          sendConnectionRequestMutation.isPending
+                            sendConnectionRequestMutation.isPending
                             ? "Envoi..."
                             : "Envoyer une demande"}
                         </Button>

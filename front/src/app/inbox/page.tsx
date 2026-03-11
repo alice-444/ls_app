@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { PageContainer } from "@/components/layout";
 import ShinyText from "@/components/ui/ShinyText";
@@ -9,15 +8,8 @@ import { motion } from "framer-motion";
 import { ConversationList } from "@/components/messaging/ConversationList";
 
 export default function InboxPage() {
-  const router = useRouter();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
-
-  useEffect(() => {
-    if (!session && !isSessionPending) {
-      router.push("/login");
-    }
-  }, [session, isSessionPending, router]);
 
   if (isSessionPending) {
     return (
@@ -29,6 +21,7 @@ export default function InboxPage() {
       </PageContainer>
     );
   }
+  if (!session) redirect("/login");
 
   return (
     <PageContainer>

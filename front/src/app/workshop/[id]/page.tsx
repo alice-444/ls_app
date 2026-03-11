@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
@@ -32,25 +32,120 @@ import { WorkshopReviews } from "@/components/workshop/WorkshopReviews";
 import { DailyVideoCall } from "@/components/workshop/DailyVideoCall";
 import { JoinVideoButton } from "@/components/workshop/JoinVideoButton";
 
+type WorkshopRequest = {
+  id: string;
+  title: string;
+  preferredDate?: Date | string | null;
+  preferredTime?: string | null;
+};
+
+type WorkshopDetailState = {
+  showDeleteDialog: boolean;
+  showRequestDialog: boolean;
+  selectedRequest: WorkshopRequest | null;
+  showAcceptDialog: boolean;
+  showRejectDialog: boolean;
+  requestToReject: string | null;
+  showCancelDialog: boolean;
+  showRescheduleDialog: boolean;
+  showApprenticeProfileModal: boolean;
+  selectedApprenticeUserId: string | null;
+  showFeedbackDialog: boolean;
+};
+
+const initialWorkshopDetailState: WorkshopDetailState = {
+  showDeleteDialog: false,
+  showRequestDialog: false,
+  selectedRequest: null,
+  showAcceptDialog: false,
+  showRejectDialog: false,
+  requestToReject: null,
+  showCancelDialog: false,
+  showRescheduleDialog: false,
+  showApprenticeProfileModal: false,
+  selectedApprenticeUserId: null,
+  showFeedbackDialog: false,
+};
+
+type WorkshopDetailAction =
+  | { type: "SET"; payload: Partial<WorkshopDetailState> }
+  | { type: "OPEN_ACCEPT"; request: WorkshopRequest }
+  | { type: "OPEN_REJECT"; requestId: string }
+  | { type: "OPEN_APPRENTICE_PROFILE"; userId: string }
+  | { type: "CLOSE_ACCEPT" }
+  | { type: "CLOSE_REJECT" }
+  | { type: "CLOSE_APPRENTICE_PROFILE" };
+
+function workshopDetailReducer(
+  state: WorkshopDetailState,
+  action: WorkshopDetailAction
+): WorkshopDetailState {
+  switch (action.type) {
+    case "SET":
+      return { ...state, ...action.payload };
+    case "OPEN_ACCEPT":
+      return {
+        ...state,
+        selectedRequest: action.request,
+        showAcceptDialog: true,
+      };
+    case "OPEN_REJECT":
+      return {
+        ...state,
+        requestToReject: action.requestId,
+        showRejectDialog: true,
+      };
+    case "OPEN_APPRENTICE_PROFILE":
+      return {
+        ...state,
+        selectedApprenticeUserId: action.userId,
+        showApprenticeProfileModal: true,
+      };
+    case "CLOSE_ACCEPT":
+      return {
+        ...state,
+        showAcceptDialog: false,
+        selectedRequest: null,
+      };
+    case "CLOSE_REJECT":
+      return {
+        ...state,
+        showRejectDialog: false,
+        requestToReject: null,
+      };
+    case "CLOSE_APPRENTICE_PROFILE":
+      return {
+        ...state,
+        showApprenticeProfileModal: false,
+        selectedApprenticeUserId: null,
+      };
+    default:
+      return state;
+  }
+}
+
 export default function WorkshopDetailPage() {
   const router = useRouter();
   const params = useParams();
   const workshopId = params.id as string;
   const { data: session } = authClient.useSession();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showRequestDialog, setShowRequestDialog] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
-  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
-  const [showRejectDialog, setShowRejectDialog] = useState(false);
-  const [requestToReject, setRequestToReject] = useState<string | null>(null);
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
-  const [showApprenticeProfileModal, setShowApprenticeProfileModal] =
-    useState(false);
-  const [selectedApprenticeUserId, setSelectedApprenticeUserId] = useState<
-    string | null
-  >(null);
-  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+  const [state, dispatch] = useReducer(
+    workshopDetailReducer,
+    initialWorkshopDetailState
+  );
+  const {
+    showDeleteDialog,
+    showRequestDialog,
+    selectedRequest,
+    showAcceptDialog,
+    showRejectDialog,
+    requestToReject,
+    showCancelDialog,
+    showRescheduleDialog,
+    showApprenticeProfileModal,
+    selectedApprenticeUserId,
+    showFeedbackDialog,
+  } = state;
 
   const utils = trpc.useUtils();
   const getOrCreateConversationMutation =
@@ -98,14 +193,12 @@ export default function WorkshopDetailPage() {
     } as any
   );
 
-  const handleAcceptRequest = (request: { id: string; title: string; preferredDate?: Date | string | null; preferredTime?: string | null }) => {
-    setSelectedRequest(request);
-    setShowAcceptDialog(true);
+  const handleAcceptRequest = (request: WorkshopRequest) => {
+    dispatch({ type: "OPEN_ACCEPT", request });
   };
 
   const handleRejectRequest = (requestId: string) => {
-    setRequestToReject(requestId);
-    setShowRejectDialog(true);
+    dispatch({ type: "OPEN_REJECT", requestId });
   };
 
   const confirmRejectRequest = (reason?: string) => {
@@ -116,8 +209,7 @@ export default function WorkshopDetailPage() {
           onSuccess: () => {
             toast.success("Demande refusée avec succès");
             utils.mentor.getWorkshopRequests.invalidate();
-            setShowRejectDialog(false);
-            setRequestToReject(null);
+            dispatch({ type: "CLOSE_REJECT" });
           },
           onError: (error: { message: string }) => {
             toast.error(`Erreur: ${error.message}`);
@@ -148,7 +240,7 @@ export default function WorkshopDetailPage() {
         onSuccess: () => {
           toast.success("Atelier supprimé avec succès");
           router.push("/my-workshops");
-          setShowDeleteDialog(false);
+          dispatch({ type: "SET", payload: { showDeleteDialog: false } });
         },
         onError: (error: { message: string }) => {
           toast.error(error.message || "Erreur lors de la suppression");
@@ -271,7 +363,7 @@ export default function WorkshopDetailPage() {
     upcomingWorkshops?.some((w: { id: string }) => w.id === workshop.id);
 
   const handleCancelClick = () => {
-    setShowCancelDialog(true);
+    dispatch({ type: "SET", payload: { showCancelDialog: true } });
   };
 
   const handleCancelConfirm = (reason?: string) => {
@@ -285,7 +377,7 @@ export default function WorkshopDetailPage() {
           onSuccess: () => {
             toast.success("Inscription annulée avec succès");
             refetch();
-            setShowCancelDialog(false);
+            dispatch({ type: "SET", payload: { showCancelDialog: false } });
           },
           onError: (error: { message: string }) => {
             toast.error(error.message || "Erreur lors de l'annulation");
@@ -308,18 +400,22 @@ export default function WorkshopDetailPage() {
   return (
     <PageContainer>
       <WorkshopHeader
-          workshop={workshop}
-          isOwner={isOwner}
-          canReschedule={Boolean(canReschedule)}
-          onBack={handleBack}
-          onEdit={handleEdit}
-          onReschedule={() => setShowRescheduleDialog(true)}
-          onUnpublish={handleUnpublish}
-          onDelete={() => setShowDeleteDialog(true)}
-          isRescheduling={rescheduleMutation.isPending}
-          isUnpublishing={unpublishMutation.isPending}
-          isDeleting={deleteMutation.isPending}
-        />
+        workshop={workshop}
+        isOwner={isOwner}
+        canReschedule={Boolean(canReschedule)}
+        onBack={handleBack}
+        onEdit={handleEdit}
+        onReschedule={() =>
+          dispatch({ type: "SET", payload: { showRescheduleDialog: true } })
+        }
+        onUnpublish={handleUnpublish}
+        onDelete={() =>
+          dispatch({ type: "SET", payload: { showDeleteDialog: true } })
+        }
+        isRescheduling={rescheduleMutation.isPending}
+        isUnpublishing={unpublishMutation.isPending}
+        isDeleting={deleteMutation.isPending}
+      />
 
       <motion.div
         className="grid grid-cols-1 lg:grid-cols-3 gap-6"
@@ -327,124 +423,129 @@ export default function WorkshopDetailPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-          <div className="lg:col-span-2 space-y-6">
-            <WorkshopDescription
-              description={workshop.description}
-              materialsNeeded={workshop.materialsNeeded}
+        <div className="lg:col-span-2 space-y-6">
+          <WorkshopDescription
+            description={workshop.description}
+            materialsNeeded={workshop.materialsNeeded}
+          />
+
+          {isOwner && workshopRequests && (
+            <WorkshopRequestsCard
+              requests={workshopRequests}
+              onAccept={handleAcceptRequest}
+              onReject={handleRejectRequest}
+              isRejecting={rejectRequest.isPending}
             />
+          )}
 
-            {isOwner && workshopRequests && (
-              <WorkshopRequestsCard
-                requests={workshopRequests}
-                onAccept={handleAcceptRequest}
-                onReject={handleRejectRequest}
-                isRejecting={rejectRequest.isPending}
-              />
-            )}
-
-            <WorkshopParticipantsCard
-              workshop={workshop}
-              onViewApprenticeProfile={(userId) => {
-                setSelectedApprenticeUserId(userId);
-                setShowApprenticeProfileModal(true);
-              }}
-            />
-            {isOwner && isWorkshopPast(workshop) && (
-              <AttendanceManagementCard
-                workshopId={workshop.id}
-                isOwner={isOwner}
-              />
-            )}
-
-            {workshop.isVirtual && workshop.status === "PUBLISHED" && (
-              <JoinVideoButton workshop={workshop} />
-            )}
-
-            {workshop.isVirtual &&
-              workshop.status === "PUBLISHED" &&
-              (isOwner || isRegistered) &&
-              workshop.dailyRoomId && (
-                <DailyVideoCall
-                  workshopId={workshop.id}
-                  onLeave={() => {
-                    toast.info("Tu as quitté la visioconférence", {
-                      description: "Tu peux rejoindre à tout moment.",
-                    });
-                    refetch();
-                  }}
-                />
-              )}
-
-            {isApprentice &&
-              isWorkshopPast(workshop) &&
-              canSubmitFeedback?.canSubmit && (
-                <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-xl border border-border/50 p-6">
-                  <h3 className="text-lg font-semibold text-ls-heading mb-2">
-                    Partage ton avis
-                  </h3>
-                  <p className="text-sm text-ls-muted mb-4">
-                    Aide le mentor à s&apos;améliorer en partageant ton expérience
-                    de cet atelier.
-                  </p>
-                  <Button
-                    variant="cta"
-                    size="cta"
-                    onClick={() => setShowFeedbackDialog(true)}
-                  >
-                    Donner mon avis
-                  </Button>
-                </div>
-              )}
-
-            {isApprentice &&
-              isWorkshopPast(workshop) &&
-              canSubmitFeedback &&
-              !canSubmitFeedback.canSubmit && (
-                <div className="bg-card/95 backdrop-blur-md rounded-2xl border border-border/50 p-4">
-                  <p className="text-sm text-ls-muted">
-                    {canSubmitFeedback.reason ||
-                      "Tu ne peux pas soumettre d&apos;avis pour cet atelier."}
-                  </p>
-                </div>
-              )}
-
-            <WorkshopReviews
+          <WorkshopParticipantsCard
+            workshop={workshop}
+            onViewApprenticeProfile={(userId) =>
+              dispatch({ type: "OPEN_APPRENTICE_PROFILE", userId })
+            }
+          />
+          {isOwner && isWorkshopPast(workshop) && (
+            <AttendanceManagementCard
               workshopId={workshop.id}
-              creatorUserId={workshop.creator?.userId}
+              isOwner={isOwner}
             />
-          </div>
+          )}
+
+          {workshop.isVirtual && workshop.status === "PUBLISHED" && (
+            <JoinVideoButton workshop={workshop} />
+          )}
+
+          {workshop.isVirtual &&
+            workshop.status === "PUBLISHED" &&
+            (isOwner || isRegistered) &&
+            workshop.dailyRoomId && (
+              <DailyVideoCall
+                workshopId={workshop.id}
+                onLeave={() => {
+                  toast.info("Tu as quitté la visioconférence", {
+                    description: "Tu peux rejoindre à tout moment.",
+                  });
+                  refetch();
+                }}
+              />
+            )}
+
+          {isApprentice &&
+            isWorkshopPast(workshop) &&
+            canSubmitFeedback?.canSubmit && (
+              <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-xl border border-border/50 p-6">
+                <h3 className="text-lg font-semibold text-ls-heading mb-2">
+                  Partage ton avis
+                </h3>
+                <p className="text-sm text-ls-muted mb-4">
+                  Aide le mentor à s&apos;améliorer en partageant ton expérience
+                  de cet atelier.
+                </p>
+                <Button
+                  variant="cta"
+                  size="cta"
+                  onClick={() =>
+                    dispatch({ type: "SET", payload: { showFeedbackDialog: true } })
+                  }
+                >
+                  Donner mon avis
+                </Button>
+              </div>
+            )}
+
+          {isApprentice &&
+            isWorkshopPast(workshop) &&
+            canSubmitFeedback &&
+            !canSubmitFeedback.canSubmit && (
+              <div className="bg-card/95 backdrop-blur-md rounded-2xl border border-border/50 p-4">
+                <p className="text-sm text-ls-muted">
+                  {canSubmitFeedback.reason ||
+                    "Tu ne peux pas soumettre d&apos;avis pour cet atelier."}
+                </p>
+              </div>
+            )}
+
+          <WorkshopReviews
+            workshopId={workshop.id}
+            creatorUserId={workshop.creator?.userId}
+          />
+        </div>
 
         <div className="space-y-6">
-            <WorkshopDetailsCard
-              topic={workshop.topic}
-              date={workshop.date}
-              time={workshop.time}
-              duration={workshop.duration}
-              location={workshop.location}
-              isVirtual={workshop.isVirtual}
-              maxParticipants={workshop.maxParticipants}
-            />
+          <WorkshopDetailsCard
+            topic={workshop.topic}
+            date={workshop.date}
+            time={workshop.time}
+            duration={workshop.duration}
+            location={workshop.location}
+            isVirtual={workshop.isVirtual}
+            maxParticipants={workshop.maxParticipants}
+          />
 
-            {workshop.creator && (
-              <WorkshopCreatorCard creator={workshop.creator} />
-            )}
+          {workshop.creator && (
+            <WorkshopCreatorCard creator={workshop.creator} />
+          )}
 
-            <WorkshopActionsCard
-              isRegistered={isRegistered}
-              canRequestParticipation={canRequestParticipation}
-              isWorkshopPast={isWorkshopPast(workshop)}
-              onRequestParticipation={() => setShowRequestDialog(true)}
-              onCancelRegistration={handleCancelClick}
-              onContactMentor={handleContactMentor}
-              showContactMentor={isApprentice && !!workshop?.creator}
-              isCancelling={cancelMutation.isPending}
-            />
-          </div>
-        </motion.div>
+          <WorkshopActionsCard
+            isRegistered={isRegistered}
+            canRequestParticipation={canRequestParticipation}
+            isWorkshopPast={isWorkshopPast(workshop)}
+            onRequestParticipation={() =>
+              dispatch({ type: "SET", payload: { showRequestDialog: true } })
+            }
+            onCancelRegistration={handleCancelClick}
+            onContactMentor={handleContactMentor}
+            showContactMentor={isApprentice && !!workshop?.creator}
+            isCancelling={cancelMutation.isPending}
+          />
+        </div>
+      </motion.div>
 
       <DeleteWorkshopDialog
         open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
+        onOpenChange={(open) =>
+          dispatch({ type: "SET", payload: { showDeleteDialog: open } })
+        }
         onConfirm={handleDelete}
         isLoading={deleteMutation.isPending}
       />
@@ -452,7 +553,9 @@ export default function WorkshopDetailPage() {
       {canRequestParticipation && workshop?.creator && (
         <RequestWorkshopParticipationDialog
           open={showRequestDialog}
-          onOpenChange={setShowRequestDialog}
+          onOpenChange={(open) =>
+            dispatch({ type: "SET", payload: { showRequestDialog: open } })
+          }
           mentorId={workshop.creator.id}
           mentorName={workshop.creator.user?.name || "Mentor"}
           workshopId={workshop.id}
@@ -463,9 +566,8 @@ export default function WorkshopDetailPage() {
         <AcceptWorkshopRequestDialog
           open={showAcceptDialog}
           onOpenChange={(open) => {
-            setShowAcceptDialog(open);
             if (!open) {
-              setSelectedRequest(null);
+              dispatch({ type: "CLOSE_ACCEPT" });
               utils.mentor.getWorkshopRequests.invalidate();
             }
           }}
@@ -483,17 +585,18 @@ export default function WorkshopDetailPage() {
       <RejectWorkshopRequestDialog
         open={showRejectDialog}
         onOpenChange={(open) => {
-          setShowRejectDialog(open);
-          if (!open) setRequestToReject(null);
+          if (!open) dispatch({ type: "CLOSE_REJECT" });
         }}
         onConfirm={confirmRejectRequest}
         isSubmitting={rejectRequest.isPending}
       />
 
-      {workshop && workshop.date && isRegistered && (
+      {workshop?.date && isRegistered && (
         <CancelWorkshopRegistrationDialog
           open={showCancelDialog}
-          onOpenChange={setShowCancelDialog}
+          onOpenChange={(open) =>
+            dispatch({ type: "SET", payload: { showCancelDialog: open } })
+          }
           onConfirm={handleCancelConfirm}
           isLoading={cancelMutation.isPending}
           workshopTitle={workshop.title}
@@ -508,7 +611,9 @@ export default function WorkshopDetailPage() {
       {workshop && isOwner && workshop.status === "PUBLISHED" && (
         <RescheduleWorkshopDialog
           open={showRescheduleDialog}
-          onOpenChange={setShowRescheduleDialog}
+          onOpenChange={(open) =>
+            dispatch({ type: "SET", payload: { showRescheduleDialog: open } })
+          }
           onConfirm={(data) => {
             rescheduleMutation.mutate(
               {
@@ -519,7 +624,7 @@ export default function WorkshopDetailPage() {
                 onSuccess: () => {
                   toast.success("Atelier reprogrammé avec succès");
                   refetch();
-                  setShowRescheduleDialog(false);
+                  dispatch({ type: "SET", payload: { showRescheduleDialog: false } });
                 },
                 onError: (error: { message: string }) => {
                   toast.error(error.message || "Erreur lors de la reprogrammation");
@@ -541,10 +646,7 @@ export default function WorkshopDetailPage() {
         <MiniProfileModal
           open={showApprenticeProfileModal}
           onOpenChange={(open) => {
-            setShowApprenticeProfileModal(open);
-            if (!open) {
-              setSelectedApprenticeUserId(null);
-            }
+            if (!open) dispatch({ type: "CLOSE_APPRENTICE_PROFILE" });
           }}
           apprenticeUserId={selectedApprenticeUserId}
         />
@@ -553,7 +655,9 @@ export default function WorkshopDetailPage() {
       {workshop && (
         <SubmitFeedbackDialog
           open={showFeedbackDialog}
-          onOpenChange={setShowFeedbackDialog}
+          onOpenChange={(open) =>
+            dispatch({ type: "SET", payload: { showFeedbackDialog: open } })
+          }
           workshopId={workshop.id}
           onSuccess={() => {
             utils.workshopFeedback.canSubmitFeedback.invalidate({
