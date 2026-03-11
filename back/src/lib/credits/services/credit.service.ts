@@ -9,17 +9,24 @@ import { generateInternalId } from "../../utils/id-generator";
 import { creditsExchangedTotal } from "../../metrics/prometheus";
 import { logger } from "../../common/logger";
 
+const AMOUNT_MUST_BE_POSITIVE = "Le montant doit être positif.";
+const USER_NOT_FOUND = "Utilisateur non trouvé.";
+
 export class CreditService implements ICreditService {
   constructor(private readonly prisma: PrismaClient) {}
 
+  private async getUserCreditBalance(userId: string): Promise<number> {
+    const user = await this.prisma.user.findUnique({
+      where: { userId },
+      select: { creditBalance: true },
+    });
+    return user?.creditBalance ?? 0;
+  }
+
   async getBalance(userId: string): Promise<Result<CreditBalanceResult>> {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { userId },
-        select: { creditBalance: true },
-      });
-
-      return success({ balance: user?.creditBalance || 0 });
+      const balance = await this.getUserCreditBalance(userId);
+      return success({ balance });
     } catch (error) {
       logger.error("Failed to get balance", error, { userId });
       return failure("Une erreur est survenue lors de la récupération du solde.", 500);
@@ -31,12 +38,7 @@ export class CreditService implements ICreditService {
     requiredAmount: number
   ): Promise<Result<CreditBalanceResult & { hasEnough: boolean }>> {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { userId },
-        select: { creditBalance: true },
-      });
-
-      const balance = user?.creditBalance || 0;
+      const balance = await this.getUserCreditBalance(userId);
       return success({
         balance,
         hasEnough: balance >= requiredAmount,
@@ -52,41 +54,13 @@ export class CreditService implements ICreditService {
     amount: number,
     description: string
   ): Promise<Result<CreditOperationResult>> {
-    if (amount <= 0) return failure("Le montant doit être positif.", 400);
+    if (amount <= 0) return failure(AMOUNT_MUST_BE_POSITIVE, 400);
 
     try {
       return await this.prisma.$transaction(async (tx) => {
-        const user = await tx.user.findUnique({
-          where: { userId },
-          select: { id: true, creditBalance: true },
-        });
-
-        if (!user) return failure("Utilisateur non trouvé.", 404);
-        if (user.creditBalance < amount) {
-          return failure("Crédits insuffisants.", 400);
-        }
-
-        const updatedUser = await tx.user.update({
-          where: { userId },
-          data: { creditBalance: { decrement: amount } },
-        });
-
-        const transaction = await tx.credit_transaction.create({
-          data: {
-            id: generateInternalId(),
-            userId: user.id,
-            amount: -amount,
-            description,
-            type: "USAGE",
-          },
-        });
-
-        creditsExchangedTotal.labels("usage").inc(amount);
-        return success({
-          userId,
-          newBalance: updatedUser.creditBalance,
-          transactionId: transaction.id,
-        });
+        const result = await this.debitCreditsInTransaction(userId, amount, description, tx);
+        if (!result.ok) return result;
+        return success({ userId, ...result.data });
       });
     } catch (error: any) {
       if (error.ok === false) return error;
@@ -101,14 +75,14 @@ export class CreditService implements ICreditService {
     description: string,
     tx: any
   ): Promise<Result<{ newBalance: number; transactionId: string }>> {
-    if (amount <= 0) return failure("Le montant doit être positif.", 400);
+    if (amount <= 0) return failure(AMOUNT_MUST_BE_POSITIVE, 400);
 
     const user = await tx.user.findUnique({
       where: { userId },
       select: { id: true, creditBalance: true },
     });
 
-    if (!user) return failure("Utilisateur non trouvé.", 404);
+    if (!user) return failure(USER_NOT_FOUND, 404);
     if (user.creditBalance < amount) {
       return failure("Crédits insuffisants.", 400);
     }
@@ -141,14 +115,14 @@ export class CreditService implements ICreditService {
     description: string,
     tx: any
   ): Promise<Result<{ newBalance: number; transactionId: string }>> {
-    if (amount <= 0) return failure("Le montant doit être positif.", 400);
+    if (amount <= 0) return failure(AMOUNT_MUST_BE_POSITIVE, 400);
 
     const user = await tx.user.findUnique({
       where: { userId },
       select: { id: true, creditBalance: true },
     });
 
-    if (!user) return failure("Utilisateur non trouvé.", 404);
+    if (!user) return failure(USER_NOT_FOUND, 404);
 
     const updatedUser = await tx.user.update({
       where: { userId },
@@ -177,7 +151,7 @@ export class CreditService implements ICreditService {
     amount: number,
     description: string
   ): Promise<Result<CreditOperationResult>> {
-    if (amount <= 0) return failure("Le montant doit être positif.", 400);
+    if (amount <= 0) return failure(AMOUNT_MUST_BE_POSITIVE, 400);
 
     try {
       return await this.prisma.$transaction(async (tx) => {
@@ -186,7 +160,7 @@ export class CreditService implements ICreditService {
           select: { id: true, creditBalance: true },
         });
 
-        if (!user) return failure("Utilisateur non trouvé.", 404);
+        if (!user) return failure(USER_NOT_FOUND, 404);
 
         const MAX_BALANCE = 100_000;
         if (user.creditBalance + amount > MAX_BALANCE) {
@@ -227,38 +201,13 @@ export class CreditService implements ICreditService {
     amount: number,
     description: string
   ): Promise<Result<CreditOperationResult>> {
-    if (amount <= 0) return failure("Le montant doit être positif.", 400);
+    if (amount <= 0) return failure(AMOUNT_MUST_BE_POSITIVE, 400);
 
     try {
       return await this.prisma.$transaction(async (tx) => {
-        const user = await tx.user.findUnique({
-          where: { userId },
-          select: { id: true, creditBalance: true },
-        });
-
-        if (!user) return failure("Utilisateur non trouvé.", 404);
-
-        const updatedUser = await tx.user.update({
-          where: { userId },
-          data: { creditBalance: { increment: amount } },
-        });
-
-        const transaction = await tx.credit_transaction.create({
-          data: {
-            id: generateInternalId(),
-            userId: user.id,
-            amount: amount,
-            description,
-            type: "REFUND",
-          },
-        });
-
-        creditsExchangedTotal.labels("refund").inc(amount);
-        return success({
-          userId,
-          newBalance: updatedUser.creditBalance,
-          transactionId: transaction.id,
-        });
+        const result = await this.refundCreditsInTransaction(userId, amount, description, tx);
+        if (!result.ok) return result;
+        return success({ userId, ...result.data });
       });
     } catch (error: any) {
       if (error.ok === false) return error;
@@ -288,7 +237,7 @@ export class CreditService implements ICreditService {
         select: { id: true },
       });
 
-      if (!user) return failure("Utilisateur non trouvé.", 404);
+      if (!user) return failure(USER_NOT_FOUND, 404);
 
       const [transactions, total] = await Promise.all([
         this.prisma.credit_transaction.findMany({
