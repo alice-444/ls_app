@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import {
   Dialog,
   DialogContent,
@@ -42,7 +42,7 @@ export function ContactMentorDialog({
   onOpenChange,
   mentorId,
   mentorName,
-}: ContactMentorDialogProps) {
+}: Readonly<ContactMentorDialogProps>) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -75,7 +75,7 @@ export function ContactMentorDialog({
     onError: (error: { message?: string }) => {
       toast.error(
         error.message ||
-          "Erreur lors de l'envoi du message. Veuillez réessayer plus tard."
+        "Erreur lors de l'envoi du message. Veuillez réessayer plus tard."
       );
       setIsSubmitting(false);
     },
@@ -135,8 +135,8 @@ export function ContactMentorDialog({
             >
               Annuler
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isSubmitting}
               className="bg-[#ffb647] hover:bg-[#ff9f1a] text-[#161616] rounded-full font-semibold"
             >
