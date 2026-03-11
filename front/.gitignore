@@ -35,6 +35,9 @@
 *.pem
 *.local
 
+# Sentry Config File
+.env.sentry-build-plugin
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
@@ -60,3 +63,5 @@ dev-dist
 .open-next
 
 .cursor
+# Sentry Config File
+.env.sentry-build-plugin
