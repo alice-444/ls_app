@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient, customAuthClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,8 +25,8 @@ import {
   Coffee,
 } from "lucide-react";
 import { toast } from "sonner";
-import { customAuthClient } from "@/lib/auth-client";
-import { getMentorProfile, API_BASE_URL, getUserRole } from "@/lib/api-client";
+import { getMentorProfile, getUserRole } from "@/lib/api-client";
+import { formatPhotoUrl } from "@/utils/photo";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
@@ -167,9 +167,7 @@ export default function MyProfilePage() {
     );
   }
 
-  const photoUrl = profile.photoUrl
-    ? `${API_BASE_URL}${profile.photoUrl}`
-    : null;
+  const photoUrl = formatPhotoUrl(profile.photoUrl);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-purple-50 p-4 py-8">
@@ -363,7 +361,7 @@ export default function MyProfilePage() {
               )}
 
               {profile.socialMediaLinks &&
-                Object.values(profile.socialMediaLinks).some(v => v) && (
+                Object.values(profile.socialMediaLinks).some(Boolean) && (
                   <div className="mt-8 pt-6 border-t border-[#d6dae4]/50">
                     <h3 className="font-bold text-[#26547c] mb-4">Réseaux sociaux</h3>
                     <div className="flex flex-wrap gap-4">
