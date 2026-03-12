@@ -83,6 +83,6 @@ jobs:
             cd ..
             cd /home/root/projects/learnsup-app/ls_app/infra/docker
             git pull
-            docker-compose -f docker-compose-prod.yml down                                                                           │
-            docker-compose -f docker-compose-prod.yml up -d --remove-orphans
+            docker compose -f docker-compose-prod.yml down                                                                           │
+            docker compose -f docker-compose-prod.yml up -d --remove-orphans
 
