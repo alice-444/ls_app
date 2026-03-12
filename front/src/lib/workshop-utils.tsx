@@ -1,6 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Edit, CheckCircle, XCircle } from "lucide-react";
-import { WORKSHOP_VALIDATION } from "@/shared/validation/workshop.constants";
+export {
+  formatDate,
+  formatTime,
+  calculateEndTime,
+  formatTimeRange,
+  isWorkshopEnded,
+  isValidTimeFormat,
+} from "@ls-app/shared";
 
 export const getStatusBadge = (status: string, size: "sm" | "md" | "lg" = "sm") => {
   const iconSizes = {
@@ -21,7 +28,11 @@ export const getStatusBadge = (status: string, size: "sm" | "md" | "lg" = "sm") 
 
   const variants: Record<
     string,
-    { variant: "secondary" | "default" | "outline" | "destructive"; label: string; icon: (size: string) => React.ReactNode }
+    {
+      variant: "secondary" | "default" | "outline" | "destructive";
+      label: string;
+      icon: (size: string) => React.ReactNode;
+    }
   > = {
     DRAFT: {
       variant: "secondary",
@@ -55,85 +66,6 @@ export const getStatusBadge = (status: string, size: "sm" | "md" | "lg" = "sm") 
       {config.label}
     </Badge>
   );
-};
-
-export const formatDate = (
-  date: string | Date | null,
-  options?: { includeWeekday?: boolean }
-): string => {
-  if (!date) return "Non définie";
-  const d = new Date(date);
-  return d.toLocaleDateString("fr-FR", {
-    ...(options?.includeWeekday && { weekday: "long" }),
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-};
-
-export const formatTime = (time: string | null): string => {
-  if (!time) return "Non définie";
-  return time;
-};
-
-export const isValidTimeFormat = (time: string): boolean => {
-  return WORKSHOP_VALIDATION.time.regex.test(time);
-};
-
-export const calculateEndTime = (
-  date: Date | string | null,
-  time: string | null,
-  duration: number | null
-): Date | null => {
-  if (!date || !time || !duration) return null;
-
-  try {
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    const [hours, minutes] = time.split(":").map(Number);
-    const startTime = new Date(dateObj);
-    startTime.setHours(hours, minutes, 0, 0);
-
-    const endTime = new Date(startTime);
-    endTime.setMinutes(endTime.getMinutes() + duration);
-
-    return endTime;
-  } catch {
-    return null;
-  }
-};
-
-export const formatTimeRange = (
-  time: string | null,
-  duration: number | null
-): string => {
-  if (!time) return "Non définie";
-
-  if (!duration) return time;
-
-  try {
-    const [hours, minutes] = time.split(":").map(Number);
-    const startMinutes = hours * 60 + minutes;
-    const endMinutes = startMinutes + duration;
-    const endHours = Math.floor(endMinutes / 60);
-    const endMins = endMinutes % 60;
-    const endTimeStr = `${endHours.toString().padStart(2, "0")}:${endMins
-      .toString()
-      .padStart(2, "0")}`;
-
-    return `${time} - ${endTimeStr}`;
-  } catch {
-    return time;
-  }
-};
-
-export const isWorkshopEnded = (
-  date: Date | string | null,
-  time: string | null,
-  duration: number | null
-): boolean => {
-  const endTime = calculateEndTime(date, time, duration);
-  if (!endTime) return false;
-  return endTime < new Date();
 };
 
 export interface CountdownResult {
@@ -170,7 +102,9 @@ export const calculateCountdown = (
     }
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const countdownHours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const countdownHours = Math.floor(
+      (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
     const countdownMinutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 

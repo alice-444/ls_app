@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { formatCalendarMonthYear } from "@/lib/dashboard-utils";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 type CalendarView = "month" | "week" | "day" | "agenda";
 
@@ -31,6 +31,12 @@ const VIEW_OPTIONS: { value: CalendarView; label: string }[] = [
   { value: "day", label: "Jour" },
   { value: "agenda", label: "Agenda" },
 ];
+
+const NAV_ACTION_LABELS: Record<"today" | "prev" | "next", string> = {
+  today: "Aujourd'hui",
+  prev: "Précédent",
+  next: "Suivant",
+};
 
 export function CalendarSection({
   workshops,
@@ -64,11 +70,7 @@ export function CalendarSection({
                   className="border border-ls-border rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm lg:text-base font-semibold text-ls-heading"
                   onClick={() => onNavigate(action)}
                 >
-                  {action === "today"
-                    ? "Aujourd'hui"
-                    : action === "prev"
-                    ? "Précédent"
-                    : "Suivant"}
+                  {NAV_ACTION_LABELS[action]}
                 </Button>
               ))}
             </div>
@@ -78,11 +80,10 @@ export function CalendarSection({
                   key={value}
                   variant={calendarView === value ? "default" : "outline"}
                   size="sm"
-                  className={`${
-                    calendarView === value
+                  className={`${calendarView === value
                       ? "bg-brand border border-brand text-[#161616]"
                       : "border border-brand text-brand"
-                  } rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold`}
+                    } rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold`}
                   onClick={() => onViewChange(value)}
                 >
                   {label}

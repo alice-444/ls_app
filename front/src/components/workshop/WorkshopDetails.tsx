@@ -2,7 +2,7 @@
 
 import { Calendar, Clock, MapPin, LinkIcon, Users, Tag } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 interface WorkshopDetailsProps {
   readonly workshop: Partial<WorkshopDetailed>;
