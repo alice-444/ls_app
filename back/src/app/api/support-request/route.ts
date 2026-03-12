@@ -11,30 +11,22 @@ import {
   applyRateLimit,
   handleRouteError,
 } from "@/lib/api-helpers";
-import { z } from "zod";
+
+import {
+  supportRequestSchema,
+  SUPPORT_ATTACHMENT_CONFIG,
+} from "@ls-app/shared";
+import type { SupportRequestInput } from "@ls-app/shared";
 import { container } from "@/lib/di/container";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const MAX_TOTAL_FILES = 5;
-const ALLOWED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "application/pdf",
-  "text/plain",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-]);
-
-const supportRequestSchema = z.object({
-  email: z.string().email(),
-  subject: z.string().min(1).max(200),
-  description: z.string().min(10).max(5000),
-  problemType: z.string().min(1),
-});
+const MAX_FILE_SIZE = SUPPORT_ATTACHMENT_CONFIG.maxSize;
+const MAX_TOTAL_FILES = SUPPORT_ATTACHMENT_CONFIG.maxCount;
+const ALLOWED_MIME_TYPES = new Set<string>(
+  SUPPORT_ATTACHMENT_CONFIG.allowedMimeTypes,
+);
 
 type ValidationResult =
-  | { ok: true; data: z.infer<typeof supportRequestSchema> }
+  | { ok: true; data: SupportRequestInput }
   | { ok: false; response: NextResponse };
 
 function validateFormData(formData: FormData): ValidationResult {
@@ -149,7 +141,7 @@ async function uploadAttachments(
 
 async function sendConfirmationEmail(
   supportRequestId: string,
-  data: z.infer<typeof supportRequestSchema>,
+  data: SupportRequestInput,
   attachmentCount: number,
 ): Promise<void> {
   try {

@@ -1,29 +1,12 @@
-export declare const formatDate: (
-  date: string | Date | null,
-  options?: {
+export type DateInput = string | Date | null;
+export declare const formatDate: (date: DateInput, options?: {
     includeWeekday?: boolean;
-  },
-) => string;
+}) => string;
 export declare const formatTime: (time: string | null) => string;
-export declare const formatDateTime: (
-  date: Date | string | null,
-  time: string | null,
-  options?: {
+export declare const formatDateTime: (date: DateInput, time: string | null, options?: {
     includeWeekday?: boolean;
-  },
-) => string;
+}) => string;
 export declare const isValidTimeFormat: (time: string) => boolean;
-export declare const calculateEndTime: (
-  date: Date | string | null,
-  time: string | null,
-  duration: number | null,
-) => Date | null;
-export declare const formatTimeRange: (
-  time: string | null,
-  duration: number | null,
-) => string;
-export declare const isWorkshopEnded: (
-  date: Date | string | null,
-  time: string | null,
-  duration: number | null,
-) => boolean;
+export declare const calculateEndTime: (date: DateInput, time: string | null, duration: number | null) => Date | null;
+export declare const formatTimeRange: (time: string | null, duration: number | null) => string;
+export declare const isWorkshopEnded: (date: DateInput, time: string | null, duration: number | null) => boolean;

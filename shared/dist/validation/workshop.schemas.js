@@ -84,8 +84,14 @@ exports.updateWorkshopBackendSchema = zod_1.z.object({
 exports.createWorkshopFrontendSchema = zod_1.z.object({
     title: exports.workshopFieldSchemas.title,
     description: exports.workshopFieldSchemas.description.optional(),
-    date: zod_1.z.string().optional().refine(date_validators_1.isMinimumTomorrow, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow),
-    time: zod_1.z.string().optional().refine((val) => !val || workshop_constants_1.WORKSHOP_VALIDATION.time.regex.test(val), workshop_constants_1.WORKSHOP_ERROR_MESSAGES.time.invalidFormat),
+    date: zod_1.z
+        .string()
+        .optional()
+        .refine(date_validators_1.isMinimumTomorrow, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow),
+    time: zod_1.z
+        .string()
+        .optional()
+        .refine((val) => !val || workshop_constants_1.WORKSHOP_VALIDATION.time.regex.test(val), workshop_constants_1.WORKSHOP_ERROR_MESSAGES.time.invalidFormat),
     durationHours: zod_1.z.number().int().min(0).max(8),
     durationMinutes: zod_1.z.number().int().min(0).max(59),
     location: exports.workshopFieldSchemas.location.optional(),
