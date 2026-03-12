@@ -40,6 +40,7 @@ COPY --from=base /app/back/.next ./back/.next
 # Copy source files needed for production
 COPY back/server.ts ./back/
 COPY back/src ./back/src
+COPY back/prisma ./back/prisma
 COPY --from=base /app/back/prisma/generated ./back/prisma/generated
 COPY back/prisma.config.ts ./back/
 COPY back/next.config.ts ./back/

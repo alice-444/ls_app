@@ -4,8 +4,8 @@ import { config } from "dotenv";
 // Charger .env depuis le répertoire back/ (indépendant du cwd)
 config({ path: path.resolve(__dirname, "../../.env") });
 
-export * from "../../.prisma/generated/client/client";
-import { PrismaClient } from "../../.prisma/generated/client/client";
+export * from "../../prisma/generated/client/client";
+import { PrismaClient } from "../../prisma/generated/client/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
