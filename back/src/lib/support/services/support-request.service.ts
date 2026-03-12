@@ -1,4 +1,4 @@
-import { type support_request } from '@/lib/prisma';
+import type { support_request } from "@/lib/prisma";
 import { SupportRequestStatus } from "../types/support-types";
 import {
   CreateSupportRequestCommand,
@@ -16,10 +16,12 @@ export class SupportRequestService implements ISupportRequestService {
   constructor(
     private readonly supportRequestRepository: ISupportRequestRepository,
     private readonly notificationService: INotificationService,
-    private readonly emailService?: IEmailService
+    private readonly emailService?: IEmailService,
   ) {}
 
-  async createSupportRequest(command: CreateSupportRequestCommand): Promise<support_request> {
+  async createSupportRequest(
+    command: CreateSupportRequestCommand,
+  ): Promise<support_request> {
     const request = await this.supportRequestRepository.create({
       userId: command.userId,
       email: command.email,
@@ -34,7 +36,7 @@ export class SupportRequestService implements ISupportRequestService {
     await this.notificationService.notifyAdmin(
       "NEW_SUPPORT_REQUEST",
       `Nouvelle demande de support : ${command.subject}`,
-      `/admin/support?requestId=${request.id}`
+      `/admin/support?requestId=${request.id}`,
     );
 
     // Send confirmation email
@@ -48,7 +50,7 @@ export class SupportRequestService implements ISupportRequestService {
             requestId: request.id,
             hasAttachments: !!(attachments && attachments.length > 0),
             attachmentCount: attachments?.length || 0,
-          })
+          }),
         );
 
         await this.emailService.sendEmail({
@@ -58,7 +60,10 @@ export class SupportRequestService implements ISupportRequestService {
           text,
         });
       } catch (error) {
-        logger.error("Failed to send support request confirmation email", { error, requestId: request.id });
+        logger.error("Failed to send support request confirmation email", {
+          error,
+          requestId: request.id,
+        });
       }
     }
 
@@ -88,33 +93,37 @@ export class SupportRequestService implements ISupportRequestService {
             email: true,
             photoUrl: true,
             displayName: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
   }
 
   async updateSupportRequestStatus(
     requestId: string,
-    status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED"
+    status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED",
   ): Promise<support_request> {
     return this.supportRequestRepository.update(requestId, { status });
   }
 
-  async getSupportRequestById(requestId: string): Promise<any | null> {
-    return this.supportRequestRepository.findMany({
-      where: { id: requestId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            photoUrl: true,
-            displayName: true,
-          }
-        }
-      }
-    }).then(results => results[0] || null);
+  async getSupportRequestById(
+    requestId: string,
+  ): Promise<support_request | null> {
+    return this.supportRequestRepository
+      .findMany({
+        where: { id: requestId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              photoUrl: true,
+              displayName: true,
+            },
+          },
+        },
+      })
+      .then((results) => results[0] || null);
   }
 }

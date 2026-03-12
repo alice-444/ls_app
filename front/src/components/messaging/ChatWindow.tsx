@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { useSocket } from "@/lib/socket-client";
@@ -13,7 +13,31 @@ import { ReplyPreview } from "./ReplyPreview";
 import { BlockUserDialog } from "@/components/user/BlockUserDialog";
 import { ReportUserDialog } from "@/components/user/ReportUserDialog";
 import { toast } from "sonner";
-import { useChatSocket, type ChatMessage } from "@/hooks/useChatSocket";
+import { useChatSocket } from "@/hooks/useChatSocket";
+import type { ChatMessage } from "@/hooks/useChatSocket";
+
+function replaceTempMessage(
+  messages: ChatMessage[],
+  tempId: string,
+  replacement: ChatMessage
+): ChatMessage[] {
+  return messages.map((msg) => (msg.messageId === tempId ? replacement : msg));
+}
+
+function createSentMessageHandler(
+  tempMessageId: string,
+  conversationId: string,
+  userId: string,
+  socket: { off: (event: string, handler: (msg: ChatMessage & { conversationId: string }) => void) => void },
+  setLocalMessages: Dispatch<SetStateAction<ChatMessage[]>>
+) {
+  return function handleSentMessage(message: ChatMessage & { conversationId: string }) {
+    if (message.conversationId === conversationId && message.senderId === userId) {
+      setLocalMessages((prev) => replaceTempMessage(prev, tempMessageId, message));
+      socket.off("new-message", handleSentMessage);
+    }
+  };
+}
 
 interface ChatWindowProps {
   readonly conversationId: string;
@@ -171,11 +195,11 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
 
     const replyToMessage = repliedMessage
       ? {
-          messageId: replyingToMessageId!,
-          content: repliedMessage.content || "",
-          senderName: null,
-          senderDisplayName: null,
-        }
+        messageId: replyingToMessageId!,
+        content: repliedMessage.content || "",
+        senderName: null,
+        senderDisplayName: null,
+      }
       : null;
 
     const optimisticMessage: ChatMessage = {
@@ -200,18 +224,13 @@ export function ChatWindow({ conversationId }: Readonly<ChatWindowProps>) {
         replyToMessageId: replyingToMessageId || null,
       });
 
-      const handleSentMessage = (message: ChatMessage & { conversationId: string }) => {
-        if (
-          message.conversationId === conversationId &&
-          message.senderId === session.user.id
-        ) {
-          setLocalMessages((prev) =>
-            prev.map((msg) => (msg.messageId === tempMessageId ? message : msg))
-          );
-          socket.off("new-message", handleSentMessage);
-        }
-      };
-
+      const handleSentMessage = createSentMessageHandler(
+        tempMessageId,
+        conversationId,
+        session.user.id,
+        socket,
+        setLocalMessages
+      );
       socket.once("new-message", handleSentMessage);
       setTimeout(() => refetch(), 1000);
     } else {

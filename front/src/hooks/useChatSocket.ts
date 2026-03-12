@@ -1,4 +1,5 @@
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useEffect } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import type { Socket } from "socket.io-client";
 
 type DateString = Date | string;
@@ -25,6 +26,54 @@ export interface ChatMessage {
     workshopTitle: string;
     workshopDate: DateString | null;
   } | null;
+}
+
+function updateMessageInList(
+  messages: ChatMessage[],
+  messageId: string,
+  updates: Partial<ChatMessage>,
+): ChatMessage[] {
+  return messages.map((msg) =>
+    msg.messageId === messageId ? { ...msg, ...updates } : msg,
+  );
+}
+
+function markMessagesAsReadInList(
+  messages: ChatMessage[],
+  messageIds: string[],
+): ChatMessage[] {
+  return messages.map((msg) =>
+    messageIds.includes(msg.messageId) ? { ...msg, isRead: true } : msg,
+  );
+}
+
+function removeUserFromTypingMap(
+  prev: Map<string, string>,
+  userId: string,
+): Map<string, string> {
+  const newMap = new Map(prev);
+  newMap.delete(userId);
+  return newMap;
+}
+
+function addUserToTypingMap(
+  prev: Map<string, string>,
+  userId: string,
+  userName: string,
+): Map<string, string> {
+  const newMap = new Map(prev);
+  newMap.set(userId, userName);
+  return newMap;
+}
+
+function scheduleTypingStop(
+  setTypingUsers: Dispatch<SetStateAction<Map<string, string>>>,
+  userId: string,
+  delayMs: number,
+): void {
+  setTimeout(() => {
+    setTypingUsers((prev) => removeUserFromTypingMap(prev, userId));
+  }, delayMs);
 }
 
 interface ChatConversation {
@@ -66,7 +115,9 @@ export function useChatSocket({
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewMessage = (message: ChatMessage & { conversationId: string }) => {
+    const handleNewMessage = (
+      message: ChatMessage & { conversationId: string },
+    ) => {
       if (message.conversationId === conversationId) {
         setLocalMessages((prev) => [...prev, message]);
         if (message.senderId !== sessionUserId) {
@@ -84,16 +135,11 @@ export function useChatSocket({
     }) => {
       if (updatedMessage.conversationId === conversationId) {
         setLocalMessages((prev) =>
-          prev.map((msg) =>
-            msg.messageId === updatedMessage.messageId
-              ? {
-                  ...msg,
-                  content: updatedMessage.content,
-                  updatedAt: updatedMessage.updatedAt,
-                  editCount: updatedMessage.editCount,
-                }
-              : msg
-          )
+          updateMessageInList(prev, updatedMessage.messageId, {
+            content: updatedMessage.content,
+            updatedAt: updatedMessage.updatedAt,
+            editCount: updatedMessage.editCount,
+          }),
         );
       }
     };
@@ -104,11 +150,7 @@ export function useChatSocket({
     }) => {
       if (data.conversationId === conversationId) {
         setLocalMessages((prev) =>
-          prev.map((msg) =>
-            data.messageIds.includes(msg.messageId)
-              ? { ...msg, isRead: true }
-              : msg
-          )
+          markMessagesAsReadInList(prev, data.messageIds),
         );
       }
     };
@@ -119,11 +161,7 @@ export function useChatSocket({
     }) => {
       if (data.conversationId === conversationId) {
         setLocalMessages((prev) =>
-          prev.map((msg) =>
-            msg.messageId === data.messageId
-              ? { ...msg, deletedAt: new Date() }
-              : msg
-          )
+          updateMessageInList(prev, data.messageId, { deletedAt: new Date() }),
         );
       }
     };
@@ -143,19 +181,10 @@ export function useChatSocket({
               "Quelqu'un"
             : "Quelqu'un";
 
-        setTypingUsers((prev) => {
-          const newMap = new Map(prev);
-          newMap.set(data.userId, userName);
-          return newMap;
-        });
-
-        setTimeout(() => {
-          setTypingUsers((prev) => {
-            const newMap = new Map(prev);
-            newMap.delete(data.userId);
-            return newMap;
-          });
-        }, 3000);
+        setTypingUsers((prev) =>
+          addUserToTypingMap(prev, data.userId, userName),
+        );
+        scheduleTypingStop(setTypingUsers, data.userId, 3000);
       }
     };
 
@@ -164,11 +193,7 @@ export function useChatSocket({
       conversationId: string;
     }) => {
       if (data.conversationId === conversationId) {
-        setTypingUsers((prev) => {
-          const newMap = new Map(prev);
-          newMap.delete(data.userId);
-          return newMap;
-        });
+        setTypingUsers((prev) => removeUserFromTypingMap(prev, data.userId));
       }
     };
 
@@ -195,5 +220,14 @@ export function useChatSocket({
       socket.off("reaction-added", handleReactionChanged);
       socket.off("reaction-removed", handleReactionChanged);
     };
-  }, [socket, conversationId, sessionUserId, conversation, setLocalMessages, setTypingUsers, markAsRead, refetch]);
+  }, [
+    socket,
+    conversationId,
+    sessionUserId,
+    conversation,
+    setLocalMessages,
+    setTypingUsers,
+    markAsRead,
+    refetch,
+  ]);
 }

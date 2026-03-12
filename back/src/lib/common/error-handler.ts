@@ -1,5 +1,6 @@
 import { logger } from "./logger";
-import { failure, type Result } from "./types";
+import { failure } from "./types";
+import type { Result } from "./types";
 
 export enum ErrorCategory {
   VALIDATION = "VALIDATION",
@@ -17,13 +18,13 @@ export interface ErrorContext {
   userId?: string;
   resourceId?: string;
   details?: Record<string, unknown>;
-  originalError?: Error | unknown;
+  originalError?: unknown;
 }
 
 function getUserFriendlyMessage(
   category: ErrorCategory,
   operation: string,
-  originalMessage?: string
+  originalMessage?: string,
 ): string {
   const operationMap: Record<string, string> = {
     createWorkshop: "créer l'atelier",
@@ -81,7 +82,7 @@ function getUserFriendlyMessage(
 
 function getStatusCode(
   category: ErrorCategory,
-  defaultStatus?: number
+  defaultStatus?: number,
 ): number {
   if (defaultStatus) return defaultStatus;
 
@@ -166,7 +167,7 @@ function categorizeError(error: unknown, operation: string): ErrorCategory {
 
 export function handleError(
   error: unknown,
-  context: ErrorContext
+  context: ErrorContext,
 ): Result<never> {
   const category =
     context.category || categorizeError(error, context.operation);
@@ -174,7 +175,7 @@ export function handleError(
   const userMessage = getUserFriendlyMessage(
     category,
     context.operation,
-    error instanceof Error ? error.message : undefined
+    error instanceof Error ? error.message : undefined,
   );
 
   const logContext: Record<string, unknown> = {
@@ -189,7 +190,7 @@ export function handleError(
     logger.error(
       `Error in ${context.operation}: ${error.message}`,
       error,
-      logContext
+      logContext,
     );
   } else {
     logger.error(`Error in ${context.operation}`, error, logContext);
@@ -205,7 +206,7 @@ export function createErrorContext(
     userId?: string;
     resourceId?: string;
     details?: Record<string, unknown>;
-  }
+  },
 ): ErrorContext {
   return {
     category: options?.category || ErrorCategory.INTERNAL,

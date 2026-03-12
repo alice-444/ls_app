@@ -11,7 +11,6 @@ ce qui existe et où le trouver
 - [Architecture](#architecture) – Vue d’ensemble front/back
 - [Design Patterns](patterns.md) – Patterns utilisés dans le projet
 - [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
-- [PRD & EPTC](#prd--eptc) – Cahier des charges et plan de tests E2E (contexte Gemini)
 - [Front](#front) – Application Next.js, tRPC, auth
 - [Back](#back) – API, Prisma, auth
 - [Arborescence](#arborescence) – Structure macro et micro
@@ -22,7 +21,7 @@ ce qui existe et où le trouver
 
 ## Architecture
 
-Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md). 
+Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md).
 Patterns de conception et principes SOLID appliqués : [patterns.md](patterns.md).
 **Modèle physique de données (MPD)** : [mpd.md](mpd.md) — tables, colonnes, types, clés, index.
 Inclut les flux d'authentification, utilisateur, données, atelier, paiement, messagerie, visio, suppression compte, crons et réseau.
@@ -32,19 +31,6 @@ Inclut les flux d'authentification, utilisateur, données, atelier, paiement, me
 ## Arborescence
 
 Structure macro (racine, front, back, infra) et micro (dossiers, fichiers) : [arborescence.md](arborescence.md).
-
----
-
-## PRD & EPTC
-
-Documents dédiés aux assistants IA (Gemini, Claude, etc.), dans **`ai_docs/`** :
-
-- **PRD** (cahier des charges, découpé) : [ai_docs/PRD/](../ai_docs/PRD/) – README, PRD-00 vision/users, PRD-01 périmètre, PRD-02 exigences
-- **EPTC** (plan de tests E2E, découpé) : [ai_docs/EPTC/](../ai_docs/EPTC/) – README, back santé, accueil-auth, dashboard-workshops, pages secondaires, priorisation
-- **Contexte Gemini** : [gemini-context.md](../ai_docs/gemini-context.md) – quels docs fournir à l’IA, résumé copier-coller
-- **Index des documents** : [ai_docs/gemini/00-index-documents.md](../ai_docs/gemini/00-index-documents.md) – liste complète ; [01-prompts-exemples.md](../ai_docs/gemini/01-prompts-exemples.md) – exemples de prompts
-- **Doc technique IA** : [ai_docs/docs/](../ai_docs/docs/) – architecture, services, patterns, database, components
-- **PRP Flow & PRPs** : [concept_library/cc_PRP_flow/](../ai_docs/concept_library/cc_PRP_flow/) – template + PRPs (auth, workshop catalogue, dashboard)
 
 ---
 

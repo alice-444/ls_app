@@ -1,8 +1,7 @@
 import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { z } from "zod";
-import { logger } from "../../lib/common/logger";
-import { getSafeMessagingErrorMessage } from "./messaging-helpers";
+import { handleRouterResult } from "../shared/router-helpers";
 import { conversationIdSchema, messageIdSchema } from "@ls-app/shared";
 
 export const messagingMessageRouter = router({
@@ -20,14 +19,11 @@ export const messagingMessageRouter = router({
         input.limit,
         input.offset,
       );
-      if (!result.ok) {
-        logger.error("getMessages error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "getMessages",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+      });
     }),
 
   sendMessage: protectedProcedure
@@ -44,14 +40,11 @@ export const messagingMessageRouter = router({
         input.content,
         input.replyToMessageId,
       );
-      if (!result.ok) {
-        logger.error("sendMessage error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "sendMessage",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+      });
     }),
 
   markMessagesAsRead: protectedProcedure
@@ -61,14 +54,11 @@ export const messagingMessageRouter = router({
         ctx.session.user.id,
         input.conversationId,
       );
-      if (!result.ok) {
-        logger.error("markMessagesAsRead error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "markMessagesAsRead",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+      });
     }),
 
   searchMessages: protectedProcedure
@@ -85,15 +75,12 @@ export const messagingMessageRouter = router({
         input.query,
         input.limit,
       );
-      if (!result.ok) {
-        logger.error("searchMessages error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-          query: input.query,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "searchMessages",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+        query: input.query,
+      });
     }),
 
   updateMessage: protectedProcedure
@@ -108,14 +95,11 @@ export const messagingMessageRouter = router({
         input.messageId,
         input.content,
       );
-      if (!result.ok) {
-        logger.error("updateMessage error", result.error, {
-          userId: ctx.session.user.id,
-          messageId: input.messageId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "updateMessage",
+        userId: ctx.session.user.id,
+        messageId: input.messageId,
+      });
     }),
 
   deleteMessage: protectedProcedure
@@ -125,13 +109,10 @@ export const messagingMessageRouter = router({
         ctx.session.user.id,
         input.messageId,
       );
-      if (!result.ok) {
-        logger.error("deleteMessage error", result.error, {
-          userId: ctx.session.user.id,
-          messageId: input.messageId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "deleteMessage",
+        userId: ctx.session.user.id,
+        messageId: input.messageId,
+      });
     }),
 });

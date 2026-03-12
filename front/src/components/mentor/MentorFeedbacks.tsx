@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, type ReactNode } from "react";
+import { useState, useMemo } from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { trpc } from "@/utils/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -171,8 +172,8 @@ export function MentorFeedbacks({
                           className="bg-yellow-400 h-2 rounded-full"
                           style={{
                             width: `${aggregate.totalCount > 0
-                                ? (dist.count / aggregate.totalCount) * 100
-                                : 0
+                              ? (dist.count / aggregate.totalCount) * 100
+                              : 0
                               }%`,
                           }}
                         />

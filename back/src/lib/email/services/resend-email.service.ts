@@ -3,7 +3,8 @@ import type {
   IEmailService,
   SendEmailOptions,
 } from "./email.service.interface";
-import { failure, success, type Result } from "../../common/types";
+import { failure, success } from "../../common/types";
+import type { Result } from "../../common/types";
 import { logger } from "../../common/logger";
 import { externalApiErrorsTotal } from "../../metrics/prometheus";
 
@@ -24,7 +25,7 @@ export class ResendEmailService implements IEmailService {
   }
 
   async sendEmail(
-    options: SendEmailOptions
+    options: SendEmailOptions,
   ): Promise<Result<{ messageId: string }>> {
     try {
       const validationError = this.validateOptions(options);
@@ -45,7 +46,7 @@ export class ResendEmailService implements IEmailService {
   }
 
   private validateOptions(
-    options: SendEmailOptions
+    options: SendEmailOptions,
   ): Result<{ messageId: string }> | null {
     const recipients = Array.isArray(options.to) ? options.to : [options.to];
     if (recipients.length === 0) {
@@ -62,7 +63,7 @@ export class ResendEmailService implements IEmailService {
 
   private simulateSend(
     options: SendEmailOptions,
-    recipients: string[]
+    recipients: string[],
   ): Result<{ messageId: string }> {
     logger.info(
       "Email not sent (SEND_EMAIL !== 'true') - Email would be sent:",
@@ -72,8 +73,8 @@ export class ResendEmailService implements IEmailService {
         subject: options.subject,
         hasHtml: !!options.html,
         hasText: !!options.text,
-        hasAttachments: !!(options.attachments?.length),
-      }
+        hasAttachments: !!options.attachments?.length,
+      },
     );
     return success({
       messageId: `simulated-${Date.now()}-${Math.random()
@@ -84,7 +85,7 @@ export class ResendEmailService implements IEmailService {
 
   private buildEmailOptions(
     options: SendEmailOptions,
-    recipients: string[]
+    recipients: string[],
   ): Record<string, unknown> {
     const emailOptions: Record<string, unknown> = {
       from: options.from || this.defaultFrom,
@@ -108,14 +109,14 @@ export class ResendEmailService implements IEmailService {
   }
 
   private async sendViaResend(
-    emailOptions: Record<string, unknown>
+    emailOptions: Record<string, unknown>,
   ): Promise<Result<{ messageId: string }>> {
     const result = await this.resend.emails.send(emailOptions as any);
     if (result.error) {
       externalApiErrorsTotal.labels("resend").inc();
       return failure(
         result.error.message || "Erreur lors de l'envoi de l'email",
-        500
+        500,
       );
     }
     const messageId = result.data?.id;

@@ -1,8 +1,7 @@
 import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { z } from "zod";
-import { logger } from "../../lib/common/logger";
-import { getSafeMessagingErrorMessage } from "./messaging-helpers";
+import { handleRouterResult } from "../shared/router-helpers";
 import { messageIdSchema, reactionIdSchema } from "@ls-app/shared";
 
 export const messagingReactionRouter = router({
@@ -18,15 +17,12 @@ export const messagingReactionRouter = router({
         input.messageId,
         input.emoji,
       );
-      if (!result.ok) {
-        logger.error("addReaction error", result.error, {
-          userId: ctx.session.user.id,
-          messageId: input.messageId,
-          emoji: input.emoji,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "addReaction",
+        userId: ctx.session.user.id,
+        messageId: input.messageId,
+        emoji: input.emoji,
+      });
     }),
 
   removeReaction: protectedProcedure
@@ -36,14 +32,11 @@ export const messagingReactionRouter = router({
         ctx.session.user.id,
         input.reactionId,
       );
-      if (!result.ok) {
-        logger.error("removeReaction error", result.error, {
-          userId: ctx.session.user.id,
-          reactionId: input.reactionId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "removeReaction",
+        userId: ctx.session.user.id,
+        reactionId: input.reactionId,
+      });
     }),
 
   getMessageReactions: protectedProcedure
@@ -53,14 +46,11 @@ export const messagingReactionRouter = router({
         input.messageId,
         ctx.session.user.id,
       );
-      if (!result.ok) {
-        logger.error("getMessageReactions error", result.error, {
-          userId: ctx.session.user.id,
-          messageId: input.messageId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "getMessageReactions",
+        userId: ctx.session.user.id,
+        messageId: input.messageId,
+      });
     }),
 
   getMessageReactionsWithUsers: protectedProcedure
@@ -70,13 +60,10 @@ export const messagingReactionRouter = router({
         await container.messageReactionService.getMessageReactionsWithUsers(
           input.messageId,
         );
-      if (!result.ok) {
-        logger.error("getMessageReactionsWithUsers error", result.error, {
-          userId: ctx.session.user.id,
-          messageId: input.messageId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "getMessageReactionsWithUsers",
+        userId: ctx.session.user.id,
+        messageId: input.messageId,
+      });
     }),
 });

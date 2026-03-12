@@ -4,15 +4,41 @@ Structure du monorepo : vue macro (niveau projet) et vue micro (détail des doss
 
 ---
 
+## Sommaire
+
+- [Vue macro](#vue-macro)
+- [Légende](#légende)
+- [Schéma des dépendances](#schéma-des-dépendances)
+- [Schéma système et flux](#schéma-système-et-flux)
+- [Vue micro — Racine](#vue-micro--racine)
+- [Vue micro — Shared](#vue-micro--shared)
+- [Vue micro — Front](#vue-micro--front)
+- [Vue micro — Back](#vue-micro--back)
+- [Index rapide](#index-rapide)
+- [Conventions de nommage](#conventions-de-nommage)
+- [Liens](#liens)
+
+---
+
+## Légende
+
+| Symbole | Signification |
+|---------|---------------|
+| `[...]` | Contenu résumé ou non détaillé |
+| `[dossier]/` | Dossier avec sous-éléments |
+| `# commentaire` | Commentaire explicatif |
+
+---
+
 ## Vue macro
 
 ```
 ls_app/
 ├── back/                    # Backend Next.js (API, tRPC, Prisma)
 ├── front/                   # Frontend Next.js (App Router, React)
+├── shared/                  # Package partagé (validation Zod, types, constantes)
 ├── infra/                   # Infrastructure (Docker, Grafana, Prometheus)
 ├── cypress/                 # Tests E2E Cypress
-├── ai_docs/                 # Documentation IA (PRD, EPTC, PRPs)
 ├── docs/                    # Documentation technique
 ├── .github/                 # CI/CD (workflows, linters)
 ├── package.json             # Racine pnpm workspace
@@ -21,15 +47,63 @@ ls_app/
 ├── cypress.config.js
 └── README.md
 ```
+---
 
-| Dossier | Rôle |
-|---------|------|
-| **back** | API Next.js, tRPC, Better Auth, Prisma, Socket.IO, crons, webhooks |
-| **front** | App React Next.js 16, pages, composants, tRPC client, auth |
-| **infra** | Dockerfiles (front, back), Grafana, Prometheus |
-| **cypress** | Specs E2E, support, fixtures |
-| **ai_docs** | PRD, EPTC, PRPs, contexte Gemini |
-| **docs** | architecture, back, front, procedure, reference, arborescence |
+## Schéma des dépendances
+
+```mermaid
+flowchart TB
+  subgraph Workspace["pnpm workspace"]
+    shared["shared"]
+    front["front"]
+    back["back"]
+  end
+
+  front --> shared
+  back --> shared
+
+  shared -.->|"Zod, types, constantes"| front
+  shared -.->|"Zod, types, constantes"| back
+```
+
+---
+
+## Schéma système et flux
+
+### Flux de routage back (entrée requête)
+
+```mermaid
+flowchart TB
+  Client["Client HTTP"]
+  Server["server.ts"]
+  CORS["CORS"]
+  Next["Next.js"]
+  Route{"Route ?"}
+
+  TRPC["/trpc → routers/"]
+  Auth["/api/auth/*"]
+  Profile["/api/profile/*"]
+  Cron["/api/cron/*"]
+  Webhooks["/api/daily, polar"]
+  Metrics["/api/metrics"]
+
+  Client --> Server
+  Server --> CORS
+  CORS --> Next
+  Next --> Route
+  Route -->|tRPC| TRPC
+  Route -->|Auth| Auth
+  Route -->|Profil| Profile
+  Route -->|Cron| Cron
+  Route -->|Webhooks| Webhooks
+  Route -->|Métriques| Metrics
+
+  TRPC --> Lib["lib/ (services)"]
+  Auth --> Lib
+  Profile --> Lib
+  Lib --> Prisma[(Prisma)]
+  Prisma --> DB[(PostgreSQL)]
+```
 
 ---
 
@@ -39,6 +113,12 @@ ls_app/
 ls_app/
 ├── back/
 ├── front/
+├── shared/
+│   ├── src/
+│   │   ├── validation/      # Schémas Zod
+│   │   ├── types/           # Types TS partagés
+│   │   └── utils/           # Utilitaires (date, etc.)
+│   └── dist/
 ├── infra/
 │   └── docker/
 │       ├── back/
@@ -49,13 +129,6 @@ ls_app/
 │   ├── e2e/
 │   ├── fixtures/
 │   └── support/
-├── ai_docs/
-│   ├── PRD/
-│   ├── EPTC/
-│   ├── PRPs/
-│   ├── docs/
-│   ├── gemini/
-│   └── concept_library/
 ├── docs/
 ├── .github/
 │   ├── workflows/
@@ -63,9 +136,64 @@ ls_app/
 └── [config: package.json, turbo.json, pnpm-workspace.yaml, ...]
 ```
 
+### `infra/` — Structure détaillée
+
+```
+infra/
+└── docker/
+    ├── back/
+    │   ├── Dockerfile.dev
+    │   └── Dockerfile.prod
+    ├── front/
+    │   ├── Dockerfile.dev
+    │   └── Dockerfile.prod
+    ├── grafana/
+    │   └── provisioning/
+    │       ├── dashboards/
+    │       └── datasources/
+    ├── prometheus/
+    │   └── prometheus.yml
+    ├── Docker-compose-dev.yml
+    └── docker-compose-prod.yml
+```
+
 ---
 
-## Vue micro — Front (`front/`)
+## Vue micro — Shared
+
+Package workspace `@ls-app/shared` : source de vérité pour la validation, les types et les constantes partagés entre front et back. **À ne pas confondre** avec `front/src/shared/` (qui n'existe pas) : le front importe via `@ls-app/shared`.
+
+```
+shared/
+├── src/
+│   ├── validation/          # Schémas Zod (auth, workshop, profile, file, password, etc.)
+│   │   ├── auth.schemas.ts
+│   │   ├── workshop.schemas.ts
+│   │   ├── workshop.constants.ts
+│   │   ├── profile.schemas.ts
+│   │   ├── profile.constants.ts
+│   │   ├── user.schemas.ts
+│   │   ├── file.validators.ts
+│   │   ├── password.validators.ts
+│   │   ├── date.validators.ts
+│   │   ├── support.schemas.ts
+│   │   ├── community.schemas.ts
+│   │   └── common.schemas.ts
+│   ├── types/               # Types TS partagés
+│   │   ├── user.ts
+│   │   ├── workshop.ts
+│   │   └── messaging.ts
+│   ├── utils/
+│   │   └── date.ts
+│   └── index.ts             # Exports publics
+├── dist/                    # Build output
+├── package.json
+└── tsconfig.json
+```
+
+---
+
+## Vue micro — Front
 
 ```
 front/
@@ -78,105 +206,50 @@ front/
 │   ├── components/          # Composants React
 │   ├── hooks/               # Hooks personnalisés
 │   ├── lib/                 # Clients (auth, API), config
-│   ├── shared/             # Validation, constantes partagées
-│   ├── types/               # Types TS (trpc-router stub)
+│   ├── types/               # Types TS (trpc-router stub, workshop-components)
 │   └── utils/               # Utilitaires (trpc.ts)
 ├── __tests__/
 │   └── units/
 └── [next.config, package.json, ...]
 ```
 
-### `front/src/app/` — Routes (App Router)
+### Schéma : hiérarchie des composants front
 
-```
-app/
-├── layout.tsx               # Layout racine (Providers, Sidebar, Header)
-├── page.tsx                 # / (accueil)
-├── error.tsx, not-found.tsx, forbidden.tsx
-├── 405/page.tsx
-├── login/page.tsx
-├── forgot-password/
-├── reset-password/
-├── verify-email-change/
-├── onboarding/
-│   ├── page.tsx
-│   ├── components/          # RoleSelectionStep, ProfFormStep, ApprenantCompleteStep
-│   ├── hooks/useOnboarding.ts
-│   ├── schemas.ts, types.ts, constants.ts
-├── dashboard/page.tsx
-├── profil/page.tsx          # Profil apprenant
-├── mentor-profile/page.tsx
-├── my-profile/page.tsx
-├── my-workshops/page.tsx
-├── workshop-editor/page.tsx
-├── workshop-room/page.tsx
-├── workshops/page.tsx
-├── workshop/[id]/
-│   ├── page.tsx
-│   └── join-video/page.tsx
-├── mentors/
-│   ├── page.tsx
-│   └── [mentorId]/page.tsx
-├── apprentice/[userId]/page.tsx
-├── inbox/
-│   ├── page.tsx
-│   └── [conversationId]/page.tsx
-├── network/page.tsx
-├── community/page.tsx
-├── notifications/page.tsx
-├── settings/page.tsx
-├── buy-credits/page.tsx
-├── paliers/page.tsx
-├── support-request/page.tsx
-├── admin/
-│   ├── layout.tsx
-│   ├── page.tsx
-│   ├── community/
-│   ├── audit-logs/
-│   ├── feedback-moderation/
-│   ├── notifications/
-│   ├── onboarding/
-│   ├── settings/
-│   ├── support/
-│   └── user-reports/
-├── legal/, terms/, privacy/
-├── help/, info/, faq/
-└── ...
+```mermaid
+flowchart TB
+  Layout["layout.tsx"]
+  Sidebar["sidebar.tsx"]
+  RoleGate["RoleGate"]
+
+  subgraph Pages["Pages (app/)"]
+    Dashboard["dashboard"]
+    Profil["profil"]
+    Workshops["workshops"]
+  end
+
+  subgraph Domain["Composants métier"]
+    Apprentice["apprentice/"]
+    Mentor["mentor/"]
+    Workshop["workshop/"]
+    Messaging["messaging/"]
+  end
+
+  subgraph UI["Composants UI (shadcn)"]
+    Button["button"]
+    Card["card"]
+    Dialog["dialog"]
+  end
+
+  Layout --> Sidebar
+  Layout --> RoleGate
+  Layout --> Pages
+  Pages --> Domain
+  Domain --> UI
 ```
 
-### `front/src/components/` — Composants
+### `front/src/lib/`, `hooks/`
 
-```
-components/
-├── ui/                      # shadcn (button, card, dialog, input, ...)
-├── layout/                  # PageContainer, PageHeader, PageCard, SectionSidebar, RoleGate
-├── header.tsx, sidebar.tsx, footer.tsx, back-button.tsx
-├── sign-in-form.tsx, sign-up-form.tsx
-├── user-menu.tsx, notification-bell.tsx
-├── theme-provider.tsx
-├── loader.tsx
-├── apprentice/              # ApprenticeSidebar, UpcomingWorkshopsCard, AvailableWorkshopsGrid, ...
-├── dashboard/               # ApprenantDashboard, MentorDashboard, FloatingAddButton
-├── mentor/                  # MentorCard, MentorFilters, MentorsGrid, ContactMentorDialog, ...
-├── mentor-profile/          # BasicInformationSection, SocialMediaSection, TagListSection, ...
-├── profil/                  # ProfilePhotoUpload, ProfilePreviewCard, IceBreakerTagsSection
-├── settings/                # PersonalInformationSection, ChangePasswordSection, DeleteAccountSection, ...
-├── workshop/                # WorkshopCard, WorkshopDetails, DailyVideoCall, SubmitFeedbackDialog, ...
-│   ├── cards/               # WorkshopCard, WorkshopHeader, WorkshopDescription, ...
-│   ├── dialogs/              # EditWorkshopRequestDialog, CancelWorkshopRegistrationDialog, ...
-│   ├── filters/
-│   ├── lists/
-│   ├── requests/
-│   └── stats/
-├── workshop-editor/         # CreateWorkshopForm, EditWorkshopForm, PublishWorkshopDialog
-├── messaging/               # ChatWindow, ChatHeader, ConversationList, MessageReactions
-├── network/                 # PendingRequestsList, AcceptedConnectionsList
-├── community/               # DealsGrid, EventsHubGrid, EventsTabs, MemberDirectory, ProposeDealForm, ProposeEventForm, ProposeSpotForm, SpotFinder, CommunityPoll, ImpactStats
-├── faq/
-└── user/                   # BlockUserDialog, ReportUserDialog
-```
-
-### `front/src/lib/`, `hooks/`, `shared/`
+> **Note** : Le front n'a pas de dossier `shared/` local. Les schémas Zod, types et constantes sont importés depuis le package `@ls-app/shared` (voir [Vue micro — Shared](#vue-micro--shared)).
 
 ```
 lib/
@@ -192,19 +265,16 @@ hooks/
 ├── useOnboarding.ts
 ├── use-password-form.ts
 └── use-photo-upload.ts
-
-shared/
-└── validation/             # Zod, file, workshop, password, date
 ```
 
 ---
 
-## Vue micro — Back (`back/`)
+## Vue micro — Back
 
 ```
 back/
 ├── server.ts                # Point d'entrée HTTP (CORS, Socket.IO, Next)
-├── prisma/
+├── .prisma/
 │   ├── schema/
 │   │   └── schema.prisma
 │   ├── generated/client/
@@ -214,10 +284,37 @@ back/
 │   ├── routers/             # tRPC appRouter
 │   └── lib/                 # Services, repositories, DI
 ├── __tests__/
-│   ├── api/
-│   ├── trpc/
-│   └── units/
+│   ├── api/                  # Tests routes API REST
+│   ├── trpc/                 # Tests procédures tRPC (apprentice.getDashboardData, mentor.getDashboardData, workshop.getById, etc.)
+│   ├── units/                # Tests unitaires services/repositories
+│   └── integration/          # Tests d'intégration (ex. database.test.ts)
 └── [next.config, package.json, ...]
+```
+
+### Schéma : flux Router → Service → Repository
+
+```mermaid
+flowchart LR
+  subgraph Routers["routers/"]
+    R1["workshop.router"]
+    R2["mentor.router"]
+    R3["apprentice.router"]
+  end
+
+  Container["di/container"]
+  S1["WorkshopLifecycleService"]
+  S2["WorkshopRequestService"]
+  Repo["Prisma / Repositories"]
+  DB[(PostgreSQL)]
+
+  R1 --> Container
+  R2 --> Container
+  R3 --> Container
+  Container --> S1
+  Container --> S2
+  S1 --> Repo
+  S2 --> Repo
+  Repo --> DB
 ```
 
 ### `back/src/app/` — Routes API
@@ -360,6 +457,8 @@ lib/
 
 ## Index rapide
 
+### Par besoin
+
 | Besoin | Emplacement |
 |--------|-------------|
 | Page d'accueil | `front/src/app/page.tsx` |
@@ -369,15 +468,42 @@ lib/
 | Auth client | `front/src/lib/auth-client.ts` |
 | Point d'entrée back | `back/server.ts` |
 | AppRouter tRPC | `back/src/routers/index.ts` |
-| Schéma Prisma | `back/prisma/schema/schema.prisma` |
+| Schéma Prisma | `back/.prisma/schema/schema.prisma` |
 | Better Auth | `back/src/lib/auth.ts` |
 | Routes API | `back/src/app/api/` |
+
+### Cas d'usage
+
+| Question | Emplacement |
+|----------|-------------|
+| Où modifier les schémas Zod partagés ? | `shared/src/validation/` |
+| Où sont les types partagés ? | `shared/src/types/` |
+| Où ajouter une route API ? | `back/src/app/api/` |
+| Où ajouter une procédure tRPC ? | `back/src/routers/` |
+| Où ajouter une page front ? | `front/src/app/[route]/page.tsx` |
+| Où sont les composants UI réutilisables ? | `front/src/components/ui/` |
+| Où configurer l'auth ? | `back/src/lib/auth.ts` |
+
+---
+
+## Conventions de nommage
+
+| Type | Convention | Exemple |
+|------|------------|---------|
+| Route App Router | `page.tsx` dans un dossier | `app/dashboard/page.tsx` |
+| Router tRPC | `*.router.ts` | `mentor.router.ts`, `workshop.router.ts` |
+| Service backend | `*.service.ts` | `WorkshopLifecycleService` |
+| Repository | `*.repository.ts` ou dans `repositories/` | `WorkshopRepository` |
+| Composant React | PascalCase | `MentorCard.tsx` |
+| Hook | `use*.ts` | `useDashboard.ts` |
+| Test unitaire | `*.test.ts` ou `*.test.tsx` | `apprentice.getDashboardData.test.ts` |
+| Test E2E Cypress | `*.cy.{ts,tsx}` | `login.cy.ts` |
 
 ---
 
 ## Liens
 
-- [Architecture](architecture.md)
+- [Architecture](architecture.md) — schémas système détaillés, flux auth, atelier, messagerie, etc.
 - [Front](front.md)
 - [Back](back.md)
 - [Référence](reference.md)

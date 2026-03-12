@@ -30,7 +30,7 @@ Voir [README principal](../README.md) pour le détail des variables.
 - **Régénérer le client Prisma** : `pnpm db:generate` (utile après modification du schéma).
 - **Explorer les données** : `pnpm db:studio` — ouvre Prisma Studio.
 
-Schéma et migrations : `back/prisma/schema/schema.prisma`.
+Schéma et migrations : `back/.prisma/schema/schema.prisma`.
 
 ---
 
@@ -70,7 +70,7 @@ La CI (`.github/workflows/tests.yml`) exécute des tests unitaires, d’intégra
 
 Emplacements des tests :
 - **Front** : `front/__tests__/units/**/*.test.{ts,tsx}`
-- **Back** : `back/__tests__/units/**/*.test.ts`, `back/__tests__/api/**/*.test.ts`, `back/__tests__/trpc/**/*.test.ts`
+- **Back** : `back/__tests__/units/**/*.test.ts`, `back/__tests__/api/**/*.test.ts`, `back/__tests__/trpc/**/*.test.ts` (ex. `apprentice.getDashboardData.test.ts`, `mentor.getDashboardData.test.ts`, `workshop.getById.test.ts`)
 - **E2E** : `cypress/e2e/**/*.cy.{js,jsx,ts,tsx}`.
 
 Résultats et artefacts (coverage, junit, screenshots/videos Cypress) sont publiés par la CI. Voir le workflow pour les chemins exacts.

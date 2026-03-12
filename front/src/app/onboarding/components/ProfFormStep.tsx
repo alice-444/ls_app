@@ -15,7 +15,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ArrowRight, Loader2, BookOpen, Upload, X } from "lucide-react";
 import { ProgressIndicator } from "./ProgressIndicator";
-import { profFormSchema, type ProfFormData } from "../schemas";
+import { profFormSchema } from "../schemas";
+import type { ProfFormData } from "../schemas";
 import type { Role, Step } from "../types";
 
 interface ProfFormStepProps {
@@ -34,7 +35,7 @@ export function ProfFormStep({
   isSubmitting,
   onGoBack,
   onSubmit,
-}: ProfFormStepProps) {
+}: Readonly<ProfFormStepProps>) {
   const {
     register,
     handleSubmit,
@@ -133,15 +134,7 @@ export function ProfFormStep({
                   }}
                   className="hidden"
                 />
-                {!watch("photo") ? (
-                  <Label
-                    htmlFor="photo"
-                    className="flex items-center gap-2 px-4 py-2 border rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-                  >
-                    <Upload className="h-4 w-4" />
-                    Choisir une photo
-                  </Label>
-                ) : (
+                {watch("photo") ? (
                   <div className="flex items-center gap-3">
                     <div className="px-4 py-2 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 flex items-center gap-2">
                       <span className="text-sm text-slate-600 dark:text-slate-400 font-medium truncate max-w-[150px]">
@@ -163,6 +156,14 @@ export function ProfFormStep({
                       Modifier
                     </Label>
                   </div>
+                ) : (
+                  <Label
+                    htmlFor="photo"
+                    className="flex items-center gap-2 px-4 py-2 border rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Choisir une photo
+                  </Label>
                 )}
               </div>
               {errors.photo && (
