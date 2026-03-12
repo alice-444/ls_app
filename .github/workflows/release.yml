@@ -2,11 +2,11 @@ name: Release (Test, Build, Deploy) 🚀
 
 on:
   push:
+    branches:
+      - maj/ci
     tags:
       - "[0-9]+.[0-9]+.[0-9]+"
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   # tests:
@@ -16,11 +16,23 @@ jobs:
 
   build-and-push-backend:
     name: Build & Push Backend
-    # needs: tests
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - name: Publish Backend to Registry
+      - name: Extract branch or tag name
+        id: extract_ref
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            REF_NAME=${GITHUB_REF#refs/tags/}
+          elif [[ "${GITHUB_REF}" == refs/heads/main ]]; then
+            REF_NAME=${GITHUB_REF#refs/heads/}
+          else
+            REF_NAME=${GITHUB_HEAD_REF#refs/heads/}
+          fi
+          REF_NAME=$(echo "${REF_NAME}" | tr '/' '_')
+          echo "REF_NAME=${REF_NAME}" >> $GITHUB_ENV
+      - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: miho11/back_ls
@@ -28,15 +40,27 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           workdir: ./
           dockerfile: infra/docker/back/prod/Dockerfile
-          tags: latest,${{ github.ref_name }}
+          tags: latest,${{ github.REF_NAME }}
 
   build-and-push-frontend:
     name: Build & Push Frontend
-    # needs: tests
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - name: Publish Frontend to Registry
+      - name: Extract branch or tag name
+        id: extract_ref
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            REF_NAME=${GITHUB_REF#refs/tags/}
+          elif [[ "${GITHUB_REF}" == refs/heads/main ]]; then
+            REF_NAME=${GITHUB_REF#refs/heads/}
+          else
+            REF_NAME=${GITHUB_HEAD_REF#refs/heads/}
+          fi
+          REF_NAME=$(echo "${REF_NAME}" | tr '/' '_')
+          echo "REF_NAME=${REF_NAME}" >> $GITHUB_ENV
+      - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: miho11/front_ls
@@ -44,7 +68,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           workdir: ./
           dockerfile: infra/docker/front/prod/Dockerfile
-          tags: latest,${{ github.ref_name }}
+          tags: latest,${{ github.REF_NAME }}
 
   deploy:
     name: Deploy to Prod
