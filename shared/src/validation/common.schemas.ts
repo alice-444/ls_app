@@ -68,6 +68,14 @@ export const reactionIdSchema = z.object({
   reactionId: z.string().cuid(),
 });
 
+export const bulkIdsSchema = z.object({
+  ids: z.array(z.string()),
+});
+
+export const bulkUserIdsSchema = z.object({
+  userIds: z.array(z.string()),
+});
+
 export const paginationSchema = z.object({
   limit: z.number().min(1).max(100).default(20),
   cursor: z.string().nullish(),

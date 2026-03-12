@@ -329,7 +329,7 @@ export default function WorkshopDetailPage() {
   }
 
   if (!workshop) {
-    const backUrl = userRole === "MENTOR" ? "/my-workshops" : "/workshop-room";
+    const backUrl = userRole === "MENTOR" ? "/my-workshops" : "/catalog";
     return (
       <PageContainer>
         <div className="text-center py-12">
@@ -388,7 +388,7 @@ export default function WorkshopDetailPage() {
   };
 
   const handleBack = () => {
-    const backUrl = isOwner ? "/my-workshops" : "/workshop-room";
+    const backUrl = isOwner ? "/my-workshops" : "/catalog";
     router.push(backUrl);
   };
 
