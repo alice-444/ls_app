@@ -13,13 +13,15 @@ RUN pnpm install --frozen-lockfile
 
 COPY front ./front
 
+WORKDIR /app
+
+RUN pnpm --filter @ls-app/shared run build
+
 WORKDIR /app/front
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build shared first, then front
-RUN pnpm --filter @ls-app/shared run build
 RUN pnpm run build
 
 # Production stage
