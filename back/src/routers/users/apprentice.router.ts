@@ -1,6 +1,6 @@
 import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
-import { unwrapResult } from "../shared/router-helpers";
+import { unwrapResult, handleRouterResult } from "../shared/router-helpers";
 import { z } from "zod";
 import { requestIdSchema, apprenticeUserIdSchema } from "@ls-app/shared";
 
@@ -52,10 +52,10 @@ export const apprenticeRouter = router({
         ctx.session.user.id,
         input,
       );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "saveIdentityCard",
+        userId: ctx.session.user.id,
+      });
     }),
 
   updateProfile: protectedProcedure
@@ -72,20 +72,20 @@ export const apprenticeRouter = router({
         ctx.session.user.id,
         input,
       );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "updateProfile",
+        userId: ctx.session.user.id,
+      });
     }),
 
   getIdentityCard: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.apprenticeProfileService.getIdentityCard(
       ctx.session.user.id,
     );
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
+    return handleRouterResult(result, {
+      operation: "getIdentityCard",
+      userId: ctx.session.user.id,
+    });
   }),
 
   getMiniProfileForMentor: protectedProcedure
@@ -96,10 +96,11 @@ export const apprenticeRouter = router({
           ctx.session.user.id,
           input.apprenticeUserId,
         );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "getMiniProfileForMentor",
+        userId: ctx.session.user.id,
+        apprenticeUserId: input.apprenticeUserId,
+      });
     }),
 
   getApprenticeProfileForViewer: protectedProcedure
@@ -110,9 +111,10 @@ export const apprenticeRouter = router({
           ctx.session.user.id,
           input.apprenticeUserId,
         );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "getApprenticeProfileForViewer",
+        userId: ctx.session.user.id,
+        apprenticeUserId: input.apprenticeUserId,
+      });
     }),
 });

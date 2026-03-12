@@ -5,6 +5,7 @@ import {
   otherUserIdSchema,
 } from "@ls-app/shared";
 import { container } from "../../lib/di/container";
+import { handleRouterResult } from "../shared/router-helpers";
 
 export const connectionRouter = router({
   sendConnectionRequest: protectedProcedure
@@ -15,10 +16,11 @@ export const connectionRouter = router({
           ctx.session.user.id,
           input.receiverUserId,
         );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "sendConnectionRequest",
+        userId: ctx.session.user.id,
+        receiverUserId: input.receiverUserId,
+      });
     }),
 
   acceptConnectionRequest: protectedProcedure
@@ -29,10 +31,11 @@ export const connectionRouter = router({
           ctx.session.user.id,
           input.connectionId,
         );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "acceptConnectionRequest",
+        userId: ctx.session.user.id,
+        connectionId: input.connectionId,
+      });
     }),
 
   rejectConnectionRequest: protectedProcedure
@@ -43,10 +46,11 @@ export const connectionRouter = router({
           ctx.session.user.id,
           input.connectionId,
         );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "rejectConnectionRequest",
+        userId: ctx.session.user.id,
+        connectionId: input.connectionId,
+      });
     }),
 
   removeConnection: protectedProcedure
@@ -56,10 +60,11 @@ export const connectionRouter = router({
         ctx.session.user.id,
         input.otherUserId,
       );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "removeConnection",
+        userId: ctx.session.user.id,
+        otherUserId: input.otherUserId,
+      });
     }),
 
   checkConnectionStatus: protectedProcedure
@@ -70,10 +75,11 @@ export const connectionRouter = router({
           ctx.session.user.id,
           input.otherUserId,
         );
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "checkConnectionStatus",
+        userId: ctx.session.user.id,
+        otherUserId: input.otherUserId,
+      });
     }),
 
   getPendingRequestsReceived: protectedProcedure.query(async ({ ctx }) => {
@@ -81,29 +87,29 @@ export const connectionRouter = router({
       await container.userConnectionService.getPendingRequestsReceived(
         ctx.session.user.id,
       );
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
+    return handleRouterResult(result, {
+      operation: "getPendingRequestsReceived",
+      userId: ctx.session.user.id,
+    });
   }),
 
   getAcceptedConnections: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.userConnectionService.getAcceptedConnections(
       ctx.session.user.id,
     );
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
+    return handleRouterResult(result, {
+      operation: "getAcceptedConnections",
+      userId: ctx.session.user.id,
+    });
   }),
 
   getPendingRequestsSent: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.userConnectionService.getPendingRequestsSent(
       ctx.session.user.id,
     );
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
+    return handleRouterResult(result, {
+      operation: "getPendingRequestsSent",
+      userId: ctx.session.user.id,
+    });
   }),
 });

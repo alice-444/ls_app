@@ -3,6 +3,7 @@ import { router, protectedProcedure, publicProcedure } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { updatePublicProfileSchema } from "@ls-app/shared";
 import type { UpdatePublicProfileInput } from "@ls-app/shared";
+import { handleRouterResult } from "../shared/router-helpers";
 
 export const accountSettingsRouter = router({
   updateProfile: protectedProcedure
@@ -13,11 +14,10 @@ export const accountSettingsRouter = router({
         input as UpdatePublicProfileInput,
       );
 
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "updateProfile",
+        userId: ctx.session.user.id,
+      });
     }),
 
   changePassword: protectedProcedure
@@ -34,11 +34,10 @@ export const accountSettingsRouter = router({
         input,
       );
 
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "changePassword",
+        userId: ctx.session.user.id,
+      });
     }),
 
   requestEmailChange: protectedProcedure
@@ -54,11 +53,10 @@ export const accountSettingsRouter = router({
         input,
       );
 
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "requestEmailChange",
+        userId: ctx.session.user.id,
+      });
     }),
 
   verifyEmailChange: publicProcedure
@@ -72,11 +70,9 @@ export const accountSettingsRouter = router({
         input.token,
       );
 
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "verifyEmailChange",
+      });
     }),
 
   requestPasswordReset: publicProcedure
@@ -89,11 +85,10 @@ export const accountSettingsRouter = router({
       const result =
         await container.forgotPasswordService.requestPasswordReset(input);
 
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "requestPasswordReset",
+        email: input.email,
+      });
     }),
 
   resetPassword: publicProcedure
@@ -108,11 +103,10 @@ export const accountSettingsRouter = router({
     .mutation(async ({ input }) => {
       const result = await container.forgotPasswordService.resetPassword(input);
 
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "resetPassword",
+        email: input.email,
+      });
     }),
 
   checkCanDeleteAccount: protectedProcedure.query(async ({ ctx }) => {
@@ -121,11 +115,10 @@ export const accountSettingsRouter = router({
         ctx.session.user.id,
       );
 
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-
-    return result.data;
+    return handleRouterResult(result, {
+      operation: "checkCanDeleteAccount",
+      userId: ctx.session.user.id,
+    });
   }),
 
   deleteAccount: protectedProcedure
@@ -142,10 +135,9 @@ export const accountSettingsRouter = router({
           input.reason,
         );
 
-      if (!result.ok) {
-        throw new Error(result.error);
-      }
-
-      return { success: true };
+      return handleRouterResult(result, {
+        operation: "deleteAccount",
+        userId: ctx.session.user.id,
+      });
     }),
 });
