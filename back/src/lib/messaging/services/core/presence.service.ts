@@ -20,9 +20,25 @@ export class PresenceService {
       where: { id: appUser.id },
       data: {
         isOnline,
-        lastSeen: isOnline ? new Date() : undefined,
+        lastSeen: new Date(),
       },
     });
+  }
+
+  /**
+   * Resets online status for all users.
+   * Useful during server startup to clear "stuck" online users.
+   */
+  async resetAllPresence(): Promise<void> {
+    try {
+      await prisma.user.updateMany({
+        where: { isOnline: true },
+        data: { isOnline: false },
+      });
+      console.log("Successfully reset all user presence status on startup.");
+    } catch (error) {
+      console.error("Failed to reset user presence on startup:", error);
+    }
   }
 
   async getUserPresence(userId: string): Promise<UserPresence | null> {
@@ -52,10 +68,10 @@ export class PresenceService {
   }
 
   async getMultipleUsersPresence(
-    userIds: string[]
+    userIds: string[],
   ): Promise<Map<string, UserPresence>> {
     const appUsers = await Promise.all(
-      userIds.map((userId) => this.appUserRepository.findByUserId(userId))
+      userIds.map((userId) => this.appUserRepository.findByUserId(userId)),
     );
 
     const presenceMap = new Map<string, UserPresence>();

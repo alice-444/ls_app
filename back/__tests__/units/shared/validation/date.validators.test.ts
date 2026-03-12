@@ -3,7 +3,7 @@ import {
   isMinimumTomorrow,
   getMinimumDate,
   formatDateForInput,
-} from "../../../../src/shared/validation/date.validators";
+} from "@ls-app/shared";
 
 describe("isMinimumTomorrow", () => {
   beforeEach(() => {
