@@ -79,6 +79,8 @@ export class PrismaConversationRepository implements IConversationRepository {
       id: conversation.id,
       participant1Id: conversation.participant1Id,
       participant2Id: conversation.participant2Id,
+      workshopId:
+        "workshopId" in conversation ? (conversation.workshopId ?? null) : null,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     };

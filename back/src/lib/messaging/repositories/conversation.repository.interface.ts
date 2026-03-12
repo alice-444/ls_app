@@ -2,6 +2,7 @@ export interface ConversationEntity {
   id: string;
   participant1Id: string;
   participant2Id: string;
+  workshopId?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

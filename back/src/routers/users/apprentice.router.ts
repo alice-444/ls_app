@@ -5,6 +5,55 @@ import { z } from "zod";
 import { requestIdSchema, apprenticeUserIdSchema } from "@ls-app/shared";
 
 export const apprenticeRouter = router({
+  getDashboardData: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    try {
+      const [
+        requestsResult,
+        workshopsResult,
+        historyResult,
+        balanceResult,
+        connectionsResult,
+        eligibleFeedbackResult,
+      ] = await Promise.all([
+        container.workshopRequestService.getApprenticeRequests(userId),
+        container.workshopService.getConfirmedWorkshopsForApprentice(userId),
+        container.workshopService.getWorkshopHistoryForApprentice(userId),
+        container.creditService.getBalance(userId),
+        container.userConnectionService.getAcceptedConnections(userId),
+        container.workshopFeedbackService.getEligibleWorkshopsForFeedback(
+          userId,
+        ),
+      ]);
+
+      if (!requestsResult.ok) throw new Error(requestsResult.error);
+      if (!workshopsResult.ok) throw new Error(workshopsResult.error);
+      if (!historyResult.ok) throw new Error(historyResult.error);
+      if (!balanceResult.ok) throw new Error(balanceResult.error);
+      if (!connectionsResult.ok) throw new Error(connectionsResult.error);
+      if (!eligibleFeedbackResult.ok)
+        throw new Error(eligibleFeedbackResult.error);
+
+      return {
+        workshopRequests: requestsResult.data,
+        confirmedWorkshops: workshopsResult.data,
+        workshopHistory: historyResult.data,
+        creditBalance: balanceResult.data,
+        acceptedConnections: connectionsResult.data,
+        eligibleFeedbackWorkshops: eligibleFeedbackResult.data,
+      };
+    } catch (error) {
+      return handleRouterResult(
+        { ok: false, error: (error as Error).message } as any,
+        {
+          operation: "getApprenticeDashboardData",
+          userId,
+        },
+      );
+    }
+  }),
+
   getMyRequests: protectedProcedure.query(async ({ ctx }) =>
     unwrapResult(
       await container.workshopRequestService.getApprenticeRequests(
