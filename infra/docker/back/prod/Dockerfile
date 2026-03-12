@@ -8,6 +8,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
 COPY back/package.json ./back/
 COPY shared/package.json ./shared/
+COPY shared/tsconfig.json ./shared/
 COPY shared/src ./shared/src
 
 RUN pnpm install --frozen-lockfile
