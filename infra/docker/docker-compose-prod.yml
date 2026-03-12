@@ -55,7 +55,7 @@ services:
       - "traefik.http.services.backend.loadbalancer.server.port=4500"
       - "traefik.docker.network=vps-mds"
 
-    traefik:
+  traefik:
     image: traefik:v3.2.1
     container_name: traefik_reverse_proxy
     command:
