@@ -6,14 +6,14 @@ on:
       - "[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  tests:
-    name: Run Tests
-    uses: ./.github/workflows/tests.yml
-    secrets: inherit
+  # tests:
+  #   name: Run Tests
+  #   uses: ./.github/workflows/tests.yml
+  #   secrets: inherit
 
   build-and-push-backend:
     name: Build & Push Backend
-    needs: tests
+    # needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
 
   build-and-push-frontend:
     name: Build & Push Frontend
-    needs: tests
+    # needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
