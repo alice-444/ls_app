@@ -17,7 +17,9 @@ import {
   Settings,
   ChevronDown,
   Flag,
-  LifeBuoy
+  LifeBuoy,
+  Plus,
+  Send
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
@@ -110,13 +112,21 @@ export default function AdminNotificationsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Vos Notifications Admin</h1>
           <p className="text-muted-foreground">Alertes système et actions requises.</p>
         </div>
-        <Button 
-          variant="outline" 
-          onClick={() => markAllAsReadMutation.mutate(undefined, { onSuccess: () => { refetchNotifications(); refetchUnreadCount(); } })}
-          disabled={!unreadCount?.count}
-        >
-          <CheckCircle className="h-4 w-4 mr-2" /> Tout marquer comme lu
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => router.push("/admin/notifications/bulk")}
+          >
+            <Users className="h-4 w-4 mr-2" /> Segmentation & Bulk
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => markAllAsReadMutation.mutate(undefined, { onSuccess: () => { refetchNotifications(); refetchUnreadCount(); } })}
+            disabled={!unreadCount?.count}
+          >
+            <CheckCircle className="h-4 w-4 mr-2" /> Tout marquer comme lu
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-2">

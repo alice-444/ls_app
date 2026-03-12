@@ -193,9 +193,9 @@ sequenceDiagram
 - **credits** — Crédits, transactions.
 - **user** — Données utilisateur.
 - **accountSettings** — Paramètres de compte.
-- **community** — Hub communauté : `getHubData`, `voteInPoll`, `proposeEvent`, `proposeDeal`, `proposeSpot`, `getPendingProposals`, `reviewProposal` (admin).
-- **admin** — Administration : stats, file d’onboarding (approbation/rejet), audit logs, modération communauté.
-- **support** — Demandes de support.
+- **community** — Hub communauté : `getHubData`, `voteInPoll`, `proposeEvent`, `proposeDeal`, `proposeSpot`, `getPendingProposals`, `reviewProposal`, `bulkReviewProposals`, `createDeal`, `createEvent`, `createSpot`, `createPoll` (admin).
+- **admin** — Administration : stats, file d’onboarding (approbation/rejet), audit logs, modération communauté, `getUser360`, `updateUserCredits`, `bulkApproveUsers`, `bulkRejectUsers`, `sendBulkNotification`.
+- **support** — Demandes de support (création, mise à jour, suivi threadé via `addMessage`).
 
 Procédures protégées : utilisation de la session Better Auth (ctx.session). `protectedProcedure` (session requise), `mentorProcedure` (rôle MENTOR + statut ACTIVE), `adminProcedure` (rôle ADMIN + statut ACTIVE, avec audit log des mutations). Health check et données publiques en `publicProcedure`.
 

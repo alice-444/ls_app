@@ -1,4 +1,5 @@
-import type { support_request } from "@/lib/prisma";
+import type { support_request, PrismaClient } from "@/lib/prisma";
+import { SupportRequestDetailed, SupportMessage } from "@ls-app/shared";
 import { SupportRequestStatus } from "../types/support-types";
 import {
   CreateSupportRequestCommand,
@@ -11,12 +12,15 @@ import { renderEmailTemplate } from "../../email/utils/render-email";
 import { SupportRequestConfirmation } from "../../email/templates/SupportRequestConfirmation";
 import * as React from "react";
 import { logger } from "../../common/logger";
+import { IAuditLogService } from "../../common/audit-log.service";
 
 export class SupportRequestService implements ISupportRequestService {
   constructor(
+    private readonly prisma: PrismaClient,
     private readonly supportRequestRepository: ISupportRequestRepository,
     private readonly notificationService: INotificationService,
     private readonly emailService?: IEmailService,
+    private readonly auditLogService?: IAuditLogService,
   ) {}
 
   async createSupportRequest(
@@ -30,6 +34,14 @@ export class SupportRequestService implements ISupportRequestService {
       problemType: command.problemType,
       attachments: command.attachments,
       status: SupportRequestStatus.PENDING,
+    });
+
+    // Add initial message to the thread
+    await this.addMessage({
+      requestId: request.id,
+      content: command.description,
+      senderId: command.userId,
+      isAdmin: false,
     });
 
     // Notify admins
@@ -102,8 +114,20 @@ export class SupportRequestService implements ISupportRequestService {
   async updateSupportRequestStatus(
     requestId: string,
     status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED",
+    adminId?: string,
   ): Promise<support_request> {
-    return this.supportRequestRepository.update(requestId, { status });
+    const request = await this.supportRequestRepository.update(requestId, { status });
+
+    if (adminId && this.auditLogService) {
+      await this.auditLogService.record({
+        adminId,
+        action: "UPDATE_SUPPORT_STATUS",
+        targetId: request.userId || undefined,
+        details: { requestId, status, subject: request.subject },
+      });
+    }
+
+    return request;
   }
 
   async getSupportRequestById(
@@ -125,5 +149,88 @@ export class SupportRequestService implements ISupportRequestService {
         },
       })
       .then((results) => results[0] || null);
+  }
+
+  async getMyRequests(userId: string): Promise<support_request[]> {
+    return this.supportRequestRepository.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async getSupportRequestDetailed(requestId: string): Promise<SupportRequestDetailed | null> {
+    const request = await this.prisma.support_request.findUnique({
+      where: { id: requestId },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true }
+        },
+        messages: {
+          include: {
+            sender: {
+              select: { id: true, name: true, image: true }
+            }
+          },
+          orderBy: { createdAt: 'asc' }
+        }
+      }
+    });
+
+    if (!request) return null;
+
+    return {
+      ...request,
+      status: request.status as any,
+      messages: request.messages.map((m) => ({
+        ...m,
+        isAdmin: m.isAdmin
+      }))
+    };
+  }
+
+  async addMessage(params: {
+    requestId: string;
+    content: string;
+    senderId?: string;
+    isAdmin?: boolean;
+  }): Promise<SupportMessage> {
+    const message = await this.prisma.support_message.create({
+      data: {
+        requestId: params.requestId,
+        content: params.content,
+        senderId: params.senderId,
+        isAdmin: params.isAdmin ?? false,
+      },
+      include: {
+        sender: {
+          select: { id: true, name: true, image: true }
+        }
+      }
+    });
+
+    const request = await this.getSupportRequestById(params.requestId);
+
+    // Notify user if admin replied
+    if (params.isAdmin) {
+      if (request?.userId) {
+        await this.notificationService.createNotification(request.userId, {
+          type: "SUPPORT_REPLY",
+          title: "Nouvelle réponse du support",
+          message: `L'administration a répondu à votre demande : ${request.subject}`,
+          actionUrl: `/help/support/${request.id}`,
+        }, params.senderId);
+      }
+
+      if (params.senderId && this.auditLogService) {
+        await this.auditLogService.record({
+          adminId: params.senderId,
+          action: "SUPPORT_ADMIN_REPLY",
+          targetId: request?.userId || undefined,
+          details: { requestId: params.requestId, messageId: message.id },
+        });
+      }
+    }
+
+    return message as any;
   }
 }

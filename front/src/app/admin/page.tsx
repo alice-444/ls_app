@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { AdminBIStats } from "@ls-app/shared";
 
 export default function AdminDashboardPage() {
   const { data: stats, isLoading: isStatsLoading } = trpc.admin.getStats.useQuery();
@@ -152,7 +153,7 @@ export default function AdminDashboardPage() {
               <>
                 <AreaChart
                   className="h-40"
-                  data={biStats?.credits.transactionsOverTime ?? []}
+                  data={(biStats as AdminBIStats)?.credits.transactionsOverTime ?? []}
                   index="date"
                   categories={["amount"]}
                   colors={["amber"]}

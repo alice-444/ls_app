@@ -199,7 +199,7 @@ export class WorkshopRequestNotificationService implements IWorkshopRequestNotif
           type: "workshop",
           title: "Demande d'atelier annulée",
           message: `${mentorName} a annulé votre demande pour l'atelier "${requestTitle}".`,
-          actionUrl: `/workshop-room`,
+          actionUrl: `/catalog`,
         },
         userId,
       );
@@ -369,7 +369,7 @@ export class WorkshopRequestNotificationService implements IWorkshopRequestNotif
         type: "workshop",
         title: "Demande d'atelier rejetée",
         message,
-        actionUrl: `/workshop-room`,
+        actionUrl: `/catalog`,
       },
       userId,
     );
@@ -397,7 +397,7 @@ export class WorkshopRequestNotificationService implements IWorkshopRequestNotif
           mentorName,
           workshopTitle: requestTitle,
           reason,
-          workshopsUrl: `${APP_URL}/workshop-room`,
+          workshopsUrl: `${APP_URL}/catalog`,
         }),
       );
 

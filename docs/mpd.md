@@ -46,6 +46,7 @@ erDiagram
   conversation ||--o{ conversation_pin : "conversationId"
   message ||--o{ message_reaction : "messageId"
   community_poll ||--o{ poll_vote : "pollId"
+  support_request ||--o{ support_message : has
 
   account {
     string id PK
@@ -223,6 +224,20 @@ Index : `userId`
 | createdAt, updatedAt | DateTime | |              |
 
 Index : `userId`
+
+---
+
+**support_message**
+| Colonne     | Type    | Contraintes | Description        |
+| ----------- | ------- | ----------- | ------------------ |
+| id          | String  | PK          | CUID               |
+| requestId   | String  | FK → support_request |             |
+| senderId    | String? | FK → user   |                    |
+| content     | String  |             |                    |
+| isAdmin     | Boolean | DEFAULT false |                  |
+| createdAt, updatedAt | DateTime | |              |
+
+Index : `requestId`, `senderId`
 
 ---
 

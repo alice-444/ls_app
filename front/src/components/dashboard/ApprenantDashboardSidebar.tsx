@@ -125,9 +125,9 @@ function TitleCard({
           <Button
             variant="secondary"
             className="group w-full min-w-0 bg-white/95 backdrop-blur-md text-[#FF8C42] font-semibold rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm border-0 shadow-md transition-all duration-300 hover:bg-white hover:shadow-[0_0_24px_rgba(255,140,66,0.35)] hover:ring-2 hover:ring-white/60 hover:ring-offset-2 hover:ring-offset-transparent dark:bg-white/90 dark:hover:bg-white dark:hover:shadow-[0_0_28px_rgba(255,140,66,0.4)] dark:hover:ring-white/70"
-            onClick={() => router.push("/workshop-room")}
+            onClick={() => router.push("/catalog")}
           >
-            Accéder à l&apos;e-Atelier
+            Accéder au Catalogue
             <ArrowRight className="h-4 w-4 ml-2 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
           <Button
@@ -312,9 +312,9 @@ function WorkshopHistoryCard({
             variant="ctaOutline"
             size="cta"
             className="w-full"
-            onClick={() => router.push("/workshop-room")}
+            onClick={() => router.push("/catalog")}
           >
-            Accéder à l&apos;e-Atelier
+            Accéder au Catalogue
             <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
           </Button>
         </div>

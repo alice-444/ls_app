@@ -211,7 +211,7 @@ export function ApprenantDashboard({
                     <Button
                       variant="link"
                       className="text-brand font-bold mt-2"
-                      onClick={() => router.push("/workshop-room")}
+                      onClick={() => router.push("/catalog")}
                     >
                       Parcourir le catalogue
                     </Button>

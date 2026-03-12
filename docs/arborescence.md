@@ -178,6 +178,8 @@ shared/
 │   │   ├── date.validators.ts
 │   │   ├── support.schemas.ts
 │   │   ├── community.schemas.ts
+│   │   ├── admin.schemas.ts
+│   │   ├── notification.schemas.ts
 │   │   └── common.schemas.ts
 │   ├── types/               # Types TS partagés
 │   │   ├── user.ts

@@ -10,8 +10,8 @@ vi.mock("@/lib/di/container", () => ({
   container: {
     supportRequestService: {
       getAdminSupportQueue: (params: any) => mockGetAdminSupportQueue(params),
-      updateSupportRequestStatus: (requestId: string, status: any) =>
-        mockUpdateStatus(requestId, status),
+      updateSupportRequestStatus: (requestId: string, status: any, adminId?: string) =>
+        mockUpdateStatus(requestId, status, adminId),
       getSupportRequestById: (requestId: string) =>
         mockGetRequestById(requestId),
     },
@@ -109,6 +109,7 @@ describe("Support Router TRPC", () => {
       expect(mockUpdateStatus).toHaveBeenCalledWith(
         "creq15720000010mscuid1234",
         "RESOLVED",
+        "admin-1"
       );
     });
 

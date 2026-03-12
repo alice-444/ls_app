@@ -1,3 +1,4 @@
+import type { BulkNotificationInput } from "@ls-app/shared";
 import type { INotificationService } from "./notification.service.interface";
 import type { INotificationRepository } from "../repositories/notification.repository.interface";
 import type { Result } from "../../common/types";
@@ -277,6 +278,65 @@ export class NotificationService implements INotificationService {
         (error as Error).message || "Failed to delete notification",
         500
       );
+    }
+  }
+
+  async sendBulkNotifications(
+    input: BulkNotificationInput
+  ): Promise<Result<{ count: number }>> {
+    try {
+      const { criteria, title, message, type, actionUrl } = input;
+
+      const where: any = {};
+      if (criteria.role) where.role = criteria.role;
+      if (criteria.status) where.status = criteria.status;
+      if (criteria.isPublished !== undefined) where.isPublished = criteria.isPublished;
+      
+      if (criteria.hasPublishedWorkshop !== undefined) {
+        where.workshops_as_mentor = criteria.hasPublishedWorkshop 
+          ? { some: { status: 'PUBLISHED' } }
+          : { none: { status: 'PUBLISHED' } };
+      }
+
+      if (criteria.minCredits !== undefined || criteria.maxCredits !== undefined) {
+        where.creditBalance = {};
+        if (criteria.minCredits !== undefined) where.creditBalance.gte = criteria.minCredits;
+        if (criteria.maxCredits !== undefined) where.creditBalance.lte = criteria.maxCredits;
+      }
+
+      const users = await this.prisma.user.findMany({
+        where,
+        select: { id: true, userId: true }
+      });
+
+      const notificationData = users.filter(u => u.userId).map(u => ({
+        id: generateInternalId(),
+        userId: u.id,
+        type,
+        title,
+        message,
+        actionUrl: actionUrl || null,
+        isRead: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }));
+
+      if (notificationData.length > 0) {
+        await this.prisma.notification.createMany({
+          data: notificationData
+        });
+
+        if (notificationData.length < 100) {
+          for (const notif of notificationData) {
+            this.eventEmitter.emitNewNotification(notif.userId, notif as any);
+          }
+        }
+      }
+
+      return success({ count: notificationData.length });
+    } catch (error) {
+      logger.error("Failed to send bulk notifications", error, { input });
+      return failure("Failed to send bulk notifications", 500);
     }
   }
 }
