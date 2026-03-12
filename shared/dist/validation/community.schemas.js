@@ -27,7 +27,10 @@ exports.communityEventSchema = zod_1.z.object({
 });
 exports.communityPollSchema = zod_1.z.object({
     question: zod_1.z.string().min(10).max(200),
-    options: zod_1.z.array(zod_1.z.object({
+    options: zod_1.z
+        .array(zod_1.z.object({
         label: zod_1.z.string().min(1).max(100),
-    })).min(2).max(10),
+    }))
+        .min(2)
+        .max(10),
 });

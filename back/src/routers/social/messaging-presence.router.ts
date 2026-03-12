@@ -1,13 +1,14 @@
 import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { z } from "zod";
+import { userIdSchema } from "@ls-app/shared";
 
 export const messagingPresenceRouter = router({
   getUserPresence: protectedProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(userIdSchema)
     .query(async ({ ctx, input }) => {
       const result = await container.presenceService.getUserPresence(
-        input.userId
+        input.userId,
       );
       if (!result) {
         throw new Error("User not found");

@@ -8,7 +8,7 @@ exports.signUpInputSchema = zod_1.z.object({
     password: zod_1.z
         .string()
         .min(profile_constants_1.PROFILE_VALIDATION.password.minLength, profile_constants_1.PROFILE_ERROR_MESSAGES.password.minLength)
-        .regex(/[0-9]/, profile_constants_1.PROFILE_ERROR_MESSAGES.password.requireNumber),
+        .regex(/\d/, profile_constants_1.PROFILE_ERROR_MESSAGES.password.requireNumber),
     name: zod_1.z
         .string()
         .min(profile_constants_1.PROFILE_VALIDATION.name.min, profile_constants_1.PROFILE_ERROR_MESSAGES.name.min)
