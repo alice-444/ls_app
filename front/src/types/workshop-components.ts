@@ -4,7 +4,7 @@ import type {
   WorkshopBase,
   WorkshopDetailed,
   WorkshopRequest,
-} from "./workshop";
+} from "@ls-app/shared";
 
 // ============================================================================
 // Daily Video Call Types

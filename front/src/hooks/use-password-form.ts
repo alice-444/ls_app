@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { PasswordValidator } from "@/shared/validation/password.validators";
+import { PasswordValidator } from "@ls-app/shared";
 
 interface UsePasswordFormOptions {
   onSubmit: (data: {
@@ -28,7 +28,7 @@ export function usePasswordForm({
 
     const matchResult = PasswordValidator.validateMatch(
       newPassword,
-      confirmPassword
+      confirmPassword,
     );
     if (!matchResult.valid) {
       toast.error(matchResult.error);
@@ -52,7 +52,7 @@ export function usePasswordForm({
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      // Error handling is done in the mutation
+      console.error("Password form submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
