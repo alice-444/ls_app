@@ -15,19 +15,26 @@ vi.mock("../../../../../src/lib/common/logger", () => ({
 }));
 
 describe("isValidTimeFormat", () => {
-  it.each(["00:00", "09:30", "12:00", "23:59", "0:00", "9:05"])(
+  it.each(["00:00", "09:30", "12:00", "23:59"])(
     "accepts valid time %s",
     (time) => {
       expect(isValidTimeFormat(time)).toBe(true);
-    }
+    },
   );
 
-  it.each(["25:00", "24:00", "12:60", "abc", "", "12:5a", "12:345"])(
-    "rejects invalid time %s",
-    (time) => {
-      expect(isValidTimeFormat(time)).toBe(false);
-    }
-  );
+  it.each([
+    "25:00",
+    "24:00",
+    "12:60",
+    "abc",
+    "",
+    "12:5a",
+    "12:345",
+    "0:00",
+    "9:05",
+  ])("rejects invalid time %s", (time) => {
+    expect(isValidTimeFormat(time)).toBe(false);
+  });
 });
 
 describe("sanitizeLocation", () => {
@@ -152,31 +159,34 @@ describe("isWorkshopValidForConflictCheck", () => {
 
   it("returns false when status is CANCELLED", () => {
     expect(
-      isWorkshopValidForConflictCheck({ ...validWorkshop, status: "CANCELLED" })
+      isWorkshopValidForConflictCheck({
+        ...validWorkshop,
+        status: "CANCELLED",
+      }),
     ).toBe(false);
   });
 
   it("returns false when date is null", () => {
     expect(
-      isWorkshopValidForConflictCheck({ ...validWorkshop, date: null })
+      isWorkshopValidForConflictCheck({ ...validWorkshop, date: null }),
     ).toBe(false);
   });
 
   it("returns false when time is null", () => {
     expect(
-      isWorkshopValidForConflictCheck({ ...validWorkshop, time: null })
+      isWorkshopValidForConflictCheck({ ...validWorkshop, time: null }),
     ).toBe(false);
   });
 
   it("returns false when duration is null", () => {
     expect(
-      isWorkshopValidForConflictCheck({ ...validWorkshop, duration: null })
+      isWorkshopValidForConflictCheck({ ...validWorkshop, duration: null }),
     ).toBe(false);
   });
 
   it("returns true when excludeWorkshopId does not match", () => {
     expect(isWorkshopValidForConflictCheck(validWorkshop, "ws-other")).toBe(
-      true
+      true,
     );
   });
 });

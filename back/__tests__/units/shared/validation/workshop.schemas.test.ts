@@ -8,7 +8,7 @@ import {
   deleteWorkshopSchema,
 } from "@ls-app/shared";
 
-const VALID_UUID = "550e8400-e29b-41d4-a716-446655440000";
+const VALID_CUID = "cktvw5720000010mscuid1234";
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -106,7 +106,7 @@ describe("workshopFieldSchemas.time", () => {
   it("accepts valid time formats", () => {
     expect(schema.safeParse("09:30").success).toBe(true);
     expect(schema.safeParse("23:59").success).toBe(true);
-    expect(schema.safeParse("0:00").success).toBe(true);
+    expect(schema.safeParse("00:00").success).toBe(true);
   });
 
   it("rejects invalid time formats", () => {
@@ -301,23 +301,23 @@ describe("createWorkshopBackendSchema", () => {
 // ─── updateWorkshopBackendSchema ────────────────────────────────────
 
 describe("updateWorkshopBackendSchema", () => {
-  it("requires a valid UUID for workshopId", () => {
+  it("requires a valid CUID for workshopId", () => {
     const result = updateWorkshopBackendSchema.safeParse({
-      workshopId: "not-a-uuid",
+      workshopId: "not-a-cuid",
     });
     expect(result.success).toBe(false);
   });
 
   it("accepts workshopId only (all other fields optional)", () => {
     const result = updateWorkshopBackendSchema.safeParse({
-      workshopId: VALID_UUID,
+      workshopId: VALID_CUID,
     });
     expect(result.success).toBe(true);
   });
 
   it("accepts partial update with valid fields", () => {
     const result = updateWorkshopBackendSchema.safeParse({
-      workshopId: VALID_UUID,
+      workshopId: VALID_CUID,
       title: "Updated Title",
       duration: 120,
     });
@@ -326,7 +326,7 @@ describe("updateWorkshopBackendSchema", () => {
 
   it("rejects invalid field values in update", () => {
     const result = updateWorkshopBackendSchema.safeParse({
-      workshopId: VALID_UUID,
+      workshopId: VALID_CUID,
       duration: 5,
     });
     expect(result.success).toBe(false);
@@ -334,7 +334,7 @@ describe("updateWorkshopBackendSchema", () => {
 
   it("accepts nullable fields as null", () => {
     const result = updateWorkshopBackendSchema.safeParse({
-      workshopId: VALID_UUID,
+      workshopId: VALID_CUID,
       location: null,
       creditCost: null,
     });
@@ -345,13 +345,13 @@ describe("updateWorkshopBackendSchema", () => {
 // ─── Action schemas (publish / unpublish / delete) ──────────────────
 
 describe("publishWorkshopSchema", () => {
-  it("accepts a valid UUID", () => {
+  it("accepts a valid CUID", () => {
     expect(
-      publishWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success,
+      publishWorkshopSchema.safeParse({ workshopId: VALID_CUID }).success,
     ).toBe(true);
   });
 
-  it("rejects a non-UUID string", () => {
+  it("rejects a non-CUID string", () => {
     expect(publishWorkshopSchema.safeParse({ workshopId: "abc" }).success).toBe(
       false,
     );
@@ -363,13 +363,13 @@ describe("publishWorkshopSchema", () => {
 });
 
 describe("unpublishWorkshopSchema", () => {
-  it("accepts a valid UUID", () => {
+  it("accepts a valid CUID", () => {
     expect(
-      unpublishWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success,
+      unpublishWorkshopSchema.safeParse({ workshopId: VALID_CUID }).success,
     ).toBe(true);
   });
 
-  it("rejects a non-UUID string", () => {
+  it("rejects a non-CUID string", () => {
     expect(
       unpublishWorkshopSchema.safeParse({ workshopId: "not-valid" }).success,
     ).toBe(false);
@@ -377,13 +377,13 @@ describe("unpublishWorkshopSchema", () => {
 });
 
 describe("deleteWorkshopSchema", () => {
-  it("accepts a valid UUID", () => {
+  it("accepts a valid CUID", () => {
     expect(
-      deleteWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success,
+      deleteWorkshopSchema.safeParse({ workshopId: VALID_CUID }).success,
     ).toBe(true);
   });
 
-  it("rejects a non-UUID string", () => {
+  it("rejects a non-CUID string", () => {
     expect(deleteWorkshopSchema.safeParse({ workshopId: "123" }).success).toBe(
       false,
     );

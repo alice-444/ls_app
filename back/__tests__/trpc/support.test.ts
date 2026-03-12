@@ -10,8 +10,10 @@ vi.mock("@/lib/di/container", () => ({
   container: {
     supportRequestService: {
       getAdminSupportQueue: (params: any) => mockGetAdminSupportQueue(params),
-      updateSupportRequestStatus: (requestId: string, status: any) => mockUpdateStatus(requestId, status),
-      getSupportRequestById: (requestId: string) => mockGetRequestById(requestId),
+      updateSupportRequestStatus: (requestId: string, status: any) =>
+        mockUpdateStatus(requestId, status),
+      getSupportRequestById: (requestId: string) =>
+        mockGetRequestById(requestId),
     },
     auditLogService: {
       record: vi.fn(),
@@ -36,70 +38,123 @@ describe("Support Router TRPC", () => {
 
   describe("getAdminSupportQueue", () => {
     it("throws FORBIDDEN when user is not admin", async () => {
-      (prisma.user.findUnique as any).mockResolvedValue({ id: "user-1", role: "USER", status: "ACTIVE" });
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "user-1",
+        role: "USER",
+        status: "ACTIVE",
+      });
       const ctx = createProtectedContext({ userId: "user-1" });
       const caller = createCaller(ctx);
-      
-      await expect(caller.support.getAdminSupportQueue()).rejects.toThrow(TRPCError);
-      await expect(caller.support.getAdminSupportQueue()).rejects.toMatchObject({
-        code: "FORBIDDEN",
-      });
+
+      await expect(caller.support.getAdminSupportQueue()).rejects.toThrow(
+        TRPCError,
+      );
+      await expect(caller.support.getAdminSupportQueue()).rejects.toMatchObject(
+        {
+          code: "FORBIDDEN",
+        },
+      );
     });
 
     it("returns support requests when user is admin", async () => {
-      (prisma.user.findUnique as any).mockResolvedValue({ id: "admin-1", role: "ADMIN", status: "ACTIVE" });
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "admin-1",
+        role: "ADMIN",
+        status: "ACTIVE",
+      });
       const mockRequests = [
-        { id: "req-1", subject: "Help", status: "PENDING" },
+        { id: "creq15720000010mscuid1234", subject: "Help", status: "PENDING" },
         { id: "req-2", subject: "Error", status: "IN_PROGRESS" },
       ];
       mockGetAdminSupportQueue.mockResolvedValue(mockRequests);
-      
+
       const ctx = createProtectedContext({ userId: "admin-1" });
       const caller = createCaller(ctx);
-      
-      const result = await caller.support.getAdminSupportQueue({ status: "PENDING" });
-      
+
+      const result = await caller.support.getAdminSupportQueue({
+        status: "PENDING",
+      });
+
       expect(result).toEqual(mockRequests);
-      expect(mockGetAdminSupportQueue).toHaveBeenCalledWith(expect.objectContaining({ status: "PENDING" }));
+      expect(mockGetAdminSupportQueue).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "PENDING" }),
+      );
     });
   });
 
   describe("updateStatus", () => {
     it("updates status when user is admin", async () => {
-      (prisma.user.findUnique as any).mockResolvedValue({ id: "admin-1", role: "ADMIN", status: "ACTIVE" });
-      mockUpdateStatus.mockResolvedValue({ id: "req-1", status: "RESOLVED" });
-      
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "admin-1",
+        role: "ADMIN",
+        status: "ACTIVE",
+      });
+      mockUpdateStatus.mockResolvedValue({
+        id: "creq15720000010mscuid1234",
+        status: "RESOLVED",
+      });
+
       const ctx = createProtectedContext({ userId: "admin-1" });
       const caller = createCaller(ctx);
-      
-      const result = await caller.support.updateStatus({ requestId: "req-1", status: "RESOLVED" });
-      
-      expect(result).toEqual({ id: "req-1", status: "RESOLVED" });
-      expect(mockUpdateStatus).toHaveBeenCalledWith("req-1", "RESOLVED");
+
+      const result = await caller.support.updateStatus({
+        requestId: "creq15720000010mscuid1234",
+        status: "RESOLVED",
+      });
+
+      expect(result).toEqual({
+        id: "creq15720000010mscuid1234",
+        status: "RESOLVED",
+      });
+      expect(mockUpdateStatus).toHaveBeenCalledWith(
+        "creq15720000010mscuid1234",
+        "RESOLVED",
+      );
     });
 
     it("throws FORBIDDEN when user is not admin", async () => {
-      (prisma.user.findUnique as any).mockResolvedValue({ id: "user-1", role: "USER", status: "ACTIVE" });
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "user-1",
+        role: "USER",
+        status: "ACTIVE",
+      });
       const ctx = createProtectedContext({ userId: "user-1" });
       const caller = createCaller(ctx);
-      
-      await expect(caller.support.updateStatus({ requestId: "req-1", status: "RESOLVED" })).rejects.toThrow(TRPCError);
+
+      await expect(
+        caller.support.updateStatus({
+          requestId: "creq15720000010mscuid1234",
+          status: "RESOLVED",
+        }),
+      ).rejects.toThrow(TRPCError);
     });
   });
 
   describe("getRequestById", () => {
     it("returns request detail when user is admin", async () => {
-      (prisma.user.findUnique as any).mockResolvedValue({ id: "admin-1", role: "ADMIN", status: "ACTIVE" });
-      const mockRequest = { id: "req-1", subject: "Help", description: "I need help" };
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "admin-1",
+        role: "ADMIN",
+        status: "ACTIVE",
+      });
+      const mockRequest = {
+        id: "creq15720000010mscuid1234",
+        subject: "Help",
+        description: "I need help",
+      };
       mockGetRequestById.mockResolvedValue(mockRequest);
-      
+
       const ctx = createProtectedContext({ userId: "admin-1" });
       const caller = createCaller(ctx);
-      
-      const result = await caller.support.getRequestById({ requestId: "req-1" });
-      
+
+      const result = await caller.support.getRequestById({
+        requestId: "creq15720000010mscuid1234",
+      });
+
       expect(result).toEqual(mockRequest);
-      expect(mockGetRequestById).toHaveBeenCalledWith("req-1");
+      expect(mockGetRequestById).toHaveBeenCalledWith(
+        "creq15720000010mscuid1234",
+      );
     });
   });
 });
