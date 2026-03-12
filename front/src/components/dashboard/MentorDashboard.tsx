@@ -29,7 +29,7 @@ import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopR
 import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
-import type { WorkshopDetailed, WorkshopBase } from "@/types/workshop";
+import type { WorkshopDetailed, WorkshopBase } from "@ls-app/shared";
 
 import RollingNumber from "@/components/ui/RollingNumber";
 
@@ -234,11 +234,10 @@ export function MentorDashboard({
                       .map((workshop, index: number) => (
                         <div
                           key={workshop.id}
-                          className={`border-b border-border pb-3 sm:pb-4 ${
-                            index === pastWorkshops.slice(0, 3).length - 1
-                              ? "border-b-0 pb-0"
-                              : ""
-                          }`}
+                          className={`border-b border-border pb-3 sm:pb-4 ${index === pastWorkshops.slice(0, 3).length - 1
+                            ? "border-b-0 pb-0"
+                            : ""
+                            }`}
                         >
                           <p className="text-sm sm:text-base font-semibold text-ls-heading mb-1 sm:mb-2">
                             {workshop.title}
@@ -315,10 +314,10 @@ export function MentorDashboard({
                                     style={
                                       c.otherUserPhotoUrl
                                         ? {
-                                            backgroundImage: `url(${c.otherUserPhotoUrl})`,
-                                            backgroundSize: "cover",
-                                            backgroundPosition: "center",
-                                          }
+                                          backgroundImage: `url(${c.otherUserPhotoUrl})`,
+                                          backgroundSize: "cover",
+                                          backgroundPosition: "center",
+                                        }
                                         : undefined
                                     }
                                   />
@@ -372,7 +371,7 @@ export function MentorDashboard({
 
                 <div className="flex flex-col gap-[16px]">
                   {mentorWorkshopRequests &&
-                  mentorWorkshopRequests.length > 0 ? (
+                    mentorWorkshopRequests.length > 0 ? (
                     <>
                       {mentorWorkshopRequests
                         .slice(0, 3)
@@ -494,11 +493,10 @@ export function MentorDashboard({
                         mentorCalendarView === "month" ? "default" : "outline"
                       }
                       size="sm"
-                      className={`${
-                        mentorCalendarView === "month"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                      } rounded-l-[8px] rounded-r-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold`}
+                      className={`${mentorCalendarView === "month"
+                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                        } rounded-l-[8px] rounded-r-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold`}
                       onClick={() => setMentorCalendarView("month")}
                     >
                       Mois
@@ -508,11 +506,10 @@ export function MentorDashboard({
                         mentorCalendarView === "week" ? "default" : "outline"
                       }
                       size="sm"
-                      className={`${
-                        mentorCalendarView === "week"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                      } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
+                      className={`${mentorCalendarView === "week"
+                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                        } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
                       onClick={() => setMentorCalendarView("week")}
                     >
                       Semaine
@@ -522,11 +519,10 @@ export function MentorDashboard({
                         mentorCalendarView === "day" ? "default" : "outline"
                       }
                       size="sm"
-                      className={`${
-                        mentorCalendarView === "day"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                      } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
+                      className={`${mentorCalendarView === "day"
+                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                        } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
                       onClick={() => setMentorCalendarView("day")}
                     >
                       Jour
@@ -536,11 +532,10 @@ export function MentorDashboard({
                         mentorCalendarView === "agenda" ? "default" : "outline"
                       }
                       size="sm"
-                      className={`${
-                        mentorCalendarView === "agenda"
-                          ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                          : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                      } rounded-r-[8px] rounded-l-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
+                      className={`${mentorCalendarView === "agenda"
+                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                        } rounded-r-[8px] rounded-l-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
                       onClick={() => setMentorCalendarView("agenda")}
                     >
                       Agenda
