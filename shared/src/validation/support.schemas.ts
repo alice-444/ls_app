@@ -15,6 +15,11 @@ export const supportRequestSchema = z.object({
 
 export type SupportRequestInput = z.infer<typeof supportRequestSchema>;
 
+export const supportMessageSchema = z.object({
+  requestId: z.string(),
+  content: z.string().min(1, "Le message ne peut pas être vide"),
+});
+
 export const SUPPORT_ATTACHMENT_CONFIG = {
   maxSize: 10 * 1024 * 1024, // 10MB
   maxCount: 5,

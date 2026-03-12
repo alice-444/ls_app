@@ -250,7 +250,7 @@ function NetworkCard({
             variant="outline"
             size="sm"
             className="w-full text-xs"
-            onClick={() => router.push("/workshop-room")}
+            onClick={() => router.push("/catalog")}
           >
             <Users className="w-3 h-3 mr-2" />
             Construire mon réseau

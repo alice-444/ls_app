@@ -88,7 +88,7 @@ export function UpcomingWorkshopsCard({
             })}
           </div>
         ) : (
-          <EmptyState onBrowse={() => router.push("/workshop-room")} />
+          <EmptyState onBrowse={() => router.push("/catalog")} />
         )}
       </CardContent>
     </Card>

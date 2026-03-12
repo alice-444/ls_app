@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.communityPollSchema = exports.communityEventSchema = exports.communitySpotSchema = exports.studentDealSchema = void 0;
+exports.bulkReviewProposalsSchema = exports.communityPollSchema = exports.communityEventSchema = exports.communitySpotSchema = exports.studentDealSchema = void 0;
 const zod_1 = require("zod");
 exports.studentDealSchema = zod_1.z.object({
     title: zod_1.z.string().min(3).max(100),
@@ -33,4 +33,9 @@ exports.communityPollSchema = zod_1.z.object({
     }))
         .min(2)
         .max(10),
+});
+exports.bulkReviewProposalsSchema = zod_1.z.object({
+    type: zod_1.z.enum(["EVENT", "DEAL", "SPOT", "POLL"]),
+    ids: zod_1.z.array(zod_1.z.string()),
+    action: zod_1.z.enum(["APPROVE", "REJECT"]),
 });

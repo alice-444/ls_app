@@ -1,3 +1,4 @@
+import type { BulkNotificationInput } from "@ls-app/shared";
 import type { Result } from "../../common/types";
 import type {
   NotificationEntity,
@@ -41,4 +42,8 @@ export interface INotificationService {
     message: string,
     actionUrl?: string
   ): Promise<Result<void>>;
+
+  sendBulkNotifications(
+    input: BulkNotificationInput
+  ): Promise<Result<{ count: number }>>;
 }

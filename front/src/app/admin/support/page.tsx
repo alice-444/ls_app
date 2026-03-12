@@ -20,7 +20,8 @@ import {
   CheckCircle2,
   MoreVertical,
   Download,
-  Info
+  Info,
+  MessageSquare
 } from "lucide-react";
 import { toast } from "sonner";
 import { useState, Suspense } from "react";
@@ -50,6 +51,7 @@ import {
 } from "@/components/ui/select";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { SupportThread } from "@/components/admin/support/support-thread";
 
 type SupportRequestStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 
@@ -283,11 +285,9 @@ function AdminSupportContent() {
 
                 <div className="space-y-2">
                   <h3 className="text-sm font-semibold flex items-center gap-2">
-                    <FileText className="h-4 w-4" /> Description du problème
+                    <MessageSquare className="h-4 w-4" /> Fil de discussion
                   </h3>
-                  <div className="bg-white dark:bg-slate-950 p-4 rounded-md border text-sm whitespace-pre-wrap min-h-[100px]">
-                    {selectedRequest.description}
-                  </div>
+                  <SupportThread requestId={selectedRequest.id} isAdmin={true} />
                 </div>
 
                 {selectedRequest.attachments && selectedRequest.attachments.length > 0 && (

@@ -10,8 +10,8 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Check, X, Calendar, MapPin, Trash2, AlertTriangle, Search, ExternalLink, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -32,12 +32,25 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { Loader2, Check, X, Calendar, MapPin, Trash2, AlertTriangle, Search, ExternalLink, Tag, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useState, useMemo } from "react";
@@ -92,6 +105,44 @@ interface ProposalPoll {
 
 const DEAL_CATEGORIES = ["FOOD", "SOFTWARE", "LEISURE", "SERVICES"];
 
+function BulkActionBar({ 
+  selectedCount, 
+  onApprove, 
+  onReject, 
+  isPending 
+}: { 
+  selectedCount: number, 
+  onApprove: () => void, 
+  onReject: () => void,
+  isPending: boolean
+}) {
+  if (selectedCount === 0) return null;
+  return (
+    <div className="flex items-center gap-2 mb-4 px-4 py-2 bg-brand/5 border border-brand/20 rounded-xl animate-in fade-in slide-in-from-top-2">
+      <span className="text-sm font-medium text-brand">{selectedCount} sélectionnés</span>
+      <div className="h-4 w-px bg-brand/20 mx-2" />
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="h-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-2"
+        onClick={onApprove}
+        disabled={isPending}
+      >
+        <Check className="h-4 w-4 mr-1" /> Approuver la sélection
+      </Button>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2"
+        onClick={onReject}
+        disabled={isPending}
+      >
+        <X className="h-4 w-4 mr-1" /> Rejeter la sélection
+      </Button>
+    </div>
+  );
+}
+
 export default function AdminCommunityPage() {
   const { data: proposals, isLoading, refetch } = trpc.community.getPendingProposals.useQuery();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -99,6 +150,59 @@ export default function AdminCommunityPage() {
   const [statusFilter, setStatusFilter] = useState<CommunityStatus | "ALL">("ALL");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [activeTab, setActiveTab] = useState<string>("events");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const bulkReviewMutation = trpc.community.bulkReviewProposals.useMutation({
+    onSuccess: () => {
+      toast.success("Statut mis à jour pour la sélection");
+      setSelectedIds([]);
+      refetch();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const toggleSelectAll = (items: any[]) => {
+    if (selectedIds.length === items.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(items.map(i => i.id));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  // Creation dialog states
+  const [isDealDialogOpen, setIsDealDialogOpen] = useState(false);
+  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [isSpotDialogOpen, setIsSpotDialogOpen] = useState(false);
+
+  // New deal form state
+  const [newDeal, setNewDeal] = useState({
+    title: "",
+    description: "",
+    category: "FOOD",
+    link: "",
+    promoCode: "",
+  });
+
+  const createDealMutation = trpc.community.createDeal.useMutation({
+    onSuccess: () => {
+      toast.success("Bon plan créé avec succès");
+      setIsDealDialogOpen(false);
+      setNewDeal({ title: "", description: "", category: "FOOD", link: "", promoCode: "" });
+      refetch();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const handleCreateDeal = (e: React.FormEvent) => {
+    e.preventDefault();
+    createDealMutation.mutate(newDeal);
+  };
 
   const reviewMutation = trpc.community.reviewProposal.useMutation({
     onSuccess: () => {
@@ -235,7 +339,7 @@ export default function AdminCommunityPage() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); setSelectedIds([]); }} className="w-full">
         <TabsList className="grid w-full max-w-[600px] grid-cols-4 mb-6">
           <TabsTrigger value="events">Événements ({filteredEvents.length})</TabsTrigger>
           <TabsTrigger value="deals">Bons Plans ({filteredDeals.length})</TabsTrigger>
@@ -244,6 +348,12 @@ export default function AdminCommunityPage() {
         </TabsList>
 
         <TabsContent value="events">
+          <BulkActionBar 
+            selectedCount={selectedIds.length} 
+            onApprove={() => bulkReviewMutation.mutate({ type: "EVENT", ids: selectedIds, action: "APPROVE" })}
+            onReject={() => bulkReviewMutation.mutate({ type: "EVENT", ids: selectedIds, action: "REJECT" })}
+            isPending={bulkReviewMutation.isPending}
+          />
           <Card className="border-ls-border">
             <CardHeader>
               <CardTitle className="text-ls-heading text-lg">Events Hub</CardTitle>
@@ -253,6 +363,12 @@ export default function AdminCommunityPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[40px]">
+                      <Checkbox 
+                        checked={filteredEvents.length > 0 && selectedIds.length === filteredEvents.length}
+                        onCheckedChange={() => toggleSelectAll(filteredEvents)}
+                      />
+                    </TableHead>
                     <TableHead className="text-ls-heading">Événement</TableHead>
                     <TableHead className="text-ls-heading">Date & Lieu</TableHead>
                     <TableHead className="text-ls-heading">Statut</TableHead>
@@ -262,10 +378,19 @@ export default function AdminCommunityPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredEvents.length === 0 ? (
-                    <TableRow><TableCell colSpan={5} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun événement trouvé.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={6} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun événement trouvé.</TableCell></TableRow>
                   ) : (
                     (filteredEvents as ProposalEvent[]).map((event) => (
-                      <TableRow key={event.id}>
+                      <TableRow 
+                        key={event.id}
+                        className={cn(selectedIds.includes(event.id) && "bg-brand/5")}
+                      >
+                        <TableCell>
+                          <Checkbox 
+                            checked={selectedIds.includes(event.id)}
+                            onCheckedChange={() => toggleSelect(event.id)}
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="font-bold text-ls-heading">{event.title}</div>
                           <div className="text-xs text-ls-muted max-w-[300px] whitespace-pre-wrap mt-1">{event.description}</div>
@@ -312,15 +437,82 @@ export default function AdminCommunityPage() {
         </TabsContent>
 
         <TabsContent value="deals">
+          <BulkActionBar 
+            selectedCount={selectedIds.length} 
+            onApprove={() => bulkReviewMutation.mutate({ type: "DEAL", ids: selectedIds, action: "APPROVE" })}
+            onReject={() => bulkReviewMutation.mutate({ type: "DEAL", ids: selectedIds, action: "REJECT" })}
+            isPending={bulkReviewMutation.isPending}
+          />
           <Card className="border-ls-border">
-            <CardHeader>
-              <CardTitle className="text-ls-heading text-lg">Bons Plans</CardTitle>
-              <CardDescription className="text-ls-muted text-xs">Réductions et offres partenaires.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <div>
+                <CardTitle className="text-ls-heading text-lg">Bons Plans</CardTitle>
+                <CardDescription className="text-ls-muted text-xs">Réductions et offres partenaires.</CardDescription>
+              </div>
+              <Dialog open={isDealDialogOpen} onOpenChange={setIsDealDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="bg-brand hover:bg-brand/90 text-white rounded-full">
+                    <Plus className="w-4 h-4 mr-1" /> Ajouter un Bon Plan
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Nouveau Bon Plan</DialogTitle>
+                    <DialogDescription>Créez un bon plan directement. Il sera automatiquement approuvé.</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleCreateDeal} className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="deal-title">Titre</Label>
+                      <Input id="deal-title" value={newDeal.title} onChange={(e) => setNewDeal({...newDeal, title: e.target.value})} placeholder="Ex: -20% sur les outils dev" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="deal-desc">Description</Label>
+                      <Textarea id="deal-desc" value={newDeal.description} onChange={(e) => setNewDeal({...newDeal, description: e.target.value})} placeholder="Détails de l'offre..." required />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Catégorie</Label>
+                        <Select value={newDeal.category} onValueChange={(v) => setNewDeal({...newDeal, category: v})}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DEAL_CATEGORIES.map(cat => (
+                              <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="deal-code">Code Promo (Optionnel)</Label>
+                        <Input id="deal-code" value={newDeal.promoCode} onChange={(e) => setNewDeal({...newDeal, promoCode: e.target.value})} placeholder="CODE20" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="deal-link">Lien de l'offre</Label>
+                      <Input id="deal-link" value={newDeal.link} onChange={(e) => setNewDeal({...newDeal, link: e.target.value})} placeholder="https://..." type="url" required />
+                    </div>
+                    <DialogFooter className="pt-4">
+                      <Button type="button" variant="ghost" onClick={() => setIsDealDialogOpen(false)}>Annuler</Button>
+                      <Button type="submit" className="bg-brand text-white" disabled={createDealMutation.isPending}>
+                        {createDealMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                        Créer le Bon Plan
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[40px]">
+                      <Checkbox 
+                        checked={filteredDeals.length > 0 && selectedIds.length === filteredDeals.length}
+                        onCheckedChange={() => toggleSelectAll(filteredDeals)}
+                      />
+                    </TableHead>
                     <TableHead className="text-ls-heading">Bon Plan</TableHead>
                     <TableHead className="text-ls-heading">Catégorie & Code</TableHead>
                     <TableHead className="text-ls-heading">Statut</TableHead>
@@ -330,10 +522,19 @@ export default function AdminCommunityPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredDeals.length === 0 ? (
-                    <TableRow><TableCell colSpan={5} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun bon plan trouvé.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={6} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun bon plan trouvé.</TableCell></TableRow>
                   ) : (
                     (filteredDeals as ProposalDeal[]).map((deal) => (
-                      <TableRow key={deal.id}>
+                      <TableRow 
+                        key={deal.id}
+                        className={cn(selectedIds.includes(deal.id) && "bg-brand/5")}
+                      >
+                        <TableCell>
+                          <Checkbox 
+                            checked={selectedIds.includes(deal.id)}
+                            onCheckedChange={() => toggleSelect(deal.id)}
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="font-medium text-ls-heading">{deal.title}</div>
                           <div className="text-xs text-ls-muted max-w-[300px] whitespace-pre-wrap mt-1">{deal.description}</div>
@@ -385,6 +586,12 @@ export default function AdminCommunityPage() {
         </TabsContent>
 
         <TabsContent value="spots">
+          <BulkActionBar 
+            selectedCount={selectedIds.length} 
+            onApprove={() => bulkReviewMutation.mutate({ type: "SPOT", ids: selectedIds, action: "APPROVE" })}
+            onReject={() => bulkReviewMutation.mutate({ type: "SPOT", ids: selectedIds, action: "REJECT" })}
+            isPending={bulkReviewMutation.isPending}
+          />
           <Card className="border-ls-border">
             <CardHeader>
               <CardTitle className="text-ls-heading text-lg">Study Spots</CardTitle>
@@ -394,6 +601,12 @@ export default function AdminCommunityPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[40px]">
+                      <Checkbox 
+                        checked={filteredSpots.length > 0 && selectedIds.length === filteredSpots.length}
+                        onCheckedChange={() => toggleSelectAll(filteredSpots)}
+                      />
+                    </TableHead>
                     <TableHead className="text-ls-heading">Lieu</TableHead>
                     <TableHead className="text-ls-heading">Tags</TableHead>
                     <TableHead className="text-ls-heading">Statut</TableHead>
@@ -403,10 +616,19 @@ export default function AdminCommunityPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredSpots.length === 0 ? (
-                    <TableRow><TableCell colSpan={5} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun lieu trouvé.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={6} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun lieu trouvé.</TableCell></TableRow>
                   ) : (
                     (filteredSpots as ProposalSpot[]).map((spot) => (
-                      <TableRow key={spot.id}>
+                      <TableRow 
+                        key={spot.id}
+                        className={cn(selectedIds.includes(spot.id) && "bg-brand/5")}
+                      >
+                        <TableCell>
+                          <Checkbox 
+                            checked={selectedIds.includes(spot.id)}
+                            onCheckedChange={() => toggleSelect(spot.id)}
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="font-medium text-ls-heading">{spot.name}</div>
                           <div className="text-[10px] text-ls-muted max-w-[200px] flex items-center gap-1 mt-0.5"><MapPin className="w-2.5 h-2.5" /> {spot.address}</div>

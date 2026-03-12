@@ -113,13 +113,13 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 - **Publiques** : `/` (accueil), `/login` (email/mot de passe ou magic link), `/forgot-password`, `/reset-password`, `/verify-email-change`, `/legal`, `/terms`, `/privacy`, `/help`, `/info`.
 - **Auth / onboarding** : `/onboarding` (choix de rôle, formulaire mentor ou apprenant).
 - **Espace utilisateur** : `/dashboard`, `/my-profile`, `/profil`, `/mentor-profile`, `/settings` (profil, mot de passe, email, blocages, suppression de compte).
-- **Ateliers** : `/workshops`, `/workshop/[id]`, `/workshop/[id]/join-video`, `/workshop-editor`, `/my-workshops`, `/workshop-room`, `/paliers`, `/buy-credits`.
+- **Ateliers** : `/workshops`, `/workshop/[id]`, `/workshop/[id]/join-video`, `/workshop-editor`, `/my-workshops`, `/catalog`, `/paliers`, `/buy-credits`.
 - **Mentors / catalogue** : `/mentors`, `/mentors/[mentorId]` (profil public avec connexion réseau, demande d’atelier, feedbacks, liste d’ateliers), `/apprentice/[userId]`.
 - **Communauté** : `/community` (Hub : Events Hub, ateliers mentorat, bons plans, Spot Finder, sondage, annuaire membres).
 - **Réseau & messagerie** : `/network`, `/inbox`, `/inbox/[conversationId]`.
 - **Notifications** : `/notifications`.
 - **Support** : `/support-request`.
-- **Admin** : `/admin` (dashboard), `/admin/community` (modération propositions), `/admin/feedback-moderation`, `/admin/audit-logs`, `/admin/user-reports`, `/admin/support`, `/admin/onboarding`, `/admin/notifications`, `/admin/settings`.
+- **Admin** : `/admin` (dashboard), `/admin/users` (gestion avec bulk actions), `/admin/users/[id]` (Fiche 360°), `/admin/community` (modération propositions et création directe), `/admin/feedback-moderation`, `/admin/audit-logs`, `/admin/user-reports`, `/admin/support` (threadé), `/admin/onboarding`, `/admin/notifications`, `/admin/notifications/bulk` (moteur de segmentation), `/admin/settings`.
 - **Erreurs** : 404 (not-found), 500 (error), 403 (forbidden), 405 (`/405`).
 
 Navigation connectée (sidebar) selon le rôle — entrées de menu :
@@ -138,7 +138,7 @@ flowchart LR
   end
 
   subgraph Apprenant["Si APPRENANT"]
-    H[e-Atelier]
+    H[Catalogue]
     I[Profil]
   end
 
@@ -154,7 +154,7 @@ flowchart LR
 ```
 
 - **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l’interface admin via `/admin` (sidebar dédiée : Dashboard, Signalements, Modération, Utilisateurs, Support, Communauté).
-- **e-Atelier** (APPRENANT) : sous-navigation Live (`/workshop-room/live`), Replay (`/workshop-room/replay`), Prochains ateliers (`/workshop-room/upcoming`). Ces sous-routes peuvent rediriger vers la page principale selon l’implémentation.
+- **Catalogue** (APPRENANT) : sous-navigation Live (`/catalog/live`), Replay (`/catalog/replay`), Prochains ateliers (`/catalog/upcoming`). Ces sous-routes peuvent rediriger vers la page principale selon l’implémentation.
 
 Voir `src/components/sidebar.tsx` et `src/app/admin/layout.tsx`.
 

@@ -242,6 +242,10 @@ class DIContainer {
     return this._services.adminService;
   }
 
+  get analyticsService() {
+    return this._services.analyticsService;
+  }
+
   get supportRequestService() {
     return this._services.supportRequestService;
   }

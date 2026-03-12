@@ -106,8 +106,8 @@ export default function UserMenu() {
         roles: ["MENTOR"],
       },
       {
-        href: "/workshop-room",
-        label: "e-Atelier",
+        href: "/catalog",
+        label: "Catalogue",
         icon: BookOpen,
         roles: ["APPRENANT"],
       },
