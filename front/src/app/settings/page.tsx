@@ -8,7 +8,8 @@ import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import { BlockedUsersSection } from "@/components/settings/BlockedUsersSection";
 import { CreditsHistorySection } from "@/components/settings/CreditsHistorySection";
-import { SIDEBAR_ITEMS, type SettingsSection } from "@/components/settings/constants";
+import { SIDEBAR_ITEMS } from "@/components/settings/constants";
+import type { SettingsSection } from "@/components/settings/constants";
 import {
   AccountSection,
   PersonalInformationSection,
