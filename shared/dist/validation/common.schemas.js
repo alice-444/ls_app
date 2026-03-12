@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.paginationSchema = exports.reactionIdSchema = exports.optionIdSchema = exports.pollIdSchema = exports.otherUserIdSchema = exports.receiverUserIdSchema = exports.connectionIdSchema = exports.apprenticeUserIdSchema = exports.apprenticeIdSchema = exports.feedbackIdSchema = exports.notificationIdSchema = exports.requestIdSchema = exports.messageIdSchema = exports.conversationIdSchema = exports.workshopIdSchema = exports.mentorIdSchema = exports.userIdSchema = exports.idSchema = void 0;
+exports.paginationSchema = exports.bulkUserIdsSchema = exports.bulkIdsSchema = exports.reactionIdSchema = exports.optionIdSchema = exports.pollIdSchema = exports.otherUserIdSchema = exports.receiverUserIdSchema = exports.connectionIdSchema = exports.apprenticeUserIdSchema = exports.apprenticeIdSchema = exports.feedbackIdSchema = exports.notificationIdSchema = exports.requestIdSchema = exports.messageIdSchema = exports.conversationIdSchema = exports.workshopIdSchema = exports.mentorIdSchema = exports.userIdSchema = exports.idSchema = void 0;
 const zod_1 = require("zod");
 exports.idSchema = zod_1.z.object({
     id: zod_1.z.string().cuid(),
@@ -52,6 +52,12 @@ exports.optionIdSchema = zod_1.z.object({
 });
 exports.reactionIdSchema = zod_1.z.object({
     reactionId: zod_1.z.string().cuid(),
+});
+exports.bulkIdsSchema = zod_1.z.object({
+    ids: zod_1.z.array(zod_1.z.string()),
+});
+exports.bulkUserIdsSchema = zod_1.z.object({
+    userIds: zod_1.z.array(zod_1.z.string()),
 });
 exports.paginationSchema = zod_1.z.object({
     limit: zod_1.z.number().min(1).max(100).default(20),

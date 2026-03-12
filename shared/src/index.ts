@@ -14,3 +14,4 @@ export * from "./utils/date";
 export * from "./types/workshop";
 export * from "./types/user";
 export * from "./types/messaging";
+export * from "./types/admin-stats";

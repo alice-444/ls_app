@@ -101,6 +101,18 @@ export declare const reactionIdSchema: z.ZodObject<
   },
   z.core.$strip
 >;
+export declare const bulkIdsSchema: z.ZodObject<
+  {
+    ids: z.ZodArray<z.ZodString>;
+  },
+  z.core.$strip
+>;
+export declare const bulkUserIdsSchema: z.ZodObject<
+  {
+    userIds: z.ZodArray<z.ZodString>;
+  },
+  z.core.$strip
+>;
 export declare const paginationSchema: z.ZodObject<
   {
     limit: z.ZodDefault<z.ZodNumber>;

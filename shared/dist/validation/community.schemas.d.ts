@@ -50,3 +50,22 @@ export declare const communityPollSchema: z.ZodObject<
   },
   z.core.$strip
 >;
+export declare const bulkReviewProposalsSchema: z.ZodObject<
+  {
+    type: z.ZodEnum<{
+      EVENT: "EVENT";
+      DEAL: "DEAL";
+      SPOT: "SPOT";
+      POLL: "POLL";
+    }>;
+    ids: z.ZodArray<z.ZodString>;
+    action: z.ZodEnum<{
+      APPROVE: "APPROVE";
+      REJECT: "REJECT";
+    }>;
+  },
+  z.core.$strip
+>;
+export type BulkReviewProposalsInput = z.infer<
+  typeof bulkReviewProposalsSchema
+>;
