@@ -1,14 +1,115 @@
 import { publicProcedure, protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
-import { unwrapResult } from "../shared/router-helpers";
+import { unwrapResult, handleRouterResult } from "../shared/router-helpers";
 import { z } from "zod";
 import {
   mentorIdSchema,
   requestIdSchema,
   workshopIdSchema,
+  calculateEndTime,
 } from "@ls-app/shared";
 
 export const mentorRouter = router({
+  getDashboardData: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    try {
+      const [
+        receivedRequestsResult,
+        workshopsResult,
+        balanceResult,
+        connectionsResult,
+      ] = await Promise.all([
+        container.workshopRequestService.getMentorRequests(userId),
+        container.workshopService.getWorkshopsByCreator(userId),
+        container.creditService.getBalance(userId),
+        container.userConnectionService.getAcceptedConnections(userId),
+      ]);
+
+      if (!receivedRequestsResult.ok)
+        throw new Error(receivedRequestsResult.error);
+      if (!workshopsResult.ok) throw new Error(workshopsResult.error);
+      if (!balanceResult.ok) throw new Error(balanceResult.error);
+      if (!connectionsResult.ok) throw new Error(connectionsResult.error);
+
+      const workshops = workshopsResult.data;
+      const now = new Date();
+
+      // Calculate Past Workshops
+      const pastWorkshops = workshops.filter((w: any) => {
+        if (w.status === "COMPLETED") return true;
+        if (w.status === "PUBLISHED" && w.date && w.time) {
+          const endTime = calculateEndTime(w.date, w.time, w.duration || 60);
+          return endTime && endTime < now;
+        }
+        return false;
+      });
+
+      // Calculate Mentor Stats
+      const completed = workshops.filter((w: any) => {
+        if (w.status === "COMPLETED") return true;
+        if (w.status === "PUBLISHED" && w.date && w.time) {
+          const endTime = calculateEndTime(w.date, w.time, w.duration || 60);
+          return endTime != null && endTime < now;
+        }
+        return false;
+      });
+      const pending = workshops.filter((w: any) => {
+        if (w.status === "PUBLISHED" && w.date && w.time) {
+          const endTime = calculateEndTime(w.date, w.time, w.duration || 60);
+          return endTime != null && endTime >= now;
+        }
+        return false;
+      });
+      const students = new Set(
+        workshops.map((w: any) => w.apprenticeId).filter(Boolean),
+      );
+
+      const mentorStats = {
+        totalWorkshops: workshops.length,
+        completedWorkshops: completed.length,
+        creditsEarned: completed.length * 20,
+        creditsPending: pending.length * 20,
+        studentsHelped: students.size,
+        hoursTaught:
+          Math.round(
+            completed.reduce(
+              (acc: number, w: any) => acc + (w.duration || 60) / 60,
+              0,
+            ) * 10,
+          ) / 10,
+      };
+
+      // Format mentor workshop requests
+      const mentorWorkshopRequests = receivedRequestsResult.data.map(
+        (req: any) => ({
+          ...req,
+          apprenticeName:
+            req.apprentice?.displayName ||
+            req.apprentice?.name ||
+            "Un apprenti",
+        }),
+      );
+
+      return {
+        mentorWorkshopRequests,
+        mentorWorkshops: workshops,
+        pastWorkshops,
+        mentorStats,
+        creditBalance: balanceResult.data,
+        acceptedConnections: connectionsResult.data,
+      };
+    } catch (error) {
+      return handleRouterResult(
+        { ok: false, error: (error as Error).message },
+        {
+          operation: "getDashboardData",
+          userId,
+        },
+      );
+    }
+  }),
+
   getPublicProfile: publicProcedure
     .input(mentorIdSchema)
     .query(async ({ ctx, input }) =>

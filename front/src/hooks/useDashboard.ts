@@ -7,7 +7,6 @@ import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
 import { getUserData } from "@/lib/api-client";
 import { toast } from "sonner";
-import { calculateEndTime } from "@/lib/workshop-utils";
 
 type UserRole = "apprenant" | "mentor" | "both";
 
@@ -106,17 +105,25 @@ export function useDashboard() {
     (userRole === "apprenant" || userRole === "both") &&
     actualUserRole === "APPRENANT";
 
-  // --- Apprentice data ---
-  const { data: rawWorkshopRequests, refetch: refetchApprenticeRequests } =
-    trpc.apprentice.getMyRequests.useQuery(undefined, {
+  // --- Mentor Data (Consolidated) ---
+  const { data: mentorDashboardData, isLoading: isLoadingMentorData } = trpc.mentor.getDashboardData.useQuery(
+    undefined,
+    {
+      enabled: !!session && isMentor,
+      refetchInterval: 10000,
+    }
+  );
+
+  // --- Apprentice Data (Consolidated) ---
+  const { data: apprenticeDashboardData, isLoading: isLoadingApprenticeData, refetch: refetchApprenticeData } = trpc.apprentice.getDashboardData.useQuery(
+    undefined,
+    {
       enabled: !!session && isApprenant,
       refetchInterval: 10000,
-    });
-
-  const workshopRequests = useMemo(
-    () => rawWorkshopRequests as WorkshopRequest[] | undefined,
-    [rawWorkshopRequests],
+    }
   );
+
+  const workshopRequests = apprenticeDashboardData?.workshopRequests as WorkshopRequest[] | undefined;
 
   const previousApprenticeRequestsRef = useRef<WorkshopRequest[] | null>(null);
 
@@ -130,29 +137,17 @@ export function useDashboard() {
     }
   }, [workshopRequests]);
 
-  const { data: confirmedWorkshops, refetch: refetchConfirmedWorkshops } =
-    trpc.apprentice.getMyWorkshops.useQuery(undefined, {
-      enabled: !!session && isApprenant,
-    });
+  const confirmedWorkshops = apprenticeDashboardData?.confirmedWorkshops;
+  const workshopHistory = apprenticeDashboardData?.workshopHistory;
+  const eligibleWorkshops = apprenticeDashboardData?.eligibleFeedbackWorkshops;
 
-  const { data: workshopHistory } = trpc.workshop.getWorkshopHistory.useQuery(
-    undefined,
-    { enabled: !!session && isApprenant },
-  );
-
-  const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
-    enabled: !!session,
-    refetchInterval: 60000,
-  });
-
-  const { data: acceptedConnections } =
-    trpc.connection.getAcceptedConnections.useQuery(undefined, {
-      enabled: !!session,
-    });
+  // Shared / Balanced between Dashboard Roles
+  const creditBalance = isMentor ? mentorDashboardData?.creditBalance : apprenticeDashboardData?.creditBalance;
+  const acceptedConnections = isMentor ? mentorDashboardData?.acceptedConnections : apprenticeDashboardData?.acceptedConnections;
 
   const mentorConnections = useMemo(() => {
     if (!acceptedConnections) return [];
-    return acceptedConnections.filter(
+    return (acceptedConnections as any[]).filter(
       (conn: any) => conn.otherUserRole === "MENTOR",
     );
   }, [acceptedConnections]);
@@ -160,7 +155,7 @@ export function useDashboard() {
   const cancelWorkshopMutation = trpc.workshop.cancelConfirmed.useMutation({
     onSuccess: () => {
       toast.success("Inscription annulée");
-      refetchConfirmedWorkshops();
+      if (isApprenant) refetchApprenticeData();
       setShowCancelDialog(null);
     },
   });
@@ -168,7 +163,7 @@ export function useDashboard() {
   const cancelRequestMutation = trpc.apprentice.cancelRequest.useMutation({
     onSuccess: () => {
       toast.success("Demande annulée");
-      refetchApprenticeRequests();
+      if (isApprenant) refetchApprenticeData();
     },
   });
 
@@ -177,90 +172,18 @@ export function useDashboard() {
     confirmedWorkshops as WorkshopItem[] | undefined
   )?.find((w) => w.id === showCancelDialog);
 
-  // --- Mentor data ---
-  const { data: rawMentorRequests } = trpc.mentor.getReceivedRequests.useQuery(
-    undefined,
-    {
-      enabled: !!session && isMentor,
-      refetchInterval: 10000,
-    },
-  );
-
-  const mentorWorkshopRequests = useMemo(() => {
-    if (!rawMentorRequests) return undefined;
-    return (rawMentorRequests as any[]).map((req) => ({
-      ...req,
-      apprenticeName:
-        req.apprentice?.displayName || req.apprentice?.name || "Un apprenti",
-    })) as WorkshopRequest[];
-  }, [rawMentorRequests]);
-
-  const { data: mentorWorkshops } = trpc.workshop.getMyWorkshops.useQuery(
-    undefined,
-    { enabled: !!session && isMentor },
-  );
-
-  const pastWorkshops = useMemo(() => {
-    if (!mentorWorkshops) return [];
-    const now = new Date();
-    return (mentorWorkshops as WorkshopItem[]).filter((w) => {
-      if (w.status === "COMPLETED") return true;
-      if (w.status === "PUBLISHED" && w.date && w.time) {
-        const endTime = calculateEndTime(w.date, w.time, w.duration || 60);
-        return endTime && endTime < now;
-      }
-      return false;
-    });
-  }, [mentorWorkshops]);
-
-  // Mentor Stats
-  const mentorStats = useMemo(() => {
-    if (!mentorWorkshops)
-      return {
-        totalWorkshops: 0,
-        completedWorkshops: 0,
-        creditsEarned: 0,
-        creditsPending: 0,
-        studentsHelped: 0,
-        hoursTaught: 0,
-      };
-
-    const now = new Date();
-    const workshops = mentorWorkshops as WorkshopItem[];
-    const completed = workshops.filter(
-      (w) =>
-        w.status === "COMPLETED" ||
-        (w.status === "PUBLISHED" &&
-          calculateEndTime(w.date!, w.time!, w.duration || 60)! < now),
-    );
-    const pending = workshops.filter(
-      (w) =>
-        w.status === "PUBLISHED" &&
-        calculateEndTime(w.date!, w.time!, w.duration || 60)! >= now,
-    );
-    const students = new Set(
-      workshops.map((w) => w.apprenticeId).filter(Boolean),
-    );
-
-    return {
-      totalWorkshops: workshops.length,
-      completedWorkshops: completed.length,
-      creditsEarned: completed.length * 20,
-      creditsPending: pending.length * 20,
-      studentsHelped: students.size,
-      hoursTaught:
-        Math.round(
-          completed.reduce((acc, w) => acc + (w.duration || 60) / 60, 0) * 10,
-        ) / 10,
-    };
-  }, [mentorWorkshops]);
-
-  // Feedback
-  const { data: eligibleWorkshops } =
-    trpc.workshopFeedback.getEligibleWorkshopsForFeedback.useQuery(undefined, {
-      enabled: !!session?.user?.id && isApprenant,
-      refetchInterval: 5000,
-    });
+  // Mentor Stats & Lists from consolidated query
+  const mentorWorkshopRequests = mentorDashboardData?.mentorWorkshopRequests as WorkshopRequest[] | undefined;
+  const mentorWorkshops = mentorDashboardData?.mentorWorkshops as WorkshopItem[] | undefined;
+  const pastWorkshops = mentorDashboardData?.pastWorkshops as WorkshopItem[] | undefined;
+  const mentorStats = mentorDashboardData?.mentorStats || {
+    totalWorkshops: 0,
+    completedWorkshops: 0,
+    creditsEarned: 0,
+    creditsPending: 0,
+    studentsHelped: 0,
+    hoursTaught: 0,
+  };
 
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
   const [selectedFeedbackWorkshopId, setSelectedFeedbackWorkshopId] = useState<
@@ -270,7 +193,8 @@ export function useDashboard() {
 
   useEffect(() => {
     if (
-      eligibleWorkshops?.length > 0 &&
+      eligibleWorkshops &&
+      eligibleWorkshops.length > 0 &&
       !showFeedbackDialog &&
       !hasShownFeedbackModal &&
       session?.user?.id
@@ -295,6 +219,7 @@ export function useDashboard() {
     router,
     session,
     isPending,
+    isLoading: isPending || isLoadingUserData || (isMentor && isLoadingMentorData) || (isApprenant && isLoadingApprenticeData),
     queryClient,
     userRole,
     actualUserRole,
