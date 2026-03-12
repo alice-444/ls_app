@@ -35,7 +35,11 @@ export const workshopVideoRouter = router({
       const isApprentice = workshop.apprenticeId === userId;
 
       if (!isCreator && !isApprentice) {
-        throw new Error("You don't have access to this workshop");
+        return unwrapResult({
+          ok: false,
+          error: "You don't have access to this workshop",
+          status: 403,
+        } as any);
       }
 
       let roomId = workshop.dailyRoomId;
