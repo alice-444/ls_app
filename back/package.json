@@ -17,6 +17,8 @@
 		"db:studio": "prisma studio",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
+		"lint": "next lint",
+		"check-types": "tsc --noEmit",
 		"test:db": "node test-db.mjs",
 		"test": "vitest run",
 		"test:watch": "vitest",
