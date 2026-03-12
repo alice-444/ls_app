@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           workdir: ./
           dockerfile: infra/docker/back/prod/Dockerfile
-          tags: latest,${{ github.REF_NAME }}
+          tags: latest,${{ env.REF_NAME }}
 
   build-and-push-frontend:
     name: Build & Push Frontend
@@ -68,7 +68,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           workdir: ./
           dockerfile: infra/docker/front/prod/Dockerfile
-          tags: latest,${{ github.REF_NAME }}
+          tags: latest,${{ env.REF_NAME }}
 
   deploy:
     name: Deploy to Prod
@@ -85,7 +85,13 @@ jobs:
             cd ..
             cd /home/root/projects/learnsup-app/ls_app/infra/docker
             # Pull latest changes from git
+            git pull origin main                                                                           │
+            # Pull latest images                                                                                  │
+            docker-compose -f docker-compose-prod.yml pull 
+            # Pull latest changes from git
             git pull origin main
             # Restart services
             docker-compose -f docker-compose-prod.yml up -d --remove-orphans
+            # Clean up old images                                                                                 │
+            docker image prune -f    
 
