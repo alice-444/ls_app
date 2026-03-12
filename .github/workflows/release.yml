@@ -2,8 +2,6 @@ name: Release (Test, Build, Deploy) 🚀
 
 on:
   push:
-    branches:
-      - maj/ci
     tags:
       - "[0-9]+.[0-9]+.[0-9]+"
 
