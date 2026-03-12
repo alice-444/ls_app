@@ -8,7 +8,7 @@ import type { IWorkshopVideoLinkService } from "./video/workshop-video-link.serv
 import type { IEmailService } from "../../email/services/email.service.interface";
 import type { IUserBlockService } from "../../users/services/moderation/user-block.service.interface";
 import type { ICreditService } from "../../credits/services/credit.service.interface";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from "@/lib/prisma";
 import { WorkshopAccessGuard } from "./guards/workshop-access.guard";
 import { WorkshopLifecycleService } from "./lifecycle/workshop-lifecycle.service";
 import { WorkshopSchedulingService } from "./scheduling/workshop-scheduling.service";
@@ -19,9 +19,6 @@ import {
 import { container as diContainer } from "../../di/container";
 import type { WorkshopResponseDTO } from "../dto/workshop.dto";
 
-import { unpublishWorkshopSchema } from "../../../shared/validation";
-import { z } from "zod";
-
 export {
   createWorkshopBackendSchema as createWorkshopSchema,
   updateWorkshopBackendSchema as updateWorkshopSchema,
@@ -29,14 +26,15 @@ export {
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
   cancelWorkshopSchema,
-} from "../../../shared/validation";
+} from "@ls-app/shared";
 export type {
   CreateWorkshopBackendInput as CreateWorkshopInput,
   UpdateWorkshopBackendInput as UpdateWorkshopInput,
   PublishWorkshopInput,
   DeleteWorkshopInput,
-} from "../../../shared/validation";
-export type UnpublishWorkshopInput = z.infer<typeof unpublishWorkshopSchema>;
+  UnpublishWorkshopInput,
+  CancelWorkshopInput,
+} from "@ls-app/shared";
 
 export interface WorkshopServiceDependencies {
   readonly workshopRepository: IWorkshopRepository;
@@ -74,13 +72,13 @@ export class WorkshopService implements IWorkshopService {
     } = deps;
     const accessGuard = new WorkshopAccessGuard(
       appUserRepository,
-      workshopRepository
+      workshopRepository,
     );
 
     this.lifecycleService = new WorkshopLifecycleService(
       workshopRepository,
       accessGuard,
-      dbNotificationService
+      dbNotificationService,
     );
 
     this.schedulingService = new WorkshopSchedulingService(
@@ -90,7 +88,7 @@ export class WorkshopService implements IWorkshopService {
       emailService,
       appUserRepository,
       creditService,
-      prisma
+      prisma,
     );
 
     const videoLinkService =
@@ -99,62 +97,62 @@ export class WorkshopService implements IWorkshopService {
     this.queryService = new WorkshopQueryService(
       workshopRepository,
       accessGuard,
-      videoLinkService
+      videoLinkService,
     );
 
     this.apprenticeQueryService = new WorkshopApprenticeQueryService(
       workshopRepository,
       accessGuard,
       userBlockService,
-      workshopRequestRepository
+      workshopRequestRepository,
     );
   }
 
   createWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ workshopId: string }>> {
     return this.lifecycleService.createWorkshop(userId, input);
   }
 
   updateWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     return this.lifecycleService.updateWorkshop(userId, input);
   }
 
   publishWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean; publishedAt: Date }>> {
     return this.lifecycleService.publishWorkshop(userId, input);
   }
 
   unpublishWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     return this.lifecycleService.unpublishWorkshop(userId, input);
   }
 
   deleteWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     return this.lifecycleService.deleteWorkshop(userId, input);
   }
 
   cancelWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     return this.lifecycleService.cancelWorkshop(userId, input);
   }
 
   getWorkshopsByCreator(
     userId: string,
-    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+    status?: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED",
   ): Promise<Result<WorkshopResponseDTO[]>> {
     return this.queryService.getWorkshopsByCreator(userId, status);
   }
@@ -167,8 +165,12 @@ export class WorkshopService implements IWorkshopService {
     return this.queryService.getWorkshopById(workshopId);
   }
 
-  getConfirmedWorkshopsForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
-    return this.apprenticeQueryService.getConfirmedWorkshopsForApprentice(userId);
+  getConfirmedWorkshopsForApprentice(
+    userId: string,
+  ): Promise<Result<WorkshopResponseDTO[]>> {
+    return this.apprenticeQueryService.getConfirmedWorkshopsForApprentice(
+      userId,
+    );
   }
 
   updateWorkshopScheduling(
@@ -179,37 +181,47 @@ export class WorkshopService implements IWorkshopService {
       time?: string | null;
       duration?: number | null;
       location?: string | null;
-    }
+    },
   ): Promise<Result<{ success: boolean }>> {
     return this.schedulingService.updateWorkshopScheduling(
       userId,
       workshopId,
-      input
+      input,
     );
   }
 
   cancelConfirmedWorkshop(
     userId: string,
     workshopId: string,
-    cancellationReason?: string
+    cancellationReason?: string,
   ): Promise<Result<{ success: boolean }>> {
     return this.schedulingService.cancelConfirmedWorkshop(
       userId,
       workshopId,
-      cancellationReason
+      cancellationReason,
     );
   }
 
-  getUpcomingWorkshopsForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
-    return this.apprenticeQueryService.getUpcomingWorkshopsForApprentice(userId);
+  getUpcomingWorkshopsForApprentice(
+    userId: string,
+  ): Promise<Result<WorkshopResponseDTO[]>> {
+    return this.apprenticeQueryService.getUpcomingWorkshopsForApprentice(
+      userId,
+    );
   }
 
-  getWorkshopHistoryForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
+  getWorkshopHistoryForApprentice(
+    userId: string,
+  ): Promise<Result<WorkshopResponseDTO[]>> {
     return this.apprenticeQueryService.getWorkshopHistoryForApprentice(userId);
   }
 
-  getAvailableWorkshopsForApprentice(userId: string): Promise<Result<WorkshopResponseDTO[]>> {
-    return this.apprenticeQueryService.getAvailableWorkshopsForApprentice(userId);
+  getAvailableWorkshopsForApprentice(
+    userId: string,
+  ): Promise<Result<WorkshopResponseDTO[]>> {
+    return this.apprenticeQueryService.getAvailableWorkshopsForApprentice(
+      userId,
+    );
   }
 
   rescheduleWorkshop(
@@ -220,7 +232,7 @@ export class WorkshopService implements IWorkshopService {
       time: string;
       duration?: number | null;
       location?: string | null;
-    }
+    },
   ): Promise<
     Result<{ success: boolean; oldDate: Date | null; oldTime: string | null }>
   > {

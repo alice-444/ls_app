@@ -9,21 +9,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Users, CheckCircle2, Clock, Save } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { LevelUpModal } from "@/components/user/LevelUpModal";
-import type { WorkshopParticipant } from "@/types/workshop";
+import type { WorkshopParticipant } from "@ls-app/shared";
 import type { AttendanceManagementCardProps } from "@/types/workshop-components";
+
+type AttendanceStatus = "PENDING" | "PRESENT" | "NO_SHOW";
 
 export function AttendanceManagementCard({
   workshopId,
   isOwner,
-}: AttendanceManagementCardProps) {
+}: Readonly<AttendanceManagementCardProps>) {
   const [attendanceUpdates, setAttendanceUpdates] = useState<
-    Record<string, "PENDING" | "PRESENT" | "NO_SHOW">
+    Record<string, AttendanceStatus>
   >({});
   const [levelUpModalOpen, setLevelUpModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState<string | null>(null);
@@ -74,7 +75,7 @@ export function AttendanceManagementCard({
   const hasParticipants = participants.length > 0;
   const hasUnsavedChanges = Object.keys(attendanceUpdates).length > 0;
 
-  const handleAttendanceChange = (participantId: string, status: "PRESENT" | "NO_SHOW" | "PENDING") => {
+  const handleAttendanceChange = (participantId: string, status: AttendanceStatus) => {
     setAttendanceUpdates((prev) => ({
       ...prev,
       [participantId]: status,
@@ -101,7 +102,7 @@ export function AttendanceManagementCard({
     }
     const participant = participants.find((p: WorkshopParticipant) => p.id === participantId);
     return (
-      (participant?.attendanceStatus as "PENDING" | "PRESENT" | "NO_SHOW") ||
+      (participant?.attendanceStatus as AttendanceStatus) ||
       "PENDING"
     );
   };
@@ -135,19 +136,42 @@ export function AttendanceManagementCard({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {!hasParticipants ? (
-            <div className="text-center py-8 text-ls-muted">
-              <Users className="w-12 h-12 mx-auto mb-3 text-ls-muted/50" />
-              <p>Aucun participant inscrit</p>
-            </div>
-          ) : (
+          {hasParticipants ? (
             <div className="space-y-4">
               <div className="space-y-3">
                 {participants.map((participant: WorkshopParticipant) => {
                   const currentStatus = getAttendanceStatus(participant.id);
                   const isPresent = currentStatus === "PRESENT";
                   const isNoShow = currentStatus === "NO_SHOW";
-                  const isPending = currentStatus === "PENDING";
+
+                  let badgeVariant: "default" | "destructive" | "secondary" =
+                    "secondary";
+                  if (isPresent) badgeVariant = "default";
+                  else if (isNoShow) badgeVariant = "destructive";
+
+                  let badgeContent: React.ReactNode;
+                  if (isPresent) {
+                    badgeContent = (
+                      <>
+                        <CheckCircle2 className="w-3 h-3" />
+                        Présent
+                      </>
+                    );
+                  } else if (isNoShow) {
+                    badgeContent = (
+                      <>
+                        <Clock className="w-3 h-3" />
+                        Absent
+                      </>
+                    );
+                  } else {
+                    badgeContent = (
+                      <>
+                        <Clock className="w-3 h-3" />
+                        En attente
+                      </>
+                    );
+                  }
 
                   return (
                     <div
@@ -177,31 +201,10 @@ export function AttendanceManagementCard({
                           )}
                         </div>
                         <Badge
-                          variant={
-                            isPresent
-                              ? "default"
-                              : isNoShow
-                              ? "destructive"
-                              : "secondary"
-                          }
+                          variant={badgeVariant}
                           className="flex items-center gap-1 shrink-0"
                         >
-                          {isPresent ? (
-                            <>
-                              <CheckCircle2 className="w-3 h-3" />
-                              Présent
-                            </>
-                          ) : isNoShow ? (
-                            <>
-                              <Clock className="w-3 h-3" />
-                              Absent
-                            </>
-                          ) : (
-                            <>
-                              <Clock className="w-3 h-3" />
-                              En attente
-                            </>
-                          )}
+                          {badgeContent}
                         </Badge>
                       </div>
 
@@ -210,9 +213,8 @@ export function AttendanceManagementCard({
                           type="button"
                           variant={isPresent ? "default" : "outline"}
                           size="sm"
-                          className={`flex-1 sm:flex-none rounded-full h-8 text-xs font-semibold ${
-                            isPresent ? "bg-emerald-600 hover:bg-emerald-700 text-white border-0" : "text-[#26547c] border-[#26547c]/20"
-                          }`}
+                          className={`flex-1 sm:flex-none rounded-full h-8 text-xs font-semibold ${isPresent ? "bg-emerald-600 hover:bg-emerald-700 text-white border-0" : "text-[#26547c] border-[#26547c]/20"
+                            }`}
                           onClick={() => handleAttendanceChange(participant.id, isPresent ? "PENDING" : "PRESENT")}
                           disabled={updateAttendanceMutation.isPending}
                         >
@@ -222,9 +224,8 @@ export function AttendanceManagementCard({
                           type="button"
                           variant={isNoShow ? "destructive" : "outline"}
                           size="sm"
-                          className={`flex-1 sm:flex-none rounded-full h-8 text-xs font-semibold ${
-                            isNoShow ? "bg-red-600 hover:bg-red-700 text-white border-0" : "text-red-600 border-red-200"
-                          }`}
+                          className={`flex-1 sm:flex-none rounded-full h-8 text-xs font-semibold ${isNoShow ? "bg-red-600 hover:bg-red-700 text-white border-0" : "text-red-600 border-red-200"
+                            }`}
                           onClick={() => handleAttendanceChange(participant.id, isNoShow ? "PENDING" : "NO_SHOW")}
                           disabled={updateAttendanceMutation.isPending}
                         >
@@ -254,7 +255,7 @@ export function AttendanceManagementCard({
                 </div>
               )}
 
-                <div className="pt-2 border-t border-border/50">
+              <div className="pt-2 border-t border-border/50">
                 <Button
                   variant="cta"
                   size="cta"
@@ -270,6 +271,11 @@ export function AttendanceManagementCard({
                   Valider et clôturer l'atelier
                 </Button>
               </div>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-ls-muted">
+              <Users className="w-12 h-12 mx-auto mb-3 text-ls-muted/50" />
+              <p>Aucun participant inscrit</p>
             </div>
           )}
         </CardContent>

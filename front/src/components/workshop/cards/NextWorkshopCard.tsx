@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { formatDate, formatTime, formatCountdown } from "@/lib/workshop-utils";
 import { useRouter } from "next/navigation";
-import type { WorkshopBase } from "@/types/workshop";
+import type { WorkshopBase } from "@ls-app/shared";
 
 interface NextWorkshopCardProps {
   workshop: WorkshopBase & { apprenticeId?: string | null };
@@ -33,7 +33,7 @@ export function NextWorkshopCard({
   workshop,
   countdown,
   onCreateWorkshop,
-}: NextWorkshopCardProps) {
+}: Readonly<NextWorkshopCardProps>) {
   const router = useRouter();
 
   return (
@@ -111,9 +111,9 @@ export function NextWorkshopCard({
 
 export function EmptyNextWorkshopCard({
   onCreateWorkshop,
-}: {
+}: Readonly<{
   onCreateWorkshop: () => void;
-}) {
+}>) {
   return (
     <Card className="mb-6 border-2 border-dashed">
       <CardContent className="pt-12 pb-12 text-center">

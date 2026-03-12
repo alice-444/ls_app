@@ -98,6 +98,8 @@ Vue simplifiée (ASCII) :
 ┌──────────────────────────────────────────────────────────────────┐
 │  Monorepo (pnpm workspaces + Turborepo)                          │
 ├──────────────────────────────────────────────────────────────────┤
+│  shared/                │  Source de vérité (Zod, constantes)     │
+├─────────────────────────┴────────────────────────────────────────┤
 │  front/                 │  back/                                  │
 │  Next.js (port 3001)    │  Next.js (port 3000 ou 4500 en dev)     │
 │  App Router             │  Serveur HTTP monte Next + Socket.IO    │
@@ -111,6 +113,7 @@ Vue simplifiée (ASCII) :
 └──────────────────────────────────────────────────────────────────┘
 ```
 
+- **Shared** : package partagé (`@ls-app/shared`) contenant la source de vérité pour la logique métier : schémas de validation Zod, constantes (limites, messages d'erreur), et utilitaires communs. Il garantit la cohérence stricte entre le front et le back.
 - **Front** : application React (Next.js 16), port 3001 en dev. Appels API via tRPC (procédures type-safe) et requêtes HTTP directes pour l’auth, l’onboarding et la gestion de profil (Better Auth + routes custom).
 - **Back** : une seule app Next.js servie par un serveur HTTP Node qui ajoute CORS et monte Socket.IO. Routes : `/trpc` (tRPC), `/api/auth/*` (Better Auth), `/api/profile/*`, `/api/sign-up`, `/api/cron/*`, webhooks (Daily, Polar), etc. Prisma pour toute la persistance.
 - **Base** : PostgreSQL. Schéma et migrations dans `back/prisma/schema/`.
@@ -137,7 +140,7 @@ vers cette URL via `NEXT_PUBLIC_SERVER_URL`.
 - **Crédits / Paiement** : crédits, achats (Polar), transactions. Webhook Polar côté back.
 - **Modération** : blocage d’utilisateurs, signalements (user block, user report). Côté back : routers tRPC + éventuels crons.
 - **Support** : formulaire de demande de support, pièces jointes, envoi d'emails (Resend).
-- **Hub Communauté** : page `/community` — Events Hub (événements communautaires), ateliers mentorat, bons plans étudiants (student_deal), Spot Finder (lieux recommandés), sondage hebdomadaire (community_poll), annuaire membres. Propositions utilisateurs (events, deals, spots) avec modération admin.
+- **Hub Communauté** : page `/community` — Events Hub (événements communautaires), ateliers mentorat, bons plans étudiants (student_deal), Spot Finder (lieux recommandés), sondage hebdomage (community_poll), annuaire membres. Propositions utilisateurs (events, deals, spots) avec modération admin.
 - **Admin** : modération des feedbacks, signalements, support, onboarding, audit logs, notifications, paramètres (interface dédiée `/admin`, rôle ADMIN).
 - **Métriques** : endpoint Prometheus (`/api/metrics`) pour monitoring.
 
@@ -194,6 +197,7 @@ sequenceDiagram
   S->>B: Socket.IO serveur
   B->>P: Écriture
   B->>S: Broadcast
+  S-->>B2: new-message (temps réel)
   S-->>F: Événement
   F-->>U: Mise à jour live
 ```

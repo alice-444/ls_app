@@ -25,7 +25,7 @@ import {
   formatTimeRange,
   calculateEndTime,
 } from "@/lib/workshop-utils";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 interface UpcomingWorkshopsCardProps {
   readonly workshops: WorkshopDetailed[] | undefined;
@@ -109,9 +109,8 @@ function WorkshopItem({
   return (
     <div className="group relative bg-white dark:bg-slate-900 border rounded-xl p-5 transition-all hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800">
       <div
-        className={`absolute top-0 left-0 w-1 h-full rounded-l-xl transition-colors ${
-          status === "confirmed" ? "bg-emerald-500" : "bg-blue-500"
-        }`}
+        className={`absolute top-0 left-0 w-1 h-full rounded-l-xl transition-colors ${status === "confirmed" ? "bg-emerald-500" : "bg-blue-500"
+          }`}
       ></div>
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 pl-2">
         <div className="flex-1 space-y-3">

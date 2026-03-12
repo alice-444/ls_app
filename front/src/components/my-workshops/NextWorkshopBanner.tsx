@@ -23,7 +23,7 @@ import {
   type CountdownResult,
 } from "@/lib/workshop-utils";
 import { motion } from "framer-motion";
-import type { WorkshopBase } from "@/types/workshop";
+import type { WorkshopBase } from "@ls-app/shared";
 
 interface NextWorkshopBannerProps {
   readonly workshop: WorkshopBase & { apprenticeId?: string | null };

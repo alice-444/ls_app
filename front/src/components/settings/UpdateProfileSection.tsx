@@ -17,7 +17,7 @@ import { User, Upload, X, Lock, Save } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { usePhotoUpload } from "@/hooks/use-photo-upload";
-import { PROFILE_VALIDATION } from "@/shared/validation/profile.constants";
+import { PROFILE_VALIDATION } from "@ls-app/shared";
 
 export function UpdateProfileSection() {
   const { data: titleData } = trpc.user.getTitle.useQuery();

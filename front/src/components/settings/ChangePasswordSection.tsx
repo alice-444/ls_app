@@ -17,10 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  PROFILE_VALIDATION,
-  PROFILE_ERROR_MESSAGES,
-} from "@/shared/validation/profile.constants";
+import { PROFILE_VALIDATION } from "@ls-app/shared";
 
 export function ChangePasswordSection() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

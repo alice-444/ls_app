@@ -16,7 +16,7 @@ import { trpc } from "@/utils/trpc";
 import {
   createWorkshopFrontendSchema,
   type CreateWorkshopFrontendData,
-} from "@/shared/validation";
+} from "@ls-app/shared";
 import {
   WorkshopFormFields,
   convertDurationToMinutes,
@@ -30,7 +30,7 @@ interface CreateWorkshopFormProps {
 export function CreateWorkshopForm({
   onSuccess,
   onCancel,
-}: CreateWorkshopFormProps) {
+}: Readonly<CreateWorkshopFormProps>) {
   const {
     register,
     handleSubmit,

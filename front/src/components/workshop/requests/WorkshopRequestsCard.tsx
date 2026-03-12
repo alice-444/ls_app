@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
 import { WorkshopRequestCard } from "./WorkshopRequestCard";
-import type { WorkshopRequest } from "@/types/workshop";
+import type { WorkshopRequest } from "@ls-app/shared";
 
 interface WorkshopRequestsCardProps {
   requests: WorkshopRequest[];
@@ -23,7 +23,7 @@ export function WorkshopRequestsCard({
   onAccept,
   onReject,
   isRejecting,
-}: WorkshopRequestsCardProps) {
+}: Readonly<WorkshopRequestsCardProps>) {
   const pendingRequests = requests.filter((r) => r.status === "PENDING");
 
   return (

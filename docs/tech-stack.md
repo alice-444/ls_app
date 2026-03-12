@@ -157,10 +157,13 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | -------------------------- | ------- | -------------------------------------------- |
 | **GitHub Actions**         | —       | CI/CD (lint, tests, build, déploiement).     |
 | **SonarQube / SonarCloud** | —       | Qualité de code, couverture, vulnérabilités. |
+| **Sentry**                 | 8.x+    | Monitoring d'erreurs, tracing et session replay. |
 | **Docker**                 | —       | Conteneurisation (infra).                    |
 | **ESLint**                 | —       | Linting.                                     |
 | **Turbo**                  | 2.8+    | Cache des tâches, parallélisation.           |
 
+
+**Choix Sentry** : Observabilité full-stack. (1) **Erreurs** : Capture en temps réel des crashs front (JS, hydration) et back (tRPC, Prisma). (2) **Tracing** : Identification des goulots d'étranglement (requêtes SQL lentes, appels API). (3) **Session Replay** : Reproduction vidéo des bugs utilisateurs pour un débuggage ultra-rapide. (4) **Tunneling** : Contournement des bloqueurs de pub via une route Next.js dédiée. Alternative à LogRocket : plus complet pour le backend. Alternative à Datadog : plus accessible pour les petites équipes.
 
 **Choix SonarQube** : Qualité de code (bugs, vulnérabilités, code smells), couverture importée (LCOV), dette technique. Intégration CI, seuils de qualité configurables.
 
@@ -186,6 +189,7 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | **Validation** | Zod               | Schémas partagés, inférence de types.                              |
 | **Tests**      | Vitest            | Rapide, ESM, proche de Jest.                                       |
 | **E2E**        | Cypress           | Stable, bon support Next.js.                                       |
+| **Observabilité** | Sentry          | Erreurs, tracing, session replay, tunneling.                       |
 | **Conteneurisation** | Docker       | Déploiement reproductible, multi-stage, Alpine.                    |
 
 

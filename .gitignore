@@ -3,6 +3,7 @@
 .vibe
 .agents
 .vscode
+ai_docs/
 
 # Testing
 cypress.config.js

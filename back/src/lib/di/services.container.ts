@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from "@/lib/prisma";
 import type { RepositoriesContainer } from "./repositories.container";
 import { WorkshopService } from "../workshops/services/workshop.service";
 import { WorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service";
@@ -127,7 +127,7 @@ export class ServicesContainer {
 
   constructor(
     private readonly prisma: PrismaClient,
-    private readonly repositories: RepositoriesContainer
+    private readonly repositories: RepositoriesContainer,
   ) {}
 
   get fileStorageService(): IFileStorageService {
@@ -145,7 +145,7 @@ export class ServicesContainer {
     this._magicLinkService ??= new MagicLinkService(
       this.prisma,
       this.repositories.appUserRepository,
-      this.emailService
+      this.emailService,
     );
     return this._magicLinkService;
   }
@@ -170,7 +170,7 @@ export class ServicesContainer {
       this.repositories.workshopFeedbackRepository,
       this.workshopService,
       this.creditService,
-      this.notificationService
+      this.notificationService,
     );
     return this._workshopFeedbackService;
   }
@@ -178,7 +178,7 @@ export class ServicesContainer {
   get mentorProfileService(): IMentorProfileService {
     this._mentorProfileService ??= new MentorProfileService(
       this.repositories.mentorRepository,
-      this.userBlockService
+      this.userBlockService,
     );
     return this._mentorProfileService;
   }
@@ -188,21 +188,21 @@ export class ServicesContainer {
       this.repositories.mentorRepository,
       this.notificationService,
       this.messagingService,
-      this.userBlockService
+      this.userBlockService,
     );
     return this._mentorContactService;
   }
 
   get mentorFeedbackService(): IMentorFeedbackService {
     this._mentorFeedbackService ??= new MentorFeedbackService(
-      this.repositories.mentorRepository
+      this.repositories.mentorRepository,
     );
     return this._mentorFeedbackService;
   }
 
   get mentorWorkshopService(): IMentorWorkshopService {
     this._mentorWorkshopService ??= new MentorWorkshopService(
-      this.repositories.mentorRepository
+      this.repositories.mentorRepository,
     );
     return this._mentorWorkshopService;
   }
@@ -216,10 +216,10 @@ export class ServicesContainer {
         this.repositories.workshopRequestRepository,
         this.repositories.workshopRepository,
         this.notificationService,
-        this.emailService
+        this.emailService,
       ),
       this.creditService,
-      this.prisma
+      this.prisma,
     );
     return this._workshopRequestService;
   }
@@ -229,7 +229,7 @@ export class ServicesContainer {
       this.repositories.appUserRepository,
       this.repositories.workshopRepository,
       this.repositories.userConnectionRepository,
-      this.userBlockService
+      this.userBlockService,
     );
     return this._apprenticeProfileService;
   }
@@ -239,7 +239,7 @@ export class ServicesContainer {
       this.repositories.appUserRepository,
       this.repositories.userConnectionRepository,
       this.userBlockService,
-      this.notificationService
+      this.notificationService,
     );
     return this._userConnectionService;
   }
@@ -252,7 +252,7 @@ export class ServicesContainer {
   get messageEnrichmentService(): IMessageEnrichmentService {
     this._messageEnrichmentService ??= new MessageEnrichmentService(
       this.repositories.appUserRepository,
-      this.repositories.messageRepository
+      this.repositories.messageRepository,
     );
     return this._messageEnrichmentService;
   }
@@ -268,14 +268,14 @@ export class ServicesContainer {
       this.notificationService,
       this.repositories.workshopRepository,
       this.prisma,
-      this.emailService
+      this.emailService,
     );
     return this._messagingService;
   }
 
   get presenceService(): PresenceService {
     this._presenceService ??= new PresenceService(
-      this.repositories.appUserRepository
+      this.repositories.appUserRepository,
     );
     return this._presenceService;
   }
@@ -284,7 +284,7 @@ export class ServicesContainer {
     this._messageReactionService ??= new MessageReactionService(
       this.repositories.messageReactionRepository,
       this.repositories.messageRepository,
-      this.repositories.appUserRepository
+      this.repositories.appUserRepository,
     );
     return this._messageReactionService;
   }
@@ -297,7 +297,7 @@ export class ServicesContainer {
         this.repositories.appUserRepository,
         eventEmitter,
         this.userBlockService,
-        this.prisma
+        this.prisma,
       );
     }
     return this._notificationService;
@@ -312,7 +312,7 @@ export class ServicesContainer {
     this._userBlockService ??= new UserBlockService(
       this.repositories.userBlockRepository,
       this.repositories.appUserRepository,
-      this.auditLogService
+      this.auditLogService,
     );
     return this._userBlockService;
   }
@@ -322,7 +322,7 @@ export class ServicesContainer {
       this.repositories.userReportRepository,
       this.repositories.appUserRepository,
       this.auditLogService,
-      this.notificationService
+      this.notificationService,
     );
     return this._userReportService;
   }
@@ -361,7 +361,7 @@ export class ServicesContainer {
 
   get workshopVideoLinkService(): IWorkshopVideoLinkService {
     this._workshopVideoLinkService ??= new WorkshopVideoLinkService(
-      this.repositories.workshopRepository
+      this.repositories.workshopRepository,
     );
     return this._workshopVideoLinkService;
   }
@@ -373,7 +373,7 @@ export class ServicesContainer {
       this.repositories.creditTransactionRepository,
       this.repositories.cashbackQueueRepository,
       this.creditService,
-      this.notificationService
+      this.notificationService,
     );
     return this._workshopCashbackService;
   }
@@ -390,7 +390,9 @@ export class ServicesContainer {
 
   get workshopTippingService(): IWorkshopTippingService {
     this._workshopTippingService ??= new WorkshopTippingService(
-      this.creditService
+      this.creditService,
+      this.prisma,
+      this.emailService,
     );
     return this._workshopTippingService;
   }
@@ -398,7 +400,7 @@ export class ServicesContainer {
   get updateProfileService(): IUpdateProfileService {
     this._updateProfileService ??= new UpdateProfileService(
       this.repositories.authUserRepository,
-      this.repositories.appUserRepository
+      this.repositories.appUserRepository,
     );
     return this._updateProfileService;
   }
@@ -409,7 +411,7 @@ export class ServicesContainer {
       this.repositories.accountRepository,
       new PasswordValidationService(),
       new BetterAuthService(),
-      this.emailService
+      this.emailService,
     );
     return this._changePasswordService;
   }
@@ -420,7 +422,7 @@ export class ServicesContainer {
       this.repositories.verificationRepository,
       this.emailService,
       new EmailTemplateService(),
-      new BetterAuthService()
+      new BetterAuthService(),
     );
     return this._changeEmailService;
   }
@@ -431,7 +433,7 @@ export class ServicesContainer {
         process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
       this._forgotPasswordService = new ForgotPasswordService(
         new PasswordValidationService(),
-        new HttpClient(baseUrl)
+        new HttpClient(baseUrl),
       );
     }
     return this._forgotPasswordService;
@@ -444,7 +446,7 @@ export class ServicesContainer {
       this.userTitleService,
       this.workshopCashbackService,
       this.workshopNoShowPenaltyService,
-      this.prisma
+      this.prisma,
     );
     return this._workshopAttendanceService;
   }
@@ -454,18 +456,22 @@ export class ServicesContainer {
       this.repositories.appUserRepository,
       this.repositories.workshopRepository,
       this.prisma,
-      new LocalFileStorageService()
+      new LocalFileStorageService(),
+      this.emailService,
     );
     return this._deleteAccountEnhancedService;
   }
 
   get exportDataService(): IExportDataService {
-    this._exportDataService ??= new ExportDataService(this.prisma);
+    this._exportDataService ??= new ExportDataService(
+      this.prisma,
+      this.emailService,
+    );
     return this._exportDataService;
   }
 
   get adminService(): IAdminService {
-    this._adminService ??= new AdminService(this.prisma);
+    this._adminService ??= new AdminService(this.prisma, this.emailService);
     return this._adminService;
   }
 
@@ -473,7 +479,7 @@ export class ServicesContainer {
     this._supportRequestService ??= new SupportRequestService(
       this.repositories.supportRequestRepository,
       this.notificationService,
-      this.emailService
+      this.emailService,
     );
     return this._supportRequestService;
   }

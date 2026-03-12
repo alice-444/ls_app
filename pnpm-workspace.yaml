@@ -1,6 +1,7 @@
 packages:
   - front
   - back
+  - shared
 
 onlyBuiltDependencies:
   - '@prisma/engines'

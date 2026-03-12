@@ -22,8 +22,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
-import { WORKSHOP_VALIDATION, isMinimumTomorrow } from "@/shared/validation";
-import type { WorkshopBase } from "@/types/workshop";
+import { WORKSHOP_VALIDATION, isMinimumTomorrow } from "@ls-app/shared";
+import type { WorkshopBase } from "@ls-app/shared";
 
 interface PublishWorkshopDialogProps {
   workshop: (Omit<WorkshopBase, "date"> & { date: Date | null }) | null;
@@ -43,7 +43,7 @@ export function PublishWorkshopDialog({
   open,
   onOpenChange,
   onSuccess,
-}: PublishWorkshopDialogProps) {
+}: Readonly<PublishWorkshopDialogProps>) {
   const [isPublishing, setIsPublishing] = useState(false);
 
   const publishMutation = trpc.workshop.publish.useMutation({
@@ -161,7 +161,7 @@ export function PublishWorkshopDialog({
                 <span className="font-semibold text-foreground">
                   "{workshop.title}"
                 </span>
-                . Il sera visible par tous les apprenants.
+                {". Il sera visible par tous les apprenants."}
               </>
             ) : (
               "Certaines informations sont manquantes pour publier cet atelier."
@@ -178,11 +178,11 @@ export function PublishWorkshopDialog({
                   Informations manquantes :
                 </p>
                 <ul className="space-y-2">
-                  {validationErrors.map((error, index) => {
+                  {validationErrors.map((error) => {
                     const Icon = error.icon;
                     return (
                       <li
-                        key={index}
+                        key={`${error.field}-${error.message}`}
                         className="flex items-center gap-2 text-sm text-red-700 dark:text-red-300"
                       >
                         <Icon className="h-4 w-4 shrink-0" />

@@ -33,7 +33,7 @@ import {
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
-import type { WorkshopBase } from "@/types/workshop";
+import type { WorkshopBase } from "@ls-app/shared";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
 

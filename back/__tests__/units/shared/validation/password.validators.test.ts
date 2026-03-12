@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { PasswordValidator } from "../../../../src/shared/validation/password.validators";
+import { PasswordValidator } from "@ls-app/shared";
 
 describe("PasswordValidator.validate", () => {
   it("rejects a password shorter than 8 characters", () => {

@@ -3,10 +3,11 @@ import { createServer } from "http";
 import type { UrlWithParsedQuery } from "url";
 import next from "next";
 import { initializeSocketServer } from "./src/lib/socket/server";
+import { container } from "./src/lib/di/container";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOSTNAME_BACKEND;
-const port = parseInt(process.env.PORT_BACKEND || "4500", 10);
+const port = Number.parseInt(process.env.PORT_BACKEND || "4500", 10);
 
 const app = next({ hostname, dev });
 const handle = app.getRequestHandler();
@@ -76,6 +77,9 @@ app.prepare().then(() => {
 
   const io = initializeSocketServer(httpServer);
   console.log("Socket.IO initialized on path /socket.io");
+
+  // Reset all user presence status on startup to avoid "ghost" online users
+  container.presenceService.resetAllPresence();
 
   httpServer
     .once("error", (err) => {

@@ -14,10 +14,10 @@ import {
   History,
   Coins,
   AlertCircle,
+  Users,
 } from "lucide-react";
-import { Users } from "lucide-react";
 import { formatDate } from "@/lib/workshop-utils";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 interface ApprenticeSidebarProps {
   readonly workshopHistory: WorkshopDetailed[] | undefined;

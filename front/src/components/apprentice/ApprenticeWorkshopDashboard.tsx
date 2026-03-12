@@ -22,7 +22,7 @@ import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalenda
 import { ApprenticeSidebar } from "./ApprenticeSidebar";
 import { UpcomingWorkshopsCard } from "./UpcomingWorkshopsCard";
 import { AvailableWorkshopsGrid } from "./AvailableWorkshopsGrid";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 export function ApprenticeWorkshopDashboard() {
   const router = useRouter();
@@ -166,7 +166,7 @@ export function ApprenticeWorkshopDashboard() {
         </div>
       </div>
 
-      {cancelDialogWorkshop && cancelDialogWorkshop.date && (
+      {cancelDialogWorkshop?.date && (
         <CancelWorkshopRegistrationDialog
           open={!!cancelDialogWorkshop}
           onOpenChange={(open) => {

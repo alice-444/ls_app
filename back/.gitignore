@@ -33,6 +33,10 @@ node_modules/
 !.env.example
 .dev.vars
 
+# Sentry
+.env.sentry-build-plugin
+.sentryclirc
+
 # logs
 logs/
 *.log

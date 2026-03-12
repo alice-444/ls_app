@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { WorkshopRequestCard } from "./WorkshopRequestCard";
-import type { WorkshopRequest } from "@/types/workshop";
+import type { WorkshopRequest } from "@ls-app/shared";
 import type { WorkshopRequestsProps } from "@/types/workshop-components";
 
 export function WorkshopRequests({
@@ -16,7 +16,7 @@ export function WorkshopRequests({
   onAcceptRequest,
   onRejectRequest,
   isRejecting,
-}: WorkshopRequestsProps) {
+}: Readonly<WorkshopRequestsProps>) {
   if (workshopStatus !== "PUBLISHED") {
     return null;
   }

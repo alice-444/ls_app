@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
+import { fileTypeFromBuffer } from "file-type";
 import { prisma } from "@/lib/common";
 import { uploadRateLimit } from "@/lib/rate-limit";
 import {
@@ -32,6 +33,163 @@ const supportRequestSchema = z.object({
   problemType: z.string().min(1),
 });
 
+type ValidationResult =
+  | { ok: true; data: z.infer<typeof supportRequestSchema> }
+  | { ok: false; response: NextResponse };
+
+function validateFormData(formData: FormData): ValidationResult {
+  const email = formData.get("email") as string;
+  const subject = formData.get("subject") as string;
+  const description = formData.get("description") as string;
+  const problemType = formData.get("problemType") as string;
+
+  const validation = supportRequestSchema.safeParse({
+    email,
+    subject,
+    description,
+    problemType,
+  });
+
+  if (!validation.success) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "Données invalides", details: validation.error.issues },
+        { status: 400 },
+      ),
+    };
+  }
+  return { ok: true, data: validation.data };
+}
+
+async function validateAndCollectFiles(
+  formData: FormData,
+): Promise<
+  { ok: true; files: File[] } | { ok: false; response: NextResponse }
+> {
+  const fileCount = formData.getAll("attachments").length;
+
+  if (fileCount > MAX_TOTAL_FILES) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: `Maximum ${MAX_TOTAL_FILES} fichiers autorisés` },
+        { status: 400 },
+      ),
+    };
+  }
+
+  const files: File[] = [];
+  for (let i = 0; i < fileCount; i++) {
+    const file = formData.get(`attachments[${i}]`) as File | null;
+    if (!file) continue;
+
+    if (file.size > MAX_FILE_SIZE) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          {
+            error: `Le fichier ${file.name} dépasse la taille maximale de 10 MB`,
+          },
+          { status: 400 },
+        ),
+      };
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const fileType = await fileTypeFromBuffer(buffer);
+
+    if (!fileType || !ALLOWED_MIME_TYPES.has(fileType.mime.toLowerCase())) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          { error: `Type de fichier non autorisé ou corrompu: ${file.name}` },
+          { status: 400 },
+        ),
+      };
+    }
+    files.push(file);
+  }
+
+  return { ok: true, files };
+}
+
+async function uploadAttachments(
+  files: File[],
+): Promise<Array<{ filename: string; url: string; size: number }>> {
+  if (files.length === 0) return [];
+
+  const uploadsDir = resolve(process.cwd(), "uploads", "support");
+  if (!existsSync(uploadsDir)) {
+    await mkdir(uploadsDir, { recursive: true });
+  }
+
+  const attachments: Array<{ filename: string; url: string; size: number }> =
+    [];
+  for (const file of files) {
+    const fileId = randomUUID();
+    const extension = file.name.split(".").pop() || "";
+    const sanitizedExtension = extension.replaceAll(/[^a-zA-Z0-9]/g, "");
+    const filename = `${fileId}.${sanitizedExtension}`;
+    const filePath = join(uploadsDir, filename);
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    await writeFile(filePath, buffer);
+
+    attachments.push({
+      filename: file.name,
+      url: `/api/support-request/attachments/${filename}`,
+      size: file.size,
+    });
+  }
+  return attachments;
+}
+
+async function sendConfirmationEmail(
+  supportRequestId: string,
+  data: z.infer<typeof supportRequestSchema>,
+  attachmentCount: number,
+): Promise<void> {
+  try {
+    const { renderEmailTemplate } =
+      await import("../../../lib/email/utils/render-email");
+    const { SupportRequestConfirmation } =
+      await import("../../../lib/email/templates/SupportRequestConfirmation");
+    const React = await import("react");
+
+    const emailContent = await renderEmailTemplate(
+      React.createElement(SupportRequestConfirmation, {
+        subject: data.subject,
+        problemType: data.problemType,
+        requestId: supportRequestId,
+        hasAttachments: attachmentCount > 0,
+        attachmentCount,
+      }),
+    );
+
+    const emailResult = await container.emailService.sendEmail({
+      to: data.email,
+      subject: `Confirmation de votre demande de support - ${data.subject}`,
+      html: emailContent.html,
+      text: emailContent.text,
+    });
+
+    if (!emailResult.ok) {
+      console.error("Failed to send confirmation email", {
+        supportRequestId,
+        error: emailResult.error,
+      });
+    }
+  } catch (error) {
+    console.error("Error sending confirmation email", {
+      supportRequestId,
+      error,
+    });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const authResult = await getAuthenticatedSession(req);
@@ -46,138 +204,39 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
 
-    const email = formData.get("email") as string;
-    const subject = formData.get("subject") as string;
-    const description = formData.get("description") as string;
-    const problemType = formData.get("problemType") as string;
-
-    const validation = supportRequestSchema.safeParse({
-      email,
-      subject,
-      description,
-      problemType,
-    });
-
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: "Données invalides", details: validation.error.issues },
-        { status: 400 }
-      );
+    const validationResult = validateFormData(formData);
+    if (!validationResult.ok) {
+      return validationResult.response;
     }
 
-    const files: File[] = [];
-    const fileCount = formData.getAll("attachments").length;
-
-    if (fileCount > MAX_TOTAL_FILES) {
-      return NextResponse.json(
-        { error: `Maximum ${MAX_TOTAL_FILES} fichiers autorisés` },
-        { status: 400 }
-      );
+    const filesResult = await validateAndCollectFiles(formData);
+    if (!filesResult.ok) {
+      return filesResult.response;
     }
 
-    for (let i = 0; i < fileCount; i++) {
-      const file = formData.get(`attachments[${i}]`) as File | null;
-      if (file) {
-        if (file.size > MAX_FILE_SIZE) {
-          return NextResponse.json(
-            {
-              error: `Le fichier ${file.name} dépasse la taille maximale de 10 MB`,
-            },
-            { status: 400 }
-          );
-        }
+    const attachments = await uploadAttachments(filesResult.files);
 
-        if (!ALLOWED_MIME_TYPES.has(file.type)) {
-          return NextResponse.json(
-            { error: `Type de fichier non autorisé: ${file.name}` },
-            { status: 400 }
-          );
-        }
-
-        files.push(file);
-      }
-    }
-
-    const attachments: Array<{ filename: string; url: string; size: number }> =
-      [];
-
-    if (files.length > 0) {
-      const uploadsDir = resolve(process.cwd(), "uploads", "support");
-      if (!existsSync(uploadsDir)) {
-        await mkdir(uploadsDir, { recursive: true });
-      }
-
-      for (const file of files) {
-        const fileId = randomUUID();
-        const extension = file.name.split(".").pop() || "";
-        const sanitizedExtension = extension.replaceAll(/[^a-zA-Z0-9]/g, "");
-        const filename = `${fileId}.${sanitizedExtension}`;
-        const filePath = join(uploadsDir, filename);
-
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        await writeFile(filePath, buffer);
-
-        attachments.push({
-          filename: file.name,
-          url: `/api/support-request/attachments/${filename}`,
-          size: file.size,
-        });
-      }
-    }
-
-    const appUser = userId ? await container.appUserRepository.findByUserId(userId) : null;
+    const appUser = userId
+      ? await container.appUserRepository.findByUserId(userId)
+      : null;
 
     const supportRequest = await (prisma as any).support_request.create({
       data: {
         userId: appUser?.id || null,
-        email: validation.data.email,
-        subject: validation.data.subject,
-        description: validation.data.description,
-        problemType: validation.data.problemType,
+        email: validationResult.data.email,
+        subject: validationResult.data.subject,
+        description: validationResult.data.description,
+        problemType: validationResult.data.problemType,
         status: "PENDING",
         attachments: attachments.length > 0 ? attachments : null,
       },
     });
 
-    try {
-      const { renderEmailTemplate } = await import(
-        "../../../lib/email/utils/render-email"
-      );
-      const { SupportRequestConfirmation } = await import(
-        "../../../lib/email/templates/SupportRequestConfirmation"
-      );
-      const React = await import("react");
-
-      const emailContent = await renderEmailTemplate(
-        React.createElement(SupportRequestConfirmation, {
-          subject: validation.data.subject,
-          problemType: validation.data.problemType,
-          requestId: supportRequest.id,
-          hasAttachments: attachments.length > 0,
-          attachmentCount: attachments.length,
-        })
-      );
-
-      const emailResult = await container.emailService.sendEmail({
-        to: validation.data.email,
-        subject: `Confirmation de votre demande de support - ${validation.data.subject}`,
-        html: emailContent.html,
-        text: emailContent.text,
-      });
-
-      if (!emailResult.ok) {
-        console.error("Failed to send confirmation email", {
-          supportRequestId: supportRequest.id,
-          error: emailResult.error,
-        });
-      }
-    } catch (error) {
-      console.error("Error sending confirmation email", {
-        supportRequestId: supportRequest.id,
-        error,
-      });
-    }
+    await sendConfirmationEmail(
+      supportRequest.id,
+      validationResult.data,
+      attachments.length,
+    );
 
     return NextResponse.json(
       {
@@ -185,7 +244,7 @@ export async function POST(req: NextRequest) {
         id: supportRequest.id,
         message: "Votre demande a été envoyée avec succès",
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return handleRouteError(error);

@@ -23,12 +23,14 @@
 		"test:coverage": "vitest run --coverage"
 	},
 	"dependencies": {
+		"@ls-app/shared": "workspace:*",
 		"@daily-co/daily-js": "^0.87.0",
 		"@prisma/adapter-pg": "^7.4.2",
 		"@prisma/client": "^7.4.2",
 		"@prisma/extension-accelerate": "^3.0.1",
 		"@react-email/components": "^1.0.8",
 		"@react-email/render": "^2.0.4",
+		"@sentry/nextjs": "^10.43.0",
 		"@trpc/server": "^11.12.0",
 		"better-auth": "^1.5.4",
 		"cloudinary": "^2.9.0",

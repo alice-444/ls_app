@@ -13,18 +13,15 @@ import {
   cancelWorkshopSchema,
   isMinimumTomorrow,
   WORKSHOP_VALIDATION,
-} from "../../../../shared/validation";
-import {
-  handleError,
-  createErrorContext,
-} from "../../../common/error-handler";
+} from "@ls-app/shared";
+import { handleError, createErrorContext } from "../../../common/error-handler";
 import { WorkshopDomain } from "../../domain/workshop.domain";
 
 export class WorkshopLifecycleService implements IWorkshopLifecycleService {
   constructor(
     private readonly workshopRepository: IWorkshopRepository,
     private readonly accessGuard: IWorkshopAccessGuard,
-    private readonly notificationService?: INotificationService
+    private readonly notificationService?: INotificationService,
   ) {}
 
   private sanitizeWorkshopFields(data: {
@@ -63,7 +60,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
 
   async createWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ workshopId: string }>> {
     const validation = validateInput(createWorkshopBackendSchema, input);
     if (!validation.ok) {
@@ -107,14 +104,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
     } catch (error) {
       return handleError(
         error,
-        createErrorContext("createWorkshop", { userId })
+        createErrorContext("createWorkshop", { userId }),
       );
     }
   }
 
   private buildUpdateWorkshopData(
     validationData: { workshopId: string } & Record<string, unknown>,
-    sanitized: ReturnType<WorkshopLifecycleService["sanitizeWorkshopFields"]>
+    sanitized: ReturnType<WorkshopLifecycleService["sanitizeWorkshopFields"]>,
   ): Result<Record<string, unknown>> {
     const updateData: Record<string, unknown> = {};
     const assignIfDefined = (key: string, value: unknown) => {
@@ -144,7 +141,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
 
   async updateWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     const validation = validateInput(updateWorkshopBackendSchema, input);
     if (!validation.ok) {
@@ -155,7 +152,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
       const ownershipCheck = await this.accessGuard.verifyWorkshopOwnership(
         userId,
         validation.data.workshopId,
-        "modifier"
+        "modifier",
       );
       if (!ownershipCheck.ok) {
         return ownershipCheck;
@@ -170,7 +167,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
 
       const updateResult = this.buildUpdateWorkshopData(
         validation.data as { workshopId: string } & Record<string, unknown>,
-        sanitized
+        sanitized,
       );
       if (!updateResult.ok) {
         return updateResult;
@@ -178,7 +175,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
 
       await this.workshopRepository.update(
         validation.data.workshopId,
-        updateResult.data as any
+        updateResult.data as any,
       );
 
       return success({ success: true });
@@ -188,14 +185,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         createErrorContext("updateWorkshop", {
           userId,
           resourceId: validation.data.workshopId,
-        })
+        }),
       );
     }
   }
 
   async publishWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean; publishedAt: Date }>> {
     const validation = validateInput(publishWorkshopSchema, input);
     if (!validation.ok) {
@@ -206,14 +203,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
       const ownershipCheck = await this.accessGuard.verifyWorkshopOwnership(
         userId,
         validation.data.workshopId,
-        "publier"
+        "publier",
       );
       if (!ownershipCheck.ok) {
         return ownershipCheck;
       }
 
       const workshop = await this.workshopRepository.findById(
-        validation.data.workshopId
+        validation.data.workshopId,
       );
       if (!workshop) {
         return failure("Atelier introuvable", 404);
@@ -224,7 +221,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
       if (!can) {
         return failure(
           `Impossible de publier l'atelier. Raisons : ${reasons.join(", ")}`,
-          400
+          400,
         );
       }
 
@@ -242,14 +239,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         createErrorContext("publishWorkshop", {
           userId,
           resourceId: validation.data.workshopId,
-        })
+        }),
       );
     }
   }
 
   async unpublishWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     const validation = validateInput(unpublishWorkshopSchema, input);
     if (!validation.ok) {
@@ -260,14 +257,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
       const ownershipCheck = await this.accessGuard.verifyWorkshopOwnership(
         userId,
         validation.data.workshopId,
-        "dépublier"
+        "dépublier",
       );
       if (!ownershipCheck.ok) {
         return ownershipCheck;
       }
 
       const workshop = await this.workshopRepository.findById(
-        validation.data.workshopId
+        validation.data.workshopId,
       );
       if (!workshop) {
         return failure("Atelier introuvable", 404);
@@ -289,14 +286,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         createErrorContext("unpublishWorkshop", {
           userId,
           resourceId: validation.data.workshopId,
-        })
+        }),
       );
     }
   }
 
   async deleteWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     const validation = validateInput(deleteWorkshopSchema, input);
     if (!validation.ok) {
@@ -307,7 +304,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
       const ownershipCheck = await this.accessGuard.verifyWorkshopOwnership(
         userId,
         validation.data.workshopId,
-        "supprimer"
+        "supprimer",
       );
       if (!ownershipCheck.ok) {
         return ownershipCheck;
@@ -322,14 +319,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         createErrorContext("deleteWorkshop", {
           userId,
           resourceId: validation.data.workshopId,
-        })
+        }),
       );
     }
   }
 
   async cancelWorkshop(
     userId: string,
-    input: unknown
+    input: unknown,
   ): Promise<Result<{ success: boolean }>> {
     const validation = validateInput(cancelWorkshopSchema, input);
     if (!validation.ok) {
@@ -340,14 +337,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
       const ownershipCheck = await this.accessGuard.verifyWorkshopOwnership(
         userId,
         validation.data.workshopId,
-        "annuler"
+        "annuler",
       );
       if (!ownershipCheck.ok) {
         return ownershipCheck;
       }
 
       const workshop = await this.workshopRepository.findById(
-        validation.data.workshopId
+        validation.data.workshopId,
       );
       if (!workshop) {
         return failure("Atelier introuvable", 404);
@@ -368,7 +365,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
             message: `${creatorName} a annulé l'atelier "${workshop.title}".`,
             actionUrl: `/workshop-room`,
           },
-          userId
+          userId,
         );
       }
 
@@ -379,7 +376,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         createErrorContext("cancelWorkshop", {
           userId,
           resourceId: validation.data.workshopId,
-        })
+        }),
       );
     }
   }
