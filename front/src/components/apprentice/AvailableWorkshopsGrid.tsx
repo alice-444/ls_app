@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { GraduationCap } from "lucide-react";
 import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 interface AvailableWorkshopsGridProps {
   readonly workshops: WorkshopDetailed[] | undefined;
