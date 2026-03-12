@@ -2,7 +2,7 @@
 	"name": "back",
 	"private": true,
 	"prisma": {
-		"schema": "./.prisma/schema/schema.prisma"
+		"schema": "./prisma/schema/schema.prisma"
 	},
 	"scripts": {
 		"dev": "concurrently \"pnpm run dev:socket\" \"pnpm run dev:next\"",
