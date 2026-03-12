@@ -2,9 +2,6 @@ services:
   # Service Frontend
   frontend:
     image: miho11/front_ls:latest
-    build:
-      context: ../../
-      dockerfile: ./infra/docker/front/prod/Dockerfile
     ports:
       - "3001:3001"
     environment:
@@ -25,9 +22,6 @@ services:
   # Service Backend
   backend:
     image: miho11/back_ls:latest
-    build:
-      context: ../../
-      dockerfile: ./infra/docker/back/prod/Dockerfile
     ports:
       - "4500:4500"
     environment:
