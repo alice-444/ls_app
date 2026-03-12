@@ -26,7 +26,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Structure app, stack, routes, auth, sidebar : [front.md](front.md).
 - Schémas : layout/Providers, flux tRPC, nav sidebar, auth/profil.
-- Racine code : `front/src/` — `app/`, `components/`, `lib/`, `utils/trpc.ts`, `shared/`.
+- Racine code : `front/src/` — `app/`, `components/`, `lib/`, `hooks/`, `types/`, `utils/trpc.ts`. Validation et types partagés : package `shared/` (voir [arborescence](arborescence.md)).
 
 ---
 
@@ -34,7 +34,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 - Entrée requêtes, routers tRPC, structure dossiers, routes API, env : [back.md](back.md).
 - Schémas : routage HTTP, arborescence appRouter, structure back/, flux requête, regroupement routes API.
-- Racine code : `back/` — `server.ts`, `src/app/api/`, `src/routers/`, `src/lib/`, `prisma/schema/`.
+- Racine code : `back/` — `server.ts`, `src/app/api/`, `src/routers/`, `src/lib/`, `.prisma/schema/`. Voir [arborescence](arborescence.md).
 
 ---
 
@@ -65,7 +65,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - Schéma : `back/.prisma/schema/schema.prisma`.
 - **MPD (modèle physique)** : [mpd.md](mpd.md) — tables, colonnes, types, clés, index.
 - Modèles principaux : account, app_user (profil utilisateur, lié à account via userId), workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
-- Client généré : `back/prisma/generated/client`.
+- Client généré : `back/.prisma/generated/client`.
 
 ---
 
@@ -92,7 +92,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - `pnpm run test:coverage` — tests avec couverture (rapports HTML + LCOV dans `coverage/`).
 - E2E : Cypress, config dans `cypress.config.js`, specs dans `cypress/e2e/`.
 
-Emplacements : `front/__tests__/units/`, `back/__tests__/units/`, `back/__tests__/api/`, `back/__tests__/trpc/`. Détail : [procedure.md](procedure.md) § Lancer les tests.
+Emplacements : `front/__tests__/units/`, `back/__tests__/units/`, `back/__tests__/api/`, `back/__tests__/trpc/`, `back/__tests__/integration/`. Détail : [procedure.md](procedure.md) § Lancer les tests.
 
 ---
 

@@ -35,7 +35,7 @@ Liste des documents **ai_docs** avec chemin et courte description, pour charger 
 
 | Document | Description |
 |----------|-------------|
-| `ai_docs/PRPs/README.md` | Index des 36 PRPs, ordre de lecture. |
+| `ai_docs/PRPs/README.md` | Index des 37 PRPs, ordre de lecture. |
 | `ai_docs/PRPs/PRP-01-back-sante.md` | Back santé et métriques. |
 | `ai_docs/PRPs/PRP-02-landing-auth.md` | Landing, login, sign-up, onboarding. |
 | `ai_docs/PRPs/PRP-03-dashboard.md` | Dashboards apprenant et mentor. |
@@ -72,6 +72,7 @@ Liste des documents **ai_docs** avec chemin et courte description, pour charger 
 | `ai_docs/PRPs/PRP-34-admin-dashboard.md` | Admin dashboard. |
 | `ai_docs/PRPs/PRP-35-cookie-consent.md` | Cookie consent / bandeau RGPD. |
 | `ai_docs/PRPs/PRP-36-admin-support.md` | Admin – gestion des demandes support. |
+| `ai_docs/PRPs/PRP-37-communaute.md` | Hub communauté (events, deals, spots, polls). |
 
 ## Concept library – PRP Flow
 
