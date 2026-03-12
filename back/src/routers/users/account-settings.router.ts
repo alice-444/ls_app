@@ -1,22 +1,16 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
+import { updatePublicProfileSchema } from "@ls-app/shared";
+import type { UpdatePublicProfileInput } from "@ls-app/shared";
 
 export const accountSettingsRouter = router({
   updateProfile: protectedProcedure
-    .input(
-      z.object({
-        photoUrl: z.string().url().nullable().optional(),
-        name: z.string().min(1).max(120).optional(),
-        bio: z.string().max(300).nullable().optional(),
-        emailNotifications: z.boolean().optional(),
-        inAppNotifications: z.boolean().optional(),
-      })
-    )
+    .input(updatePublicProfileSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.updateProfileService.updatePublicProfile(
         ctx.session.user.id,
-        input
+        input as UpdatePublicProfileInput,
       );
 
       if (!result.ok) {
@@ -32,12 +26,12 @@ export const accountSettingsRouter = router({
         currentPassword: z.string().min(1),
         newPassword: z.string().min(8),
         confirmPassword: z.string().min(8),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.changePasswordService.changePassword(
         ctx.session.user.id,
-        input
+        input,
       );
 
       if (!result.ok) {
@@ -52,12 +46,12 @@ export const accountSettingsRouter = router({
       z.object({
         newEmail: z.string().email(),
         currentPassword: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.changeEmailService.requestEmailChange(
         ctx.session.user.id,
-        input
+        input,
       );
 
       if (!result.ok) {
@@ -71,11 +65,11 @@ export const accountSettingsRouter = router({
     .input(
       z.object({
         token: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const result = await container.changeEmailService.verifyEmailChange(
-        input.token
+        input.token,
       );
 
       if (!result.ok) {
@@ -89,12 +83,11 @@ export const accountSettingsRouter = router({
     .input(
       z.object({
         email: z.string().email(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
-      const result = await container.forgotPasswordService.requestPasswordReset(
-        input
-      );
+      const result =
+        await container.forgotPasswordService.requestPasswordReset(input);
 
       if (!result.ok) {
         throw new Error(result.error);
@@ -110,7 +103,7 @@ export const accountSettingsRouter = router({
         otp: z.string().min(1),
         newPassword: z.string().min(8),
         confirmPassword: z.string().min(8),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const result = await container.forgotPasswordService.resetPassword(input);
@@ -125,7 +118,7 @@ export const accountSettingsRouter = router({
   checkCanDeleteAccount: protectedProcedure.query(async ({ ctx }) => {
     const result =
       await container.deleteAccountEnhancedService.checkCanDeleteAccount(
-        ctx.session.user.id
+        ctx.session.user.id,
       );
 
     if (!result.ok) {
@@ -140,13 +133,14 @@ export const accountSettingsRouter = router({
       z.object({
         confirmation: z.literal("DELETE"),
         reason: z.string().optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const result = await container.deleteAccountEnhancedService.initiateDeletion(
-        ctx.session.user.id,
-        input.reason
-      );
+      const result =
+        await container.deleteAccountEnhancedService.initiateDeletion(
+          ctx.session.user.id,
+          input.reason,
+        );
 
       if (!result.ok) {
         throw new Error(result.error);
