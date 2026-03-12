@@ -6,13 +6,14 @@ import {
 } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import {
-  createWorkshopSchema,
-  updateWorkshopSchema,
+  createWorkshopBackendSchema,
+  updateWorkshopBackendSchema,
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
   cancelWorkshopSchema,
-} from "../../lib/workshops/services";
+  workshopIdSchema,
+} from "@ls-app/shared";
 import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
 import { workshopAttendanceRouter } from "./workshop-attendance.router";
@@ -21,7 +22,7 @@ import { workshopsTotal } from "../../lib/metrics/prometheus";
 
 const workshopCoreRouter = router({
   create: mentorProcedure
-    .input(createWorkshopSchema)
+    .input(createWorkshopBackendSchema)
     .mutation(async ({ ctx, input }) => {
       const result = unwrapResult(
         await container.workshopService.createWorkshop(
@@ -29,12 +30,12 @@ const workshopCoreRouter = router({
           input,
         ),
       );
-      workshopsTotal.labels("created").inc();
+      workshopsTotal.inc();
       return result;
     }),
 
   update: mentorProcedure
-    .input(updateWorkshopSchema)
+    .input(updateWorkshopBackendSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopService.updateWorkshop(
@@ -116,7 +117,7 @@ const workshopCoreRouter = router({
   ),
 
   getById: publicProcedure
-    .input(z.object({ workshopId: z.string() }))
+    .input(workshopIdSchema)
     .query(async ({ input }) =>
       unwrapResult(
         await container.workshopService.getWorkshopById(input.workshopId),

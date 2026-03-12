@@ -28,3 +28,4 @@ __exportStar(require("./validation/community.schemas"), exports);
 __exportStar(require("./validation/user.schemas"), exports);
 __exportStar(require("./utils/date"), exports);
 __exportStar(require("./types/workshop"), exports);
+__exportStar(require("./types/user"), exports);

@@ -1,15 +1,19 @@
 import { protectedProcedure, router } from "../../lib/trpc";
+import {
+  receiverUserIdSchema,
+  connectionIdSchema,
+  otherUserIdSchema,
+} from "@ls-app/shared";
 import { container } from "../../lib/di/container";
-import { z } from "zod";
 
 export const connectionRouter = router({
   sendConnectionRequest: protectedProcedure
-    .input(z.object({ receiverUserId: z.string() }))
+    .input(receiverUserIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result =
         await container.userConnectionService.sendConnectionRequest(
           ctx.session.user.id,
-          input.receiverUserId
+          input.receiverUserId,
         );
       if (!result.ok) {
         throw new Error(result.error);
@@ -18,12 +22,12 @@ export const connectionRouter = router({
     }),
 
   acceptConnectionRequest: protectedProcedure
-    .input(z.object({ connectionId: z.string() }))
+    .input(connectionIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result =
         await container.userConnectionService.acceptConnectionRequest(
           ctx.session.user.id,
-          input.connectionId
+          input.connectionId,
         );
       if (!result.ok) {
         throw new Error(result.error);
@@ -32,12 +36,12 @@ export const connectionRouter = router({
     }),
 
   rejectConnectionRequest: protectedProcedure
-    .input(z.object({ connectionId: z.string() }))
+    .input(connectionIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result =
         await container.userConnectionService.rejectConnectionRequest(
           ctx.session.user.id,
-          input.connectionId
+          input.connectionId,
         );
       if (!result.ok) {
         throw new Error(result.error);
@@ -46,11 +50,11 @@ export const connectionRouter = router({
     }),
 
   removeConnection: protectedProcedure
-    .input(z.object({ otherUserId: z.string() }))
+    .input(otherUserIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.userConnectionService.removeConnection(
         ctx.session.user.id,
-        input.otherUserId
+        input.otherUserId,
       );
       if (!result.ok) {
         throw new Error(result.error);
@@ -59,12 +63,12 @@ export const connectionRouter = router({
     }),
 
   checkConnectionStatus: protectedProcedure
-    .input(z.object({ otherUserId: z.string() }))
+    .input(otherUserIdSchema)
     .query(async ({ ctx, input }) => {
       const result =
         await container.userConnectionService.checkConnectionStatus(
           ctx.session.user.id,
-          input.otherUserId
+          input.otherUserId,
         );
       if (!result.ok) {
         throw new Error(result.error);
@@ -75,7 +79,7 @@ export const connectionRouter = router({
   getPendingRequestsReceived: protectedProcedure.query(async ({ ctx }) => {
     const result =
       await container.userConnectionService.getPendingRequestsReceived(
-        ctx.session.user.id
+        ctx.session.user.id,
       );
     if (!result.ok) {
       throw new Error(result.error);
@@ -84,10 +88,9 @@ export const connectionRouter = router({
   }),
 
   getAcceptedConnections: protectedProcedure.query(async ({ ctx }) => {
-    const result =
-      await container.userConnectionService.getAcceptedConnections(
-        ctx.session.user.id
-      );
+    const result = await container.userConnectionService.getAcceptedConnections(
+      ctx.session.user.id,
+    );
     if (!result.ok) {
       throw new Error(result.error);
     }
@@ -95,10 +98,9 @@ export const connectionRouter = router({
   }),
 
   getPendingRequestsSent: protectedProcedure.query(async ({ ctx }) => {
-    const result =
-      await container.userConnectionService.getPendingRequestsSent(
-        ctx.session.user.id
-      );
+    const result = await container.userConnectionService.getPendingRequestsSent(
+      ctx.session.user.id,
+    );
     if (!result.ok) {
       throw new Error(result.error);
     }

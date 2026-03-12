@@ -10,12 +10,9 @@ export default defineConfig({
       "__tests__/units/**/*.test.ts",
       "__tests__/api/**/*.test.ts",
       "__tests__/trpc/**/*.test.ts",
+      "__tests__/integration/**/*.test.ts",
     ],
-    env: {
-      DATABASE_URL:
-        process.env.DATABASE_URL ||
-        "postgresql://user:password@localhost:5432/test?schema=public",
-    },
+    env: {},
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],

@@ -2,7 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mentorProfileSchema = exports.SOCIAL_PLATFORMS = void 0;
 const zod_1 = require("zod");
-exports.SOCIAL_PLATFORMS = ["linkedin", "twitter", "youtube", "github"];
+exports.SOCIAL_PLATFORMS = [
+    "linkedin",
+    "twitter",
+    "youtube",
+    "github",
+];
 exports.mentorProfileSchema = zod_1.z.object({
     name: zod_1.z
         .string()

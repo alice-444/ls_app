@@ -1,4 +1,5 @@
 import { adminProcedure, router } from "../../lib/trpc";
+import { userIdSchema } from "@ls-app/shared";
 import { prisma } from "../../lib/common/prisma";
 import { z } from "zod";
 
@@ -18,7 +19,7 @@ export const adminRouter = router({
       z.object({
         limit: z.number().min(1).max(100).default(50),
         cursor: z.string().nullish(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit, cursor } = input;
@@ -47,7 +48,7 @@ export const adminRouter = router({
         limit: z.number().min(1).max(100).default(50),
         cursor: z.string().nullish(),
         status: z.enum(["PENDING", "ACTIVE", "SUSPENDED"]).optional(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit, cursor, status } = input;
@@ -82,7 +83,7 @@ export const adminRouter = router({
     }),
 
   approveUser: adminProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(userIdSchema)
     .mutation(async ({ input }) => {
       return prisma.user.update({
         where: { id: input.userId },

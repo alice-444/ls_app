@@ -36,6 +36,38 @@ export const feedbackIdSchema = z.object({
   feedbackId: z.string().cuid(),
 });
 
+export const apprenticeIdSchema = z.object({
+  apprenticeId: z.string().cuid(),
+});
+
+export const apprenticeUserIdSchema = z.object({
+  apprenticeUserId: z.string().cuid(),
+});
+
+export const connectionIdSchema = z.object({
+  connectionId: z.string().cuid(),
+});
+
+export const receiverUserIdSchema = z.object({
+  receiverUserId: z.string().cuid(),
+});
+
+export const otherUserIdSchema = z.object({
+  otherUserId: z.string().cuid(),
+});
+
+export const pollIdSchema = z.object({
+  pollId: z.string().cuid(),
+});
+
+export const optionIdSchema = z.object({
+  optionId: z.string().cuid(),
+});
+
+export const reactionIdSchema = z.object({
+  reactionId: z.string().cuid(),
+});
+
 export const paginationSchema = z.object({
   limit: z.number().min(1).max(100).default(20),
   cursor: z.string().nullish(),

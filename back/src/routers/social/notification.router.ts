@@ -2,6 +2,7 @@ import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { z } from "zod";
 import { logger } from "../../lib/common/logger";
+import { notificationIdSchema } from "@ls-app/shared";
 
 const getSafeErrorMessage = (error: string): string => {
   if (error.includes("not found") || error.includes("Not found")) {
@@ -29,13 +30,13 @@ export const notificationRouter = router({
           offset: z.number().min(0).max(10000).optional().default(0),
         })
         .optional()
-        .default({ limit: 50, offset: 0 })
+        .default({ limit: 50, offset: 0 }),
     )
     .query(async ({ ctx, input }) => {
       const result = await container.notificationService.getNotifications(
         ctx.session.user.id,
         input.limit,
-        input.offset
+        input.offset,
       );
       if (!result.ok) {
         logger.error("getNotifications error", result.error, {
@@ -50,7 +51,7 @@ export const notificationRouter = router({
 
   getUnreadCount: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.notificationService.getUnreadCount(
-      ctx.session.user.id
+      ctx.session.user.id,
     );
     if (!result.ok) {
       logger.error("getUnreadCount error", result.error, {
@@ -68,12 +69,12 @@ export const notificationRouter = router({
           limit: z.number().min(1).max(10).optional().default(5),
         })
         .optional()
-        .default({ limit: 5 })
+        .default({ limit: 5 }),
     )
     .query(async ({ ctx, input }) => {
       const result = await container.notificationService.getRecentNotifications(
         ctx.session.user.id,
-        input.limit
+        input.limit,
       );
       if (!result.ok) {
         logger.error("getRecentNotifications error", result.error, {
@@ -86,11 +87,11 @@ export const notificationRouter = router({
     }),
 
   markAsRead: protectedProcedure
-    .input(z.object({ notificationId: z.string() }))
+    .input(notificationIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.notificationService.markAsRead(
         input.notificationId,
-        ctx.session.user.id
+        ctx.session.user.id,
       );
       if (!result.ok) {
         logger.error("markAsRead error", result.error, {
@@ -104,7 +105,7 @@ export const notificationRouter = router({
 
   markAllAsRead: protectedProcedure.mutation(async ({ ctx }) => {
     const result = await container.notificationService.markAllAsRead(
-      ctx.session.user.id
+      ctx.session.user.id,
     );
     if (!result.ok) {
       logger.error("markAllAsRead error", result.error, {
@@ -116,11 +117,11 @@ export const notificationRouter = router({
   }),
 
   deleteNotification: protectedProcedure
-    .input(z.object({ notificationId: z.string() }))
+    .input(notificationIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.notificationService.deleteNotification(
         input.notificationId,
-        ctx.session.user.id
+        ctx.session.user.id,
       );
       if (!result.ok) {
         logger.error("deleteNotification error", result.error, {

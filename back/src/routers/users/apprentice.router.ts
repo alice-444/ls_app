@@ -2,33 +2,34 @@ import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
+import { requestIdSchema, apprenticeUserIdSchema } from "@ls-app/shared";
 
 export const apprenticeRouter = router({
   getMyRequests: protectedProcedure.query(async ({ ctx }) =>
     unwrapResult(
       await container.workshopRequestService.getApprenticeRequests(
-        ctx.session.user.id
-      )
-    )
+        ctx.session.user.id,
+      ),
+    ),
   ),
 
   getMyWorkshops: protectedProcedure.query(async ({ ctx }) =>
     unwrapResult(
       await container.workshopService.getConfirmedWorkshopsForApprentice(
-        ctx.session.user.id
-      )
-    )
+        ctx.session.user.id,
+      ),
+    ),
   ),
 
   cancelRequest: protectedProcedure
-    .input(z.object({ requestId: z.string() }))
+    .input(requestIdSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopRequestService.cancelWorkshopRequest(
           ctx.session.user.id,
-          input.requestId
-        )
-      )
+          input.requestId,
+        ),
+      ),
     ),
 
   saveIdentityCard: protectedProcedure
@@ -44,12 +45,12 @@ export const apprenticeRouter = router({
           .max(5)
           .optional()
           .default([]),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.apprenticeProfileService.saveIdentityCard(
         ctx.session.user.id,
-        input
+        input,
       );
       if (!result.ok) {
         throw new Error(result.error);
@@ -64,12 +65,12 @@ export const apprenticeRouter = router({
         studyDomain: z.string().min(1).max(50).optional(),
         studyProgram: z.string().min(1).max(50).optional(),
         bio: z.string().max(500).nullable().optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.apprenticeProfileService.updateProfile(
         ctx.session.user.id,
-        input
+        input,
       );
       if (!result.ok) {
         throw new Error(result.error);
@@ -79,7 +80,7 @@ export const apprenticeRouter = router({
 
   getIdentityCard: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.apprenticeProfileService.getIdentityCard(
-      ctx.session.user.id
+      ctx.session.user.id,
     );
     if (!result.ok) {
       throw new Error(result.error);
@@ -88,12 +89,12 @@ export const apprenticeRouter = router({
   }),
 
   getMiniProfileForMentor: protectedProcedure
-    .input(z.object({ apprenticeUserId: z.string() }))
+    .input(apprenticeUserIdSchema)
     .query(async ({ ctx, input }) => {
       const result =
         await container.apprenticeProfileService.getMiniProfileForMentor(
           ctx.session.user.id,
-          input.apprenticeUserId
+          input.apprenticeUserId,
         );
       if (!result.ok) {
         throw new Error(result.error);
@@ -102,12 +103,12 @@ export const apprenticeRouter = router({
     }),
 
   getApprenticeProfileForViewer: protectedProcedure
-    .input(z.object({ apprenticeUserId: z.string() }))
+    .input(apprenticeUserIdSchema)
     .query(async ({ ctx, input }) => {
       const result =
         await container.apprenticeProfileService.getApprenticeProfileForViewer(
           ctx.session.user.id,
-          input.apprenticeUserId
+          input.apprenticeUserId,
         );
       if (!result.ok) {
         throw new Error(result.error);
