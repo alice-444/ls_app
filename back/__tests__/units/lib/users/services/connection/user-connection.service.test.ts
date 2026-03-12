@@ -58,7 +58,7 @@ describe("UserConnectionService", () => {
       mockAppUserRepo as any,
       mockConnectionRepo as any,
       mockUserBlockService as any,
-      mockNotificationService as any
+      mockNotificationService as any,
     );
   });
 
@@ -82,15 +82,25 @@ describe("UserConnectionService", () => {
 
     it("returns failure when receiver does not exist", async () => {
       mockVerifyUserExists
-        .mockResolvedValueOnce({ ok: true, data: { user: { id: "user-1" } } })
-        .mockResolvedValueOnce({ ok: false, error: "User not found", status: 404 });
+        .mockResolvedValueOnce({
+          ok: true,
+          data: { user: { id: "user-1", userId: "user-1" } },
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          error: "User not found",
+          status: 404,
+        });
 
       const result = await service.sendConnectionRequest("user-1", "user-2");
       expect(result.ok).toBe(false);
     });
 
     it("returns 404 when one or both appUsers not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId
         .mockResolvedValueOnce({ id: "app-1" })
         .mockResolvedValueOnce(null);
@@ -101,7 +111,10 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 400 when users are already connected", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId
         .mockResolvedValueOnce({ id: "app-1" })
         .mockResolvedValueOnce({ id: "app-2" });
@@ -115,7 +128,10 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 400 when request is already pending", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId
         .mockResolvedValueOnce({ id: "app-1" })
         .mockResolvedValueOnce({ id: "app-2" });
@@ -129,7 +145,10 @@ describe("UserConnectionService", () => {
     });
 
     it("creates connection request successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId
         .mockResolvedValueOnce({ id: "app-1" })
         .mockResolvedValueOnce({ id: "app-2" });
@@ -143,7 +162,7 @@ describe("UserConnectionService", () => {
           requesterId: "app-1",
           receiverId: "app-2",
           status: "PENDING",
-        })
+        }),
       );
     });
   });
@@ -161,7 +180,10 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 404 when appUser not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId.mockResolvedValue(null);
 
       const result = await service.acceptConnectionRequest("user-1", "conn-1");
@@ -170,7 +192,10 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 404 when connection not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue(null);
 
@@ -180,7 +205,10 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 403 when user is not the receiver", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "other-app",
@@ -193,7 +221,10 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 400 when connection is not pending", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "app-1",
@@ -206,7 +237,10 @@ describe("UserConnectionService", () => {
     });
 
     it("accepts connection successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "app-1",
@@ -225,7 +259,10 @@ describe("UserConnectionService", () => {
 
   describe("rejectConnectionRequest", () => {
     it("returns 403 when user is not the receiver", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "other-app",
@@ -238,7 +275,10 @@ describe("UserConnectionService", () => {
     });
 
     it("rejects connection successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "app-1",
@@ -257,7 +297,10 @@ describe("UserConnectionService", () => {
 
   describe("removeConnection", () => {
     it("returns 404 when one or both users not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId
         .mockResolvedValueOnce({ id: "app-1" })
         .mockResolvedValueOnce(null);
@@ -268,7 +311,10 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 404 when no accepted connection exists", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId
         .mockResolvedValueOnce({ id: "app-1" })
         .mockResolvedValueOnce({ id: "app-2" });
@@ -280,7 +326,10 @@ describe("UserConnectionService", () => {
     });
 
     it("deletes accepted connection successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({ ok: true, data: { user: { id: "u" } } });
+      mockVerifyUserExists.mockResolvedValue({
+        ok: true,
+        data: { user: { id: "u", userId: "u" } },
+      });
       mockAppUserRepo.findByUserId
         .mockResolvedValueOnce({ id: "app-1" })
         .mockResolvedValueOnce({ id: "app-2" });

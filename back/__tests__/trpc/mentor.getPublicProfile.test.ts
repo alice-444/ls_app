@@ -6,8 +6,7 @@ const mockGetPublicProfile = vi.fn();
 vi.mock("@/lib/di/container", () => ({
   container: {
     mentorProfileService: {
-      getPublicProfile: (mentorId: string) =>
-        mockGetPublicProfile(mentorId),
+      getPublicProfile: (mentorId: string) => mockGetPublicProfile(mentorId),
     },
   },
 }));
@@ -19,7 +18,7 @@ describe("trpc mentor.getPublicProfile", () => {
 
   it("returns mentor when found", async () => {
     const mentor = {
-      id: "mentor-1",
+      id: "cktvw5720000010mscuid1234",
       userId: "user-1",
       name: "Jane Mentor",
       bio: "Expert",
@@ -27,9 +26,13 @@ describe("trpc mentor.getPublicProfile", () => {
     mockGetPublicProfile.mockResolvedValue({ ok: true, data: mentor });
     const ctx = createPublicContext();
     const caller = createCaller(ctx);
-    const result = await caller.mentor.getPublicProfile({ mentorId: "mentor-1" });
+    const result = await caller.mentor.getPublicProfile({
+      mentorId: "cktvw5720000010mscuid1234",
+    });
     expect(result).toEqual(mentor);
-    expect(mockGetPublicProfile).toHaveBeenCalledWith("mentor-1");
+    expect(mockGetPublicProfile).toHaveBeenCalledWith(
+      "cktvw5720000010mscuid1234",
+    );
   });
 
   it("throws when service returns error", async () => {
@@ -40,7 +43,7 @@ describe("trpc mentor.getPublicProfile", () => {
     const ctx = createPublicContext();
     const caller = createCaller(ctx);
     await expect(
-      caller.mentor.getPublicProfile({ mentorId: "missing" })
+      caller.mentor.getPublicProfile({ mentorId: "missing" }),
     ).rejects.toThrow();
   });
 });

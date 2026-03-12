@@ -64,16 +64,18 @@ describe("Community Router", () => {
       (prisma.student_deal.findMany as any).mockResolvedValue([]);
       (prisma.community_spot.findMany as any).mockResolvedValue([]);
       (prisma.community_poll.findFirst as any).mockResolvedValue({
-        id: "poll-1",
+        id: "cpol15720000010mscuid1234",
         question: "How are you?",
-        options: [{ id: "opt-1", label: "Good" }],
+        options: [{ id: "copt15720000010mscuid1234", label: "Good" }],
         votes: [],
         status: "APPROVED",
         active: true,
       });
       (prisma.poll_vote.findFirst as any).mockResolvedValue(null);
       (prisma.user.count as any).mockResolvedValue(100);
-      (prisma.workshop.aggregate as any).mockResolvedValue({ _sum: { duration: 120 } });
+      (prisma.workshop.aggregate as any).mockResolvedValue({
+        _sum: { duration: 120 },
+      });
       (prisma.workshop.count as any).mockResolvedValue(10);
       (prisma.user.findMany as any).mockResolvedValue([]);
 
@@ -90,15 +92,26 @@ describe("Community Router", () => {
       const ctx = createProtectedContext({ userId: "user-1" });
       const caller = createCaller(ctx);
 
-      (prisma.community_poll.findUnique as any).mockResolvedValue({ id: "poll-1", active: true, status: "APPROVED" });
+      (prisma.community_poll.findUnique as any).mockResolvedValue({
+        id: "cpol15720000010mscuid1234",
+        active: true,
+        status: "APPROVED",
+      });
       (prisma.poll_vote.findUnique as any).mockResolvedValue(null);
       (prisma.poll_vote.create as any).mockResolvedValue({ id: "vote-1" });
 
-      const result = await caller.community.voteInPoll({ pollId: "poll-1", optionId: "opt-1" });
+      const result = await caller.community.voteInPoll({
+        pollId: "cpol15720000010mscuid1234",
+        optionId: "copt15720000010mscuid1234",
+      });
 
       expect(result).toBeDefined();
       expect(prisma.poll_vote.create).toHaveBeenCalledWith({
-        data: { pollId: "poll-1", userId: "user-1", optionId: "opt-1" }
+        data: {
+          pollId: "cpol15720000010mscuid1234",
+          userId: "user-1",
+          optionId: "copt15720000010mscuid1234",
+        },
       });
     });
 
@@ -106,11 +119,23 @@ describe("Community Router", () => {
       const ctx = createProtectedContext({ userId: "user-1" });
       const caller = createCaller(ctx);
 
-      (prisma.community_poll.findUnique as any).mockResolvedValue({ id: "poll-1", active: true, status: "APPROVED" });
-      (prisma.poll_vote.findUnique as any).mockResolvedValue({ id: "existing-vote" });
+      (prisma.community_poll.findUnique as any).mockResolvedValue({
+        id: "cpol15720000010mscuid1234",
+        active: true,
+        status: "APPROVED",
+      });
+      (prisma.poll_vote.findUnique as any).mockResolvedValue({
+        id: "existing-vote",
+      });
 
-      await expect(caller.community.voteInPoll({ pollId: "poll-1", optionId: "opt-1" }))
-        .rejects.toThrow(new TRPCError({ code: "BAD_REQUEST", message: "Déjà voté." }));
+      await expect(
+        caller.community.voteInPoll({
+          pollId: "cpol15720000010mscuid1234",
+          optionId: "copt15720000010mscuid1234",
+        }),
+      ).rejects.toThrow(
+        new TRPCError({ code: "BAD_REQUEST", message: "Déjà voté." }),
+      );
     });
   });
 
@@ -133,7 +158,7 @@ describe("Community Router", () => {
           title: "Study Session",
           proposedById: "user-1",
           status: "PENDING",
-        })
+        }),
       });
     });
   });
@@ -144,15 +169,23 @@ describe("Community Router", () => {
       // In these tests, we mock the ctx as if it passed the admin check
       const ctx = createProtectedContext({ userId: "admin-1" });
       // We need to ensure prisma.user.findUnique returns an admin for adminProcedure
-      (prisma.user.findUnique as any).mockResolvedValue({ id: "admin-1", role: "ADMIN", status: "ACTIVE" });
-      
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "admin-1",
+        role: "ADMIN",
+        status: "ACTIVE",
+      });
+
       const caller = createCaller(ctx);
 
-      await caller.community.reviewProposal({ type: "EVENT", id: "ev-1", action: "APPROVE" });
+      await caller.community.reviewProposal({
+        type: "EVENT",
+        id: "ev-1",
+        action: "APPROVE",
+      });
 
       expect(prisma.community_event.update).toHaveBeenCalledWith({
         where: { id: "ev-1" },
-        data: { status: "APPROVED" }
+        data: { status: "APPROVED" },
       });
     });
   });

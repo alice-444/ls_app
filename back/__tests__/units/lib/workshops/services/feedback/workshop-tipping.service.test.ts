@@ -14,11 +14,19 @@ describe("WorkshopTippingService", () => {
     creditCredits: vi.fn(),
   };
 
+  const mockPrisma = {
+    credit_transaction: { create: vi.fn() },
+    $transaction: vi.fn((cb) => cb(mockPrisma)),
+  };
+
   let service: WorkshopTippingService;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    service = new WorkshopTippingService(mockCreditService as any);
+    service = new WorkshopTippingService(
+      mockCreditService as any,
+      mockPrisma as any,
+    );
   });
 
   describe("sendTip", () => {
@@ -92,7 +100,11 @@ describe("WorkshopTippingService", () => {
         data: { newBalance: 9 },
       });
       mockCreditService.creditCredits
-        .mockResolvedValueOnce({ ok: false, error: "credit error", status: 500 })
+        .mockResolvedValueOnce({
+          ok: false,
+          error: "credit error",
+          status: 500,
+        })
         .mockResolvedValueOnce({ ok: true });
 
       const result = await service.sendTip("from", "to", 1);
@@ -105,7 +117,7 @@ describe("WorkshopTippingService", () => {
       expect(mockCreditService.creditCredits).toHaveBeenLastCalledWith(
         "from",
         1,
-        expect.stringContaining("Remboursement")
+        expect.stringContaining("Remboursement"),
       );
     });
 
@@ -148,7 +160,7 @@ describe("WorkshopTippingService", () => {
 
     it("returns failure on unexpected exception", async () => {
       mockCreditService.checkBalance.mockRejectedValue(
-        new Error("network failure")
+        new Error("network failure"),
       );
 
       const result = await service.sendTip("from", "to", 1);
