@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   createWorkshopFrontendSchema,
   editWorkshopFrontendSchema,
-} from "@/shared/validation/workshop.frontend-schema";
+} from "@ls-app/shared";
 
 const validBase = {
   title: "Atelier React Avancé",

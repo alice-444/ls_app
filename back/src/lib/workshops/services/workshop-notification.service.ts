@@ -4,7 +4,7 @@ import type { IWorkshopRepository } from "../repositories/workshop.repository.in
 import type { INotificationService } from "../../notifications/services/notification.service.interface";
 import type { AppUserRepository } from "../../users/repositories";
 import type { IEmailService } from "../../email/services/email.service.interface";
-import { formatDateTime } from "../utils/date-formatters";
+import { formatDateTime } from "@ls-app/shared";
 import { logger } from "../../common/logger";
 import { handleError, createErrorContext } from "../../common/error-handler";
 import { renderEmailTemplate } from "../../email/utils/render-email";
@@ -31,7 +31,7 @@ export class WorkshopNotificationService {
     private readonly workshopRepository: IWorkshopRepository,
     private readonly dbNotificationService?: INotificationService,
     private readonly appUserRepository?: AppUserRepository,
-    private readonly emailService?: IEmailService
+    private readonly emailService?: IEmailService,
   ) {}
 
   async notifyWorkshopRescheduled(
@@ -40,7 +40,7 @@ export class WorkshopNotificationService {
     oldTime: string | null,
     newDate: Date,
     newTime: string,
-    senderUserId?: string | null
+    senderUserId?: string | null,
   ): Promise<Result<{ notifiedCount: number }>> {
     try {
       const workshop = await this.workshopRepository.findById(workshopId);
@@ -74,14 +74,14 @@ export class WorkshopNotificationService {
         createErrorContext("notifyWorkshopRescheduled", {
           resourceId: workshopId,
           details: { oldDate, oldTime, newDate, newTime },
-        })
+        }),
       );
     }
   }
 
   private async sendRescheduleNotification(
     data: WorkshopRescheduleNotificationData,
-    senderUserId?: string | null
+    senderUserId?: string | null,
   ): Promise<void> {
     const oldDateTime = formatDateTime(data.oldDate, data.oldTime, {
       includeWeekday: true,
@@ -102,7 +102,7 @@ export class WorkshopNotificationService {
             message: `L'atelier "${data.workshopTitle}" a été reprogrammé. Ancien horaire: ${oldDateTime}. Nouvel horaire: ${newDateTime}.`,
             actionUrl: `/workshop/${data.workshopId}`,
           },
-          senderUserId
+          senderUserId,
         );
       } catch (error) {
         logger.error(
@@ -111,7 +111,7 @@ export class WorkshopNotificationService {
           {
             workshopId: data.workshopId,
             apprenticeUserId: data.apprenticeUserId,
-          }
+          },
         );
       }
     }
@@ -120,7 +120,7 @@ export class WorkshopNotificationService {
   }
 
   private async sendRescheduleEmail(
-    data: WorkshopRescheduleNotificationData
+    data: WorkshopRescheduleNotificationData,
   ): Promise<void> {
     if (!this.emailService) return;
 
@@ -128,7 +128,9 @@ export class WorkshopNotificationService {
       let apprenticeEmail = data.apprenticeEmail;
 
       if (!apprenticeEmail && data.apprenticeUserId && this.appUserRepository) {
-        const apprenticeAppUser = await this.appUserRepository.findByUserId(data.apprenticeUserId);
+        const apprenticeAppUser = await this.appUserRepository.findByUserId(
+          data.apprenticeUserId,
+        );
         apprenticeEmail = apprenticeAppUser?.email || null;
       }
 
@@ -138,13 +140,19 @@ export class WorkshopNotificationService {
           {
             workshopId: data.workshopId,
             apprenticeUserId: data.apprenticeUserId,
-          }
+          },
         );
         return;
       }
 
-      const formatDate = (date: Date | null) => 
-        date ? new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : "Date à confirmer";
+      const formatDate = (date: Date | null) =>
+        date
+          ? new Date(date).toLocaleDateString("fr-FR", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+            })
+          : "Date à confirmer";
 
       const { html, text } = await renderEmailTemplate(
         React.createElement(WorkshopRescheduledEmail, {
@@ -155,7 +163,7 @@ export class WorkshopNotificationService {
           newDate: formatDate(data.newDate),
           newTime: data.newTime,
           workshopUrl: `${APP_URL}/workshop/${data.workshopId}`,
-        })
+        }),
       );
 
       const emailResult = await this.emailService.sendEmail({
@@ -183,7 +191,7 @@ export class WorkshopNotificationService {
   private logRescheduleNotification(
     data: WorkshopRescheduleNotificationData,
     oldDateTime: string,
-    newDateTime: string
+    newDateTime: string,
   ): void {
     logger.debug("Workshop reschedule notification sent", {
       workshopId: data.workshopId,

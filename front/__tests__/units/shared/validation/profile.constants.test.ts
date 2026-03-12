@@ -1,14 +1,11 @@
 import { describe, it, expect } from "vitest";
-import {
-  PROFILE_VALIDATION,
-  PROFILE_ERROR_MESSAGES,
-} from "@/shared/validation/profile.constants";
+import { PROFILE_VALIDATION, PROFILE_ERROR_MESSAGES } from "@ls-app/shared";
 
 describe("PROFILE_VALIDATION", () => {
   it("should have name with min and max", () => {
     expect(PROFILE_VALIDATION.name.min).toBeGreaterThan(0);
     expect(PROFILE_VALIDATION.name.max).toBeGreaterThan(
-      PROFILE_VALIDATION.name.min
+      PROFILE_VALIDATION.name.min,
     );
   });
 

@@ -1,15 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { FileValidator } from "@/shared/validation/file.validators";
 import {
+  FileValidator,
   PROFILE_VALIDATION,
   PROFILE_ERROR_MESSAGES,
-} from "@/shared/validation/profile.constants";
+} from "@ls-app/shared";
 
-function createMockFile(
-  name: string,
-  size: number,
-  type: string
-): File {
+function createMockFile(name: string, size: number, type: string): File {
   const buffer = new ArrayBuffer(size);
   return new File([buffer], name, { type });
 }
@@ -46,7 +42,7 @@ describe("FileValidator.validatePhoto", () => {
     const file = createMockFile(
       "exact.jpg",
       PROFILE_VALIDATION.photo.maxSizeBytes,
-      "image/jpeg"
+      "image/jpeg",
     );
     const result = FileValidator.validatePhoto(file);
     expect(result.valid).toBe(true);

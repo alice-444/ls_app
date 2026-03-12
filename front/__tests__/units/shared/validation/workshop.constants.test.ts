@@ -1,14 +1,11 @@
 import { describe, it, expect } from "vitest";
-import {
-  WORKSHOP_VALIDATION,
-  WORKSHOP_ERROR_MESSAGES,
-} from "@/shared/validation/workshop.constants";
+import { WORKSHOP_VALIDATION, WORKSHOP_ERROR_MESSAGES } from "@ls-app/shared";
 
 describe("WORKSHOP_VALIDATION", () => {
   it("should have title with min and max", () => {
     expect(WORKSHOP_VALIDATION.title.min).toBeGreaterThan(0);
     expect(WORKSHOP_VALIDATION.title.max).toBeGreaterThan(
-      WORKSHOP_VALIDATION.title.min
+      WORKSHOP_VALIDATION.title.min,
     );
   });
 
@@ -25,7 +22,7 @@ describe("WORKSHOP_VALIDATION", () => {
   it("should have duration with min < max", () => {
     expect(WORKSHOP_VALIDATION.duration.min).toBeGreaterThan(0);
     expect(WORKSHOP_VALIDATION.duration.max).toBeGreaterThan(
-      WORKSHOP_VALIDATION.duration.min
+      WORKSHOP_VALIDATION.duration.min,
     );
   });
 
@@ -51,7 +48,7 @@ describe("WORKSHOP_VALIDATION", () => {
   it("should have topic with min < max", () => {
     expect(WORKSHOP_VALIDATION.topic.min).toBeGreaterThan(0);
     expect(WORKSHOP_VALIDATION.topic.max).toBeGreaterThan(
-      WORKSHOP_VALIDATION.topic.min
+      WORKSHOP_VALIDATION.topic.min,
     );
   });
 });
@@ -75,10 +72,10 @@ describe("WORKSHOP_ERROR_MESSAGES", () => {
 
   it("should reference validation values in messages", () => {
     expect(WORKSHOP_ERROR_MESSAGES.title.min).toContain(
-      String(WORKSHOP_VALIDATION.title.min)
+      String(WORKSHOP_VALIDATION.title.min),
     );
     expect(WORKSHOP_ERROR_MESSAGES.title.max).toContain(
-      String(WORKSHOP_VALIDATION.title.max)
+      String(WORKSHOP_VALIDATION.title.max),
     );
   });
 });

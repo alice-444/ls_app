@@ -1,5 +1,5 @@
 import { sanitizeString } from "../../utils/sanitize";
-import { WORKSHOP_VALIDATION } from "../../../shared/validation/workshop.constants";
+import { WORKSHOP_VALIDATION } from "@ls-app/shared";
 import { logger } from "../../common/logger";
 
 export function isValidTimeFormat(time: string): boolean {
@@ -7,7 +7,7 @@ export function isValidTimeFormat(time: string): boolean {
 }
 
 export function sanitizeLocation(
-  location: string | null | undefined
+  location: string | null | undefined,
 ): string | null {
   if (!location) return null;
   return sanitizeString(location);
@@ -29,10 +29,10 @@ export function buildWorkshopUpdateData(input: {
 }): {
   date?: Date;
   time?: string;
-  duration?: number | undefined;
+  duration?: number;
   location?: string | null;
   isVirtual?: boolean;
-  maxParticipants?: number | null | undefined;
+  maxParticipants?: number | null;
 } {
   const updateData: any = {};
 
@@ -51,7 +51,7 @@ export function buildWorkshopUpdateData(input: {
 
   if (input.location !== undefined) {
     updateData.location = sanitizeLocation(
-      input.location ?? input.existingWorkshop?.location ?? null
+      input.location ?? input.existingWorkshop?.location ?? null,
     );
   }
 
@@ -74,7 +74,7 @@ export function doTimeRangesOverlap(
   start1: Date,
   end1: Date,
   start2: Date,
-  end2: Date
+  end2: Date,
 ): boolean {
   return (
     (start1 >= start2 && start1 < end2) ||
@@ -85,7 +85,7 @@ export function doTimeRangesOverlap(
 
 export function calculateWorkshopStartTime(
   date: Date | null,
-  time: string | null
+  time: string | null,
 ): Date | null {
   if (!date || !time) {
     return null;
@@ -110,7 +110,7 @@ export function calculateWorkshopStartTime(
 export function calculateWorkshopEndTime(
   date: Date | null,
   time: string | null,
-  duration: number | null
+  duration: number | null,
 ): Date | null {
   if (!date || !time || !duration) {
     return null;
@@ -145,7 +145,7 @@ export function isWorkshopValidForConflictCheck(
     time: string | null;
     duration: number | null;
   },
-  excludeWorkshopId?: string
+  excludeWorkshopId?: string,
 ): boolean {
   if (excludeWorkshopId && workshop.id === excludeWorkshopId) {
     return false;
@@ -171,7 +171,7 @@ export function calculateWorkshopTimeRange(workshop: {
   const endTime = calculateWorkshopEndTime(
     workshop.date,
     workshop.time,
-    workshop.duration
+    workshop.duration,
   );
 
   return { startTime, endTime };

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { PasswordValidator } from "@/shared/validation/password.validators";
 import {
+  PasswordValidator,
   PROFILE_VALIDATION,
   PROFILE_ERROR_MESSAGES,
-} from "@/shared/validation/profile.constants";
+} from "@ls-app/shared";
 
 describe("PasswordValidator.validate", () => {
   it("should reject password shorter than minLength", () => {
@@ -60,7 +60,7 @@ describe("PasswordValidator.validateComplete", () => {
   it("should reject if passwords don't match", () => {
     const result = PasswordValidator.validateComplete(
       "ValidPass1",
-      "DifferentPass1"
+      "DifferentPass1",
     );
     expect(result.valid).toBe(false);
     expect(result.error).toBe(PROFILE_ERROR_MESSAGES.password.match);
@@ -81,7 +81,7 @@ describe("PasswordValidator.validateComplete", () => {
   it("should accept valid matching passwords", () => {
     const result = PasswordValidator.validateComplete(
       "ValidPass1",
-      "ValidPass1"
+      "ValidPass1",
     );
     expect(result.valid).toBe(true);
     expect(result.error).toBeUndefined();

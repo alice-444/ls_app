@@ -8,18 +8,15 @@ import { WorkshopNotificationService } from "../workshop-notification.service";
 import { SchedulingConflictChecker } from "./scheduling-conflict-checker";
 import type { ISchedulingConflictChecker } from "./scheduling-conflict-checker";
 import { sanitizeString } from "../../../utils/sanitize";
-import { WORKSHOP_VALIDATION, isMinimumTomorrow } from "../../../../shared/validation";
+import { WORKSHOP_VALIDATION, isMinimumTomorrow } from "@ls-app/shared";
 import { logger } from "../../../common/logger";
-import {
-  handleError,
-  createErrorContext,
-} from "../../../common/error-handler";
+import { handleError, createErrorContext } from "../../../common/error-handler";
 import { isValidTimeFormat } from "../../utils/workshop-helpers";
 import { renderEmailTemplate } from "../../../email/utils/render-email";
 import { WorkshopCancelledEmail } from "../../../email/templates/WorkshopCancelledEmail";
 import * as React from "react";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from "@/lib/prisma";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
@@ -35,15 +32,17 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     private readonly emailService?: IEmailService,
     appUserRepository?: any,
     private readonly creditService?: ICreditService,
-    private readonly prisma?: PrismaClient
+    private readonly prisma?: PrismaClient,
   ) {
     this.workshopNotificationService = new WorkshopNotificationService(
       this.workshopRepository,
       this.dbNotificationService,
       appUserRepository,
-      this.emailService
+      this.emailService,
     );
-    this.conflictChecker = new SchedulingConflictChecker(this.workshopRepository);
+    this.conflictChecker = new SchedulingConflictChecker(
+      this.workshopRepository,
+    );
   }
 
   private sanitizeLocation(location: string | null | undefined): string | null {
@@ -62,7 +61,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       time?: string | null;
       duration?: number | null;
       location?: string | null;
-    }
+    },
   ): Promise<Result<{ success: boolean }>> {
     try {
       const workshop = await this.workshopRepository.findById(workshopId);
@@ -78,7 +77,8 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
 
       let isApprentice = false;
       if (workshop.apprenticeId) {
-        const apprenticeCheck = await this.accessGuard.verifyApprenticeAccess(userId);
+        const apprenticeCheck =
+          await this.accessGuard.verifyApprenticeAccess(userId);
         isApprentice =
           apprenticeCheck.ok &&
           apprenticeCheck.data.appUser.id === workshop.apprenticeId;
@@ -115,7 +115,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
         createErrorContext("updateWorkshopScheduling", {
           userId,
           resourceId: workshopId,
-        })
+        }),
       );
     }
   }
@@ -123,7 +123,12 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   private async notifySchedulingChange(
     workshopId: string,
     userId: string,
-    input: { date?: Date | null; time?: string | null; duration?: number | null; location?: string | null }
+    input: {
+      date?: Date | null;
+      time?: string | null;
+      duration?: number | null;
+      location?: string | null;
+    },
   ): Promise<void> {
     const updatedWorkshop = await this.workshopRepository.findById(workshopId);
     if (!updatedWorkshop?.apprentice?.id) return;
@@ -144,7 +149,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
           message: `${mentorName} a modifié ${changes.join(", ")} de l'atelier "${updatedWorkshop.title}".`,
           actionUrl: `/workshop/${workshopId}`,
         },
-        userId
+        userId,
       );
     }
   }
@@ -152,7 +157,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   async cancelConfirmedWorkshop(
     userId: string,
     workshopId: string,
-    cancellationReason?: string
+    cancellationReason?: string,
   ): Promise<Result<{ success: boolean }>> {
     try {
       const workshop = await this.workshopRepository.findById(workshopId);
@@ -162,7 +167,8 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
 
       let isApprentice = false;
       if (workshop.apprenticeId) {
-        const apprenticeCheck = await this.accessGuard.verifyApprenticeAccess(userId);
+        const apprenticeCheck =
+          await this.accessGuard.verifyApprenticeAccess(userId);
         isApprentice =
           apprenticeCheck.ok &&
           apprenticeCheck.data.appUser.id === workshop.apprenticeId;
@@ -190,7 +196,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
           userId,
           workshopId,
           workshop,
-          cancellationReason
+          cancellationReason,
         );
       }
 
@@ -202,7 +208,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
           userId,
           resourceId: workshopId,
           details: { cancellationReason },
-        })
+        }),
       );
     }
   }
@@ -211,7 +217,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     userId: string,
     workshopId: string,
     workshop: any,
-    cancellationReason?: string
+    cancellationReason?: string,
   ): Promise<Result<{ success: boolean }>> {
     if (this.prisma && this.creditService && workshop.apprenticeId) {
       await this.prisma.$transaction(async (tx) => {
@@ -227,7 +233,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
             apprentice.userId,
             this.WORKSHOP_REQUEST_COST,
             `Remboursement participation annulée: ${workshop.title}`,
-            tx
+            tx,
           );
         }
       });
@@ -236,9 +242,11 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     }
 
     if (this.dbNotificationService) {
-      const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
+      const cancelledWorkshop =
+        await this.workshopRepository.findById(workshopId);
       if (cancelledWorkshop?.creator?.id) {
-        const apprenticeName = cancelledWorkshop.apprentice?.name || "un apprenti";
+        const apprenticeName =
+          cancelledWorkshop.apprentice?.name || "un apprenti";
         const message = cancellationReason
           ? `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}". Raison: ${cancellationReason}`
           : `${apprenticeName} a annulé sa participation à l'atelier "${cancelledWorkshop.title}".`;
@@ -251,7 +259,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
             message,
             actionUrl: `/workshop/${workshopId}`,
           },
-          userId
+          userId,
         );
       }
     }
@@ -272,11 +280,15 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   private async handleMentorCancellation(
     userId: string,
     workshopId: string,
-    workshop: any
+    workshop: any,
   ): Promise<Result<{ success: boolean }>> {
     if (this.prisma && this.creditService && workshop.apprenticeId) {
       await this.prisma.$transaction(async (tx) => {
-        await this.workshopRepository.update(workshopId, { status: "CANCELLED" }, tx);
+        await this.workshopRepository.update(
+          workshopId,
+          { status: "CANCELLED" },
+          tx,
+        );
 
         const apprentice = await (tx as any).user.findUnique({
           where: { id: workshop.apprenticeId },
@@ -288,7 +300,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
             apprentice.userId,
             this.WORKSHOP_REQUEST_COST,
             `Remboursement atelier annulé par mentor: ${workshop.title}`,
-            tx
+            tx,
           );
         }
       });
@@ -297,7 +309,8 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
     }
 
     if (this.dbNotificationService) {
-      const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
+      const cancelledWorkshop =
+        await this.workshopRepository.findById(workshopId);
       if (cancelledWorkshop?.apprentice?.id) {
         const mentorName = cancelledWorkshop.creator?.name || "le mentor";
         await this.dbNotificationService.createNotification(
@@ -308,12 +321,15 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
             message: `${mentorName} a annulé l'atelier "${cancelledWorkshop.title}".`,
             actionUrl: `/workshop-room`,
           },
-          userId
+          userId,
         );
       }
     }
 
-    logger.info("Workshop cancelled by mentor", { workshopId, mentorId: userId });
+    logger.info("Workshop cancelled by mentor", {
+      workshopId,
+      mentorId: userId,
+    });
 
     return success({ success: true });
   }
@@ -321,15 +337,22 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
   private async sendCancellationEmail(
     workshopId: string,
     userId: string,
-    cancellationReason?: string
+    cancellationReason?: string,
   ): Promise<void> {
     try {
-      const cancelledWorkshop = await this.workshopRepository.findById(workshopId);
+      const cancelledWorkshop =
+        await this.workshopRepository.findById(workshopId);
       const creator = cancelledWorkshop?.creator;
       if (!cancelledWorkshop || !creator?.email || !this.emailService) return;
 
-      const formatDate = (date: Date | null) => 
-        date ? new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : "Date non définie";
+      const formatDate = (date: Date | null) =>
+        date
+          ? new Date(date).toLocaleDateString("fr-FR", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+            })
+          : "Date non définie";
 
       const { html, text } = await renderEmailTemplate(
         React.createElement(WorkshopCancelledEmail, {
@@ -340,7 +363,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
           workshopsUrl: `${APP_URL}/dashboard/workshops`,
           cancelledByName: cancelledWorkshop.apprentice?.name || "Un apprenti",
           reason: cancellationReason,
-        })
+        }),
       );
 
       const emailResult = await this.emailService.sendEmail({
@@ -369,7 +392,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       time: string;
       duration?: number | null;
       location?: string | null;
-    }
+    },
   ): Promise<
     Result<{ success: boolean; oldDate: Date | null; oldTime: string | null }>
   > {
@@ -392,14 +415,14 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       if (appUser.id !== workshop.creatorId) {
         return failure(
           "Vous n'êtes pas autorisé à reprogrammer cet atelier",
-          403
+          403,
         );
       }
 
       if (workshop.status !== "PUBLISHED") {
         return failure(
           "Seuls les ateliers publiés peuvent être reprogrammés",
-          400
+          400,
         );
       }
 
@@ -416,7 +439,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
         input.time,
         duration,
         input.location ?? workshop.location,
-        workshop.isVirtual
+        workshop.isVirtual,
       );
 
       if (!conflictCheck.ok) {
@@ -426,7 +449,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
       if (conflictCheck.data.hasConflict) {
         return failure(
           conflictCheck.data.conflictMessage || "Conflit de ressources détecté",
-          409
+          409,
         );
       }
 
@@ -455,14 +478,14 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
           oldTime,
           input.date,
           input.time,
-          userId
+          userId,
         );
 
       if (!notificationResult.ok) {
         logger.error(
           "Erreur lors de l'envoi des notifications",
           notificationResult.error,
-          { workshopId, userId }
+          { workshopId, userId },
         );
       }
 
@@ -474,14 +497,15 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
           userId,
           resourceId: workshopId,
           details: { newDate: input.date, newTime: input.time },
-        })
+        }),
       );
     }
   }
 
-  private validateRescheduleInput(
-    input: { date: Date; time: string }
-  ): Result<any> | null {
+  private validateRescheduleInput(input: {
+    date: Date;
+    time: string;
+  }): Result<any> | null {
     if (!isMinimumTomorrow(input.date)) {
       return failure("La nouvelle date doit être au minimum demain", 400);
     }
