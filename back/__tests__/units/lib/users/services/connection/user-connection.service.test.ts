@@ -52,6 +52,26 @@ describe("UserConnectionService", () => {
 
   let service: UserConnectionService;
 
+  const setupValidUser = () => {
+    mockVerifyUserExists.mockResolvedValue({
+      ok: true,
+      data: { user: { id: "u", userId: "u" } },
+    });
+  };
+
+  const setupAppUsers = (
+    requester: { id: string } | null,
+    receiver?: { id: string } | null,
+  ) => {
+    if (receiver === undefined) {
+      mockAppUserRepo.findByUserId.mockResolvedValue(requester);
+    } else {
+      mockAppUserRepo.findByUserId
+        .mockResolvedValueOnce(requester)
+        .mockResolvedValueOnce(receiver);
+    }
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     service = new UserConnectionService(
@@ -97,13 +117,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 404 when one or both appUsers not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-1" })
-        .mockResolvedValueOnce(null);
+      setupValidUser();
+      setupAppUsers({ id: "app-1" }, null);
 
       const result = await service.sendConnectionRequest("user-1", "user-2");
       expect(result.ok).toBe(false);
@@ -111,13 +126,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 400 when users are already connected", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-1" })
-        .mockResolvedValueOnce({ id: "app-2" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" }, { id: "app-2" });
       mockConnectionRepo.findConnectionBetweenUsers.mockResolvedValue({
         status: "ACCEPTED",
       });
@@ -128,13 +138,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 400 when request is already pending", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-1" })
-        .mockResolvedValueOnce({ id: "app-2" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" }, { id: "app-2" });
       mockConnectionRepo.findConnectionBetweenUsers.mockResolvedValue({
         status: "PENDING",
       });
@@ -145,13 +150,8 @@ describe("UserConnectionService", () => {
     });
 
     it("creates connection request successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-1" })
-        .mockResolvedValueOnce({ id: "app-2" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" }, { id: "app-2" });
       mockConnectionRepo.findConnectionBetweenUsers.mockResolvedValue(null);
       mockConnectionRepo.create.mockResolvedValue({});
 
@@ -180,11 +180,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 404 when appUser not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId.mockResolvedValue(null);
+      setupValidUser();
+      setupAppUsers(null);
 
       const result = await service.acceptConnectionRequest("user-1", "conn-1");
       expect(result.ok).toBe(false);
@@ -192,11 +189,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 404 when connection not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue(null);
 
       const result = await service.acceptConnectionRequest("user-1", "conn-1");
@@ -205,11 +199,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 403 when user is not the receiver", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "other-app",
         status: "PENDING",
@@ -221,11 +212,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 400 when connection is not pending", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "app-1",
         status: "ACCEPTED",
@@ -237,11 +225,8 @@ describe("UserConnectionService", () => {
     });
 
     it("accepts connection successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "app-1",
         status: "PENDING",
@@ -259,11 +244,8 @@ describe("UserConnectionService", () => {
 
   describe("rejectConnectionRequest", () => {
     it("returns 403 when user is not the receiver", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "other-app",
         status: "PENDING",
@@ -275,11 +257,8 @@ describe("UserConnectionService", () => {
     });
 
     it("rejects connection successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId.mockResolvedValue({ id: "app-1" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" });
       mockConnectionRepo.findById.mockResolvedValue({
         receiverId: "app-1",
         status: "PENDING",
@@ -297,13 +276,8 @@ describe("UserConnectionService", () => {
 
   describe("removeConnection", () => {
     it("returns 404 when one or both users not found", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-1" })
-        .mockResolvedValueOnce(null);
+      setupValidUser();
+      setupAppUsers({ id: "app-1" }, null);
 
       const result = await service.removeConnection("user-1", "user-2");
       expect(result.ok).toBe(false);
@@ -311,13 +285,8 @@ describe("UserConnectionService", () => {
     });
 
     it("returns 404 when no accepted connection exists", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-1" })
-        .mockResolvedValueOnce({ id: "app-2" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" }, { id: "app-2" });
       mockConnectionRepo.findConnectionBetweenUsers.mockResolvedValue(null);
 
       const result = await service.removeConnection("user-1", "user-2");
@@ -326,13 +295,8 @@ describe("UserConnectionService", () => {
     });
 
     it("deletes accepted connection successfully", async () => {
-      mockVerifyUserExists.mockResolvedValue({
-        ok: true,
-        data: { user: { id: "u", userId: "u" } },
-      });
-      mockAppUserRepo.findByUserId
-        .mockResolvedValueOnce({ id: "app-1" })
-        .mockResolvedValueOnce({ id: "app-2" });
+      setupValidUser();
+      setupAppUsers({ id: "app-1" }, { id: "app-2" });
       mockConnectionRepo.findConnectionBetweenUsers.mockResolvedValue({
         id: "conn-1",
         status: "ACCEPTED",

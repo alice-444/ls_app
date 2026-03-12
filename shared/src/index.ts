@@ -13,3 +13,4 @@ export * from "./validation/user.schemas";
 export * from "./utils/date";
 export * from "./types/workshop";
 export * from "./types/user";
+export * from "./types/messaging";

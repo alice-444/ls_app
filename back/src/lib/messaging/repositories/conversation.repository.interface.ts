@@ -9,20 +9,20 @@ export interface ConversationEntity {
 export interface IConversationRepository {
   findConversationBetweenUsers(
     appUserId1: string,
-    appUserId2: string
+    appUserId2: string,
   ): Promise<ConversationEntity | null>;
 
   findConversationBetweenUsersWithTransaction(
     appUserId1: string,
     appUserId2: string,
-    tx: any
+    tx: any,
   ): Promise<ConversationEntity | null>;
 
   findById(conversationId: string): Promise<ConversationEntity | null>;
 
-  findConversationsForUser(
-    userId: string
-  ): Promise<ConversationEntity[]>;
+  findConversationsForUser(userId: string): Promise<ConversationEntity[]>;
+
+  findConversationsWithDetails(userId: string): Promise<any[]>;
 
   create(data: {
     id: string;
@@ -38,20 +38,19 @@ export interface IConversationRepository {
       participant2Id: string;
       updatedAt: Date;
     },
-    tx: any
+    tx: any,
   ): Promise<ConversationEntity>;
 
   update(
     conversationId: string,
-    data: { updatedAt: Date }
+    data: { updatedAt: Date },
   ): Promise<ConversationEntity>;
 
   updateWithTransaction(
     conversationId: string,
     data: { updatedAt: Date },
-    tx: any
+    tx: any,
   ): Promise<ConversationEntity>;
 
   delete(conversationId: string): Promise<void>;
 }
-

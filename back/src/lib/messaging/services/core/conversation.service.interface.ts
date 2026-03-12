@@ -1,5 +1,5 @@
 import type { Result } from "../../../common";
-import type { ConversationListItem } from "./messaging.service.interface";
+import type { ConversationListItem } from "@ls-app/shared";
 
 export interface IConversationService {
   getConversations(userId: string): Promise<Result<ConversationListItem[]>>;
@@ -7,12 +7,12 @@ export interface IConversationService {
   getOrCreateConversation(
     userId1: string,
     userId2: string,
-    workshopId?: string | null
+    workshopId?: string | null,
   ): Promise<Result<{ conversationId: string }>>;
 
   getConversationDetails(
     userId: string,
-    conversationId: string
+    conversationId: string,
   ): Promise<
     Result<{
       workshopId: string | null;
@@ -22,21 +22,21 @@ export interface IConversationService {
   >;
 
   getUnreadConversationsCount(
-    userId: string
+    userId: string,
   ): Promise<Result<{ count: number }>>;
 
   deleteConversation(
     userId: string,
-    conversationId: string
+    conversationId: string,
   ): Promise<Result<{ success: boolean }>>;
 
   pinConversation(
     userId: string,
-    conversationId: string
+    conversationId: string,
   ): Promise<Result<{ success: boolean }>>;
 
   unpinConversation(
     userId: string,
-    conversationId: string
+    conversationId: string,
   ): Promise<Result<{ success: boolean }>>;
 }

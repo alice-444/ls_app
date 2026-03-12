@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from "@/lib/prisma";
 import type {
   IConversationRepository,
   ConversationEntity,
@@ -9,7 +9,7 @@ export class PrismaConversationRepository implements IConversationRepository {
 
   async findConversationBetweenUsers(
     appUserId1: string,
-    appUserId2: string
+    appUserId2: string,
   ): Promise<ConversationEntity | null> {
     const conversation = await this.prisma.conversation.findFirst({
       where: {
@@ -40,7 +40,7 @@ export class PrismaConversationRepository implements IConversationRepository {
   async findConversationBetweenUsersWithTransaction(
     appUserId1: string,
     appUserId2: string,
-    tx: any
+    tx: any,
   ): Promise<ConversationEntity | null> {
     const conversation = await tx.conversation.findFirst({
       where: {
@@ -85,7 +85,7 @@ export class PrismaConversationRepository implements IConversationRepository {
   }
 
   async findConversationsForUser(
-    userId: string
+    userId: string,
   ): Promise<ConversationEntity[]> {
     const conversations = await this.prisma.conversation.findMany({
       where: {
@@ -103,6 +103,53 @@ export class PrismaConversationRepository implements IConversationRepository {
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
     }));
+  }
+
+  async findConversationsWithDetails(userId: string): Promise<any[]> {
+    return this.prisma.conversation.findMany({
+      where: {
+        OR: [{ participant1Id: userId }, { participant2Id: userId }],
+      },
+      include: {
+        participant1: {
+          select: {
+            id: true,
+            userId: true,
+            role: true,
+            name: true,
+            displayName: true,
+            photoUrl: true,
+          },
+        },
+        participant2: {
+          select: {
+            id: true,
+            userId: true,
+            role: true,
+            name: true,
+            displayName: true,
+            photoUrl: true,
+          },
+        },
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                isRead: false,
+                NOT: { senderId: userId },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
   }
 
   async create(data: {
@@ -131,7 +178,7 @@ export class PrismaConversationRepository implements IConversationRepository {
       participant2Id: string;
       updatedAt: Date;
     },
-    tx: any
+    tx: any,
   ): Promise<ConversationEntity> {
     const conversation = await tx.conversation.create({
       data,
@@ -148,7 +195,7 @@ export class PrismaConversationRepository implements IConversationRepository {
 
   async update(
     conversationId: string,
-    data: { updatedAt: Date }
+    data: { updatedAt: Date },
   ): Promise<ConversationEntity> {
     const conversation = await this.prisma.conversation.update({
       where: { id: conversationId },
@@ -167,7 +214,7 @@ export class PrismaConversationRepository implements IConversationRepository {
   async updateWithTransaction(
     conversationId: string,
     data: { updatedAt: Date },
-    tx: any
+    tx: any,
   ): Promise<ConversationEntity> {
     const conversation = await tx.conversation.update({
       where: { id: conversationId },
