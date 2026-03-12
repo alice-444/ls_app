@@ -13,6 +13,9 @@ on:
       - prod
       - dev
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   run-tests:
     name: Run All Tests
@@ -26,8 +29,7 @@ jobs:
       - name: Setup PNPM and Node.js
         uses: digi-fry/setup-pnpm-node-action@v1
         with:
-          pnpm-version: "8"
-          node-version: "20"
+          node-version: "24"
 
       - name: Install dependencies
         run: pnpm install
