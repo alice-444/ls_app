@@ -23,6 +23,9 @@ importers:
       '@daily-co/daily-js':
         specifier: ^0.87.0
         version: 0.87.0
+      '@ls-app/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@prisma/adapter-pg':
         specifier: ^7.4.2
         version: 7.4.2
@@ -135,6 +138,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.71.2(react@19.2.4))
+      '@ls-app/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@radix-ui/react-avatar':
         specifier: ^1.1.11
         version: 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -295,6 +301,16 @@ importers:
       vitest:
         specifier: ^4.0.18
         version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(lightningcss@1.31.1)(terser@5.46.0)(tsx@4.21.0)
+
+  shared:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 
