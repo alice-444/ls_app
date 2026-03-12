@@ -19,7 +19,7 @@
 		"db:migrate": "prisma migrate dev",
 		"lint": "next lint",
 		"check-types": "tsc --noEmit",
-		"test:db": "node test-db.mjs",
+		"test:db": "vitest run __tests__/integration/database.test.ts",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage"

@@ -11,12 +11,12 @@ import { authClient } from "@/lib/auth-client";
 import { PageContainer } from "@/components/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import type { MentorBasic } from "@/types/workshop-components";
+import type { MentorBasic } from "@ls-app/shared";
 
 export default function MentorsPage() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [domainFilter, setDomainFilter] = useState("");
   const [topicFilter, setTopicFilter] = useState("");
@@ -138,16 +138,16 @@ export default function MentorsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05 }}
       >
-      <MentorFilters
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        domainFilter={domainFilter}
-        onDomainFilterChange={setDomainFilter}
-        topicFilter={topicFilter}
-        onTopicFilterChange={setTopicFilter}
-      />
+        <MentorFilters
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          domainFilter={domainFilter}
+          onDomainFilterChange={setDomainFilter}
+          topicFilter={topicFilter}
+          onTopicFilterChange={setTopicFilter}
+        />
 
-      {renderMentorsContent()}
+        {renderMentorsContent()}
       </motion.div>
     </PageContainer>
   );

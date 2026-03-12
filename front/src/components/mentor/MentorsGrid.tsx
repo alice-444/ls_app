@@ -2,14 +2,14 @@
 
 import { motion } from "framer-motion";
 import { MentorCard } from "./MentorCard";
-import type { MentorBasic } from "@/types/workshop-components";
+import type { MentorBasic } from "@ls-app/shared";
 
 interface MentorsGridProps {
   mentors: MentorBasic[];
   onViewProfile?: (mentorId: string) => void;
 }
 
-export function MentorsGrid({ mentors, onViewProfile }: MentorsGridProps) {
+export function MentorsGrid({ mentors, onViewProfile }: Readonly<MentorsGridProps>) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {mentors.map((mentor, index) => (

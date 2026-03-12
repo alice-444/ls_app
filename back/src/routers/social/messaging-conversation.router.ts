@@ -1,4 +1,5 @@
 import { protectedProcedure, router } from "../../lib/trpc";
+import { conversationIdSchema } from "@ls-app/shared";
 import { container } from "../../lib/di/container";
 import { z } from "zod";
 import { logger } from "../../lib/common/logger";
@@ -7,7 +8,7 @@ import { getSafeMessagingErrorMessage } from "./messaging-helpers";
 export const messagingConversationRouter = router({
   getConversations: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.messagingService.getConversations(
-      ctx.session.user.id
+      ctx.session.user.id,
     );
     if (!result.ok) {
       logger.error("getConversations error", result.error, {
@@ -23,13 +24,13 @@ export const messagingConversationRouter = router({
       z.object({
         otherUserId: z.string(),
         workshopId: z.string().optional().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.messagingService.getOrCreateConversation(
         ctx.session.user.id,
         input.otherUserId,
-        input.workshopId
+        input.workshopId,
       );
       if (!result.ok) {
         logger.error("getOrCreateConversation error", result.error, {
@@ -43,11 +44,11 @@ export const messagingConversationRouter = router({
     }),
 
   getConversationDetails: protectedProcedure
-    .input(z.object({ conversationId: z.string() }))
+    .input(conversationIdSchema)
     .query(async ({ ctx, input }) => {
       const result = await container.messagingService.getConversationDetails(
         ctx.session.user.id,
-        input.conversationId
+        input.conversationId,
       );
       if (!result.ok) {
         logger.error("getConversationDetails error", result.error, {
@@ -61,7 +62,7 @@ export const messagingConversationRouter = router({
 
   getUnreadConversationsCount: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.messagingService.getUnreadConversationsCount(
-      ctx.session.user.id
+      ctx.session.user.id,
     );
     if (!result.ok) {
       throw new Error(result.error);
@@ -70,11 +71,11 @@ export const messagingConversationRouter = router({
   }),
 
   deleteConversation: protectedProcedure
-    .input(z.object({ conversationId: z.string() }))
+    .input(conversationIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.messagingService.deleteConversation(
         ctx.session.user.id,
-        input.conversationId
+        input.conversationId,
       );
       if (!result.ok) {
         logger.error("deleteConversation error", result.error, {
@@ -87,11 +88,11 @@ export const messagingConversationRouter = router({
     }),
 
   pinConversation: protectedProcedure
-    .input(z.object({ conversationId: z.string() }))
+    .input(conversationIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.messagingService.pinConversation(
         ctx.session.user.id,
-        input.conversationId
+        input.conversationId,
       );
       if (!result.ok) {
         logger.error("pinConversation error", result.error, {
@@ -104,11 +105,11 @@ export const messagingConversationRouter = router({
     }),
 
   unpinConversation: protectedProcedure
-    .input(z.object({ conversationId: z.string() }))
+    .input(conversationIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.messagingService.unpinConversation(
         ctx.session.user.id,
-        input.conversationId
+        input.conversationId,
       );
       if (!result.ok) {
         logger.error("unpinConversation error", result.error, {
