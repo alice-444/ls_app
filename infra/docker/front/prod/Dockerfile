@@ -37,24 +37,17 @@ RUN corepack enable pnpm
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-COPY --from=base /app/front/package.json ./front/
-COPY --from=base /app/shared/package.json ./shared/
-COPY --from=base /app/shared/dist ./shared/dist
-
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/shared/node_modules ./shared/node_modules
-COPY --from=base /app/front/node_modules ./front/node_modules
-COPY --from=base /app/front/.next ./front/.next
-COPY --from=base /app/front/public ./front/public
-
-WORKDIR /app/front
-
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME="0.0.0.0"
+ENV PORT=3001
+
+# Copy standalone output
+COPY --from=base /app/front/.next/standalone ./
+COPY --from=base /app/front/.next/static ./front/.next/static
+COPY --from=base /app/front/public ./front/public
 
 EXPOSE 3001
 
-CMD ["pnpm", "start", "-p", "3001"]
+# The standalone output generates a server.js file in the root of the app
+CMD ["node", "front/server.js"]
