@@ -20,8 +20,8 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-import { BackButton } from "@/components/back-button";
-import { SupportThread } from "@/components/admin/support/support-thread";
+import { BackButton } from "@/components/shared/back-button";
+import { SupportThread } from "@/components/domains/admin/support/support-thread";
 
 export default function SupportRequestDetailPage() {
   const params = useParams();

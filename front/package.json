@@ -8,7 +8,8 @@
 		"lint": "next lint",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"test:coverage": "vitest run --coverage"
+		"test:coverage": "vitest run --coverage",
+		"update-imports": "node scripts/update_imports.js"
 	},
 	"dependencies": {
 		"@daily-co/daily-js": "^0.87.0",

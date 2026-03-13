@@ -26,8 +26,8 @@ import { useSocket } from "@/lib/socket-client";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { PageContainer } from "@/components/layout/PageContainer";
-import { PageCard } from "@/components/layout/PageCard";
+import { PageContainer } from "@/components/shared/layout/PageContainer";
+import { PageCard } from "@/components/shared/layout/PageCard";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 

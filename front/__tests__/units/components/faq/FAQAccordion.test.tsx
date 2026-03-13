@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FAQAccordion } from "@/components/faq/FAQAccordion";
+import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
 
 const mockItems = [
   { id: "1", question: "Question one?", answer: "Answer one." },

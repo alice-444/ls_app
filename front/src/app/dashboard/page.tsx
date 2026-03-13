@@ -1,15 +1,15 @@
 "use client";
 
-import { CancelWorkshopRegistrationDialog } from "@/components/workshop/dialogs/CancelWorkshopRegistrationDialog";
-import { SubmitFeedbackDialog } from "@/components/workshop/SubmitFeedbackDialog";
-import { ApprenantDashboard } from "@/components/dashboard/ApprenantDashboard";
-import { MentorDashboard } from "@/components/dashboard/MentorDashboard";
-import { PageContainer } from "@/components/layout";
+import { CancelWorkshopRegistrationDialog } from "@/components/domains/workshop/dialogs/CancelWorkshopRegistrationDialog";
+import { SubmitFeedbackDialog } from "@/components/domains/workshop/SubmitFeedbackDialog";
+import { ApprenantDashboard } from "@/components/domains/dashboard/ApprenantDashboard";
+import { MentorDashboard } from "@/components/domains/dashboard/MentorDashboard";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 
 import { useDashboard } from "@/hooks/useDashboard";
-import { FloatingAddButton } from "@/components/dashboard/FloatingAddButton";
+import { FloatingAddButton } from "@/components/domains/dashboard/FloatingAddButton";
 
 export default function Dashboard() {
   const {

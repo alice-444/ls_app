@@ -15,14 +15,14 @@ import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
-import { BackButton } from "@/components/back-button";
-import { PageContainer } from "@/components/layout";
+import { BackButton } from "@/components/shared/back-button";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { ProfilePhotoUpload } from "@/components/profil/ProfilePhotoUpload";
-import { ProfilePreviewCard } from "@/components/profil/ProfilePreviewCard";
-import { IceBreakerTagsSection } from "@/components/profil/IceBreakerTagsSection";
-import { ApprenticeProfileForm } from "@/components/profil/ApprenticeProfileForm";
+import { ProfilePhotoUpload } from "@/components/domains/profil/ProfilePhotoUpload";
+import { ProfilePreviewCard } from "@/components/domains/profil/ProfilePreviewCard";
+import { IceBreakerTagsSection } from "@/components/domains/profil/IceBreakerTagsSection";
+import { ApprenticeProfileForm } from "@/components/domains/profil/ApprenticeProfileForm";
 
 const BLOCK_CARD =
   "rounded-2xl border border-border/50 bg-card/95 backdrop-blur-md p-5 sm:p-6 shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-brand/5";

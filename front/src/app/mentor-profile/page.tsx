@@ -3,9 +3,9 @@
 import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { BackButton } from "@/components/back-button";
-import { PageContainer, SectionSidebar } from "@/components/layout";
-import Loader from "@/components/loader";
+import { BackButton } from "@/components/shared/back-button";
+import { PageContainer, SectionSidebar } from "@/components/shared/layout";
+import Loader from "@/components/shared/loader";
 import ShinyText from "@/components/ui/ShinyText";
 import {
   Card,
@@ -17,15 +17,15 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 
-import { PREDEFINED_TOPICS, SIDEBAR_ITEMS, type ProfileSection } from "@/components/mentor-profile/constants";
+import { PREDEFINED_TOPICS, SIDEBAR_ITEMS, type ProfileSection } from "@/components/domains/mentor-profile/constants";
 import { useMentorProfile } from "@/hooks/useMentorProfile";
 import {
   BasicInformationSection,
   TagListSection,
   SocialMediaSection,
   PublicationSection,
-} from "@/components/mentor-profile";
-import { ProfilePreviewCard } from "@/components/profil/ProfilePreviewCard";
+} from "@/components/domains/mentor-profile";
+import { ProfilePreviewCard } from "@/components/domains/profil/ProfilePreviewCard";
 
 export default function MentorProfilePage() {
   const {

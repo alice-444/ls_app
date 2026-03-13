@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/shared/back-button";
 
 export default function AdminBulkNotificationPage() {
   const router = useRouter();

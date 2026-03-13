@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import type { AppRouter } from "@/types/trpc-router";
-import SignUpForm from "@/components/sign-up-form";
+import SignUpForm from "@/components/domains/auth/sign-up-form";
 
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({

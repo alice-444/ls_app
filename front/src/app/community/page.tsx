@@ -2,15 +2,15 @@
 
 import { Suspense, useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { EventsTabs } from "@/components/community/EventsTabs";
-import { EventsHubGrid } from "@/components/community/EventsHubGrid";
-import { DealsGrid } from "@/components/community/DealsGrid";
-import { SpotFinder } from "@/components/community/SpotFinder";
-import { CommunityPoll } from "@/components/community/CommunityPoll";
-import { ImpactStats } from "@/components/community/ImpactStats";
+import { EventsTabs } from "@/components/domains/community/EventsTabs";
+import { EventsHubGrid } from "@/components/domains/community/EventsHubGrid";
+import { DealsGrid } from "@/components/domains/community/DealsGrid";
+import { SpotFinder } from "@/components/domains/community/SpotFinder";
+import { CommunityPoll } from "@/components/domains/community/CommunityPoll";
+import { ImpactStats } from "@/components/domains/community/ImpactStats";
 import { COMMUNITY_HUB_LIMITS } from "@ls-app/shared";
 import { Loader2, PlusCircle, Rocket, Calendar, Tag, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,9 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import { ProposeDealForm } from "@/components/community/ProposeDealForm";
-import { ProposeSpotForm } from "@/components/community/ProposeSpotForm";
-import { ProposeEventForm } from "@/components/community/ProposeEventForm";
+import { ProposeDealForm } from "@/components/domains/community/ProposeDealForm";
+import { ProposeSpotForm } from "@/components/domains/community/ProposeSpotForm";
+import { ProposeEventForm } from "@/components/domains/community/ProposeEventForm";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { getUserRole } from "@/lib/api-client";

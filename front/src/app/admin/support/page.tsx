@@ -51,7 +51,7 @@ import {
 } from "@/components/ui/select";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { SupportThread } from "@/components/admin/support/support-thread";
+import { SupportThread } from "@/components/domains/admin/support/support-thread";
 
 type SupportRequestStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 

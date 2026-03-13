@@ -28,11 +28,11 @@ import {
   Tag,
   BookOpen,
 } from "lucide-react";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
-import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
+import { RequestWorkshopParticipationDialog } from "@/components/domains/mentor/RequestWorkshopParticipationDialog";
+import { WorkshopCard } from "@/components/domains/workshop/cards/WorkshopCard";
 import type { WorkshopDetailed as Workshop } from "@ls-app/shared";
 
 export default function WorkshopRoomPage() {

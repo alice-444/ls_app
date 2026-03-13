@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SectionSidebar } from "@/components/layout";
+import { SectionSidebar } from "@/components/shared/layout";
 import { 
   UserCircle, 
   Bell, 
@@ -13,7 +13,7 @@ import {
   NotificationsSection,
   SystemSettingsSection,
   AboutSection,
-} from "@/components/settings";
+} from "@/components/domains/settings";
 
 type AdminSettingsSection =
   | "informations-personnelles"

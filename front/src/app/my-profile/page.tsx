@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { authClient, customAuthClient } from "@/lib/auth-client";
-import Loader from "@/components/loader";
+import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,7 +28,7 @@ import {
 import { toast } from "sonner";
 import { getMentorProfile, getUserRole } from "@/lib/api-client";
 import { formatPhotoUrl } from "@/utils/photo";
-import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
+import { WorkshopCalendar } from "@/components/domains/workshop/calendar/WorkshopCalendar";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import type { WorkshopDetailed } from "@ls-app/shared";
