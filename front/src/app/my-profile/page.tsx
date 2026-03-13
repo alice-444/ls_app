@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authClient, customAuthClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
@@ -69,8 +69,6 @@ export default function MyProfilePage() {
       enabled: !!session && userRole === "MENTOR",
     }
   ) as { data: WorkshopDetailed[] | undefined };
-
-  if (!isSessionPending && !session) redirect("/login");
 
   const loadProfile = useCallback(async () => {
     if (!session?.user?.id) return;

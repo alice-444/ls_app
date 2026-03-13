@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { PageContainer } from "@/components/layout";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
@@ -15,8 +15,6 @@ export default function ConversationPage() {
   const conversationId = params.conversationId as string;
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
-
-  if (!isSessionPending && !session) redirect("/login");
 
   if (isSessionPending) {
     return (

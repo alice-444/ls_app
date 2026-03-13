@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
@@ -104,9 +104,22 @@ export default function ProfilPage() {
     },
   });
 
-  if (!isSessionPending && !session) redirect("/login");
-  if (userRole === "MENTOR") redirect("/mentor-profile");
-  if (userRole && userRole !== "APPRENANT") redirect("/dashboard");
+  const router = useRouter();
+  useEffect(() => {
+    if (isSessionPending || isLoadingRole) return;
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+    if (userRole === "MENTOR") {
+      router.push("/mentor-profile");
+      return;
+    }
+    if (userRole && userRole !== "APPRENANT") {
+      router.push("/dashboard");
+      return;
+    }
+  }, [session, userRole, isSessionPending, isLoadingRole, router]);
 
   useEffect(() => {
     if (identityCard?.photoUrl) setPreviewPhoto(identityCard.photoUrl);
