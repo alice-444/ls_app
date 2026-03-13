@@ -20,6 +20,11 @@ RUN pnpm --filter @ls-app/shared run build
 
 WORKDIR /app/front
 
+ARG NEXT_PUBLIC_SERVER_URL
+ARG NEXT_PUBLIC_SOCKET_URL
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+ENV NEXT_PUBLIC_SOCKET_URL=$NEXT_PUBLIC_SOCKET_URL
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -32,24 +37,19 @@ RUN corepack enable pnpm
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-COPY --from=base /app/front/package.json ./front/
-COPY --from=base /app/shared/package.json ./shared/
-COPY --from=base /app/shared/dist ./shared/dist
-
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/shared/node_modules ./shared/node_modules
-COPY --from=base /app/front/node_modules ./front/node_modules
-COPY --from=base /app/front/.next ./front/.next
-COPY --from=base /app/front/public ./front/public
-
-WORKDIR /app/front
-
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME="0.0.0.0"
+ENV PORT=3001
+
+# Copy standalone output (this contains the node_modules and the server.js)
+COPY --from=base /app/front/.next/standalone ./
+
+# IMPORTANT: Static and public files must be in the root for standalone to find them
+COPY --from=base /app/front/.next/static ./.next/static
+COPY --from=base /app/front/public ./public
 
 EXPOSE 3001
 
-CMD ["pnpm", "start", "-p", "3001"]
+# The standalone output generates a server.js file in front/server.js
+CMD ["node", "front/server.js"]

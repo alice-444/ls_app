@@ -1,7 +1,7 @@
 services:
   # Service Frontend
   frontend:
-    image: miho11/front_ls:latest
+    image: miho11/front_ls:${FRONT_IMAGE_TAG:-latest}
     ports:
       - "3001:3001"
     environment:
@@ -16,12 +16,14 @@ services:
       - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_URL}`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+      - "traefik.http.routers.frontend.middlewares=frontend-headers"
+      - "traefik.http.middlewares.frontend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.services.frontend.loadbalancer.server.port=3001"
       - "traefik.docker.network=vps-mds"
 
   # Service Backend
   backend:
-    image: miho11/back_ls:latest
+    image: miho11/back_ls:${BACK_IMAGE_TAG:-latest}
     ports:
       - "4500:4500"
     environment:
@@ -51,6 +53,8 @@ services:
       - "traefik.http.routers.backend.rule=Host(`${BACKEND_URL}`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.routers.backend.middlewares=backend-headers"
+      - "traefik.http.middlewares.backend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.services.backend.loadbalancer.server.port=4500"
       - "traefik.docker.network=vps-mds"
 
@@ -60,7 +64,6 @@ services:
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.file.watch=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.websecure.address=:443"
@@ -81,6 +84,7 @@ services:
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "443:443"
+      - "80:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
