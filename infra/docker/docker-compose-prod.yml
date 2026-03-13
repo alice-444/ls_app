@@ -1,7 +1,7 @@
 services:
   # Service Frontend
   frontend:
-    image: miho11/front_ls:latest
+    image: miho11/front_ls:${FRONT_IMAGE_TAG:-latest}
     ports:
       - "3001:3001"
     environment:
@@ -21,7 +21,7 @@ services:
 
   # Service Backend
   backend:
-    image: miho11/back_ls:latest
+    image: miho11/back_ls:${BACK_IMAGE_TAG:-latest}
     ports:
       - "4500:4500"
     environment:
@@ -81,6 +81,7 @@ services:
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "443:443"
+      - "80:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
