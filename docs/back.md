@@ -259,7 +259,7 @@ Fichier : `back/.env` (voir `back/.env.example`).
 
 - **CORS_ORIGIN** — Origine autorisée (ex. `http://localhost:3001`).
 - **CRON_SECRET** — Secret pour sécuriser les appels aux routes cron.
-- **DATABASE_URL** — URL PostgreSQL (obligatoire).
+- **DATABASE_URL** — URL PostgreSQL (obligatoire). Recommandé : ajouter `?sslmode=verify-full` pour garantir une connexion sécurisée et éviter les avertissements de dépréciation du pilote `pg`.
 - **PRISMA_ACCELERATE_URL** — Optionnel (Prisma Accelerate).
 - **BETTER_AUTH_SECRET** — Secret Better Auth (obligatoire).
 - **BETTER_AUTH_URL** — URL publique du back (ex. `http://localhost:3000`).
