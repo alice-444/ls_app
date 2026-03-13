@@ -28,6 +28,11 @@ export type session = Prisma.sessionModel
  */
 export type account = Prisma.accountModel
 /**
+ * Model verification
+ * 
+ */
+export type verification = Prisma.verificationModel
+/**
  * Model user
  * 
  */

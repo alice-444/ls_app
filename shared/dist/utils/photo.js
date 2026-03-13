@@ -43,7 +43,9 @@ exports.isValidPhotoUrl = isValidPhotoUrl;
 const formatPhotoUrl = (url) => {
     if (!url)
         return null;
-    if (url.startsWith("http") || url.startsWith("/") || url.startsWith("data:")) {
+    if (url.startsWith("http") ||
+        url.startsWith("/") ||
+        url.startsWith("data:")) {
         return url;
     }
     return `${exports.PHOTO_URL_PREFIX}${url}`;

@@ -24,6 +24,7 @@ __exportStar(require("./validation/auth.schemas"), exports);
 __exportStar(require("./validation/support.schemas"), exports);
 __exportStar(require("./validation/profile.schemas"), exports);
 __exportStar(require("./validation/common.schemas"), exports);
+__exportStar(require("./validation/community.constants"), exports);
 __exportStar(require("./validation/community.schemas"), exports);
 __exportStar(require("./validation/user.schemas"), exports);
 __exportStar(require("./validation/admin.schemas"), exports);

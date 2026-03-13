@@ -14,7 +14,7 @@ ce qui existe et où le trouver
 - [Front](#front) – Application Next.js, tRPC, auth
 - [Back](#back) – API, Prisma, auth
 - [Arborescence](#arborescence) – Structure macro et micro
-- [Guides](#guides) – Procédures (déploiement, DB, auth…)
+- [Guides](#guides) – Procédures (déploiement, DB, auth…), PV de recette
 - [Référence](#référence) – Détails techniques par domaine
 
 ---
@@ -49,6 +49,7 @@ Documentation de l’API et du serveur : [back.md](back.md).
 ## Guides
 
 Procédures (déploiement, DB, auth…) : [procedure.md](procedure.md).
+Procès-verbal de recette : [pv-recette.md](pv-recette.md).
 
 ---
 
