@@ -67,6 +67,10 @@ jobs:
           workdir: ./
           dockerfile: infra/docker/front/prod/Dockerfile
           tags: latest,${{ env.REF_NAME }}
+          buildargs: NEXT_PUBLIC_SERVER_URL,NEXT_PUBLIC_SOCKET_URL
+        env:
+          NEXT_PUBLIC_SERVER_URL: https://api.learnsup.fr
+          NEXT_PUBLIC_SOCKET_URL: https://api.learnsup.fr
 
   deploy:
     name: Deploy to Prod
