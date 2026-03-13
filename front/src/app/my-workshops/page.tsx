@@ -16,7 +16,7 @@ import {
   formatTime,
   isWorkshopEnded,
 } from "@/lib/workshop-utils";
-import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
+import { DeleteWorkshopDialog } from "@/components/domains/workshop/dialogs/DeleteWorkshopDialog";
 import {
   Calendar,
   Clock,
@@ -30,11 +30,11 @@ import {
   MapPin,
   Link as LinkIcon,
 } from "lucide-react";
-import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
-import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
-import { WorkshopStatsCards } from "@/components/workshop/stats/WorkshopStatsCards";
-import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequests";
-import { PageContainer } from "@/components/layout";
+import { AcceptWorkshopRequestDialog } from "@/components/domains/mentor/AcceptWorkshopRequestDialog";
+import { RejectWorkshopRequestDialog } from "@/components/domains/mentor/RejectWorkshopRequestDialog";
+import { WorkshopStatsCards } from "@/components/domains/workshop/stats/WorkshopStatsCards";
+import { WorkshopRequests } from "@/components/domains/workshop/requests/WorkshopRequests";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion, useReducedMotion } from "framer-motion";
 import type { WorkshopDetailed } from "@ls-app/shared";
@@ -44,7 +44,7 @@ import {
   NextWorkshopBanner,
   WorkshopFiltersBar,
   CalendarSection,
-} from "@/components/my-workshops";
+} from "@/components/domains/my-workshops";
 
 export default function MyWorkshopsPage() {
   const {

@@ -22,10 +22,21 @@ export class MentorProfileService implements IMentorProfileService {
       // Autoriser le mentor à voir son propre profil même s'il n'est pas publié
       let mentor = await this.mentorRepository.findPublishedMentorById(mentorId);
       
-      if (!mentor && viewerUserId) {
+      const workshops = await this.mentorRepository.findMentorPublicWorkshops(
+        mentorId
+      );
+
+      if (!mentor) {
+        // Fallback: Si le mentor n'est pas "publié" mais qu'il a des ateliers publics, on l'affiche quand même
         const potentialMentor = await this.mentorRepository.findMentorById(mentorId);
-        if (potentialMentor && potentialMentor.userId === viewerUserId) {
-          mentor = potentialMentor;
+        
+        if (potentialMentor) {
+          const isSelf = potentialMentor.userId === viewerUserId;
+          const hasPublicWorkshops = workshops.length > 0;
+          
+          if (isSelf || hasPublicWorkshops) {
+            mentor = potentialMentor;
+          }
         }
       }
 
@@ -43,10 +54,6 @@ export class MentorProfileService implements IMentorProfileService {
           return failure("Ce profil n'est plus accessible", 403);
         }
       }
-
-      const workshops = await this.mentorRepository.findMentorPublicWorkshops(
-        mentorId
-      );
 
       return success({
         id: mentor.id,

@@ -1,6 +1,6 @@
 "use client";
 
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/shared/back-button";
 
 export default function TermsPage() {
   return (

@@ -4,33 +4,33 @@ import { useReducer } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
-import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
+import { RequestWorkshopParticipationDialog } from "@/components/domains/mentor/RequestWorkshopParticipationDialog";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { DeleteWorkshopDialog } from "@/components/workshop/dialogs/DeleteWorkshopDialog";
+import { DeleteWorkshopDialog } from "@/components/domains/workshop/dialogs/DeleteWorkshopDialog";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
-import { AcceptWorkshopRequestDialog } from "@/components/mentor/AcceptWorkshopRequestDialog";
-import { RejectWorkshopRequestDialog } from "@/components/mentor/RejectWorkshopRequestDialog";
-import { CancelWorkshopRegistrationDialog } from "@/components/workshop/dialogs/CancelWorkshopRegistrationDialog";
-import { RescheduleWorkshopDialog } from "@/components/workshop/dialogs/RescheduleWorkshopDialog";
-import { MiniProfileModal } from "@/components/apprentice/MiniProfileModal";
-import { WorkshopHeader } from "@/components/workshop/cards/WorkshopHeader";
-import { WorkshopDescription } from "@/components/workshop/cards/WorkshopDescription";
-import { WorkshopDetailsCard } from "@/components/workshop/cards/WorkshopDetailsCard";
-import { WorkshopCreatorCard } from "@/components/workshop/cards/WorkshopCreatorCard";
-import { WorkshopParticipantsCard } from "@/components/workshop/cards/WorkshopParticipantsCard";
-import { AttendanceManagementCard } from "@/components/workshop/cards/AttendanceManagementCard";
-import { WorkshopActionsCard } from "@/components/workshop/cards/WorkshopActionsCard";
-import { WorkshopRequestsCard } from "@/components/workshop/requests/WorkshopRequestsCard";
-import { SubmitFeedbackDialog } from "@/components/workshop/SubmitFeedbackDialog";
-import { WorkshopReviews } from "@/components/workshop/WorkshopReviews";
-import { DailyVideoCall } from "@/components/workshop/DailyVideoCall";
-import { JoinVideoButton } from "@/components/workshop/JoinVideoButton";
+import { AcceptWorkshopRequestDialog } from "@/components/domains/mentor/AcceptWorkshopRequestDialog";
+import { RejectWorkshopRequestDialog } from "@/components/domains/mentor/RejectWorkshopRequestDialog";
+import { CancelWorkshopRegistrationDialog } from "@/components/domains/workshop/dialogs/CancelWorkshopRegistrationDialog";
+import { RescheduleWorkshopDialog } from "@/components/domains/workshop/dialogs/RescheduleWorkshopDialog";
+import { MiniProfileModal } from "@/components/domains/apprentice/MiniProfileModal";
+import { WorkshopHeader } from "@/components/domains/workshop/cards/WorkshopHeader";
+import { WorkshopDescription } from "@/components/domains/workshop/cards/WorkshopDescription";
+import { WorkshopDetailsCard } from "@/components/domains/workshop/cards/WorkshopDetailsCard";
+import { WorkshopCreatorCard } from "@/components/domains/workshop/cards/WorkshopCreatorCard";
+import { WorkshopParticipantsCard } from "@/components/domains/workshop/cards/WorkshopParticipantsCard";
+import { AttendanceManagementCard } from "@/components/domains/workshop/cards/AttendanceManagementCard";
+import { WorkshopActionsCard } from "@/components/domains/workshop/cards/WorkshopActionsCard";
+import { WorkshopRequestsCard } from "@/components/domains/workshop/requests/WorkshopRequestsCard";
+import { SubmitFeedbackDialog } from "@/components/domains/workshop/SubmitFeedbackDialog";
+import { WorkshopReviews } from "@/components/domains/workshop/WorkshopReviews";
+import { DailyVideoCall } from "@/components/domains/workshop/DailyVideoCall";
+import { JoinVideoButton } from "@/components/domains/workshop/JoinVideoButton";
 
 type WorkshopRequest = {
   id: string;
@@ -397,6 +397,9 @@ export default function WorkshopDetailPage() {
     Boolean(workshop.date) &&
     !isWorkshopPast(workshop);
 
+  const creatorName =
+    workshop?.creator?.displayName || workshop?.creator?.name || "Mentor";
+
   return (
     <PageContainer>
       <WorkshopHeader
@@ -557,7 +560,7 @@ export default function WorkshopDetailPage() {
             dispatch({ type: "SET", payload: { showRequestDialog: open } })
           }
           mentorId={workshop.creator.id}
-          mentorName={workshop.creator.user?.name || "Mentor"}
+          mentorName={creatorName}
           workshopId={workshop.id}
         />
       )}

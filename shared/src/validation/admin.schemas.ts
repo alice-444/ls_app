@@ -5,7 +5,7 @@ export const adminAnalyticsSchema = z.object({
 });
 
 export const updateUserCreditsSchema = z.object({
-  userId: z.string().cuid(),
+  userId: z.string(),
   amount: z.number().min(1),
   reason: z.string().min(3),
   type: z.enum(["ADD", "REMOVE"]),

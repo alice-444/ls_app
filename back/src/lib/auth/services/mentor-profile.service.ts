@@ -1,4 +1,4 @@
-import { mentorProfileSchema } from "@ls-app/shared";
+import { mentorProfileSchema, isValidPhotoUrl } from "@ls-app/shared";
 import type { MentorProfileInput } from "@ls-app/shared";
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -15,52 +15,29 @@ export class MentorProfileService {
     photoUrl: string,
     userId: string,
   ): Promise<Result<string>> {
-    if (!photoUrl.startsWith("/api/profile/photo/")) {
+    if (!isValidPhotoUrl(photoUrl, userId)) {
       return failure(
-        "Invalid photo URL. Must be from /api/profile/photo/ endpoint",
+        "Invalid photo URL. Must be a secure Cloudinary URL or from /api/profile/photo/ endpoint belonging to you.",
         400,
       );
     }
 
-    const fileName = photoUrl.replace("/api/profile/photo/", "");
-    if (!fileName) {
-      return failure("Invalid photo URL format", 400);
-    }
+    // For local files, we still check file existence on disk
+    if (photoUrl.startsWith("/api/profile/photo/")) {
+      const fileName = photoUrl.replace("/api/profile/photo/", "");
+      const sanitizedFileName = fileName.replaceAll(/[^a-zA-Z0-9._-]/g, "");
 
-    const sanitizedFileName = fileName.replaceAll(/[^a-zA-Z0-9._-]/g, "");
-    if (sanitizedFileName !== fileName) {
-      return failure("Invalid characters in file name", 400);
-    }
+      const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
+      const filePath = join(uploadsDir, sanitizedFileName);
+      const resolvedPath = resolve(filePath);
 
-    const extensionMatch = /\.(jpg|jpeg|png)$/.exec(sanitizedFileName);
-    if (!extensionMatch) {
-      return failure("Invalid file extension", 400);
-    }
+      if (!resolvedPath.startsWith(resolve(uploadsDir))) {
+        return failure("Invalid file path", 400);
+      }
 
-    const nameWithoutExt = sanitizedFileName.replace(/\.(jpg|jpeg|png)$/, "");
-    const uuidPattern =
-      /^(.+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
-    const match = uuidPattern.exec(nameWithoutExt);
-
-    if (!match) {
-      return failure("Invalid file name format. Expected: userId-uuid", 400);
-    }
-
-    const userIdFromFileName = match[1];
-    if (userIdFromFileName !== userId) {
-      return failure("Photo URL does not belong to this user", 403);
-    }
-
-    const uploadsDir = resolve(process.cwd(), "uploads", "profiles");
-    const filePath = join(uploadsDir, sanitizedFileName);
-    const resolvedPath = resolve(filePath);
-
-    if (!resolvedPath.startsWith(resolve(uploadsDir))) {
-      return failure("Invalid file path", 400);
-    }
-
-    if (!existsSync(filePath)) {
-      return failure("Photo file not found", 404);
+      if (!existsSync(filePath)) {
+        return failure("Photo file not found", 404);
+      }
     }
 
     return success(photoUrl);
@@ -185,7 +162,7 @@ export class MentorProfileService {
       }
 
       const fullProfile = await prisma.user.findUnique({
-        where: { userId: userId },
+        where: { id: userId },
         select: { bio: true, domain: true },
       });
 

@@ -28,15 +28,15 @@ import {
 } from "lucide-react";
 import { getUserRole } from "@/lib/api-client";
 import { formatPhotoUrl } from "@/utils/photo";
-import { ContactMentorDialog } from "@/components/mentor/ContactMentorDialog";
-import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
-import { MentorFeedbacks } from "@/components/mentor/MentorFeedbacks";
-import { MentorWorkshopsList } from "@/components/mentor/MentorWorkshopsList";
-import { BlockUserDialog } from "@/components/user/BlockUserDialog";
-import { ReportUserDialog } from "@/components/user/ReportUserDialog";
+import { ContactMentorDialog } from "@/components/domains/mentor/ContactMentorDialog";
+import { RequestWorkshopParticipationDialog } from "@/components/domains/mentor/RequestWorkshopParticipationDialog";
+import { MentorFeedbacks } from "@/components/domains/mentor/MentorFeedbacks";
+import { MentorWorkshopsList } from "@/components/domains/mentor/MentorWorkshopsList";
+import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
+import { ReportUserDialog } from "@/components/domains/user/ReportUserDialog";
 import { toast } from "sonner";
-import { BackButton } from "@/components/back-button";
-import { PageContainer } from "@/components/layout/PageContainer";
+import { BackButton } from "@/components/shared/back-button";
+import { PageContainer } from "@/components/shared/layout/PageContainer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -135,7 +135,10 @@ export default function MentorProfileViewPage() {
 
   const breadcrumbItems = [
     { label: "Accueil", href: "/dashboard" },
-    { label: "Mentors", href: "/mentors" },
+    { 
+      label: "Mentors", 
+      href: (userRole === "APPRENANT" || userRole === "ADMIN") ? "/mentors" : undefined 
+    },
     { label: mentor?.displayName || mentor?.name || "Profil", isCurrent: true },
   ];
 

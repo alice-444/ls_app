@@ -386,6 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   session: 'session',
   account: 'account',
+  verification: 'verification',
   user: 'user',
   credit_transaction: 'credit_transaction',
   support_request: 'support_request',
@@ -425,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "session" | "account" | "user" | "credit_transaction" | "support_request" | "support_message" | "audit_log" | "user_report" | "user_block" | "user_connection" | "workshop" | "workshop_request" | "mentor_feedback" | "conversation" | "message" | "message_reaction" | "notification" | "magic_link_token" | "deletion_job" | "workshop_cashback_queue" | "conversation_pin" | "student_deal" | "community_spot" | "community_event" | "community_poll" | "poll_vote"
+    modelProps: "session" | "account" | "verification" | "user" | "credit_transaction" | "support_request" | "support_message" | "audit_log" | "user_report" | "user_block" | "user_connection" | "workshop" | "workshop_request" | "mentor_feedback" | "conversation" | "message" | "message_reaction" | "notification" | "magic_link_token" | "deletion_job" | "workshop_cashback_queue" | "conversation_pin" | "student_deal" | "community_spot" | "community_event" | "community_poll" | "poll_vote"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -574,6 +575,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.accountCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AccountCountAggregateOutputType> | number
+        }
+      }
+    }
+    verification: {
+      payload: Prisma.$verificationPayload<ExtArgs>
+      fields: Prisma.verificationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.verificationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.verificationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>
+        }
+        findFirst: {
+          args: Prisma.verificationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.verificationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>
+        }
+        findMany: {
+          args: Prisma.verificationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>[]
+        }
+        create: {
+          args: Prisma.verificationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>
+        }
+        createMany: {
+          args: Prisma.verificationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.verificationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>[]
+        }
+        delete: {
+          args: Prisma.verificationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>
+        }
+        update: {
+          args: Prisma.verificationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>
+        }
+        deleteMany: {
+          args: Prisma.verificationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.verificationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.verificationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>[]
+        }
+        upsert: {
+          args: Prisma.verificationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$verificationPayload>
+        }
+        aggregate: {
+          args: Prisma.VerificationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVerification>
+        }
+        groupBy: {
+          args: Prisma.verificationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VerificationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.verificationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VerificationCountAggregateOutputType> | number
         }
       }
     }
@@ -2430,6 +2505,18 @@ export const AccountScalarFieldEnum = {
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
 
 
+export const VerificationScalarFieldEnum = {
+  id: 'id',
+  identifier: 'identifier',
+  value: 'value',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3069,6 +3156,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   session?: Prisma.sessionOmit
   account?: Prisma.accountOmit
+  verification?: Prisma.verificationOmit
   user?: Prisma.userOmit
   credit_transaction?: Prisma.credit_transactionOmit
   support_request?: Prisma.support_requestOmit

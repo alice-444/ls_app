@@ -24,12 +24,12 @@ import {
   Rocket,
 } from "lucide-react";
 import ShinyText from "@/components/ui/ShinyText";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import { motion } from "framer-motion";
-import { CreateWorkshopForm } from "@/components/workshop-editor/CreateWorkshopForm";
-import { EditWorkshopForm } from "@/components/workshop-editor/EditWorkshopForm";
-import { DeleteWorkshopDialog } from "@/components/workshop-editor/DeleteWorkshopDialog";
-import { PublishWorkshopDialog } from "@/components/workshop-editor/PublishWorkshopDialog";
+import { CreateWorkshopForm } from "@/components/domains/workshop-editor/CreateWorkshopForm";
+import { EditWorkshopForm } from "@/components/domains/workshop-editor/EditWorkshopForm";
+import { DeleteWorkshopDialog } from "@/components/domains/workshop-editor/DeleteWorkshopDialog";
+import { PublishWorkshopDialog } from "@/components/domains/workshop-editor/PublishWorkshopDialog";
 import { trpc } from "@/utils/trpc";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -39,7 +39,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/shared/back-button";
 import type { WorkshopDetailed } from "@ls-app/shared";
 
 type Workshop = WorkshopDetailed;

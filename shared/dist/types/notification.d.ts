@@ -1,6 +1,6 @@
 export interface SegmentationCriteria {
-    role?: 'MENTOR' | 'APPRENANT' | 'ADMIN';
-    status?: 'PENDING' | 'ACTIVE' | 'SUSPENDED';
+    role?: "MENTOR" | "APPRENANT" | "ADMIN";
+    status?: "PENDING" | "ACTIVE" | "SUSPENDED";
     isPublished?: boolean;
     hasPublishedWorkshop?: boolean;
     minCredits?: number;

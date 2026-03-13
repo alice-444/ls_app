@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
-import { PageContainer, SectionSidebar } from "@/components/layout";
+import { PageContainer, SectionSidebar } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { BlockedUsersSection } from "@/components/settings/BlockedUsersSection";
-import { CreditsHistorySection } from "@/components/settings/CreditsHistorySection";
-import { SIDEBAR_ITEMS } from "@/components/settings/constants";
-import type { SettingsSection } from "@/components/settings/constants";
+import { BlockedUsersSection } from "@/components/domains/settings/BlockedUsersSection";
+import { CreditsHistorySection } from "@/components/domains/settings/CreditsHistorySection";
+import { SIDEBAR_ITEMS } from "@/components/domains/settings/constants";
+import type { SettingsSection } from "@/components/domains/settings/constants";
 import {
   AccountSection,
   PersonalInformationSection,
@@ -18,7 +18,7 @@ import {
   FeedbackSection,
   SupportInfoSection,
   ExportDataSection,
-} from "@/components/settings";
+} from "@/components/domains/settings";
 
 export default function SettingsPage() {
   const { data: session } = authClient.useSession();

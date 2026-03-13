@@ -1,9 +1,24 @@
+export function isMinimumToday(
+  date: Date | string | null | undefined,
+): boolean {
+  if (!date) return true;
+
+  const dateToCheck = typeof date === "string" ? new Date(date) : date;
+  dateToCheck.setHours(0, 0, 0, 0);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return dateToCheck >= today;
+}
+
 export function isMinimumTomorrow(
   date: Date | string | null | undefined,
 ): boolean {
   if (!date) return true;
 
   const dateToCheck = typeof date === "string" ? new Date(date) : date;
+  dateToCheck.setHours(0, 0, 0, 0);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

@@ -4,7 +4,7 @@ export interface AdminStats {
     support: number;
     onboarding: number;
 }
-export type AdminTimeRange = '7d' | '30d' | '90d' | 'all';
+export type AdminTimeRange = "7d" | "30d" | "90d" | "all";
 export interface CreditsStats {
     totalBalance: number;
     totalTopUps: number;
@@ -35,7 +35,7 @@ export interface ActivityHeatmap {
     date: string;
     hour: number;
     count: number;
-    type: 'MESSAGE' | 'LOGIN';
+    type: "MESSAGE" | "LOGIN";
 }
 export interface AdminBIStats {
     credits: CreditsStats;

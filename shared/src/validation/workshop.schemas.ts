@@ -3,7 +3,7 @@ import {
   WORKSHOP_VALIDATION,
   WORKSHOP_ERROR_MESSAGES,
 } from "./workshop.constants";
-import { isMinimumTomorrow } from "./date.validators";
+import { isMinimumTomorrow, isMinimumToday } from "./date.validators";
 
 // Schémas de base pour chaque champ
 export const workshopFieldSchemas = {
@@ -21,12 +21,7 @@ export const workshopFieldSchemas = {
       WORKSHOP_ERROR_MESSAGES.description.max,
     ),
 
-  date: z.coerce
-    .date()
-    .refine(
-      (date) => isMinimumTomorrow(date),
-      WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow,
-    ),
+  date: z.coerce.date(),
 
   time: z
     .string()
@@ -78,8 +73,11 @@ export const workshopFieldSchemas = {
   topic: z
     .string()
     .trim()
-    .min(WORKSHOP_VALIDATION.topic.min, WORKSHOP_ERROR_MESSAGES.topic.min)
-    .max(WORKSHOP_VALIDATION.topic.max, WORKSHOP_ERROR_MESSAGES.topic.max),
+    .max(WORKSHOP_VALIDATION.topic.max, WORKSHOP_ERROR_MESSAGES.topic.max)
+    .refine(
+      (val) => val === "" || val.length >= WORKSHOP_VALIDATION.topic.min,
+      WORKSHOP_ERROR_MESSAGES.topic.min,
+    ),
 
   creditCost: z
     .number()
@@ -99,7 +97,13 @@ export const createWorkshopBackendSchema = z.object({
   title: workshopFieldSchemas.title,
   description: workshopFieldSchemas.description.optional().default(""),
   topic: workshopFieldSchemas.topic.optional().nullable(),
-  date: workshopFieldSchemas.date.optional().nullable(),
+  date: workshopFieldSchemas.date
+    .refine(
+      (date) => isMinimumTomorrow(date),
+      WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow,
+    )
+    .optional()
+    .nullable(),
   time: workshopFieldSchemas.time.optional().nullable(),
   duration: workshopFieldSchemas.duration.optional().nullable(),
   location: workshopFieldSchemas.location.optional().nullable(),
@@ -110,11 +114,13 @@ export const createWorkshopBackendSchema = z.object({
 });
 
 export const updateWorkshopBackendSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string(),
   title: workshopFieldSchemas.title.optional(),
   description: workshopFieldSchemas.description.optional(),
   topic: workshopFieldSchemas.topic.optional().nullable(),
-  date: workshopFieldSchemas.date.optional(),
+  date: workshopFieldSchemas.date
+    .refine(isMinimumToday, "La date ne peut pas être dans le passé")
+    .optional(),
   time: workshopFieldSchemas.time.optional(),
   duration: workshopFieldSchemas.duration.optional(),
   location: workshopFieldSchemas.location.optional().nullable(),
@@ -149,25 +155,55 @@ export const createWorkshopFrontendSchema = z.object({
   creditCost: workshopFieldSchemas.creditCost.optional().nullable(),
 });
 
-export const editWorkshopFrontendSchema = createWorkshopFrontendSchema.extend({
-  workshopId: z.string().cuid(),
+export const editWorkshopFrontendSchema = z.object({
+  workshopId: z.string(),
+  title: workshopFieldSchemas.title,
+  description: workshopFieldSchemas.description.optional(),
+  date: z
+    .string()
+    .optional()
+    .refine(isMinimumToday, "La date ne peut pas être dans le passé"),
+  time: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || WORKSHOP_VALIDATION.time.regex.test(val),
+      WORKSHOP_ERROR_MESSAGES.time.invalidFormat,
+    ),
+  durationHours: z.number().int().min(0).max(8),
+  durationMinutes: z.number().int().min(0).max(59),
+  location: workshopFieldSchemas.location.optional(),
+  isVirtual: workshopFieldSchemas.isVirtual,
+  maxParticipants: workshopFieldSchemas.maxParticipants.optional(),
+  materialsNeeded: workshopFieldSchemas.materialsNeeded.optional(),
+  topic: z
+    .string()
+    .trim()
+    .max(WORKSHOP_VALIDATION.topic.max, WORKSHOP_ERROR_MESSAGES.topic.max)
+    .refine(
+      (val) => val === "" || val.length >= WORKSHOP_VALIDATION.topic.min,
+      WORKSHOP_ERROR_MESSAGES.topic.min,
+    )
+    .optional()
+    .nullable(),
+  creditCost: workshopFieldSchemas.creditCost.optional().nullable(),
 });
 
 // --- SCHÉMAS DE CYCLE DE VIE ---
 export const publishWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string(),
 });
 
 export const unpublishWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string(),
 });
 
 export const deleteWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string(),
 });
 
 export const cancelWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string(),
 });
 
 // Types partagés
