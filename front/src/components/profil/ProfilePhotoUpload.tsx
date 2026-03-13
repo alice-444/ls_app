@@ -84,89 +84,95 @@ export function ProfilePhotoUpload({
         disabled={isUploading}
         className="hidden"
       />
-      <button
-        type="button"
-        onDragOver={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setIsDragging(true);
-        }}
-        onDragLeave={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setIsDragging(false);
-        }}
-        onDrop={handlePhotoDrop}
-        onClick={() =>
-          !isUploading && document.getElementById("photo")?.click()
-        }
-        disabled={isUploading}
-        aria-label="Choisir ou glisser une photo"
-        className={cn(
-          "flex flex-col sm:flex-row items-center justify-center gap-4 p-6 sm:p-8 rounded-xl border-2 border-dashed transition-all cursor-pointer min-h-[120px]",
-          isDragging
-            ? "border-[#FF8C42] bg-[#FF8C42]/10 scale-[0.99]"
-            : "border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] hover:border-[#FF8C42]/50 hover:bg-[#FF8C42]/5"
-        )}
-      >
-        {(() => {
-          if (isUploading) {
-            return (
-              <div className="flex flex-col items-center gap-2">
-                <Loader2 className="h-10 w-10 animate-spin text-brand" />
-                <span className="text-xs text-ls-muted">
-                  Envoi en cours...
-                </span>
-              </div>
-            );
-          }
-          if (previewPhoto) {
+      <div className="relative">
+        <button
+          type="button"
+          disabled={isUploading}
+          onClick={() => document.getElementById("photo")?.click()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              document.getElementById("photo")?.click();
+            }
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDragging(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDragging(false);
+          }}
+          onDrop={handlePhotoDrop}
+          aria-label="Choisir ou glisser une photo"
+          className={cn(
+            "w-full flex flex-col sm:flex-row items-center justify-center gap-4 p-6 sm:p-8 rounded-xl border-2 border-dashed transition-all cursor-pointer min-h-[120px] text-left",
+            isDragging
+              ? "border-[#FF8C42] bg-[#FF8C42]/10 scale-[0.99]"
+              : "border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] hover:border-[#FF8C42]/50 hover:bg-[#FF8C42]/5",
+            isUploading && "opacity-50 cursor-not-allowed"
+          )}
+        >
+          {(() => {
+            if (isUploading) {
+              return (
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-10 w-10 animate-spin text-brand" />
+                  <span className="text-xs text-ls-muted">
+                    Envoi en cours...
+                  </span>
+                </div>
+              );
+            }
+            if (previewPhoto) {
+              return (
+                <>
+                  <div className="relative shrink-0 w-20 h-20">
+                    <Image
+                      src={previewPhoto}
+                      alt="Aperçu"
+                      width={80}
+                      height={80}
+                      className="rounded-full object-cover ring-2 ring-brand/20"
+                      unoptimized={previewPhoto.startsWith("data:")}
+                    />
+                  </div>
+                  <span className="text-sm text-ls-muted">
+                    Cliquer ou glisser pour remplacer &middot; JPG, PNG 5 Mo
+                  </span>
+                </>
+              );
+            }
             return (
               <>
-                <div className="relative shrink-0 w-20 h-20">
-                  <Image
-                    src={previewPhoto}
-                    alt="Aperçu"
-                    width={80}
-                    height={80}
-                    className="rounded-full object-cover ring-2 ring-brand/20"
-                    unoptimized={previewPhoto.startsWith("data:")}
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onPhotoChange(null);
-                    }}
-                    className="absolute -top-0.5 -right-0.5 bg-brand text-white rounded-full p-1.5 hover:bg-brand-hover shadow-md transition-colors"
-                    aria-label="Supprimer la photo"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 ring-2 ring-brand/20">
+                  <Upload className="h-7 w-7 text-brand" />
                 </div>
-                <span className="text-sm text-ls-muted">
-                  Cliquer ou glisser pour remplacer &middot; JPG, PNG 5 Mo
-                </span>
+                <div className="text-center sm:text-left space-y-0.5">
+                  <p className="text-sm font-medium text-ls-heading">
+                    Dépose ta photo ici
+                  </p>
+                  <p className="text-xs text-ls-muted">
+                    Glisser-déposer ou cliquer &middot; JPG, PNG 5 Mo max
+                  </p>
+                </div>
               </>
             );
-          }
-          return (
-            <>
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 ring-2 ring-brand/20">
-                <Upload className="h-7 w-7 text-brand" />
-              </div>
-              <div className="text-center sm:text-left space-y-0.5">
-                <p className="text-sm font-medium text-ls-heading">
-                  Dépose ta photo ici
-                </p>
-                <p className="text-xs text-ls-muted">
-                  Glisser-déposer ou cliquer &middot; JPG, PNG 5 Mo max
-                </p>
-              </div>
-            </>
-          );
-        })()}
-      </button>
+          })()}
+        </button>
+        {previewPhoto && !isUploading && (
+          <button
+            type="button"
+            onClick={() => onPhotoChange(null)}
+            className="absolute left-[6.5rem] top-6 bg-brand text-white rounded-full p-1.5 hover:bg-brand-hover shadow-md transition-colors -translate-x-1/2 -translate-y-1/2"
+            aria-label="Supprimer la photo"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

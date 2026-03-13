@@ -64,6 +64,7 @@ export declare const createWorkshopFrontendSchema: z.ZodObject<
 >;
 export declare const editWorkshopFrontendSchema: z.ZodObject<
   {
+    workshopId: z.ZodString;
     title: z.ZodString;
     description: z.ZodOptional<z.ZodString>;
     date: z.ZodOptional<z.ZodString>;
@@ -76,7 +77,6 @@ export declare const editWorkshopFrontendSchema: z.ZodObject<
     materialsNeeded: z.ZodOptional<z.ZodString>;
     topic: z.ZodNullable<z.ZodOptional<z.ZodString>>;
     creditCost: z.ZodNullable<z.ZodOptional<z.ZodNumber>>;
-    workshopId: z.ZodString;
   },
   z.core.$strip
 >;

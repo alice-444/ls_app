@@ -4,7 +4,7 @@ export declare const WORKSHOP_VALIDATION: {
     readonly max: 100;
   };
   readonly description: {
-    readonly max: 100;
+    readonly max: 1000;
   };
   readonly time: {
     readonly regex: RegExp;
@@ -46,7 +46,7 @@ export declare const WORKSHOP_ERROR_MESSAGES: {
     readonly max: "Le titre ne peut pas dépasser 100 caractères";
   };
   readonly description: {
-    readonly max: "La description ne peut pas dépasser 100 caractères";
+    readonly max: "La description ne peut pas dépasser 1000 caractères";
     readonly minForPublish: "La description doit contenir au moins 30 caractères pour publier";
   };
   readonly date: {

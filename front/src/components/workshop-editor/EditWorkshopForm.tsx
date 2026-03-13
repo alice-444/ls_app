@@ -106,6 +106,13 @@ export function EditWorkshopForm({
     });
   };
 
+  const onInvalid = (errors: any) => {
+    console.error("Form validation errors (detailed):", JSON.stringify(errors, null, 2));
+    toast.error("Veuillez vérifier les champs du formulaire", {
+      description: "Certains champs sont invalides.",
+    });
+  };
+
   return (
     <Card className="border-border/50 bg-card/95 dark:bg-card/95 backdrop-blur-md shadow-xl overflow-hidden">
       <CardHeader>
@@ -117,7 +124,8 @@ export function EditWorkshopForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+          <input type="hidden" {...register("workshopId")} />
           <WorkshopFormFields
             register={register as any}
             control={control as any}
