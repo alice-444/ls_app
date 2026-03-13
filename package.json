@@ -11,19 +11,16 @@
 		"check-types": "turbo check-types",
 		"test": "turbo test",
 		"test:unit": "turbo test",
-		"test:integration": "turbo test",
 		"test:coverage": "turbo test:coverage",
 		"dev:front": "turbo -F front dev",
 		"dev:back": "turbo -F back dev",
 		"db:push": "turbo -F back db:push",
 		"db:studio": "turbo -F back db:studio",
 		"db:generate": "turbo -F back db:generate",
-		"db:migrate": "turbo -F back db:migrate",
-		"test:db": "pnpm -F back run test:db"
+		"db:migrate": "turbo -F back db:migrate"
 	},
 	"devDependencies": {
 		"@vitest/coverage-v8": "^4.0.18",
-		"cypress": "^15.11.0",
 		"turbo": "^2.8.14"
 	},
 	"packageManager": "pnpm@10.30.3"
