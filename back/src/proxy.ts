@@ -1,36 +1,44 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
-	// Handle preflight OPTIONS requests
-	if (request.method === "OPTIONS") {
-		return new NextResponse(null, {
-			status: 200,
-			headers: {
-				"Access-Control-Allow-Credentials": "true",
-				"Access-Control-Allow-Origin":
-					process.env.CORS_ORIGIN || "http://localhost:3001",
-				"Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
-				"Access-Control-Allow-Headers": "Content-Type, Authorization",
-			},
-		});
-	}
+  // Use the actual request origin or fallback to process.env.CORS_ORIGIN
+  const origin =
+    request.headers.get("origin") || process.env.CORS_ORIGIN || "*";
 
-	const res = NextResponse.next();
+  // Handle preflight OPTIONS requests
+  if (request.method === "OPTIONS") {
+    return new NextResponse(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS,PUT,PATCH",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version",
+      },
+    });
+  }
 
-	res.headers.append("Access-Control-Allow-Credentials", "true");
-	res.headers.append(
-		"Access-Control-Allow-Origin",
-		process.env.CORS_ORIGIN || "http://localhost:3001",
-	);
-	res.headers.append("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-	res.headers.append(
-		"Access-Control-Allow-Headers",
-		"Content-Type, Authorization",
-	);
+  // Handle normal requests
+  const response = NextResponse.next();
 
-	return res;
+  // Add CORS headers to all responses
+  response.headers.set("Access-Control-Allow-Credentials", "true");
+  response.headers.set("Access-Control-Allow-Origin", origin);
+  response.headers.set(
+    "Access-Control-Allow-Methods",
+    "GET,POST,DELETE,OPTIONS,PUT,PATCH",
+  );
+  response.headers.set(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version",
+  );
+
+  return response;
 }
 
+// See "Matching Paths" below to learn more
 export const config = {
-	matcher: "/((?!api|trpc|_next/static|_next/image|favicon.ico|public|logo|bg|typo).*)",
+  matcher: "/:path*",
 };

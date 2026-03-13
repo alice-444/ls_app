@@ -3,7 +3,7 @@
 import { Linkedin, Twitter, Youtube, Github, Share2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { UseFormRegister } from "react-hook-form";
+import type { UseFormRegister, FieldErrors } from "react-hook-form";
 import type { MentorProfileFormData } from "./schema";
 
 const SOCIAL_FIELDS = [
@@ -35,9 +35,10 @@ const SOCIAL_FIELDS = [
 
 interface SocialMediaSectionProps {
   readonly register: UseFormRegister<MentorProfileFormData>;
+  readonly errors: FieldErrors<MentorProfileFormData>;
 }
 
-export function SocialMediaSection({ register }: SocialMediaSectionProps) {
+export function SocialMediaSection({ register, errors }: SocialMediaSectionProps) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-2">
@@ -65,8 +66,13 @@ export function SocialMediaSection({ register }: SocialMediaSectionProps) {
               {...register(`socialMediaLinks.${id}`)}
               placeholder={placeholder}
               type="url"
-              className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-full"
+              className={`border ${errors.socialMediaLinks?.[id] ? 'border-ls-error' : 'border-ls-border'} bg-ls-input-bg text-ls-heading rounded-full`}
             />
+            {errors.socialMediaLinks?.[id] && (
+              <p className="text-sm text-ls-error">
+                {errors.socialMediaLinks[id]?.message}
+              </p>
+            )}
           </div>
         ))}
       </div>

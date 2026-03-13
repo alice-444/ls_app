@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { faqConfig } from "@/lib/faq-config";
 import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
 import { BackButton } from "@/components/shared/back-button";
+import { PageContainer } from "@/components/shared/layout";
 import { useMemo, Suspense } from "react";
 
 function HelpCenterContent() {
@@ -69,7 +70,7 @@ function HelpCenterContent() {
     const Icon = currentCategory.icon === "logo" ? null : currentCategory.icon;
 
     return (
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+      <PageContainer className="py-4 sm:py-6 lg:py-8">
         <BackButton href="/help" label="Retour aux catégories" />
 
         <div className="mb-6 sm:mb-8">
@@ -130,12 +131,12 @@ function HelpCenterContent() {
             </p>
           )}
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+    <PageContainer className="py-4 sm:py-6 lg:py-8">
       <BackButton href="/info" label="Retour aux informations" />
 
       <div className="mb-6 sm:mb-8">
@@ -234,7 +235,7 @@ function HelpCenterContent() {
           );
         })}
       </div>
-    </div>
+    </PageContainer>
   );
 }
 
@@ -242,13 +243,13 @@ export default function HelpCenterPage() {
   return (
     <Suspense
       fallback={
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+        <PageContainer className="py-4 sm:py-6 lg:py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-[#26547c] dark:text-[#e6e6e6] text-lg">
               Chargement...
             </div>
           </div>
-        </div>
+        </PageContainer>
       }
     >
       <HelpCenterContent />

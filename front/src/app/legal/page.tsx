@@ -1,10 +1,11 @@
 "use client";
 
 import { BackButton } from "@/components/shared/back-button";
+import { PageContainer } from "@/components/shared/layout";
 
 export default function LegalPage() {
   return (
-    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+    <PageContainer className="py-4 sm:py-6 lg:py-8">
       <BackButton href="/info" label="Retour aux informations" />
 
       <div className="mb-6 sm:mb-8">
@@ -74,6 +75,6 @@ export default function LegalPage() {
           </p>
         </section>
       </div>
-    </div>
+    </PageContainer>
   );
 }

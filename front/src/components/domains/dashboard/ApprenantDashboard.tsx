@@ -233,29 +233,47 @@ export function ApprenantDashboard({
                     Calendrier
                   </h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("prev")}>Précédent</Button>
-                  <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("today")}>Aujourd&apos;hui</Button>
-                  <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("next")}>Suivant</Button>
-                </div>
+                {confirmedWorkshops && confirmedWorkshops.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("prev")}>Précédent</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("today")}>Aujourd&apos;hui</Button>
+                    <Button variant="ctaOutline" size="ctaSm" onClick={() => navigateCalendar("next")}>Suivant</Button>
+                  </div>
+                )}
               </div>
 
-              <div className="overflow-x-auto">
-                <WorkshopCalendar
-                  workshops={(confirmedWorkshops || []) as unknown as WorkshopDetailed[]}
-                  height="450px"
-                  userRole="APPRENANT"
-                  controlledDate={apprenantCalendarDate}
-                  controlledView={apprenantCalendarView}
-                  onDateChange={setApprenantCalendarDate}
-                  onViewChange={(view) => {
-                    if (["month", "week", "day", "agenda"].includes(view)) {
-                      setApprenantCalendarView(view as any);
-                    }
-                  }}
-                  onSelectEvent={(workshop) => router.push(`/workshop/${workshop.id}`)}
-                />
-              </div>
+              {confirmedWorkshops && confirmedWorkshops.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <WorkshopCalendar
+                    workshops={(confirmedWorkshops || []) as unknown as WorkshopDetailed[]}
+                    height="450px"
+                    userRole="APPRENANT"
+                    controlledDate={apprenantCalendarDate}
+                    controlledView={apprenantCalendarView}
+                    onDateChange={setApprenantCalendarDate}
+                    onViewChange={(view) => {
+                      if (["month", "week", "day", "agenda"].includes(view)) {
+                        setApprenantCalendarView(view as any);
+                      }
+                    }}
+                    onSelectEvent={(workshop) => router.push(`/workshop/${workshop.id}`)}
+                  />
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-card/50 border-2 border-dashed border-border/50 rounded-3xl">
+                  <Calendar className="h-12 w-12 text-ls-muted/30 mx-auto mb-4" />
+                  <p className="text-ls-muted italic mb-4">
+                    Tu n&apos;as pas encore d&apos;ateliers programmés.
+                  </p>
+                  <Button
+                    variant="cta"
+                    size="cta"
+                    onClick={() => router.push("/catalog")}
+                  >
+                    Parcourir le catalogue
+                  </Button>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

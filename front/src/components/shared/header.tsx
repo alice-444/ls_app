@@ -34,13 +34,13 @@ export default function Header() {
     enabled: !!session?.user?.id,
   });
 
-  const shouldHideThemeToggle = pathname === "/login";
-
   const { data: creditBalance } = trpc.credits.getBalance.useQuery(undefined, {
     enabled: !!session && userRole !== "ADMIN",
     refetchInterval: REFETCH_INTERVALS.CREDITS,
     trpc: {},
   });
+
+  const shouldHideThemeToggle = pathname === "/login";
 
   const renderCreditsSection = () => {
     if (!session || creditBalance === undefined || userRole === "ADMIN") return null;
@@ -49,8 +49,7 @@ export default function Header() {
       <div className="flex items-center gap-2 md:gap-4">
         <div className="flex items-center gap-1.5 md:gap-2 h-8 md:h-10 px-2 md:px-4 py-1 md:py-2 rounded-full bg-white/30 dark:bg-white/15 backdrop-blur-xl backdrop-saturate-150 border border-white/50 dark:border-white/30 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.12),0_4px_8px_-2px_rgba(0,0,0,0.08),inset_0_2px_0_0_rgba(255,255,255,0.6)] dark:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35),0_4px_8px_-2px_rgba(0,0,0,0.2),inset_0_2px_0_0_rgba(255,255,255,0.15)] transition-all duration-200 ease-out hover:bg-white/40 hover:border-white/60 hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,0.15),0_6px_12px_-4px_rgba(0,0,0,0.1),inset_0_2px_0_0_rgba(255,255,255,0.7)] dark:hover:bg-white/20 dark:hover:border-white/40 dark:hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,0.4),inset_0_2px_0_0_rgba(255,255,255,0.2)]">
           <span className="text-[#26547c] dark:text-[#5ba3ff] text-[10px] md:text-xs font-semibold whitespace-nowrap">
-            999
-            <span className="hidden sm:inline"> crédits</span>
+            999<span className="hidden sm:inline"> crédits</span>
           </span>
           <Coins className="w-3.5 md:w-[18px] h-3.5 md:h-[18px] text-[#26547c] dark:text-[#5ba3ff]" />
         </div>

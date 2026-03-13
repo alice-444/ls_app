@@ -463,115 +463,133 @@ export function MentorDashboard({
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-                  <div className="flex flex-wrap gap-2">
+                {mentorWorkshops && mentorWorkshops.length > 0 ? (
+                  <>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="ctaOutline"
+                          size="ctaSm"
+                          onClick={() => navigateCalendar("today")}
+                        >
+                          Aujourd&apos;hui
+                        </Button>
+                        <Button
+                          variant="ctaOutline"
+                          size="ctaSm"
+                          onClick={() => navigateCalendar("prev")}
+                        >
+                          Précédent
+                        </Button>
+                        <Button
+                          variant="ctaOutline"
+                          size="ctaSm"
+                          onClick={() => navigateCalendar("next")}
+                        >
+                          Suivant
+                        </Button>
+                      </div>
+                      <div className="flex items-center flex-wrap gap-0">
+                        <Button
+                          variant={
+                            mentorCalendarView === "month" ? "default" : "outline"
+                          }
+                          size="sm"
+                          className={`${mentorCalendarView === "month"
+                            ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                            : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                            } rounded-l-[8px] rounded-r-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold`}
+                          onClick={() => setMentorCalendarView("month")}
+                        >
+                          Mois
+                        </Button>
+                        <Button
+                          variant={
+                            mentorCalendarView === "week" ? "default" : "outline"
+                          }
+                          size="sm"
+                          className={`${mentorCalendarView === "week"
+                            ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                            : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                            } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
+                          onClick={() => setMentorCalendarView("week")}
+                        >
+                          Semaine
+                        </Button>
+                        <Button
+                          variant={
+                            mentorCalendarView === "day" ? "default" : "outline"
+                          }
+                          size="sm"
+                          className={`${mentorCalendarView === "day"
+                            ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                            : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                            } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
+                          onClick={() => setMentorCalendarView("day")}
+                        >
+                          Jour
+                        </Button>
+                        <Button
+                          variant={
+                            mentorCalendarView === "agenda" ? "default" : "outline"
+                          }
+                          size="sm"
+                          className={`${mentorCalendarView === "agenda"
+                            ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
+                            : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
+                            } rounded-r-[8px] rounded-l-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
+                          onClick={() => setMentorCalendarView("agenda")}
+                        >
+                          Agenda
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="mb-3 sm:mb-4">
+                      <p className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]">
+                        {formatCalendarMonthYear(mentorCalendarDate)}
+                      </p>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <WorkshopCalendar
+                        workshops={(mentorWorkshops || []) as unknown as WorkshopDetailed[]}
+                        height="400px"
+                        userRole="MENTOR"
+                        controlledDate={mentorCalendarDate}
+                        controlledView={mentorCalendarView}
+                        onDateChange={setMentorCalendarDate}
+                        onViewChange={(view) => {
+                          if (
+                            view === "month" ||
+                            view === "week" ||
+                            view === "day" ||
+                            view === "agenda"
+                          ) {
+                            setMentorCalendarView(view);
+                          }
+                        }}
+                        onSelectEvent={(workshop) => {
+                          router.push(`/workshop/${workshop.id}`);
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12 bg-card/50 border-2 border-dashed border-border/50 rounded-3xl">
+                    <Calendar className="h-12 w-12 text-ls-muted/30 mx-auto mb-4" />
+                    <p className="text-ls-muted italic mb-4">
+                      Tu n&apos;as pas encore d&apos;ateliers programmés.
+                    </p>
                     <Button
-                      variant="ctaOutline"
-                      size="ctaSm"
-                      onClick={() => navigateCalendar("today")}
+                      variant="cta"
+                      size="cta"
+                      onClick={() => router.push("/workshop-editor?new=true")}
                     >
-                      Aujourd&apos;hui
-                    </Button>
-                    <Button
-                      variant="ctaOutline"
-                      size="ctaSm"
-                      onClick={() => navigateCalendar("prev")}
-                    >
-                      Précédent
-                    </Button>
-                    <Button
-                      variant="ctaOutline"
-                      size="ctaSm"
-                      onClick={() => navigateCalendar("next")}
-                    >
-                      Suivant
+                      Créer mon premier atelier
                     </Button>
                   </div>
-                  <div className="flex items-center flex-wrap gap-0">
-                    <Button
-                      variant={
-                        mentorCalendarView === "month" ? "default" : "outline"
-                      }
-                      size="sm"
-                      className={`${mentorCalendarView === "month"
-                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                        } rounded-l-[8px] rounded-r-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold`}
-                      onClick={() => setMentorCalendarView("month")}
-                    >
-                      Mois
-                    </Button>
-                    <Button
-                      variant={
-                        mentorCalendarView === "week" ? "default" : "outline"
-                      }
-                      size="sm"
-                      className={`${mentorCalendarView === "week"
-                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                        } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
-                      onClick={() => setMentorCalendarView("week")}
-                    >
-                      Semaine
-                    </Button>
-                    <Button
-                      variant={
-                        mentorCalendarView === "day" ? "default" : "outline"
-                      }
-                      size="sm"
-                      className={`${mentorCalendarView === "day"
-                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                        } rounded-none h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
-                      onClick={() => setMentorCalendarView("day")}
-                    >
-                      Jour
-                    </Button>
-                    <Button
-                      variant={
-                        mentorCalendarView === "agenda" ? "default" : "outline"
-                      }
-                      size="sm"
-                      className={`${mentorCalendarView === "agenda"
-                        ? "bg-[#ffb647] border border-[#ffb647] text-[#161616]"
-                        : "border border-[#ffb647] text-[#ffb647] dark:text-[#ffb647]"
-                        } rounded-r-[8px] rounded-l-0 h-9 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm`}
-                      onClick={() => setMentorCalendarView("agenda")}
-                    >
-                      Agenda
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="mb-3 sm:mb-4">
-                  <p className="text-sm sm:text-base font-semibold text-[#26547c] dark:text-[#e6e6e6]">
-                    {formatCalendarMonthYear(mentorCalendarDate)}
-                  </p>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <WorkshopCalendar
-                    workshops={(mentorWorkshops || []) as unknown as WorkshopDetailed[]}
-                    height="400px"
-                    userRole="MENTOR"
-                    controlledDate={mentorCalendarDate}
-                    controlledView={mentorCalendarView}
-                    onDateChange={setMentorCalendarDate}
-                    onViewChange={(view) => {
-                      if (
-                        view === "month" ||
-                        view === "week" ||
-                        view === "day" ||
-                        view === "agenda"
-                      ) {
-                        setMentorCalendarView(view);
-                      }
-                    }}
-                    onSelectEvent={(workshop) => {
-                      router.push(`/workshop/${workshop.id}`);
-                    }}
-                  />
-                </div>
+                )}
               </div>
             </CardContent>
           </Card>
