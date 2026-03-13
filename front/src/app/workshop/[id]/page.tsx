@@ -397,6 +397,9 @@ export default function WorkshopDetailPage() {
     Boolean(workshop.date) &&
     !isWorkshopPast(workshop);
 
+  const creatorName =
+    workshop?.creator?.displayName || workshop?.creator?.name || "Mentor";
+
   return (
     <PageContainer>
       <WorkshopHeader
@@ -557,7 +560,7 @@ export default function WorkshopDetailPage() {
             dispatch({ type: "SET", payload: { showRequestDialog: open } })
           }
           mentorId={workshop.creator.id}
-          mentorName={workshop.creator.user?.name || "Mentor"}
+          mentorName={creatorName}
           workshopId={workshop.id}
         />
       )}

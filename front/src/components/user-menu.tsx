@@ -31,6 +31,8 @@ import {
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { trpc } from "@/utils/trpc";
+import { formatPhotoUrl } from "@/utils/photo";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 interface MenuLink {
@@ -60,6 +62,13 @@ export default function UserMenu() {
     enabled: !!session?.user?.id,
     staleTime: 5 * 60 * 1000,
   });
+
+  const { data: profileData } = trpc.user.getProfile.useQuery(undefined, {
+    enabled: !!session?.user?.id,
+  });
+
+  const userName = profileData?.name || session?.user?.name || "Utilisateur";
+  const userPhoto = formatPhotoUrl(profileData?.photoUrl) || session?.user?.image;
 
   const menuLinks: MenuLink[] = useMemo(
     () => [
@@ -212,10 +221,10 @@ export default function UserMenu() {
           aria-haspopup="menu"
         >
           <div className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-brand/50 overflow-hidden bg-white/35 dark:bg-white/15 backdrop-blur-xl backdrop-saturate-150 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.12),0_4px_8px_-2px_rgba(0,0,0,0.08),inset_0_2px_0_0_rgba(255,255,255,0.6)] dark:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.35),0_4px_8px_-2px_rgba(0,0,0,0.2),inset_0_2px_0_0_rgba(255,255,255,0.15)] ring-2 ring-transparent group-hover:ring-brand/40 group-hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,0.15),0_6px_12px_-4px_rgba(0,0,0,0.1),inset_0_2px_0_0_rgba(255,255,255,0.7),0_0_25px_-8px_rgba(255,182,71,0.35)] transition-all duration-200">
-            {session.user.image ? (
+            {userPhoto ? (
               <Image
-                src={session.user.image}
-                alt={session.user.name || "Avatar"}
+                src={userPhoto}
+                alt={userName}
                 width={40}
                 height={40}
                 className="h-full w-full object-cover"
@@ -243,9 +252,9 @@ export default function UserMenu() {
         <div className="relative px-4 py-4 bg-linear-to-br from-brand/5 via-transparent to-brand/5 border-b border-border/50">
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 rounded-full border-2 border-brand overflow-hidden bg-card shadow-md shrink-0">
-              {session.user.image ? (
+              {userPhoto ? (
                 <Image
-                  src={session.user.image}
+                  src={userPhoto}
                   alt=""
                   width={48}
                   height={48}
@@ -259,7 +268,7 @@ export default function UserMenu() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-ls-heading truncate">
-                {session.user.name || "Utilisateur"}
+                {userName}
               </p>
               <p className="text-xs text-ls-muted truncate">{session.user.email}</p>
             </div>

@@ -1,7 +1,7 @@
 export interface FileValidationResult {
-  valid: boolean;
-  error?: string;
+    valid: boolean;
+    error?: string;
 }
 export declare class FileValidator {
-  static validatePhoto(file: File): FileValidationResult;
+    static validatePhoto(file: File): FileValidationResult;
 }

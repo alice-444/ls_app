@@ -135,7 +135,10 @@ export default function MentorProfileViewPage() {
 
   const breadcrumbItems = [
     { label: "Accueil", href: "/dashboard" },
-    { label: "Mentors", href: "/mentors" },
+    { 
+      label: "Mentors", 
+      href: (userRole === "APPRENANT" || userRole === "ADMIN") ? "/mentors" : undefined 
+    },
     { label: mentor?.displayName || mentor?.name || "Profil", isCurrent: true },
   ];
 

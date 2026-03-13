@@ -8,6 +8,4 @@ export declare const isValidPhotoUrl: (url: string, userId: string) => boolean;
 /**
  * Formats a photo URL for display, ensuring it has the correct prefix if needed.
  */
-export declare const formatPhotoUrl: (
-  url: string | null | undefined,
-) => string | null;
+export declare const formatPhotoUrl: (url: string | null | undefined) => string | null;

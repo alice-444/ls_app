@@ -8,6 +8,7 @@ export * from "./validation/auth.schemas";
 export * from "./validation/support.schemas";
 export * from "./validation/profile.schemas";
 export * from "./validation/common.schemas";
+export * from "./validation/community.constants";
 export * from "./validation/community.schemas";
 export * from "./validation/user.schemas";
 export * from "./validation/admin.schemas";
