@@ -2,18 +2,18 @@
 
 import { useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Loader2, 
-  MessageSquare, 
-  Clock, 
+import {
+  Loader2,
+  MessageSquare,
+  Clock,
   Info,
   LifeBuoy
 } from "lucide-react";
@@ -22,6 +22,7 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { BackButton } from "@/components/shared/back-button";
 import { SupportThread } from "@/components/domains/admin/support/support-thread";
+import { PageContainer } from "@/components/shared/layout";
 
 export default function SupportRequestDetailPage() {
   const params = useParams();
@@ -48,26 +49,30 @@ export default function SupportRequestDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Loader2 className="h-10 w-10 animate-spin text-brand" />
-      </div>
+      <PageContainer className="py-4 sm:py-6 lg:py-8">
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="h-10 w-10 animate-spin text-brand" />
+        </div>
+      </PageContainer>
     );
   }
 
   if (!request) {
     return (
-      <div className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold">Ticket introuvable</h1>
-        <p className="text-ls-muted mt-2">Cette demande de support n'existe pas ou vous n'y avez pas accès.</p>
-        <Button asChild className="mt-6 rounded-full bg-brand">
-          <BackButton href="/help/support" label="Retour à mes demandes" />
-        </Button>
-      </div>
+      <PageContainer className="py-4 sm:py-6 lg:py-8">
+        <div className="py-20 text-center">
+          <h1 className="text-2xl font-bold">Ticket introuvable</h1>
+          <p className="text-ls-muted mt-2">Cette demande de support n'existe pas ou vous n'y avez pas accès.</p>
+          <Button asChild className="mt-6 rounded-full bg-brand">
+            <BackButton href="/help/support" label="Retour à mes demandes" />
+          </Button>
+        </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <PageContainer className="py-4 sm:py-6 lg:py-8">
       <div className="mb-8">
         <BackButton href="/help/support" label="Retour à mes demandes" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4">
@@ -123,6 +128,6 @@ export default function SupportRequestDetailPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }
