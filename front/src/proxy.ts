@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getSessionCookie } from "better-auth";
 
 // Routes qui nécessitent d'être connecté
 const PROTECTED_ROUTES = [
@@ -22,12 +21,14 @@ const ADMIN_ROUTES = ["/admin"];
 // Routes réservées aux utilisateurs non connectés
 const AUTH_ROUTES = ["/login", "/sign-up", "/forgot-password"];
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
-  // Utilise better-auth pour vérifier la session via les cookies
-  const sessionCookie = getSessionCookie(request);
-  const hasSession = !!sessionCookie;
+  // Détecte manuellement le cookie de session Better Auth
+  // Fonctionne pour les cookies standard et sécurisés
+  const sessionToken = request.cookies.get("better-auth.session_token") || 
+                       request.cookies.get("__Secure-better-auth.session_token");
+  const hasSession = !!sessionToken;
 
   // 1. Redirection si déjà connecté et tente d'aller sur login/sign-up
   if (hasSession && AUTH_ROUTES.some(route => pathname.startsWith(route))) {
@@ -45,24 +46,21 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Note : La vérification fine des rôles (ADMIN vs USER) se fera toujours dans le RoleGate
-  // car le middleware n'a pas un accès facile aux données de la base de données Prisma 
-  // sans faire une requête API supplémentaire (ce qui ralentirait chaque page).
-  
   return NextResponse.next();
 }
 
-// Configurer sur quelles routes le middleware doit s'exécuter
+// Configurer sur quelles routes le proxy doit s'exécuter
 export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
      * - api (API routes)
+     * - trpc (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public (public files)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|public|bg|logo|typo).*)",
+    "/((?!api|trpc|_next/static|_next/image|favicon.ico|public|bg|logo|typo).*)",
   ],
 };
