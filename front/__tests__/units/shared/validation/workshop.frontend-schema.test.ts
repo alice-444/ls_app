@@ -61,10 +61,10 @@ describe("createWorkshopFrontendSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject description exceeding 100 chars", () => {
+    it("should reject description exceeding 1000 chars", () => {
       const result = createWorkshopFrontendSchema.safeParse({
         ...validBase,
-        description: "A".repeat(101),
+        description: "A".repeat(1001),
       });
       expect(result.success).toBe(false);
     });

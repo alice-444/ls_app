@@ -15,7 +15,9 @@ exports.workshopFieldSchemas = {
         .string()
         .trim()
         .max(workshop_constants_1.WORKSHOP_VALIDATION.description.max, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.description.max),
-    date: zod_1.z.coerce.date(),
+    date: zod_1.z.coerce
+        .date()
+        .refine(date_validators_1.isMinimumToday, "La date ne peut pas être dans le passé"),
     time: zod_1.z
         .string()
         .trim()
@@ -68,7 +70,7 @@ exports.createWorkshopBackendSchema = zod_1.z.object({
     creditCost: exports.workshopFieldSchemas.creditCost.optional().nullable(),
 });
 exports.updateWorkshopBackendSchema = zod_1.z.object({
-    workshopId: zod_1.z.string(),
+    workshopId: zod_1.z.string().cuid(),
     title: exports.workshopFieldSchemas.title.optional(),
     description: exports.workshopFieldSchemas.description.optional(),
     topic: exports.workshopFieldSchemas.topic.optional().nullable(),
@@ -105,7 +107,7 @@ exports.createWorkshopFrontendSchema = zod_1.z.object({
     creditCost: exports.workshopFieldSchemas.creditCost.optional().nullable(),
 });
 exports.editWorkshopFrontendSchema = zod_1.z.object({
-    workshopId: zod_1.z.string(),
+    workshopId: zod_1.z.string().cuid(),
     title: exports.workshopFieldSchemas.title,
     description: exports.workshopFieldSchemas.description.optional(),
     date: zod_1.z
@@ -133,14 +135,14 @@ exports.editWorkshopFrontendSchema = zod_1.z.object({
 });
 // --- SCHÉMAS DE CYCLE DE VIE ---
 exports.publishWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string(),
+    workshopId: zod_1.z.string().cuid(),
 });
 exports.unpublishWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string(),
+    workshopId: zod_1.z.string().cuid(),
 });
 exports.deleteWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string(),
+    workshopId: zod_1.z.string().cuid(),
 });
 exports.cancelWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string(),
+    workshopId: zod_1.z.string().cuid(),
 });
