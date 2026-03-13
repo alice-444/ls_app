@@ -85,6 +85,24 @@ export function BasicInformationSection({
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="domain" className="text-ls-heading">
+            Domaine d&apos;activité *
+          </Label>
+          <Input
+            id="domain"
+            {...register("domain")}
+            placeholder="Ex: Développement Logiciel, Marketing Digital, Design..."
+            className="border border-ls-border bg-ls-input-bg text-ls-heading rounded-full"
+          />
+          <p className="text-xs text-ls-muted">
+            Ton domaine principal d&apos;activité
+          </p>
+          {errors.domain && (
+            <p className="text-sm text-ls-error">{errors.domain.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="bio" className="text-ls-heading">
             Bio courte *
           </Label>

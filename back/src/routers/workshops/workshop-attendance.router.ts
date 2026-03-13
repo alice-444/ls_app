@@ -19,8 +19,8 @@ export const workshopAttendanceRouter = router({
   updateAttendance: mentorProcedure
     .input(
       z.object({
-        workshopId: z.string().cuid(),
-        participantId: z.string().cuid(),
+        workshopId: z.string(),
+        participantId: z.string(),
         attendanceStatus: z.enum(["PENDING", "PRESENT", "NO_SHOW"]),
       }),
     )

@@ -29,6 +29,7 @@ __exportStar(require("./validation/user.schemas"), exports);
 __exportStar(require("./validation/admin.schemas"), exports);
 __exportStar(require("./validation/notification.schemas"), exports);
 __exportStar(require("./utils/date"), exports);
+__exportStar(require("./utils/photo"), exports);
 __exportStar(require("./types/workshop"), exports);
 __exportStar(require("./types/user"), exports);
 __exportStar(require("./types/messaging"), exports);
