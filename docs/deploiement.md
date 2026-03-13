@@ -21,8 +21,23 @@ Documentation du déploiement LearnSup : architecture, Docker, CI/CD et procédu
 | [Webhooks entrants](#schéma-des-webhooks-entrants) | Technique | Polar, Daily → Backend |
 | [Variables d'environnement](#schéma-des-variables-denvironnement) | Technique | Répartition Front / Back / Traefik |
 | [Réseau Docker](#schéma-du-réseau-docker-production) | Technique | Conteneurs sur vps-mds |
+| [Flux d'intégration](#flux-dintégration) | Technique | PR, tests, merge, release |
 
 ---
+
+## Flux d'intégration
+
+*Intégration = merge du code. Déploiement = étape séparée, déclenchée par un tag.*
+
+```mermaid
+flowchart LR
+  A[Push] --> B[Pull Request] --> C[Tests CI] --> D[Merge]
+```
+
+| Phase | Déclencheur | Action |
+| ----- | ----------- | ------ |
+| Intégration | Push / PR | Tests, merge |
+| Deploy | Tag (manuel) | Build, déploiement |
 
 ## Vue simplifiée (pour non-techniques)
 
