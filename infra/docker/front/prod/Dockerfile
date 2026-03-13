@@ -45,10 +45,11 @@ ENV PORT=3001
 # Copy standalone output
 COPY --from=base /app/front/.next/standalone ./
 
-# IMPORTANT: In a monorepo, standalone server.js is in front/server.js
-# Static and public files must be copied into the application folder
+# IMPORTANT: Copy assets to both root and app folder for maximum compatibility in standalone monorepo
 COPY --from=base /app/front/.next/static ./front/.next/static
 COPY --from=base /app/front/public ./front/public
+COPY --from=base /app/front/.next/static ./.next/static
+COPY --from=base /app/front/public ./public
 
 EXPOSE 3001
 
