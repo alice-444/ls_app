@@ -15,7 +15,8 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const httpServer = createServer(async (req, res) => {
     try {
-      const origin = req.headers.origin || process.env.CORS_ORIGIN || "http://localhost:3001";
+      // Use the actual request origin or fallback to process.env.CORS_ORIGIN
+      const origin = req.headers.origin || process.env.CORS_ORIGIN || "*";
       
       // Set CORS headers
       res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -25,7 +26,7 @@ app.prepare().then(() => {
 
       // Handle preflight OPTIONS requests directly
       if (req.method === "OPTIONS") {
-        res.writeHead(200);
+        res.writeHead(204);
         res.end();
         return;
       }
