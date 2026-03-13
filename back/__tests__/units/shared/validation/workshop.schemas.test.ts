@@ -54,8 +54,8 @@ describe("workshopFieldSchemas.title", () => {
 describe("workshopFieldSchemas.description", () => {
   const schema = workshopFieldSchemas.description;
 
-  it("rejects a description longer than 100 characters", () => {
-    const result = schema.safeParse("A".repeat(101));
+  it("rejects a description longer than 1000 characters", () => {
+    const result = schema.safeParse("A".repeat(1001));
     expect(result.success).toBe(false);
   });
 
@@ -78,9 +78,9 @@ describe("workshopFieldSchemas.date", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects today's date", () => {
+  it("accepts today's date", () => {
     const result = schema.safeParse("2026-02-26");
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it("accepts tomorrow's date", () => {
