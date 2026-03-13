@@ -48,7 +48,7 @@ services:
       - vps-mds
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${HOSTNAME_BACKEND}`)"
+      - "traefik.http.routers.backend.rule=Host(`${BACKEND_URL}`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
       - "traefik.http.services.backend.loadbalancer.server.port=4500"
