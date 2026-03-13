@@ -8,6 +8,7 @@ ce qui existe et où le trouver
 
 - [README principal](../README.md) — Installation et quick start
 - [Stack technique](tech-stack.md) — Technologies, langages et choix technologiques
+- [Fonctionnalités](feat.md) — Fonctionnalités produit par rôle et par domaine
 - [Architecture](#architecture) – Vue d’ensemble front/back
 - [Design Patterns](patterns.md) – Patterns utilisés dans le projet
 - [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
@@ -16,6 +17,12 @@ ce qui existe et où le trouver
 - [Arborescence](#arborescence) – Structure macro et micro
 - [Guides](#guides) – Procédures (déploiement, DB, auth…), PV de recette
 - [Référence](#référence) – Détails techniques par domaine
+
+---
+
+## Fonctionnalités
+
+Documentation des fonctionnalités produit (vue fonctionnelle par rôle) : [feat.md](feat.md).
 
 ---
 
