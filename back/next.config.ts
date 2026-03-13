@@ -33,24 +33,11 @@ const nextConfig: NextConfig = {
 																...config.resolve.alias,
 																"@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs":
 																				prismaWasmPath,
-												};
-								}
-								return config;
-				},
-				async headers() {
-								const corsHeaders = [
-												{ key: "Access-Control-Allow-Credentials", value: "true" },
-												{ key: "Access-Control-Allow-Origin", value: process.env.CORS_ORIGIN || "http://localhost:3001" },
-												{ key: "Access-Control-Allow-Methods", value: "GET,POST,DELETE,OPTIONS" },
-												{ key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
-								];
-								return [
-												{ source: "/api/(.*)", headers: corsHeaders },
-												{ source: "/trpc/(.*)", headers: corsHeaders },
-								];
-				},
-};
-
+																};
+																}
+																return config;
+																},
+																};
 export default withSentryConfig(nextConfig, {
  // For all available options, see:
 	// https://www.npmjs.com/package/@sentry/webpack-plugin#options
