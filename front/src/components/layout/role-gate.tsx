@@ -36,12 +36,12 @@ export function RoleGate({
       return;
     }
 
-    const currentIsUserOnly = USER_ONLY_ROUTES.some(route => pathname === route || pathname.startsWith(route + "/"));
-    const currentIsAdminOnly = ADMIN_ONLY_ROUTES.some(route => pathname === route || pathname.startsWith(route + "/"));
+    const isUserOnlyPath = USER_ONLY_ROUTES.some(route => pathname === route || pathname.startsWith(route + "/"));
+    const isAdminOnlyPath = ADMIN_ONLY_ROUTES.some(route => pathname === route || pathname.startsWith(route + "/"));
 
-    if (userRole === "ADMIN" && currentIsUserOnly) {
+    if (userRole === "ADMIN" && isUserOnlyPath) {
       router.push("/admin");
-    } else if (userRole !== "ADMIN" && currentIsAdminOnly) {
+    } else if (userRole !== "ADMIN" && isAdminOnlyPath) {
       router.push("/dashboard");
     }
   }, [userRole, session, pathname, isLoadingRole, isErrorRole, router]);
