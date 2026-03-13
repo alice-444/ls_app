@@ -42,12 +42,14 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=3001
 
-# Copy standalone output
+# Copy standalone output (this contains the node_modules and the server.js)
 COPY --from=base /app/front/.next/standalone ./
-COPY --from=base /app/front/.next/static ./front/.next/static
-COPY --from=base /app/front/public ./front/public
+
+# IMPORTANT: Static and public files must be in the root for standalone to find them
+COPY --from=base /app/front/.next/static ./.next/static
+COPY --from=base /app/front/public ./public
 
 EXPOSE 3001
 
-# The standalone output generates a server.js file in the root of the app
+# The standalone output generates a server.js file in front/server.js
 CMD ["node", "front/server.js"]
