@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Calendar, CheckCircle, Edit, Clock, BookOpen } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -26,7 +26,7 @@ export function WorkshopStatsCards({
   drafts,
   completed,
   pendingRequests,
-}: WorkshopStatsCardsProps) {
+}: Readonly<WorkshopStatsCardsProps>) {
   const prefersReducedMotion = useReducedMotion();
   const values = { total, published, drafts, completed, pendingRequests };
 

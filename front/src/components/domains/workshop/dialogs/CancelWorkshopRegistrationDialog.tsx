@@ -6,10 +6,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
 import { AlertTriangle } from "lucide-react";
 
 interface CancelWorkshopRegistrationDialogProps {
@@ -28,7 +28,7 @@ export function CancelWorkshopRegistrationDialog({
   isLoading,
   workshopTitle,
   workshopDate,
-}: CancelWorkshopRegistrationDialogProps) {
+}: Readonly<CancelWorkshopRegistrationDialogProps>) {
   const [reason, setReason] = useState("");
 
   const handleConfirm = () => {

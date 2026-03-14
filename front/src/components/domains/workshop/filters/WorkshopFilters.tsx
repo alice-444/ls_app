@@ -1,20 +1,19 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { Search } from "lucide-react";
 import type {
   WorkshopFiltersProps,
   SortField,
-  SortOrder,
   StatusFilter,
 } from "@/types/workshop-components";
 
@@ -27,7 +26,7 @@ export function WorkshopFilters({
   onSortFieldChange,
   sortOrder,
   onSortOrderChange,
-}: WorkshopFiltersProps) {
+}: Readonly<WorkshopFiltersProps>) {
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">

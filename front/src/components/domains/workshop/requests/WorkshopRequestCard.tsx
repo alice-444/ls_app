@@ -1,13 +1,79 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { Check, X, MessageSquare } from "lucide-react";
 import {
   getWorkshopRequestStatusLabel,
   getWorkshopRequestStatusColor,
 } from "@/lib/workshop-request-utils";
 import type { WorkshopRequestCardProps } from "@/types/workshop-components";
+
+const VARIANT_STYLES = {
+  compact: {
+    container:
+      "bg-white dark:bg-[rgba(255,255,255,0.08)] rounded-[16px] p-3 sm:p-4 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]",
+    name: "text-sm font-medium",
+    title: "font-medium text-slate-900 dark:text-slate-100",
+    message: "text-xs text-slate-600 dark:text-slate-400 mt-1 italic",
+    date: "text-xs text-slate-500 dark:text-slate-500 mt-1",
+    gap: "gap-2",
+  },
+  dashboard: {
+    container:
+      "p-3 sm:p-4 rounded-[16px] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors",
+    name: "text-xs text-slate-600 dark:text-slate-400 mt-1",
+    title: "font-medium text-sm",
+    message: "text-xs text-slate-500 dark:text-slate-500 mt-1 italic",
+    date: "text-xs text-slate-500 dark:text-slate-500 mt-1",
+    gap: "",
+  },
+  default: {
+    container:
+      "border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] p-3 sm:p-4 bg-white dark:bg-[rgba(255,255,255,0.08)]",
+    name: "font-medium text-slate-900 dark:text-slate-100",
+    title: "font-medium text-slate-900 dark:text-slate-100",
+    message: "text-sm text-slate-600 dark:text-slate-400 mt-1 italic",
+    date: "text-xs text-slate-500 dark:text-slate-500 mt-2",
+    gap: "",
+  },
+} as const;
+
+function ActionButtons({
+  request,
+  onAccept,
+  onReject,
+  isRejecting,
+}: Readonly<{
+  request: WorkshopRequestCardProps["request"];
+  onAccept: NonNullable<WorkshopRequestCardProps["onAccept"]>;
+  onReject: NonNullable<WorkshopRequestCardProps["onReject"]>;
+  isRejecting: boolean;
+}>) {
+  return (
+    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <Button
+        variant="ctaSuccess"
+        size="ctaSm"
+        className="w-full sm:w-auto"
+        onClick={() => onAccept(request)}
+      >
+        <Check className="w-3 h-3 sm:w-3 sm:h-3" />
+        Accepter
+      </Button>
+      <Button
+        variant="ctaDestructive"
+        size="ctaSm"
+        className="w-full sm:w-auto"
+        onClick={() => onReject(request.id)}
+        disabled={isRejecting}
+      >
+        <X className="w-3 h-3 sm:w-3 sm:h-3" />
+        Refuser
+      </Button>
+    </div>
+  );
+}
 
 export function WorkshopRequestCard({
   request,
@@ -19,45 +85,19 @@ export function WorkshopRequestCard({
   showDescription = false,
   showPreferredDate = false,
   showMentor = false,
-}: WorkshopRequestCardProps) {
+}: Readonly<WorkshopRequestCardProps>) {
   const isPending = request.status === "PENDING";
   const apprenticeName = request.apprentice?.user?.name || "Apprenti";
   const mentorName = request.mentor?.user?.name || "Mentor";
   const statusLabel = getWorkshopRequestStatusLabel(request.status);
   const statusColor = getWorkshopRequestStatusColor(request.status);
 
-  const containerClass =
-    variant === "compact"
-      ? "bg-white dark:bg-[rgba(255,255,255,0.08)] rounded-[16px] p-3 sm:p-4 border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]"
-      : variant === "dashboard"
-      ? "p-3 sm:p-4 rounded-[16px] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] bg-white dark:bg-[rgba(255,255,255,0.08)] hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-      : "border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px] p-3 sm:p-4 bg-white dark:bg-[rgba(255,255,255,0.08)]";
-
-  const nameClass =
-    variant === "compact"
-      ? "text-sm font-medium"
-      : variant === "dashboard"
-      ? "text-xs text-slate-600 dark:text-slate-400 mt-1"
-      : "font-medium text-slate-900 dark:text-slate-100";
-
-  const titleClass =
-    variant === "dashboard"
-      ? "font-medium text-sm"
-      : "font-medium text-slate-900 dark:text-slate-100";
-
-  const messageClass =
-    variant === "compact"
-      ? "text-xs text-slate-600 dark:text-slate-400 mt-1 italic"
-      : variant === "dashboard"
-      ? "text-xs text-slate-500 dark:text-slate-500 mt-1 italic"
-      : "text-sm text-slate-600 dark:text-slate-400 mt-1 italic";
-
-  const dateClass =
-    variant === "compact"
-      ? "text-xs text-slate-500 dark:text-slate-500 mt-1"
-      : variant === "dashboard"
-      ? "text-xs text-slate-500 dark:text-slate-500 mt-1"
-      : "text-xs text-slate-500 dark:text-slate-500 mt-2";
+  const styles = VARIANT_STYLES[variant] ?? VARIANT_STYLES.default;
+  const containerClass = styles.container;
+  const nameClass = styles.name;
+  const titleClass = styles.title;
+  const messageClass = styles.message;
+  const dateClass = styles.date;
 
   const content = (
     <div className="flex-1">
@@ -124,27 +164,12 @@ export function WorkshopRequestCard({
               {statusLabel}
             </Badge>
             {isPending && onAccept && onReject && (
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <Button
-                  variant="ctaSuccess"
-                  size="ctaSm"
-                  className="w-full sm:w-auto"
-                  onClick={() => onAccept(request)}
-                >
-                  <Check className="w-3 h-3 sm:w-3 sm:h-3" />
-                  Accepter
-                </Button>
-                <Button
-                  variant="ctaDestructive"
-                  size="ctaSm"
-                  className="w-full sm:w-auto"
-                  onClick={() => onReject(request.id)}
-                  disabled={isRejecting}
-                >
-                  <X className="w-3 h-3 sm:w-3 sm:h-3" />
-                  Refuser
-                </Button>
-              </div>
+              <ActionButtons
+                request={request}
+                onAccept={onAccept}
+                onReject={onReject}
+                isRejecting={isRejecting}
+              />
             )}
           </div>
         </div>
@@ -155,9 +180,7 @@ export function WorkshopRequestCard({
   return (
     <div className={containerClass}>
       <div
-        className={`flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 ${
-          variant === "compact" ? "gap-2" : ""
-        }`}
+        className={`flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 ${styles.gap}`}
       >
         {content}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2 w-full sm:w-auto">
@@ -165,27 +188,12 @@ export function WorkshopRequestCard({
             {statusLabel}
           </Badge>
           {isPending && onAccept && onReject && (
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <Button
-                variant="ctaSuccess"
-                size="ctaSm"
-                className="w-full sm:w-auto"
-                onClick={() => onAccept(request)}
-              >
-                <Check className="w-3 h-3 sm:w-3 sm:h-3" />
-                Accepter
-              </Button>
-              <Button
-                variant="ctaDestructive"
-                size="ctaSm"
-                className="w-full sm:w-auto"
-                onClick={() => onReject(request.id)}
-                disabled={isRejecting}
-              >
-                <X className="w-3 h-3 sm:w-3 sm:h-3" />
-                Refuser
-              </Button>
-            </div>
+            <ActionButtons
+              request={request}
+              onAccept={onAccept}
+              onReject={onReject}
+              isRejecting={isRejecting}
+            />
           )}
         </div>
       </div>

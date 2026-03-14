@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Calendar, Clock, MapPin, Users, Tag, Video } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 
@@ -22,7 +22,7 @@ export function WorkshopDetailsCard({
   location,
   isVirtual,
   maxParticipants,
-}: WorkshopDetailsCardProps) {
+}: Readonly<WorkshopDetailsCardProps>) {
   return (
     <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardHeader>
