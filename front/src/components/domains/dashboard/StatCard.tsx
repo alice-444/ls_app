@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import type { ReactNode } from "react";
 
 interface StatCardProps {
@@ -26,7 +26,7 @@ export function StatCard({
   onButtonClick,
   className = "",
   children,
-}: StatCardProps) {
+}: Readonly<StatCardProps>) {
   return (
     <Card
       className={`bg-linear-to-br ${gradient} text-white border-0 shadow-lg ${className}`}

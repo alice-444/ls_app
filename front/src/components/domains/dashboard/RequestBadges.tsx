@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 
 interface RequestBadgesProps {
   requests: Array<{ status: string }> | null | undefined;
@@ -12,7 +12,7 @@ export function RequestBadges({
   requests,
   showPendingBadge = true,
   showAutoUpdateText = false,
-}: RequestBadgesProps) {
+}: Readonly<RequestBadgesProps>) {
   if (!requests || requests.length === 0) return null;
 
   const pendingCount = requests.filter((r) => r.status === "PENDING").length;
