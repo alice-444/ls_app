@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { User } from "lucide-react";
 import { WorkshopDropdownMenu } from "../WorkshopDropdownMenu";
 import { WorkshopDetails } from "../WorkshopDetails";
@@ -50,9 +50,8 @@ export function WorkshopCard({
 
   return (
     <Card
-      className={`hover:shadow-lg transition-shadow relative overflow-hidden min-w-0 ${
-        isHero ? "lg:col-span-full" : ""
-      } ${onViewDetails ? "cursor-pointer" : ""} ${className}`}
+      className={`hover:shadow-lg transition-shadow relative overflow-hidden min-w-0 ${isHero ? "lg:col-span-full" : ""
+        } ${onViewDetails ? "cursor-pointer" : ""} ${className}`}
       onClick={handleCardClick}
     >
       <CardHeader>
@@ -94,7 +93,7 @@ export function WorkshopCard({
             variant={getWorkshopDetailsVariant()}
           />
         </div>
-        
+
         {isPast && onDuplicate && (
           <div className="mt-4 pt-4 border-t border-ls-border">
             <Button

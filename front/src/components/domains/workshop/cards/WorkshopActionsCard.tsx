@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { CheckCircle, X, BookOpen, MessageSquare } from "lucide-react";
 
 interface WorkshopActionsCardProps {
@@ -24,19 +24,19 @@ export function WorkshopActionsCard({
   onContactMentor,
   isCancelling,
   showContactMentor = false,
-}: WorkshopActionsCardProps) {
+}: Readonly<WorkshopActionsCardProps>) {
   if (isRegistered && !isWorkshopPast) {
     return (
       <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-ls-heading">
+          <CardTitle className="flex items-center gap-2 text-ls-heading">
             <CheckCircle className="w-5 h-5 text-[#34b162]" />
-            Vous êtes inscrit à cet atelier
+            Tu es inscrit.e à cet atelier
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-ls-muted">
-            Tu es inscrit à cet atelier. Tu peux annuler ton inscription si nécessaire.
+            Tu es inscrit.e à cet atelier. Tu peux annuler ton inscription si nécessaire.
           </p>
           {showContactMentor && onContactMentor && (
             <Button
@@ -67,7 +67,7 @@ export function WorkshopActionsCard({
     return (
       <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-ls-heading">
+          <CardTitle className="flex items-center gap-2 text-ls-heading">
             <BookOpen className="w-5 h-5" />
             Participer à cet atelier
           </CardTitle>
@@ -105,7 +105,7 @@ export function WorkshopActionsCard({
     return (
       <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
         <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-ls-heading">
+          <CardTitle className="flex items-center gap-2 text-ls-heading">
             <MessageSquare className="w-5 h-5" />
             Contacter le mentor
           </CardTitle>

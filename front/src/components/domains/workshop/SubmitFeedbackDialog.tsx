@@ -7,11 +7,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Star, Loader2, Coins, CheckCircle2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ export function SubmitFeedbackDialog({
   onOpenChange,
   workshopId,
   onSuccess,
-}: SubmitFeedbackDialogProps) {
+}: Readonly<SubmitFeedbackDialogProps>) {
   const [rating, setRating] = useState<number>(0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
@@ -98,7 +98,7 @@ export function SubmitFeedbackDialog({
 
   if (showSuccessAnimation) {
     return (
-      <Dialog open={open} onOpenChange={() => {}}>
+      <Dialog open={open} onOpenChange={() => { }}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogTitle className="sr-only">Merci pour votre avis</DialogTitle>
           <div className="flex flex-col items-center justify-center py-8">
@@ -153,11 +153,10 @@ export function SubmitFeedbackDialog({
                     className="focus:outline-none"
                   >
                     <Star
-                      className={`w-8 h-8 transition-colors ${
-                        value <= displayRating
+                      className={`w-8 h-8 transition-colors ${value <= displayRating
                           ? "fill-yellow-400 text-yellow-400"
                           : "fill-slate-200 text-slate-200 dark:fill-slate-700 dark:text-slate-700"
-                      }`}
+                        }`}
                     />
                   </button>
                 ))}

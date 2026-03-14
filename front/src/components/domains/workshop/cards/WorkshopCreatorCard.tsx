@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { User, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
