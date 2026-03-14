@@ -15,7 +15,9 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   cookie: {
-    domain: process.env.NODE_ENV === "production" ? ".learnsup.fr" : undefined,
+    domain: process.env.BETTER_AUTH_URL ? 
+      ("." + new URL(process.env.BETTER_AUTH_URL).hostname.split(".").slice(-2).join(".")) : 
+      undefined,
   },
   trustedOrigins: [
     process.env.CORS_ORIGIN || "",
