@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import "../index.css";
-import Providers from "@/components/shared/providers";
-import { RoleGate } from "@/components/shared/layout/role-gate";
-import { LayoutSwitch } from "@/components/shared/layout/layout-switch";
-import Loader from "@/components/shared/loader";
+import Providers from "@/components/shared/Providers";
+import { RoleGate } from "@/components/shared/layout/RoleGate";
+import { LayoutSwitch } from "@/components/shared/layout/LayoutSwitch";
+import Loader from "@/components/shared/Loader";
 
 export const metadata: Metadata = {
   title: {
