@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { ArrowLeft, ArrowRight, Loader2, CheckCircle2, BookOpen, GraduationCap } from "lucide-react";
 import { ProgressIndicator } from "./ProgressIndicator";
 import type { Role, Step } from "../types";
@@ -27,7 +27,7 @@ export function RoleConfirmationStep({
   isSubmitting,
   onGoBack,
   onConfirm,
-}: RoleConfirmationStepProps) {
+}: Readonly<RoleConfirmationStepProps>) {
   const config = ROLE_CONFIG[selectedRole];
   const features = config.features;
   const Icon = selectedRole === "MENTOR" ? BookOpen : GraduationCap;
@@ -44,31 +44,29 @@ export function RoleConfirmationStep({
             selectedRole={selectedRole}
           />
           <div
-            className={`mx-auto p-4 rounded-full w-fit ${
-              selectedRole === "MENTOR" ? "bg-[#26547c]" : "bg-[#FFB647]"
-            }`}
+            className={`mx-auto p-4 rounded-full w-fit ${selectedRole === "MENTOR" ? "bg-[#26547c]" : "bg-[#FFB647]"
+              }`}
           >
             <Icon className="h-8 w-8 text-white" />
           </div>
           <CardTitle className="text-3xl font-black text-[#26547c] dark:text-white">
-            Vous êtes {config.label} ! 🎉
+            Tu es {config.label} !
           </CardTitle>
           <CardDescription className="text-lg text-slate-600 dark:text-slate-300">
-            Découvrez ce que vous pouvez faire
+            Découvre ce que tu peux faire
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8 px-4 sm:px-8">
           <div className="space-y-3">
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <div
-                key={index}
+                key={feature}
                 className="flex items-start gap-3 p-4 rounded-xl bg-gray-50/50 dark:bg-white/5 border border-transparent hover:border-[#26547c]/10 dark:hover:border-white/10 transition-colors"
               >
-                  <CheckCircle2
-                    className={`h-5 w-5 mt-0.5 shrink-0 ${
-                      selectedRole === "MENTOR" ? "text-[#26547c] dark:text-blue-400" : "text-[#FFB647]"
+                <CheckCircle2
+                  className={`h-5 w-5 mt-0.5 shrink-0 ${selectedRole === "MENTOR" ? "text-[#26547c] dark:text-blue-400" : "text-[#FFB647]"
                     }`}
-                  />
+                />
                 <p className="text-slate-700 dark:text-slate-200 font-medium">{feature}</p>
               </div>
             ))}
@@ -88,11 +86,10 @@ export function RoleConfirmationStep({
             <Button
               onClick={onConfirm}
               disabled={isSubmitting}
-              className={`flex-1 h-12 text-lg font-bold rounded-full transition-all shadow-lg ${
-                selectedRole === "MENTOR"
-                  ? "bg-[#26547c] hover:bg-[#26547c]/90 text-white"
-                  : "bg-[#FFB647] hover:bg-[#FFB647]/90 text-[#26547c]"
-              }`}
+              className={`flex-1 h-12 text-lg font-bold rounded-full transition-all shadow-lg ${selectedRole === "MENTOR"
+                ? "bg-[#26547c] hover:bg-[#26547c]/90 text-white"
+                : "bg-[#FFB647] hover:bg-[#FFB647]/90 text-[#26547c]"
+                }`}
               size="lg"
             >
               {isSubmitting ? (

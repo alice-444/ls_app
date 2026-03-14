@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Search, MessageSquare } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/Dialog";
 import * as Avatar from "@radix-ui/react-avatar";
 
 interface Connection {

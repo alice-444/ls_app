@@ -1,7 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/Button";
 import {
   Calendar,
   Clock,
@@ -12,8 +11,7 @@ import {
   EyeOff,
   Trash2,
 } from "lucide-react";
-import { formatDate, formatTime } from "@/lib/workshop-utils";
-import { getStatusBadge } from "@/lib/workshop-utils";
+import { formatDate, getStatusBadge } from "@/lib/workshop-utils";
 import { WorkshopRequests } from "../requests/WorkshopRequests";
 import type { WorkshopListItemProps } from "@/types/workshop-components";
 
@@ -32,7 +30,7 @@ export function WorkshopListItem({
   isUnpublishing,
   isDeleting,
   isRejecting,
-}: WorkshopListItemProps) {
+}: Readonly<WorkshopListItemProps>) {
   const isExpanded = expandedWorkshopId === workshop.id;
 
   return (
@@ -41,12 +39,13 @@ export function WorkshopListItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-3 mb-2">
             <div className="flex-1 min-w-0">
-              <h3
-                className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1 truncate cursor-pointer hover:text-blue-600 transition-colors"
+              <button
+                type="button"
+                className="text-left text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1 truncate cursor-pointer hover:text-blue-600 transition-colors w-full bg-transparent border-none p-0"
                 onClick={() => onViewDetails(workshop.id)}
               >
                 {workshop.title}
-              </h3>
+              </button>
               {workshop.description && (
                 <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
                   {workshop.description}
