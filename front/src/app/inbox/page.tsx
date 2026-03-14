@@ -1,10 +1,10 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { ConversationList } from "@/components/messaging/ConversationList";
+import { ConversationList } from "@/components/domains/messaging/ConversationList";
 
 export default function InboxPage() {
   const { data: session, isPending: isSessionPending } =

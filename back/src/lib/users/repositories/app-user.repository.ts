@@ -53,7 +53,7 @@ export interface AppUserRepository {
   upsert(
     userId: string,
     createInput: CreateAppUserInput,
-    updateInput?: UpdateAppUserInput
+    updateInput?: UpdateAppUserInput,
   ): Promise<AppUserData>;
   findIdentityCardByUserId(userId: string): Promise<{
     displayName: string | null;
@@ -67,21 +67,42 @@ export interface AppUserRepository {
 }
 
 const UPDATABLE_FIELDS = [
-  "role", "status", "bio", "domain", "photoUrl", "qualifications",
-  "experience", "socialMediaLinks", "areasOfExpertise", "mentorshipTopics",
-  "studyDomain", "studyProgram", "iceBreakerTags", "deletedAt",
-  "emailNotifications", "inAppNotifications",
+  "role",
+  "status",
+  "bio",
+  "domain",
+  "photoUrl",
+  "qualifications",
+  "experience",
+  "socialMediaLinks",
+  "areasOfExpertise",
+  "mentorshipTopics",
+  "studyDomain",
+  "studyProgram",
+  "iceBreakerTags",
+  "deletedAt",
+  "emailNotifications",
+  "inAppNotifications",
+  "isPublished",
+  "publishedAt",
+  "displayName",
 ] as const;
 
-const ARRAY_FIELDS = ["areasOfExpertise", "mentorshipTopics", "iceBreakerTags"] as const;
+const ARRAY_FIELDS = [
+  "areasOfExpertise",
+  "mentorshipTopics",
+  "iceBreakerTags",
+] as const;
 
-function buildPrismaUpdateData(input: UpdateAppUserInput): Record<string, unknown> {
+function buildPrismaUpdateData(
+  input: UpdateAppUserInput,
+): Record<string, unknown> {
   const data: Record<string, unknown> = { updatedAt: new Date() };
-  
+
   for (const field of UPDATABLE_FIELDS) {
     if ((input as Record<string, unknown>)[field] !== undefined) {
       const value = (input as Record<string, unknown>)[field];
-      
+
       // Sécurité pour les tableaux : ne jamais envoyer null
       if (ARRAY_FIELDS.includes(field as any) && value === null) {
         data[field] = [];
@@ -189,8 +210,8 @@ export class PrismaAppUserRepository implements AppUserRepository {
         mentorshipTopics: [],
         iceBreakerTags: [],
         accounts: {
-          connect: { accountId: input.userId }
-        }
+          connect: { accountId: input.userId },
+        },
       },
     });
 
@@ -199,7 +220,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
 
   async update(
     userId: string,
-    input: UpdateAppUserInput
+    input: UpdateAppUserInput,
   ): Promise<AppUserData> {
     const appUser = await this.prisma.user.update({
       where: { id: userId },
@@ -212,7 +233,7 @@ export class PrismaAppUserRepository implements AppUserRepository {
   async upsert(
     userId: string,
     createInput: CreateAppUserInput,
-    updateInput: UpdateAppUserInput = {}
+    updateInput: UpdateAppUserInput = {},
   ): Promise<AppUserData> {
     const now = new Date();
     const appUser = await this.prisma.user.upsert({
@@ -230,8 +251,8 @@ export class PrismaAppUserRepository implements AppUserRepository {
         mentorshipTopics: [],
         iceBreakerTags: [],
         accounts: {
-          connect: { accountId: createInput.userId }
-        }
+          connect: { accountId: createInput.userId },
+        },
       },
       update: buildPrismaUpdateData(updateInput),
     });

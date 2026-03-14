@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/shared/back-button";
 
 vi.mock("next/link", () => {
   const React = require("react");

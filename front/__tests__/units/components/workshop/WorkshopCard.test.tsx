@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
+import { WorkshopCard } from "@/components/domains/workshop/cards/WorkshopCard";
 
 const baseWorkshop = {
   id: "w1",

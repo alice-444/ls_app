@@ -36,11 +36,11 @@ const adminLogger = t.middleware(async ({ ctx, next, path, type, getRawInput }) 
   if (result.ok && type === "mutation" && ctx.session?.user?.id) {
     try {
       const rawInput = await getRawInput();
-      await container.auditLogService.record(
-        ctx.session.user.id,
-        `ADMIN_ACTION_${path.toUpperCase().replace(/\./g, "_")}`,
-        { input: rawInput }
-      );
+      await container.auditLogService.record({
+        adminId: ctx.session.user.id,
+        action: `ADMIN_ACTION_${path.toUpperCase().replace(/\./g, "_")}`,
+        details: { input: rawInput }
+      });
     } catch (e) {
       console.error("Failed to record admin audit log:", e);
     }

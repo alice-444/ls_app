@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { render} from "@testing-library/react";
-import Loader from "@/components/loader";
+import { render, screen } from "@testing-library/react";
+import Loader from "@/components/shared/loader";
 
 describe("Loader", () => {
   it("renders a spinner container", () => {

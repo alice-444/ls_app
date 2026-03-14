@@ -8,12 +8,13 @@
 		"lint": "next lint",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"test:coverage": "vitest run --coverage"
+		"test:coverage": "vitest run --coverage",
+		"update-imports": "node scripts/update_imports.js"
 	},
 	"dependencies": {
-		"@ls-app/shared": "workspace:*",
 		"@daily-co/daily-js": "^0.87.0",
 		"@hookform/resolvers": "^5.2.2",
+		"@ls-app/shared": "workspace:*",
 		"@radix-ui/react-avatar": "^1.1.11",
 		"@radix-ui/react-checkbox": "^1.3.3",
 		"@radix-ui/react-dialog": "^1.1.15",
@@ -29,6 +30,7 @@
 		"@sentry/nextjs": "^10.43.0",
 		"@tanstack/react-form": "^1.28.4",
 		"@tanstack/react-query": "^5.90.21",
+		"@tremor/react": "^3.18.7",
 		"@trpc/client": "^11.12.0",
 		"@trpc/react-query": "^11.12.0",
 		"better-auth": "^1.5.4",
@@ -46,6 +48,7 @@
 		"react-dom": "^19.2.4",
 		"react-hook-form": "^7.71.2",
 		"react-icons": "^5.6.0",
+		"recharts": "^3.8.0",
 		"socket.io-client": "^4.8.3",
 		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.5.0",

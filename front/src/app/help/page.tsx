@@ -6,8 +6,9 @@ import { Settings, CreditCard, MessageSquare, Video } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { faqConfig } from "@/lib/faq-config";
-import { FAQAccordion } from "@/components/faq/FAQAccordion";
-import { BackButton } from "@/components/back-button";
+import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
+import { BackButton } from "@/components/shared/back-button";
+import { PageContainer } from "@/components/shared/layout";
 import { useMemo, Suspense } from "react";
 
 function HelpCenterContent() {
@@ -69,7 +70,7 @@ function HelpCenterContent() {
     const Icon = currentCategory.icon === "logo" ? null : currentCategory.icon;
 
     return (
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+      <PageContainer className="py-4 sm:py-6 lg:py-8">
         <BackButton href="/help" label="Retour aux catégories" />
 
         <div className="mb-6 sm:mb-8">
@@ -130,12 +131,12 @@ function HelpCenterContent() {
             </p>
           )}
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+    <PageContainer className="py-4 sm:py-6 lg:py-8">
       <BackButton href="/info" label="Retour aux informations" />
 
       <div className="mb-6 sm:mb-8">
@@ -150,25 +151,49 @@ function HelpCenterContent() {
       </div>
 
       {/* Contact Support Section */}
-      <div className="mb-8 bg-linear-to-r from-[#FF8C42]/10 to-[#26547c]/10 dark:from-[#FF8C42]/5 dark:to-[#26547c]/5 border-2 border-[#FF8C42]/20 dark:border-[#FF8C42]/30 rounded-2xl p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-center sm:text-left">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-2">
-              Tu n'as pas trouvé la réponse ?
-            </h2>
-            <p className="text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] text-sm sm:text-base">
-              Notre équipe de support est là pour t'aider. Contacte-nous et nous
-              te répondrons rapidement.
-            </p>
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-linear-to-r from-[#FF8C42]/10 to-[#26547c]/10 dark:from-[#FF8C42]/5 dark:to-[#26547c]/5 border-2 border-[#FF8C42]/20 dark:border-[#FF8C42]/30 rounded-2xl p-6 sm:p-8">
+          <div className="flex flex-col h-full justify-between gap-4">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-2">
+                Tu n'as pas trouvé la réponse ?
+              </h2>
+              <p className="text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] text-sm sm:text-base">
+                Notre équipe de support est là pour t'aider. Contacte-nous et nous
+                te répondrons rapidement.
+              </p>
+            </div>
+            <Link href="/support-request">
+              <Button
+                size="lg"
+                className="bg-[#FF8C42] hover:bg-[#FF8C42]/90 text-white font-bold w-full md:w-auto px-8 py-6 text-base shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+              >
+                Contacter le support
+              </Button>
+            </Link>
           </div>
-          <Link href="/support-request">
-            <Button
-              size="lg"
-              className="bg-[#FF8C42] hover:bg-[#FF8C42]/90 text-white font-bold px-8 py-6 text-base shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-            >
-              Contacter le support
-            </Button>
-          </Link>
+        </div>
+
+        <div className="bg-linear-to-r from-brand/10 to-brand/20 dark:from-brand/5 dark:to-brand/10 border-2 border-brand/20 dark:border-brand/30 rounded-2xl p-6 sm:p-8">
+          <div className="flex flex-col h-full justify-between gap-4">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-ls-heading mb-2">
+                Suivre mes demandes
+              </h2>
+              <p className="text-ls-muted text-sm sm:text-base">
+                Consulte l'historique de tes échanges avec le support et l'état de tes tickets en cours.
+              </p>
+            </div>
+            <Link href="/help/support">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-brand text-brand hover:bg-brand/10 font-bold w-full md:w-auto px-8 py-6 text-base shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+              >
+                Mes tickets support
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -210,7 +235,7 @@ function HelpCenterContent() {
           );
         })}
       </div>
-    </div>
+    </PageContainer>
   );
 }
 
@@ -218,13 +243,13 @@ export default function HelpCenterPage() {
   return (
     <Suspense
       fallback={
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+        <PageContainer className="py-4 sm:py-6 lg:py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-[#26547c] dark:text-[#e6e6e6] text-lg">
               Chargement...
             </div>
           </div>
-        </div>
+        </PageContainer>
       }
     >
       <HelpCenterContent />

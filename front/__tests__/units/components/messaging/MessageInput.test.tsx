@@ -1,7 +1,7 @@
 import { describe, beforeEach, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MessageInput } from "@/components/messaging/MessageInput";
+import { MessageInput } from "@/components/domains/messaging/MessageInput";
 
 const mockEmit = vi.fn();
 vi.mock("@/lib/socket-client", () => ({

@@ -3,19 +3,34 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
-import { MentorsGrid } from "@/components/mentor/MentorsGrid";
-import { MentorFilters } from "@/components/mentor/MentorFilters";
+import { MentorsGrid } from "@/components/domains/mentor/MentorsGrid";
+import { MentorFilters } from "@/components/domains/mentor/MentorFilters";
 import { Button } from "@/components/ui/button";
 import { Loader2, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import type { MentorBasic } from "@ls-app/shared";
+import { useQuery } from "@tanstack/react-query";
+import { getUserRole } from "@/lib/api-client";
+import { useEffect } from "react";
 
 export default function MentorsPage() {
   const router = useRouter();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
+
+  const { data: userRole, isLoading: isLoadingRole } = useQuery({
+    queryKey: ["userRole", session?.user?.id],
+    queryFn: getUserRole,
+    enabled: !!session?.user?.id,
+  });
+
+  useEffect(() => {
+    if (!isSessionPending && !isLoadingRole && userRole === "MENTOR") {
+      router.push("/dashboard");
+    }
+  }, [userRole, isLoadingRole, isSessionPending, router]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [domainFilter, setDomainFilter] = useState("");
@@ -113,6 +128,17 @@ export default function MentorsPage() {
       </div>
     );
   };
+
+  if (isSessionPending || isLoadingRole || userRole === "MENTOR") {
+    return (
+      <PageContainer className="py-4 sm:py-6 lg:py-8">
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-12 h-12 animate-spin text-brand mb-4" />
+          <p className="text-ls-muted">Vérification des accès...</p>
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer className="py-4 sm:py-6 lg:py-8">

@@ -319,7 +319,7 @@ export class WorkshopSchedulingService implements IWorkshopSchedulingService {
             type: "workshop",
             title: "Atelier annulé",
             message: `${mentorName} a annulé l'atelier "${cancelledWorkshop.title}".`,
-            actionUrl: `/workshop-room`,
+            actionUrl: `/catalog`,
           },
           userId,
         );

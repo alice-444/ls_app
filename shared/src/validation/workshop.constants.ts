@@ -4,7 +4,7 @@ export const WORKSHOP_VALIDATION = {
     max: 100, // On prend le max du back car plus restrictif
   },
   description: {
-    max: 100,
+    max: 1000,
   },
   time: {
     regex: /^([01]\d|2[0-3]):([0-5]\d)$/, // On prend le format strict (09:30)

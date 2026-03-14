@@ -3,9 +3,9 @@
 import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { BackButton } from "@/components/back-button";
-import { PageContainer, SectionSidebar } from "@/components/layout";
-import Loader from "@/components/loader";
+import { BackButton } from "@/components/shared/back-button";
+import { PageContainer, SectionSidebar } from "@/components/shared/layout";
+import Loader from "@/components/shared/loader";
 import ShinyText from "@/components/ui/ShinyText";
 import {
   Card,
@@ -15,16 +15,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
 
-import { PREDEFINED_TOPICS, SIDEBAR_ITEMS } from "@/components/mentor-profile/constants";
+import { PREDEFINED_TOPICS, SIDEBAR_ITEMS, type ProfileSection } from "@/components/domains/mentor-profile/constants";
 import { useMentorProfile } from "@/hooks/useMentorProfile";
 import {
   BasicInformationSection,
   TagListSection,
   SocialMediaSection,
   PublicationSection,
-} from "@/components/mentor-profile";
-import { ProfilePreviewCard } from "@/components/profil/ProfilePreviewCard";
+} from "@/components/domains/mentor-profile";
+import { ProfilePreviewCard } from "@/components/domains/profil/ProfilePreviewCard";
 
 export default function MentorProfilePage() {
   const {
@@ -84,6 +85,35 @@ export default function MentorProfilePage() {
     exit: { opacity: 0, y: -8 },
   };
 
+  const onFormError = (formErrors: any) => {
+    console.error("Form validation errors (detailed):", JSON.parse(JSON.stringify(formErrors)));
+    console.log("Current form values:", form.getValues());
+    toast.error("Veuillez vérifier les erreurs dans toutes les sections du formulaire.");
+
+    // Auto-switch to the first section with an error
+    const sectionsWithErrors: ProfileSection[] = [];
+    if (formErrors.name || formErrors.bio || formErrors.domain || formErrors.displayName || formErrors.iceBreakerTags || formErrors.photo) sectionsWithErrors.push("informations-base");
+    if (formErrors.areasOfExpertise) sectionsWithErrors.push("domaines-expertise");
+    if (formErrors.mentorshipTopics) sectionsWithErrors.push("sujets-mentorat");
+    if (formErrors.qualifications || formErrors.experience) sectionsWithErrors.push("qualifications-experience");
+    if (formErrors.socialMediaLinks) sectionsWithErrors.push("reseaux-sociaux");
+
+    if (sectionsWithErrors.length > 0 && !sectionsWithErrors.includes(activeSection)) {
+      setActiveSection(sectionsWithErrors[0]);
+    }
+  };
+
+  const sidebarItemsWithErrors = SIDEBAR_ITEMS.map(item => {
+    let hasError = false;
+    if (item.id === "informations-base") hasError = !!(errors.name || errors.bio || errors.domain || errors.displayName || errors.iceBreakerTags || errors.photo);
+    if (item.id === "domaines-expertise") hasError = !!errors.areasOfExpertise;
+    if (item.id === "sujets-mentorat") hasError = !!errors.mentorshipTopics;
+    if (item.id === "qualifications-experience") hasError = !!(errors.qualifications || errors.experience);
+    if (item.id === "reseaux-sociaux") hasError = !!errors.socialMediaLinks;
+
+    return { ...item, hasError };
+  });
+
   return (
     <PageContainer>
       <div className="mb-6 sm:mb-8 lg:mb-10">
@@ -105,7 +135,7 @@ export default function MentorProfilePage() {
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         <SectionSidebar
-          items={SIDEBAR_ITEMS}
+          items={sidebarItemsWithErrors}
           activeSection={activeSection}
           onSelect={setActiveSection}
         />
@@ -128,203 +158,203 @@ export default function MentorProfilePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <AnimatePresence mode="wait">
-                  {activeSection === "informations-base" && (
-                    <motion.div
-                      key="informations-base"
-                      variants={sectionVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      transition={{ duration: 0.25 }}
-                    >
-                    <BasicInformationSection
-                      register={register}
-                      errors={errors}
-                      bioLength={bioLength}
-                      previewPhoto={previewPhoto}
-                      existingPhotoUrl={existingPhotoUrl}
-                      watch={watch}
-                      handlePhotoChange={handlePhotoChange}
-                      iceBreakers={iceBreakers}
-                      selectedIceBreakers={selectedIceBreakers}
-                      customIceBreaker={customIceBreaker}
-                      setCustomIceBreaker={setCustomIceBreaker}
-                    />
-                    </motion.div>
-                  )}
+                  <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-6">
+                    <AnimatePresence mode="wait">
+                      {activeSection === "informations-base" && (
+                        <motion.div
+                          key="informations-base"
+                          variants={sectionVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          transition={{ duration: 0.25 }}
+                        >
+                          <BasicInformationSection
+                            register={register}
+                            errors={errors}
+                            bioLength={bioLength}
+                            previewPhoto={previewPhoto}
+                            existingPhotoUrl={existingPhotoUrl}
+                            watch={watch}
+                            handlePhotoChange={handlePhotoChange}
+                            iceBreakers={iceBreakers}
+                            selectedIceBreakers={selectedIceBreakers}
+                            customIceBreaker={customIceBreaker}
+                            setCustomIceBreaker={setCustomIceBreaker}
+                          />
+                        </motion.div>
+                      )}
 
-                  {activeSection === "domaines-expertise" && (
-                    <motion.div
-                      key="domaines-expertise"
-                      variants={sectionVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      transition={{ duration: 0.25 }}
-                      className="flex flex-col gap-6"
-                    >
-                      <TagListSection
-                        items={selectedAreas}
-                        customValue={customArea}
-                        onCustomChange={setCustomArea}
-                        onAdd={areas.add}
-                        onRemove={areas.remove}
-                        placeholder="Ajouter un domaine d'expertise (ex: Mathématiques, Programmation, Design...)"
-                        hint="Appuyez sur Entrée pour ajouter. Au moins un domaine est requis."
-                        error={errors.areasOfExpertise?.message}
-                        variant="blue"
-                      />
-                    </motion.div>
-                  )}
-
-                  {activeSection === "sujets-mentorat" && (
-                    <motion.div
-                      key="sujets-mentorat"
-                      variants={sectionVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      transition={{ duration: 0.25 }}
-                      className="flex flex-col gap-6"
-                    >
-                      <TagListSection
-                        items={selectedTopics}
-                        customValue={customTopic}
-                        onCustomChange={setCustomTopic}
-                        onAdd={topics.add}
-                        onRemove={topics.remove}
-                        placeholder="Ajouter un sujet personnalisé"
-                        hint="Appuyez sur Entrée pour ajouter ou sélectionnez ci-dessous."
-                        error={errors.mentorshipTopics?.message}
-                        variant="orange"
-                      />
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                        {PREDEFINED_TOPICS.filter(
-                          (topic) => !selectedTopics.includes(topic)
-                        ).map((topic) => (
-                          <Button
-                            key={topic}
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => topics.add(topic)}
-                            className="text-xs border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
-                          >
-                            <Plus className="h-3 w-3 mr-1" />
-                            {topic}
-                          </Button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {activeSection === "qualifications-experience" && (
-                    <motion.div
-                      key="qualifications-experience"
-                      variants={sectionVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      transition={{ duration: 0.25 }}
-                      className="flex flex-col gap-6"
-                    >
-
-                      <div className="space-y-6">
-                        <div className="space-y-4">
-                          <Label className="text-ls-heading">
-                            Qualifications (max 20)
-                          </Label>
+                      {activeSection === "domaines-expertise" && (
+                        <motion.div
+                          key="domaines-expertise"
+                          variants={sectionVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          transition={{ duration: 0.25 }}
+                          className="flex flex-col gap-6"
+                        >
                           <TagListSection
-                            items={selectedQualifications}
-                            customValue={customQualification}
-                            onCustomChange={setCustomQualification}
-                            onAdd={qualifications.add}
-                            onRemove={qualifications.remove}
-                            placeholder="Ajouter une qualification (ex: Master en Informatique, Certification AWS...)"
-                            hint="Appuyez sur Entrée pour ajouter. Maximum 20 qualifications."
-                            error={errors.qualifications?.message}
+                            items={selectedAreas}
+                            customValue={customArea}
+                            onCustomChange={setCustomArea}
+                            onAdd={areas.add}
+                            onRemove={areas.remove}
+                            placeholder="Ajouter un domaine d'expertise (ex: Mathématiques, Programmation, Design...)"
+                            hint="Appuyez sur Entrée pour ajouter. Au moins un domaine est requis."
+                            error={errors.areasOfExpertise?.message}
                             variant="blue"
                           />
-                        </div>
-                        <div className="space-y-4">
-                          <Label className="text-ls-heading">
-                            Expérience (max 20)
-                          </Label>
+                        </motion.div>
+                      )}
+
+                      {activeSection === "sujets-mentorat" && (
+                        <motion.div
+                          key="sujets-mentorat"
+                          variants={sectionVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          transition={{ duration: 0.25 }}
+                          className="flex flex-col gap-6"
+                        >
                           <TagListSection
-                            items={selectedExperience}
-                            customValue={customExperience}
-                            onCustomChange={setCustomExperience}
-                            onAdd={experience.add}
-                            onRemove={experience.remove}
-                            placeholder="Ajouter une expérience (ex: Développeur Full Stack chez Google, 5 ans...)"
-                            hint="Appuyez sur Entrée pour ajouter. Maximum 20 expériences."
-                            error={errors.experience?.message}
+                            items={selectedTopics}
+                            customValue={customTopic}
+                            onCustomChange={setCustomTopic}
+                            onAdd={topics.add}
+                            onRemove={topics.remove}
+                            placeholder="Ajouter un sujet personnalisé"
+                            hint="Appuyez sur Entrée pour ajouter ou sélectionnez ci-dessous."
+                            error={errors.mentorshipTopics?.message}
                             variant="orange"
                           />
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {activeSection === "reseaux-sociaux" && (
-                    <motion.div
-                      key="reseaux-sociaux"
-                      variants={sectionVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      transition={{ duration: 0.25 }}
-                    >
-                    <SocialMediaSection register={register} />
-                    </motion.div>
-                  )}
-
-                  {activeSection === "publication" && (
-                    <motion.div
-                      key="publication"
-                      variants={sectionVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      transition={{ duration: 0.25 }}
-                    >
-                    <PublicationSection
-                      isPublished={isPublished}
-                      isSubmitting={isSubmitting}
-                      isFormSubmitting={isFormSubmitting}
-                      isPublishing={isPublishing}
-                      isUnpublishing={isUnpublishing}
-                      handlePublish={handlePublish}
-                      handleUnpublish={handleUnpublish}
-                    />
-                    </motion.div>
-                  )}
-                  </AnimatePresence>
-
-                  <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-ls-border">
-                    <Button
-                      type="submit"
-                      disabled={
-                        isSubmitting ||
-                        isFormSubmitting ||
-                        isPublishing ||
-                        isUnpublishing
-                      }
-                      variant="cta" size="cta" className="flex-1"
-                    >
-                      {isSubmitting || isFormSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Sauvegarde...
-                        </>
-                      ) : (
-                        "Sauvegarder le profil"
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                            {PREDEFINED_TOPICS.filter(
+                              (topic) => !selectedTopics.includes(topic)
+                            ).map((topic) => (
+                              <Button
+                                key={topic}
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => topics.add(topic)}
+                                className="text-xs border border-ls-border bg-ls-input-bg text-ls-heading hover:bg-brand-soft hover:border-brand rounded-full"
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                {topic}
+                              </Button>
+                            ))}
+                          </div>
+                        </motion.div>
                       )}
-                    </Button>
-                  </div>
-                </form>
+
+                      {activeSection === "qualifications-experience" && (
+                        <motion.div
+                          key="qualifications-experience"
+                          variants={sectionVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          transition={{ duration: 0.25 }}
+                          className="flex flex-col gap-6"
+                        >
+
+                          <div className="space-y-6">
+                            <div className="space-y-4">
+                              <Label className="text-ls-heading">
+                                Qualifications (max 20)
+                              </Label>
+                              <TagListSection
+                                items={selectedQualifications}
+                                customValue={customQualification}
+                                onCustomChange={setCustomQualification}
+                                onAdd={qualifications.add}
+                                onRemove={qualifications.remove}
+                                placeholder="Ajouter une qualification (ex: Master en Informatique, Certification AWS...)"
+                                hint="Appuyez sur Entrée pour ajouter. Maximum 20 qualifications."
+                                error={errors.qualifications?.message}
+                                variant="blue"
+                              />
+                            </div>
+                            <div className="space-y-4">
+                              <Label className="text-ls-heading">
+                                Expérience (max 20)
+                              </Label>
+                              <TagListSection
+                                items={selectedExperience}
+                                customValue={customExperience}
+                                onCustomChange={setCustomExperience}
+                                onAdd={experience.add}
+                                onRemove={experience.remove}
+                                placeholder="Ajouter une expérience (ex: Développeur Full Stack chez Google, 5 ans...)"
+                                hint="Appuyez sur Entrée pour ajouter. Maximum 20 expériences."
+                                error={errors.experience?.message}
+                                variant="orange"
+                              />
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {activeSection === "reseaux-sociaux" && (
+                        <motion.div
+                          key="reseaux-sociaux"
+                          variants={sectionVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          transition={{ duration: 0.25 }}
+                        >
+                          <SocialMediaSection register={register} errors={errors} />
+                        </motion.div>
+                      )}
+
+                      {activeSection === "publication" && (
+                        <motion.div
+                          key="publication"
+                          variants={sectionVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          transition={{ duration: 0.25 }}
+                        >
+                          <PublicationSection
+                            isPublished={isPublished}
+                            isSubmitting={isSubmitting}
+                            isFormSubmitting={isFormSubmitting}
+                            isPublishing={isPublishing}
+                            isUnpublishing={isUnpublishing}
+                            handlePublish={handlePublish}
+                            handleUnpublish={handleUnpublish}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-ls-border">
+                      <Button
+                        type="submit"
+                        disabled={
+                          isSubmitting ||
+                          isFormSubmitting ||
+                          isPublishing ||
+                          isUnpublishing
+                        }
+                        variant="cta" size="cta" className="flex-1"
+                      >
+                        {isSubmitting || isFormSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Sauvegarde...
+                          </>
+                        ) : (
+                          "Sauvegarder le profil"
+                        )}
+                      </Button>
+                    </div>
+                  </form>
                 </CardContent>
               </Card>
             </div>

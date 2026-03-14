@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SUPPORT_ATTACHMENT_CONFIG = exports.supportRequestSchema = void 0;
+exports.SUPPORT_ATTACHMENT_CONFIG = exports.supportMessageSchema = exports.supportRequestSchema = void 0;
 const zod_1 = require("zod");
 exports.supportRequestSchema = zod_1.z.object({
     email: zod_1.z.string().email("L'adresse email est invalide."),
@@ -13,6 +13,10 @@ exports.supportRequestSchema = zod_1.z.object({
         .min(10, "La description doit contenir au moins 10 caractères.")
         .max(5000, "La description ne doit pas dépasser 5000 caractères."),
     problemType: zod_1.z.string().min(1, "Le type de problème est requis."),
+});
+exports.supportMessageSchema = zod_1.z.object({
+    requestId: zod_1.z.string(),
+    content: zod_1.z.string().min(1, "Le message ne peut pas être vide"),
 });
 exports.SUPPORT_ATTACHMENT_CONFIG = {
     maxSize: 10 * 1024 * 1024, // 10MB

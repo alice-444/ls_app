@@ -10,6 +10,7 @@
  */
 export type * from './models/session'
 export type * from './models/account'
+export type * from './models/verification'
 export type * from './models/user'
 export type * from './models/credit_transaction'
 export type * from './models/support_request'

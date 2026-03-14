@@ -37,3 +37,11 @@ export const communityPollSchema = z.object({
     .min(2)
     .max(10),
 });
+
+export const bulkReviewProposalsSchema = z.object({
+  type: z.enum(["EVENT", "DEAL", "SPOT", "POLL"]),
+  ids: z.array(z.string()),
+  action: z.enum(["APPROVE", "REJECT"]),
+});
+
+export type BulkReviewProposalsInput = z.infer<typeof bulkReviewProposalsSchema>;

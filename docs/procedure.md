@@ -84,11 +84,14 @@ Résultats et artefacts (coverage, junit, screenshots/videos Cypress) sont publi
 - **Front** : build Next.js, puis `next start` ou hébergement statique selon config. `NEXT_PUBLIC_SERVER_URL` doit pointer vers l’URL publique du back.
 - **CI/CD** : workflows dans `.github/workflows/` (tests, code-quality, deployment). Adapter les secrets et les étapes selon l’environnement cible.
 
+**Schéma et procédure détaillés** : [deploiement.md](deploiement.md) — architecture Docker, CI/CD, variables d’env, procédure de déploiement.
+
 ---
 
 ## Documentation
 
 - [Architecture](architecture.md)
+- [Déploiement](deploiement.md)
 - [Front](front.md)
 - [Back](back.md)
 - [Référence](reference.md)

@@ -17,7 +17,7 @@ exports.workshopFieldSchemas = {
         .max(workshop_constants_1.WORKSHOP_VALIDATION.description.max, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.description.max),
     date: zod_1.z.coerce
         .date()
-        .refine((date) => (0, date_validators_1.isMinimumTomorrow)(date), workshop_constants_1.WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow),
+        .refine(date_validators_1.isMinimumToday, "La date ne peut pas être dans le passé"),
     time: zod_1.z
         .string()
         .trim()
@@ -44,8 +44,8 @@ exports.workshopFieldSchemas = {
     topic: zod_1.z
         .string()
         .trim()
-        .min(workshop_constants_1.WORKSHOP_VALIDATION.topic.min, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.topic.min)
-        .max(workshop_constants_1.WORKSHOP_VALIDATION.topic.max, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.topic.max),
+        .max(workshop_constants_1.WORKSHOP_VALIDATION.topic.max, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.topic.max)
+        .refine((val) => val === "" || val.length >= workshop_constants_1.WORKSHOP_VALIDATION.topic.min, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.topic.min),
     creditCost: zod_1.z
         .number()
         .int(workshop_constants_1.WORKSHOP_ERROR_MESSAGES.creditCost.integer)
@@ -57,7 +57,10 @@ exports.createWorkshopBackendSchema = zod_1.z.object({
     title: exports.workshopFieldSchemas.title,
     description: exports.workshopFieldSchemas.description.optional().default(""),
     topic: exports.workshopFieldSchemas.topic.optional().nullable(),
-    date: exports.workshopFieldSchemas.date.optional().nullable(),
+    date: exports.workshopFieldSchemas.date
+        .refine((date) => (0, date_validators_1.isMinimumTomorrow)(date), workshop_constants_1.WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow)
+        .optional()
+        .nullable(),
     time: exports.workshopFieldSchemas.time.optional().nullable(),
     duration: exports.workshopFieldSchemas.duration.optional().nullable(),
     location: exports.workshopFieldSchemas.location.optional().nullable(),
@@ -71,7 +74,9 @@ exports.updateWorkshopBackendSchema = zod_1.z.object({
     title: exports.workshopFieldSchemas.title.optional(),
     description: exports.workshopFieldSchemas.description.optional(),
     topic: exports.workshopFieldSchemas.topic.optional().nullable(),
-    date: exports.workshopFieldSchemas.date.optional(),
+    date: exports.workshopFieldSchemas.date
+        .refine(date_validators_1.isMinimumToday, "La date ne peut pas être dans le passé")
+        .optional(),
     time: exports.workshopFieldSchemas.time.optional(),
     duration: exports.workshopFieldSchemas.duration.optional(),
     location: exports.workshopFieldSchemas.location.optional().nullable(),
@@ -101,8 +106,32 @@ exports.createWorkshopFrontendSchema = zod_1.z.object({
     topic: exports.workshopFieldSchemas.topic.optional().nullable(),
     creditCost: exports.workshopFieldSchemas.creditCost.optional().nullable(),
 });
-exports.editWorkshopFrontendSchema = exports.createWorkshopFrontendSchema.extend({
+exports.editWorkshopFrontendSchema = zod_1.z.object({
     workshopId: zod_1.z.string().cuid(),
+    title: exports.workshopFieldSchemas.title,
+    description: exports.workshopFieldSchemas.description.optional(),
+    date: zod_1.z
+        .string()
+        .optional()
+        .refine(date_validators_1.isMinimumToday, "La date ne peut pas être dans le passé"),
+    time: zod_1.z
+        .string()
+        .optional()
+        .refine((val) => !val || workshop_constants_1.WORKSHOP_VALIDATION.time.regex.test(val), workshop_constants_1.WORKSHOP_ERROR_MESSAGES.time.invalidFormat),
+    durationHours: zod_1.z.number().int().min(0).max(8),
+    durationMinutes: zod_1.z.number().int().min(0).max(59),
+    location: exports.workshopFieldSchemas.location.optional(),
+    isVirtual: exports.workshopFieldSchemas.isVirtual,
+    maxParticipants: exports.workshopFieldSchemas.maxParticipants.optional(),
+    materialsNeeded: exports.workshopFieldSchemas.materialsNeeded.optional(),
+    topic: zod_1.z
+        .string()
+        .trim()
+        .max(workshop_constants_1.WORKSHOP_VALIDATION.topic.max, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.topic.max)
+        .refine((val) => val === "" || val.length >= workshop_constants_1.WORKSHOP_VALIDATION.topic.min, workshop_constants_1.WORKSHOP_ERROR_MESSAGES.topic.min)
+        .optional()
+        .nullable(),
+    creditCost: exports.workshopFieldSchemas.creditCost.optional().nullable(),
 });
 // --- SCHÉMAS DE CYCLE DE VIE ---
 exports.publishWorkshopSchema = zod_1.z.object({

@@ -11,8 +11,8 @@ import { toast } from "sonner";
 import {
   mentorProfileSchema,
   type MentorProfileFormData,
-} from "@/components/mentor-profile/schema";
-import type { ProfileSection } from "@/components/mentor-profile/constants";
+} from "@/components/domains/mentor-profile/schema";
+import type { ProfileSection } from "@/components/domains/mentor-profile/constants";
 
 function parseStringOrArray(value: unknown): string[] {
   if (Array.isArray(value)) return value;
@@ -42,7 +42,7 @@ function buildFormResetData(p: Record<string, unknown>): MentorProfileFormData {
   return {
     name: (p.name as string) || "",
     bio: (p.bio as string) || "",
-    domain: p.domain as string | undefined,
+    domain: (p.domain as string) || "",
     displayName: (p.displayName as string) || "",
     photo: null,
     qualifications: quals,
@@ -149,7 +149,7 @@ export function useMentorProfile() {
     defaultValues: {
       name: "",
       bio: "",
-      domain: undefined,
+      domain: "",
       photo: null,
       qualifications: [],
       experience: [],
@@ -344,7 +344,7 @@ export function useMentorProfile() {
       await customAuthClient.saveMentorProfile({
         name: data.name,
         bio: data.bio,
-        domain: data.areasOfExpertise[0] || "",
+        domain: data.domain,
         photoUrl: photoUrl || undefined,
         qualifications: data.qualifications?.length
           ? data.qualifications.join(", ")

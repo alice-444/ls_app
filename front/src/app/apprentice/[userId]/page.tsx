@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Loader from "@/components/loader";
+import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
 import {
   Card,

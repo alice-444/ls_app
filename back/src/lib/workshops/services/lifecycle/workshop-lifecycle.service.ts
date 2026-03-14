@@ -363,7 +363,7 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
             type: "workshop",
             title: "Atelier annulé",
             message: `${creatorName} a annulé l'atelier "${workshop.title}".`,
-            actionUrl: `/workshop-room`,
+            actionUrl: `/catalog`,
           },
           userId,
         );

@@ -1,10 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { mentorProfileSchema } from "@/components/mentor-profile/schema";
+import { mentorProfileSchema } from "@/components/domains/mentor-profile/schema";
 
 describe("mentorProfileSchema", () => {
   const validData = {
     name: "Jean Dupont",
     bio: "Un mentor passionné par le développement et l'enseignement.",
+    domain: "Développement Web",
     areasOfExpertise: ["Programmation"],
   };
 

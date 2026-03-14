@@ -9,9 +9,9 @@ import {
   Star,
   Zap,
 } from "lucide-react";
-import { BackButton } from "@/components/back-button";
+import { BackButton } from "@/components/shared/back-button";
 import { Button } from "@/components/ui/button";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 
@@ -185,7 +185,7 @@ export default function PaliersPage() {
             <p>
               En montant en palier, tu valorises ton profil auprès des mentors et
               de la communauté. Ton titre apparaît sur ton profil et dans
-              l&apos;e-Atelier, montrant ton engagement et ta régularité.
+              l&apos;Catalogue, montrant ton engagement et ta régularité.
             </p>
             <p>
               Plus tu progresses, plus tu démontres ta motivation — et plus tu

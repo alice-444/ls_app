@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { AreaChart } from "@tremor/react";
 import {
   AlertOctagon,
   MessageSquare,
@@ -15,13 +16,17 @@ import {
   Users,
   ChevronRight,
   ArrowRight,
+  ShieldCheck,
+  BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { AdminBIStats } from "@ls-app/shared";
 
 export default function AdminDashboardPage() {
-  const { data: stats, isLoading } = trpc.admin.getStats.useQuery();
+  const { data: stats, isLoading: isStatsLoading } = trpc.admin.getStats.useQuery();
+  const { data: biStats, isLoading: isBILoading } = trpc.admin.getAnalytics.useQuery({ timeRange: '30d' });
 
   const statCards = [
     {
@@ -83,7 +88,7 @@ export default function AdminDashboardPage() {
               </div>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
+              {isStatsLoading ? (
                 <Skeleton className="h-8 w-12" />
               ) : (
                 <div className="text-2xl font-bold text-ls-heading">{card.count}</div>
@@ -133,29 +138,37 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* You can add more cards here for recent activity, etc. */}
+        <Card className="border-ls-border bg-ls-surface lg:col-span-1">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-ls-heading">Analyses</CardTitle>
+              <CardDescription className="text-ls-muted">Évolution des crédits (30j)</CardDescription>
+            </div>
+            <BarChart3 className="h-5 w-5 text-brand" />
+          </CardHeader>
+          <CardContent>
+            {isBILoading ? (
+              <Skeleton className="h-40 w-full" />
+            ) : (
+              <>
+                <AreaChart
+                  className="h-40"
+                  data={(biStats as AdminBIStats)?.credits.transactionsOverTime ?? []}
+                  index="date"
+                  categories={["amount"]}
+                  colors={["amber"]}
+                  showXAxis={false}
+                  showYAxis={false}
+                  showLegend={false}
+                />
+                <Button asChild variant="outline" size="sm" className="w-full mt-4">
+                  <Link href="/admin/analytics">Voir le rapport complet</Link>
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
-  );
-}
-
-// Inline helper for ShieldCheck since it's not imported from lucide
-function ShieldCheck(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
   );
 }
