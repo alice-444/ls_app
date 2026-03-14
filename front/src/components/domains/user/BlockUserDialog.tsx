@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { AlertTriangle } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ export function BlockUserDialog({
   userId,
   userName,
   onBlocked,
-}: BlockUserDialogProps) {
+}: Readonly<BlockUserDialogProps>) {
   const [isBlocking, setIsBlocking] = useState(false);
   const utils = trpc.useUtils();
   const blockUserMutation = trpc.userBlock.blockUser.useMutation({

@@ -7,17 +7,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
 import { AlertTriangle } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
@@ -53,7 +53,7 @@ export function ReportUserDialog({
   userName,
   messageId,
   onReported,
-}: ReportUserDialogProps) {
+}: Readonly<ReportUserDialogProps>) {
   const [reason, setReason] = useState<ReportReason | "">("");
   const [details, setDetails] = useState("");
   const [isReporting, setIsReporting] = useState(false);
@@ -88,7 +88,7 @@ export function ReportUserDialog({
     setIsReporting(true);
     reportUserMutation.mutate({
       reportedUserId: userId,
-      reason: reason as ReportReason,
+      reason,
       details: details.trim() || null,
       messageId: messageId || null,
     });

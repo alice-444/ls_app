@@ -6,8 +6,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { Sparkles, Trophy } from "lucide-react";
 
 interface LevelUpModalProps {
@@ -20,7 +20,7 @@ export function LevelUpModal({
   open,
   onOpenChange,
   newTitle,
-}: LevelUpModalProps) {
+}: Readonly<LevelUpModalProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
