@@ -53,7 +53,7 @@ export const STEP_CONFIG = {
   select: {
     number: 1,
     label: "Choix du rôle",
-    key: "select",
+    key: "Select",
   },
   "confirm-features": {
     number: 2,
@@ -66,4 +66,3 @@ export const STEP_CONFIG = {
     key: "profile",
   },
 } as const;
-

@@ -13,10 +13,10 @@ import { CommunityPoll } from "@/components/domains/community/CommunityPoll";
 import { ImpactStats } from "@/components/domains/community/ImpactStats";
 import { COMMUNITY_HUB_LIMITS } from "@ls-app/shared";
 import { Loader2, PlusCircle, Rocket, Calendar, Tag, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Card,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from "@/components/ui/dialog";
+} from "@/components/ui/Dialog";
 import { ProposeDealForm } from "@/components/domains/community/ProposeDealForm";
 import { ProposeSpotForm } from "@/components/domains/community/ProposeSpotForm";
 import { ProposeEventForm } from "@/components/domains/community/ProposeEventForm";

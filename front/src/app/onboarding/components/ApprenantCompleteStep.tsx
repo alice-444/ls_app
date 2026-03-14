@@ -2,13 +2,11 @@
 
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { GraduationCap } from "lucide-react";
-import { ProgressIndicator } from "./ProgressIndicator";
 import type { Role, Step } from "../types";
 
 interface ApprenantCompleteStepProps {
@@ -19,14 +17,11 @@ interface ApprenantCompleteStepProps {
 import DecryptedText from "@/components/ui/DecryptedText";
 import ShinyText from "@/components/ui/ShinyText";
 
-export function ApprenantCompleteStep({
-  currentStep,
-  selectedRole,
-}: ApprenantCompleteStepProps) {
+export function ApprenantCompleteStep(_props: Readonly<ApprenantCompleteStepProps>) {
   return (
     <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#26547c]/5 dark:bg-[#4A90E2]/5 rounded-full blur-[120px] pointer-events-none" />
-      
+
       <Card className="w-full max-w-2xl shadow-2xl border-gray-100 dark:border-white/10 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md relative z-10 py-12">
         <CardHeader className="text-center space-y-8">
           <div className="mx-auto p-6 bg-green-50 rounded-full w-fit animate-bounce">

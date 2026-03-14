@@ -2,17 +2,17 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 import { ArrowLeft, ArrowRight, Loader2, BookOpen, Upload, X } from "lucide-react";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { profFormSchema } from "../schemas";
