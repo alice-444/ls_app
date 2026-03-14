@@ -13,22 +13,28 @@ const PUBLIC_ROUTES = [
   "/terms",
   "/privacy",
   "/info",
-  "/mentors"
+  "/mentors",
+  "/monitoring" // Sentry tunnel
 ];
 
-export default async function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+/**
+ * Middleware proxy pour Next.js 16 (remplace middleware.ts)
+ */
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   
-  // 0. Skip all static assets and internal Next.js routes immediately
+  // 0. Ignorer IMMÉDIATEMENT les assets statiques et les routes internes
+  // On vérifie le matcher Next.js mais on double la sécurité ici
   if (
     pathname.startsWith("/_next") || 
     pathname.startsWith("/api") || 
     pathname.startsWith("/trpc") ||
-    pathname.includes(".") ||
     pathname.startsWith("/favicon.ico") ||
     pathname.startsWith("/logo") ||
     pathname.startsWith("/bg") ||
-    pathname.startsWith("/typo")
+    pathname.startsWith("/typo") ||
+    pathname.startsWith("/public") ||
+    pathname.includes(".") // Catch-all pour les fichiers avec extensions
   ) {
     return NextResponse.next();
   }
@@ -57,16 +63,20 @@ export default async function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
+// Export par défaut également au cas où
+export default proxy;
+
 export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
      * - api (API routes)
+     * - trpc (tRPC routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public (static assets)
+     * - assets (logo, bg, typo)
      */
-    "/((?!api|trpc|_next/static|_next/image|favicon.ico|logo|bg|typo|public).*)",
+    "/((?!api|trpc|_next/static|_next/image|favicon.ico|logo|bg|typo|monitoring).*)",
   ],
 };

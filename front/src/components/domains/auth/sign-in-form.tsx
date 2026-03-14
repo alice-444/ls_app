@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ShinyText from "@/components/ui/ShinyText";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { getUserRole } from "@/lib/api-client";
 import { trpc } from "@/utils/trpc";
@@ -28,6 +28,8 @@ export default function SignInForm({
   onSwitchToSignUp: () => void;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const { isPending } = authClient.useSession();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,12 +63,15 @@ export default function SignInForm({
           onSuccess: async () => {
             const role = await getUserRole();
             await queryClient.invalidateQueries({ queryKey: ["userRole"] });
-            if (role === "ADMIN") {
+            
+            if (role === "ADMIN" && !callbackUrl) {
               window.location.href = "/admin";
+            } else if (callbackUrl) {
+              router.push(callbackUrl);
             } else {
               router.push("/dashboard");
             }
-            toast.success("Sign in successful");
+            toast.success("Connexion réussie");
           },
           onError: (ctx) => {
             setIsSubmitting(false);
