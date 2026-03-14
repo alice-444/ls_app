@@ -1,0 +1,15 @@
+.agents
+.github
+.git
+.gitignore
+.idea
+.vscode
+*.md
+*.log
+*.sh
+*.yml
+*.yaml
+*.env
+README.md
+docs
+DS_Store

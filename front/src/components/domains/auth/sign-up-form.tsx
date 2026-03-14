@@ -14,7 +14,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import ShinyText from "@/components/ui/ShinyText";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
@@ -24,6 +24,8 @@ export default function SignUpForm({
 	onSwitchToSignIn: () => void;
 }) {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get("callbackUrl");
 	const { isPending } = authClient.useSession();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 

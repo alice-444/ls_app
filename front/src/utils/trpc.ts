@@ -4,6 +4,7 @@ import { createTRPCReact } from "@trpc/react-query";
 // Use local type stub instead of importing from backend (not available in Docker build)
 import type { AppRouter } from "@/types/trpc-router";
 import { toast } from "sonner";
+import { API_BASE_URL } from "@/lib/api-client";
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -41,7 +42,7 @@ export const trpc = createTRPCReact<AppRouter>() as any;
 export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4500"}/trpc`,
+      url: `${API_BASE_URL}/trpc`,
       fetch(url, options) {
         return fetch(url, {
           ...options,

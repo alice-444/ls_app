@@ -12,10 +12,12 @@ export async function GET(req: NextRequest) {
   }
 
   const baseUrl = new URL(req.url).origin;
+  const frontendUrl = process.env.CORS_ORIGIN || "https://app.learnsup.fr";
+  
   const verifyUrl = new URL("/api/auth/magic-link/verify", baseUrl);
   verifyUrl.searchParams.set("token", token);
-  verifyUrl.searchParams.set("callbackURL", "/dashboard");
-  verifyUrl.searchParams.set("errorCallbackURL", "/login?error=magic_link");
+  verifyUrl.searchParams.set("callbackURL", `${frontendUrl}/dashboard`);
+  verifyUrl.searchParams.set("errorCallbackURL", `${frontendUrl}/login?error=magic_link`);
 
   return NextResponse.redirect(verifyUrl);
 }

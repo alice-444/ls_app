@@ -26,31 +26,61 @@ function buildHeadersAdapter(
 export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
   if (io) return io;
 
+  const allowedOrigins = [
+    process.env.CORS_ORIGIN || "http://localhost:3001",
+    "http://localhost:3001",
+    "https://app.learnsup.fr"
+  ];
+
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.CORS_ORIGIN || "http://localhost:3001",
+      origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       credentials: true,
       methods: ["GET", "POST"],
     },
     path: "/socket.io",
-    pingTimeout: 20000, // Considère le client déconnecté après 20s sans ping
-    pingInterval: 10000, // Envoie un ping toutes les 10s
+    addTrailingSlash: false,
+    pingTimeout: 20000,
+    pingInterval: 10000,
+    transports: ["websocket", "polling"], // Allow both for better compatibility
   });
 
   io.use(async (socket, next) => {
     try {
       const cookies = socket.handshake.headers.cookie;
-      if (!cookies) return next(new Error("Authentication required"));
+      if (!cookies) {
+        console.log("WebSocket connection rejected: No cookies found");
+        return next(new Error("Authentication required"));
+      }
 
-      const headersObj = buildHeadersAdapter(cookies, socket.handshake.headers);
+      // Build a proper Headers object for Better Auth
+      const headersObj = new Headers();
+      headersObj.set("cookie", cookies);
+      // Copy other relevant headers
+      const handshakeHeaders = socket.handshake.headers;
+      if (handshakeHeaders["user-agent"]) headersObj.set("user-agent", handshakeHeaders["user-agent"] as string);
+      if (handshakeHeaders["x-forwarded-for"]) headersObj.set("x-forwarded-for", handshakeHeaders["x-forwarded-for"] as string);
+
       const session = await auth.api.getSession({ headers: headersObj });
 
-      if (!session?.user) return next(new Error("Unauthorized"));
+      if (!session?.user) {
+        console.log("WebSocket connection rejected: Invalid session");
+        return next(new Error("Unauthorized"));
+      }
 
       (socket as any).userId = session.user.id;
       (socket as any).session = session;
       next();
-    } catch {
+    } catch (error) {
+      console.error("WebSocket auth error:", error);
       next(new Error("Authentication failed"));
     }
   });

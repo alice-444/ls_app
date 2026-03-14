@@ -26,24 +26,33 @@ export function useSocket(): Socket | null {
     }
 
     const serverUrl =
-      process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5050";
+      process.env.NEXT_PUBLIC_SOCKET_URL || 
+      process.env.NEXT_PUBLIC_SERVER_URL || 
+      "http://localhost:5050";
+
+    console.log(`Connecting to WebSocket at: ${serverUrl}`);
 
     socketInstance = io(serverUrl, {
       path: "/socket.io",
       withCredentials: true,
       transports: ["websocket", "polling"],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
     socketInstance.on("connect", () => {
+      console.log("WebSocket connected successfully");
       setSocket(socketInstance);
     });
 
-    socketInstance.on("disconnect", () => {
+    socketInstance.on("connect_error", (error) => {
+      console.error("WebSocket connection error:", error.message);
       setSocket(null);
     });
 
-    socketInstance.on("error", () => {
-      // Error handling without logging
+    socketInstance.on("disconnect", (reason) => {
+      console.log("WebSocket disconnected:", reason);
+      setSocket(null);
     });
 
     setSocket(socketInstance);
