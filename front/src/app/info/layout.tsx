@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Informations - LearnSup",
-  description: "À propos de LearnSup et informations utiles.",
+  title: "À propos de nous",
+  description: "Découvrez la mission de LearnSup et comment nous transformons l'apprentissage par la solidarité.",
+  openGraph: {
+    title: "À propos de LearnSup",
+    description: "Apprenez-en plus sur notre vision et nos valeurs.",
+  },
 };
 
 export default function InfoLayout({

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Paliers | LearnSup",
-  description: "Découvre les paliers et avantages LearnSup.",
+  title: "Nos Paliers et Avantages",
+  description: "Découvre comment ta progression sur LearnSup te permet de débloquer des avantages et de contribuer à la solidarité.",
 };
 
 export default function PaliersLayout({

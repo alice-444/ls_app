@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "CGU - LearnSup",
-  description: "Conditions Générales d'Utilisation de la plateforme LearnSup.",
+  title: "Conditions Générales d'Utilisation",
+  description: "Les règles d'utilisation de la plateforme LearnSup pour garantir une expérience solidaire et sûre.",
 };
 
 export default function TermsLayout({

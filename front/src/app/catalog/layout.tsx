@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Salle des ateliers | LearnSup",
-  description: "Parcourez les ateliers disponibles et inscrivez-vous sur LearnSup.",
+  title: "Catalogue des Ateliers - Apprends avec des Experts",
+  description: "Parcoure notre catalogue d'ateliers en petit groupe. Apprends de nouvelles compétences avec des mentors expérimentés.",
+  openGraph: {
+    title: "Catalogue des Ateliers | LearnSup",
+    description: "Découvre et inscris-toi à nos ateliers sur LearnSup.",
+  },
 };
 
 export default function WorkshopRoomLayout({

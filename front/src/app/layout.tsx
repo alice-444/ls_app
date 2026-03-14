@@ -7,8 +7,37 @@ import { LayoutSwitch } from "@/components/shared/layout/layout-switch";
 import Loader from "@/components/shared/loader";
 
 export const metadata: Metadata = {
-  title: "Learning Solidarity",
-  description: "Plateforme d'apprentissage solidaire",
+  title: {
+    default: "LearnSup - Plateforme d'apprentissage solidaire",
+    template: "%s | LearnSup",
+  },
+  description: "LearnSup est la plateforme d'apprentissage entre pairs où tu apprends avec des mentors et d'autres étudiant.e.s. Rejoins notre communauté solidaire !",
+  keywords: ["apprentissage", "solidarité", "mentorat", "étudiants", "ateliers", "entraide", "LearnSup", "éducation", "formation", "partage de connaissances", "succès académique"],
+  authors: [{ name: "LearnSup Team" }],
+  creator: "LearnSup Team",
+  publisher: "LearnSup",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://app.learnsup.fr"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "LearnSup - Plateforme d'apprentissage solidaire",
+    description: "Apprends avec des mentors et d'autres étudiant.e.s sur LearnSup.",
+    url: "https://app.learnsup.fr",
+    siteName: "LearnSup",
+    locale: "fr_FR",
+    type: "website",
+  },
+  icons: {
+    icon: "/ico_LearnSup.ico",
+    shortcut: "/ico_LearnSup.ico",
+    apple: "/ico_LearnSup.ico",
+  },
 };
 
 export default function RootLayout({
