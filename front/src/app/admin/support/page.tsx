@@ -8,15 +8,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { 
-  Loader2, 
-  ExternalLink, 
-  FileText, 
-  User, 
-  Mail, 
-  Clock, 
+} from "@/components/ui/Table";
+import { Button } from "@/components/ui/Button";
+import {
+  Loader2,
+  ExternalLink,
+  FileText,
+  User,
+  Mail,
+  Clock,
   CheckCircle2,
   MoreVertical,
   Download,
@@ -25,33 +25,33 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useState, Suspense } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
-} from "@/components/ui/dialog";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from "@/components/ui/Dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/DropdownMenu";
+import { Badge } from "@/components/ui/Badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/Select";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { SupportThread } from "@/components/domains/admin/support/support-thread";
+import { SupportThread } from "@/components/domains/admin/support/SupportThread";
 
 type SupportRequestStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 
@@ -130,8 +130,8 @@ function AdminSupportContent() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">Filtrer par statut:</span>
-          <Select 
-            value={statusFilter} 
+          <Select
+            value={statusFilter}
             onValueChange={(v) => setStatusFilter(v as SupportRequestStatus | "ALL")}
           >
             <SelectTrigger className="w-[180px]">
@@ -297,7 +297,7 @@ function AdminSupportContent() {
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {selectedRequest.attachments.map((file) => (
-                        <a 
+                        <a
                           key={file.url}
                           href={file.url}
                           target="_blank"
@@ -325,8 +325,8 @@ function AdminSupportContent() {
 
               <DialogFooter className="gap-2 flex-col sm:flex-row">
                 <div className="flex grow gap-2">
-                  <Select 
-                    defaultValue={selectedRequest.status} 
+                  <Select
+                    defaultValue={selectedRequest.status}
                     onValueChange={(v) => handleUpdateStatus(selectedRequest.id, v as SupportRequestStatus)}
                   >
                     <SelectTrigger className="w-full sm:w-[200px]">

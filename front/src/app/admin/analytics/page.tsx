@@ -10,7 +10,6 @@ import {
   BarChart,
   DonutChart,
   Grid,
-  Col,
   TabGroup,
   TabList,
   Tab,
@@ -19,7 +18,7 @@ import {
   BadgeDelta,
   ProgressBar,
 } from "@tremor/react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { BarChart3, TrendingUp, Users, BookOpen, CreditCard } from "lucide-react";
 import type { AdminBIStats, AdminTimeRange } from "@ls-app/shared";
 
