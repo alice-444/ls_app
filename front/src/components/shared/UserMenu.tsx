@@ -6,10 +6,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import { authClient } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
