@@ -2,37 +2,35 @@
 
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
   CardTitle,
   CardFooter
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { 
-  Send, 
-  Users, 
-  Filter, 
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/Select";
+import { Switch } from "@/components/ui/Switch";
+import { Label } from "@/components/ui/Label";
+import {
+  Send,
+  Filter,
   AlertCircle,
   CheckCircle2,
-  ChevronLeft
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 
 export default function AdminBulkNotificationPage() {
   const router = useRouter();
@@ -102,10 +100,10 @@ export default function AdminBulkNotificationPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Rôle</Label>
-                  <Select 
-                    onValueChange={(v) => setFormData(prev => ({ 
-                      ...prev, 
-                      criteria: { ...prev.criteria, role: v === "ALL" ? undefined : v as any } 
+                  <Select
+                    onValueChange={(v) => setFormData(prev => ({
+                      ...prev,
+                      criteria: { ...prev.criteria, role: v === "ALL" ? undefined : v as any }
                     }))}
                   >
                     <SelectTrigger>
@@ -122,10 +120,10 @@ export default function AdminBulkNotificationPage() {
 
                 <div className="space-y-2">
                   <Label>Statut compte</Label>
-                  <Select 
-                    onValueChange={(v) => setFormData(prev => ({ 
-                      ...prev, 
-                      criteria: { ...prev.criteria, status: v === "ALL" ? undefined : v as any } 
+                  <Select
+                    onValueChange={(v) => setFormData(prev => ({
+                      ...prev,
+                      criteria: { ...prev.criteria, status: v === "ALL" ? undefined : v as any }
                     }))}
                   >
                     <SelectTrigger>
@@ -142,22 +140,22 @@ export default function AdminBulkNotificationPage() {
 
                 <div className="flex items-center justify-between space-x-2 pt-2">
                   <Label htmlFor="is-published">Profil publié</Label>
-                  <Switch 
-                    id="is-published" 
-                    onCheckedChange={(checked) => setFormData(prev => ({ 
-                      ...prev, 
-                      criteria: { ...prev.criteria, isPublished: checked } 
+                  <Switch
+                    id="is-published"
+                    onCheckedChange={(checked) => setFormData(prev => ({
+                      ...prev,
+                      criteria: { ...prev.criteria, isPublished: checked }
                     }))}
                   />
                 </div>
 
                 <div className="flex items-center justify-between space-x-2 pt-2">
                   <Label htmlFor="has-workshop">Atelier publié</Label>
-                  <Switch 
-                    id="has-workshop" 
-                    onCheckedChange={(checked) => setFormData(prev => ({ 
-                      ...prev, 
-                      criteria: { ...prev.criteria, hasPublishedWorkshop: checked } 
+                  <Switch
+                    id="has-workshop"
+                    onCheckedChange={(checked) => setFormData(prev => ({
+                      ...prev,
+                      criteria: { ...prev.criteria, hasPublishedWorkshop: checked }
                     }))}
                   />
                 </div>
@@ -184,9 +182,9 @@ export default function AdminBulkNotificationPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">Titre</Label>
-                  <Input 
-                    id="title" 
-                    placeholder="Ex: Nouvelle fonctionnalité disponible !" 
+                  <Input
+                    id="title"
+                    placeholder="Ex: Nouvelle fonctionnalité disponible !"
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                     required
@@ -195,9 +193,9 @@ export default function AdminBulkNotificationPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="message">Contenu du message</Label>
-                  <Textarea 
-                    id="message" 
-                    placeholder="Décrivez votre annonce ici..." 
+                  <Textarea
+                    id="message"
+                    placeholder="Décrivez votre annonce ici..."
                     className="min-h-[120px]"
                     value={formData.message}
                     onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
@@ -208,7 +206,7 @@ export default function AdminBulkNotificationPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="type">Type de notification</Label>
-                    <Select 
+                    <Select
                       defaultValue="SYSTEM"
                       onValueChange={(v) => setFormData(prev => ({ ...prev, type: v }))}
                     >
@@ -225,9 +223,9 @@ export default function AdminBulkNotificationPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="url">Lien d'action (Optionnel)</Label>
-                    <Input 
-                      id="url" 
-                      placeholder="Ex: /workshops" 
+                    <Input
+                      id="url"
+                      placeholder="Ex: /workshops"
                       value={formData.actionUrl}
                       onChange={(e) => setFormData(prev => ({ ...prev, actionUrl: e.target.value }))}
                     />

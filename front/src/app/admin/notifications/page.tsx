@@ -1,25 +1,17 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import {
   Bell,
   MessageSquare,
   Users,
-  BookOpen,
-  Calendar,
   CheckCircle,
   Info,
-  Filter,
   Trash2,
-  Settings,
-  ChevronDown,
   Flag,
   LifeBuoy,
-  Plus,
-  Send
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
@@ -113,14 +105,14 @@ export default function AdminNotificationsPage() {
           <p className="text-muted-foreground">Alertes système et actions requises.</p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => router.push("/admin/notifications/bulk")}
           >
             <Users className="h-4 w-4 mr-2" /> Segmentation & Bulk
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => markAllAsReadMutation.mutate(undefined, { onSuccess: () => { refetchNotifications(); refetchUnreadCount(); } })}
             disabled={!unreadCount?.count}
           >
@@ -144,9 +136,9 @@ export default function AdminNotificationsPage() {
           </div>
         ) : (
           filteredNotifications.map((n: any) => (
-            <Card 
-              key={n.id} 
-              className={`cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 ${!n.isRead ? "border-l-4 border-l-primary bg-primary/5" : ""}`}
+            <Card
+              key={n.id}
+              className={`cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 ${n.isRead ? "" : "border-l-4 border-l-primary bg-primary/5"}`}
               onClick={() => handleNotificationClick(n)}
             >
               <CardContent className="p-4 flex items-start gap-4">
@@ -165,9 +157,9 @@ export default function AdminNotificationsPage() {
                     <Badge variant="outline" className="text-[10px] uppercase">{getTypeLabel(n.type)}</Badge>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="h-8 w-8 text-muted-foreground hover:text-destructive"
                   onClick={(e) => {
                     e.stopPropagation();

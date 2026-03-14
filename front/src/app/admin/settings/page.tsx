@@ -13,7 +13,7 @@ import {
   NotificationsSection,
   SystemSettingsSection,
   AboutSection,
-} from "@/components/domains/settings";
+} from "@/components/domains/Settings";
 
 type AdminSettingsSection =
   | "informations-personnelles"
@@ -56,7 +56,7 @@ export default function AdminSettingsPage() {
           <SectionSidebar
             items={ADMIN_SIDEBAR_ITEMS as any}
             activeSection={activeSection}
-            onSelect={(id) => setActiveSection(id as AdminSettingsSection)}
+            onSelect={(id) => setActiveSection(id)}
           />
         </div>
 

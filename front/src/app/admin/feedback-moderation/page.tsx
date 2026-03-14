@@ -8,14 +8,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Table";
+import { Button } from "@/components/ui/Button";
 import { Loader2, CheckCircle, Trash2, AlertTriangle, User, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useEffect, Suspense } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog";
+import { Badge } from "@/components/ui/Badge";
 import { useSearchParams } from "next/navigation";
+
+type ModerationFeedback = {
+  id: string;
+  workshopTitle?: string;
+  mentorName?: string;
+  publicName: string;
+  rating: number;
+  comment?: string;
+  reportReason?: string;
+};
 
 function AdminFeedbackModerationContent() {
   const searchParams = useSearchParams();
@@ -27,12 +37,12 @@ function AdminFeedbackModerationContent() {
   const warnUserMutation = trpc.workshopFeedback.warnUser.useMutation();
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [selectedFeedback, setSelectedFeedback] = useState<any | null>(null);
+  const [selectedFeedback, setSelectedFeedback] = useState<ModerationFeedback | null>(null);
   const [actionType, setActionType] = useState<"DELETE" | "WARN" | "DISMISS" | null>(null);
 
   useEffect(() => {
     if (feedbackIdParam && moderationQueue?.feedbacks) {
-      const feedback = moderationQueue.feedbacks.find((f: any) => f.id === feedbackIdParam);
+      const feedback = moderationQueue.feedbacks.find((f: ModerationFeedback) => f.id === feedbackIdParam);
       if (feedback) {
         // For moderation, we don't have a "view" dialog, just confirmation actions.
         // We could maybe highlight the row or scroll to it.
@@ -42,7 +52,7 @@ function AdminFeedbackModerationContent() {
     }
   }, [feedbackIdParam, moderationQueue]);
 
-  const handleAction = (feedback: any, type: "DELETE" | "WARN" | "DISMISS") => {
+  const handleAction = (feedback: ModerationFeedback, type: "DELETE" | "WARN" | "DISMISS") => {
     setSelectedFeedback(feedback);
     setActionType(type);
     setIsConfirmDialogOpen(true);
@@ -50,7 +60,7 @@ function AdminFeedbackModerationContent() {
 
   const confirmAction = async () => {
     if (!selectedFeedback || !actionType) return;
-    
+
     try {
       if (actionType === "DISMISS") {
         await dismissReportMutation.mutateAsync({ feedbackId: selectedFeedback.id });
@@ -62,7 +72,7 @@ function AdminFeedbackModerationContent() {
         await warnUserMutation.mutateAsync({ feedbackId: selectedFeedback.id });
         toast.success("Utilisateur averti.");
       }
-      
+
       refetch();
       setIsConfirmDialogOpen(false);
     } catch (error) {
@@ -72,12 +82,13 @@ function AdminFeedbackModerationContent() {
   };
 
   const renderRating = (rating: number) => {
+    const stars = [1, 2, 3, 4, 5] as const;
     return (
       <div className="flex items-center">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {stars.map((starIndex) => (
           <Star
-            key={i}
-            className={`h-4 w-4 ${i < rating ? "text-yellow-400 fill-yellow-400" : "text-slate-300"}`}
+            key={starIndex}
+            className={`h-4 w-4 ${starIndex <= rating ? "text-yellow-400 fill-yellow-400" : "text-slate-300"}`}
           />
         ))}
       </div>
@@ -120,7 +131,7 @@ function AdminFeedbackModerationContent() {
                 </TableCell>
               </TableRow>
             ) : (
-              feedbacks.map((feedback: any) => (
+              feedbacks.map((feedback: ModerationFeedback) => (
                 <TableRow key={feedback.id} className={feedback.id === feedbackIdParam ? "bg-primary/5" : ""}>
                   <TableCell>
                     <div className="font-medium">{feedback.workshopTitle || "N/A"}</div>
@@ -189,8 +200,8 @@ function AdminFeedbackModerationContent() {
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>Annuler</Button>
-            <Button 
-              variant={actionType === "DELETE" ? "destructive" : "default"} 
+            <Button
+              variant={actionType === "DELETE" ? "destructive" : "default"}
               onClick={confirmAction}
               className={actionType === "DISMISS" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}
             >
