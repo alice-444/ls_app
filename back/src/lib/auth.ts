@@ -14,9 +14,6 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  advanced: {
-    trustProxy: true,
-  },
   cookie: {
     domain: process.env.NODE_ENV === "production" ? ".learnsup.fr" : undefined,
   },
