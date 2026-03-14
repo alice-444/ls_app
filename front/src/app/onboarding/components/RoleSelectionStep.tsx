@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { RoleSelectionCard } from "./RoleSelectionCard";
@@ -30,7 +30,7 @@ export function RoleSelectionStep({
   isSubmitting,
   onRoleSelect,
   onContinue,
-}: RoleSelectionStepProps) {
+}: Readonly<RoleSelectionStepProps>) {
   return (
     <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background decorations - consistent with LearnSup */}
@@ -44,8 +44,8 @@ export function RoleSelectionStep({
             selectedRole={selectedRole}
           />
           <CardTitle className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            <DecryptedText 
-              text="Bienvenue sur LearnSup !" 
+            <DecryptedText
+              text="Bienvenue sur LearnSup !"
               animateOn="view"
               revealDirection="center"
               speed={40}

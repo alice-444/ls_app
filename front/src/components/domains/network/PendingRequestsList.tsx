@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { UserCheck } from "lucide-react";
 import { PendingRequestItem } from "./PendingRequestItem";
 
@@ -35,7 +35,7 @@ export function PendingRequestsList({
   onAccept,
   onReject,
   isProcessing,
-}: PendingRequestsListProps) {
+}: Readonly<PendingRequestsListProps>) {
   if (requests.length === 0) {
     return null;
   }

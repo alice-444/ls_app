@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { X, Trash2 } from "lucide-react";
 
 interface RemoveConnectionDialogProps {
@@ -23,7 +23,7 @@ export function RemoveConnectionDialog({
   onOpenChange,
   onConfirm,
   isRemoving,
-}: RemoveConnectionDialogProps) {
+}: Readonly<RemoveConnectionDialogProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
