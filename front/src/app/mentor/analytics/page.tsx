@@ -4,17 +4,17 @@ import { PageContainer } from "@/components/shared/layout";
 import { CashbackSummaryCard } from "@/components/domains/dashboard/CashbackSummaryCard";
 import { CashbackHistoryList } from "@/components/domains/dashboard/CashbackHistoryList";
 import { trpc } from "@/utils/trpc";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Card, CardContent } from "@/components/ui/Card";
 import { ArrowLeft, TrendingUp, BarChart3 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import ShinyText from "@/components/ui/ShinyText";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 
 export default function MentorAnalyticsPage() {
   const router = useRouter();
