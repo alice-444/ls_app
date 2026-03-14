@@ -6,7 +6,7 @@ import { initializeSocketServer } from "./src/lib/socket/server";
 import { container } from "./src/lib/di/container";
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = process.env.HOSTNAME_BACKEND;
+const hostname = process.env.HOSTNAME_BACKEND || "0.0.0.0";
 const port = Number.parseInt(process.env.PORT_BACKEND || "4500", 10);
 
 const app = next({ hostname, dev });
@@ -21,12 +21,12 @@ app.prepare().then(() => {
       // Set CORS headers
       res.setHeader("Access-Control-Allow-Credentials", "true");
       res.setHeader("Access-Control-Allow-Origin", origin);
-      res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS,PUT,PATCH");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-TRPC-Source, X-Requested-With, Accept, Sentry-Trace, baggage");
 
       // Handle preflight OPTIONS requests directly
       if (req.method === "OPTIONS") {
-        res.writeHead(204);
+        res.statusCode = 204;
         res.end();
         return;
       }

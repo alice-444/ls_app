@@ -14,7 +14,17 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  trustedOrigins: [process.env.CORS_ORIGIN || ""],
+  advanced: {
+    trustProxy: true,
+  },
+  cookie: {
+    domain: process.env.NODE_ENV === "production" ? ".learnsup.fr" : undefined,
+  },
+  trustedOrigins: [
+    process.env.CORS_ORIGIN || "",
+    "https://app.learnsup.fr",
+    "http://localhost:3001"
+  ],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,

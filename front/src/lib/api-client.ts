@@ -1,5 +1,29 @@
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4500";
+const getApiBaseUrl = () => {
+  // 1. Try build-time/runtime environment variable
+  if (process.env.NEXT_PUBLIC_SERVER_URL) {
+    return process.env.NEXT_PUBLIC_SERVER_URL;
+  }
+
+  // 2. Client-side fallback: Guess backend URL from frontend URL
+  if (typeof window !== "undefined") {
+    const { hostname, protocol } = window.location;
+    
+    // If we are on the production domain, use the api subdomain
+    if (hostname === "app.learnsup.fr") {
+      return `${protocol}//api.learnsup.fr`;
+    }
+    
+    // If we are on localhost, use the default backend port
+    if (hostname === "localhost") {
+      return `${protocol}//localhost:4500`;
+    }
+  }
+
+  // 3. Last resort fallback
+  return "http://localhost:4500";
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export const authenticatedFetchOptions: RequestInit = {
   credentials: "include",
