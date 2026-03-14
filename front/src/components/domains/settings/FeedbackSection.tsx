@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { MessageSquare, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 
@@ -60,8 +60,8 @@ export function FeedbackSection() {
             className="h-10"
           />
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="w-full sm:w-auto bg-brand text-ls-heading hover:bg-brand-hover border-brand rounded-full"
           onClick={handleSubmit}
           disabled={createRequestMutation.isPending}

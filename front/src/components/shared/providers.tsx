@@ -1,13 +1,18 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient, trpc, trpcClient } from "@/utils/trpc";
-import { ThemeProvider } from "@/components/shared/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import { Toaster } from "@/components/ui/Sonner";
 import { SidebarProvider } from "@/hooks/use-sidebar";
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersProps {
+	readonly children: ReactNode;
+}
+
+export default function Providers({ children }: Readonly<ProvidersProps>) {
 	return (
 		<ThemeProvider
 			attribute="class"

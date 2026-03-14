@@ -1,6 +1,10 @@
 export type Role = "MENTOR" | "APPRENANT";
 
-export type Step = "select" | "confirm-features" | "prof-form" | "apprenant-flow";
+export type Step =
+  | "Select"
+  | "confirm-features"
+  | "prof-form"
+  | "apprenant-flow";
 
 export type { ProfFormData } from "./schemas";
 
@@ -9,4 +13,3 @@ export interface OnboardingState {
   selectedRole: Role | null;
   isSubmitting: boolean;
 }
-
