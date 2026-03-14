@@ -1,27 +1,27 @@
 "use client";
 
 import { trpc } from "@/utils/trpc";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/Table";
+import { Button, buttonVariants } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Badge } from "@/components/ui/Badge";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/Card";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -30,26 +30,26 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
+} from "@/components/ui/AlertDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/Dialog";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/Select";
 import { Loader2, Check, X, Calendar, MapPin, Trash2, AlertTriangle, Search, ExternalLink, Tag, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -62,6 +62,8 @@ interface UserInfo {
 }
 
 type CommunityStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+type ProposalType = "EVENT" | "DEAL" | "SPOT" | "POLL";
 
 interface ProposalEvent {
   id: string;
@@ -105,34 +107,34 @@ interface ProposalPoll {
 
 const DEAL_CATEGORIES = ["FOOD", "SOFTWARE", "LEISURE", "SERVICES"];
 
-function BulkActionBar({ 
-  selectedCount, 
-  onApprove, 
-  onReject, 
-  isPending 
-}: { 
-  selectedCount: number, 
-  onApprove: () => void, 
-  onReject: () => void,
-  isPending: boolean
-}) {
+function BulkActionBar({
+  selectedCount,
+  onApprove,
+  onReject,
+  isPending
+}: Readonly<{
+  selectedCount: number;
+  onApprove: () => void;
+  onReject: () => void;
+  isPending: boolean;
+}>) {
   if (selectedCount === 0) return null;
   return (
     <div className="flex items-center gap-2 mb-4 px-4 py-2 bg-brand/5 border border-brand/20 rounded-xl animate-in fade-in slide-in-from-top-2">
       <span className="text-sm font-medium text-brand">{selectedCount} sélectionnés</span>
       <div className="h-4 w-px bg-brand/20 mx-2" />
-      <Button 
-        variant="ghost" 
-        size="sm" 
+      <Button
+        variant="ghost"
+        size="sm"
         className="h-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-2"
         onClick={onApprove}
         disabled={isPending}
       >
         <Check className="h-4 w-4 mr-1" /> Approuver la sélection
       </Button>
-      <Button 
-        variant="ghost" 
-        size="sm" 
+      <Button
+        variant="ghost"
+        size="sm"
         className="h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2"
         onClick={onReject}
         disabled={isPending}
@@ -146,7 +148,7 @@ function BulkActionBar({
 export default function AdminCommunityPage() {
   const { data: proposals, isLoading, refetch } = trpc.community.getPendingProposals.useQuery();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{ type: "EVENT" | "DEAL" | "SPOT" | "POLL", id: string } | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ type: ProposalType; id: string } | null>(null);
   const [statusFilter, setStatusFilter] = useState<CommunityStatus | "ALL">("ALL");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [activeTab, setActiveTab] = useState<string>("events");
@@ -170,7 +172,7 @@ export default function AdminCommunityPage() {
   };
 
   const toggleSelect = (id: string) => {
-    setSelectedIds(prev => 
+    setSelectedIds(prev =>
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
@@ -226,11 +228,11 @@ export default function AdminCommunityPage() {
     }
   });
 
-  const handleAction = (type: "EVENT" | "DEAL" | "SPOT" | "POLL", id: string, action: "APPROVE" | "REJECT") => {
+  const handleAction = (type: ProposalType, id: string, action: "APPROVE" | "REJECT") => {
     reviewMutation.mutate({ type, id, action });
   };
 
-  const confirmDelete = (type: "EVENT" | "DEAL" | "SPOT" | "POLL", id: string) => {
+  const confirmDelete = (type: ProposalType, id: string) => {
     setItemToDelete({ type, id });
     setDeleteConfirmOpen(true);
   };
@@ -300,8 +302,8 @@ export default function AdminCommunityPage() {
           {/* Status Filter */}
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase font-bold text-ls-muted tracking-wider">Statut</span>
-            <Select 
-              value={statusFilter} 
+            <Select
+              value={statusFilter}
               onValueChange={(v) => setStatusFilter(v as CommunityStatus | "ALL")}
             >
               <SelectTrigger className="w-[140px] h-8 rounded-full border-ls-border bg-card text-xs">
@@ -320,8 +322,8 @@ export default function AdminCommunityPage() {
           {activeTab === "deals" && (
             <div className="flex items-center gap-2">
               <span className="text-[10px] uppercase font-bold text-ls-muted tracking-wider">Catégorie</span>
-              <Select 
-                value={categoryFilter} 
+              <Select
+                value={categoryFilter}
                 onValueChange={setCategoryFilter}
               >
                 <SelectTrigger className="w-[140px] h-8 rounded-full border-ls-border bg-card text-xs">
@@ -348,8 +350,8 @@ export default function AdminCommunityPage() {
         </TabsList>
 
         <TabsContent value="events">
-          <BulkActionBar 
-            selectedCount={selectedIds.length} 
+          <BulkActionBar
+            selectedCount={selectedIds.length}
             onApprove={() => bulkReviewMutation.mutate({ type: "EVENT", ids: selectedIds, action: "APPROVE" })}
             onReject={() => bulkReviewMutation.mutate({ type: "EVENT", ids: selectedIds, action: "REJECT" })}
             isPending={bulkReviewMutation.isPending}
@@ -364,7 +366,7 @@ export default function AdminCommunityPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[40px]">
-                      <Checkbox 
+                      <Checkbox
                         checked={filteredEvents.length > 0 && selectedIds.length === filteredEvents.length}
                         onCheckedChange={() => toggleSelectAll(filteredEvents)}
                       />
@@ -380,13 +382,13 @@ export default function AdminCommunityPage() {
                   {filteredEvents.length === 0 ? (
                     <TableRow><TableCell colSpan={6} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun événement trouvé.</TableCell></TableRow>
                   ) : (
-                    (filteredEvents as ProposalEvent[]).map((event) => (
-                      <TableRow 
+                    filteredEvents.map((event) => (
+                      <TableRow
                         key={event.id}
                         className={cn(selectedIds.includes(event.id) && "bg-brand/5")}
                       >
                         <TableCell>
-                          <Checkbox 
+                          <Checkbox
                             checked={selectedIds.includes(event.id)}
                             onCheckedChange={() => toggleSelect(event.id)}
                           />
@@ -395,13 +397,13 @@ export default function AdminCommunityPage() {
                           <div className="font-bold text-ls-heading">{event.title}</div>
                           <div className="text-xs text-ls-muted max-w-[300px] whitespace-pre-wrap mt-1">{event.description}</div>
                           {event.link && (
-                            <a 
-                              href={event.link} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
+                            <a
+                              href={event.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-brand/5 text-brand text-xs font-medium hover:bg-brand/10 transition-colors mt-2"
                             >
-                              <ExternalLink className="w-3.5 h-3.5" /> 
+                              <ExternalLink className="w-3.5 h-3.5" />
                               Lien de l'événement
                             </a>
                           )}
@@ -437,8 +439,8 @@ export default function AdminCommunityPage() {
         </TabsContent>
 
         <TabsContent value="deals">
-          <BulkActionBar 
-            selectedCount={selectedIds.length} 
+          <BulkActionBar
+            selectedCount={selectedIds.length}
             onApprove={() => bulkReviewMutation.mutate({ type: "DEAL", ids: selectedIds, action: "APPROVE" })}
             onReject={() => bulkReviewMutation.mutate({ type: "DEAL", ids: selectedIds, action: "REJECT" })}
             isPending={bulkReviewMutation.isPending}
@@ -463,16 +465,16 @@ export default function AdminCommunityPage() {
                   <form onSubmit={handleCreateDeal} className="space-y-4 pt-4">
                     <div className="space-y-2">
                       <Label htmlFor="deal-title">Titre</Label>
-                      <Input id="deal-title" value={newDeal.title} onChange={(e) => setNewDeal({...newDeal, title: e.target.value})} placeholder="Ex: -20% sur les outils dev" required />
+                      <Input id="deal-title" value={newDeal.title} onChange={(e) => setNewDeal({ ...newDeal, title: e.target.value })} placeholder="Ex: -20% sur les outils dev" required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="deal-desc">Description</Label>
-                      <Textarea id="deal-desc" value={newDeal.description} onChange={(e) => setNewDeal({...newDeal, description: e.target.value})} placeholder="Détails de l'offre..." required />
+                      <Textarea id="deal-desc" value={newDeal.description} onChange={(e) => setNewDeal({ ...newDeal, description: e.target.value })} placeholder="Détails de l'offre..." required />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Catégorie</Label>
-                        <Select value={newDeal.category} onValueChange={(v) => setNewDeal({...newDeal, category: v})}>
+                        <Select value={newDeal.category} onValueChange={(v) => setNewDeal({ ...newDeal, category: v })}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -485,12 +487,12 @@ export default function AdminCommunityPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="deal-code">Code Promo (Optionnel)</Label>
-                        <Input id="deal-code" value={newDeal.promoCode} onChange={(e) => setNewDeal({...newDeal, promoCode: e.target.value})} placeholder="CODE20" />
+                        <Input id="deal-code" value={newDeal.promoCode} onChange={(e) => setNewDeal({ ...newDeal, promoCode: e.target.value })} placeholder="CODE20" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="deal-link">Lien de l'offre</Label>
-                      <Input id="deal-link" value={newDeal.link} onChange={(e) => setNewDeal({...newDeal, link: e.target.value})} placeholder="https://..." type="url" required />
+                      <Input id="deal-link" value={newDeal.link} onChange={(e) => setNewDeal({ ...newDeal, link: e.target.value })} placeholder="https://..." type="url" required />
                     </div>
                     <DialogFooter className="pt-4">
                       <Button type="button" variant="ghost" onClick={() => setIsDealDialogOpen(false)}>Annuler</Button>
@@ -508,7 +510,7 @@ export default function AdminCommunityPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[40px]">
-                      <Checkbox 
+                      <Checkbox
                         checked={filteredDeals.length > 0 && selectedIds.length === filteredDeals.length}
                         onCheckedChange={() => toggleSelectAll(filteredDeals)}
                       />
@@ -524,13 +526,13 @@ export default function AdminCommunityPage() {
                   {filteredDeals.length === 0 ? (
                     <TableRow><TableCell colSpan={6} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun bon plan trouvé.</TableCell></TableRow>
                   ) : (
-                    (filteredDeals as ProposalDeal[]).map((deal) => (
-                      <TableRow 
+                    filteredDeals.map((deal) => (
+                      <TableRow
                         key={deal.id}
                         className={cn(selectedIds.includes(deal.id) && "bg-brand/5")}
                       >
                         <TableCell>
-                          <Checkbox 
+                          <Checkbox
                             checked={selectedIds.includes(deal.id)}
                             onCheckedChange={() => toggleSelect(deal.id)}
                           />
@@ -538,13 +540,13 @@ export default function AdminCommunityPage() {
                         <TableCell>
                           <div className="font-medium text-ls-heading">{deal.title}</div>
                           <div className="text-xs text-ls-muted max-w-[300px] whitespace-pre-wrap mt-1">{deal.description}</div>
-                          <a 
-                            href={deal.link} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            href={deal.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-brand/5 text-brand text-xs font-medium hover:bg-brand/10 transition-colors mt-2"
                           >
-                            <ExternalLink className="w-3.5 h-3.5" /> 
+                            <ExternalLink className="w-3.5 h-3.5" />
                             Voir l'offre
                           </a>
                         </TableCell>
@@ -586,8 +588,8 @@ export default function AdminCommunityPage() {
         </TabsContent>
 
         <TabsContent value="spots">
-          <BulkActionBar 
-            selectedCount={selectedIds.length} 
+          <BulkActionBar
+            selectedCount={selectedIds.length}
             onApprove={() => bulkReviewMutation.mutate({ type: "SPOT", ids: selectedIds, action: "APPROVE" })}
             onReject={() => bulkReviewMutation.mutate({ type: "SPOT", ids: selectedIds, action: "REJECT" })}
             isPending={bulkReviewMutation.isPending}
@@ -602,7 +604,7 @@ export default function AdminCommunityPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[40px]">
-                      <Checkbox 
+                      <Checkbox
                         checked={filteredSpots.length > 0 && selectedIds.length === filteredSpots.length}
                         onCheckedChange={() => toggleSelectAll(filteredSpots)}
                       />
@@ -618,13 +620,13 @@ export default function AdminCommunityPage() {
                   {filteredSpots.length === 0 ? (
                     <TableRow><TableCell colSpan={6} className="text-center py-12 text-ls-muted"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun lieu trouvé.</TableCell></TableRow>
                   ) : (
-                    (filteredSpots as ProposalSpot[]).map((spot) => (
-                      <TableRow 
+                    filteredSpots.map((spot) => (
+                      <TableRow
                         key={spot.id}
                         className={cn(selectedIds.includes(spot.id) && "bg-brand/5")}
                       >
                         <TableCell>
-                          <Checkbox 
+                          <Checkbox
                             checked={selectedIds.includes(spot.id)}
                             onCheckedChange={() => toggleSelect(spot.id)}
                           />
@@ -680,7 +682,7 @@ export default function AdminCommunityPage() {
                 {filteredPolls.length === 0 ? (
                   <div className="col-span-full text-center py-12 text-ls-muted border border-dashed rounded-2xl"><Search className="w-8 h-8 mx-auto mb-2 opacity-20" /> Aucun sondage trouvé.</div>
                 ) : (
-                  (filteredPolls as ProposalPoll[]).map((poll) => (
+                  filteredPolls.map((poll) => (
                     <Card key={poll.id} className="border-ls-border bg-card/50">
                       <CardHeader className="p-4">
                         <div className="flex justify-between items-start mb-2">
@@ -736,7 +738,7 @@ export default function AdminCommunityPage() {
             <AlertDialogCancel className={cn(buttonVariants({ variant: "ctaOutline" }), "mt-0")}>
               Annuler
             </AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={executeDelete}
               className={buttonVariants({ variant: "ctaDestructive" })}
               disabled={deleteMutation.isPending}

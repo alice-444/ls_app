@@ -8,8 +8,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import {
   getStatusBadge,
   formatDate,
@@ -44,7 +44,7 @@ import {
   NextWorkshopBanner,
   WorkshopFiltersBar,
   CalendarSection,
-} from "@/components/domains/my-workshops";
+} from "@/components/domains/MyWorkshops";
 
 export default function MyWorkshopsPage() {
   const {

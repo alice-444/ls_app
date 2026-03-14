@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import DailyIframe from "@daily-co/daily-js";
 import { trpc } from "@/utils/trpc";
 import { Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 
 export default function JoinVideoPage() {
   const params = useParams();
@@ -27,11 +27,12 @@ export default function JoinVideoPage() {
   );
 
   useEffect(() => {
-    if (!tokenData || isLoading || !videoContainerRef.current) return;
+    const container = videoContainerRef.current;
+    if (!tokenData || isLoading || !container) return;
 
     const initializeCall = async () => {
       try {
-        const callFrame = DailyIframe.createFrame(videoContainerRef.current!, {
+        const callFrame = DailyIframe.createFrame(container, {
           showLeaveButton: true,
           iframeStyle: {
             position: "relative",

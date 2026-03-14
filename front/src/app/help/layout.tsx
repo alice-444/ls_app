@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Centre d'aide - LearnSup",
-  description: "Trouvez des réponses à vos questions sur LearnSup.",
+  title: "Centre d'Aide",
+  description: "Trouvez des guides et des ressources pour bien utiliser la plateforme LearnSup.",
+  openGraph: {
+    title: "Centre d'Aide | LearnSup",
+    description: "Besoin d'assistance ? Notre centre d'aide est là pour vous.",
+  },
 };
 
 export default function HelpLayout({
