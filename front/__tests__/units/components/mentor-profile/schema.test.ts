@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mentorProfileSchema } from "@/components/domains/mentor-profile/schema";
+import { mentorProfileSchema } from "@/components/domains/MentorProfile/schema";
 
 describe("mentorProfileSchema", () => {
   const validData = {
