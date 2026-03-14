@@ -14,11 +14,11 @@ import {
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Switch } from "@/components/ui/Switch";
+import { Textarea } from "@/components/ui/Textarea";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -27,8 +27,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { ChangePasswordSection } from "@/components/domains/settings/ChangePasswordSection";
+} from "@/components/ui/Dialog";
+import { ChangePasswordSection } from "@/components/domains/Settings/ChangePasswordSection";
 
 interface AccountSectionProps {
   readonly session: ReturnType<typeof authClient.useSession>["data"];
@@ -159,7 +159,7 @@ function EmailChangeButton() {
       onSuccess: (data: { message?: string }) => {
         toast.success(
           data.message ||
-            "Un lien de vérification a été envoyé à ta nouvelle adresse email"
+          "Un lien de vérification a été envoyé à ta nouvelle adresse email"
         );
         setIsDialogOpen(false);
         setNewEmail("");

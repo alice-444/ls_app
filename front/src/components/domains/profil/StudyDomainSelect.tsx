@@ -6,8 +6,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/Select";
+import { Label } from "@/components/ui/Label";
 
 const STUDY_DOMAINS = [
   "Développement Web",
@@ -32,7 +32,7 @@ export function StudyDomainSelect({
   value,
   onChange,
   error,
-}: StudyDomainSelectProps) {
+}: Readonly<StudyDomainSelectProps>) {
   return (
     <div className="space-y-2">
       <Label htmlFor="studyDomain">Domaine d&apos;étude</Label>
