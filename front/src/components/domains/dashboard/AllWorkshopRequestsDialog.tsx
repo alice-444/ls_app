@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/Dialog";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";
 import { MessageSquare } from "lucide-react";
@@ -70,8 +70,8 @@ export function AllWorkshopRequestsDialog({
                 {(request.status === "ACCEPTED" ||
                   request.status === "PENDING" ||
                   request.status === "REJECTED") && (
-                  <StatusBadge status={request.status} />
-                )}
+                    <StatusBadge status={request.status} />
+                  )}
               </div>
             ))
           ) : (

@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 import { Star, MapPin, Coffee, Zap, Moon, Wifi } from "lucide-react";
 
 interface Spot {
@@ -24,7 +24,7 @@ const TAG_ICONS: Record<string, any> = {
   "Wi-Fi Gratuit": Wifi,
 };
 
-export function SpotFinder({ initialSpots }: SpotFinderProps) {
+export function SpotFinder({ initialSpots }: Readonly<SpotFinderProps>) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {initialSpots.length === 0 ? (

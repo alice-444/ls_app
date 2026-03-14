@@ -8,9 +8,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { Calendar } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { CancelWorkshopRegistrationDialog } from "@/components/domains/workshop/dialogs/CancelWorkshopRegistrationDialog";
 import { toast } from "sonner";
 import { useState } from "react";

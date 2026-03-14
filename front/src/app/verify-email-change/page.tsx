@@ -8,12 +8,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { CheckCircle2, XCircle, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import Link from "next/link";
 
 function VerifyEmailChangeContent() {
   const router = useRouter();
