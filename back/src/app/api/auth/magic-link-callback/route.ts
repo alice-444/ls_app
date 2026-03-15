@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=invalid_token", req.url));
   }
 
-  const baseUrl = new URL(req.url).origin;
+  const baseUrl = process.env.BETTER_AUTH_URL || new URL(req.url).origin;
   const frontendUrl = process.env.CORS_ORIGIN || "https://app.learnsup.fr";
   
   const verifyUrl = new URL("/api/auth/magic-link/verify", baseUrl);

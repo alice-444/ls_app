@@ -9,20 +9,36 @@ import { AuthPasswordResetEmail } from "./email/templates/AuthPasswordResetEmail
 import { AuthMagicLinkEmail } from "./email/templates/AuthMagicLinkEmail";
 import * as React from "react";
 
+const getCookieDomain = () => {
+  if (process.env.NODE_ENV === "development") return undefined;
+  const url = process.env.BETTER_AUTH_URL || "";
+  try {
+    const hostname = new URL(url).hostname;
+    // Extraire le domaine racine (ex: learnsup.fr de api.learnsup.fr)
+    const parts = hostname.split(".");
+    if (parts.length >= 2) {
+      return `.${parts.slice(-2).join(".")}`;
+    }
+    return undefined;
+  } catch {
+    return ".learnsup.fr"; // Fallback safe pour la prod LearnSup
+  }
+};
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
   cookie: {
-    domain: ".learnsup.fr", // Force le domaine racine pour le partage entre sous-domaines
+    domain: getCookieDomain(),
     extraAttributes: {
       SameSite: "Lax",
-      Secure: true,
+      Secure: process.env.NODE_ENV === "production" || process.env.BETTER_AUTH_URL?.startsWith("https"),
     },
   },
   advanced: {
-    useSecureCookies: true,
+    useSecureCookies: process.env.NODE_ENV === "production" || process.env.BETTER_AUTH_URL?.startsWith("https"),
   },
   trustedOrigins: [
     process.env.CORS_ORIGIN || "",
