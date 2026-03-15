@@ -7,6 +7,8 @@ services:
     environment:
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
       NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
+      RUNTIME_API_URL: ${RUNTIME_API_URL}
+      RUNTIME_SOCKET_URL: ${RUNTIME_SOCKET_URL}
       SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
     networks:
@@ -56,6 +58,11 @@ services:
       - "traefik.http.routers.backend.middlewares=backend-headers"
       - "traefik.http.middlewares.backend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.services.backend.loadbalancer.server.port=4500"
+      - "traefik.http.services.backend.loadbalancer.sticky=true"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.name=ls_io_sticky"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.samesite=none"
       - "traefik.docker.network=vps-mds"
 
   traefik:

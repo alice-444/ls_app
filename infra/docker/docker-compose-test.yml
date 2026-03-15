@@ -1,7 +1,7 @@
 services:
   # Service Frontend
   frontend:
-      build:
+    build:
       context: ../../
       dockerfile: ./infra/docker/front/prod/Dockerfile
     ports:
@@ -11,6 +11,8 @@ services:
       NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
       SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+      RUNTIME_API_URL: ${RUNTIME_API_URL:-}
+      RUNTIME_SOCKET_URL: ${RUNTIME_SOCKET_URL:-}
     networks:
       - vps-mds
     labels:

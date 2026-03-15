@@ -14,13 +14,18 @@ const databaseUrl = process.env.DATABASE_URL || "postgresql://dummy:dummy@localh
 // Un seul pool de connexions pour toute l'application
 export const pool = new Pool({
   connectionString: databaseUrl,
-  connectionTimeoutMillis: 10000,
-  idleTimeoutMillis: 30000,
-  max: 10, // Réduit à 10 pour être sûr de ne pas saturer la DB
+  connectionTimeoutMillis: 20000, // Plus de temps pour la prod
+  idleTimeoutMillis: 60000,       // Garder les connexions plus longtemps
+  max: 20,                         // Augmenter légèrement pour absorber les pics
   ssl:
     process.env.NODE_ENV === "development"
       ? { rejectUnauthorized: false }
       : undefined,
+});
+
+// CRITICAL: Éviter que le pool ne crashe le processus lors d'une rupture réseau
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle pg client", err);
 });
 
 const adapter = new PrismaPg(pool);

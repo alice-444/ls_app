@@ -47,10 +47,13 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       methods: ["GET", "POST"],
     },
     path: "/socket.io",
-    addTrailingSlash: false,
-    pingTimeout: 20000,
-    pingInterval: 10000,
-    transports: ["websocket", "polling"], // Allow both for better compatibility
+    addTrailingSlash: true, // Plus compatible avec certains proxies
+    pingTimeout: 60000,
+    pingInterval: 25000,
+    transports: ["websocket", "polling"], // On remet websocket en premier pour tenter l'upgrade direct
+    allowEIO3: true,
+    maxHttpBufferSize: 1e7, // 10MB au lieu de 1MB pour les sessions lourdes
+    perMessageDeflate: false, // Désactiver la compression pour éviter les conflits avec Traefik
   });
 
   io.use(async (socket, next) => {
@@ -61,18 +64,28 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
         return next(new Error("Authentication required"));
       }
 
-      // Build a proper Headers object for Better Auth
+      // Build a proper Headers object with ALL handshake headers
       const headersObj = new Headers();
-      headersObj.set("cookie", cookies);
-      // Copy other relevant headers
-      const handshakeHeaders = socket.handshake.headers;
-      if (handshakeHeaders["user-agent"]) headersObj.set("user-agent", handshakeHeaders["user-agent"] as string);
-      if (handshakeHeaders["x-forwarded-for"]) headersObj.set("x-forwarded-for", handshakeHeaders["x-forwarded-for"] as string);
+      Object.entries(socket.handshake.headers).forEach(([key, value]) => {
+        if (value) {
+          if (Array.isArray(value)) {
+            value.forEach(v => headersObj.append(key, v));
+          } else {
+            headersObj.set(key, value as string);
+          }
+        }
+      });
+      
+      // Timeout de 5s pour Better Auth (si DB est lente/plantée)
+      const sessionPromise = auth.api.getSession({ headers: headersObj });
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Auth timeout")), 5000)
+      );
 
-      const session = await auth.api.getSession({ headers: headersObj });
+      const session = await Promise.race([sessionPromise, timeoutPromise]) as any;
 
       if (!session?.user) {
-        console.log("WebSocket connection rejected: Invalid session");
+        console.warn("WebSocket connection rejected: Session not found or DB error");
         return next(new Error("Unauthorized"));
       }
 
@@ -80,8 +93,9 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       (socket as any).session = session;
       next();
     } catch (error) {
-      console.error("WebSocket auth error:", error);
-      next(new Error("Authentication failed"));
+      console.error("WebSocket auth error (likely DB):", error);
+      // Ne pas crasher, mais refuser la connexion proprement
+      next(new Error("Authentication service unavailable"));
     }
   });
 
