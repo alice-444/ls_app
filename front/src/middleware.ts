@@ -31,10 +31,11 @@ export function middleware(request: NextRequest) {
   }
 
   const allCookies = request.cookies.getAll();
+  // On cherche n'importe quel cookie qui ressemble à une session
   const hasSession = allCookies.some(c => 
-    c.name.includes("session_token") || 
-    c.name.includes("auth_session") ||
-    c.name.includes("better-auth.session")
+    c.name.toLowerCase().includes("session") || 
+    c.name.toLowerCase().includes("auth") ||
+    c.name.toLowerCase().includes("token")
   );
 
   const isPublicRoute = PUBLIC_ROUTES.some(route => 

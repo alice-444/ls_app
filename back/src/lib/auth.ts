@@ -16,7 +16,7 @@ export const auth = betterAuth({
   }),
   cookie: {
     domain: process.env.BETTER_AUTH_URL && !process.env.BETTER_AUTH_URL.includes("localhost") ? 
-      ("." + new URL(process.env.BETTER_AUTH_URL).hostname.split(".").slice(-2).join(".")) : 
+      "." + new URL(process.env.BETTER_AUTH_URL).hostname.split(".").slice(-2).join(".") : 
       undefined,
     extraAttributes: {
       SameSite: "Lax",

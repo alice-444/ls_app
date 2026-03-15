@@ -16,6 +16,13 @@ function LoginContent() {
   const [showSignIn, setShowSignIn] = useState(mode !== "signup");
 
   useEffect(() => {
+    if (session) {
+      const callbackUrl = searchParams.get("callbackUrl");
+      router.push(callbackUrl || "/dashboard");
+    }
+  }, [session, router, searchParams]);
+
+  useEffect(() => {
     setShowSignIn(mode !== "signup");
   }, [mode]);
 
