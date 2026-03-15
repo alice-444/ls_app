@@ -16,6 +16,12 @@ function LoginContent() {
   const [showSignIn, setShowSignIn] = useState(mode !== "signup");
 
   useEffect(() => {
+    if (session) {
+      router.push("/dashboard");
+    }
+  }, [session, router]);
+
+  useEffect(() => {
     setShowSignIn(mode !== "signup");
   }, [mode]);
 

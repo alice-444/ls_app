@@ -5,6 +5,8 @@ services:
     ports:
       - "3001:3001"
     environment:
+      NODE_ENV: production
+      TRUST_PROXY: "true"
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
       NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
       RUNTIME_API_URL: ${RUNTIME_API_URL}
@@ -29,11 +31,13 @@ services:
     ports:
       - "4500:4500"
     environment:
+      NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
       CORS_ORIGIN: ${CORS_ORIGIN}
       CRON_SECRET: ${CRON_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      TRUST_PROXY: "true"
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
       POLAR_LEARNSUP: ${POLAR_LEARNSUP}
       POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN}
@@ -52,18 +56,21 @@ services:
       - vps-mds
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${BACKEND_URL}`)"
+      - "traefik.http.routers.backend.rule=Host(`api.learnsup.fr`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
-      - "traefik.http.routers.backend.middlewares=backend-headers"
+      - "traefik.http.routers.backend.middlewares=backend-cors,backend-headers"
       - "traefik.http.middlewares.backend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.backend-headers.headers.customrequestheaders.X-Forwarded-Host=api.learnsup.fr"
+      - "traefik.http.middlewares.backend-headers.headers.customresponseheaders.Access-Control-Allow-Credentials=true"
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolalloworiginlist=https://app.learnsup.fr"
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,PATCH,OPTIONS"
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolmaxage=3600"
       - "traefik.http.services.backend.loadbalancer.server.port=4500"
       - "traefik.http.services.backend.loadbalancer.sticky=true"
-      - "traefik.http.services.backend.loadbalancer.sticky.cookie.name=ls_io_sticky"
-      - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
-      - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
-      - "traefik.http.services.backend.loadbalancer.sticky.cookie.samesite=none"
       - "traefik.docker.network=vps-mds"
+
 
   traefik:
     image: traefik:v3.2.1
@@ -74,6 +81,9 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.websecure.address=:443"
+      # Configuration des en-têtes transmis
+      - "--entrypoints.websecure.forwardedheaders.insecure=false"
+      - "--entrypoints.websecure.forwardedheaders.trustedips=127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
       # Activation du /ping pour le healthcheck
       - "--ping=true"
       - "--ping.entrypoint=web"

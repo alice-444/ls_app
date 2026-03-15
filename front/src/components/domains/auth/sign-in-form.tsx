@@ -7,13 +7,7 @@ import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ShinyText from "@/components/ui/ShinyText";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -22,14 +16,9 @@ import { trpc } from "@/utils/trpc";
 import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function SignInForm({
-  onSwitchToSignUp,
-}: {
-  onSwitchToSignUp: () => void;
-}) {
+export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
   const { isPending } = authClient.useSession();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,11 +52,9 @@ export default function SignInForm({
           onSuccess: async () => {
             const role = await getUserRole();
             await queryClient.invalidateQueries({ queryKey: ["userRole"] });
-            
-            if (role === "ADMIN" && !callbackUrl) {
+
+            if (role === "ADMIN") {
               window.location.href = "/admin";
-            } else if (callbackUrl) {
-              router.push(callbackUrl);
             } else {
               router.push("/dashboard");
             }
@@ -77,7 +64,7 @@ export default function SignInForm({
             setIsSubmitting(false);
             toast.error(ctx.error.message || ctx.error.statusText);
           },
-        }
+        },
       );
     },
     validators: {
@@ -122,12 +109,7 @@ export default function SignInForm({
             }}
             className="space-y-4"
           >
-            <motion.div
-              variants={fieldVariants}
-              initial="hidden"
-              animate="visible"
-              custom={0}
-            >
+            <motion.div variants={fieldVariants} initial="hidden" animate="visible" custom={0}>
               <Label htmlFor="magic-email">Email</Label>
               <Input
                 id="magic-email"
@@ -140,17 +122,8 @@ export default function SignInForm({
                 className="mt-2 rounded-full"
               />
             </motion.div>
-            <motion.div
-              variants={fieldVariants}
-              initial="hidden"
-              animate="visible"
-              custom={1}
-            >
-              <Button
-                type="submit"
-                className="w-full rounded-full"
-                disabled={requestMagicLinkMutation.isPending}
-              >
+            <motion.div variants={fieldVariants} initial="hidden" animate="visible" custom={1}>
+              <Button type="submit" className="w-full rounded-full" disabled={requestMagicLinkMutation.isPending}>
                 {requestMagicLinkMutation.isPending ? "Envoi..." : "Envoyer le lien"}
               </Button>
             </motion.div>
@@ -175,9 +148,7 @@ export default function SignInForm({
             <ShinyText text="Bienvenue" />
           </h1>
         </CardTitle>
-        <CardDescription className="text-center">
-          Connecte-toi pour accéder à ton tableau de bord
-        </CardDescription>
+        <CardDescription className="text-center">Connecte-toi pour accéder à ton tableau de bord</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -188,12 +159,7 @@ export default function SignInForm({
           }}
           className="space-y-4"
         >
-          <motion.div
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-            custom={0}
-          >
+          <motion.div variants={fieldVariants} initial="hidden" animate="visible" custom={0}>
             <form.Field name="email">
               {(field) => (
                 <div className="space-y-2">
@@ -219,12 +185,7 @@ export default function SignInForm({
               )}
             </form.Field>
           </motion.div>
-          <motion.div
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-            custom={1}
-          >
+          <motion.div variants={fieldVariants} initial="hidden" animate="visible" custom={1}>
             <form.Field name="password">
               {(field) => (
                 <div className="space-y-2">
@@ -250,12 +211,7 @@ export default function SignInForm({
               )}
             </form.Field>
           </motion.div>
-          <motion.div
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-            custom={2}
-          >
+          <motion.div variants={fieldVariants} initial="hidden" animate="visible" custom={2}>
             <Button
               type="submit"
               className="w-full rounded-full bg-[#FFB647] hover:bg-[#FF9F1A] text-black font-semibold"
@@ -266,12 +222,7 @@ export default function SignInForm({
           </motion.div>
         </form>
         <div className="mt-6 space-y-3">
-          <motion.div
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-            custom={3}
-          >
+          <motion.div variants={fieldVariants} initial="hidden" animate="visible" custom={3}>
             <Button
               variant="outline"
               onClick={() => setIsMagicLinkFlow(true)}

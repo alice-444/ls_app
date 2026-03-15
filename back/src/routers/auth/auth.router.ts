@@ -19,8 +19,6 @@ export const authRouter = router({
       await auth.api.signInMagicLink({
         body: {
           email: input.email,
-          callbackURL: "/dashboard",
-          errorCallbackURL: "/login?error=magic_link",
         },
         headers: ctx.req?.headers ?? new Headers(),
       });

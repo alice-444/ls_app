@@ -11,13 +11,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=invalid_token", req.url));
   }
 
-  const baseUrl = new URL(req.url).origin;
   const frontendUrl = process.env.CORS_ORIGIN || "https://app.learnsup.fr";
-  
-  const verifyUrl = new URL("/api/auth/magic-link/verify", baseUrl);
+  const verifyUrl = new URL("/auth/verify", frontendUrl);
   verifyUrl.searchParams.set("token", token);
-  verifyUrl.searchParams.set("callbackURL", `${frontendUrl}/dashboard`);
-  verifyUrl.searchParams.set("errorCallbackURL", `${frontendUrl}/login?error=magic_link`);
 
   return NextResponse.redirect(verifyUrl);
 }
