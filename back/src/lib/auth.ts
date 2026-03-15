@@ -15,9 +15,15 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   cookie: {
-    domain: process.env.BETTER_AUTH_URL ? 
+    domain: process.env.BETTER_AUTH_URL && !process.env.BETTER_AUTH_URL.includes("localhost") ? 
       ("." + new URL(process.env.BETTER_AUTH_URL).hostname.split(".").slice(-2).join(".")) : 
       undefined,
+    extraAttributes: {
+      SameSite: "Lax",
+    },
+  },
+  advanced: {
+    useSecureCookies: process.env.BETTER_AUTH_URL?.startsWith("https://"),
   },
   trustedOrigins: [
     process.env.CORS_ORIGIN || "",
