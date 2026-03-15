@@ -58,6 +58,39 @@ flowchart TB
   appRouter --> support[support]
 ```
 
+---
+
+## 🔄 Cycle de vie d'une requête (Backend)
+
+Ce diagramme montre comment chaque procédure tRPC est sécurisée par une chaîne de responsabilités.
+
+```mermaid
+sequenceDiagram
+    participant C as Client (tRPC)
+    participant CTX as createContext (Session)
+    participant M as Middlewares (Rate Limit / Logs)
+    participant G as Guards (RBAC / Role Check)
+    participant P as Procédure (Logic)
+    participant S as Service / DB
+
+    C->>CTX: Appel /trpc
+    CTX->>CTX: getSession(cookie)
+    CTX-->>M: Context { session, prisma }
+    
+    M->>M: Rate Limiter check
+    M->>M: Audit Log (si mutation)
+    
+    M-->>G: Autorisé ?
+    G->>G: checkRole(MENTOR | ADMIN)
+    
+    G-->>P: Accès accordé
+    P->>S: Appel Service
+    S-->>P: Result.ok
+    P-->>C: JSON Typé
+```
+
+---
+
 ## Stack
 
 - **Node** + **Next.js 16** — App Next (API routes, possible standalone). Le point d’entrée en prod est le serveur custom (`server.ts`), pas `next start` seul.
@@ -69,8 +102,8 @@ flowchart TB
 - **Resend** — Envoi d’emails (templates React Email dans `lib/email/templates/`).
 - **Sharp** — Traitement d’images (photos de profil, upload).
 - **Cloudinary** — Stockage cloud des images (si configuré, sinon repli sur stockage local).
-- **Daily.co** — Création de salles / liens visio, webhooks. Service dans `lib/daily/`.
-- **Socket.io** — Notifications et messagerie temps réel. Initialisation dans `lib/socket/server`, monté sur le même serveur HTTP que Next.
+- **next-cloudinary** — Intégration Cloudinary pour Next.js (upload, optimisation).
+- **Socket.IO** — Serveur temps réel (messagerie, notifications). Initialisation dans `lib/socket/server`, monté sur le même serveur HTTP que Next.
 - **rate-limiter-flexible** — Limitation de requêtes (middleware / routes sensibles).
 - **prom-client** — Métriques Prometheus exposées sur `/api/metrics`.
 - **React Email** — Rendu des templates d’emails (Welcome, PasswordChange, etc.).
