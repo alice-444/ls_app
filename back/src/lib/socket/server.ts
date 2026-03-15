@@ -76,10 +76,16 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
         }
       });
       
-      const session = await auth.api.getSession({ headers: headersObj });
+      // Timeout de 5s pour Better Auth (si DB est lente/plantée)
+      const sessionPromise = auth.api.getSession({ headers: headersObj });
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Auth timeout")), 5000)
+      );
+
+      const session = await Promise.race([sessionPromise, timeoutPromise]) as any;
 
       if (!session?.user) {
-        console.log("WebSocket connection rejected: Invalid session");
+        console.warn("WebSocket connection rejected: Session not found or DB error");
         return next(new Error("Unauthorized"));
       }
 
@@ -87,8 +93,9 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       (socket as any).session = session;
       next();
     } catch (error) {
-      console.error("WebSocket auth error:", error);
-      next(new Error("Authentication failed"));
+      console.error("WebSocket auth error (likely DB):", error);
+      // Ne pas crasher, mais refuser la connexion proprement
+      next(new Error("Authentication service unavailable"));
     }
   });
 
