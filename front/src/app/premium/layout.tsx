@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Premium | LearnSup",
-  description: "Découvre les avantages Premium LearnSup.",
+  title: "Devenir Premium",
+  description: "Soutiens la plateforme et débloque des fonctionnalités exclusives avec LearnSup Premium.",
+  openGraph: {
+    title: "LearnSup Premium",
+    description: "Accède au meilleur de l'apprentissage entre pairs.",
+  },
 };
 
 export default function PremiumLayout({

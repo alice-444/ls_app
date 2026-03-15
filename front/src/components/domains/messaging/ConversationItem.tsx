@@ -6,8 +6,8 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import * as Avatar from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
-import { Trash2, BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { DeleteConversationDialog } from "./DeleteConversationDialog";
 import { PresenceIndicator } from "./PresenceIndicator";
 import { trpc } from "@/utils/trpc";
@@ -36,7 +36,7 @@ export function ConversationItem({
   conversation,
   onDelete,
   isDeleting = false,
-}: ConversationItemProps) {
+}: Readonly<ConversationItemProps>) {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -71,13 +71,13 @@ export function ConversationItem({
 
   const timestamp = conversation.lastMessage
     ? formatDistanceToNow(new Date(conversation.lastMessage.createdAt), {
-        addSuffix: true,
-        locale: fr,
-      })
+      addSuffix: true,
+      locale: fr,
+    })
     : formatDistanceToNow(new Date(conversation.updatedAt), {
-        addSuffix: true,
-        locale: fr,
-      });
+      addSuffix: true,
+      locale: fr,
+    });
 
   const handleClick = () => {
     router.push(`/inbox/${conversation.conversationId}`);
@@ -95,10 +95,11 @@ export function ConversationItem({
 
   return (
     <>
-      <div
+      <button
+        type="button"
         onClick={handleClick}
         className={cn(
-          "flex items-center gap-4 p-4 rounded-lg cursor-pointer transition-colors hover:bg-accent group",
+          "w-full text-left flex items-center gap-4 p-4 rounded-lg cursor-pointer transition-colors hover:bg-accent group",
           hasUnread && "bg-accent/50 font-semibold"
         )}
       >
@@ -163,7 +164,7 @@ export function ConversationItem({
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         )}
-      </div>
+      </button>
       <DeleteConversationDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}

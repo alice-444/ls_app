@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { MessageSquare, Plus, Search, Pin } from "lucide-react";
 import { useSocket } from "@/lib/socket-client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { toast } from "sonner";
 import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,57 @@ import { NewConversationDialog } from "./NewConversationDialog";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+
+
+function sortConversationsByPinnedAndTime<T extends { isPinned?: boolean; lastMessage?: { createdAt: string }; updatedAt: string }>(
+  convs: T[]
+): T[] {
+  return [...convs].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : new Date(a.updatedAt).getTime();
+    const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : new Date(b.updatedAt).getTime();
+    return timeB - timeA;
+  });
+}
+
+function getNewConversationButtonText(hasConnections: boolean, userRole?: string | null): string {
+  if (!hasConnections) return userRole === "MENTOR" ? "Voir mon réseau" : "Trouver un mentor";
+  return "Nouvelle conversation";
+}
+
+function getNewConversationShortText(hasConnections: boolean, userRole?: string | null): string {
+  if (!hasConnections) return userRole === "MENTOR" ? "Mon réseau" : "Trouver un mentor";
+  return "Nouvelle conversation";
+}
+
+function applyConversationUpdate<T extends { conversationId: string; isPinned?: boolean; lastMessage?: { createdAt: string }; updatedAt: string }>(
+  prev: T[],
+  updated: T
+): T[] {
+  const index = prev.findIndex((c) => c.conversationId === updated.conversationId);
+  let newConversations: T[];
+  if (index >= 0) {
+    newConversations = [...prev];
+    newConversations[index] = updated;
+  } else {
+    newConversations = [updated, ...prev];
+  }
+  return sortConversationsByPinnedAndTime(newConversations);
+}
+
+function filterConversations<T extends { otherUserDisplayName?: string | null; otherUserName?: string | null; isPinned?: boolean }>(
+  convs: T[],
+  searchQuery: string,
+  showOnlyPinned: boolean
+): T[] {
+  return convs.filter((conv) => {
+    const displayName = conv.otherUserDisplayName || conv.otherUserName || "";
+    const matchesSearch = displayName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesPinFilter = !showOnlyPinned || conv.isPinned;
+    return matchesSearch && matchesPinFilter;
+  });
+}
 
 export function ConversationList() {
   const router = useRouter();
@@ -50,7 +101,7 @@ export function ConversationList() {
     userName: string;
   } | null>(null);
 
-  const otherUserIds = useMemo(() => 
+  const otherUserIds = useMemo(() =>
     localConversations.map(c => c.otherUserId),
     [localConversations]
   );
@@ -118,17 +169,25 @@ export function ConversationList() {
       },
     });
 
-  const handleTogglePin = (conversationId: string, isPinned: boolean) => {
-    if (isPinned) {
-      unpinConversationMutation.mutate({ conversationId });
-    } else {
-      pinConversationMutation.mutate({ conversationId });
-    }
+  const handlePin = (conversationId: string) => {
+    pinConversationMutation.mutate({ conversationId });
+  };
+
+  const handleUnpin = (conversationId: string) => {
+    unpinConversationMutation.mutate({ conversationId });
   };
 
   const handleBlockUser = (otherUserId: string, displayName: string) => {
     setUserToBlock({ userId: otherUserId, userName: displayName });
     setBlockDialogOpen(true);
+  };
+
+  const handleNewConversationClick = () => {
+    if (hasConnections) {
+      setShowNewConversationDialog(true);
+    } else {
+      router.push(userRole === "MENTOR" ? "/network" : "/mentors");
+    }
   };
 
   useEffect(() => {
@@ -143,27 +202,9 @@ export function ConversationList() {
     const handleConversationUpdate = (
       updatedConversation: NonNullable<typeof conversations>[0]
     ) => {
-      setLocalConversations((prev) => {
-        const index = prev.findIndex(
-          (c) => c.conversationId === updatedConversation.conversationId
-        );
-        let newConversations: Conversation[];
-        if (index >= 0) {
-          newConversations = [...prev];
-          newConversations[index] = updatedConversation;
-        } else {
-          newConversations = [updatedConversation, ...prev];
-        }
-
-        return newConversations.sort((a, b) => {
-          if (a.isPinned && !b.isPinned) return -1;
-          if (!a.isPinned && b.isPinned) return 1;
-          
-          const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : new Date(a.updatedAt).getTime();
-          const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : new Date(b.updatedAt).getTime();
-          return timeB - timeA;
-        });
-      });
+      setLocalConversations((prev) =>
+        applyConversationUpdate(prev, updatedConversation)
+      );
     };
 
     const handlePresenceChange = (data: { userId: string }) => {
@@ -193,10 +234,6 @@ export function ConversationList() {
   }
 
   if (!localConversations || localConversations.length === 0) {
-    const buttonText = !hasConnections 
-        ? (userRole === "MENTOR" ? "Voir mon réseau" : "Trouver un mentor")
-        : "Nouvelle conversation";
-
     return (
       <div className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl p-8 shadow-xl">
         <div className="text-center py-12 text-ls-muted">
@@ -204,13 +241,7 @@ export function ConversationList() {
           <p className="text-lg font-medium text-ls-heading mb-2">Aucune conversation</p>
           <p className="mb-4">Commence à réseauter pour discuter !</p>
           <Button
-            onClick={() => {
-              if (!hasConnections) {
-                router.push(userRole === "MENTOR" ? "/network" : "/mentors");
-              } else {
-                setShowNewConversationDialog(true);
-              }
-            }}
+            onClick={handleNewConversationClick}
             disabled={isLoadingConnections}
             variant="cta" size="cta" className="px-6 py-2"
           >
@@ -219,7 +250,7 @@ export function ConversationList() {
             ) : (
               <>
                 <Plus className="h-4 w-4 mr-2" />
-                {buttonText}
+                {getNewConversationButtonText(hasConnections, userRole)}
               </>
             )}
           </Button>
@@ -228,23 +259,13 @@ export function ConversationList() {
     );
   }
 
-  const filteredConversations = localConversations.filter((conv) => {
-    const displayName = conv.otherUserDisplayName || conv.otherUserName || "";
-    const matchesSearch = displayName
-      .toLowerCase()
-      .includes(conversationSearchQuery.toLowerCase());
-    const matchesPinFilter = !showOnlyPinned || conv.isPinned;
-    return matchesSearch && matchesPinFilter;
-  });
+  const filteredConversations = filterConversations(
+    localConversations,
+    conversationSearchQuery,
+    showOnlyPinned
+  );
 
-  const sortedConversations = [...filteredConversations].sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    
-    const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : new Date(a.updatedAt).getTime();
-    const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : new Date(b.updatedAt).getTime();
-    return timeB - timeA;
-  });
+  const sortedConversations = sortConversationsByPinnedAndTime(filteredConversations);
 
   const totalPages = Math.ceil(
     sortedConversations.length / conversationsPerPage
@@ -296,13 +317,7 @@ export function ConversationList() {
             </Button>
 
             <Button
-              onClick={() => {
-                if (!hasConnections) {
-                  router.push(userRole === "MENTOR" ? "/network" : "/mentors");
-                } else {
-                  setShowNewConversationDialog(true);
-                }
-              }}
+              onClick={handleNewConversationClick}
               disabled={isLoadingConnections}
               variant="cta" size="ctaSm" className="flex-1 sm:flex-initial"
             >
@@ -311,9 +326,7 @@ export function ConversationList() {
               ) : (
                 <>
                   <span className="hidden sm:inline">
-                    {!hasConnections 
-                      ? (userRole === "MENTOR" ? "Mon réseau" : "Trouver un mentor")
-                      : "Nouvelle conversation"}
+                    {getNewConversationShortText(hasConnections, userRole)}
                   </span>
                   <span className="sm:hidden">
                     Nouveau
@@ -341,7 +354,8 @@ export function ConversationList() {
                 <ConversationRow
                   key={conversation.conversationId}
                   conversation={conversation}
-                  onTogglePin={handleTogglePin}
+                  onPin={handlePin}
+                  onUnpin={handleUnpin}
                   onDelete={(id) => deleteMutation.mutate({ conversationId: id })}
                   onBlockUser={handleBlockUser}
                   isDeleting={deleteMutation.isPending}
