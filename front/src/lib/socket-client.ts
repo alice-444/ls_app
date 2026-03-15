@@ -5,27 +5,6 @@ import { io, Socket } from "socket.io-client";
 import { authClient } from "./auth-client";
 
 let socketInstance: Socket | null = null;
-let runtimeSocketUrlPromise: Promise<string | null> | null = null;
-
-const getRuntimeSocketUrl = async (): Promise<string | null> => {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  if (!runtimeSocketUrlPromise) {
-    runtimeSocketUrlPromise = fetch("/api/runtime-config", {
-      cache: "no-store",
-    })
-      .then(async (response) => {
-        if (!response.ok) return null;
-        const data = (await response.json()) as { socketUrl?: string | null };
-        return data.socketUrl?.trim() || null;
-      })
-      .catch(() => null);
-  }
-
-  return runtimeSocketUrlPromise;
-};
 
 export function useSocket(): Socket | null {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -46,56 +25,39 @@ export function useSocket(): Socket | null {
       return;
     }
 
-    let isCancelled = false;
+    const serverUrl =
+      process.env.NEXT_PUBLIC_SOCKET_URL || 
+      process.env.NEXT_PUBLIC_SERVER_URL || 
+      "http://localhost:5050";
 
-    const setupSocket = async () => {
-      const runtimeSocketUrl = await getRuntimeSocketUrl();
-      if (isCancelled) return;
+    console.log(`Connecting to WebSocket at: ${serverUrl}`);
 
-      const isLocalhost =
-        typeof window !== "undefined" &&
-        (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+    socketInstance = io(serverUrl, {
+      path: "/socket.io",
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
 
-      const serverUrl =
-        runtimeSocketUrl ||
-        (isLocalhost
-          ? "http://localhost:4500"
-          : typeof window !== "undefined"
-            ? window.location.origin
-            : "http://localhost:4500");
-
-      console.log(`Connecting to WebSocket at: ${serverUrl}`);
-
-      socketInstance = io(serverUrl, {
-        path: "/socket.io",
-        withCredentials: true,
-        transports: ["websocket", "polling"],
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-      });
-
-      socketInstance.on("connect", () => {
-        console.log("WebSocket connected successfully");
-        setSocket(socketInstance);
-      });
-
-      socketInstance.on("connect_error", (error) => {
-        console.error("WebSocket connection error:", error.message);
-        setSocket(null);
-      });
-
-      socketInstance.on("disconnect", (reason) => {
-        console.log("WebSocket disconnected:", reason);
-        setSocket(null);
-      });
-
+    socketInstance.on("connect", () => {
+      console.log("WebSocket connected successfully");
       setSocket(socketInstance);
-    };
+    });
 
-    void setupSocket();
+    socketInstance.on("connect_error", (error) => {
+      console.error("WebSocket connection error:", error.message);
+      setSocket(null);
+    });
+
+    socketInstance.on("disconnect", (reason) => {
+      console.log("WebSocket disconnected:", reason);
+      setSocket(null);
+    });
+
+    setSocket(socketInstance);
 
     return () => {
-      isCancelled = true;
       // Don't disconnect on unmount, keep connection alive
       // socketInstance?.disconnect();
     };
