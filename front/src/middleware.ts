@@ -33,7 +33,8 @@ export function middleware(request: NextRequest) {
   const allCookies = request.cookies.getAll();
   const hasSession = allCookies.some(c => 
     c.name.includes("session_token") || 
-    c.name.includes("auth_session")
+    c.name.includes("auth_session") ||
+    c.name.includes("better-auth.session")
   );
 
   const isPublicRoute = PUBLIC_ROUTES.some(route => 
@@ -41,7 +42,9 @@ export function middleware(request: NextRequest) {
   );
 
   if (hasSession && (pathname === "/login" || pathname === "/sign-up")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    const callbackUrl = request.nextUrl.searchParams.get("callbackUrl");
+    const redirectUrl = callbackUrl ? new URL(callbackUrl, request.url) : new URL("/dashboard", request.url);
+    return NextResponse.redirect(redirectUrl);
   }
 
   if (!hasSession && !isPublicRoute) {
