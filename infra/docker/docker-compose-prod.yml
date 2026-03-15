@@ -59,6 +59,7 @@ services:
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
       - "traefik.http.routers.backend.middlewares=backend-headers"
       - "traefik.http.middlewares.backend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.backend-headers.headers.customrequestheaders.X-Forwarded-Host=api.learnsup.fr"
       - "traefik.http.services.backend.loadbalancer.server.port=4500"
       - "traefik.http.services.backend.loadbalancer.sticky=true"
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.name=ls_io_sticky"

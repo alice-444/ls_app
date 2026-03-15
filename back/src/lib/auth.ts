@@ -15,15 +15,14 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   cookie: {
-    domain: process.env.BETTER_AUTH_URL && !process.env.BETTER_AUTH_URL.includes("localhost") ? 
-      "." + new URL(process.env.BETTER_AUTH_URL).hostname.split(".").slice(-2).join(".") : 
-      undefined,
+    domain: ".learnsup.fr", // Force le domaine racine pour le partage entre sous-domaines
     extraAttributes: {
       SameSite: "Lax",
+      Secure: true,
     },
   },
   advanced: {
-    useSecureCookies: process.env.BETTER_AUTH_URL?.startsWith("https://"),
+    useSecureCookies: true,
   },
   trustedOrigins: [
     process.env.CORS_ORIGIN || "",
