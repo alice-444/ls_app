@@ -66,6 +66,8 @@ services:
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.samesite=none"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.domain=.learnsup.fr"
+      - "traefik.http.services.backend.loadbalancer.passhostheader=true"
       - "traefik.docker.network=vps-mds"
 
   traefik:
