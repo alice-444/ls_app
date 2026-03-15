@@ -16,12 +16,9 @@ export const authRouter = router({
           { operation: "sendMagicLink", email: input.email }
         );
       }
-      const frontendUrl = process.env.CORS_ORIGIN || "https://app.learnsup.fr";
       await auth.api.signInMagicLink({
         body: {
           email: input.email,
-          callbackURL: `${frontendUrl}/dashboard`,
-          errorCallbackURL: `${frontendUrl}/login?error=magic_link`,
         },
         headers: ctx.req?.headers ?? new Headers(),
       });

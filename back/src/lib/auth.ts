@@ -102,8 +102,15 @@ export const auth = betterAuth({
     }),
     magicLink({
       sendMagicLink: async (data, request) => {
+        // data.url ressemble à https://api.learnsup.fr/api/auth/magic-link/verify?token=...
+        // Nous le transformons pour pointer vers le frontend (Verification côté client)
+        const url = new URL(data.url);
+        const token = url.searchParams.get("token");
+        const frontendUrl = process.env.CORS_ORIGIN || "https://app.learnsup.fr";
+        const verificationUrl = `${frontendUrl}/auth/verify?token=${token}`;
+
         const { html, text } = await renderEmailTemplate(
-          React.createElement(AuthMagicLinkEmail, { url: data.url })
+          React.createElement(AuthMagicLinkEmail, { url: verificationUrl })
         );
         await container.emailService.sendEmail({
           to: data.email,
