@@ -8,11 +8,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { Loader2, AlertTriangle, X, MessageSquare } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
 
 const rejectRequestSchema = z.object({
   reason: z

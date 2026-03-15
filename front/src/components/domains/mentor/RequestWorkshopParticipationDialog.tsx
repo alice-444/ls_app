@@ -11,17 +11,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import {
   Loader2,
   BookOpen,
@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 import type { WorkshopBase } from "@ls-app/shared";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { useRouter } from "next/navigation";
 
 const requestParticipationSchema = z.object({
@@ -58,7 +58,7 @@ interface RequestWorkshopParticipationDialogProps {
   onSuccess?: () => void;
 }
 
-const WORKSHOP_REQUEST_COST = 10;
+const WORKSHOP_REQUEST_COST = 5;
 
 export function RequestWorkshopParticipationDialog({
   open,

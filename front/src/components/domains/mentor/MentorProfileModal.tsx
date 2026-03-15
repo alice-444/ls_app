@@ -7,10 +7,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { trpc } from "@/utils/trpc";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import {
   User,
   UserPlus,
