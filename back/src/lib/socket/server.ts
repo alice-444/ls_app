@@ -47,10 +47,13 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       methods: ["GET", "POST"],
     },
     path: "/socket.io",
-    addTrailingSlash: false,
-    pingTimeout: 60000, // Increased for better stability in production
-    pingInterval: 25000, // Adjusted to match common proxy timeouts
-    transports: ["polling", "websocket"], // Polling first is more robust for fallback
+    addTrailingSlash: true, // Plus compatible avec certains proxies
+    pingTimeout: 60000,
+    pingInterval: 25000,
+    transports: ["websocket", "polling"], // On remet websocket en premier pour tenter l'upgrade direct
+    allowEIO3: true,
+    maxHttpBufferSize: 1e7, // 10MB au lieu de 1MB pour les sessions lourdes
+    perMessageDeflate: false, // Désactiver la compression pour éviter les conflits avec Traefik
   });
 
   io.use(async (socket, next) => {
@@ -61,14 +64,18 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
         return next(new Error("Authentication required"));
       }
 
-      // Build a proper Headers object for Better Auth
+      // Build a proper Headers object with ALL handshake headers
       const headersObj = new Headers();
-      headersObj.set("cookie", cookies);
-      // Copy other relevant headers
-      const handshakeHeaders = socket.handshake.headers;
-      if (handshakeHeaders["user-agent"]) headersObj.set("user-agent", handshakeHeaders["user-agent"] as string);
-      if (handshakeHeaders["x-forwarded-for"]) headersObj.set("x-forwarded-for", handshakeHeaders["x-forwarded-for"] as string);
-
+      Object.entries(socket.handshake.headers).forEach(([key, value]) => {
+        if (value) {
+          if (Array.isArray(value)) {
+            value.forEach(v => headersObj.append(key, v));
+          } else {
+            headersObj.set(key, value as string);
+          }
+        }
+      });
+      
       const session = await auth.api.getSession({ headers: headersObj });
 
       if (!session?.user) {
