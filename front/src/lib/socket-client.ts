@@ -33,9 +33,11 @@ export function useSocket(): Socket | null {
     socketInstance = io(serverUrl, {
       path: "/socket.io",
       withCredentials: true,
-      transports: ["websocket", "polling"],
-      reconnectionAttempts: 5,
+      transports: ["polling", "websocket"], // Match server order
+      reconnectionAttempts: 20, // More attempts for mobile users
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000, // Max delay between attempts
+      randomizationFactor: 0.5,
     });
 
     socketInstance.on("connect", () => {

@@ -48,9 +48,9 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
     },
     path: "/socket.io",
     addTrailingSlash: false,
-    pingTimeout: 20000,
-    pingInterval: 10000,
-    transports: ["websocket", "polling"], // Allow both for better compatibility
+    pingTimeout: 60000, // Increased for better stability in production
+    pingInterval: 25000, // Adjusted to match common proxy timeouts
+    transports: ["polling", "websocket"], // Polling first is more robust for fallback
   });
 
   io.use(async (socket, next) => {

@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // EXCLUSION CRITIQUE : Ne pas interférer avec Socket.IO
+  // Socket.IO gère ses propres en-têtes et le handshake.
+  if (pathname.startsWith("/socket.io")) {
+    return NextResponse.next();
+  }
+
   // Use the actual request origin or fallback to process.env.CORS_ORIGIN
   const origin =
     request.headers.get("origin") || process.env.CORS_ORIGIN || "*";
@@ -15,12 +23,11 @@ export function proxy(request: NextRequest) {
         "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS,PUT,PATCH",
         "Access-Control-Allow-Headers":
-          "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version",
+          "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version, Sentry-Trace, baggage",
       },
     });
   }
 
-  // Handle normal requests
   const response = NextResponse.next();
 
   // Add CORS headers to all responses
@@ -32,13 +39,15 @@ export function proxy(request: NextRequest) {
   );
   response.headers.set(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version",
+    "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version, Sentry-Trace, baggage",
   );
 
   return response;
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: "/:path*",
+  // On matche tout sauf /socket.io pour éviter les conflits
+  matcher: [
+    "/((?!socket.io).*)",
+  ],
 };

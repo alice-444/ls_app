@@ -15,6 +15,11 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const httpServer = createServer(async (req, res) => {
     try {
+      // Skip Socket.IO requests to let the Socket.IO server handle them directly
+      if (req.url?.startsWith("/socket.io")) {
+        return;
+      }
+
       // Must use explicit origin for credentials support
       const origin = req.headers.origin || process.env.CORS_ORIGIN || "https://app.learnsup.fr";
       
