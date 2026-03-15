@@ -1,0 +1,100 @@
+services:
+  # Service Frontend
+  frontend:
+      build:
+      context: ../../
+      dockerfile: ./infra/docker/front/prod/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
+      SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+    networks:
+      - vps-mds
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_URL}`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+      - "traefik.http.routers.frontend.middlewares=frontend-headers"
+      - "traefik.http.middlewares.frontend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3001"
+      - "traefik.docker.network=vps-mds"
+
+  # Service Backend
+  backend:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/back/prod/Dockerfile
+    ports:
+      - "4500:4500"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      CRON_SECRET: ${CRON_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+      POLAR_LEARNSUP: ${POLAR_LEARNSUP}
+      POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
+      SEND_EMAILS: ${SEND_EMAILS}
+      DAILY_API_KEY: ${DAILY_API_KEY}
+      DAILY_DOMAIN: ${DAILY_DOMAIN}
+      DAILY_WEBHOOK_SECRET: ${DAILY_WEBHOOK_SECRET}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      PORT_BACKEND: 4500
+      HOSTNAME_BACKEND: ${HOSTNAME_BACKEND}
+    networks:
+      - vps-mds
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${BACKEND_URL}`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.routers.backend.middlewares=backend-headers"
+      - "traefik.http.middlewares.backend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.services.backend.loadbalancer.server.port=4500"
+      - "traefik.docker.network=vps-mds"
+
+  traefik:
+    image: traefik:v3.2.1
+    container_name: traefik_reverse_proxy
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.websecure.address=:443"
+      # Activation du /ping pour le healthcheck
+      - "--ping=true"
+      - "--ping.entrypoint=web"
+      # Activation des logs
+      - "--log=true"
+      - "--log.level=DEBUG"
+      # Activation des access logs au format json
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      # On ne garde que les erreurs et on log les headers
+      - "--accesslog.filters.statuscodes=400-499,500-599"
+      - "--accesslog.fields.headers.defaultMode=keep"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=carole.bouche@my-digital-school.org"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - vps-mds
+
+networks:
+  vps-mds:
+    external: true
