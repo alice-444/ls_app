@@ -1,7 +1,7 @@
 services:
   # Service Frontend
   frontend:
-      build:
+    build:
       context: ../../
       dockerfile: ./infra/docker/front/prod/Dockerfile
     ports:
