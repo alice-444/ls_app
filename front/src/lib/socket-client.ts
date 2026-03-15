@@ -50,7 +50,8 @@ export function useSocket(): Socket | null {
     socketInstance.on("connect_error", (error) => {
       console.error("WebSocket connection error:", error.message);
       // Tenter le polling si websocket échoue
-      if (socketInstance && socketInstance.io.opts.transports?.includes("websocket")) {
+      const transports = socketInstance?.io.opts.transports as string[] | undefined;
+      if (socketInstance && transports?.includes("websocket")) {
         console.log("Retrying with polling...");
       }
       setSocket(null);
