@@ -32,6 +32,7 @@ export const auth = betterAuth({
   }),
   cookie: {
     domain: getCookieDomain(),
+    path: "/",
     extraAttributes: {
       SameSite: "None",
       Secure: true,
