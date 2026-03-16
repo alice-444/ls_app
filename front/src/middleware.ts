@@ -66,6 +66,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   console.log(`[middleware] Incoming request: ${pathname}`);
+  console.log("[middleware] All headers:", Object.fromEntries(request.headers.entries()));
 
   // Ignorer les routes techniques et Socket.IO
   if (
