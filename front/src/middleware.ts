@@ -46,7 +46,6 @@ async function checkSession(request: NextRequest): Promise<boolean> {
       headers: {
         cookie: cookieHeader,
       },
-      credentials: "include",
     });
 
     console.log(`[middleware] Backend response status: ${response.status}`);
