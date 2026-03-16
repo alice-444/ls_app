@@ -13,16 +13,40 @@ const PUBLIC_ROUTES = [
   "/privacy",
   "/info",
   "/mentors",
-  "/monitoring"
+  "/monitoring",
 ];
 
-export function middleware(request: NextRequest) {
+const API_BASE_URL = process.env.RUNTIME_API_URL || "https://api.learnsup.fr";
+
+async function checkSession(request: NextRequest): Promise<boolean> {
+  try {
+    // Récupérer les cookies depuis la requête
+    const cookieHeader = request.headers.get("cookie") || "";
+
+    // Appeler le backend pour vérifier la session
+    const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
+      method: "GET",
+      headers: {
+        cookie: cookieHeader,
+      },
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    return data.authenticated === true;
+  } catch (error) {
+    console.error("[middleware] Session check failed:", error);
+    return false;
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
   // Ignorer les routes techniques et Socket.IO
   if (
-    pathname.startsWith("/_next") || 
-    pathname.startsWith("/api") || 
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
     pathname.startsWith("/trpc") ||
     pathname.startsWith("/socket.io") ||
     pathname.includes(".")
@@ -30,23 +54,17 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const allCookies = request.cookies.getAll();
-  // On cherche n'importe quel cookie qui ressemble à une session
-  const hasSession = allCookies.some(c => 
-    c.name.toLowerCase().includes("session") || 
-    c.name.toLowerCase().includes("auth") ||
-    c.name.toLowerCase().includes("token")
-  );
+  const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 
-  const isPublicRoute = PUBLIC_ROUTES.some(route => 
-    pathname === route || pathname.startsWith(route + "/")
-  );
-
-  if (hasSession && (pathname === "/login" || pathname === "/sign-up")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  // Si c'est une route publique, laisser passer
+  if (isPublicRoute) {
+    return NextResponse.next();
   }
 
-  if (!hasSession && !isPublicRoute) {
+  // Pour les routes protégées, vérifier la session
+  const isAuthenticated = await checkSession(request);
+
+  if (!isAuthenticated) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
