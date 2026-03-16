@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Connexion | LearnSup",
-  description: "Connectez-vous à votre compte LearnSup pour accéder à la plateforme d'apprentissage solidaire.",
+  title: "Connexion ou Inscription",
+  description: "Rejoins la communauté LearnSup. Connecte-toi pour accéder à tes ateliers ou crée un compte pour commencer à apprendre.",
 };
 
 export default function LoginLayout({

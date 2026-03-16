@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { User, BookOpen, Star, Users } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { User, BookOpen } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import type { MentorCardProps } from "@/types/workshop-components";
 
-export function MentorCard({ mentor, onViewProfile, className }: MentorCardProps) {
+export function MentorCard({ mentor, onViewProfile, className }: Readonly<MentorCardProps>) {
   const {
     id,
     displayName,
@@ -59,8 +59,8 @@ export function MentorCard({ mentor, onViewProfile, className }: MentorCardProps
         </p>
 
         <div className="flex flex-wrap gap-1">
-          {areasOfExpertise?.slice(0, 3).map((expertise, idx) => (
-            <Badge key={idx} variant="outline" className="text-[10px] px-1.5 py-0 rounded-full border-border/50 bg-brand/5 text-ls-heading">
+          {areasOfExpertise?.slice(0, 3).map((expertise) => (
+            <Badge key={expertise} variant="outline" className="text-[10px] px-1.5 py-0 rounded-full border-border/50 bg-brand/5 text-ls-heading">
               {expertise}
             </Badge>
           ))}

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "FAQ - LearnSup",
-  description: "Foire aux questions - Toutes vos réponses sur LearnSup.",
+  title: "Foire Aux Questions",
+  description: "Toutes les réponses à vos questions sur le fonctionnement de LearnSup, les ateliers et le mentorat.",
+  openGraph: {
+    title: "FAQ | LearnSup",
+    description: "Besoin d'aide ? Consultez notre foire aux questions.",
+  },
 };
 
 export default function FAQLayout({

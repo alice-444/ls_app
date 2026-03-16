@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
@@ -17,9 +17,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+} from "@/components/ui/Dialog";
+import { Input } from "@/components/ui/Input";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
 
 export function DeleteAccountSection() {
   const router = useRouter();
@@ -173,9 +173,7 @@ export function DeleteAccountSection() {
               disabled={isDeleting || confirmation !== "DELETE"}
             >
               {isDeleting ? (
-                <>
-                  <span className="mr-2">Suppression...</span>
-                </>
+                <span className="mr-2">Suppression...</span>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4 mr-2" />

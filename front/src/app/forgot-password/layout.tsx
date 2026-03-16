@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mot de passe oublié | LearnSup",
-  description: "Demandez un lien pour réinitialiser votre mot de passe LearnSup.",
+  title: "Mot de Passe Oublié",
+  description: "Récupère l'accès à ton compte LearnSup. Demande un lien de réinitialisation sécurisé.",
 };
 
 export default function ForgotPasswordLayout({

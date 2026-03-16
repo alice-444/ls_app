@@ -1,8 +1,8 @@
 "use client";
 
 import { User, GraduationCap } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 import { StudyDomainSelect } from "./StudyDomainSelect";
 
 const MAX_LENGTH = 50;
@@ -31,7 +31,7 @@ export function ApprenticeProfileForm({
   setStudyProgramVal,
   fieldErrors,
   blockCardClass,
-}: ApprenticeProfileFormProps) {
+}: Readonly<ApprenticeProfileFormProps>) {
   return (
     <>
       <div className={blockCardClass}>
@@ -71,7 +71,7 @@ export function ApprenticeProfileForm({
               </p>
             )}
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <Label htmlFor="bio">Bio (optionnelle)</Label>
@@ -118,7 +118,7 @@ export function ApprenticeProfileForm({
             onChange={setStudyDomainVal}
             error={fieldErrors.studyDomain}
           />
-          
+
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <Label htmlFor="studyProgram">Cursus</Label>

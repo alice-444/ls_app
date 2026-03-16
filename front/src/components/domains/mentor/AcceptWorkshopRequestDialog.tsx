@@ -11,10 +11,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 import { Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
@@ -202,7 +202,7 @@ export function AcceptWorkshopRequestDialog({
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
               <input
-                type="checkbox"
+                type="Checkbox"
                 id="isVirtual"
                 className="h-4 w-4 rounded border-gray-300"
                 {...register("isVirtual")}

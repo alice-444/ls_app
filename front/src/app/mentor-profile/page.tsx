@@ -1,11 +1,11 @@
 "use client";
 
 import { Loader2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { BackButton } from "@/components/shared/back-button";
+import { Button } from "@/components/ui/Button";
+import { Label } from "@/components/ui/Label";
+import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import ShinyText from "@/components/ui/ShinyText";
 import {
   Card,
@@ -13,18 +13,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 
-import { PREDEFINED_TOPICS, SIDEBAR_ITEMS, type ProfileSection } from "@/components/domains/mentor-profile/constants";
+import { PREDEFINED_TOPICS, SIDEBAR_ITEMS, type ProfileSection } from "@/components/domains/MentorProfile/constants";
 import { useMentorProfile } from "@/hooks/useMentorProfile";
 import {
   BasicInformationSection,
   TagListSection,
   SocialMediaSection,
   PublicationSection,
-} from "@/components/domains/mentor-profile";
+} from "@/components/domains/MentorProfile";
 import { ProfilePreviewCard } from "@/components/domains/profil/ProfilePreviewCard";
 
 export default function MentorProfilePage() {
@@ -85,8 +85,8 @@ export default function MentorProfilePage() {
     exit: { opacity: 0, y: -8 },
   };
 
-  const onFormError = (formErrors: any) => {
-    console.error("Form validation errors (detailed):", JSON.parse(JSON.stringify(formErrors)));
+  const onFormError = (formErrors: Record<string, unknown>) => {
+    console.error("Form validation errors (detailed):", structuredClone(formErrors));
     console.log("Current form values:", form.getValues());
     toast.error("Veuillez vérifier les erreurs dans toutes les sections du formulaire.");
 

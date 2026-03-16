@@ -12,7 +12,7 @@ interface ProgressIndicatorProps {
 export function ProgressIndicator({
   currentStep,
   selectedRole,
-}: ProgressIndicatorProps) {
+}: Readonly<ProgressIndicatorProps>) {
   const maxSteps = getMaxSteps(selectedRole, currentStep);
   const currentStepNum = getCurrentStepNumber(currentStep);
   const steps = buildSteps(selectedRole, currentStep);
@@ -33,11 +33,10 @@ export function ProgressIndicator({
             className="flex flex-col items-center flex-1 relative"
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-                step.number <= currentStepNum
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${step.number <= currentStepNum
                   ? "bg-[#FFB647] text-[#26547c] shadow-lg"
                   : "bg-white dark:bg-[#111827] border-2 border-gray-300 dark:border-white/10 text-gray-500 dark:text-gray-400"
-              }`}
+                }`}
             >
               {step.number < currentStepNum ? (
                 <CheckCircle2 className="h-6 w-6" />
@@ -47,11 +46,10 @@ export function ProgressIndicator({
             </div>
             <div className="mt-2 text-center">
               <p
-                className={`text-xs font-bold transition-colors uppercase tracking-tight ${
-                  step.number <= currentStepNum
+                className={`text-xs font-bold transition-colors uppercase tracking-tight ${step.number <= currentStepNum
                     ? "text-[#FFB647] dark:text-[#FFB647]"
                     : "text-gray-400 dark:text-gray-500"
-                }`}
+                  }`}
               >
                 {step.label}
               </p>
@@ -75,7 +73,7 @@ function getMaxSteps(selectedRole: Role | null, currentStep: Step): number {
 
 function getCurrentStepNumber(currentStep: Step): number {
   switch (currentStep) {
-    case "select":
+    case "Select":
       return 1;
     case "confirm-features":
       return 2;

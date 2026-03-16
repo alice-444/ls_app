@@ -6,8 +6,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { Search, Users } from "lucide-react";
 import { ConnectionItem } from "./ConnectionItem";
 import { useState } from "react";
@@ -37,7 +37,7 @@ export function AcceptedConnectionsList({
   onRemove,
   onMessage,
   isRemoving,
-}: AcceptedConnectionsListProps) {
+}: Readonly<AcceptedConnectionsListProps>) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredConnections = connections.filter((connection) => {

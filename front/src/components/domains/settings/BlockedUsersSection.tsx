@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Ban, User, X } from "lucide-react";
 
 export function BlockedUsersSection() {

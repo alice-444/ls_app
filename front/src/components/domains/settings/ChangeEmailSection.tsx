@@ -4,14 +4,11 @@ import { useState } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Mail, Eye, EyeOff, Info } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
@@ -22,9 +19,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+} from "@/components/ui/Dialog";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
 
 export function ChangeEmailSection() {
   const { data: session } = authClient.useSession();
@@ -38,7 +34,7 @@ export function ChangeEmailSection() {
       onSuccess: (data: { message?: string }) => {
         toast.success(
           data.message ||
-            "Un lien de vérification a été envoyé à votre nouvelle adresse email"
+          "Un lien de vérification a été envoyé à votre nouvelle adresse email"
         );
         setIsDialogOpen(false);
         setNewEmail("");

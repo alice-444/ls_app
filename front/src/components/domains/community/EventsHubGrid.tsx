@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { Calendar, MapPin, ExternalLink, Info } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -20,7 +20,7 @@ interface EventsHubGridProps {
   events: CommunityEvent[];
 }
 
-export function EventsHubGrid({ events }: EventsHubGridProps) {
+export function EventsHubGrid({ events }: Readonly<EventsHubGridProps>) {
   if (events.length === 0) {
     return (
       <div className="bg-card/50 border-2 border-dashed border-border rounded-2xl p-12 text-center backdrop-blur-sm">

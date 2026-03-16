@@ -5,23 +5,21 @@ import { trpc } from "@/utils/trpc";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import {
   Loader2,
-  MessageSquare,
   Clock,
   Info,
   LifeBuoy
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Badge } from "@/components/ui/badge";
-import { BackButton } from "@/components/shared/back-button";
-import { SupportThread } from "@/components/domains/admin/support/support-thread";
+import { Badge } from "@/components/ui/Badge";
+import { BackButton } from "@/components/shared/BackButton";
+import { SupportThread } from "@/components/domains/admin/support/SupportThread";
 import { PageContainer } from "@/components/shared/layout";
 
 export default function SupportRequestDetailPage() {

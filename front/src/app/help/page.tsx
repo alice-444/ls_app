@@ -4,10 +4,10 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Settings, CreditCard, MessageSquare, Video } from "lucide-react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { faqConfig } from "@/lib/faq-config";
 import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer } from "@/components/shared/layout";
 import { useMemo, Suspense } from "react";
 

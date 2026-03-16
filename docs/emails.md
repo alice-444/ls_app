@@ -14,6 +14,33 @@ Ce document détaille le fonctionnement de l'envoi d'emails dans LearnSup, de la
 
 ---
 
+## 🔄 Flux d'envoi d'un email (Cycle de vie)
+
+Ce diagramme illustre le parcours d'une notification email, du déclencheur métier à l'expédition finale.
+
+```mermaid
+sequenceDiagram
+    participant U as Utilisateur
+    participant S as Service Métier (ex: Workshop)
+    participant E as EmailService (Resend)
+    participant T as Template (React Email)
+    participant R as Resend API
+    participant D as Destinataire
+
+    U->>S: Action (ex: Accepter demande)
+    S->>S: Logique métier (BDD, etc.)
+    S->>T: Instanciation avec props (id, name, link)
+    T-->>S: Template React prêt
+    S->>E: sendEmail(to, subject, template)
+    E->>E: render(template) → HTML
+    E->>R: POST /emails (API Key)
+    R-->>E: 200 OK
+    R->>D: Envoi SMTP/HTTP
+    D-->>U: Réception Notification
+```
+
+---
+
 ## 🏗️ Structure du Code
 
 L'architecture est centralisée dans `back/src/lib/email/` :

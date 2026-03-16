@@ -6,10 +6,10 @@ import { trpc } from "@/utils/trpc";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { BlockedUsersSection } from "@/components/domains/settings/BlockedUsersSection";
-import { CreditsHistorySection } from "@/components/domains/settings/CreditsHistorySection";
-import { SIDEBAR_ITEMS } from "@/components/domains/settings/constants";
-import type { SettingsSection } from "@/components/domains/settings/constants";
+import { BlockedUsersSection } from "@/components/domains/Settings/BlockedUsersSection";
+import { CreditsHistorySection } from "@/components/domains/Settings/CreditsHistorySection";
+import { SIDEBAR_ITEMS } from "@/components/domains/Settings/constants";
+import type { SettingsSection } from "@/components/domains/Settings/constants";
 import {
   AccountSection,
   PersonalInformationSection,
@@ -18,7 +18,7 @@ import {
   FeedbackSection,
   SupportInfoSection,
   ExportDataSection,
-} from "@/components/domains/settings";
+} from "@/components/domains/Settings";
 
 export default function SettingsPage() {
   const { data: session } = authClient.useSession();

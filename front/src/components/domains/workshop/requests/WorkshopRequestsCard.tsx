@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { BookOpen } from "lucide-react";
 import { WorkshopRequestCard } from "./WorkshopRequestCard";
 import type { WorkshopRequest } from "@ls-app/shared";

@@ -7,10 +7,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
 import { Flag, Loader2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ export function ReportFeedbackDialog({
   onOpenChange,
   feedbackId,
   onSuccess,
-}: ReportFeedbackDialogProps) {
+}: Readonly<ReportFeedbackDialogProps>) {
   const [reason, setReason] = useState<string>("");
 
   const reportMutation = trpc.workshopFeedback.reportFeedback.useMutation({

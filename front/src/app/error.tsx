@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ServerCrash, Home, RefreshCw } from "lucide-react";
 
 interface ErrorProps {
@@ -10,7 +10,7 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function Error({ error, reset }: ErrorProps) {
+export default function Error({ error, reset }: Readonly<ErrorProps>) {
   useEffect(() => {
     console.error(error);
   }, [error]);

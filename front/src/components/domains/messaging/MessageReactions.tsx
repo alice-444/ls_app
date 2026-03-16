@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Smile, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Smile } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/Popover";
 import EmojiPicker from "emoji-picker-react";
 import type { EmojiClickData } from "emoji-picker-react";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,7 @@ export function MessageReactions({
   messageId,
   currentUserId,
   conversationId,
-}: MessageReactionsProps) {
+}: Readonly<MessageReactionsProps>) {
   const socket = useSocket();
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
@@ -50,7 +50,7 @@ export function MessageReactions({
   });
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
-    if (socket && socket.connected) {
+    if (socket?.connected) {
       socket.emit("add-reaction", {
         messageId,
         emoji: emojiData.emoji,
@@ -69,24 +69,22 @@ export function MessageReactions({
     );
 
     if (userReaction) {
-      if (socket && socket.connected) {
+      if (socket?.connected) {
         socket.emit("remove-reaction", {
           messageId,
           emoji,
         });
       }
+    } else if (socket?.connected) {
+      socket.emit("add-reaction", {
+        messageId,
+        emoji,
+      });
     } else {
-      if (socket && socket.connected) {
-        socket.emit("add-reaction", {
-          messageId,
-          emoji,
-        });
-      } else {
-        addReactionMutation.mutate({
-          messageId,
-          emoji,
-        });
-      }
+      addReactionMutation.mutate({
+        messageId,
+        emoji,
+      });
     }
   };
 

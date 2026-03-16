@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { AreaChart } from "@tremor/react";
 import {
   AlertOctagon,
@@ -20,8 +20,8 @@ import {
   BarChart3,
 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import type { AdminBIStats } from "@ls-app/shared";
 
 export default function AdminDashboardPage() {

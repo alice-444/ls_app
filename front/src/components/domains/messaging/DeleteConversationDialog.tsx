@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 
 interface DeleteConversationDialogProps {
   open: boolean;
@@ -24,7 +24,7 @@ export function DeleteConversationDialog({
   onConfirm,
   isDeleting,
   conversationName = "cette conversation",
-}: DeleteConversationDialogProps) {
+}: Readonly<DeleteConversationDialogProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>

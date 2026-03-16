@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { GraduationCap } from "lucide-react";
 import { WorkshopCard } from "@/components/domains/workshop/cards/WorkshopCard";
 import type { WorkshopDetailed } from "@ls-app/shared";
@@ -14,7 +14,6 @@ interface AvailableWorkshopsGridProps {
   readonly workshops: WorkshopDetailed[] | undefined;
   readonly onJoinWorkshop: (workshop: WorkshopDetailed) => void;
 }
-
 export function AvailableWorkshopsGrid({
   workshops,
   onJoinWorkshop,

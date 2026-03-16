@@ -2,7 +2,7 @@
 
 import { faqConfig } from "@/lib/faq-config";
 import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 
 export default function FAQPage() {
   return (
@@ -21,7 +21,7 @@ export default function FAQPage() {
       </div>
 
       <div className="space-y-12">
-        {faqConfig.categories.sort((a, b) => a.order - b.order).map((category) => {
+        {faqConfig.categories.toSorted((a, b) => a.order - b.order).map((category) => {
           const categoryQuestions = faqConfig.questions.filter(
             (q) => q.categoryId === category.id
           );

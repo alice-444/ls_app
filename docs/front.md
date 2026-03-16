@@ -25,14 +25,14 @@ flowchart TB
     Toaster[Toaster]
   end
 
-  subgraph Données["Sources de données"]
+  subgraph SD[Sources de données]
     tRPC[tRPC hooks]
     Auth[authClient.useSession]
     API[api-client / customAuthClient]
   end
 
   Root --> P
-  M --> Données
+  M --> SD
   tRPC --> Back["Back /trpc"]
   Auth --> Back
   API --> Back
@@ -55,6 +55,35 @@ sequenceDiagram
   Back-->>Client: JSON
   Client-->>Hook: Données typées
   Hook-->>Page: Affichage
+```
+
+---
+
+## 🔄 Cycle de vie des données (Cache & Mutations)
+
+L'application utilise **TanStack Query** piloté par **tRPC** pour synchroniser l'état du serveur avec l'interface utilisateur.
+
+```mermaid
+flowchart TD
+    UI[Page / Composant] --> Query[trpc.useQuery]
+    Query --> Cache{Cache présent ?}
+    Cache -->|Oui & Fresh| Render[Affichage immédiat]
+    Cache -->|Non ou Stale| API[Appel tRPC Client]
+    API --> Back[Serveur /trpc]
+    Back -->|Données JSON| API
+    API --> UpdateCache[Mise à jour Cache]
+    UpdateCache --> Render
+
+    subgraph Modification["Modification (Mutation)"]
+        Submit[trpc.useMutation]
+        Submit -->|onSuccess| Invalidation[invalidateQueries]
+        Invalidation -->|Trigger| Query
+    end
+
+    %% Styles
+    style Query fill:#dfd,stroke:#333
+    style Mutation fill:#fdd,stroke:#333
+    style Cache stroke-width:4px
 ```
 
 ---
@@ -142,6 +171,14 @@ flowchart LR
     I[Profil]
   end
 
+  subgraph Admin["Si ADMIN (Espace /admin)"]
+    L[Dashboard Admin]
+    M[Signalements / Rapports]
+    N[Utilisateurs / Onboarding]
+    O[Modération / Audit]
+    P[Support / Notifications]
+  end
+
   subgraph Bas["En bas"]
     J[Aide et support]
     K[Informations]
@@ -150,10 +187,11 @@ flowchart LR
   Sidebar[Sidebar] --> Commun
   Sidebar --> Mentor
   Sidebar --> Apprenant
+  Sidebar --> Admin
   Sidebar --> Bas
 ```
 
-- **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l’interface admin via `/admin` (sidebar dédiée : Dashboard, Signalements, Modération, Utilisateurs, Support, Communauté).
+- **ADMIN** : la sidebar principale (utilisateur) est masquée ; les admins accèdent à l’interface admin via `/admin` qui possède sa propre configuration de sidebar (`ADMIN_NAV_ITEMS`). Elle regroupe : Dashboard, Signalements, Modération, Utilisateurs, Support, Communauté.
 - **Catalogue** (APPRENANT) : sous-navigation Live (`/catalog/live`), Replay (`/catalog/replay`), Prochains ateliers (`/catalog/upcoming`). Ces sous-routes peuvent rediriger vers la page principale selon l’implémentation.
 
 Voir `src/components/sidebar.tsx` et `src/app/admin/layout.tsx`.
@@ -197,6 +235,68 @@ flowchart TB
 - **Inscription / onboarding** : `customAuthClient.signUpEmail`, `customAuthClient.selectRole`, puis formulaires spécifiques (mentor ou apprenant). Mentor : `customAuthClient.saveMentorProfile`, `customAuthClient.publishProfile` / `unpublishProfile`.
 - **Photo de profil** : `customAuthClient.uploadPhoto` (POST multipart vers le back).
 - **Suppression de compte** : `customAuthClient.deleteAccount(reason?)`.
+
+---
+
+## 🧭 Flux d'Onboarding (Activation de compte)
+
+Ce diagramme illustre le parcours d'un nouvel utilisateur jusqu'à l'accès à son dashboard.
+
+```mermaid
+flowchart TD
+    Start[Inscription /login] --> Session[Session Créée]
+    Session --> CheckRole{Rôle présent ?}
+    CheckRole -->|Non| Onboarding[/onboarding]
+    Onboarding --> Selection[Sélection MENTOR ou APPRENANT]
+    Selection --> Form[Formulaire spécifique profil]
+    Form --> Submit[Soumission API]
+    Submit --> Success[Statut ACTIVE & Rôle fixé]
+    Success --> Dashboard[/dashboard]
+    CheckRole -->|Oui| Dashboard
+```
+
+---
+
+## 📝 Pattern de Formulaire (Validation & Soumission)
+
+L'application suit un pattern strict pour tous les formulaires (Profil, Ateliers, Paramètres).
+
+```mermaid
+flowchart LR
+    User[Utilisateur] --> Input[Saisie Données]
+    Input --> Zod{Validation Zod\nClient-side}
+    Zod -->|Erreur| DisplayErr[Affichage message sous l'input]
+    Zod -->|Valide| Mutation[trpc.useMutation]
+    Mutation --> API[API tRPC Back]
+    API -->|Succès| ToastS[Sonner : Toast Succès]
+    API -->|Erreur| ToastE[Sonner : Toast Erreur]
+    ToastS --> Redirect[Redirection ou Update Cache]
+```
+
+---
+
+## 💬 Flux Messagerie & Temps Réel (Socket.IO)
+
+Comment l'interface réagit aux événements live sans rechargement.
+
+```mermaid
+sequenceDiagram
+    participant UI as Interface Chat
+    participant Hook as useChatSocket
+    participant S as Socket.IO Client
+    participant B as Serveur Back
+    participant Q as TanStack Query
+
+    UI->>Hook: Montage du composant
+    Hook->>S: Connexion & join-room(convId)
+    
+    Note over UI,B: Envoi d'un message
+    UI->>B: tRPC messaging.sendMessage
+    B->>S: Broadcast 'new-message'
+    S->>Hook: Événement reçu
+    Hook->>Q: Invalidation / Optimistic Update
+    Q-->>UI: Nouveau message affiché
+```
 
 ---
 

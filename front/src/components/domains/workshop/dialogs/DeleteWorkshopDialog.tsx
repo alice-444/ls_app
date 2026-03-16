@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 
 interface DeleteWorkshopDialogProps {
   open: boolean;
@@ -22,7 +22,7 @@ export function DeleteWorkshopDialog({
   onOpenChange,
   onConfirm,
   isLoading = false,
-}: DeleteWorkshopDialogProps) {
+}: Readonly<DeleteWorkshopDialogProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { Utensils, Laptop, Ticket, Briefcase, ExternalLink, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,11 +29,11 @@ const CATEGORIES = [
   { id: "SERVICES", label: "Services", icon: Briefcase },
 ];
 
-export function DealsGrid({ initialDeals }: DealsGridProps) {
+export function DealsGrid({ initialDeals }: Readonly<DealsGridProps>) {
   const [filter, setFilter] = useState("ALL");
 
-  const filteredDeals = filter === "ALL" 
-    ? initialDeals 
+  const filteredDeals = filter === "ALL"
+    ? initialDeals
     : initialDeals.filter(d => d.category === filter);
 
   return (
@@ -84,10 +84,10 @@ export function DealsGrid({ initialDeals }: DealsGridProps) {
                 <p className="text-sm text-ls-muted line-clamp-2 mb-4">
                   {deal.description}
                 </p>
-                <Button 
-                  asChild 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
                   className="w-full justify-between h-9 text-xs hover:bg-brand/5 dark:hover:bg-brand/10 text-ls-heading font-bold rounded-full"
                 >
                   <a href={deal.link} target="_blank" rel="noopener noreferrer">

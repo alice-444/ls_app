@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import {
   MoreVertical,
   Eye,
@@ -48,7 +48,7 @@ export function WorkshopDropdownMenu({
   onDuplicate,
   onComplete,
   variant = "default",
-}: WorkshopDropdownMenuProps) {
+}: Readonly<WorkshopDropdownMenuProps>) {
   const handleCopyLink = () => {
     if (workshop.location) {
       navigator.clipboard.writeText(workshop.location);

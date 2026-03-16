@@ -9,9 +9,9 @@ import { getUserRole } from "@/lib/api-client";
 import {
   Card,
   CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -19,7 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import {
   GraduationCap,
   X,
@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { PageContainer } from "@/components/shared/layout";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { RequestWorkshopParticipationDialog } from "@/components/domains/mentor/RequestWorkshopParticipationDialog";
 import { WorkshopCard } from "@/components/domains/workshop/cards/WorkshopCard";
 import type { WorkshopDetailed as Workshop } from "@ls-app/shared";

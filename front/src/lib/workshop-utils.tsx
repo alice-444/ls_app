@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Edit, CheckCircle, XCircle } from "lucide-react";
 export {
   formatDate,

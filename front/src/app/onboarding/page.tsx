@@ -3,15 +3,15 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { RoleSelectionStep } from "./components/RoleSelectionStep";
 import { RoleConfirmationStep } from "./components/RoleConfirmationStep";
 import { ProfFormStep } from "./components/ProfFormStep";
 import { ApprenantCompleteStep } from "./components/ApprenantCompleteStep";
 
-import { Progress } from "@/components/ui/progress";
-import { ModeToggle } from "@/components/shared/mode-toggle";
+import { Progress } from "@/components/ui/Progress";
+import { ModeToggle } from "@/components/shared/ModeToggle";
 
 function OnboardingContent() {
   const { data: session, isPending: isSessionPending } =
@@ -30,7 +30,7 @@ function OnboardingContent() {
 
   // Calcul du pourcentage de progression
   const stepProgress = {
-    "select": 25,
+    "Select": 25,
     "confirm-features": 50,
     "prof-form": 75,
     "apprenant-flow": 100
@@ -62,7 +62,7 @@ function OnboardingContent() {
       <div className="flex-1 flex items-center justify-center p-4">
         {(() => {
           switch (currentStep) {
-            case "select":
+            case "Select":
               return (
                 <RoleSelectionStep
                   currentStep={currentStep}

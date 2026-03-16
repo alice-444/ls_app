@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ArrowLeft, Edit, Calendar, EyeOff, Trash2 } from "lucide-react";
 import { formatDate, getStatusBadge } from "@/lib/workshop-utils";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 
 interface WorkshopHeaderProps {
   readonly workshop: {

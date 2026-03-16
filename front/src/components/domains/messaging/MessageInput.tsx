@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import type { KeyboardEvent } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSocket } from "@/lib/socket-client";

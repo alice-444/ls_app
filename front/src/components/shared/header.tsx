@@ -5,10 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Coins, ShoppingCart, Crown, Menu } from "lucide-react";
 
-import { ModeToggle } from "@/components/shared/mode-toggle";
-import UserMenu from "@/components/shared/user-menu";
-import { NotificationBell } from "@/components/shared/notification-bell";
-import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/shared/ModeToggle";
+import UserMenu from "@/components/shared/UserMenu";
+import { NotificationBell } from "@/components/shared/NotificationBell";
+import { Button } from "@/components/ui/Button";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";

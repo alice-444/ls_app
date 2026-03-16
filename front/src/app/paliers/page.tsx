@@ -9,8 +9,8 @@ import {
   Star,
   Zap,
 } from "lucide-react";
-import { BackButton } from "@/components/shared/back-button";
-import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/shared/BackButton";
+import { Button } from "@/components/ui/Button";
 import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
@@ -107,7 +107,7 @@ export default function PaliersPage() {
           <h2 className="text-lg sm:text-xl font-bold text-ls-heading mb-4 flex items-center gap-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/15 text-brand">
               <Target className="h-5 w-5" />
-            </span>
+            </span>{" "}
             Comment ça marche ?
           </h2>
           <div className="space-y-4 text-sm sm:text-base text-ls-muted leading-relaxed">
@@ -132,7 +132,7 @@ export default function PaliersPage() {
           <h2 className="text-lg sm:text-xl font-bold text-ls-heading mb-6 flex items-center gap-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/15 text-brand">
               <Sparkles className="h-5 w-5" />
-            </span>
+            </span>{" "}
             Les quatre paliers
           </h2>
           <div className="grid gap-4 sm:gap-5">
@@ -155,9 +155,9 @@ export default function PaliersPage() {
                     </h3>
                     <p className="text-sm text-ls-muted mt-1">{palier.description}</p>
                     <p className="text-xs sm:text-sm font-semibold text-brand mt-2">
-                      {palier.max !== null
-                        ? `${palier.min} à ${palier.max} ateliers`
-                        : `${palier.min}+ ateliers`}
+                      {palier.max === null
+                        ? `${palier.min}+ ateliers`
+                        : `${palier.min} à ${palier.max} ateliers`}
                     </p>
                   </div>
                   {index < PALIERS.length - 1 && (
@@ -178,7 +178,7 @@ export default function PaliersPage() {
           <h2 className="text-lg sm:text-xl font-bold text-ls-heading mb-4 flex items-center gap-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/15 text-brand">
               <Trophy className="h-5 w-5" />
-            </span>
+            </span>{" "}
             Récompenses
           </h2>
           <div className="space-y-4 text-sm sm:text-base text-ls-muted leading-relaxed">

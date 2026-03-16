@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { User, GraduationCap } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 
 interface ProfilePreviewCardProps {
   readonly previewPhoto: string | null;

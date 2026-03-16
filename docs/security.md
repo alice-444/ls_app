@@ -4,6 +4,31 @@ Ce document détaille les mesures de sécurité, le contrôle d'accès et la con
 
 ---
 
+## 🛡️ Modèle de Défense en Profondeur
+
+Chaque requête entrante doit traverser plusieurs couches de sécurité avant d'atteindre la logique métier ou la base de données.
+
+```mermaid
+flowchart TD
+    User((Utilisateur)) --> Traefik[1. Traefik : SSL/TLS & Filtrage IP]
+    Traefik --> CORS[2. CORS : Origines autorisées]
+    CORS --> RateLimit[3. Rate Limit : Protection Anti-Brute Force]
+    RateLimit --> Auth[4. Better Auth : Vérification Session/Cookie]
+    Auth --> RBAC[5. RBAC : Middlewares tRPC - Rôles & Statuts]
+    RBAC --> Zod[6. Zod : Validation stricte des entrées]
+    Zod --> Service[7. Service : Logique métier sécurisée]
+    Service --> Prisma[8. Prisma : Requêtes SQL préparées]
+    Prisma --> DB[(PostgreSQL)]
+
+    %% Styles pour souligner la progression
+    style Traefik fill:#f9f,stroke:#333
+    style Auth fill:#bbf,stroke:#333
+    style RBAC font-weight:bold,fill:#dfd,stroke:#333
+    style DB fill:#eee,stroke:#333
+```
+
+---
+
 ## 🔐 Contrôle d'Accès (RBAC)
 
 Le système utilise **tRPC** pour gérer les autorisations de manière granulaire via des middlewares.

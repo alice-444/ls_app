@@ -8,8 +8,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import {
   Plus,
   Sparkles,
@@ -26,20 +26,20 @@ import {
 import ShinyText from "@/components/ui/ShinyText";
 import { PageContainer } from "@/components/shared/layout";
 import { motion } from "framer-motion";
-import { CreateWorkshopForm } from "@/components/domains/workshop-editor/CreateWorkshopForm";
-import { EditWorkshopForm } from "@/components/domains/workshop-editor/EditWorkshopForm";
-import { DeleteWorkshopDialog } from "@/components/domains/workshop-editor/DeleteWorkshopDialog";
-import { PublishWorkshopDialog } from "@/components/domains/workshop-editor/PublishWorkshopDialog";
+import { CreateWorkshopForm } from "@/components/domains/WorkshopEditor/CreateWorkshopForm";
+import { EditWorkshopForm } from "@/components/domains/WorkshopEditor/EditWorkshopForm";
+import { DeleteWorkshopDialog } from "@/components/domains/WorkshopEditor/DeleteWorkshopDialog";
+import { PublishWorkshopDialog } from "@/components/domains/WorkshopEditor/PublishWorkshopDialog";
 import { trpc } from "@/utils/trpc";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { BackButton } from "@/components/shared/back-button";
+} from "@/components/ui/DropdownMenu";
+import { BackButton } from "@/components/shared/BackButton";
 import type { WorkshopDetailed } from "@ls-app/shared";
 
 type Workshop = WorkshopDetailed;

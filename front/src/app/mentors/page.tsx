@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { MentorsGrid } from "@/components/domains/mentor/MentorsGrid";
 import { MentorFilters } from "@/components/domains/mentor/MentorFilters";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Loader2, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { PageContainer } from "@/components/shared/layout";
@@ -14,7 +14,6 @@ import { motion } from "framer-motion";
 import type { MentorBasic } from "@ls-app/shared";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
-import { useEffect } from "react";
 
 export default function MentorsPage() {
   const router = useRouter();

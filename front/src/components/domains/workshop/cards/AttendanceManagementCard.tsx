@@ -7,12 +7,12 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { Users, CheckCircle2, Clock, Save } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { LevelUpModal } from "@/components/domains/user/LevelUpModal";
 import type { WorkshopParticipant } from "@ls-app/shared";
 import type { AttendanceManagementCardProps } from "@/types/workshop-components";

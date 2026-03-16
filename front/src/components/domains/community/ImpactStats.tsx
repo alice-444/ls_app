@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Users, Clock, CheckCircle } from "lucide-react";
 
 interface ImpactStatsProps {
@@ -11,7 +11,7 @@ interface ImpactStatsProps {
   };
 }
 
-export function ImpactStats({ stats }: ImpactStatsProps) {
+export function ImpactStats({ stats }: Readonly<ImpactStatsProps>) {
   const impactItems = [
     {
       label: "Membres Solidaires",

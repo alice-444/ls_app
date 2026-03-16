@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Label } from "@/components/ui/label";
+import { Label } from "@/components/ui/Label";
 
 describe("Label", () => {
   it("renders children", () => {

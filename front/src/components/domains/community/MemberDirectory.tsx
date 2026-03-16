@@ -1,8 +1,8 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Users, UserPlus } from "lucide-react";
 import Link from "next/link";
 
@@ -19,7 +19,7 @@ interface MemberDirectoryProps {
   members: Member[];
 }
 
-export function MemberDirectory({ members }: MemberDirectoryProps) {
+export function MemberDirectory({ members }: Readonly<MemberDirectoryProps>) {
   return (
     <Card className="border border-border/50 bg-card/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
       <CardHeader className="pb-4">
