@@ -44,7 +44,11 @@ async function checkSession(request: NextRequest): Promise<boolean> {
     const response = await fetch(`${INTERNAL_API_URL}/api/auth/session`, {
       method: "GET",
       headers: {
+        host: "app.learnsup.fr", // On utilise le domaine unique
         cookie: cookieHeader,
+        "x-forwarded-host": "app.learnsup.fr",
+        "x-forwarded-proto": request.headers.get("x-forwarded-proto") || "https",
+        "x-forwarded-for": request.headers.get("x-forwarded-for") || "",
       },
     });
 
