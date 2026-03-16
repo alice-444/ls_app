@@ -21,6 +21,6 @@ describe("Label", () => {
 
   it("has data-slot", () => {
     render(<Label>Test</Label>);
-    expect(screen.getByText("Test")).toHaveAttribute("data-slot", "label");
+    expect(screen.getByText("Test")).toHaveAttribute("data-slot", "Label");
   });
 });
