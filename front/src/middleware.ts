@@ -43,14 +43,11 @@ export function middleware(request: NextRequest) {
   );
 
   if (hasSession && (pathname === "/login" || pathname === "/sign-up")) {
-    const callbackUrl = request.nextUrl.searchParams.get("callbackUrl");
-    const redirectUrl = callbackUrl ? new URL(callbackUrl, request.url) : new URL("/dashboard", request.url);
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (!hasSession && !isPublicRoute) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
