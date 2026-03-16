@@ -10,19 +10,11 @@ import { AuthMagicLinkEmail } from "./email/templates/AuthMagicLinkEmail";
 import * as React from "react";
 
 const getCookieDomain = () => {
-  if (process.env.NODE_ENV === "development") return undefined;
-  const url = process.env.BETTER_AUTH_URL || "";
-  try {
-    const hostname = new URL(url).hostname;
-    // Extraire le domaine racine (ex: learnsup.fr de api.learnsup.fr)
-    const parts = hostname.split(".");
-    if (parts.length >= 2) {
-      return `.${parts.slice(-2).join(".")}`;
-    }
-    return undefined;
-  } catch {
-    return ".learnsup.fr"; // Fallback safe pour la prod LearnSup
+  // En prod, utiliser .learnsup.fr pour que le cookie soit accessible sur tous les sous-domaines
+  if (process.env.NODE_ENV === "production") {
+    return ".learnsup.fr";
   }
+  return undefined; // En dev, pas de domaine spécifique (localhost)
 };
 
 export const auth = betterAuth({
@@ -33,10 +25,8 @@ export const auth = betterAuth({
   cookie: {
     domain: getCookieDomain(),
     path: "/",
-    extraAttributes: {
-      SameSite: "None",
-      Secure: true,
-    },
+    sameSite: "none",
+    secure: true,
   },
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production" || process.env.BETTER_AUTH_URL?.startsWith("https"),
