@@ -21,7 +21,6 @@ import {
   UserPlus,
   MessageSquare,
   Bell,
-  Coins,
   Globe,
   Info,
   Settings,
@@ -100,13 +99,6 @@ const getNavItems = (
       href: "/network",
       icon: Globe,
       roles: ["APPRENANT", "MENTOR"],
-    },
-    {
-      key: "/buy-credits",
-      name: "Mes crédits",
-      href: "/buy-credits",
-      icon: Coins,
-      roles: ["APPRENANT"],
     },
     // --- COMMON ---
     {

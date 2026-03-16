@@ -2,7 +2,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // output: "standalone", // Désactivé pour le serveur custom avec Socket.IO
   serverExternalPackages: ["@prisma/client", "prisma"],
   turbopack: {},
   images: {

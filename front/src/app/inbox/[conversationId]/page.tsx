@@ -6,7 +6,7 @@ import { PageContainer } from "@/components/shared/layout";
 import { ChatWindow } from "@/components/domains/messaging/ChatWindow";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 import { motion } from "framer-motion";
 
 export default function ConversationPage() {

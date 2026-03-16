@@ -1,6 +1,6 @@
 "use client";
 
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 
 export default function PrivacyPage() {
   return (

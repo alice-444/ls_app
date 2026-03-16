@@ -1,29 +1,18 @@
 const getApiBaseUrl = () => {
-  // 1. Client-side: Always prioritize the current browser domain in production
+  // En architecture Single Domain, l'API est sur le même domaine que le front.
+  // On retourne une chaîne vide pour utiliser des chemins relatifs, 
+  // ou l'origine actuelle si on est côté client.
   if (typeof window !== "undefined") {
-    const { hostname, protocol } = window.location;
-    
-    // Si on est sur un domaine de prod (pas localhost)
-    if (hostname !== "localhost" && hostname !== "127.0.0.1" && hostname.includes(".")) {
-      // Si on est sur app.domaine.fr, on vise api.domaine.fr
-      if (hostname.startsWith("app.")) {
-        return `${protocol}//${hostname.replace("app.", "api.")}`;
-      }
-      // Cas générique : on tente le sous-domaine api
-      const parts = hostname.split(".");
-      if (parts.length >= 2) {
-        return `${protocol}//api.${parts.slice(-2).join(".")}`;
-      }
-    }
+    return window.location.origin;
   }
 
-  // 2. Fallback sur la variable d'environnement (Build-time ou SSR)
+  // Fallback sur la variable d'environnement (Build-time ou SSR)
   if (process.env.NEXT_PUBLIC_SERVER_URL) {
     return process.env.NEXT_PUBLIC_SERVER_URL;
   }
 
-  // 3. Last resort fallback (Dev local)
-  return "http://localhost:4500";
+  // En dev local, on utilise le port 3001 du serveur unifié
+  return "http://localhost:3001";
 };
 
 export const API_BASE_URL = getApiBaseUrl();

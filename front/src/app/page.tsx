@@ -5,13 +5,7 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-server-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
-import {
-  Users,
-  BookOpen,
-  Trophy,
-  ChevronRight,
-  LogIn,
-} from "lucide-react";
+import { Users, BookOpen, ChevronRight, LogIn } from "lucide-react";
 
 const highlights = [
   {
@@ -78,9 +72,7 @@ export default function Home() {
                 <Icon className="h-6 w-6" />
               </div>
               <div className="text-left">
-                <span className="block font-semibold text-foreground">
-                  {label}
-                </span>
+                <span className="block font-semibold text-foreground">{label}</span>
                 <span className="block text-sm text-muted-foreground">{desc}</span>
               </div>
             </div>
@@ -92,9 +84,7 @@ export default function Home() {
           {!isPending && (
             <>
               <p className="text-lg sm:text-xl font-medium text-muted-foreground mb-6 dark:text-white">
-                {session
-                  ? "Tu es connecté(e). Accède à ton espace."
-                  : "Rejoins la plateforme en quelques clics."}
+                {session ? "Tu es connecté(e). Accède à ton espace." : "Rejoins la plateforme en quelques clics."}
               </p>
               <div className="flex flex-col sm:flex-row gap-5 justify-center">
                 {session ? (

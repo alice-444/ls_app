@@ -73,7 +73,6 @@ export function ApprenantDashboard({
     <div className="flex flex-col lg:flex-row gap-4 sm:gap-[16px]">
       <ApprenantDashboardSidebar
         titleData={titleData}
-        creditBalance={{ balance: 999 }}
         mentorConnections={mentorConnections}
         workshopHistory={workshopHistory}
         acceptedConnections={acceptedConnections}

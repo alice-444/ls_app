@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import {
   User,
   UserPlus,

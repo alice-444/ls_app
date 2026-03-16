@@ -1,8 +1,14 @@
-import { protectedProcedure, publicProcedure, router } from "../lib/trpc-server";
+import {
+  protectedProcedure,
+  publicProcedure,
+  router,
+} from "../lib/trpc-server";
+import type { Context } from "../lib/context";
 
 // Workshops
 import { workshopRouter } from "./workshops/workshop.router";
 import { workshopFeedbackRouter } from "./workshops/workshop-feedback.router";
+import { workshopAttendanceRouter } from "./workshops/workshop-attendance.router";
 import { cashbackAnalyticsRouter } from "./workshops/analytics/cashback-analytics.router";
 
 // Users
@@ -34,14 +40,21 @@ export const appRouter = router({
     return "OK";
   }),
   auth: authRouter,
-  privateData: protectedProcedure.query(({ ctx }) => {
-    return {
-      message: "This is private",
-      user: ctx.session.user,
-    };
-  }),
+  privateData: protectedProcedure.query(
+    ({
+      ctx,
+    }: {
+      ctx: Context & { session: NonNullable<Context["session"]> };
+    }) => {
+      return {
+        message: "This is private",
+        user: ctx.session.user,
+      };
+    },
+  ),
   workshop: workshopRouter,
   workshopFeedback: workshopFeedbackRouter,
+  workshopAttendance: workshopAttendanceRouter,
   mentor: mentorRouter,
   apprentice: apprenticeRouter,
   connection: connectionRouter,

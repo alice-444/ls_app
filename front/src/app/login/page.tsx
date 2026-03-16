@@ -1,11 +1,11 @@
 "use client";
 
-import SignInForm from "@/components/domains/auth/sign-in-form";
-import SignUpForm from "@/components/domains/auth/sign-up-form";
+import SignInForm from "@/components/domains/auth/SignInForm";
+import SignUpForm from "@/components/domains/auth/SignUpForm";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { AnimatePresence, motion } from "framer-motion";
 
 function LoginContent() {

@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { authClient, customAuthClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Card,

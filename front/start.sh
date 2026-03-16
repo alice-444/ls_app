@@ -5,6 +5,6 @@ if [ "$NODE_ENV" = "production" ]; then
   npx prisma migrate deploy
 fi
 
-# Démarrer le serveur Node.js avec le serveur custom
+# Démarrer le serveur LearnSup
 echo "[start.sh] Démarrage du serveur LearnSup..."
-node --import tsx ./server.ts
+pnpm start

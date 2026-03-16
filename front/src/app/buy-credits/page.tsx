@@ -17,7 +17,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { PageContainer } from "@/components/shared/layout";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 

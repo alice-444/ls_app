@@ -20,7 +20,7 @@ import { Upload, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { API_BASE_URL } from "@/lib/api-client";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 
 const supportRequestSchema = z.object({
   email: z.string().email("Adresse e-mail invalide"),

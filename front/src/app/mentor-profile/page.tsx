@@ -3,9 +3,9 @@
 import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import ShinyText from "@/components/ui/ShinyText";
 import {
   Card,
