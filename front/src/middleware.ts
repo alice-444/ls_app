@@ -88,11 +88,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Pour les routes protégées, vérifier la session
+  // Pour les routes protégées, vérifier la session côté serveur
   console.log(`[middleware] Protected route, checking session: ${pathname}`);
   const isAuthenticated = await checkSession(request);
 
   if (!isAuthenticated) {
+    // Try alternative method: check if any session cookie exists
+    const cookies = request.cookies.getAll();
+    const hasAnyCookie = cookies.length > 0;
+
+    console.log(`[middleware] Alternative check - any cookies present: ${hasAnyCookie}`);
+    console.log(`[middleware] All cookies: ${JSON.stringify(cookies.map((c) => c.name))}`);
+
+    // Si on a au moins un cookie, on laisse passer (on laisse le client vérifier)
+    if (hasAnyCookie) {
+      console.log(`[middleware] Cookies detected, allowing request (client will verify)`);
+      return NextResponse.next();
+    }
+
     console.log(`[middleware] User not authenticated, redirecting to /login from ${pathname}`);
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
