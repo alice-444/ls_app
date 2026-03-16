@@ -44,8 +44,9 @@ async function checkSession(request: NextRequest): Promise<boolean> {
     const response = await fetch(`${INTERNAL_API_URL}/api/auth/session`, {
       method: "GET",
       headers: {
+        host: "api.learnsup.fr", // Indispensable pour que Better Auth reconnaisse le domaine
         cookie: cookieHeader,
-        "x-forwarded-host": request.headers.get("x-forwarded-host") || request.headers.get("host") || "",
+        "x-forwarded-host": "api.learnsup.fr",
         "x-forwarded-proto": request.headers.get("x-forwarded-proto") || "https",
         "x-forwarded-for": request.headers.get("x-forwarded-for") || "",
       },
