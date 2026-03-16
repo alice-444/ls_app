@@ -45,6 +45,9 @@ async function checkSession(request: NextRequest): Promise<boolean> {
       method: "GET",
       headers: {
         cookie: cookieHeader,
+        "x-forwarded-host": request.headers.get("x-forwarded-host") || request.headers.get("host") || "",
+        "x-forwarded-proto": request.headers.get("x-forwarded-proto") || "https",
+        "x-forwarded-for": request.headers.get("x-forwarded-for") || "",
       },
     });
 

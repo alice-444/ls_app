@@ -25,10 +25,11 @@ export const auth = betterAuth({
   cookie: {
     domain: getCookieDomain(),
     path: "/",
-    sameSite: "none",
+    sameSite: "lax",
     secure: true,
   },
   advanced: {
+    trustProxy: true,
     useSecureCookies: process.env.NODE_ENV === "production" || process.env.BETTER_AUTH_URL?.startsWith("https"),
   },
   trustedOrigins: [process.env.CORS_ORIGIN || "", "https://app.learnsup.fr", "http://localhost:3001"],
