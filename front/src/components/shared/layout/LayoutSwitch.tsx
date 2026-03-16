@@ -10,7 +10,7 @@ import { Footer } from "@/components/shared/Footer";
 import { ScrollToTopButton } from "@/components/shared/ScrollToTopButton";
 import { ADMIN_NAV_ITEMS, ADMIN_SIDEBAR_TITLE, ADMIN_SIDEBAR_ICON } from "@/lib/admin-nav";
 
-export function LayoutSwitch({ children }: { children: React.ReactNode }) {
+export function LayoutSwitch({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const { data: userRole } = useQuery({
