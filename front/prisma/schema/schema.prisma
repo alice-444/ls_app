@@ -1,0 +1,554 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../generated/client"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgres"
+}
+
+model session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model account {
+  id                     String    @id @default(cuid()) @map("_id")
+  accountId              String    @unique
+  userId                 String
+  providerId             String    @default("credential")
+  email                  String?   @unique
+  isEmailVerified        Boolean   @default(false)
+  password               String?
+  failedLoginAttempts    Int       @default(0)
+  isLocked               Boolean   @default(false)
+  lockoutTime            DateTime?
+  lastLogin              DateTime  @default(now())
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  emailChangeToken       String?
+  emailChangeNewEmail    String?
+  emailChangeTimestamp   DateTime?
+  passwordResetToken     String?
+  passwordResetTimestamp DateTime?
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}
+
+model user {
+  id               String    @id @default(cuid())
+  userId           String?   @unique // Business identifier, equals id for Better Auth users
+  name             String
+  email            String    @unique
+  emailVerified    Boolean   @default(false)
+  image            String?
+  username         String?   @unique
+  displayUsername  String?
+  onboardingStep   Int       @default(0)
+  role             String?
+  status           String    @default("PENDING")
+  creditBalance    Int       @default(0)
+  title            String    @default("Explorer")
+  isOnline         Boolean   @default(false)
+  lastSeen         DateTime?
+  deletionReason   String?
+  photoUrl         String?
+  displayName      String?
+  bio              String?
+  domain           String?
+  areasOfExpertise String[]
+  mentorshipTopics String[]
+  qualifications   String?
+  experience       String?
+  socialMediaLinks Json?
+  studyDomain      String?
+  studyProgram     String?
+  iceBreakerTags   String[]
+  isPublished      Boolean   @default(false)
+  publishedAt      DateTime?
+  emailNotifications Boolean   @default(true)
+  inAppNotifications Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+  deletionRequestedAt DateTime?
+
+  // GDPR Export
+  exportToken      String?   @unique
+  exportExpiresAt  DateTime?
+
+  // Relations (Better Auth: user has many accounts and sessions)
+  accounts account[]
+  sessions session[]
+
+  reports_made     user_report[] @relation("reports_made")
+  reports_received user_report[] @relation("reports_received")
+  reports_reviewed user_report[] @relation("reports_reviewed")
+
+  blocked_by user_block[] @relation("blocked_by")
+  blocking   user_block[] @relation("blocking")
+
+  sent_requests     user_connection[] @relation("sent_requests")
+  received_requests user_connection[] @relation("received_requests")
+
+  workshop_requests_as_apprentice workshop_request[] @relation("workshop_requests_as_apprentice")
+  workshop_requests_as_mentor     workshop_request[] @relation("workshop_requests_as_mentor")
+
+  feedback_as_mentor     mentor_feedback[] @relation("feedback_as_mentor")
+  feedback_as_apprentice mentor_feedback[] @relation("feedback_as_apprentice")
+
+  conversations_as_participant1 conversation[]       @relation("conversations_as_participant1")
+  conversations_as_participant2 conversation[]       @relation("conversations_as_participant2")
+  creditTransactions            credit_transaction[]
+  supportRequests               support_request[]
+  supportMessages               support_message[]
+  auditLogs                     audit_log[]
+  workshops_as_mentor           workshop[]            @relation("workshop_creator")
+  workshops_as_apprentice       workshop[]            @relation("workshop_apprentice")
+  messages                      message[]
+  messageReactions              message_reaction[]
+  notifications                 notification[]
+  cashbackQueues                workshop_cashback_queue[]
+  conversationPins              conversation_pin[]
+  poll_votes                    poll_vote[]
+  
+  // Community contributions
+  proposed_deals                student_deal[]
+  proposed_spots                community_spot[]
+  proposed_polls                community_poll[]
+  proposed_events               community_event[]
+
+  @@index([userId])
+}
+
+model credit_transaction {
+  id          String                @id @default(cuid())
+  userId   String
+  amount      Int
+  description String
+  type        CreditTransactionType
+  createdAt   DateTime              @default(now())
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model support_request {
+  id          String   @id @default(cuid())
+  userId      String?
+  email       String
+  subject     String
+  description String
+  problemType String
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, RESOLVED, CLOSED
+  attachments Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     user?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages support_message[]
+
+  @@index([userId])
+}
+
+model support_message {
+  id        String   @id @default(cuid())
+  requestId String
+  senderId  String?
+  content   String
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  request support_request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  sender  user?           @relation(fields: [senderId], references: [id], onDelete: SetNull)
+
+  @@index([requestId])
+}
+
+model audit_log {
+  id        String   @id @default(cuid())
+  action    String
+  adminId   String
+  targetId  String?
+  details   Json
+  createdAt DateTime @default(now())
+
+  admin user @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+}
+
+model user_report {
+  id             String   @id @default(cuid())
+  reporterUserId String
+  reportedUserId String
+  reason         String
+  details        String?
+  messageId      String?
+  status         String   @default("PENDING") // PENDING, REVIEWED, RESOLVED, DISMISSED
+  adminNotes     String?
+  reviewedAt     DateTime?
+  reviewedById   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([updatedAt])
+
+  reporter   user  @relation(name: "reports_made", fields: [reporterUserId], references: [id], onDelete: Cascade)
+  reported   user  @relation(name: "reports_received", fields: [reportedUserId], references: [id], onDelete: Cascade)
+  reviewedBy user? @relation(name: "reports_reviewed", fields: [reviewedById], references: [id])
+
+  @@index([reporterUserId])
+  @@index([reportedUserId])
+  @@index([reviewedById])
+}
+
+model user_block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  blocker user @relation("blocked_by", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked user @relation("blocking", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+model user_connection {
+  id          String   @id @default(cuid())
+  requesterId String
+  receiverId  String
+  status      String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  requester user @relation("sent_requests", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver  user @relation("received_requests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, receiverId])
+}
+
+model workshop {
+  id                         String    @id @default(cuid())
+  creatorId                  String
+  title                      String
+  description                String?
+  domain                     String?
+  topic                      String?
+  materialsNeeded            String?
+  status                     String    @default("DRAFT") // DRAFT, PUBLISHED, CANCELLED, COMPLETED
+  creditCost                 Int       @default(0)
+  maxParticipants            Int       @default(10)
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+  publishedAt                DateTime?
+  date                       DateTime?
+  time                       String?
+  duration                   Int?
+  location                   String?
+  isVirtual                  Boolean?
+  apprenticeId               String?
+  apprenticeAttendanceStatus String?
+
+  // Daily.co integration
+  dailyRoomId             String?
+  dailyRoomName           String?
+  dailyRoomUrl            String?
+  dailyRoomLastActivityAt DateTime?
+
+  creator         user          @relation("workshop_creator", fields: [creatorId], references: [id], onDelete: Cascade)
+  apprentice      user?         @relation("workshop_apprentice", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  mentorFeedbacks mentor_feedback[]
+  cashbackQueues  workshop_cashback_queue[]
+
+  @@index([creatorId])
+  @@index([apprenticeId])
+}
+
+model workshop_request {
+  id              String    @id @default(cuid())
+  apprenticeId    String
+  mentorId        String
+  workshopId      String?
+  title           String
+  description     String?
+  message         String?
+  preferredDate   DateTime?
+  preferredTime   String?
+  status          String    @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  rejectionReason String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  apprentice user @relation("workshop_requests_as_apprentice", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  mentor     user @relation("workshop_requests_as_mentor", fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@index([apprenticeId])
+  @@index([mentorId])
+}
+
+model mentor_feedback {
+  id           String    @id @default(cuid())
+  mentorId     String
+  apprenticeId String
+  workshopId   String
+  rating       Int
+  comment      String?
+  isAnonymous  Boolean   @default(false)
+  status       String    @default("ACTIVE") // ACTIVE, UNDER_REVIEW, DELETED
+  reportedAt   DateTime?
+  reportedBy   String?
+  reportReason String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  mentor     user @relation("feedback_as_mentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  apprentice user @relation("feedback_as_apprentice", fields: [apprenticeId], references: [id], onDelete: Cascade)
+  workshop   workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+
+  @@index([mentorId])
+  @@index([apprenticeId])
+  @@index([workshopId])
+}
+
+model conversation {
+  id             String   @id @default(cuid())
+  participant1Id String
+  participant2Id String
+  workshopId     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([updatedAt])
+
+  participant1 user  @relation("conversations_as_participant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2 user  @relation("conversations_as_participant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  messages     message[]
+  pins         conversation_pin[]
+
+  @@unique([participant1Id, participant2Id])
+}
+
+model message {
+  id             String    @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  isRead         Boolean   @default(false)
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  conversation conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       user     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  reactions message_reaction[]
+
+  @@index([conversationId, createdAt])
+}
+
+model message_reaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  message message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+}
+
+model notification {
+  id        String   @id @default(cuid())
+  userId    String
+  senderId  String?
+  type      String
+  title     String
+  message   String
+  actionUrl String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, type, createdAt])
+}
+
+enum CreditTransactionType {
+  TOP_UP
+  USAGE
+  REFUND
+}
+
+enum FeedbackStatus {
+  ACTIVE
+  UNDER_REVIEW
+  DELETED
+}
+
+model magic_link_token {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model deletion_job {
+  id        String   @id @default(cuid())
+  userId    String
+  runAt     DateTime
+  status    String   @default("PENDING") // PENDING, COMPLETED, ERROR
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status, runAt])
+  }
+
+  model workshop_cashback_queue {
+  id                String         @id
+  workshopId        String
+  participantUserId String
+  cashbackAmount    Int
+  workshopEndTime   DateTime
+  status            CashbackStatus @default(PENDING)
+  processedAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  retryCount        Int            @default(0)
+  errorMessage      String?
+  lastRetryAt       DateTime?
+
+  workshop    workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+  participant user     @relation(fields: [participantUserId], references: [id], onDelete: Cascade)
+
+  @@index([status, workshopEndTime])
+  @@index([workshopId])
+  @@index([participantUserId])
+  }
+
+  enum CashbackStatus {
+  PENDING
+  PROCESSED
+  FAILED
+  }
+
+  model conversation_pin {
+  id             String   @id @default(cuid())
+  conversationId String
+  userId         String
+  createdAt      DateTime @default(now())
+
+  conversation conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         user         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  }
+
+model student_deal {
+  id          String   @id @default(cuid())
+  proposedById String?
+  title       String
+  description String
+  category    String   // FOOD, SOFTWARE, LEISURE, SERVICES
+  link        String
+  promoCode   String?
+  imageUrl    String?
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  proposedBy user? @relation(fields: [proposedById], references: [id], onDelete: SetNull)
+}
+
+model community_spot {
+  id          String   @id @default(cuid())
+  proposedById String?
+  name        String
+  description String
+  address     String
+  tags        String[] // Ultra Calme, Prises dispo, etc.
+  rating      Float    @default(0)
+  imageUrl    String?
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  proposedBy user? @relation(fields: [proposedById], references: [id], onDelete: SetNull)
+}
+
+model community_event {
+  id          String   @id @default(cuid())
+  proposedById String?
+  title       String
+  description String
+  date        DateTime
+  location    String
+  link        String?
+  imageUrl    String?
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  proposedBy user? @relation(fields: [proposedById], references: [id], onDelete: SetNull)
+}
+
+model community_poll {
+  id        String   @id @default(cuid())
+  proposedById String?
+  question  String
+  options   Json     // Array of { id: string, label: string }
+  active    Boolean  @default(true)
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  votes poll_vote[]
+  proposedBy user? @relation(fields: [proposedById], references: [id], onDelete: SetNull)
+}
+
+model poll_vote {
+  id        String   @id @default(cuid())
+  pollId    String
+  userId    String
+  optionId  String
+  createdAt DateTime @default(now())
+
+  poll community_poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user user           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId])
+}

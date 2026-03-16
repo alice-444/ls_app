@@ -15,41 +15,41 @@ services:
       SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
       INTERNAL_API_URL: "http://backend:4500"
-    depends_on:
-      - backend
+    # depends_on:
+    #   - backend
     # networks:
     #   - app-network
 
   # Service Backend
-  backend:
-    build:
-      context: ../../
-      dockerfile: ./infra/docker/back/prod/Dockerfile
-    # image: miho11/back_ls:${BACK_IMAGE_TAG:-latest}
-    ports:
-      - "4500:4500"
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      CORS_ORIGIN: ${CORS_ORIGIN}
-      CRON_SECRET: ${CRON_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
-      POLAR_LEARNSUP: ${POLAR_LEARNSUP}
-      POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
-      SEND_EMAILS: ${SEND_EMAILS}
-      DAILY_API_KEY: ${DAILY_API_KEY}
-      DAILY_DOMAIN: ${DAILY_DOMAIN}
-      DAILY_WEBHOOK_SECRET: ${DAILY_WEBHOOK_SECRET}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      PORT_BACKEND: 4500
-      HOSTNAME_BACKEND: ${HOSTNAME_BACKEND}
-    volumes:
-      - /app/node_modules
+  # backend:
+  #   build:
+  #     context: ../../
+  #     dockerfile: ./infra/docker/back/prod/Dockerfile
+  #   # image: miho11/back_ls:${BACK_IMAGE_TAG:-latest}
+  #   ports:
+  #     - "4500:4500"
+  #   environment:
+  #     DATABASE_URL: ${DATABASE_URL}
+  #     CORS_ORIGIN: ${CORS_ORIGIN}
+  #     CRON_SECRET: ${CRON_SECRET}
+  #     BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+  #     BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+  #     NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+  #     POLAR_LEARNSUP: ${POLAR_LEARNSUP}
+  #     POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN}
+  #     RESEND_API_KEY: ${RESEND_API_KEY}
+  #     RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
+  #     SEND_EMAILS: ${SEND_EMAILS}
+  #     DAILY_API_KEY: ${DAILY_API_KEY}
+  #     DAILY_DOMAIN: ${DAILY_DOMAIN}
+  #     DAILY_WEBHOOK_SECRET: ${DAILY_WEBHOOK_SECRET}
+  #     CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+  #     CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+  #     CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+  #     PORT_BACKEND: 4500
+  #     HOSTNAME_BACKEND: ${HOSTNAME_BACKEND}
+  #   volumes:
+  #     - /app/node_modules
     # networks:
     #   - app-network
 

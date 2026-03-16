@@ -1,0 +1,55 @@
+export interface IAppUserRepository {
+  findByUserId(userId: string): Promise<AppUserEntity | null>;
+  findByAppUserId(userId: string): Promise<AppUserEntity | null>;
+  update(
+    userId: string,
+    data: Partial<AppUserUpdateData>
+  ): Promise<AppUserEntity>;
+  findIdentityCardByUserId(userId: string): Promise<{
+    displayName: string | null;
+    studyDomain: string | null;
+    studyProgram: string | null;
+    photoUrl: string | null;
+    iceBreakerTags: string[] | null;
+  } | null>;
+  findUserNameByUserId(userId: string): Promise<string | null>;
+}
+
+export interface AppUserEntity {
+  id: string;
+  userId: string;
+  role: "MENTOR" | "APPRENANT" | "ADMIN" | null;
+  status: "ACTIVE" | "SUSPENDED" | "PENDING";
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  deletionRequestedAt: Date | null;
+  deletionReason: string | null;
+  bio: string | null;
+  domain: string | null;
+  photoUrl: string | null;
+  qualifications: string | null;
+  experience: string | null;
+  socialMediaLinks: any;
+  areasOfExpertise: any;
+  mentorshipTopics: any;
+  isPublished: boolean;
+  publishedAt: Date | null;
+}
+
+export interface AppUserUpdateData {
+  role?: "MENTOR" | "APPRENANT" | "ADMIN" | null;
+  status?: "ACTIVE" | "SUSPENDED" | "PENDING";
+  bio?: string | null;
+  domain?: string | null;
+  photoUrl?: string | null;
+  qualifications?: string | null;
+  experience?: string | null;
+  socialMediaLinks?: any;
+  areasOfExpertise?: any;
+  mentorshipTopics?: any;
+  isPublished?: boolean;
+  publishedAt?: Date | null;
+  displayName?: string | null;
+  deletedAt?: Date | null;
+}
