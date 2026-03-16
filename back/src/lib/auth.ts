@@ -33,25 +33,19 @@ export const auth = betterAuth({
   cookie: {
     domain: getCookieDomain(),
     extraAttributes: {
-      SameSite: "Lax",
-      Secure: process.env.NODE_ENV === "production" || process.env.BETTER_AUTH_URL?.startsWith("https"),
+      SameSite: "None",
+      Secure: true,
     },
   },
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production" || process.env.BETTER_AUTH_URL?.startsWith("https"),
   },
-  trustedOrigins: [
-    process.env.CORS_ORIGIN || "",
-    "https://app.learnsup.fr",
-    "http://localhost:3001"
-  ],
+  trustedOrigins: [process.env.CORS_ORIGIN || "", "https://app.learnsup.fr", "http://localhost:3001"],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
     sendResetPassword: async ({ user, url, token }, request) => {
-      const { html, text } = await renderEmailTemplate(
-        React.createElement(AuthPasswordResetEmail, { url })
-      );
+      const { html, text } = await renderEmailTemplate(React.createElement(AuthPasswordResetEmail, { url }));
       await container.emailService.sendEmail({
         to: user.email,
         subject: "Réinitialisation de votre mot de passe LearnSup",
@@ -62,9 +56,7 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      const { html, text } = await renderEmailTemplate(
-        React.createElement(AuthEmailVerification, { url })
-      );
+      const { html, text } = await renderEmailTemplate(React.createElement(AuthEmailVerification, { url }));
       await container.emailService.sendEmail({
         to: user.email,
         subject: "Vérifiez votre adresse e-mail LearnSup",
@@ -78,9 +70,7 @@ export const auth = betterAuth({
     emailOTP({
       async sendVerificationOTP({ email, otp, type }, request) {
         if (type === "forget-password") {
-          const { html, text } = await renderEmailTemplate(
-            React.createElement(AuthPasswordResetEmail, { otp })
-          );
+          const { html, text } = await renderEmailTemplate(React.createElement(AuthPasswordResetEmail, { otp }));
           await container.emailService.sendEmail({
             to: email,
             subject: "Réinitialisation de votre mot de passe LearnSup",
@@ -88,9 +78,7 @@ export const auth = betterAuth({
             html,
           });
         } else if (type === "email-verification") {
-          const { html, text } = await renderEmailTemplate(
-            React.createElement(AuthEmailVerification, { otp })
-          );
+          const { html, text } = await renderEmailTemplate(React.createElement(AuthEmailVerification, { otp }));
           await container.emailService.sendEmail({
             to: email,
             subject: "Code de vérification LearnSup",
@@ -110,7 +98,7 @@ export const auth = betterAuth({
         const verificationUrl = `${frontendUrl}/auth/verify?token=${token}`;
 
         const { html, text } = await renderEmailTemplate(
-          React.createElement(AuthMagicLinkEmail, { url: verificationUrl })
+          React.createElement(AuthMagicLinkEmail, { url: verificationUrl }),
         );
         await container.emailService.sendEmail({
           to: data.email,
