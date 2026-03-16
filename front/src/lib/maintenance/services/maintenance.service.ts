@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 import { IMaintenanceService } from "./maintenance.service.interface";
 import { logger } from "../../common/logger";
 import { generateInternalId } from "../../utils/id-generator";

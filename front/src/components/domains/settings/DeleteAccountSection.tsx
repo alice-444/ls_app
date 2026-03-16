@@ -9,7 +9,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import {
   Dialog,
   DialogContent,

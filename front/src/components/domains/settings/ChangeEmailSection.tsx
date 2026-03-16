@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import {
   Dialog,
   DialogContent,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { authClient } from "./auth-client";
+import { authClient } from "./auth-server-client";
 
 let socketInstance: Socket | null = null;
 

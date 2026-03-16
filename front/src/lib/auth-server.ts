@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "./prisma";
+import { prisma } from "./prisma-server";
 import { username, magicLink, emailOTP } from "better-auth/plugins";
 import { container } from "./di/container";
 import { renderEmailTemplate } from "./email/utils/render-email";

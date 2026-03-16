@@ -3,7 +3,7 @@ import type { ICreditService } from "../../../credits/services/credit.service.in
 import type { Result } from "../../../common";
 import { success, failure } from "../../../common";
 import { logger } from "../../../common/logger";
-import type { PrismaClient } from "../../../prisma";
+import type { PrismaClient } from "../../../prisma-server";
 import type { IEmailService } from "../../../email/services/email.service.interface";
 import { renderEmailTemplate } from "../../../email/utils/render-email";
 import { TippingReceivedEmail } from "../../../email/templates/TippingReceivedEmail";

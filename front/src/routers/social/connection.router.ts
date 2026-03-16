@@ -1,4 +1,4 @@
-import { protectedProcedure, router } from "../../lib/trpc";
+import { protectedProcedure, router } from "../../lib/trpc-server";
 import {
   receiverUserIdSchema,
   connectionIdSchema,

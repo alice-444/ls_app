@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/lib/prisma";
+import { PrismaClient } from "@/lib/prisma-server";
 import { AdminStats } from "@ls-app/shared";
 import { IAdminService } from "./admin.service.interface";
 import type { IEmailService } from "../../email/services/email.service.interface";

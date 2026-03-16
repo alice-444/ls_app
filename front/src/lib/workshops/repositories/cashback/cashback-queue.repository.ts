@@ -5,7 +5,7 @@ import type {
   UpdateCashbackQueueInput,
   CashbackStatus,
 } from "./cashback-queue.repository.interface";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 
 export class PrismaCashbackQueueRepository implements ICashbackQueueRepository {
   constructor(private readonly prisma: PrismaClient) {}

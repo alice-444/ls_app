@@ -1,4 +1,4 @@
-import { adminProcedure, router } from "../../lib/trpc";
+import { adminProcedure, router } from "../../lib/trpc-server";
 import { 
   userIdSchema, 
   adminAnalyticsSchema, 

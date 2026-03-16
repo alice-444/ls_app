@@ -1,5 +1,5 @@
 import type { Result } from "../../../common";
-import type { ConversationListItem } from "@ls-app/shared";
+import { ConversationListItem } from "@ls-app/shared";
 
 export interface MessageItem {
   messageId: string;

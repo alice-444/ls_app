@@ -5,7 +5,7 @@ import type {
   ReportStatus,
 } from "./user-report.repository.interface";
 import { generateInternalId } from "../../../utils/id-generator";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 
 export class PrismaUserReportRepository implements IUserReportRepository {
   constructor(private readonly prisma: PrismaClient) {}

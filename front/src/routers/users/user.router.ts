@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from "../../lib/trpc";
+import { router, protectedProcedure } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { handleRouterResult } from "../shared/router-helpers";
 

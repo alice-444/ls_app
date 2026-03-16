@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@/lib/prisma";
+import type { PrismaClient } from "@/lib/prisma-server";
 import type { RepositoriesContainer } from "./repositories.container";
 import { WorkshopService } from "../workshops/services/workshop.service";
 import { WorkshopFeedbackService } from "../workshops/services/feedback/workshop-feedback.service";

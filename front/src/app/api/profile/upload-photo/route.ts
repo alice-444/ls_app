@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fileTypeFromBuffer } from "file-type";
-import { uploadRateLimit } from "@/lib/rate-limit";
+import { uploadRateLimit } from "@/lib/rate-limit-server";
 import sharp from "sharp";
 import {
   getAuthenticatedSession,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { FileValidator } from "@ls-app/shared";
-import { customAuthClient } from "@/lib/auth-client";
+import { customAuthClient } from "@/lib/auth-server-client";
 import { API_BASE_URL } from "@/lib/api-client";
 
 interface UsePhotoUploadOptions {

@@ -1,4 +1,4 @@
-import type { CreditTransactionType as PrismaCreditTransactionType } from '@/lib/prisma';
+import type { CreditTransactionType as PrismaCreditTransactionType } from '@/lib/prisma-server';
 
 export type CreditTransactionType = PrismaCreditTransactionType;
 

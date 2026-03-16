@@ -6,11 +6,11 @@ import type {
   IMessagingService,
   MessageItem,
 } from "./messaging.service.interface";
-import type { ConversationListItem } from "@ls-app/shared";
+import { ConversationListItem } from "@ls-app/shared";
 import type { IWorkshopRepository } from "../../../workshops/repositories/workshop.repository.interface";
 import type { IMessageValidationService } from "../validation/message-validation.service.interface";
 import type { IMessageEnrichmentService } from "../enrichment/message-enrichment.service.interface";
-import type { PrismaClient } from "@/lib/prisma";
+import type { PrismaClient } from "@/lib/prisma-server";
 import type { IUserBlockService } from "../../../users/services/moderation/user-block.service.interface";
 import type { INotificationService } from "../../../notifications/services/notification.service.interface";
 import type { IEmailService } from "../../../email/services/email.service.interface";

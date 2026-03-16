@@ -2,8 +2,8 @@ import type {
   ICreditTransactionRepository,
   CreditTransaction,
 } from "./credit-transaction.repository.interface";
-import type { PrismaClient } from '@/lib/prisma';
-import type { CreditTransactionType } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
+import type { CreditTransactionType } from '@/lib/prisma-server';
 
 export class PrismaCreditTransactionRepository
   implements ICreditTransactionRepository

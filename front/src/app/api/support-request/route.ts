@@ -5,7 +5,7 @@ import { existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { fileTypeFromBuffer } from "file-type";
 import { prisma } from "@/lib/common";
-import { uploadRateLimit } from "@/lib/rate-limit";
+import { uploadRateLimit } from "@/lib/rate-limit-server";
 import {
   getAuthenticatedSession,
   applyRateLimit,

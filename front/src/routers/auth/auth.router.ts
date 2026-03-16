@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../../lib/trpc";
+import { router, publicProcedure } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { handleRouterResult } from "../shared/router-helpers";
-import { auth } from "../../lib/auth";
+import { auth } from "../../lib/auth-server";
 
 export const authRouter = router({
   requestMagicLink: publicProcedure

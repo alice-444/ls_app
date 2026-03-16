@@ -1,4 +1,4 @@
-import type { FeedbackStatus } from '@/lib/prisma';
+import type { FeedbackStatus } from '@/lib/prisma-server';
 
 export interface WorkshopFeedbackEntity {
   id: string;

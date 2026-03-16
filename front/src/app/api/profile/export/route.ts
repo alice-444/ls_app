@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { container } from "@/lib/di/container";
-import { authRateLimit } from "@/lib/rate-limit";
+import { authRateLimit } from "@/lib/rate-limit-server";
 import {
   getAuthenticatedSession,
   handleRouteError,

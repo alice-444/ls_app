@@ -1,5 +1,5 @@
 import { mentorProfileSchema, isValidPhotoUrl } from "@ls-app/shared";
-import type { MentorProfileInput } from "@ls-app/shared";
+import { MentorProfileInput } from "@ls-app/shared";
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { Result, failure, success, validateInput, prisma } from "../../common";

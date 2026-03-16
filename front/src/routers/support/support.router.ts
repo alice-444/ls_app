@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, adminProcedure, protectedProcedure } from "../../lib/trpc";
+import { router, adminProcedure, protectedProcedure } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { requestIdSchema, supportMessageSchema } from "@ls-app/shared";
 

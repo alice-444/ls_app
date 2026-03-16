@@ -1,4 +1,4 @@
-import { mentorProcedure, router } from "../../lib/trpc";
+import { mentorProcedure, router } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";

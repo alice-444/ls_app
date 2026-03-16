@@ -1,7 +1,7 @@
 import type {
   PrismaClient,
   support_request,
-} from '@/lib/prisma';
+} from '@/lib/prisma-server';
 import {
   ISupportRequestRepository,
   CreateSupportRequestInput,

@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@/lib/prisma";
+import type { PrismaClient } from "@/lib/prisma-server";
 import {
   IExportDataService,
   UserDataExport,

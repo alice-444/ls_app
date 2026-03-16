@@ -1,5 +1,5 @@
 import type { IVerificationRepository } from "./verification.repository.interface";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 
 export class PrismaVerificationRepository implements IVerificationRepository {
   constructor(private readonly prisma: PrismaClient) {}

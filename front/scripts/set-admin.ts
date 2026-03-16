@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 // Load .env before importing prisma (which reads DATABASE_URL)
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
-import { prisma } from "../src/lib/prisma";
+import { prisma } from "../src/lib/prisma-server";
 
 async function main() {
   const email = process.argv[2];

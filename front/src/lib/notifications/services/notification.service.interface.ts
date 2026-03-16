@@ -1,4 +1,4 @@
-import type { BulkNotificationInput } from "@ls-app/shared";
+import { BulkNotificationInput } from "@ls-app/shared";
 import type { Result } from "../../common/types";
 import type {
   NotificationEntity,

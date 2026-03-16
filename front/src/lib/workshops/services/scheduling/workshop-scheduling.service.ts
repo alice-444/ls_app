@@ -16,7 +16,7 @@ import { renderEmailTemplate } from "../../../email/utils/render-email";
 import { WorkshopCancelledEmail } from "../../../email/templates/WorkshopCancelledEmail";
 import * as React from "react";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
-import type { PrismaClient } from "@/lib/prisma";
+import type { PrismaClient } from "@/lib/prisma-server";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth-server";
 import { authFailuresTotal } from "@/lib/metrics/prometheus";
 
 export const signInInputSchema = z.object({

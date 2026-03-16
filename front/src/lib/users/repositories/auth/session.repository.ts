@@ -1,5 +1,5 @@
 import type { ISessionRepository } from "./session.repository.interface";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 
 export class PrismaSessionRepository implements ISessionRepository {
   constructor(private readonly prisma: PrismaClient) {}

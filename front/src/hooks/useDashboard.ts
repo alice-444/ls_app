@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { getUserData } from "@/lib/api-client";
 import { toast } from "sonner";
 

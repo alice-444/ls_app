@@ -1,5 +1,5 @@
 import { RateLimiterPostgres, RateLimiterMemory } from "rate-limiter-flexible";
-import { pool } from "../prisma";
+import { pool } from "../prisma-server";
 
 let rateLimiterPostgres: RateLimiterPostgres | null = null;
 let rateLimiterMemory: RateLimiterMemory | null = null;

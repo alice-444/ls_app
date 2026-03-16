@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
 import {

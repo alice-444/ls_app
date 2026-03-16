@@ -1,4 +1,4 @@
-import { prisma } from '../src/lib/prisma';
+import { prisma } from '../src/lib/prisma-server';
 
 async function main() {
   console.log('Seeding community data...');

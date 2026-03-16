@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { customAuthClient } from "@/lib/auth-client";
+import { customAuthClient } from "@/lib/auth-server-client";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Role, Step } from "../types";
 import type { ProfFormData } from "../schemas";

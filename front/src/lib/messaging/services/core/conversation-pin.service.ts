@@ -2,7 +2,7 @@ import type { Result } from "../../../common";
 import { failure, success, prisma } from "../../../common";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { IConversationRepository } from "../../repositories/conversation.repository.interface";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 
 export interface IConversationPinService {
   pinConversation(

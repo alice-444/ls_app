@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ShinyText from "@/components/ui/ShinyText";

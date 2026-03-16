@@ -3,7 +3,7 @@ import {
   publicProcedure,
   protectedProcedure,
   router,
-} from "../../lib/trpc";
+} from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import {
   createWorkshopBackendSchema,

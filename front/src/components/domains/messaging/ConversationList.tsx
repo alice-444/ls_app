@@ -12,7 +12,7 @@ import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
 import { cn } from "@/lib/utils";
 import { ConversationRow } from "./ConversationRow";
 import { NewConversationDialog } from "./NewConversationDialog";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 

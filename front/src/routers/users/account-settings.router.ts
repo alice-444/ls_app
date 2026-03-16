@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, publicProcedure } from "../../lib/trpc";
+import { router, protectedProcedure, publicProcedure } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { updatePublicProfileSchema } from "@ls-app/shared";
 import type { UpdatePublicProfileInput } from "@ls-app/shared";

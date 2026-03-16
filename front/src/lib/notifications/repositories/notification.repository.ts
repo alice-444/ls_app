@@ -3,7 +3,7 @@ import type {
   NotificationEntity,
   CreateNotificationInput,
 } from "./notification.repository.interface";
-import { PrismaClient } from '@/lib/prisma';
+import { PrismaClient } from '@/lib/prisma-server';
 
 export class PrismaNotificationRepository implements INotificationRepository {
   private readonly prisma: PrismaClient;

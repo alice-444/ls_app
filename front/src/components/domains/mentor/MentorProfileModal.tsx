@@ -21,7 +21,7 @@ import {
   Ban,
   Flag,
 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { toast } from "sonner";
 import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
 import { ReportUserDialog } from "@/components/domains/user/ReportUserDialog";

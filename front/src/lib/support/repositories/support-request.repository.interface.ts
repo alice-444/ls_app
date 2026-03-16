@@ -1,4 +1,4 @@
-import type { support_request } from '@/lib/prisma';
+import type { support_request } from '@/lib/prisma-server';
 
 export interface CreateSupportRequestInput {
   userId?: string | null;

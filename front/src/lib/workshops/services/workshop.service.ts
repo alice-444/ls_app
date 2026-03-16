@@ -8,7 +8,7 @@ import type { IWorkshopVideoLinkService } from "./video/workshop-video-link.serv
 import type { IEmailService } from "../../email/services/email.service.interface";
 import type { IUserBlockService } from "../../users/services/moderation/user-block.service.interface";
 import type { ICreditService } from "../../credits/services/credit.service.interface";
-import type { PrismaClient } from "@/lib/prisma";
+import type { PrismaClient } from "@/lib/prisma-server";
 import { WorkshopAccessGuard } from "./guards/workshop-access.guard";
 import { WorkshopLifecycleService } from "./lifecycle/workshop-lifecycle.service";
 import { WorkshopSchedulingService } from "./scheduling/workshop-scheduling.service";

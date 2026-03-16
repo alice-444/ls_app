@@ -6,7 +6,7 @@ import type { AppUserRepository } from "../../../users/repositories";
 import type { IEmailService } from "../../../email/services/email.service.interface";
 import { AuthEmailTemplates } from "../email/auth-email.templates";
 import { generateSecureToken } from "../../../utils/token-generator";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 
 const MAGIC_LINK_EXPIRATION_MINUTES = 15;
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, adminProcedure } from "../../lib/trpc";
+import { router, protectedProcedure, adminProcedure } from "../../lib/trpc-server";
 import { prisma } from "../../lib/common/prisma";
 import { TRPCError } from "@trpc/server";
 import {

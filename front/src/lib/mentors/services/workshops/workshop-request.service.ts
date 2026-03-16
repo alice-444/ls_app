@@ -13,7 +13,7 @@ import { sanitizeString } from "../../../utils/sanitize";
 import { logger } from "../../../common/logger";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 import { generateInternalId } from "../../../utils/id-generator";
 
 export class WorkshopRequestService implements IWorkshopRequestService {

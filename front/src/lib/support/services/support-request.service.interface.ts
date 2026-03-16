@@ -1,4 +1,4 @@
-import { support_request } from "@/lib/prisma";
+import { support_request } from "@/lib/prisma-server";
 import { SupportRequestDetailed, SupportMessage } from "@ls-app/shared";
 
 export interface CreateSupportRequestCommand {

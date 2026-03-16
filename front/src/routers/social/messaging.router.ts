@@ -1,4 +1,4 @@
-import { router } from "../../lib/trpc";
+import { router } from "../../lib/trpc-server";
 import { messagingConversationRouter } from "./messaging-conversation.router";
 import { messagingMessageRouter } from "./messaging-message.router";
 import { messagingReactionRouter } from "./messaging-reaction.router";

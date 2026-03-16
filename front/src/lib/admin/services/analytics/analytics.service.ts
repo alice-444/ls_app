@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/lib/prisma";
+import { PrismaClient } from "@/lib/prisma-server";
 import { 
   AdminBIStats, 
   AdminTimeRange,

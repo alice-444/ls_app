@@ -1,4 +1,4 @@
-import { publicProcedure, protectedProcedure, router } from "../../lib/trpc";
+import { publicProcedure, protectedProcedure, router } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { unwrapResult, handleRouterResult } from "../shared/router-helpers";
 import { z } from "zod";

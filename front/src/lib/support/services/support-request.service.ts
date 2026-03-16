@@ -1,4 +1,4 @@
-import type { support_request, PrismaClient } from "@/lib/prisma";
+import type { support_request, PrismaClient } from "@/lib/prisma-server";
 import { SupportRequestDetailed, SupportMessage } from "@ls-app/shared";
 import { SupportRequestStatus } from "../types/support-types";
 import {

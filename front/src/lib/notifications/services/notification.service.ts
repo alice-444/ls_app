@@ -1,4 +1,4 @@
-import type { BulkNotificationInput } from "@ls-app/shared";
+import { BulkNotificationInput } from "@ls-app/shared";
 import type { INotificationService } from "./notification.service.interface";
 import type { INotificationRepository } from "../repositories/notification.repository.interface";
 import type { Result } from "../../common/types";
@@ -8,7 +8,7 @@ import type { IUserBlockService } from "../../users/services/moderation/user-blo
 import { success, failure } from "../../common/types";
 import { generateInternalId } from "../../utils/id-generator";
 import { logger } from "../../common/logger";
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 
 export class NotificationService implements INotificationService {
   constructor(

@@ -29,7 +29,7 @@ import { ProposeDealForm } from "@/components/domains/community/ProposeDealForm"
 import { ProposeSpotForm } from "@/components/domains/community/ProposeSpotForm";
 import { ProposeEventForm } from "@/components/domains/community/ProposeEventForm";
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { getUserRole } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 

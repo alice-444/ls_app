@@ -1,5 +1,6 @@
 import { AdminStats } from "@ls-app/shared";
 
+
 export interface IAdminService {
   getStats(): Promise<AdminStats>;
   getOnboardingQueue(params?: { limit?: number; offset?: number }): Promise<any>;

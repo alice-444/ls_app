@@ -3,7 +3,7 @@
 import { useReducer } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { RequestWorkshopParticipationDialog } from "@/components/domains/mentor/RequestWorkshopParticipationDialog";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";

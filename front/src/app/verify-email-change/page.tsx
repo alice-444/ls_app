@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import Link from "next/link";
 
 function VerifyEmailChangeContent() {

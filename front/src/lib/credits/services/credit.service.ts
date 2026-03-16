@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@/lib/prisma';
+import type { PrismaClient } from '@/lib/prisma-server';
 import { failure, success, Result } from "@/lib/common/types";
 import {
   ICreditService,

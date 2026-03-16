@@ -16,35 +16,6 @@ const PUBLIC_ROUTES = [
   "/monitoring",
 ];
 
-import { auth } from "@/lib/auth-server";
-
-const PUBLIC_ROUTES = [
-  "/",
-  "/login",
-  "/sign-up",
-  "/forgot-password",
-  "/reset-password",
-  "/help",
-  "/legal",
-  "/terms",
-  "/privacy",
-  "/info",
-  "/mentors",
-  "/monitoring",
-];
-
-async function checkSession(request: NextRequest): Promise<boolean> {
-  try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-    return !!session?.user;
-  } catch (error) {
-    console.error("[middleware] Session check failed:", error);
-    return false;
-  }
-}
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -88,19 +59,16 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Pour les routes protégées, vérifier la session côté serveur
-  const isAuthenticated = await checkSession(request);
-
-  if (!isAuthenticated) {
-    // Try alternative method: check if any session cookie exists
-    const hasAnyCookie = request.cookies.getAll().length > 0;
-
-    // Si on a au moins un cookie, on laisse passer (on laisse le client vérifier)
-    if (hasAnyCookie) {
-      return response;
-    }
-
+  // Pour les routes protégées, une vérification sommaire de la présence du cookie de session
+  // Better Auth utilise par défaut 'better-auth.session_token'
+  const sessionCookie = request.cookies.get("better-auth.session_token") || 
+                        request.cookies.get("__Secure-better-auth.session_token");
+  
+  if (!sessionCookie) {
+    // Si aucun cookie de session n'est présent, on redirige vers /login
     const loginUrl = new URL("/login", request.url);
+    // On garde l'URL de destination pour après le login
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 

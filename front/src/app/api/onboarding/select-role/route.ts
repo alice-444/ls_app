@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { OnboardingService } from "@/lib/auth/services/onboarding";
 import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
-import { onboardingRateLimit } from "@/lib/rate-limit";
+import { onboardingRateLimit } from "@/lib/rate-limit-server";
 import {
   getAuthenticatedSession,
   applyRateLimit,

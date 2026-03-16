@@ -1,4 +1,4 @@
-import { protectedProcedure, router } from "../../lib/trpc";
+import { protectedProcedure, router } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { z } from "zod";
 import { userIdSchema } from "@ls-app/shared";

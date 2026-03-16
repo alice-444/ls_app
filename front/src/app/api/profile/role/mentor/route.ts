@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { MentorProfileService } from "@/lib/auth/services/mentor-profile.service";
 import { PrismaAppUserRepository } from "@/lib/users/repositories";
 import { prisma } from "@/lib/common";
-import { profileRateLimit } from "@/lib/rate-limit";
+import { profileRateLimit } from "@/lib/rate-limit-server";
 import {
   getAuthenticatedSession,
   applyRateLimit,

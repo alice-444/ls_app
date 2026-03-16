@@ -1,4 +1,4 @@
-import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
+import { protectedProcedure, publicProcedure, router } from "../lib/trpc-server";
 
 // Workshops
 import { workshopRouter } from "./workshops/workshop.router";
