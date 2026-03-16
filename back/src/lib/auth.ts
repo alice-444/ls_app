@@ -25,10 +25,8 @@ export const auth = betterAuth({
   cookie: {
     domain: getCookieDomain(),
     path: "/",
-    extraAttributes: {
-      SameSite: "None",
-      Secure: true,
-    },
+    sameSite: "lax",
+    secure: true,
   },
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production" || process.env.BETTER_AUTH_URL?.startsWith("https"),
