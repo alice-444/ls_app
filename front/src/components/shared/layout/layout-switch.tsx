@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { getUserRole } from "@/lib/api-client";
 import Header from "@/components/shared/header";
 import Sidebar from "@/components/shared/sidebar";

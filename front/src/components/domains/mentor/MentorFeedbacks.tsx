@@ -11,7 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { renderStars } from "@/lib/rating-utils";
 import { API_BASE_URL } from "@/lib/api-client";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { ReportFeedbackDialog } from "@/components/domains/workshop/ReportFeedbackDialog";
 import {
   Select,

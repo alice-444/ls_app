@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { PageContainer } from "@/components/shared/layout";
 import { ChatWindow } from "@/components/domains/messaging/ChatWindow";
 import { MessageSquare } from "lucide-react";

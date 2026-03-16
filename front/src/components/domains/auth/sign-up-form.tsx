@@ -1,4 +1,4 @@
-import { authClient, customAuthClient } from "@/lib/auth-client";
+import { authClient, customAuthClient } from "@/lib/auth-server-client";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";

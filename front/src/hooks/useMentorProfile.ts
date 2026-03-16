@@ -4,7 +4,7 @@ import { useEffect, useReducer, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authClient, customAuthClient } from "@/lib/auth-client";
+import { authClient, customAuthClient } from "@/lib/auth-server-client";
 import { API_BASE_URL } from "@/lib/api-client";
 import { formatPhotoUrl } from "@/utils/photo";
 import { toast } from "sonner";

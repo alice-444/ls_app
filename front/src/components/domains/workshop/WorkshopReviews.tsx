@@ -12,7 +12,7 @@ import { fr } from "date-fns/locale";
 import { renderStars } from "@/lib/rating-utils";
 import { API_BASE_URL } from "@/lib/api-client";
 import { ReportFeedbackDialog } from "@/components/domains/workshop/ReportFeedbackDialog";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 
 type WorkshopReviewsProps = Readonly<{
   workshopId: string;

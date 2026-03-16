@@ -9,7 +9,7 @@ import { ModeToggle } from "@/components/shared/mode-toggle";
 import UserMenu from "@/components/shared/user-menu";
 import { NotificationBell } from "@/components/shared/notification-bell";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";

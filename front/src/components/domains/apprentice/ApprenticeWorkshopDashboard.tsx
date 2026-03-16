@@ -15,7 +15,7 @@ import { CancelWorkshopRegistrationDialog } from "@/components/domains/workshop/
 import { toast } from "sonner";
 import { useState } from "react";
 import { RequestWorkshopParticipationDialog } from "@/components/domains/mentor/RequestWorkshopParticipationDialog";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { WorkshopCalendar } from "@/components/domains/workshop/calendar/WorkshopCalendar";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import { trpc } from "@/utils/trpc";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";

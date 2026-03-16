@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import ShinyText from "@/components/ui/ShinyText";
 import { Mail, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import Link from "next/link";
 import { motion } from "framer-motion";
 

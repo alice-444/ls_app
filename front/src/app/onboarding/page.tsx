@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-server-client";
 import Loader from "@/components/shared/loader";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { RoleSelectionStep } from "./components/RoleSelectionStep";
