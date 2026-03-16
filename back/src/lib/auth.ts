@@ -25,7 +25,7 @@ export const auth = betterAuth({
   cookie: {
     domain: getCookieDomain(),
     path: "/",
-    sameSite: "lax",
+    sameSite: "none",
     secure: true,
   },
   advanced: {
