@@ -16,15 +16,32 @@ const PUBLIC_ROUTES = [
   "/monitoring",
 ];
 
-const API_BASE_URL = process.env.RUNTIME_API_URL || "https://api.learnsup.fr";
+// Pour le middleware (server-side), utiliser l'URL interne Docker
+const INTERNAL_API_URL = process.env.INTERNAL_API_URL || "http://backend:4500";
 
 async function checkSession(request: NextRequest): Promise<boolean> {
   try {
     // Récupérer les cookies depuis la requête
     const cookieHeader = request.headers.get("cookie") || "";
+    const pathname = request.nextUrl.pathname;
+
+    console.log(`[middleware] Checking session for ${pathname}`);
+    console.log(`[middleware] Cookie header: ${cookieHeader ? `[${cookieHeader.split(";").length} cookies]` : "NONE"}`);
+
+    // Afficher les cookies individuels
+    const cookies = request.cookies.getAll();
+    if (cookies.length > 0) {
+      console.log(
+        `[middleware] Cookies detected:`,
+        cookies.map((c) => c.name),
+      );
+    } else {
+      console.log(`[middleware] No cookies detected`);
+    }
 
     // Appeler le backend pour vérifier la session
-    const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
+    console.log(`[middleware] Calling ${INTERNAL_API_URL}/api/auth/session`);
+    const response = await fetch(`${INTERNAL_API_URL}/api/auth/session`, {
       method: "GET",
       headers: {
         cookie: cookieHeader,
@@ -32,8 +49,14 @@ async function checkSession(request: NextRequest): Promise<boolean> {
       credentials: "include",
     });
 
+    console.log(`[middleware] Backend response status: ${response.status}`);
     const data = await response.json();
-    return data.authenticated === true;
+    console.log(`[middleware] Backend response:`, data);
+
+    const isAuth = data.authenticated === true;
+    console.log(`[middleware] Session valid: ${isAuth}`);
+
+    return isAuth;
   } catch (error) {
     console.error("[middleware] Session check failed:", error);
     return false;
@@ -43,6 +66,8 @@ async function checkSession(request: NextRequest): Promise<boolean> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  console.log(`[middleware] Incoming request: ${pathname}`);
+
   // Ignorer les routes techniques et Socket.IO
   if (
     pathname.startsWith("/_next") ||
@@ -51,6 +76,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/socket.io") ||
     pathname.includes(".")
   ) {
+    console.log(`[middleware] Bypassing technical route: ${pathname}`);
     return NextResponse.next();
   }
 
@@ -58,17 +84,21 @@ export async function middleware(request: NextRequest) {
 
   // Si c'est une route publique, laisser passer
   if (isPublicRoute) {
+    console.log(`[middleware] Public route allowed: ${pathname}`);
     return NextResponse.next();
   }
 
   // Pour les routes protégées, vérifier la session
+  console.log(`[middleware] Protected route, checking session: ${pathname}`);
   const isAuthenticated = await checkSession(request);
 
   if (!isAuthenticated) {
+    console.log(`[middleware] User not authenticated, redirecting to /login from ${pathname}`);
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
+  console.log(`[middleware] User authenticated, allowing access to ${pathname}`);
   return NextResponse.next();
 }
 
