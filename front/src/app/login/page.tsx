@@ -17,10 +17,9 @@ function LoginContent() {
 
   useEffect(() => {
     if (session) {
-      const callbackUrl = searchParams.get("callbackUrl");
-      router.push(callbackUrl || "/dashboard");
+      router.push("/dashboard");
     }
-  }, [session, router, searchParams]);
+  }, [session, router]);
 
   useEffect(() => {
     setShowSignIn(mode !== "signup");
