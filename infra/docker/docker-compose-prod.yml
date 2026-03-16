@@ -23,7 +23,9 @@ services:
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
       - "traefik.http.routers.frontend.middlewares=frontend-headers"
       - "traefik.http.middlewares.frontend-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.frontend-headers.headers.customrequestheaders.X-Forwarded-Host=${FRONTEND_URL}"
       - "traefik.http.services.frontend.loadbalancer.server.port=3001"
+      - "traefik.http.services.frontend.loadbalancer.passHostHeader=true"
       - "traefik.http.services.frontend.loadbalancer.sticky=true"
       - "traefik.docker.network=vps-mds"
 
@@ -71,6 +73,7 @@ services:
       - "traefik.http.middlewares.backend-cors.headers.accesscontrolmaxage=3600"
       - "traefik.http.middlewares.backend-cors.headers.accesscontrolallowcredentials=true"
       - "traefik.http.services.backend.loadbalancer.server.port=4500"
+      - "traefik.http.services.backend.loadbalancer.passHostHeader=true"
       - "traefik.http.services.backend.loadbalancer.sticky=true"
       - "traefik.docker.network=vps-mds"
 
