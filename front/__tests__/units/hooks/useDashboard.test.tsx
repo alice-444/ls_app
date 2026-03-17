@@ -10,9 +10,11 @@ const mockPush = vi.fn();
 const mockReplace = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/",
 }));
 
-vi.mock("@/lib/auth-client", () => ({
+vi.mock("@/lib/auth-server-client", () => ({
   authClient: {
     useSession: () => ({
       data: { user: { id: "user-1" } },
@@ -22,6 +24,7 @@ vi.mock("@/lib/auth-client", () => ({
 }));
 
 vi.mock("@/lib/api-client", () => ({
+  API_BASE_URL: "http://localhost:3000",
   getUserData: vi.fn().mockResolvedValue({ role: "APPRENANT", status: "ACTIVE" }),
   getUserRole: vi.fn().mockResolvedValue("APPRENANT"),
 }));
