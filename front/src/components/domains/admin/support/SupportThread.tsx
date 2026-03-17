@@ -14,8 +14,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 interface SupportThreadProps {
-  requestId: string;
-  isAdmin?: boolean;
+  readonly requestId: string;
+  readonly isAdmin?: boolean;
 }
 
 export function SupportThread({ requestId, isAdmin = false }: SupportThreadProps) {

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,6 @@ interface Connection {
 
 interface ApprenantDashboardSidebarProps {
   readonly titleData: { title?: string } | undefined;
-  readonly creditBalance: { readonly balance: number } | undefined;
   readonly mentorConnections: Connection[];
   readonly workshopHistory: WorkshopBase[] | undefined;
   readonly acceptedConnections: Connection[] | undefined;
@@ -44,7 +44,6 @@ interface ApprenantDashboardSidebarProps {
 
 export function ApprenantDashboardSidebar({
   titleData,
-  creditBalance,
   mentorConnections,
   workshopHistory,
   acceptedConnections,
@@ -180,14 +179,6 @@ function CreditBalanceCard({
         </div>
         {showActions && (
           <div className="flex flex-col gap-2">
-            <Button
-              variant="secondary"
-              className="group w-full min-w-0 bg-white/95 backdrop-blur-md text-[#C9A0DC] rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border-0 shadow-md transition-all duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(201,160,220,0.4)] hover:ring-2 hover:ring-white/60 hover:ring-offset-2 hover:ring-offset-transparent dark:bg-white/90 dark:hover:bg-white dark:text-[#a67fd4] dark:hover:shadow-[0_0_24px_rgba(201,160,220,0.35)] dark:hover:ring-white/70"
-              onClick={() => router.push("/buy-credits")}
-            >
-              Gérer mon solde
-              <ArrowRight className="h-4 w-4 sm:h-[18px] sm:w-[18px] ml-2 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </Button>
             <Button
               variant="outline"
               className="group w-full min-w-0 bg-white/20 backdrop-blur-md text-white rounded-[32px] h-9 sm:h-10 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold flex items-center justify-center gap-2 border border-white/40 shadow-sm transition-all duration-300 hover:bg-white/40 hover:border-white/60 hover:shadow-md hover:ring-2 hover:ring-white/40 dark:bg-white/25 dark:border-white/50 dark:hover:bg-white/45 dark:hover:ring-white/50"

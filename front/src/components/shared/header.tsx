@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Coins, ShoppingCart, Crown, Menu } from "lucide-react";
+import { Coins, Crown, Menu } from "lucide-react";
 
 import { ModeToggle } from "@/components/shared/ModeToggle";
 import UserMenu from "@/components/shared/UserMenu";
@@ -53,20 +53,6 @@ export default function Header() {
           </span>
           <Coins className="w-3.5 md:w-[18px] h-3.5 md:h-[18px] text-[#26547c] dark:text-[#5ba3ff]" />
         </div>
-        {userRole === "APPRENANT" && (
-          <Button
-            variant="ctaOutline"
-            size="ctaSm"
-            onClick={() => router.push("/buy-credits")}
-            className="group"
-            title="Acheter des crédits"
-          >
-            <span className="hidden lg:inline text-[#26547c] group-hover:text-white dark:text-[#e0e0e0] dark:group-hover:text-white text-xs font-semibold transition-colors duration-200">
-              Acheter des crédits
-            </span>
-            <ShoppingCart className="w-4 lg:w-[18px] h-4 lg:h-[18px] text-[#26547c] group-hover:text-white dark:text-[#e0e0e0] dark:group-hover:text-white lg:ml-2 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Button>
-        )}
 
         {PREMIUM_ENABLED && (
           <Button
