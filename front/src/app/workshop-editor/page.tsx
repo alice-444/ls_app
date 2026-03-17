@@ -39,7 +39,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 import type { WorkshopDetailed } from "@ls-app/shared";
 
 type Workshop = WorkshopDetailed;

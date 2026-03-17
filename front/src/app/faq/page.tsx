@@ -2,7 +2,7 @@
 
 import { faqConfig } from "@/lib/faq-config";
 import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 
 export default function FAQPage() {
   return (

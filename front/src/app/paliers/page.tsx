@@ -9,7 +9,7 @@ import {
   Star,
   Zap,
 } from "lucide-react";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";

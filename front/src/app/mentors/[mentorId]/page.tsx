@@ -35,7 +35,7 @@ import { MentorWorkshopsList } from "@/components/domains/mentor/MentorWorkshops
 import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
 import { ReportUserDialog } from "@/components/domains/user/ReportUserDialog";
 import { toast } from "sonner";
-import { BackButton } from "@/components/shared/back-button";
+import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer } from "@/components/shared/layout/PageContainer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
