@@ -26,7 +26,7 @@ export function useSocket(): Socket | null {
     }
 
     const serverUrl =
-      process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_SERVER_URL || "https://api.learnsup.fr";
+      process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_SERVER_URL || "https://app.learnsup.fr";
 
     console.log(`Connecting to WebSocket at: ${serverUrl}`);
 
