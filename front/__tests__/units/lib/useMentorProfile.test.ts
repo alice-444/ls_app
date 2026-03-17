@@ -5,9 +5,10 @@ import { useMentorProfile } from "@/hooks/useMentorProfile";
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
-vi.mock("@/lib/auth-client", () => ({
+vi.mock("@/lib/auth-server-client", () => ({
   authClient: {
     useSession: () => ({
       data: { user: { id: "user-1", name: "Test User" } },
@@ -20,6 +21,10 @@ vi.mock("@/lib/auth-client", () => ({
     publishProfile: vi.fn(),
     unpublishProfile: vi.fn(),
   },
+}));
+
+vi.mock("@/lib/api-client", () => ({
+  API_BASE_URL: "http://localhost:3000",
 }));
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));

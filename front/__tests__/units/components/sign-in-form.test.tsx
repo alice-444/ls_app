@@ -12,10 +12,11 @@ const mockPush = vi.fn();
 const mockRefresh = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, refresh: mockRefresh }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 const mockSignInEmail = vi.fn();
-vi.mock("@/lib/auth-client", () => ({
+vi.mock("@/lib/auth-server-client", () => ({
   authClient: {
     useSession: () => ({ data: null, isPending: false }),
     signIn: {
@@ -29,6 +30,7 @@ vi.mock("sonner", () => ({
 }));
 
 vi.mock("@/lib/api-client", () => ({
+  API_BASE_URL: "http://localhost:3000",
   getUserRole: vi.fn(() => Promise.resolve("MENTOR")),
 }));
 

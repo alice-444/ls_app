@@ -10,11 +10,12 @@ import SignUpForm from "@/components/domains/auth/SignUpForm";
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 const mockSignUpEmail = vi.fn();
 const mockSignInEmail = vi.fn();
-vi.mock("@/lib/auth-client", () => ({
+vi.mock("@/lib/auth-server-client", () => ({
   authClient: {
     useSession: () => ({ data: null, isPending: false }),
     signIn: {
@@ -28,6 +29,10 @@ vi.mock("@/lib/auth-client", () => ({
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
+}));
+
+vi.mock("@/lib/api-client", () => ({
+  API_BASE_URL: "http://localhost:3000",
 }));
 
 // @ts-expect-error - AppRouter type stub doesn't satisfy Router constraint (_def, createCaller); real types from backend

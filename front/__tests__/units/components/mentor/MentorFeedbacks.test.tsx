@@ -10,12 +10,17 @@ import { MentorFeedbacks } from "@/components/domains/mentor/MentorFeedbacks";
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
-vi.mock("@/lib/auth-client", () => ({
+vi.mock("@/lib/auth-server-client", () => ({
   authClient: {
     useSession: () => ({ data: { user: { id: "user-1" } } }),
   },
+}));
+
+vi.mock("@/lib/api-client", () => ({
+  API_BASE_URL: "http://localhost:3000",
 }));
 
 const trpc = createTRPCReact<AppRouter>();
