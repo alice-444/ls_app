@@ -2,6 +2,7 @@ import "dotenv/config";
 import { createServer } from "node:http";
 import next from "next";
 import { container } from "./src/lib/di/container";
+import { initializeSocketServer } from "./src/lib/socket/server";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOSTNAME || "0.0.0.0";
@@ -45,6 +46,9 @@ app.prepare().then(() => {
       process.exit(1);
     }
   });
+
+  // Attach Socket.IO to the HTTP server so it handles /socket.io requests
+  initializeSocketServer(httpServer);
 
   console.info("Socket.IO initialized on path /socket.io");
 
