@@ -2,7 +2,7 @@ import { authClient, customAuthClient } from "@/lib/auth-server-client";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

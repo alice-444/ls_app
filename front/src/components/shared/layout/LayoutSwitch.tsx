@@ -1,16 +1,16 @@
 "use client";
-
+import React from "react";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-server-client";
 import { getUserRole } from "@/lib/api-client";
-import Header from "@/components/shared/Header";
-import Sidebar from "@/components/shared/Sidebar";
-import { Footer } from "@/components/shared/Footer";
+import Header from "@/components/shared/header";
+import Sidebar from "@/components/shared/sidebar";
+import { Footer } from "@/components/shared/footer";
 import { ScrollToTopButton } from "@/components/shared/ScrollToTopButton";
 import { ADMIN_NAV_ITEMS, ADMIN_SIDEBAR_TITLE, ADMIN_SIDEBAR_ICON } from "@/lib/admin-nav";
 
-export function LayoutSwitch({ children }: { children: React.ReactNode }) {
+export function LayoutSwitch({ children }: { readonly children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const { data: userRole } = useQuery({

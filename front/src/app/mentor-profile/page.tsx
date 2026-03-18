@@ -5,15 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/components/shared/loader";
 import ShinyText from "@/components/ui/ShinyText";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -92,7 +86,15 @@ export default function MentorProfilePage() {
 
     // Auto-switch to the first section with an error
     const sectionsWithErrors: ProfileSection[] = [];
-    if (formErrors.name || formErrors.bio || formErrors.domain || formErrors.displayName || formErrors.iceBreakerTags || formErrors.photo) sectionsWithErrors.push("informations-base");
+    if (
+      formErrors.name ||
+      formErrors.bio ||
+      formErrors.domain ||
+      formErrors.displayName ||
+      formErrors.iceBreakerTags ||
+      formErrors.photo
+    )
+      sectionsWithErrors.push("informations-base");
     if (formErrors.areasOfExpertise) sectionsWithErrors.push("domaines-expertise");
     if (formErrors.mentorshipTopics) sectionsWithErrors.push("sujets-mentorat");
     if (formErrors.qualifications || formErrors.experience) sectionsWithErrors.push("qualifications-experience");
@@ -103,9 +105,17 @@ export default function MentorProfilePage() {
     }
   };
 
-  const sidebarItemsWithErrors = SIDEBAR_ITEMS.map(item => {
+  const sidebarItemsWithErrors = SIDEBAR_ITEMS.map((item) => {
     let hasError = false;
-    if (item.id === "informations-base") hasError = !!(errors.name || errors.bio || errors.domain || errors.displayName || errors.iceBreakerTags || errors.photo);
+    if (item.id === "informations-base")
+      hasError = !!(
+        errors.name ||
+        errors.bio ||
+        errors.domain ||
+        errors.displayName ||
+        errors.iceBreakerTags ||
+        errors.photo
+      );
     if (item.id === "domaines-expertise") hasError = !!errors.areasOfExpertise;
     if (item.id === "sujets-mentorat") hasError = !!errors.mentorshipTopics;
     if (item.id === "qualifications-experience") hasError = !!(errors.qualifications || errors.experience);
@@ -127,18 +137,12 @@ export default function MentorProfilePage() {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
             <ShinyText text="Mon Profil Mentor" />
           </h1>
-          <p className="text-base sm:text-lg text-ls-muted mt-2">
-            Remplis les informations pour créer ton profil
-          </p>
+          <p className="text-base sm:text-lg text-ls-muted mt-2">Remplis les informations pour créer ton profil</p>
         </motion.div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-        <SectionSidebar
-          items={sidebarItemsWithErrors}
-          activeSection={activeSection}
-          onSelect={setActiveSection}
-        />
+        <SectionSidebar items={sidebarItemsWithErrors} activeSection={activeSection} onSelect={setActiveSection} />
 
         <div className="flex-1 min-w-0">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -231,9 +235,7 @@ export default function MentorProfilePage() {
                             variant="orange"
                           />
                           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                            {PREDEFINED_TOPICS.filter(
-                              (topic) => !selectedTopics.includes(topic)
-                            ).map((topic) => (
+                            {PREDEFINED_TOPICS.filter((topic) => !selectedTopics.includes(topic)).map((topic) => (
                               <Button
                                 key={topic}
                                 type="button"
@@ -260,12 +262,9 @@ export default function MentorProfilePage() {
                           transition={{ duration: 0.25 }}
                           className="flex flex-col gap-6"
                         >
-
                           <div className="space-y-6">
                             <div className="space-y-4">
-                              <Label className="text-ls-heading">
-                                Qualifications (max 20)
-                              </Label>
+                              <Label className="text-ls-heading">Qualifications (max 20)</Label>
                               <TagListSection
                                 items={selectedQualifications}
                                 customValue={customQualification}
@@ -279,9 +278,7 @@ export default function MentorProfilePage() {
                               />
                             </div>
                             <div className="space-y-4">
-                              <Label className="text-ls-heading">
-                                Expérience (max 20)
-                              </Label>
+                              <Label className="text-ls-heading">Expérience (max 20)</Label>
                               <TagListSection
                                 items={selectedExperience}
                                 customValue={customExperience}
@@ -336,13 +333,10 @@ export default function MentorProfilePage() {
                     <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-ls-border">
                       <Button
                         type="submit"
-                        disabled={
-                          isSubmitting ||
-                          isFormSubmitting ||
-                          isPublishing ||
-                          isUnpublishing
-                        }
-                        variant="cta" size="cta" className="flex-1"
+                        disabled={isSubmitting || isFormSubmitting || isPublishing || isUnpublishing}
+                        variant="cta"
+                        size="cta"
+                        className="flex-1"
                       >
                         {isSubmitting || isFormSubmitting ? (
                           <>

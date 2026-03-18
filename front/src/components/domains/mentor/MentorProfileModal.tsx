@@ -1,26 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
-import Loader from "@/components/shared/Loader";
-import {
-  User,
-  UserPlus,
-  UserMinus,
-  Linkedin,
-  Youtube,
-  Github,
-  Ban,
-  Flag,
-} from "lucide-react";
+import Loader from "@/components/shared/loader";
+import { User, UserPlus, UserMinus, Linkedin, Youtube, Github, Ban, Flag } from "lucide-react";
 import { authClient } from "@/lib/auth-server-client";
 import { toast } from "sonner";
 import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
@@ -33,38 +18,24 @@ interface MentorProfileModalProps {
   readonly mentorId: string;
 }
 
-export function MentorProfileModal({
-  open,
-  onOpenChange,
-  mentorId,
-}: MentorProfileModalProps) {
+export function MentorProfileModal({ open, onOpenChange, mentorId }: MentorProfileModalProps) {
   const { data: session } = authClient.useSession();
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
-  const { data: mentor, isLoading } = trpc.mentor.getPublicProfile.useQuery(
-    { mentorId },
+  const { data: mentor, isLoading } = trpc.mentor.getPublicProfile.useQuery({ mentorId }, {
+    enabled: open && !!mentorId,
+  } as any);
+
+  const { data: connectionStatus, refetch: refetchConnectionStatus } = trpc.connection.checkConnectionStatus.useQuery(
+    { otherUserId: mentor?.userId || "" },
     {
-      enabled: open && !!mentorId,
-    } as any
+      enabled: open && !!mentor?.userId && !!session && mentor.userId !== session?.user?.id,
+    } as any,
   );
 
-  const { data: connectionStatus, refetch: refetchConnectionStatus } =
-    trpc.connection.checkConnectionStatus.useQuery(
-      { otherUserId: mentor?.userId || "" },
-      {
-        enabled:
-          open &&
-          !!mentor?.userId &&
-          !!session &&
-          mentor.userId !== session?.user?.id,
-      } as any
-    );
+  const sendConnectionRequestMutation = trpc.connection.sendConnectionRequest.useMutation();
 
-  const sendConnectionRequestMutation =
-    trpc.connection.sendConnectionRequest.useMutation();
-
-  const removeConnectionMutation =
-    trpc.connection.removeConnection.useMutation();
+  const removeConnectionMutation = trpc.connection.removeConnection.useMutation();
 
   if (isLoading) {
     return (
@@ -87,9 +58,7 @@ export function MentorProfileModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <DialogHeader>
-          <DialogTitle className="text-[#26547c] dark:text-[#e6e6e6]">
-            Profil Mentor
-          </DialogTitle>
+          <DialogTitle className="text-[#26547c] dark:text-[#e6e6e6]">Profil Mentor</DialogTitle>
           <DialogDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
             Informations sur le mentor
           </DialogDescription>
@@ -110,9 +79,7 @@ export function MentorProfileModal({
               </div>
             )}
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-[#26547c] dark:text-[#e6e6e6]">
-                {mentor.name || "Mentor"}
-              </h3>
+              <h3 className="font-semibold text-lg text-[#26547c] dark:text-[#e6e6e6]">{mentor.name || "Mentor"}</h3>
               {mentor.domain && (
                 <p className="text-sm text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] mt-1">
                   {mentor.domain}
@@ -123,42 +90,28 @@ export function MentorProfileModal({
 
           {mentor.bio && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">
-                À propos
-              </h4>
-              <p className="text-sm text-[#161616] dark:text-[#e6e6e6]">
-                {mentor.bio}
-              </p>
+              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">À propos</h4>
+              <p className="text-sm text-[#161616] dark:text-[#e6e6e6]">{mentor.bio}</p>
             </div>
           )}
 
           {mentor.qualifications && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">
-                Qualifications
-              </h4>
-              <p className="text-sm text-[#161616] dark:text-[#e6e6e6]">
-                {mentor.qualifications}
-              </p>
+              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">Qualifications</h4>
+              <p className="text-sm text-[#161616] dark:text-[#e6e6e6]">{mentor.qualifications}</p>
             </div>
           )}
 
           {mentor.experience && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">
-                Expérience
-              </h4>
-              <p className="text-sm text-[#161616] dark:text-[#e6e6e6]">
-                {mentor.experience}
-              </p>
+              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">Expérience</h4>
+              <p className="text-sm text-[#161616] dark:text-[#e6e6e6]">{mentor.experience}</p>
             </div>
           )}
 
           {mentor.areasOfExpertise && mentor.areasOfExpertise.length > 0 && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">
-                Domaines d'expertise
-              </h4>
+              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">Domaines d'expertise</h4>
               <div className="flex flex-wrap gap-2">
                 {mentor.areasOfExpertise.map((area: string) => (
                   <span
@@ -174,9 +127,7 @@ export function MentorProfileModal({
 
           {mentor.mentorshipTopics && mentor.mentorshipTopics.length > 0 && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">
-                Sujets de mentorat
-              </h4>
+              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">Sujets de mentorat</h4>
               <div className="flex flex-wrap gap-2">
                 {mentor.mentorshipTopics.map((topic: string) => (
                   <span
@@ -195,9 +146,7 @@ export function MentorProfileModal({
             socialMediaLinks.youtube ||
             socialMediaLinks.github) && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">
-                Réseaux sociaux
-              </h4>
+              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">Réseaux sociaux</h4>
               <div className="flex flex-wrap gap-2">
                 {socialMediaLinks.linkedin && (
                   <a
@@ -259,15 +208,13 @@ export function MentorProfileModal({
                                 description: error.message,
                               });
                             },
-                          }
+                          },
                         );
                       }}
                       disabled={removeConnectionMutation.isPending}
                     >
                       <UserMinus className="h-4 w-4 mr-2" />
-                      {removeConnectionMutation.isPending
-                        ? "Suppression..."
-                        : "Retirer la connexion"}
+                      {removeConnectionMutation.isPending ? "Suppression..." : "Retirer la connexion"}
                     </Button>
                   );
                 }
@@ -301,15 +248,13 @@ export function MentorProfileModal({
                               description: error.message,
                             });
                           },
-                        }
+                        },
                       );
                     }}
                     disabled={sendConnectionRequestMutation.isPending}
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
-                    {sendConnectionRequestMutation.isPending
-                      ? "Envoi..."
-                      : "Connecter"}
+                    {sendConnectionRequestMutation.isPending ? "Envoi..." : "Connecter"}
                   </Button>
                 );
               })()}

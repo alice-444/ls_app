@@ -4,27 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { authClient, customAuthClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Linkedin,
-  Youtube,
-  X,
-  Github,
-  Calendar,
-  Edit,
-  Eye,
-  EyeOff,
-  CheckCircle2,
-  Coffee,
-} from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Linkedin, Youtube, X, Github, Calendar, Edit, Eye, EyeOff, CheckCircle2, Coffee } from "lucide-react";
 import { toast } from "sonner";
 import { getMentorProfile, getUserRole } from "@/lib/api-client";
 import { formatPhotoUrl } from "@/utils/photo";
@@ -49,8 +32,7 @@ interface MentorProfile {
 
 export default function MyProfilePage() {
   const router = useRouter();
-  const { data: session, isPending: isSessionPending } =
-    authClient.useSession();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
   const [profile, setProfile] = useState<MentorProfile | null>(null);
   const [isPublished, setIsPublished] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,12 +45,9 @@ export default function MyProfilePage() {
     enabled: !!session?.user?.id,
   });
 
-  const { data: myWorkshops } = trpc.workshop.getMyWorkshops.useQuery(
-    undefined,
-    {
-      enabled: !!session && userRole === "MENTOR",
-    }
-  ) as { data: WorkshopDetailed[] | undefined };
+  const { data: myWorkshops } = trpc.workshop.getMyWorkshops.useQuery(undefined, {
+    enabled: !!session && userRole === "MENTOR",
+  }) as { data: WorkshopDetailed[] | undefined };
 
   const loadProfile = useCallback(async () => {
     if (!session?.user?.id) return;
@@ -98,16 +77,10 @@ export default function MyProfilePage() {
     setIsPublishing(true);
     try {
       await customAuthClient.publishProfile();
-      toast.success(
-        "Profil publié avec succès ! Il est maintenant visible dans le répertoire des mentors."
-      );
+      toast.success("Profil publié avec succès ! Il est maintenant visible dans le répertoire des mentors.");
       setIsPublished(true);
     } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Erreur lors de la publication du profil"
-      );
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la publication du profil");
     } finally {
       setIsPublishing(false);
     }
@@ -117,18 +90,12 @@ export default function MyProfilePage() {
     setIsUnpublishing(true);
     try {
       await customAuthClient.unpublishProfile();
-      toast.success(
-        "Profil dépublié avec succès. Il n'est plus visible dans le répertoire des mentors."
-      );
+      toast.success("Profil dépublié avec succès. Il n'est plus visible dans le répertoire des mentors.");
 
       await loadProfile();
     } catch (error) {
       console.error("Error unpublishing profile:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Erreur lors de la dépublication du profil"
-      );
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la dépublication du profil");
     } finally {
       setIsUnpublishing(false);
     }
@@ -148,14 +115,10 @@ export default function MyProfilePage() {
         <Card className="w-full max-w-2xl">
           <CardHeader>
             <CardTitle>Profil non trouvé</CardTitle>
-            <CardDescription>
-              Vous n'avez pas encore créé de profil mentor.
-            </CardDescription>
+            <CardDescription>Vous n'avez pas encore créé de profil mentor.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => router.push("/mentor-profile")}>
-              Créer mon profil
-            </Button>
+            <Button onClick={() => router.push("/mentor-profile")}>Créer mon profil</Button>
           </CardContent>
         </Card>
       </div>
@@ -250,14 +213,8 @@ export default function MyProfilePage() {
 
                 <div className="flex-1 space-y-4">
                   <div>
-                    <h2 className="text-2xl font-bold text-[#26547c]">
-                      {profile.displayName || profile.name}
-                    </h2>
-                    {profile.domain && (
-                      <p className="text-lg text-[#26547c]/80 font-medium">
-                        {profile.domain}
-                      </p>
-                    )}
+                    <h2 className="text-2xl font-bold text-[#26547c]">{profile.displayName || profile.name}</h2>
+                    {profile.domain && <p className="text-lg text-[#26547c]/80 font-medium">{profile.domain}</p>}
                   </div>
 
                   {profile.iceBreakerTags && profile.iceBreakerTags.length > 0 && (
@@ -275,66 +232,56 @@ export default function MyProfilePage() {
 
                   {profile.bio && (
                     <div>
-                      <h3 className="text-sm font-bold text-[#26547c] uppercase tracking-wider mb-1">
-                        À propos
-                      </h3>
-                      <p className="text-gray-700 leading-relaxed">
-                        {profile.bio}
-                      </p>
+                      <h3 className="text-sm font-bold text-[#26547c] uppercase tracking-wider mb-1">À propos</h3>
+                      <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
                     </div>
                   )}
                 </div>
               </div>
 
-              {profile.areasOfExpertise &&
-                profile.areasOfExpertise.length > 0 && (
-                  <div className="mt-8 pt-6 border-t border-[#d6dae4]/50">
-                    <h3 className="font-bold text-[#26547c] mb-3">Domaines d'expertise</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {profile.areasOfExpertise.map((area) => (
-                        <span
-                          key={area}
-                          className="px-3 py-1 bg-indigo-100/50 text-indigo-800 rounded-full text-sm font-medium"
-                        >
-                          {area}
-                        </span>
-                      ))}
-                    </div>
+              {profile.areasOfExpertise && profile.areasOfExpertise.length > 0 && (
+                <div className="mt-8 pt-6 border-t border-[#d6dae4]/50">
+                  <h3 className="font-bold text-[#26547c] mb-3">Domaines d'expertise</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.areasOfExpertise.map((area) => (
+                      <span
+                        key={area}
+                        className="px-3 py-1 bg-indigo-100/50 text-indigo-800 rounded-full text-sm font-medium"
+                      >
+                        {area}
+                      </span>
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
 
-              {profile.mentorshipTopics &&
-                profile.mentorshipTopics.length > 0 && (
-                  <div className="mt-6 pt-6 border-t border-[#d6dae4]/50">
-                    <h3 className="font-bold text-[#26547c] mb-3">Sujets de mentorat</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {profile.mentorshipTopics.map((topic) => (
-                        <span
-                          key={topic}
-                          className="px-3 py-1 bg-purple-100/50 text-purple-800 rounded-full text-sm font-medium"
-                        >
-                          {topic}
-                        </span>
-                      ))}
-                    </div>
+              {profile.mentorshipTopics && profile.mentorshipTopics.length > 0 && (
+                <div className="mt-6 pt-6 border-t border-[#d6dae4]/50">
+                  <h3 className="font-bold text-[#26547c] mb-3">Sujets de mentorat</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.mentorshipTopics.map((topic) => (
+                      <span
+                        key={topic}
+                        className="px-3 py-1 bg-purple-100/50 text-purple-800 rounded-full text-sm font-medium"
+                      >
+                        {topic}
+                      </span>
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
 
               {profile.qualifications && (
                 <div className="mt-6 pt-6 border-t border-[#d6dae4]/50">
                   <h3 className="font-bold text-[#26547c] mb-2">Qualifications</h3>
-                  <p className="text-gray-700 whitespace-pre-line">
-                    {profile.qualifications}
-                  </p>
+                  <p className="text-gray-700 whitespace-pre-line">{profile.qualifications}</p>
                 </div>
               )}
 
               {profile.experience && (
                 <div className="mt-6 pt-6 border-t border-[#d6dae4]/50">
                   <h3 className="font-bold text-[#26547c] mb-2">Expérience</h3>
-                  <p className="text-gray-700 whitespace-pre-line">
-                    {profile.experience}
-                  </p>
+                  <p className="text-gray-700 whitespace-pre-line">{profile.experience}</p>
                 </div>
               )}
 
@@ -357,58 +304,56 @@ export default function MyProfilePage() {
                 </div>
               )}
 
-              {profile.socialMediaLinks &&
-                Object.values(profile.socialMediaLinks).some(Boolean) && (
-                  <div className="mt-8 pt-6 border-t border-[#d6dae4]/50">
-                    <h3 className="font-bold text-[#26547c] mb-4">Réseaux sociaux</h3>
-                    <div className="flex flex-wrap gap-4">
-                      {profile.socialMediaLinks.linkedin && (
-                        <a
-                          href={profile.socialMediaLinks.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-colors font-medium border border-blue-100"
-                        >
-                          <Linkedin className="h-5 w-5" />
-                          LinkedIn
-                        </a>
-                      )}
-                      {profile.socialMediaLinks.twitter && (
-                        <a
-                          href={profile.socialMediaLinks.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-xl hover:bg-sky-100 transition-colors font-medium border border-sky-100"
-                        >
-                          <X className="h-5 w-5" />
-                          X
-                        </a>
-                      )}
-                      {profile.socialMediaLinks.github && (
-                        <a
-                          href={profile.socialMediaLinks.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-xl hover:bg-gray-100 transition-colors font-medium border border-gray-200"
-                        >
-                          <Github className="h-5 w-5" />
-                          GitHub
-                        </a>
-                      )}
-                      {profile.socialMediaLinks.youtube && (
-                        <a
-                          href={profile.socialMediaLinks.youtube}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 transition-colors font-medium border border-red-100"
-                        >
-                          <Youtube className="h-5 w-5" />
-                          YouTube
-                        </a>
-                      )}
-                    </div>
+              {profile.socialMediaLinks && Object.values(profile.socialMediaLinks).some(Boolean) && (
+                <div className="mt-8 pt-6 border-t border-[#d6dae4]/50">
+                  <h3 className="font-bold text-[#26547c] mb-4">Réseaux sociaux</h3>
+                  <div className="flex flex-wrap gap-4">
+                    {profile.socialMediaLinks.linkedin && (
+                      <a
+                        href={profile.socialMediaLinks.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-colors font-medium border border-blue-100"
+                      >
+                        <Linkedin className="h-5 w-5" />
+                        LinkedIn
+                      </a>
+                    )}
+                    {profile.socialMediaLinks.twitter && (
+                      <a
+                        href={profile.socialMediaLinks.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-xl hover:bg-sky-100 transition-colors font-medium border border-sky-100"
+                      >
+                        <X className="h-5 w-5" />X
+                      </a>
+                    )}
+                    {profile.socialMediaLinks.github && (
+                      <a
+                        href={profile.socialMediaLinks.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-xl hover:bg-gray-100 transition-colors font-medium border border-gray-200"
+                      >
+                        <Github className="h-5 w-5" />
+                        GitHub
+                      </a>
+                    )}
+                    {profile.socialMediaLinks.youtube && (
+                      <a
+                        href={profile.socialMediaLinks.youtube}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 transition-colors font-medium border border-red-100"
+                      >
+                        <Youtube className="h-5 w-5" />
+                        YouTube
+                      </a>
+                    )}
                   </div>
-                )}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

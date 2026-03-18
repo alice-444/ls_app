@@ -5,7 +5,7 @@ import SignUpForm from "@/components/domains/auth/SignUpForm";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/components/shared/loader";
 import { AnimatePresence, motion } from "framer-motion";
 
 function LoginContent() {

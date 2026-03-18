@@ -1,25 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
-import Loader from "@/components/shared/Loader";
-import {
-  User,
-  GraduationCap,
-  Tag,
-  UserPlus,
-  UserMinus,
-  Ban,
-  Flag,
-} from "lucide-react";
+import Loader from "@/components/shared/loader";
+import { User, GraduationCap, Tag, UserPlus, UserMinus, Ban, Flag } from "lucide-react";
 import { authClient } from "@/lib/auth-server-client";
 import { toast } from "sonner";
 import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
@@ -32,36 +18,24 @@ interface MiniProfileModalProps {
   readonly apprenticeUserId: string;
 }
 
-export function MiniProfileModal({
-  open,
-  onOpenChange,
-  apprenticeUserId,
-}: MiniProfileModalProps) {
+export function MiniProfileModal({ open, onOpenChange, apprenticeUserId }: MiniProfileModalProps) {
   const { data: session } = authClient.useSession();
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
-  const { data: miniProfile, isLoading } =
-    trpc.apprentice.getMiniProfileForMentor.useQuery({ apprenticeUserId }, {
-      enabled: open && !!apprenticeUserId,
-    } as any);
+  const { data: miniProfile, isLoading } = trpc.apprentice.getMiniProfileForMentor.useQuery({ apprenticeUserId }, {
+    enabled: open && !!apprenticeUserId,
+  } as any);
 
-  const { data: connectionStatus, refetch: refetchConnectionStatus } =
-    trpc.connection.checkConnectionStatus.useQuery(
-      { otherUserId: apprenticeUserId },
-      {
-        enabled:
-          open &&
-          !!apprenticeUserId &&
-          !!session &&
-          apprenticeUserId !== session?.user?.id,
-      } as any
-    );
+  const { data: connectionStatus, refetch: refetchConnectionStatus } = trpc.connection.checkConnectionStatus.useQuery(
+    { otherUserId: apprenticeUserId },
+    {
+      enabled: open && !!apprenticeUserId && !!session && apprenticeUserId !== session?.user?.id,
+    } as any,
+  );
 
-  const sendConnectionRequestMutation =
-    trpc.connection.sendConnectionRequest.useMutation();
+  const sendConnectionRequestMutation = trpc.connection.sendConnectionRequest.useMutation();
 
-  const removeConnectionMutation =
-    trpc.connection.removeConnection.useMutation();
+  const removeConnectionMutation = trpc.connection.removeConnection.useMutation();
 
   if (isLoading) {
     return (
@@ -82,9 +56,7 @@ export function MiniProfileModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] rounded-[16px]">
         <DialogHeader>
-          <DialogTitle className="text-[#26547c] dark:text-[#e6e6e6]">
-            Profil Apprenti
-          </DialogTitle>
+          <DialogTitle className="text-[#26547c] dark:text-[#e6e6e6]">Profil Apprenti</DialogTitle>
           <DialogDescription className="text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
             Informations sur le participant
           </DialogDescription>
@@ -126,27 +98,24 @@ export function MiniProfileModal({
             </div>
           </div>
 
-          {miniProfile.iceBreakerTags &&
-            miniProfile.iceBreakerTags.length > 0 && (
-              <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-                <div className="flex items-center gap-2 mb-2">
-                  <Tag className="h-4 w-4 text-[#26547c] dark:text-[#e6e6e6]" />
-                  <span className="text-sm font-medium text-[#26547c] dark:text-[#e6e6e6]">
-                    Tags
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {miniProfile.iceBreakerTags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-[rgba(255,182,71,0.15)] dark:bg-[rgba(255,182,71,0.25)] text-[#ffb647] dark:text-[#ffb647] rounded-full text-sm font-medium"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+          {miniProfile.iceBreakerTags && miniProfile.iceBreakerTags.length > 0 && (
+            <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
+              <div className="flex items-center gap-2 mb-2">
+                <Tag className="h-4 w-4 text-[#26547c] dark:text-[#e6e6e6]" />
+                <span className="text-sm font-medium text-[#26547c] dark:text-[#e6e6e6]">Tags</span>
               </div>
-            )}
+              <div className="flex flex-wrap gap-2">
+                {miniProfile.iceBreakerTags.map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 bg-[rgba(255,182,71,0.15)] dark:bg-[rgba(255,182,71,0.25)] text-[#ffb647] dark:text-[#ffb647] rounded-full text-sm font-medium"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           {session && apprenticeUserId !== session?.user?.id && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] space-y-2">
@@ -169,15 +138,13 @@ export function MiniProfileModal({
                             description: error.message,
                           });
                         },
-                      }
+                      },
                     );
                   }}
                   disabled={removeConnectionMutation.isPending}
                 >
                   <UserMinus className="h-4 w-4 mr-2" />
-                  {removeConnectionMutation.isPending
-                    ? "Suppression..."
-                    : "Retirer la connexion"}
+                  {removeConnectionMutation.isPending ? "Suppression..." : "Retirer la connexion"}
                 </Button>
               )}
               {connectionStatus?.status === "PENDING" && (
@@ -190,36 +157,33 @@ export function MiniProfileModal({
                   Demande en attente
                 </Button>
               )}
-              {connectionStatus?.status !== "ACCEPTED" &&
-                connectionStatus?.status !== "PENDING" && (
-                  <Button
-                    className="w-full bg-[#34b162] hover:bg-[#2a9d52] dark:bg-[#34b162] dark:hover:bg-[#2a9d52] text-white rounded-[32px]"
-                    onClick={() => {
-                      sendConnectionRequestMutation.mutate(
-                        {
-                          receiverUserId: apprenticeUserId,
+              {connectionStatus?.status !== "ACCEPTED" && connectionStatus?.status !== "PENDING" && (
+                <Button
+                  className="w-full bg-[#34b162] hover:bg-[#2a9d52] dark:bg-[#34b162] dark:hover:bg-[#2a9d52] text-white rounded-[32px]"
+                  onClick={() => {
+                    sendConnectionRequestMutation.mutate(
+                      {
+                        receiverUserId: apprenticeUserId,
+                      },
+                      {
+                        onSuccess: () => {
+                          toast.success("Demande d'invitation envoyée");
+                          refetchConnectionStatus();
                         },
-                        {
-                          onSuccess: () => {
-                            toast.success("Demande d'invitation envoyée");
-                            refetchConnectionStatus();
-                          },
-                          onError: (error: { message: string }) => {
-                            toast.error("Erreur lors de l'envoi", {
-                              description: error.message,
-                            });
-                          },
-                        }
-                      );
-                    }}
-                    disabled={sendConnectionRequestMutation.isPending}
-                  >
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    {sendConnectionRequestMutation.isPending
-                      ? "Envoi..."
-                      : "Connecter"}
-                  </Button>
-                )}
+                        onError: (error: { message: string }) => {
+                          toast.error("Erreur lors de l'envoi", {
+                            description: error.message,
+                          });
+                        },
+                      },
+                    );
+                  }}
+                  disabled={sendConnectionRequestMutation.isPending}
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  {sendConnectionRequestMutation.isPending ? "Envoi..." : "Connecter"}
+                </Button>
+              )}
               <div className="flex gap-2">
                 <Button
                   variant="outline"

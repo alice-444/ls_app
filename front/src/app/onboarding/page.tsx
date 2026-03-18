@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { authClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/components/shared/loader";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { RoleSelectionStep } from "./components/RoleSelectionStep";
 import { RoleConfirmationStep } from "./components/RoleConfirmationStep";
@@ -13,8 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 
 function OnboardingContent() {
-  const { data: session, isPending: isSessionPending } =
-    authClient.useSession();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
 
   const {
     currentStep,
@@ -29,10 +28,10 @@ function OnboardingContent() {
 
   // Calcul du pourcentage de progression
   const stepProgress = {
-    "select": 25,
+    select: 25,
     "confirm-features": 50,
     "prof-form": 75,
-    "apprenant-flow": 100
+    "apprenant-flow": 100,
   };
   const progress = stepProgress[currentStep] || 0;
 
@@ -50,9 +49,7 @@ function OnboardingContent() {
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Étape {Object.keys(stepProgress).indexOf(currentStep) + 1} sur 4
           </span>
-          <span className="text-xs font-semibold text-primary">
-            {progress}%
-          </span>
+          <span className="text-xs font-semibold text-primary">{progress}%</span>
         </div>
         <Progress value={progress} className="h-2" />
       </div>
@@ -98,12 +95,7 @@ function OnboardingContent() {
 
             case "apprenant-flow":
               if (!selectedRole) return null;
-              return (
-                <ApprenantCompleteStep
-                  currentStep={currentStep}
-                  selectedRole={selectedRole}
-                />
-              );
+              return <ApprenantCompleteStep currentStep={currentStep} selectedRole={selectedRole} />;
 
             default:
               return null;

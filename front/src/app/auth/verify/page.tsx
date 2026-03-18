@@ -3,7 +3,7 @@
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/components/shared/loader";
 import { toast } from "sonner";
 
 function VerifyContent() {
@@ -35,16 +35,14 @@ function VerifyContent() {
           toast.error(ctx.error.message || "Lien invalide ou expiré");
           router.push("/login?error=magic_link");
         },
-      }
+      },
     );
   }, [token, router]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-4">
       <Loader size="lg" />
-      <p className="text-muted-foreground animate-pulse font-medium">
-        Vérification de votre lien de connexion...
-      </p>
+      <p className="text-muted-foreground animate-pulse font-medium">Vérification de votre lien de connexion...</p>
     </div>
   );
 }

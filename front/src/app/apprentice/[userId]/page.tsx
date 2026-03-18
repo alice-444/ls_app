@@ -4,23 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  User,
-  GraduationCap,
-  Tag,
-  Lock,
-  UserPlus,
-  UserMinus,
-} from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, GraduationCap, Tag, Lock, UserPlus, UserMinus } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 
@@ -28,8 +15,7 @@ export default function ApprenticeProfilePage() {
   const params = useParams();
   const router = useRouter();
   const userId = params?.userId as string;
-  const { data: session, isPending: isSessionPending } =
-    authClient.useSession();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
 
   const {
     data: profile,
@@ -39,44 +25,40 @@ export default function ApprenticeProfilePage() {
     { apprenticeUserId: userId },
     {
       enabled: !!userId && !!session,
-    }
+    },
   );
 
   const [isSendingRequest, setIsSendingRequest] = useState(false);
 
-  const { data: connectionStatus } =
-    trpc.connection.checkConnectionStatus.useQuery(
-      { otherUserId: userId },
-      {
-        enabled: !!userId && !!session && userId !== session?.user?.id,
-      }
-    );
-
-  const sendConnectionRequestMutation =
-    trpc.connection.sendConnectionRequest.useMutation({
-      onSuccess: () => {
-        toast.success("Demande d'invitation envoyée");
-      },
-      onError: (error: { message?: string }) => {
-        toast.error("Erreur lors de l'envoi", {
-          description: error.message,
-        });
-      },
-    });
-
-  const removeConnectionMutation = trpc.connection.removeConnection.useMutation(
+  const { data: connectionStatus } = trpc.connection.checkConnectionStatus.useQuery(
+    { otherUserId: userId },
     {
-      onSuccess: () => {
-        toast.success("Connexion supprimée");
-        router.refresh();
-      },
-      onError: (error: { message?: string }) => {
-        toast.error("Erreur lors de la suppression", {
-          description: error.message,
-        });
-      }
-    }
+      enabled: !!userId && !!session && userId !== session?.user?.id,
+    },
   );
+
+  const sendConnectionRequestMutation = trpc.connection.sendConnectionRequest.useMutation({
+    onSuccess: () => {
+      toast.success("Demande d'invitation envoyée");
+    },
+    onError: (error: { message?: string }) => {
+      toast.error("Erreur lors de l'envoi", {
+        description: error.message,
+      });
+    },
+  });
+
+  const removeConnectionMutation = trpc.connection.removeConnection.useMutation({
+    onSuccess: () => {
+      toast.success("Connexion supprimée");
+      router.refresh();
+    },
+    onError: (error: { message?: string }) => {
+      toast.error("Erreur lors de la suppression", {
+        description: error.message,
+      });
+    },
+  });
 
   const handleSendConnectionRequest = async () => {
     if (!userId) return;
@@ -104,9 +86,7 @@ export default function ApprenticeProfilePage() {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Erreur</CardTitle>
-            <CardDescription>
-              {error.message || "Impossible de charger le profil"}
-            </CardDescription>
+            <CardDescription>{error.message || "Impossible de charger le profil"}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -119,9 +99,7 @@ export default function ApprenticeProfilePage() {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Profil introuvable</CardTitle>
-            <CardDescription>
-              Ce profil n'existe pas ou n'est plus disponible.
-            </CardDescription>
+            <CardDescription>Ce profil n'existe pas ou n'est plus disponible.</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -139,11 +117,7 @@ export default function ApprenticeProfilePage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-2xl">Profil Apprenti</CardTitle>
-                <CardDescription>
-                  {hasFullAccess
-                    ? "Profil complet"
-                    : "Profil privé - Accès restreint"}
-                </CardDescription>
+                <CardDescription>{hasFullAccess ? "Profil complet" : "Profil privé - Accès restreint"}</CardDescription>
               </div>
               {!hasFullAccess && (
                 <div className="flex items-center gap-2 text-muted-foreground">
@@ -166,9 +140,7 @@ export default function ApprenticeProfilePage() {
                   />
                 ) : (
                   <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center border-4 border-gray-300 dark:border-gray-600 relative overflow-hidden">
-                    {!hasFullAccess && (
-                      <div className="absolute inset-0 bg-black/20 blur-sm" />
-                    )}
+                    {!hasFullAccess && <div className="absolute inset-0 bg-black/20 blur-sm" />}
                     <User className="h-12 w-12 text-gray-400 dark:text-gray-500" />
                   </div>
                 )}
@@ -189,11 +161,7 @@ export default function ApprenticeProfilePage() {
                       )}
                     </>
                   )}
-                  {!hasFullAccess && (
-                    <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Profil privé
-                    </div>
-                  )}
+                  {!hasFullAccess && <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">Profil privé</div>}
                 </div>
               </div>
 
@@ -208,93 +176,77 @@ export default function ApprenticeProfilePage() {
                       <div className="space-y-2">
                         {profile.studyDomain && (
                           <p className="text-gray-700 dark:text-gray-300">
-                            <span className="font-medium">Domaine :</span>{" "}
-                            {profile.studyDomain}
+                            <span className="font-medium">Domaine :</span> {profile.studyDomain}
                           </p>
                         )}
                         {profile.studyProgram && (
                           <p className="text-gray-700 dark:text-gray-300">
-                            <span className="font-medium">Cursus :</span>{" "}
-                            {profile.studyProgram}
+                            <span className="font-medium">Cursus :</span> {profile.studyProgram}
                           </p>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {profile.iceBreakerTags &&
-                    profile.iceBreakerTags.length > 0 && (
-                      <div className="pt-4 border-t">
-                        <h3 className="font-semibold mb-3 flex items-center gap-2">
-                          <Tag className="h-5 w-5" />
-                          Tags
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                          {profile.iceBreakerTags.map((tag: string) => (
-                            <span
-                              key={tag}
-                              className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-sm"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
+                  {profile.iceBreakerTags && profile.iceBreakerTags.length > 0 && (
+                    <div className="pt-4 border-t">
+                      <h3 className="font-semibold mb-3 flex items-center gap-2">
+                        <Tag className="h-5 w-5" />
+                        Tags
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {profile.iceBreakerTags.map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-sm"
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                  {hasFullAccess &&
-                    connectionStatus?.status === "ACCEPTED" &&
-                    userId !== session?.user?.id && (
-                      <div className="pt-4 border-t">
-                        <Button
-                          onClick={() => {
-                            if (userId) {
-                              removeConnectionMutation.mutate({
-                                otherUserId: userId,
-                              });
-                            }
-                          }}
-                          disabled={removeConnectionMutation.isPending}
-                          variant="outline"
-                          className="w-full sm:w-auto"
-                        >
-                          <UserMinus className="mr-2 h-4 w-4" />
-                          {removeConnectionMutation.isPending
-                            ? "Suppression..."
-                            : "Supprimer la connexion"}
-                        </Button>
-                      </div>
-                    )}
+                  {hasFullAccess && connectionStatus?.status === "ACCEPTED" && userId !== session?.user?.id && (
+                    <div className="pt-4 border-t">
+                      <Button
+                        onClick={() => {
+                          if (userId) {
+                            removeConnectionMutation.mutate({
+                              otherUserId: userId,
+                            });
+                          }
+                        }}
+                        disabled={removeConnectionMutation.isPending}
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                      >
+                        <UserMinus className="mr-2 h-4 w-4" />
+                        {removeConnectionMutation.isPending ? "Suppression..." : "Supprimer la connexion"}
+                      </Button>
+                    </div>
+                  )}
                 </>
               )}
 
               {!hasFullAccess && (
                 <div className="pt-4 border-t">
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-4">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Ce profil est privé.
-                    </p>
-                    {connectionStatus?.status !== "ACCEPTED" &&
-                      connectionStatus?.status !== "PENDING" && (
-                        <Button
-                          onClick={handleSendConnectionRequest}
-                          disabled={
-                            isSendingRequest ||
-                            sendConnectionRequestMutation.isPending
-                          }
-                          className="w-full sm:w-auto"
-                        >
-                          <UserPlus className="mr-2 h-4 w-4" />
-                          {isSendingRequest ||
-                            sendConnectionRequestMutation.isPending
-                            ? "Envoi..."
-                            : "Envoyer une demande"}
-                        </Button>
-                      )}
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Ce profil est privé.</p>
+                    {connectionStatus?.status !== "ACCEPTED" && connectionStatus?.status !== "PENDING" && (
+                      <Button
+                        onClick={handleSendConnectionRequest}
+                        disabled={isSendingRequest || sendConnectionRequestMutation.isPending}
+                        className="w-full sm:w-auto"
+                      >
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        {isSendingRequest || sendConnectionRequestMutation.isPending
+                          ? "Envoi..."
+                          : "Envoyer une demande"}
+                      </Button>
+                    )}
                     {connectionStatus?.status === "PENDING" && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Demande d'invitation en attente
-                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Demande d'invitation en attente</p>
                     )}
                   </div>
                 </div>
