@@ -9,14 +9,14 @@ LearnSup is a pedagogical accompaniment application for tutors, learners, and wo
 - **Monorepo Manager:** Turborepo
 - **Package Manager:** pnpm
 - **Workspaces:**
-  - `front/`: Next.js 16 (App Router) frontend.
+  - `app/`: Next.js 16 (App Router) frontend.
   - `back/`: Next.js 16 (API) + custom Socket.IO server + Prisma ORM.
   - `shared/`: Shared Zod schemas, types, and utilities.
   - `infra/`: Docker configurations for development and production.
   - `docs/`: Comprehensive technical documentation.
 
 ## 🛠 Tech Stack
-### Frontend (`front/`)
+### Frontend (`app/`)
 - **Framework:** Next.js 16.1.6, React 19
 - **Styling:** Tailwind CSS 4, shadcn/ui (Radix UI)
 - **Data Fetching:** TanStack Query, tRPC (client)
@@ -47,7 +47,7 @@ LearnSup is a pedagogical accompaniment application for tutors, learners, and wo
 
 ### Environment Variables (Required)
 - `back/.env`: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `CORS_ORIGIN`, `CRON_SECRET`
-- `front/.env`: `NEXT_PUBLIC_SERVER_URL`, `NEXT_PUBLIC_SOCKET_URL`
+- `app/.env`: `NEXT_PUBLIC_SERVER_URL`, `NEXT_PUBLIC_SOCKET_URL`
 
 ## 📜 Standard Workflows
 - **Development:** `pnpm dev` (starts front and back via turbo)

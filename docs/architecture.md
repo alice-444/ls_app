@@ -100,7 +100,7 @@ Vue simplifiée (ASCII) :
 ├──────────────────────────────────────────────────────────────────┤
 │  shared/                │  Source de vérité (Zod, constantes)     │
 ├─────────────────────────┴────────────────────────────────────────┤
-│  front/                 │  back/                                  │
+│  app/                 │  back/                                  │
 │  Next.js (port 3001)    │  Next.js (port 3000 ou 4500 en dev)     │
 │  App Router             │  Serveur HTTP monte Next + Socket.IO    │
 │  tRPC client            ──────────────►  /trpc (API tRPC)         │
@@ -988,5 +988,5 @@ Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `men
 
 Installation, variables d’environnement et commandes : [README principal](../README.md).
 
-- Détails front (pages, structure, stack, env) : [front.md](front.md).
+- Détails front (pages, structure, stack, env) : [app.md](app.md).
 - Détails back (routers, routes API, Prisma, crons, env) : [back.md](back.md).

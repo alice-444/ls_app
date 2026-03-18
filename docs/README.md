@@ -12,7 +12,7 @@ ce qui existe et où le trouver
 - [Architecture](#architecture) – Vue d’ensemble front/back
 - [Design Patterns](patterns.md) – Patterns utilisés dans le projet
 - [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
-- [Front](#front) – Application Next.js, tRPC, auth
+- [App](#app) – Application Next.js, tRPC, auth
 - [Back](#back) – API, Prisma, auth
 - [Arborescence](#arborescence) – Structure macro et micro
 - [Guides](#guides) – Procédures (déploiement, DB, auth…), PV de recette, schéma déploiement
@@ -37,13 +37,13 @@ Inclut les flux d'authentification, utilisateur, données, atelier, paiement, me
 
 ## Arborescence
 
-Structure macro (racine, front, back, infra) et micro (dossiers, fichiers) : [arborescence.md](arborescence.md).
+Structure macro (racine, app, back, infra) et micro (dossiers, fichiers) : [arborescence.md](arborescence.md).
 
 ---
 
-## Front
+## App
 
-Documentation de l’application frontend : [front.md](front.md).
+Documentation de l’application frontend : [app.md](app.md).
 
 ---
 

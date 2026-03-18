@@ -1,5 +1,5 @@
 packages:
-  - front
+  - app
   - shared
 
 onlyBuiltDependencies:

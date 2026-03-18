@@ -116,7 +116,7 @@ export const createWorkshopBackendSchema = z.object({
 });
 
 export const updateWorkshopBackendSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string().min(1),
   title: workshopFieldSchemas.title.optional(),
   description: workshopFieldSchemas.description.optional(),
   topic: workshopFieldSchemas.topic.optional().nullable(),
@@ -158,7 +158,7 @@ export const createWorkshopFrontendSchema = z.object({
 });
 
 export const editWorkshopFrontendSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string().min(1),
   title: workshopFieldSchemas.title,
   description: workshopFieldSchemas.description.optional(),
   date: z
@@ -193,19 +193,19 @@ export const editWorkshopFrontendSchema = z.object({
 
 // --- SCHÉMAS DE CYCLE DE VIE ---
 export const publishWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string().min(1),
 });
 
 export const unpublishWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string().min(1),
 });
 
 export const deleteWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string().min(1),
 });
 
 export const cancelWorkshopSchema = z.object({
-  workshopId: z.string().cuid(),
+  workshopId: z.string().min(1),
 });
 
 // Types partagés

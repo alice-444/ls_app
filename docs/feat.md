@@ -155,7 +155,7 @@ LearnSup est une plateforme d'accompagnement mettant en relation **mentors** et 
 ## Références techniques
 
 - [Architecture](architecture.md) — Flux et schémas
-- [Front](front.md) — Routes et composants
+- [App](app.md) — Routes et composants
 - [Back](back.md) — API et routers
 - [Référence](reference.md) — Détails par domaine
 

@@ -1,0 +1,54 @@
+import { QueryCache, QueryClient } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
+// Use local type stub instead of importing from backend (not available in Docker build)
+import type { AppRouter } from "@/types/trpc-router";
+import { toast } from "sonner";
+import { API_BASE_URL } from "@/lib/api-client";
+
+export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error: { message?: string }) => {
+      // Ignore authentication errors - they're expected when session is expired or missing
+      // ProtectedRoute handles the actual redirection, so toasts are redundant and noisy
+      const isAuthError =
+        error.message === "Authentication required" ||
+        error.message?.includes("Authentication required") ||
+        (error as { data?: { code?: string } })?.data?.code === "UNAUTHORIZED";
+
+      if (isAuthError) {
+        return; // Silently ignore all auth errors on all pages
+      }
+
+      toast.error(
+        error.message ||
+          "Une erreur est survenue lors de la communication avec le serveur.",
+        {
+          action: {
+            label: "retry",
+            onClick: () => {
+              queryClient.invalidateQueries();
+            },
+          },
+        },
+      );
+    },
+  }),
+});
+
+// @ts-expect-error - AppRouter type stub doesn't satisfy Router constraint; real types come from backend
+export const trpc = createTRPCReact<AppRouter>() as any;
+
+export const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: `${API_BASE_URL}/trpc`,
+      fetch(url, options) {
+        return fetch(url, {
+          ...options,
+          credentials: "include",
+        });
+      },
+    }),
+  ],
+});

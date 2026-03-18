@@ -3,7 +3,7 @@ services:
   frontend:
     build:
       context: ../../
-      dockerfile: ./infra/docker/front/prod/Dockerfile
+      dockerfile: ./infra/docker/app/prod/Dockerfile
     ports:
       - "3001:3001"
     environment:
