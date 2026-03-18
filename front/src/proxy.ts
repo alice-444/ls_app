@@ -16,7 +16,7 @@ const PUBLIC_ROUTES = [
   "/monitoring",
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // EXCLUSION CRITIQUE : Ne pas interférer avec Socket.IO
@@ -27,12 +27,15 @@ export async function middleware(request: NextRequest) {
   // Handle CORS
   const origin = request.headers.get("origin") || "";
   const response = NextResponse.next();
-  
+
   // Add CORS headers to all responses
   response.headers.set("Access-Control-Allow-Credentials", "true");
   response.headers.set("Access-Control-Allow-Origin", origin || "*");
   response.headers.set("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS,PUT,PATCH");
-  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-TRPC-Source, X-Requested-With, Accept, Sentry-Trace, baggage");
+  response.headers.set(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-TRPC-Source, X-Requested-With, Accept, Sentry-Trace, baggage",
+  );
 
   // Handle preflight OPTIONS requests directly
   if (request.method === "OPTIONS") {
@@ -61,14 +64,11 @@ export async function middleware(request: NextRequest) {
 
   // Pour les routes protégées, une vérification sommaire de la présence du cookie de session
   // Better Auth utilise par défaut 'better-auth.session_token'
-  const sessionCookie = request.cookies.get("better-auth.session_token") || 
-                        request.cookies.get("__Secure-better-auth.session_token");
-  
+  const sessionCookie =
+    request.cookies.get("better-auth.session_token") || request.cookies.get("__Secure-better-auth.session_token");
+
   if (!sessionCookie) {
-    // Si aucun cookie de session n'est présent, on redirige vers /login
     const loginUrl = new URL("/login", request.url);
-    // On garde l'URL de destination pour après le login
-    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
