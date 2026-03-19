@@ -69,7 +69,7 @@ export function WorkshopParticipantsCard({
                   <User className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-medium text-sm text-ls-heading hover:underline whitespace-nowrap">
+                  <p className="font-medium text-sm text-ls-heading hover:underline text-brand transition-colors whitespace-nowrap">
                     {workshop.apprentice.user?.name || "Apprenti"}
                   </p>
                 </div>

@@ -15,6 +15,7 @@ interface WorkshopRequestsCardProps {
   requests: WorkshopRequest[];
   onAccept: (request: WorkshopRequest) => void;
   onReject: (requestId: string) => void;
+  onViewApprenticeProfile: (userId: string) => void;
   isRejecting: boolean;
 }
 
@@ -22,6 +23,7 @@ export function WorkshopRequestsCard({
   requests,
   onAccept,
   onReject,
+  onViewApprenticeProfile,
   isRejecting,
 }: Readonly<WorkshopRequestsCardProps>) {
   const pendingRequests = requests.filter((r) => r.status === "PENDING");
@@ -46,6 +48,7 @@ export function WorkshopRequestsCard({
                 request={request}
                 onAccept={onAccept}
                 onReject={onReject}
+                onViewApprenticeProfile={onViewApprenticeProfile}
                 isRejecting={isRejecting}
               />
             ))}
