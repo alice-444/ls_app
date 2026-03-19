@@ -20,7 +20,7 @@ export default function Loader({
   fullScreen = false,
   size = "md",
   className,
-}: LoaderProps) {
+}: Readonly<LoaderProps>) {
   return (
     <div
       className={cn(

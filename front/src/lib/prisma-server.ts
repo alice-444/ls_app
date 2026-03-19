@@ -28,7 +28,8 @@ pool.on("error", (err) => {
   console.error("Unexpected error on idle pg client", err);
 });
 
-const adapter = new PrismaPg(pool);
+// Fix TypeScript version mismatch for Pool types
+const adapter = new PrismaPg(pool as any);
 
 // Instance unique de Prisma
 export const prisma = new PrismaClient({
