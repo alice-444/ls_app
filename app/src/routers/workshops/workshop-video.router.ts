@@ -2,6 +2,7 @@ import { protectedProcedure, router } from "../../lib/trpc-server";
 import { container } from "../../lib/di/container";
 import { unwrapResult } from "../shared/router-helpers";
 import { workshopIdSchema } from "@ls-app/shared";
+import { calculateDailyRoomAccessWindow } from "../../lib/workshops/utils/workshop-helpers";
 
 export const workshopVideoRouter = router({
   logVideoLinkClick: protectedProcedure
@@ -14,7 +15,7 @@ export const workshopVideoRouter = router({
           details: {
             workshopId: input.workshopId,
             timestamp: new Date().toISOString(),
-          }
+          },
         });
       } catch (error) {
         console.error("Failed to log video link click:", error);
@@ -47,10 +48,25 @@ export const workshopVideoRouter = router({
           dailyRoomLastActivityAt: new Date(),
         });
       } else {
+        const accessWindow = calculateDailyRoomAccessWindow({
+          date: workshop.date,
+          time: workshop.time,
+          duration: workshop.duration,
+        });
+        if (!accessWindow) {
+          return unwrapResult({
+            ok: false,
+            error:
+              "Impossible de créer la salle : date, heure ou durée de l'atelier manquante",
+            status: 400,
+          } as any);
+        }
+
         const roomResult =
           await container.dailyService.getOrCreateRoomForWorkshop(
             input.workshopId,
             workshop.title,
+            accessWindow,
           );
         roomId = unwrapResult(roomResult).roomId;
 

@@ -206,6 +206,7 @@ export class ServicesContainer {
   get mentorWorkshopService(): IMentorWorkshopService {
     this._mentorWorkshopService ??= new MentorWorkshopService(
       this.repositories.mentorRepository,
+      this.workshopVideoLinkService,
     );
     return this._mentorWorkshopService;
   }
@@ -474,7 +475,11 @@ export class ServicesContainer {
   }
 
   get adminService(): IAdminService {
-    this._adminService ??= new AdminService(this.prisma, this.auditLogService, this.emailService);
+    this._adminService ??= new AdminService(
+      this.prisma,
+      this.auditLogService,
+      this.emailService,
+    );
     return this._adminService;
   }
 

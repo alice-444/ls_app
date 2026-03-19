@@ -176,3 +176,53 @@ export function calculateWorkshopTimeRange(workshop: {
 
   return { startTime, endTime };
 }
+
+/** Aligné avec l’exposition du lien visio (3 h avant le début). */
+const DAILY_ROOM_JOIN_LEAD_MINUTES = 180;
+/** Marge après la fin prévue (dépassement, au revoir). */
+const DAILY_ROOM_EXP_GRACE_MINUTES = 120;
+const DAILY_ROOM_FALLBACK_DURATION_MINUTES = 60;
+
+export interface DailyRoomAccessWindow {
+  /** Unix seconds — pas d’accès Daily avant ce moment (voir doc Daily `nbf`). */
+  nbf: number;
+  /** Unix seconds — pas d’accès Daily après ce moment (voir doc Daily `exp`). */
+  exp: number;
+}
+
+/**
+ * Fenêtre d’accès Daily pour une room liée à un atelier (nbf / exp en secondes Unix).
+ * Si `duration` est absente, une durée par défaut est utilisée pour calculer la fin.
+ */
+export function calculateDailyRoomAccessWindow(params: {
+  date: Date | null;
+  time: string | null;
+  duration: number | null;
+}): DailyRoomAccessWindow | null {
+  const startTime = calculateWorkshopStartTime(params.date, params.time);
+  if (!startTime) {
+    return null;
+  }
+
+  const durationMinutes =
+    params.duration != null && params.duration > 0
+      ? params.duration
+      : DAILY_ROOM_FALLBACK_DURATION_MINUTES;
+
+  const endTime = calculateWorkshopEndTime(
+    params.date,
+    params.time,
+    durationMinutes,
+  );
+  if (!endTime) {
+    return null;
+  }
+
+  const nbfMs = startTime.getTime() - DAILY_ROOM_JOIN_LEAD_MINUTES * 60 * 1000;
+  const expMs = endTime.getTime() + DAILY_ROOM_EXP_GRACE_MINUTES * 60 * 1000;
+
+  return {
+    nbf: Math.floor(nbfMs / 1000),
+    exp: Math.floor(expMs / 1000),
+  };
+}
