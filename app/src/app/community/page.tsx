@@ -29,6 +29,7 @@ import { ProposeDealForm } from "@/components/domains/community/ProposeDealForm"
 import { ProposeSpotForm } from "@/components/domains/community/ProposeSpotForm";
 import { ProposeEventForm } from "@/components/domains/community/ProposeEventForm";
 import Link from "next/link";
+import Loader from "@/components/shared/Loader";
 import { authClient } from "@/lib/auth-server-client";
 import { getUserRole } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
@@ -48,9 +49,8 @@ function CommunityHubContent() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-[400px] gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-brand" />
-        <p className="text-ls-muted">Chargement de la communauté...</p>
+      <div className="py-20 flex justify-center">
+        <Loader message="Chargement du hub communautaire..." />
       </div>
     );
   }
@@ -243,13 +243,11 @@ export default function CommunityPage() {
         </p>
       </motion.div>
       <Suspense fallback={
-        <div className="flex flex-col justify-center items-center h-64 gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-brand" />
-          <p className="text-ls-muted">Chargement de la communauté...</p>
+        <div className="py-20 flex justify-center">
+          <Loader message="Chargement de la communauté..." />
         </div>
       }>
         <CommunityHubContent />
-      </Suspense>
-    </PageContainer>
+      </Suspense>    </PageContainer>
   );
 }
