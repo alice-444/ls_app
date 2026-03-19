@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-server-client";
 import { trpc } from "@/utils/trpc";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
@@ -22,26 +22,31 @@ import {
 
 export default function SettingsPage() {
   const { data: session } = authClient.useSession();
-  const { data: profileData } = trpc.user.getProfile.useQuery();
+  const { data: profileData } = trpc.user.getProfile.useQuery(undefined, {
+    enabled: !!session?.user?.id,
+  });
   const [activeSection, setActiveSection] = useState<SettingsSection>(
     "informations-personnelles"
   );
   const [privacyMode, setPrivacyMode] = useState(false);
 
   useEffect(() => {
-    const handleSectionChange = (event: CustomEvent) => {
-      setActiveSection(event.detail.section as SettingsSection);
+    const handleSectionChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ section: SettingsSection }>;
+      if (customEvent.detail?.section) {
+        setActiveSection(customEvent.detail.section);
+      }
     };
 
-    globalThis.addEventListener(
+    window.addEventListener(
       "settings:change-section",
-      handleSectionChange as EventListener
+      handleSectionChange
     );
 
     return () => {
-      globalThis.removeEventListener(
+      window.removeEventListener(
         "settings:change-section",
-        handleSectionChange as EventListener
+        handleSectionChange
       );
     };
   }, []);

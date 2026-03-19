@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Sidebar from "@/components/shared/sidebar";
-import Header from "@/components/shared/header";
+import Sidebar from "@/components/shared/Sidebar";
+import Header from "@/components/shared/Header";
 import { cn } from "@/lib/utils";
 import { ADMIN_NAV_ITEMS, ADMIN_SIDEBAR_TITLE, ADMIN_SIDEBAR_ICON } from "@/lib/admin-nav";
 

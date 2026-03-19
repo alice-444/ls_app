@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import "../index.css";
-import Providers from "@/components/shared/providers";
+import Providers from "@/components/shared/Providers";
 import { RoleGate } from "@/components/shared/layout/RoleGate";
 import { LayoutSwitch } from "@/components/shared/layout/LayoutSwitch";
-import Loader from "@/components/shared/loader";
-import React from "react";
+import Loader from "@/components/shared/Loader";
 
 export const metadata: Metadata = {
   title: "Learning Solidarity",

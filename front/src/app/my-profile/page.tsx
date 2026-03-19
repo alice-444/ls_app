@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { authClient, customAuthClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Linkedin, Youtube, X, Github, Calendar, Edit, Eye, EyeOff, CheckCircle2, Coffee } from "lucide-react";

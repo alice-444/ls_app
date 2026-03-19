@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { User, GraduationCap, Tag, UserPlus, UserMinus, Ban, Flag } from "lucide-react";
 import { authClient } from "@/lib/auth-server-client";
 import { toast } from "sonner";

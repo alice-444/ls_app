@@ -209,6 +209,14 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
         return ownershipCheck;
       }
 
+      const { appUser } = ownershipCheck.data;
+      if (!appUser.isPublished) {
+        return failure(
+          "Tu dois publier ton profil de mentor avant de pouvoir publier un atelier.",
+          403,
+        );
+      }
+
       const workshop = await this.workshopRepository.findById(
         validation.data.workshopId,
       );

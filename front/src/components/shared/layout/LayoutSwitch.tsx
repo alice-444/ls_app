@@ -4,9 +4,9 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-server-client";
 import { getUserRole } from "@/lib/api-client";
-import Header from "@/components/shared/header";
-import Sidebar from "@/components/shared/sidebar";
-import { Footer } from "@/components/shared/footer";
+import Header from "@/components/shared/Header";
+import Sidebar from "@/components/shared/Sidebar";
+import { Footer } from "@/components/shared/Footer";
 import { ScrollToTopButton } from "@/components/shared/ScrollToTopButton";
 import { ADMIN_NAV_ITEMS, ADMIN_SIDEBAR_TITLE, ADMIN_SIDEBAR_ICON } from "@/lib/admin-nav";
 
@@ -16,7 +16,7 @@ export function LayoutSwitch({ children }: { readonly children: React.ReactNode 
   const { data: userRole } = useQuery({
     queryKey: ["userRole", session?.user?.id],
     queryFn: getUserRole,
-    enabled: !!session,
+    enabled: !!session?.user?.id,
     staleTime: 5 * 60 * 1000,
   });
 

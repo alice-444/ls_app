@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import ShinyText from "@/components/ui/ShinyText";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";

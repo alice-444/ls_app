@@ -2,6 +2,9 @@ import { logger } from "../../lib/common/logger";
 import type { Result } from "../../lib/common";
 
 const getSafeErrorMessage = (error: unknown): string => {
+  if (typeof error === "string") {
+    return error;
+  }
   if (error instanceof Error) {
     return error.message;
   }
@@ -14,7 +17,7 @@ export function handleRouterResult<T>(
     operation: string;
     userId?: string;
     [key: string]: unknown;
-  }
+  },
 ): T {
   if (!result.ok) {
     logger.error(`${errorContext.operation} error`, result.error, errorContext);

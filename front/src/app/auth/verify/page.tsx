@@ -3,7 +3,7 @@
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { toast } from "sonner";
 
 function VerifyContent() {

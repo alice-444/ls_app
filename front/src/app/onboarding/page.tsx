@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { authClient } from "@/lib/auth-server-client";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { RoleSelectionStep } from "./components/RoleSelectionStep";
 import { RoleConfirmationStep } from "./components/RoleConfirmationStep";
