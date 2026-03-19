@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Smile, X } from "lucide-react";
+import { Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -25,7 +25,7 @@ export function MessageReactions({
   messageId,
   currentUserId,
   conversationId,
-}: MessageReactionsProps) {
+}: Readonly<MessageReactionsProps>) {
   const socket = useSocket();
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
@@ -50,7 +50,7 @@ export function MessageReactions({
   });
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
-    if (socket && socket.connected) {
+    if (socket?.connected) {
       socket.emit("add-reaction", {
         messageId,
         emoji: emojiData.emoji,
@@ -69,30 +69,28 @@ export function MessageReactions({
     );
 
     if (userReaction) {
-      if (socket && socket.connected) {
+      if (socket?.connected) {
         socket.emit("remove-reaction", {
           messageId,
           emoji,
         });
       }
+    } else if (socket?.connected) {
+      socket.emit("add-reaction", {
+        messageId,
+        emoji,
+      });
     } else {
-      if (socket && socket.connected) {
-        socket.emit("add-reaction", {
-          messageId,
-          emoji,
-        });
-      } else {
-        addReactionMutation.mutate({
-          messageId,
-          emoji,
-        });
-      }
+      addReactionMutation.mutate({
+        messageId,
+        emoji,
+      });
     }
   };
 
   return (
     <div className="flex items-center gap-1 mt-1 flex-wrap">
-      {reactions && reactions.length > 0 && (
+      {reactions && reactions.length > 0 ? (
         <div className="flex items-center gap-1">
           {reactions.map((reaction: { emoji: string; userReacted: boolean; count: number }) => (
             <Button
@@ -110,7 +108,7 @@ export function MessageReactions({
             </Button>
           ))}
         </div>
-      )}
+      ) : null}
 
       <Popover open={isPickerOpen} onOpenChange={setIsPickerOpen}>
         <PopoverTrigger asChild>

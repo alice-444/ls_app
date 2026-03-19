@@ -278,7 +278,7 @@ export default function MentorProfileViewPage() {
         onOpenChange={setShowBlockDialog}
         userId={mentor.userId!}
         userName={mentor.displayName}
-        onBlocked={() => router.push("/")}
+        onBlocked={() => router.push("/dashboard")}
       />
       <ReportUserDialog
         open={showReportDialog}

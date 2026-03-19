@@ -9,29 +9,29 @@ import { API_BASE_URL } from "@/lib/api-client";
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error: { message?: string }) => {
-      // Ignore authentication errors - they're expected when user is not logged in
+      // Ignore authentication errors - they're expected when session is expired or missing
+      // ProtectedRoute handles the actual redirection, so toasts are redundant and noisy
       const isAuthError =
         error.message === "Authentication required" ||
         error.message?.includes("Authentication required") ||
         (error as { data?: { code?: string } })?.data?.code === "UNAUTHORIZED";
 
-      // Don't show toast for auth errors on login/sign-up pages
       if (isAuthError) {
-        const currentPath =
-          typeof window !== "undefined" ? window.location.pathname : "";
-        if (currentPath === "/login" || currentPath === "/sign-up") {
-          return; // Silently ignore auth errors on auth pages
-        }
+        return; // Silently ignore all auth errors on all pages
       }
 
-      toast.error(error.message, {
-        action: {
-          label: "retry",
-          onClick: () => {
-            queryClient.invalidateQueries();
+      toast.error(
+        error.message ||
+          "Une erreur est survenue lors de la communication avec le serveur.",
+        {
+          action: {
+            label: "retry",
+            onClick: () => {
+              queryClient.invalidateQueries();
+            },
           },
         },
-      });
+      );
     },
   }),
 });

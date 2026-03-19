@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
@@ -19,6 +20,7 @@ interface MiniProfileModalProps {
 }
 
 export function MiniProfileModal({ open, onOpenChange, apprenticeUserId }: MiniProfileModalProps) {
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
@@ -213,6 +215,10 @@ export function MiniProfileModal({ open, onOpenChange, apprenticeUserId }: MiniP
             onOpenChange={setShowBlockDialog}
             userId={apprenticeUserId}
             userName={miniProfile?.displayName || null}
+            onBlocked={() => {
+              onOpenChange(false);
+              router.push("/dashboard");
+            }}
           />
           <ReportUserDialog
             open={showReportDialog}

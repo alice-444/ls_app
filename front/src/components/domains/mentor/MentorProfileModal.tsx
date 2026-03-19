@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
@@ -19,6 +20,7 @@ interface MentorProfileModalProps {
 }
 
 export function MentorProfileModal({ open, onOpenChange, mentorId }: MentorProfileModalProps) {
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
@@ -145,45 +147,45 @@ export function MentorProfileModal({ open, onOpenChange, mentorId }: MentorProfi
             socialMediaLinks.twitter ||
             socialMediaLinks.youtube ||
             socialMediaLinks.github) && (
-            <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
-              <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">Réseaux sociaux</h4>
-              <div className="flex flex-wrap gap-2">
-                {socialMediaLinks.linkedin && (
-                  <a
-                    href={socialMediaLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-[#0077b5] text-white rounded-[32px] hover:bg-[#005885] transition-colors text-sm font-medium"
-                  >
-                    <Linkedin className="h-4 w-4" />
-                    LinkedIn
-                  </a>
-                )}
-                {socialMediaLinks.youtube && (
-                  <a
-                    href={socialMediaLinks.youtube}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-[#FF0000] text-white rounded-[32px] hover:bg-[#cc0000] transition-colors text-sm font-medium"
-                  >
-                    <Youtube className="h-4 w-4" />
-                    YouTube
-                  </a>
-                )}
-                {socialMediaLinks.github && (
-                  <a
-                    href={socialMediaLinks.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-[#333] dark:bg-[#24292e] text-white rounded-[32px] hover:bg-[#24292e] dark:hover:bg-[#1a1e22] transition-colors text-sm font-medium"
-                  >
-                    <Github className="h-4 w-4" />
-                    GitHub
-                  </a>
-                )}
+              <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)]">
+                <h4 className="font-medium mb-2 text-[#26547c] dark:text-[#e6e6e6]">Réseaux sociaux</h4>
+                <div className="flex flex-wrap gap-2">
+                  {socialMediaLinks.linkedin && (
+                    <a
+                      href={socialMediaLinks.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 bg-[#0077b5] text-white rounded-[32px] hover:bg-[#005885] transition-colors text-sm font-medium"
+                    >
+                      <Linkedin className="h-4 w-4" />
+                      LinkedIn
+                    </a>
+                  )}
+                  {socialMediaLinks.youtube && (
+                    <a
+                      href={socialMediaLinks.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 bg-[#FF0000] text-white rounded-[32px] hover:bg-[#cc0000] transition-colors text-sm font-medium"
+                    >
+                      <Youtube className="h-4 w-4" />
+                      YouTube
+                    </a>
+                  )}
+                  {socialMediaLinks.github && (
+                    <a
+                      href={socialMediaLinks.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 bg-[#333] dark:bg-[#24292e] text-white rounded-[32px] hover:bg-[#24292e] dark:hover:bg-[#1a1e22] transition-colors text-sm font-medium"
+                    >
+                      <Github className="h-4 w-4" />
+                      GitHub
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {session && mentor.userId !== session?.user?.id && (
             <div className="pt-4 border-t border-[#d6dae4] dark:border-[rgba(214,218,228,0.32)] space-y-2">
@@ -287,6 +289,10 @@ export function MentorProfileModal({ open, onOpenChange, mentorId }: MentorProfi
             onOpenChange={setShowBlockDialog}
             userId={mentor.userId}
             userName={mentor.name || null}
+            onBlocked={() => {
+              onOpenChange(false);
+              router.push("/dashboard");
+            }}
           />
           <ReportUserDialog
             open={showReportDialog}

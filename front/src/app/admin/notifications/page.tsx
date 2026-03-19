@@ -3,23 +3,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import {
   Bell,
   MessageSquare,
   Users,
-  BookOpen,
-  Calendar,
   CheckCircle,
   Info,
-  Filter,
   Trash2,
-  Settings,
-  ChevronDown,
   Flag,
   LifeBuoy,
-  Plus,
-  Send
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
@@ -27,18 +19,24 @@ import { useSocket } from "@/lib/socket-client";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { authClient } from "@/lib/auth-server-client";
+import type { NotificationEntity } from "@/lib/notifications/repositories/notification.repository.interface";
 
 export default function AdminNotificationsPage() {
   const router = useRouter();
   const socket = useSocket();
+  const { data: session } = authClient.useSession();
   const [filter, setFilter] = useState<"all" | "unread">("all");
-  const [showSettings, setShowSettings] = useState(false);
 
   const { data: notifications, refetch: refetchNotifications } =
-    trpc.notification.getNotifications.useQuery({ limit: 100, offset: 0 });
+    trpc.notification.getNotifications.useQuery({ limit: 100, offset: 0 }, {
+      enabled: !!session?.user?.id,
+    });
 
   const { data: unreadCount, refetch: refetchUnreadCount } =
-    trpc.notification.getUnreadCount.useQuery();
+    trpc.notification.getUnreadCount.useQuery(undefined, {
+      enabled: !!session?.user?.id,
+    });
 
   const markAsReadMutation = trpc.notification.markAsRead.useMutation();
   const markAllAsReadMutation = trpc.notification.markAllAsRead.useMutation();
@@ -91,7 +89,7 @@ export default function AdminNotificationsPage() {
     }
   };
 
-  const handleNotificationClick = (notification: any) => {
+  const handleNotificationClick = (notification: NotificationEntity) => {
     if (!notification.isRead) {
       markAsReadMutation.mutate({ notificationId: notification.id });
     }
@@ -100,7 +98,7 @@ export default function AdminNotificationsPage() {
     }
   };
 
-  const filteredNotifications = (notifications || []).filter((n: any) => {
+  const filteredNotifications = (notifications || []).filter((n: NotificationEntity) => {
     if (filter === "unread") return !n.isRead;
     return true;
   });
@@ -113,14 +111,14 @@ export default function AdminNotificationsPage() {
           <p className="text-muted-foreground">Alertes système et actions requises.</p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => router.push("/admin/notifications/bulk")}
           >
             <Users className="h-4 w-4 mr-2" /> Segmentation & Bulk
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => markAllAsReadMutation.mutate(undefined, { onSuccess: () => { refetchNotifications(); refetchUnreadCount(); } })}
             disabled={!unreadCount?.count}
           >
@@ -143,10 +141,10 @@ export default function AdminNotificationsPage() {
             <p className="text-muted-foreground">Aucune notification pour le moment.</p>
           </div>
         ) : (
-          filteredNotifications.map((n: any) => (
-            <Card 
-              key={n.id} 
-              className={`cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 ${!n.isRead ? "border-l-4 border-l-primary bg-primary/5" : ""}`}
+          filteredNotifications.map((n: NotificationEntity) => (
+            <Card
+              key={n.id}
+              className={`cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 ${n.isRead ? "" : "border-l-4 border-l-primary bg-primary/5"}`}
               onClick={() => handleNotificationClick(n)}
             >
               <CardContent className="p-4 flex items-start gap-4">
@@ -165,9 +163,9 @@ export default function AdminNotificationsPage() {
                     <Badge variant="outline" className="text-[10px] uppercase">{getTypeLabel(n.type)}</Badge>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="h-8 w-8 text-muted-foreground hover:text-destructive"
                   onClick={(e) => {
                     e.stopPropagation();

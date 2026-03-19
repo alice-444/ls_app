@@ -30,10 +30,12 @@ import { PageContainer } from "@/components/shared/layout/PageContainer";
 import { PageCard } from "@/components/shared/layout/PageCard";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
+import { authClient } from "@/lib/auth-server-client";
 
 export default function NotificationsPage() {
   const router = useRouter();
   const socket = useSocket();
+  const { data: session } = authClient.useSession();
   const [filter, setFilter] = useState<"all" | "unread" | "high">("all");
   const [showSettings, setShowSettings] = useState(false);
   const [notificationSettings, setNotificationSettings] = useState({
@@ -44,13 +46,15 @@ export default function NotificationsPage() {
 
   const { data: notifications, refetch: refetchNotifications } =
     trpc.notification.getNotifications.useQuery({ limit: 100, offset: 0 }, {
+      enabled: !!session?.user?.id,
       refetchInterval: 30000,
-    } as any);
+    });
 
   const { data: unreadCount, refetch: refetchUnreadCount } =
     trpc.notification.getUnreadCount.useQuery(undefined, {
+      enabled: !!session?.user?.id,
       refetchInterval: 30000,
-    } as any);
+    });
 
   const markAsReadMutation = trpc.notification.markAsRead.useMutation();
 
@@ -225,11 +229,10 @@ export default function NotificationsPage() {
             variant={filter === "all" ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter("all")}
-            className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${
-              filter === "all"
+            className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${filter === "all"
                 ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
                 : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
-            }`}
+              }`}
           >
             <Filter className="h-4 w-4 mr-2" />
             Toutes ({notifications?.length || 0})
@@ -238,11 +241,10 @@ export default function NotificationsPage() {
             variant={filter === "unread" ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter("unread")}
-            className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${
-              filter === "unread"
+            className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${filter === "unread"
                 ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
                 : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
-            }`}
+              }`}
           >
             Non lues ({unreadCountValue})
           </Button>
@@ -257,9 +259,8 @@ export default function NotificationsPage() {
             <Settings className="h-4 w-4" />
             Paramètres
             <ChevronDown
-              className={`h-4 w-4 transition-transform duration-200 ${
-                showSettings ? "rotate-180" : ""
-              }`}
+              className={`h-4 w-4 transition-transform duration-200 ${showSettings ? "rotate-180" : ""
+                }`}
             />
           </Button>
           <Button
@@ -381,25 +382,22 @@ export default function NotificationsPage() {
               return (
                 <Card
                   key={notification.id}
-                  className={`transition-all duration-200 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl ${
-                    isUnread
+                  className={`transition-all duration-200 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl ${isUnread
                       ? "border-l-4 border-l-brand bg-brand/5"
                       : ""
-                  } ${
-                    notification.actionUrl
+                    } ${notification.actionUrl
                       ? "cursor-pointer hover:shadow-lg hover:border-brand/30"
                       : ""
-                  }`}
+                    }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <CardContent className="p-4 sm:p-5">
                     <div className="flex items-start gap-3 sm:gap-4">
                       <div
-                        className={`p-2 sm:p-3 rounded-2xl shrink-0 ${
-                          isUnread
+                        className={`p-2 sm:p-3 rounded-2xl shrink-0 ${isUnread
                             ? "bg-brand/15"
                             : "bg-muted/50"
-                        }`}
+                          }`}
                       >
                         <div className={isUnread ? "text-brand" : "text-ls-muted"}>
                           {getNotificationIcon(notification.type)}
@@ -410,11 +408,10 @@ export default function NotificationsPage() {
                         <div className="flex flex-col space-y-2 sm:space-y-3 mb-3">
                           <div className="flex-1 min-w-0">
                             <h3
-                              className={`font-semibold text-sm sm:text-base mb-1 ${
-                                isUnread
+                              className={`font-semibold text-sm sm:text-base mb-1 ${isUnread
                                   ? "text-ls-heading"
                                   : "text-ls-muted"
-                              }`}
+                                }`}
                             >
                               {notification.title}
                             </h3>
