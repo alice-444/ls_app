@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +23,7 @@ import {
   convertDurationToMinutes,
   extractDurationParts,
 } from "./WorkshopFormFields";
+import { formatValidationErrors } from "./error-utils";
 
 interface EditWorkshopFormProps {
   workshop: WorkshopDetailed;
@@ -78,8 +79,8 @@ export function EditWorkshopForm({
       onSuccess?.();
     },
     onError: (error: { message?: string }) => {
-      toast.error("Erreur lors de la modification", {
-        description: error.message || "Une erreur est survenue",
+      toast.error("Impossible de modifier l'atelier", {
+        description: error.message || "Une erreur technique est survenue.",
       });
     },
   });
@@ -106,10 +107,10 @@ export function EditWorkshopForm({
     });
   };
 
-  const onInvalid = (errors: any) => {
+  const onInvalid = (errors: FieldErrors<EditWorkshopFrontendData>) => {
     console.error("Form validation errors (detailed):", JSON.stringify(errors, null, 2));
-    toast.error("Veuillez vérifier les champs du formulaire", {
-      description: "Certains champs sont invalides.",
+    toast.error("Formulaire invalide", {
+      description: formatValidationErrors(errors),
     });
   };
 
@@ -127,9 +128,9 @@ export function EditWorkshopForm({
         <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
           <input type="hidden" {...register("workshopId")} />
           <WorkshopFormFields
-            register={register as any}
-            control={control as any}
-            errors={errors as any}
+            register={register}
+            control={control}
+            errors={errors}
             isVirtual={isVirtual}
             description={description}
           />

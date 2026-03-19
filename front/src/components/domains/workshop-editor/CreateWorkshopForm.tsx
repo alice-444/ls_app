@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,7 @@ import {
   WorkshopFormFields,
   convertDurationToMinutes,
 } from "./WorkshopFormFields";
+import { formatValidationErrors } from "./error-utils";
 
 interface CreateWorkshopFormProps {
   onSuccess?: () => void;
@@ -60,8 +61,8 @@ export function CreateWorkshopForm({
       onSuccess?.();
     },
     onError: (error: { message?: string }) => {
-      toast.error("Erreur lors de la création", {
-        description: error.message || "Une erreur est survenue",
+      toast.error("Impossible de créer l'atelier", {
+        description: error.message || "Une erreur technique est survenue.",
       });
     },
   });
@@ -87,10 +88,10 @@ export function CreateWorkshopForm({
     });
   };
 
-  const onInvalid = (errors: any) => {
+  const onInvalid = (errors: FieldErrors<CreateWorkshopFrontendData>) => {
     console.error("Form validation errors:", errors);
-    toast.error("Veuillez vérifier les champs du formulaire", {
-      description: "Certains champs sont invalides.",
+    toast.error("Formulaire invalide", {
+      description: formatValidationErrors(errors),
     });
   };
 

@@ -32,6 +32,7 @@ import { DeleteWorkshopDialog } from "@/components/domains/workshop-editor/Delet
 import { PublishWorkshopDialog } from "@/components/domains/workshop-editor/PublishWorkshopDialog";
 import { trpc } from "@/utils/trpc";
 import { Badge } from "@/components/ui/badge";
+import { authClient } from "@/lib/auth-server-client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +46,7 @@ import type { WorkshopDetailed } from "@ls-app/shared";
 type Workshop = WorkshopDetailed;
 
 function WorkshopEditorContent() {
+  const { data: session } = authClient.useSession();
   const searchParams = useSearchParams();
   const [userClickedCreate, setUserClickedCreate] = useState(false);
   const [userSelectedWorkshop, setUserSelectedWorkshop] =
@@ -59,7 +61,9 @@ function WorkshopEditorContent() {
     isLoading,
     error,
     refetch,
-  } = trpc.workshop.getMyWorkshops.useQuery(undefined) as {
+  } = trpc.workshop.getMyWorkshops.useQuery(undefined, {
+    enabled: !!session?.user?.id,
+  }) as {
     data: WorkshopDetailed[] | undefined;
     isLoading: boolean;
     error: any;

@@ -20,13 +20,15 @@ export const getFieldLabel = (field: string): string => {
   return labels[field] || field;
 };
 
-export const formatValidationErrors = (errors: FieldErrors<Record<string, unknown>>): string => {
+export const formatValidationErrors = (errors: FieldErrors<any>): string => {
   const errorFields = Object.keys(errors)
+    .filter((key) => key !== "root")
     .map((key) => getFieldLabel(key))
     .filter((value, index, self) => self.indexOf(value) === index);
 
   if (errorFields.length === 0) return "Certains champs sont invalides.";
-  if (errorFields.length === 1) return `Le champ "${errorFields[0]}" est invalide.`;
-  
+  if (errorFields.length === 1)
+    return `Le champ "${errorFields[0]}" est invalide.`;
+
   return `Les champs suivants sont invalides : ${errorFields.join(", ")}.`;
 };
