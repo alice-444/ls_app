@@ -199,11 +199,6 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Readonl
                 className="shrink-0 object-contain transition-transform duration-300 group-hover:scale-110"
               />
             )}
-            {isExpanded && (
-              <span className="font-bold text-xl text-ls-heading whitespace-nowrap">
-                {title || "LearnSup"}
-              </span>
-            )}
           </Link>
           <button
             onClick={() => setIsExpanded(!isExpanded)}

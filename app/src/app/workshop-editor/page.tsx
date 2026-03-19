@@ -41,6 +41,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BackButton } from "@/components/shared/BackButton";
+import Loader from "@/components/shared/Loader";
 import type { WorkshopDetailed } from "@ls-app/shared";
 
 type Workshop = WorkshopDetailed;
