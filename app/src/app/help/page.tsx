@@ -129,14 +129,13 @@ function HelpCenterContent() {
                 et nous te répondrons rapidement.
               </p>
             </div>
-            <Link href="/support-request" className="shrink-0">
-              <Button
-                size="lg"
-                className="w-full bg-brand font-bold text-white shadow-md hover:bg-brand/90 hover:shadow-lg sm:w-auto"
-              >
-                Contacter le support
-              </Button>
-            </Link>
+            <Button
+              asChild
+              size="lg"
+              className="w-full shrink-0 bg-brand font-bold text-white shadow-md hover:bg-brand/90 hover:shadow-lg sm:w-auto"
+            >
+              <Link href="/support-request">Contacter le support</Link>
+            </Button>
           </div>
         </motion.div>
 
@@ -199,14 +198,13 @@ function HelpCenterContent() {
               et nous te répondrons rapidement.
             </p>
           </div>
-          <Link href="/support-request">
-            <Button
-              size="lg"
-              className="w-full bg-brand font-bold text-white shadow-md hover:bg-brand/90 md:w-auto"
-            >
-              Contacter le support
-            </Button>
-          </Link>
+          <Button
+            asChild
+            size="lg"
+            className="w-full bg-brand font-bold text-white shadow-md hover:bg-brand/90 md:w-auto"
+          >
+            <Link href="/support-request">Contacter le support</Link>
+          </Button>
         </div>
 
         <div className="flex h-full flex-col justify-between gap-4 rounded-2xl border border-border/50 bg-card/95 p-6 shadow-xl backdrop-blur-md sm:p-8">
@@ -219,15 +217,14 @@ function HelpCenterContent() {
               l&apos;état de tes tickets en cours.
             </p>
           </div>
-          <Link href="/help/support">
-            <Button
-              size="lg"
-              variant="outline"
-              className="w-full border-brand font-bold text-brand hover:bg-brand/10 md:w-auto"
-            >
-              Mes tickets support
-            </Button>
-          </Link>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="w-full border-brand font-bold text-brand hover:bg-brand/10 md:w-auto"
+          >
+            <Link href="/help/support">Mes tickets support</Link>
+          </Button>
         </div>
       </motion.div>
 
