@@ -12,11 +12,11 @@
 		"test:unit": "turbo test",
 		"test:coverage": "turbo test:coverage",
 		"dev:app": "turbo -F app dev",
-		"dev:back": "turbo -F back dev",
-		"db:push": "turbo -F back db:push",
-		"db:studio": "turbo -F back db:studio",
-		"db:generate": "turbo -F back db:generate",
-		"db:migrate": "turbo -F back db:migrate",
+		"db:push": "turbo -F app db:push",
+		"db:studio": "turbo -F app db:studio",
+		"db:generate": "turbo -F app db:generate",
+		"db:migrate": "turbo -F app db:migrate",
+		"db:deploy": "turbo -F app db:deploy",
 		"lint": "turbo lint"
 	},
 	"devDependencies": {
