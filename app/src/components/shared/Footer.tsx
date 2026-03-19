@@ -30,9 +30,9 @@ export function Footer() {
         <div className="border-t border-[#d6dae4] dark:border-[#d6dae4] pt-6 sm:pt-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="relative w-16 h-16 shrink-0">
+              <div className="relative w-20 h-24 shrink-0">
                 <Image
-                  src="/logo/icon.png"
+                  src="/logo/logo_vertical.png"
                   alt="LearnSup"
                   fill
                   className="object-contain"

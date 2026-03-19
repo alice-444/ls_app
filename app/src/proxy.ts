@@ -80,6 +80,6 @@ export const config = {
     /*
      * Intercepte tout sauf les assets et les routes techniques
      */
-    "/((?!api|trpc|socket.io|_next/static|_next/image|favicon.ico|logo|bg|typo|monitoring).*)",
+    "/((?!api|trpc|socket.io|_next/static|_next/image|logo|bg|typo|monitoring).*)",
   ],
 };

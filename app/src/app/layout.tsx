@@ -10,6 +10,9 @@ import Loader from "@/components/shared/Loader";
 export const metadata: Metadata = {
   title: "LearnSup",
   description: "Plateforme d'apprentissage entre étudiants",
+  icons: {
+    icon: "/logo/ico_LearnSup.ico",
+  },
 };
 
 export default function RootLayout({

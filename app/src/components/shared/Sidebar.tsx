@@ -192,11 +192,11 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Readonl
               <TitleIcon className="h-8 w-8 text-brand shrink-0 transition-transform duration-300 group-hover:scale-110" />
             ) : (
               <Image
-                src="/logo/icon.png"
+                src="/logo/logo_vertical.png"
                 alt="LearnSup Logo"
-                width={56}
-                height={56}
-                className="shrink-0 transition-transform duration-300 group-hover:scale-110"
+                width={64}
+                height={80}
+                className="shrink-0 object-contain transition-transform duration-300 group-hover:scale-110"
               />
             )}
             {isExpanded && (
