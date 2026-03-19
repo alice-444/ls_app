@@ -35,7 +35,7 @@ export function NotificationBell() {
 
   const { data: unreadCount, refetch: refetchUnreadCount } =
     trpc.notification.getUnreadCount.useQuery(undefined, {
-      enabled: !!session,
+      enabled: !!session?.user?.id,
       refetchInterval: 30000,
     });
 
@@ -43,7 +43,7 @@ export function NotificationBell() {
     trpc.notification.getRecentNotifications.useQuery(
       { limit: 5 },
       {
-        enabled: !!session,
+        enabled: !!session?.user?.id,
         refetchInterval: 30000,
       }
     );

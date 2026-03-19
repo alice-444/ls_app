@@ -13,17 +13,17 @@ export function AuthPasswordResetEmail({
 }: AuthPasswordResetEmailProps) {
   return (
     <EmailLayout
-      preview="Réinitialisez votre mot de passe LearnSup"
+      preview="Réinitialise ton mot de passe LearnSup"
       title="Réinitialisation de mot de passe"
     >
       <Text>Bonjour,</Text>
       <Text>
-        Vous avez demandé la réinitialisation de votre mot de passe <strong>LearnSup</strong>. Veuillez utiliser le lien ou le code ci-dessous pour choisir un nouveau mot de passe.
+        Tu as demandé la réinitialisation de ton mot de passe <strong>LearnSup</strong>. Utilise le lien ou le code ci-dessous pour choisir un nouveau mot de passe.
       </Text>
 
       {otp && (
         <Section style={codeBox}>
-          <Text style={codeLabel}>Votre code de réinitialisation</Text>
+          <Text style={codeLabel}>Ton code de réinitialisation</Text>
           <Text style={codeText}>
             {otp}
           </Text>
@@ -40,13 +40,13 @@ export function AuthPasswordResetEmail({
             Réinitialiser mon mot de passe
           </Button>
           <Text style={linkText}>
-            Ou copiez-collez ce lien : <Link href={url} style={link}>{url}</Link>
+            Ou copie-colle ce lien : <Link href={url} style={link}>{url}</Link>
           </Text>
         </Section>
       )}
 
       <Text style={footerNote}>
-        Ce lien/code est valable pour une durée limitée. Si vous n'avez pas demandé de réinitialisation, vous pouvez ignorer cet email en toute sécurité.
+        Ce lien/code est valable pour une durée limitée. Si tu n'as pas demandé de réinitialisation, tu peux ignorer cet email en toute sécurité.
       </Text>
     </EmailLayout>
   );

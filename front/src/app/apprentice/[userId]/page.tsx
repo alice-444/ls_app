@@ -7,15 +7,25 @@ import { authClient } from "@/lib/auth-server-client";
 import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, GraduationCap, Tag, Lock, UserPlus, UserMinus } from "lucide-react";
+import { User, GraduationCap, Tag, Lock, UserPlus, UserMinus, MoreVertical, Ban, Flag } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
+import { ReportUserDialog } from "@/components/domains/user/ReportUserDialog";
 
 export default function ApprenticeProfilePage() {
   const params = useParams();
   const router = useRouter();
   const userId = params?.userId as string;
   const { data: session, isPending: isSessionPending } = authClient.useSession();
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   const {
     data: profile,
@@ -119,12 +129,31 @@ export default function ApprenticeProfilePage() {
                 <CardTitle className="text-2xl">Profil Apprenti</CardTitle>
                 <CardDescription>{hasFullAccess ? "Profil complet" : "Profil privé - Accès restreint"}</CardDescription>
               </div>
-              {!hasFullAccess && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Lock className="h-5 w-5" />
-                  <span className="text-sm">Privé</span>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                {!hasFullAccess && (
+                  <div className="flex items-center gap-2 text-muted-foreground mr-2">
+                    <Lock className="h-5 w-5" />
+                    <span className="text-sm">Privé</span>
+                  </div>
+                )}
+                {session && userId !== session.user.id && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="rounded-full">
+                        <MoreVertical className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="rounded-xl">
+                      <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-red-600 dark:text-red-400">
+                        <Flag className="h-4 w-4 mr-2" /> Signaler
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-red-600 dark:text-red-400">
+                        <Ban className="h-4 w-4 mr-2" /> Bloquer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -255,6 +284,24 @@ export default function ApprenticeProfilePage() {
           </CardContent>
         </Card>
       </div>
+
+      {session && userId !== session.user.id && (
+        <>
+          <BlockUserDialog
+            open={showBlockDialog}
+            onOpenChange={setShowBlockDialog}
+            userId={userId}
+            userName={displayName}
+            onBlocked={() => router.push("/dashboard")}
+          />
+          <ReportUserDialog
+            open={showReportDialog}
+            onOpenChange={setShowReportDialog}
+            userId={userId}
+            userName={displayName}
+          />
+        </>
+      )}
     </div>
   );
 }

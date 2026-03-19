@@ -19,12 +19,12 @@ export function SupportRequestConfirmation({
 }: SupportRequestConfirmationProps) {
   return (
     <EmailLayout
-      preview="Confirmation de votre demande de support"
-      title="Confirmation de votre demande"
+      preview="Confirmation de ta demande de support"
+      title="Confirmation de ta demande"
     >
       <Text>Bonjour,</Text>
       <Text>
-        Nous avons bien reçu votre demande de support concernant :{" "}
+        Nous avons bien reçu ta demande de support concernant :{" "}
         <strong>{subject}</strong>
       </Text>
       <Section style={infoBox}>
@@ -42,13 +42,13 @@ export function SupportRequestConfirmation({
         )}
       </Section>
       <Text>
-        Notre équipe va examiner votre demande et vous répondra dans les plus
+        Notre équipe va examiner ta demande et te répondra dans les plus
         brefs délais.
       </Text>
       {hasAttachments && (
         <Text>
-          Nous avons bien reçu vos pièces jointes et elles seront prises en
-          compte dans l&apos;analyse de votre demande.
+          Nous avons bien reçu tes pièces jointes et elles seront prises en
+          compte dans l&apos;analyse de ta demande.
         </Text>
       )}
     </EmailLayout>

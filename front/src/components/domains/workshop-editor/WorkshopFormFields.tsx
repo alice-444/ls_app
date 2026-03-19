@@ -1,7 +1,7 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import type { Control, FieldErrors, UseFormRegister } from "react-hook-form";
+import type { Control, FieldErrors, UseFormRegister, Path } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -14,12 +14,13 @@ import {
   Package,
   Tag,
   Coins,
+  AlertCircle,
+  Info,
 } from "lucide-react";
 import {
   WORKSHOP_VALIDATION,
   type CreateWorkshopFrontendData,
 } from "@ls-app/shared";
-
 
 interface WorkshopFormFieldsProps<T extends CreateWorkshopFrontendData = CreateWorkshopFrontendData> {
   register: UseFormRegister<T>;
@@ -55,7 +56,7 @@ export function convertDurationToMinutes(
   hours: number,
   minutes: number
 ): number | null {
-  const totalMinutes = hours * 60 + minutes;
+  const totalMinutes = (hours || 0) * 60 + (minutes || 0);
   return totalMinutes > 0 ? totalMinutes : null;
 }
 
@@ -70,16 +71,19 @@ export function extractDurationParts(totalMinutes: number | null): {
   };
 }
 
-export function WorkshopFormFields({
+export function WorkshopFormFields<T extends CreateWorkshopFrontendData>({
   register,
   control,
   errors,
   isVirtual,
   description,
-}: Readonly<WorkshopFormFieldsProps>) {
+}: Readonly<WorkshopFormFieldsProps<T>>) {
   const descriptionLength = description.length;
   const descriptionProgress = Math.min((descriptionLength / WORKSHOP_VALIDATION.description.max) * 100, 100);
   const descStatus = getDescriptionStatus(descriptionLength);
+
+  // Cast errors for easier access to known fields in the UI
+  const fieldErrors = errors as FieldErrors<CreateWorkshopFrontendData>;
 
   return (
     <>
@@ -90,12 +94,18 @@ export function WorkshopFormFields({
         <Input
           id="title"
           placeholder="Ex: Introduction à React"
-          {...register("title")}
-          className={`rounded-full ${errors.title ? "border-red-500" : ""}`}
+          {...register("title" as Path<T>)}
+          className={`rounded-full transition-colors ${fieldErrors.title ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
         />
-        {errors.title?.message && (
-          <p className="text-sm text-red-500">{String(errors.title.message)}</p>
+        {fieldErrors.title?.message && (
+          <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {String(fieldErrors.title.message)}
+          </p>
         )}
+        <p className="text-xs text-muted-foreground ml-1">
+          Un titre clair et accrocheur (min. {WORKSHOP_VALIDATION.title.min} caractères)
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -104,21 +114,21 @@ export function WorkshopFormFields({
         </Label>
         <Textarea
           id="description"
-          placeholder="Description courte de l'atelier..."
-          rows={3}
+          placeholder="Décrivez ce que les apprenants vont apprendre..."
+          rows={4}
           maxLength={WORKSHOP_VALIDATION.description.max}
-          {...register("description" as any)}
-          className={`rounded-2xl ${errors.description ? "border-red-500" : ""}`}
+          {...register("description" as Path<T>)}
+          className={`rounded-2xl transition-colors ${fieldErrors.description ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
         />
 
-        <div className="space-y-1">
-          <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+        <div className="space-y-1 px-1">
+          <div className="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
             <div
-              className={`h-2 rounded-full transition-all duration-300 ${descStatus.color}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${descStatus.color}`}
               style={{ width: `${descriptionProgress}%` }}
             />
           </div>
-          <div className="flex justify-between text-xs text-muted-foreground">
+          <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>{descriptionLength} / {WORKSHOP_VALIDATION.description.max} caractères</span>
             <span className={`font-medium ${descStatus.textColor}`}>
               {descStatus.text}
@@ -126,9 +136,10 @@ export function WorkshopFormFields({
           </div>
         </div>
 
-        {errors.description?.message && (
-          <p className="text-sm text-red-500">
-            {String(errors.description.message)}
+        {fieldErrors.description?.message && (
+          <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {String(fieldErrors.description.message)}
           </p>
         )}
       </div>
@@ -139,16 +150,19 @@ export function WorkshopFormFields({
           className="text-base font-semibold flex items-center gap-2"
         >
           <Tag className="h-4 w-4" />
-          Tag(s) / Sujet(s)
+          Sujet / Tags
         </Label>
         <Input
           id="topic"
-          placeholder="Ex: React, Mathématiques, Design, Programmation..."
-          {...register("topic")}
-          className={`rounded-full ${errors.topic ? "border-red-500" : ""}`}
+          placeholder="Ex: React, Mathématiques, Design..."
+          {...register("topic" as Path<T>)}
+          className={`rounded-full transition-colors ${fieldErrors.topic ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
         />
-        {errors.topic?.message && (
-          <p className="text-sm text-red-500">{String(errors.topic.message)}</p>
+        {fieldErrors.topic?.message && (
+          <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {String(fieldErrors.topic.message)}
+          </p>
         )}
       </div>
 
@@ -164,16 +178,18 @@ export function WorkshopFormFields({
           <Input
             id="date"
             type="date"
-            {...register("date")}
-            className={`rounded-full ${errors.date ? "border-red-500" : ""}`}
+            {...register("date" as Path<T>)}
+            className={`rounded-full transition-colors ${fieldErrors.date ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
           />
-          {errors.date?.message && (
-            <p className="text-sm text-red-500">
-              {String(errors.date.message)}
+          {fieldErrors.date?.message && (
+            <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {String(fieldErrors.date.message)}
             </p>
           )}
-          <p className="text-xs text-muted-foreground">
-            Requis uniquement lors de la publication
+          <p className="text-[10px] text-muted-foreground ml-1">
+            <Info className="h-3 w-3 inline mr-1" />
+            Optionnel pour un brouillon
           </p>
         </div>
 
@@ -188,12 +204,13 @@ export function WorkshopFormFields({
           <Input
             id="time"
             type="time"
-            {...register("time")}
-            className={`rounded-full ${errors.time ? "border-red-500" : ""}`}
+            {...register("time" as Path<T>)}
+            className={`rounded-full transition-colors ${fieldErrors.time ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
           />
-          {errors.time?.message && (
-            <p className="text-sm text-red-500">
-              {String(errors.time.message)}
+          {fieldErrors.time?.message && (
+            <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {String(fieldErrors.time.message)}
             </p>
           )}
         </div>
@@ -211,10 +228,10 @@ export function WorkshopFormFields({
                 min="0"
                 max="8"
                 placeholder="0"
-                {...register("durationHours", { valueAsNumber: true })}
-                className={`rounded-full ${errors.durationHours ? "border-red-500" : ""}`}
+                {...register("durationHours" as Path<T>, { valueAsNumber: true })}
+                className={`rounded-full transition-colors ${fieldErrors.durationHours ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
               />
-              <p className="text-xs text-muted-foreground mt-1">Heures</p>
+              <p className="text-[10px] text-muted-foreground mt-1 text-center">Heures</p>
             </div>
             <div>
               <Input
@@ -224,39 +241,40 @@ export function WorkshopFormFields({
                 max="59"
                 step="15"
                 placeholder="0"
-                {...register("durationMinutes", { valueAsNumber: true })}
-                className={`rounded-full ${errors.durationMinutes ? "border-red-500" : ""}`}
+                {...register("durationMinutes" as Path<T>, { valueAsNumber: true })}
+                className={`rounded-full transition-colors ${fieldErrors.durationMinutes ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
               />
-              <p className="text-xs text-muted-foreground mt-1">Minutes</p>
+              <p className="text-[10px] text-muted-foreground mt-1 text-center">Minutes</p>
             </div>
           </div>
-          {(errors.durationHours?.message ||
-            errors.durationMinutes?.message) && (
-              <p className="text-sm text-red-500">
+          {(fieldErrors.durationHours?.message ||
+            fieldErrors.durationMinutes?.message) && (
+              <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+                <AlertCircle className="h-3.5 w-3.5" />
                 {String(
-                  errors.durationHours?.message || errors.durationMinutes?.message
+                  fieldErrors.durationHours?.message || fieldErrors.durationMinutes?.message
                 )}
               </p>
             )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between p-4 border rounded-2xl">
+      <div className="flex items-center justify-between p-4 border border-border/50 rounded-2xl bg-muted/30">
         <div className="space-y-0.5">
           <Label htmlFor="isVirtual" className="text-base font-semibold">
             Atelier virtuel
           </Label>
-          <p className="text-sm text-muted-foreground">
-            L'atelier se déroulera en ligne
+          <p className="text-xs text-muted-foreground">
+            L'atelier se déroulera en visioconférence
           </p>
         </div>
         <Controller
           control={control}
-          name="isVirtual"
+          name={"isVirtual" as Path<T>}
           render={({ field }) => (
             <Switch
               id="isVirtual"
-              checked={field.value}
+              checked={!!field.value}
               onCheckedChange={field.onChange}
             />
           )}
@@ -274,13 +292,14 @@ export function WorkshopFormFields({
           </Label>
           <Input
             id="location"
-            placeholder="Ex: 123 Rue de la Paix, Paris"
-            {...register("location")}
-            className={`rounded-full ${errors.location ? "border-red-500" : ""}`}
+            placeholder="Ex: 123 Rue de la Paix, Paris ou 'À définir'"
+            {...register("location" as Path<T>)}
+            className={`rounded-full transition-colors ${fieldErrors.location ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
           />
-          {errors.location?.message && (
-            <p className="text-sm text-red-500">
-              {String(errors.location.message)}
+          {fieldErrors.location?.message && (
+            <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {String(fieldErrors.location.message)}
             </p>
           )}
         </div>
@@ -299,20 +318,21 @@ export function WorkshopFormFields({
           type="number"
           min="1"
           max="1000"
-          placeholder="Ex: 5 (laisse vide si aucune limite)"
-          {...register("maxParticipants", {
+          placeholder="Ex: 5"
+          {...register("maxParticipants" as Path<T>, {
             setValueAs: (v) =>
               v === "" || v === null ? undefined : Number.parseInt(v, 10),
           })}
-          className={`rounded-full ${errors.maxParticipants ? "border-red-500" : ""}`}
+          className={`rounded-full transition-colors ${fieldErrors.maxParticipants ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
         />
-        {errors.maxParticipants?.message && (
-          <p className="text-sm text-red-500">
-            {String(errors.maxParticipants.message)}
+        {fieldErrors.maxParticipants?.message && (
+          <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {String(fieldErrors.maxParticipants.message)}
           </p>
         )}
-        <p className="text-sm text-muted-foreground">
-          Laisse vide si aucune limite
+        <p className="text-xs text-muted-foreground ml-1">
+          Laisse vide si tu n'as pas de limite de participants
         </p>
       </div>
 
@@ -322,29 +342,30 @@ export function WorkshopFormFields({
           className="text-base font-semibold flex items-center gap-2"
         >
           <Package className="h-4 w-4" />
-          Matériaux nécessaires
+          Matériel nécessaire
         </Label>
         <Textarea
           id="materialsNeeded"
-          placeholder="Ex: Ordinateur portable, logiciel(s) nécessaire(s),..."
+          placeholder="Ex: Ordinateur portable, carnet, stylo..."
           rows={3}
-          {...register("materialsNeeded")}
-          className={`rounded-2xl ${errors.materialsNeeded ? "border-red-500" : ""}`}
+          {...register("materialsNeeded" as Path<T>)}
+          className={`rounded-2xl transition-colors ${fieldErrors.materialsNeeded ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
         />
-        {errors.materialsNeeded?.message && (
-          <p className="text-sm text-red-500">
-            {String(errors.materialsNeeded.message)}
+        {fieldErrors.materialsNeeded?.message && (
+          <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {String(fieldErrors.materialsNeeded.message)}
           </p>
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 p-4 border border-brand/20 rounded-2xl bg-brand/5">
         <Label
           htmlFor="creditCost"
-          className="text-base font-semibold flex items-center gap-2"
+          className="text-base font-semibold flex items-center gap-2 text-ls-heading"
         >
-          <Coins className="h-4 w-4" />
-          Nombre de crédits
+          <Coins className="h-4 w-4 text-brand" />
+          Tarif en crédits
         </Label>
         <Input
           id="creditCost"
@@ -352,15 +373,20 @@ export function WorkshopFormFields({
           min={20}
           max={100}
           placeholder="20"
-          {...register("creditCost", { valueAsNumber: true })}
-          className={`rounded-full ${errors.creditCost ? "border-red-500" : ""}`}
+          {...register("creditCost" as Path<T>, { valueAsNumber: true })}
+          className={`rounded-full transition-colors ${fieldErrors.creditCost ? "border-red-500 bg-red-50/50 dark:bg-red-950/20" : "border-brand/30 focus:border-brand"}`}
         />
-        <p className="text-xs text-muted-foreground">
-          Le nombre minimum de crédits est 20 et le maximum est 100 (par défaut: 20)
-        </p>
-        {errors.creditCost?.message && (
-          <p className="text-sm text-red-500">
-            {String(errors.creditCost.message)}
+        <div className="flex items-start gap-1.5 mt-1 ml-1">
+          <Info className="h-3.5 w-3.5 text-brand mt-0.5 shrink-0" />
+          <p className="text-xs text-muted-foreground">
+            Recommandation : 20 crédits (minimum) pour un atelier standard. 
+            Le tarif doit être compris entre 20 et 100 crédits.
+          </p>
+        </div>
+        {fieldErrors.creditCost?.message && (
+          <p className="text-sm text-red-500 flex items-center gap-1.5 mt-1 ml-1">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {String(fieldErrors.creditCost.message)}
           </p>
         )}
       </div>

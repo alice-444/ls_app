@@ -19,13 +19,13 @@ export function WorkshopRequestRejectedEmail({
 }: WorkshopRequestRejectedEmailProps) {
   return (
     <EmailLayout
-      title="Mise à jour concernant votre demande"
-      preview={`${mentorName} ne peut pas donner suite à votre demande pour "${workshopTitle}".`}
+      title="Mise à jour concernant ta demande"
+      preview={`${mentorName} ne peut pas donner suite à ta demande pour "${workshopTitle}".`}
       headerColor="#ef4444"
     >
       <Text>Bonjour {userName},</Text>
       <Text>
-        Nous vous informons que <strong>{mentorName}</strong> ne pourra malheureusement pas donner suite à votre demande de participation à l'atelier <strong>{workshopTitle}</strong>.
+        Nous t'informons que <strong>{mentorName}</strong> ne pourra malheureusement pas donner suite à ta demande de participation à l'atelier <strong>{workshopTitle}</strong>.
       </Text>
       {reason && (
         <Section className="bg-gray-50 rounded-lg p-4 my-4 border-l-4 border-red-500">
@@ -35,7 +35,7 @@ export function WorkshopRequestRejectedEmail({
         </Section>
       )}
       <Text>
-        Ne vous découragez pas ! De nombreux autres ateliers sont disponibles sur la plateforme.
+        Ne te décourage pas ! De nombreux autres ateliers sont disponibles sur la plateforme.
       </Text>
       <Section className="text-center mt-6">
         <Button
