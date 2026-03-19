@@ -86,7 +86,8 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 - **`src/components/`** — Composants organisés par domaine :
   - `ui/` — Design system shadcn (boutons, cartes, dialogs, inputs, avatar, tabs, etc.).
   - `layout/` — PageContainer, PageHeader, PageCard, SectionSidebar.
-  - `header.tsx`, `sidebar.tsx`, `footer.tsx`, `back-button.tsx` — Shell de l'app.
+  - `shared/` — `BackButton.tsx`, `Loader.tsx` (animations Framer Motion), `NotificationBell.tsx`, `UserMenu.tsx`.
+  - `header.tsx`, `sidebar.tsx`, `footer.tsx` — Shell de l'app.
   - `apprentice/` — Dashboard et ateliers apprenant (ApprenticeSidebar, UpcomingWorkshopsCard, AvailableWorkshopsGrid, ApprenticeWorkshopDashboard).
   - `dashboard/` — Dashboards (ApprenantDashboard, ApprenantDashboardSidebar, MentorDashboard, FloatingAddButton).
   - `messaging/` — Messagerie (ChatWindow, ChatHeader, ConversationList, ConversationRow, NewConversationDialog, ReplyPreview, MessageReactions).
@@ -204,14 +205,14 @@ flowchart TB
 
 Fichier : `app/.env` (voir `app/.env.example`).
 
-- **`NEXT_PUBLIC_SERVER_URL`** — URL du back (ex. `http://localhost:3000`). Utilisée par le client tRPC et par `auth-client` / `api-client` pour les appels API. Obligatoire en prod.
+- **`NEXT_PUBLIC_SERVER_URL`** — URL de base de l’app Next (API + pages) telle que vue par le navigateur (ex. `http://localhost:3001` si tout est servi sur le même port). Utilisée par le client tRPC et `auth-client` / `api-client`. Obligatoire en prod.
 
 ---
 
 ## Scripts (depuis la racine du repo)
 
-- `pnpm dev:app` — Démarre le front en dev (port 3001).
-- `pnpm dev` — Démarre app et back (Turborepo).
+- `pnpm dev:app` — Filtre Turbo sur le package `app`.
+- `pnpm dev` — Démarre le workspace `app` (Next + socket selon `app/package.json`).
 
 Build : `pnpm build` (à la racine lance le build des workspaces).
 

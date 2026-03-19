@@ -16,7 +16,7 @@ Ce document détaille le fonctionnement de l'envoi d'emails dans LearnSup, de la
 
 ## 🏗️ Structure du Code
 
-L'architecture est centralisée dans `back/src/lib/email/` :
+L'architecture est centralisée dans `app/src/lib/email/` :
 
 ```mermaid
 graph TD

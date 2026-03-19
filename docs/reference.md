@@ -12,9 +12,10 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - **Flux utilisateur** : états (non connecté → session → onboarding → dashboard), redirections par rôle (ADMIN/MENTOR/APPRENANT), RoleGate.
 - **Flux de données** : tRPC + TanStack Query, contexte session, procédures protégées, Socket.IO temps réel.
 - **Flux atelier** : création, publication, demande, acceptation, visio, feedback, cashback.
+- **Interactions Mentor-Apprenant** : Accès au `MiniProfileModal` depuis `WorkshopRequestCard` et `WorkshopParticipantsCard`.
 - **Flux paiement/crédits** : achat Polar, webhook, crédit compte.
 - **Flux messagerie** : getOrCreateConversation, envoi (tRPC/Socket), temps réel.
-- **Flux visio** : Daily.co token, webhook, crons.
+- **Flux visio** : Daily.co (création salle cron ou `getDailyToken`, `nbf`/`exp` sur le créneau), masquage `dailyRoomId` jusqu’à ~3 h avant, token, webhook, crons nettoyage.
 - **Flux suppression compte** : demande, deletion_job, purge cron.
 - **Flux crons** : liste des jobs planifiés.
 - **Flux réseau** : connexions mentor-apprenant.
@@ -33,14 +34,14 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ## Back
 
 - Entrée requêtes, routers tRPC, structure dossiers, routes API, env : [back.md](back.md).
-- Schémas : routage HTTP, arborescence appRouter, structure back/, flux requête, regroupement routes API.
-- Racine code : `back/` — `server.ts`, `src/app/api/`, `src/routers/`, `src/lib/`, `.prisma/schema/`. Voir [arborescence](arborescence.md).
+- Schémas : routage HTTP, arborescence appRouter, structure du package `app/`, flux requête, regroupement routes API.
+- Racine code API + front : package **`app/`** — `server.ts`, `src/app/api/`, `src/routers/`, `src/lib/`, `prisma/schema/`. Voir [arborescence](arborescence.md).
 
 ---
 
 ## API (tRPC)
 
-- Router racine : `back/src/routers/index.ts` (appRouter).
+- Router racine : `app/src/routers/index.ts` (appRouter).
 - **Renommage** : `workshopFeedback.dismissReport` → `approveFeedback`.
 - Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, community, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
 - **admin** : `getStats`, `getOnboardingQueue`, `getUsers`, `approveUser`, `rejectUser`, `getUser360`, `updateUserCredits`, `bulkApproveUsers`, `bulkRejectUsers`, `sendBulkNotification` (moteur de segmentation).
@@ -65,24 +66,24 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 ## Base de données (Prisma)
 
-- Schéma : `back/.prisma/schema/schema.prisma`.
+- Schéma : `app/prisma/schema/schema.prisma`.
 - **MPD (modèle physique)** : [mpd.md](mpd.md) — tables, colonnes, types, clés, index.
 - Modèles principaux : account, app_user (profil utilisateur, lié à account via userId), workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log (action, adminId, targetId, details), magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
-- Client généré : `back/.prisma/generated/client`.
+- Client généré : `app/prisma/generated/client` (sortie définie dans le `generator` Prisma).
 
 ---
 
 ## Variables d’environnement
 
-- **Back** : `CORS_ORIGIN`, `CRON_SECRET`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `RESEND_*`, `DAILY_*`, `POLAR_*` (paiement), `PORT_BACKEND`, `HOSTNAME_BACKEND`. Voir `back/.env.example`.
-- **Front** : `NEXT_PUBLIC_SERVER_URL`. Voir `app/.env.example`.
+- **Fichier d’exemple commité** : `app/.env.example` (surtout `NEXT_PUBLIC_*`). Les secrets se configurent dans **`app/.env`** (non versionné) : typiquement `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CORS_ORIGIN`, `CRON_SECRET`, `RESEND_*`, `DAILY_*`, `DAILY_WEBHOOK_SECRET`, `POLAR_*` (webhook + clés produit), `PORT_BACKEND` / `HOSTNAME_BACKEND` si utilisés par `server.ts`, `CLOUDINARY_*` si stockage cloud des photos, `SENTRY_*` si activé.
+- **Règles métier, Polar, rate limits, dépannage** : [metier-et-ops.md](metier-et-ops.md).
 
 ---
 
 ## Scripts (racine repo)
 
-- `pnpm dev` — front + back
-- `pnpm dev:front` / `pnpm dev:back`
+- `pnpm dev` — workspace `app` (Turborepo)
+- `pnpm dev:app` — filtre sur le package `app`
 - `pnpm build` — build des workspaces
 - `pnpm check-types`
 - `pnpm db:push` / `pnpm db:migrate` / `pnpm db:generate` / `pnpm db:studio`
@@ -91,11 +92,11 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ### Tests
 
 - `pnpm run test:unit` — tests unitaires (Vitest, front + back). Attendu par la CI.
-- `pnpm run test:integration` — tests d’intégration (attendu par la CI).
+- Tests d’intégration / E2E : suivre les workflows dans `.github/workflows/` (le root `package.json` peut n’avoir que `pnpm test`).
 - `pnpm run test:coverage` — tests avec couverture (rapports HTML + LCOV dans `coverage/`).
 - E2E : Cypress, config dans `cypress.config.js`, specs dans `cypress/e2e/`.
 
-Emplacements : `app/__tests__/units/`, `back/__tests__/units/`, `back/__tests__/api/`, `back/__tests__/trpc/`, `back/__tests__/integration/`. Détail : [procedure.md](procedure.md) § Lancer les tests.
+Emplacements : principalement `app/__tests__/units/`. Détail : [procedure.md](procedure.md) § Lancer les tests et [metier-et-ops.md](metier-et-ops.md) § Tests.
 
 ---
 
@@ -120,4 +121,5 @@ Pour les guides (premier démarrage, DB, auth, crons, déploiement) : [procedure
 
 ## Index doc
 
-[README](README.md) — sommaire de la documentation.
+[README](README.md) — sommaire de la documentation.  
+[metier-et-ops.md](metier-et-ops.md) — crédits, Polar, communauté, admin, rate limiting, dépannage.

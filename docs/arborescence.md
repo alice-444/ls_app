@@ -6,17 +6,29 @@ Structure du monorepo : vue macro (niveau projet) et vue micro (détail des doss
 
 ## Sommaire
 
-- [Vue macro](#vue-macro)
-- [Légende](#légende)
-- [Schéma des dépendances](#schéma-des-dépendances)
-- [Schéma système et flux](#schéma-système-et-flux)
-- [Vue micro — Racine](#vue-micro--racine)
-- [Vue micro — Shared](#vue-micro--shared)
-- [Vue micro — App](#vue-micro--app)
-- [Vue micro — Back](#vue-micro--back)
-- [Index rapide](#index-rapide)
-- [Conventions de nommage](#conventions-de-nommage)
-- [Liens](#liens)
+- [Arborescence LearnSup](#arborescence-learnsup)
+  - [Sommaire](#sommaire)
+  - [Légende](#légende)
+  - [Vue macro](#vue-macro)
+  - [Schéma des dépendances](#schéma-des-dépendances)
+  - [Schéma système et flux](#schéma-système-et-flux)
+    - [Flux de routage HTTP (entrée requête)](#flux-de-routage-http-entrée-requête)
+  - [Vue micro — Racine](#vue-micro--racine)
+    - [`infra/` — Structure détaillée](#infra--structure-détaillée)
+  - [Vue micro — Shared](#vue-micro--shared)
+  - [Vue micro — App](#vue-micro--app)
+    - [Schéma : hiérarchie des composants front](#schéma--hiérarchie-des-composants-front)
+    - [`app/src/lib/`, `hooks/`](#appsrclib-hooks)
+  - [Vue micro — Package app (API)](#vue-micro--package-app-api)
+    - [Schéma : flux Router → Service → Repository](#schéma--flux-router--service--repository)
+    - [`app/src/app/` — Routes API](#appsrcapp--routes-api)
+    - [`app/src/routers/` — tRPC](#appsrcrouters--trpc)
+    - [`app/src/lib/` — Services et infrastructure](#appsrclib--services-et-infrastructure)
+  - [Index rapide](#index-rapide)
+    - [Par besoin](#par-besoin)
+    - [Cas d'usage](#cas-dusage)
+  - [Conventions de nommage](#conventions-de-nommage)
+  - [Liens](#liens)
 
 ---
 
@@ -34,17 +46,14 @@ Structure du monorepo : vue macro (niveau projet) et vue micro (détail des doss
 
 ```
 ls_app/
-├── back/                    # Backend Next.js (API, tRPC, Prisma)
-├── app/                     # Frontend Next.js (App Router, React)
+├── app/                     # Application Next.js (Front + Back tRPC/API)
 ├── shared/                  # Package partagé (validation Zod, types, constantes)
 ├── infra/                   # Infrastructure (Docker, Grafana, Prometheus)
-├── cypress/                 # Tests E2E Cypress
 ├── docs/                    # Documentation technique
 ├── .github/                 # CI/CD (workflows, linters)
 ├── package.json             # Racine pnpm workspace
 ├── pnpm-workspace.yaml
 ├── turbo.json
-├── cypress.config.js
 └── README.md
 ```
 ---
@@ -56,21 +65,18 @@ flowchart TB
   subgraph Workspace["pnpm workspace"]
     shared["shared"]
     app["app"]
-    back["back"]
   end
 
   app --> shared
-  back --> shared
 
   shared -.->|"Zod, types, constantes"| app
-  shared -.->|"Zod, types, constantes"| back
 ```
 
 ---
 
 ## Schéma système et flux
 
-### Flux de routage back (entrée requête)
+### Flux de routage HTTP (entrée requête)
 
 ```mermaid
 flowchart TB
@@ -111,7 +117,6 @@ flowchart TB
 
 ```
 ls_app/
-├── back/
 ├── app/
 ├── shared/
 │   ├── src/
@@ -271,12 +276,14 @@ hooks/
 
 ---
 
-## Vue micro — Back
+## Vue micro — Package app (API)
+
+Tout le code serveur et les routes Next côté « back » se trouvent dans **`app/`** (un seul package ; pas de dossier `back/` au niveau repo sauf éventuellement sous `infra/docker/` pour Docker).
 
 ```
-back/
+app/
 ├── server.ts                # Point d'entrée HTTP (CORS, Socket.IO, Next)
-├── .prisma/
+├── prisma/
 │   ├── schema/
 │   │   └── schema.prisma
 │   ├── generated/client/
@@ -286,11 +293,8 @@ back/
 │   ├── routers/             # tRPC appRouter
 │   └── lib/                 # Services, repositories, DI
 ├── __tests__/
-│   ├── api/                  # Tests routes API REST
-│   ├── trpc/                 # Tests procédures tRPC (apprentice.getDashboardData, mentor.getDashboardData, workshop.getById, etc.)
-│   ├── units/                # Tests unitaires services/repositories
-│   └── integration/          # Tests d'intégration (ex. database.test.ts)
-└── [next.config, package.json, ...]
+│   └── units/                # Tests Vitest (services, hooks, validation, …)
+└── [next.config, package.json, start.sh, ...]
 ```
 
 ### Schéma : flux Router → Service → Repository
@@ -319,7 +323,7 @@ flowchart LR
   Repo --> DB
 ```
 
-### `back/src/app/` — Routes API
+### `app/src/app/` — Routes API
 
 ```
 app/
@@ -355,7 +359,7 @@ app/
 └── trpc/[trpc]/route.ts
 ```
 
-### `back/src/routers/` — tRPC
+### `app/src/routers/` — tRPC
 
 ```
 routers/
@@ -390,11 +394,11 @@ routers/
 └── support/support.router.ts
 ```
 
-### `back/src/lib/` — Services et infrastructure
+### `app/src/lib/` — Services et infrastructure
 
 ```
 lib/
-├── auth.ts                 # Better Auth config
+├── auth-server.ts          # Better Auth (serveur)
 ├── prisma.ts, context.ts, trpc.ts
 ├── api-helpers/            # getAuthenticatedSession, parseJsonBody, handleRouteError, cron-auth
 ├── di/container.ts         # DI, ServicesContainer
@@ -416,6 +420,7 @@ lib/
 │       └── workshops/     # WorkshopRequestService, WorkshopForRequestFactory, ...
 ├── workshops/
 │   ├── repositories/       # Workshop, Feedback, Cashback
+│   ├── utils/              # workshop-helpers (dont calculateDailyRoomAccessWindow), workshop-public-dto.mapper
 │   └── services/
 │       ├── lifecycle/      # WorkshopLifecycleService (create, publish, cancel, ...)
 │       ├── query/         # WorkshopQueryService
@@ -468,11 +473,11 @@ lib/
 | Sidebar | `app/src/components/sidebar.tsx` |
 | Client tRPC | `app/src/utils/trpc.ts` |
 | Auth client | `app/src/lib/auth-client.ts` |
-| Point d'entrée back | `back/server.ts` |
-| AppRouter tRPC | `back/src/routers/index.ts` |
-| Schéma Prisma | `back/.prisma/schema/schema.prisma` |
-| Better Auth | `back/src/lib/auth.ts` |
-| Routes API | `back/src/app/api/` |
+| Point d'entrée serveur | `app/server.ts` |
+| AppRouter tRPC | `app/src/routers/index.ts` |
+| Schéma Prisma | `app/prisma/schema/schema.prisma` |
+| Better Auth | `app/src/lib/auth-server.ts` |
+| Routes API | `app/src/app/api/` |
 
 ### Cas d'usage
 
@@ -480,11 +485,11 @@ lib/
 |----------|-------------|
 | Où modifier les schémas Zod partagés ? | `shared/src/validation/` |
 | Où sont les types partagés ? | `shared/src/types/` |
-| Où ajouter une route API ? | `back/src/app/api/` |
-| Où ajouter une procédure tRPC ? | `back/src/routers/` |
+| Où ajouter une route API ? | `app/src/app/api/` |
+| Où ajouter une procédure tRPC ? | `app/src/routers/` |
 | Où ajouter une page front ? | `app/src/app/[route]/page.tsx` |
 | Où sont les composants UI réutilisables ? | `app/src/components/ui/` |
-| Où configurer l'auth ? | `back/src/lib/auth.ts` |
+| Où configurer l'auth ? | `app/src/lib/auth-server.ts` |
 
 ---
 

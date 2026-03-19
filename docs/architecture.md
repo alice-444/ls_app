@@ -45,7 +45,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  subgraph Front["Front (Next.js :3001)"]
+  subgraph Client["Navigateur / Client"]
     UI[Pages / UI]
     tRPC_C[tRPC client]
     AUTH_C[Better Auth client]
@@ -53,7 +53,7 @@ flowchart LR
     SOCKET_C[Socket.IO client]
   end
 
-  subgraph Back["Back (Next.js :3000/4500)"]
+  subgraph App["App (Next.js :3001/4500)"]
     HTTP[Serveur HTTP + CORS]
     NEXT[Next.js handler]
     TRPC[/trpc]
@@ -100,9 +100,9 @@ Vue simplifiée (ASCII) :
 ├──────────────────────────────────────────────────────────────────┤
 │  shared/                │  Source de vérité (Zod, constantes)     │
 ├─────────────────────────┴────────────────────────────────────────┤
-│  app/                 │  back/                                  │
-│  Next.js (port 3001)    │  Next.js (port 3000 ou 4500 en dev)     │
-│  App Router             │  Serveur HTTP monte Next + Socket.IO    │
+│  app/                                                            │
+│  Next.js (ports :3001 pour le front, :4500 pour l'API)           │
+│  Serveur HTTP monte Next + Socket.IO                             │
 │  tRPC client            ──────────────►  /trpc (API tRPC)         │
 │  Better Auth client     ──────────────►  /api/auth/[...all]       │
 │  Fetch (onboarding,     ──────────────►  /api/profile/*,           │
@@ -113,20 +113,18 @@ Vue simplifiée (ASCII) :
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-- **Shared** : package partagé (`@ls-app/shared`) contenant la source de vérité pour la logique métier : schémas de validation Zod, constantes (limites, messages d'erreur), et utilitaires communs. Il garantit la cohérence stricte entre le front et le back.
-- **Front** : application React (Next.js 16), port 3001 en dev. Appels API via tRPC (procédures type-safe) et requêtes HTTP directes pour l’auth, l’onboarding et la gestion de profil (Better Auth + routes custom).
-- **Back** : une seule app Next.js servie par un serveur HTTP Node qui ajoute CORS et monte Socket.IO. Routes : `/trpc` (tRPC), `/api/auth/*` (Better Auth), `/api/profile/*`, `/api/sign-up`, `/api/cron/*`, webhooks (Daily, Polar), etc. Prisma pour toute la persistance.
-- **Base** : PostgreSQL. Schéma et migrations dans `back/prisma/schema/`.
+- **Shared** : package partagé (`@ls-app/shared`) contenant la source de vérité pour la logique métier : schémas de validation Zod, constantes (limites, messages d'erreur), et utilitaires communs. Il garantit la cohérence stricte au sein du monorepo.
+- **App** : application Next.js unique contenant à la fois le code frontend (React) et le code backend (API tRPC, routes REST, serveur Socket.IO).
+- **Base** : PostgreSQL. Schéma et migrations dans `app/prisma/schema/`.
 
 ---
 
 ## Ports et URLs en dev
 
-- **Front** : `http://localhost:3001`
-- **Back (Next.js)** : `http://localhost:4500` (API tRPC, routes API) - Le front doit pointer 
-vers cette URL via `NEXT_PUBLIC_SERVER_URL`.
-- **Back (Socket.IO)** : `http://localhost:5050` (serveur custom `server.ts`)
-- **Variables front** : `NEXT_PUBLIC_SERVER_URL` (back Next), `NEXT_PUBLIC_SOCKET_URL` (Socket.IO)
+- **Front-end** : `http://localhost:3001`
+- **API / tRPC** : `http://localhost:4500` (Le front doit pointer vers cette URL via `NEXT_PUBLIC_SERVER_URL`)
+- **Socket.IO** : `http://localhost:5050` (serveur custom `server.ts`)
+- **Variables d'environnement** : `NEXT_PUBLIC_SERVER_URL` (API), `NEXT_PUBLIC_SOCKET_URL` (Socket.IO)
 
 ---
 
@@ -173,33 +171,28 @@ flowchart LR
 ```mermaid
 sequenceDiagram
   participant U as Utilisateur
-  participant F as Front (Next.js)
-  participant T as tRPC / API
-  participant B as Back (Next)
+  participant A as App (Next.js)
   participant P as Prisma
   participant DB as PostgreSQL
   participant S as Socket.IO
 
-  U->>F: Pages, formulaires
-  F->>T: useQuery / useMutation (credentials)
-  T->>B: /trpc ou /api/*
-  B->>B: Session Better Auth (cookie)
-  B->>P: Requêtes
+  U->>A: Pages, formulaires
+  A->>A: /trpc ou /api/* (Interne)
+  A->>A: Session Better Auth (cookie)
+  A->>P: Requêtes
   P->>DB: SQL
   DB-->>P: Données
-  P-->>B: Modèles
-  B-->>F: JSON
-  F-->>U: UI à jour
+  P-->>A: Modèles
+  A-->>U: UI à jour
 
-  Note over F,S: Temps réel
-  U->>F: Action (message, notif)
-  F->>S: Socket.IO client
-  S->>B: Socket.IO serveur
-  B->>P: Écriture
-  B->>S: Broadcast
-  S-->>B2: new-message (temps réel)
-  S-->>F: Événement
-  F-->>U: Mise à jour live
+  Note over A,S: Temps réel
+  U->>A: Action (message, notif)
+  A->>S: Socket.IO client
+  S->>A: Socket.IO serveur
+  A->>P: Écriture
+  A->>S: Broadcast
+  S-->>A: new-message (temps réel)
+  A-->>U: Mise à jour live
 ```
 
 1. **Utilisateur** : consulte et utilise l’app front (pages, formulaires, navigation).
@@ -235,46 +228,46 @@ flowchart LR
 ```mermaid
 sequenceDiagram
   participant U as Utilisateur
-  participant F as Front
+  participant A as App
   participant API as API
   participant Auth as Better Auth
   participant DB as PostgreSQL
 
   Note over U,DB: Parcours 1 — Inscription
-  U->>F: /login (mode signup)
-  F->>API: POST /api/sign-up
+  U->>A: /login (mode signup)
+  A->>API: POST /api/sign-up
   API->>Auth: signUpEmail
   Auth->>DB: account + user (PENDING, role null)
   API->>U: Email bienvenue + lien onboarding
 
   Note over U,DB: Parcours 2 — Connexion
-  U->>F: /login (mode signin)
+  U->>A: /login (mode signin)
   alt Email + mot de passe
-    F->>Auth: POST /api/auth/sign-in/email
+    A->>Auth: POST /api/auth/sign-in/email
     Auth->>DB: session
   else Magic link
-    F->>API: trpc.auth.requestMagicLink
+    A->>API: trpc.auth.requestMagicLink
     API->>U: Email avec lien
     U->>Auth: /api/auth/magic-link/verify
     Auth->>DB: session
   end
-  F->>API: GET /api/profile/role
-  API-->>F: role
-  F->>U: Redirect /dashboard ou /admin ou /onboarding
+  A->>API: GET /api/profile/role
+  API-->>A: role
+  A->>U: Redirect /dashboard ou /admin ou /onboarding
 
   Note over U,DB: Parcours 3 — Récupération MDP
-  U->>F: /forgot-password
-  F->>Auth: forgetPassword
+  U->>A: /forgot-password
+  A->>Auth: forgetPassword
   Auth->>U: Email avec lien reset
   U->>Auth: /reset-password?token=xxx
   Auth->>DB: nouveau mot de passe
 
   Note over U,DB: Parcours 4 — Onboarding
-  U->>F: /onboarding (session OK, role null)
-  F->>API: POST /api/onboarding/select-role
+  U->>A: /onboarding (session OK, role null)
+  A->>API: POST /api/onboarding/select-role
   API->>DB: app_user.role, app_user.status = ACTIVE
-  API-->>F: OK
-  F->>U: Redirect /dashboard
+  API-->>A: OK
+  A->>U: Redirect /dashboard
 ```
 
 **Routes et procédures** : POST `/api/sign-up`, `/api/auth/sign-in/email`, `/api/auth/magic-link/verify`, `trpc.auth.requestMagicLink`, GET `/api/profile/role`, POST `/api/onboarding/select-role`, `/forgot-password`, `/reset-password`.
@@ -396,21 +389,17 @@ sequenceDiagram
   participant UI as Composants
   participant QC as TanStack Query
   participant TC as tRPCClient
-  participant F as Front
-  participant T as tRPC
-  participant B as Back
+  participant A as App
   participant P as Prisma
   participant DB as PostgreSQL
   participant S as Socket.IO
-  participant API as REST API
 
   Note over UI,DB: Canal 1 — tRPC (CRUD)
   UI->>QC: trpc.*.useQuery / useMutation
   QC->>TC: requête (si cache stale)
-  TC->>T: POST /trpc (batch, credentials: include)
-  T->>B: createContext
-  B->>B: auth.api.getSession
-  B->>P: procédure (public / protected / mentor / admin)
+  TC->>A: POST /trpc (batch, credentials: include)
+  A->>A: createContext (auth.api.getSession)
+  A->>P: procédure (public / protected / mentor / admin)
   P->>DB: SQL
   DB-->>P: données
   P-->>TC: JSON typé
@@ -418,20 +407,19 @@ sequenceDiagram
   QC-->>UI: données
 
   Note over UI,DB: Canal 2 — REST (Auth, profil)
-  UI->>F: fetch /api/profile, sign-up, onboarding…
-  F->>API: credentials: include
-  API->>B: getAuthenticatedSession
-  B->>P: lecture/écriture
+  UI->>A: fetch /api/profile, sign-up, onboarding…
+  A->>A: getAuthenticatedSession
+  A->>P: lecture/écriture
   P->>DB: SQL
   DB-->>P: données
-  P-->>API: réponse
-  API-->>UI: JSON
+  P-->>A: réponse
+  A-->>UI: JSON
 
   Note over UI,DB: Canal 3 — Socket.IO (temps réel)
   UI->>S: socket.emit (événement)
-  S->>B: Socket serveur
-  B->>P: lecture/écriture si besoin
-  B->>S: broadcast
+  S->>A: Socket serveur
+  A->>P: lecture/écriture si besoin
+  A->>S: broadcast
   S-->>UI: socket.on (new-message, notif…)
 ```
 
@@ -480,56 +468,47 @@ flowchart LR
 ```mermaid
 sequenceDiagram
   participant M as Mentor
-  participant F as Front
-  participant T as tRPC
-  participant B as Back
+  participant A as App
   participant DB as PostgreSQL
   participant D as Daily.co
-  participant A as Apprenant
+  participant Apprenant as Apprenant
   participant CRON as Cron
 
   Note over M,DB: Phase 1 — Création et publication
-  M->>F: Créer atelier
-  F->>T: workshop.create
-  T->>B: mutation
-  B->>DB: workshop (status DRAFT)
-  M->>F: Publier
-  F->>T: workshop.publish
-  T->>B: mutation
-  B->>DB: workshop (status PUBLISHED)
+  M->>A: Créer atelier (workshop.create)
+  A->>DB: workshop (status DRAFT)
+  M->>A: Publier (workshop.publish)
+  A->>DB: workshop (status PUBLISHED)
 
-  Note over A,DB: Phase 2 — Demande apprenant
-  A->>F: Demander atelier
-  F->>T: mentor.submitWorkshopRequest
-  T->>B: mutation
-  B->>DB: débit 10 crédits
-  B->>DB: workshop_request (status PENDING)
-  B->>M: Notification
+  Note over Apprenant,DB: Phase 2 — Demande apprenant
+  Apprenant->>A: Demander atelier (mentor.submitWorkshopRequest)
+  A->>A: Vérifier doublons (PENDING/ACCEPTED)
+  alt Déjà inscrit
+    A-->>Apprenant: Erreur "Déjà une demande"
+  else Nouvelle demande
+    A->>DB: débit 10 crédits
+    A->>DB: workshop_request (status PENDING)
+    A->>M: Notification
+  end
 
   Note over M,DB: Phase 3 — Acceptation ou rejet
-  M->>F: Accepter (date, heure, lieu)
-  F->>T: mentor.acceptRequest
-  T->>B: acceptWorkshopRequest
-  B->>DB: workshop créé/mis à jour, apprenticeId
-  B->>DB: workshop_request (status ACCEPTED)
-  B->>A: Notification + email
+  M->>A: Accepter (mentor.acceptRequest)
+  A->>DB: workshop créé/mis à jour, apprenticeId
+  A->>DB: workshop_request (status ACCEPTED)
+  A->>Apprenant: Notification + email
 
-  Note over A,D: Phase 4 — Visio et feedback
-  A->>F: Rejoindre visio
-  F->>T: workshop-video.getDailyToken
-  T->>B: getDailyToken
-  B->>D: Création salle si absente
-  B-->>F: token
-  F->>A: Redirect /workshop/[id]/join-video
-  A->>F: Soumettre feedback
-  F->>T: workshopFeedback.submitFeedback
-  T->>B: mutation
-  B->>DB: mentor_feedback
+  Note over Apprenant,D: Phase 4 — Visio et feedback
+  Apprenant->>A: Rejoindre visio (workshop-video.getDailyToken)
+  A->>D: Création salle si absente
+  D-->>A: token
+  A->>Apprenant: Redirect /workshop/[id]/join-video
+  Apprenant->>A: Soumettre feedback (workshopFeedback.submitFeedback)
+  A->>DB: mentor_feedback
 
   Note over CRON,DB: Phase 5 — Cashback
-  CRON->>B: /api/cron/process-cashback-queue
-  B->>DB: workshop_cashback_queue → PROCESSED
-  B->>DB: credit_transaction (crédit apprenant)
+  CRON->>A: /api/cron/process-cashback-queue
+  A->>DB: workshop_cashback_queue → PROCESSED
+  A->>DB: credit_transaction (crédit apprenant)
 ```
 
 **Procédures tRPC** : `workshop.create`, `workshop.publish`, `mentor.submitWorkshopRequest`, `mentor.acceptRequest`, `mentor.rejectRequest`, `workshop-video.getDailyToken`, `workshopFeedback.submitFeedback`.
@@ -620,7 +599,7 @@ sequenceDiagram
   A->>F: Ouvrir conversation
   F->>T: messaging.getOrCreateConversation
   T->>B: mutation
-  B->>DB: conversation créée si absente
+  B->>DB: Transaction: conversation + message ref atelier
   B-->>F: conversationId
 
   Note over A,B2: Phase 2 — Connexion temps réel
@@ -725,8 +704,8 @@ sequenceDiagram
 
   Note over B,DB: Phase 3 — Crons
   CRON->>B: /api/cron/generate-video-links
-  B->>DB: workshops sans dailyRoomId
-  B->>D: POST /rooms pour chaque
+  B->>B: ateliers virtuels publiés, sans dailyRoomId, début dans [maintenant ; +12 h]
+  B->>D: POST /rooms (nbf = T−3 h, exp = fin atelier + marge)
   B->>DB: dailyRoomId
 
   CRON->>B: /api/cron/cleanup-inactive-rooms
@@ -738,11 +717,13 @@ sequenceDiagram
   end
 ```
 
-**Procédure tRPC** : `workshop.getDailyToken(workshopId)` — vérifie accès (mentor ou apprenant), crée salle Daily si absente (`workshop-{workshopId}`), génère token (owner pour mentor), met à jour `dailyRoomLastActivityAt`.
+**Procédure tRPC** : `workshop.getDailyToken(workshopId)` — vérifie accès (mentor ou apprenant), crée salle Daily si absente (`workshop-{workshopId}`) avec fenêtre **`nbf` / `exp`** alignée sur le créneau atelier (via `calculateDailyRoomAccessWindow`), génère token (owner pour mentor), met à jour `dailyRoomLastActivityAt`.
+
+**Exposition API** : `WorkshopVideoLinkService.filterVideoLink` masque `dailyRoomId` tant que l’atelier n’est pas dans la fenêtre « live » (≈ **3 h avant le début** jusqu’à la fin). Les listes et la fiche passent par **`workshop-public-dto.mapper`** pour appliquer la même règle partout (catalogue, mentor, apprenti, profil public mentor).
 
 **Webhook** : POST `/api/daily/webhook` — événements `participant-joined` / `participant-left` → mise à jour `dailyRoomLastActivityAt` si room name = `workshop-{id}`.
 
-**Crons** : `generate-video-links` (pré-création salles pour ateliers à venir), `cleanup-inactive-rooms` (fermeture salles inactives > 30 min, 0 participant).
+**Crons** : `generate-video-links` (pré-création salles pour ateliers **virtuels publiés** éligibles : **0–12 h avant le début**, pas encore de `dailyRoomId`), `cleanup-inactive-rooms` (fermeture salles inactives > 30 min, 0 participant).
 
 ---
 
@@ -980,7 +961,7 @@ erDiagram
   }
 ```
 
-Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `workshop_cashback_queue`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. **Modèle physique (MPD)** : [mpd.md](mpd.md). Schéma source : `back/.prisma/schema/schema.prisma`.
+Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `workshop_cashback_queue`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. **Modèle physique (MPD)** : [mpd.md](mpd.md). Schéma source : `app/prisma/schema/schema.prisma`.
 
 ---
 

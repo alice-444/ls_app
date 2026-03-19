@@ -11,7 +11,7 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | -------------- | -------------- | -------------------------------------------------------------------------------------------- |
 | **TypeScript** | 5.9+           | Langage principal du projet. Typage statique pour le front, le back et les schémas partagés. |
 | **JavaScript** | ES2022+        | Cible de compilation TypeScript. Pas de code JS brut dans le projet.                         |
-| **SQL**        | PostgreSQL 14+ | Requêtes générées par Prisma. Schéma et migrations dans `back/prisma/schema/`.               |
+| **SQL**        | PostgreSQL 14+ | Requêtes générées par Prisma. Schéma et migrations dans `app/prisma/schema/`.                |
 | **CSS**        | Tailwind 4     | Styles via classes utilitaires. Variables CSS pour le thème (couleurs, typographie).         |
 
 
@@ -169,7 +169,7 @@ Document de référence pour les technologies, langages et outils utilisés dans
 
 **Choix GitHub Actions** : CI/CD natif GitHub, pas de service externe. Workflows YAML, matrix builds, artefacts. Alternative à GitLab CI : même principe, écosystème GitHub.
 
-**Choix Docker** : Conteneurisation pour déploiement reproductible (front, back). Dockerfiles multi-stage (build + runtime) dans `infra/docker/`. Image Alpine (léger), Node 24, pnpm. Alternative à déploiement bare-metal : environnement identique dev/staging/prod, isolation des dépendances. Compatible Kubernetes, Docker Compose, hébergeurs (Railway, Render, Fly.io). Grafana + Prometheus pour le monitoring (optionnel).
+**Choix Docker** : Conteneurisation pour déploiement reproductible (package `app` et services associés). Dockerfiles multi-stage (build + runtime) dans `infra/docker/`. Image Alpine (léger), Node 24, pnpm. Alternative à déploiement bare-metal : environnement identique dev/staging/prod, isolation des dépendances. Compatible Docker Compose. Grafana + Prometheus pour le monitoring (optionnel).
 
 ---
 

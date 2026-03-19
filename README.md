@@ -37,8 +37,7 @@ Application d’accompagnement pédagogique (tuteurs, apprenants, ateliers). Mon
 
 Ce projet est géré en monorepo :
 
-- **[app](./app)** – Application Next.js
-- **[back](./back)** – API et serveur Next.js
+- **[app](./app)** – Application Next.js (UI + API tRPC, routes `/api/*`, Prisma, `server.ts`)
 
 ---
 
@@ -66,30 +65,15 @@ pnpm db:push
 pnpm dev
 ```
 
-**URLs :**
-- Frontend : [http://localhost:3001](http://localhost:3001)
-- Backend (Next.js) : [http://localhost:4500](http://localhost:4500)
-- Socket.IO : [http://localhost:5050](http://localhost:5050)
+**URLs (selon `.env` et `server.ts`) :**
+- App Next : [http://localhost:3001](http://localhost:3001) (`pnpm dev` lance Next + socket)
+- Socket.IO : port défini dans la config (souvent **5050** — `NEXT_PUBLIC_SOCKET_URL`)
 
 ---
 
 ## ⚙️ Configuration
 
-Créer les fichiers `.env` à la racine des packages :
-
-**`back/.env`**
-```env
-DATABASE_URL="postgresql://..."
-BETTER_AUTH_SECRET="your-secret-key-min-32-chars"
-CORS_ORIGIN="http://localhost:3001"
-CRON_SECRET="your-secret-key-min-32-chars"
-```
-
-**`app/.env`**
-```env
-NEXT_PUBLIC_SERVER_URL="http://localhost:4500"
-NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
-```
+Configurer **`app/.env`** (et variables sensibles non listées dans `.env.example` : `DATABASE_URL`, `BETTER_AUTH_*`, `CRON_SECRET`, `RESEND_*`, `DAILY_*`, `POLAR_*`, etc.). Voir `app/.env.example` et [docs/metier-et-ops.md](./docs/metier-et-ops.md).
 
 ---
 
@@ -97,10 +81,9 @@ NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
 
 | Script | Description |
 |--------|-------------|
-| `pnpm dev` | Démarre tous les services (front + back) |
-| `pnpm dev:app` | Démarre uniquement le frontend |
-| `pnpm dev:back` | Démarre uniquement le backend |
-| `pnpm build` | Build toutes les applications |
+| `pnpm dev` | Démarre le workspace `app` (Next + serveur socket via Turborepo) |
+| `pnpm dev:app` | Filtre Turbo sur le package `app` |
+| `pnpm build` | Build du workspace |
 | `pnpm check-types` | Vérifie les types TypeScript |
 | `pnpm db:push` | Synchronise le schéma Prisma (dev) |
 | `pnpm db:migrate` | Applique les migrations (prod) |
@@ -150,8 +133,7 @@ NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
 
 ```
 ls_app/
-├── app/                # Frontend Next.js
-├── back/               # Backend (serveur custom + Next.js, Prisma)
+├── app/                # Next.js (front + API tRPC, Prisma, server.ts)
 ├── infra/
 │   └── docker/         # Configuration Docker
 ├── docs/               # Documentation
