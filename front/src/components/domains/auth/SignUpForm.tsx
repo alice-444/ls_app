@@ -2,7 +2,7 @@ import { authClient, customAuthClient } from "@/lib/auth-server-client";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) {
+export default function SignUpForm({ onSwitchToSignIn }: Readonly<{ onSwitchToSignIn: () => void }>) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isPending } = authClient.useSession();

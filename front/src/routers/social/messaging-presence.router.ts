@@ -10,9 +10,17 @@ export const messagingPresenceRouter = router({
       const result = await container.presenceService.getUserPresence(
         input.userId,
       );
+
+      // If user not found, return a default offline presence instead of throwing
+      // This avoids showing tRPC error toasts for missing presence records
       if (!result) {
-        throw new Error("User not found");
+        return {
+          userId: input.userId,
+          isOnline: false,
+          lastSeen: null,
+        };
       }
+
       return result;
     }),
 

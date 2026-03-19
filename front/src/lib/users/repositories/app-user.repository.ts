@@ -13,6 +13,7 @@ export interface AppUserData {
   deletedAt?: Date | null;
   emailNotifications: boolean;
   inAppNotifications: boolean;
+  isPublished: boolean;
 }
 
 export interface CreateAppUserInput {
@@ -130,6 +131,7 @@ function mapToAppUserData(raw: any): AppUserData {
     deletedAt: raw.deletedAt ?? null,
     emailNotifications: raw.emailNotifications ?? true,
     inAppNotifications: raw.inAppNotifications ?? true,
+    isPublished: raw.isPublished || false,
   };
 }
 
@@ -148,6 +150,7 @@ const APP_USER_BASE_SELECT = {
   deletedAt: true,
   emailNotifications: true,
   inAppNotifications: true,
+  isPublished: true,
 } as const;
 
 export class PrismaAppUserRepository implements AppUserRepository {

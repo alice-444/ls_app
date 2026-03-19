@@ -3,7 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import z from "zod";
-import Loader from "@/components/shared/loader";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,7 @@ import { trpc } from "@/utils/trpc";
 import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
+export default function SignInForm({ onSwitchToSignUp }: Readonly<{ onSwitchToSignUp: () => void }>) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isPending } = authClient.useSession();
