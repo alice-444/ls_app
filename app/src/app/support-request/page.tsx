@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v3";
+import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { API_BASE_URL } from "@/lib/api-client";
 import { BackButton } from "@/components/shared/BackButton";
+import { PageContainer } from "@/components/shared/layout";
+import ShinyText from "@/components/ui/ShinyText";
 
 const supportRequestSchema = z.object({
   email: z.string().email("Adresse e-mail invalide"),
@@ -87,7 +90,7 @@ export default function SupportRequestPage() {
   ]);
 
   const validateFiles = (
-    newFiles: File[]
+    newFiles: File[],
   ): { valid: File[]; errors: string[] } => {
     const valid: File[] = [];
     const errors: string[] = [];
@@ -105,7 +108,7 @@ export default function SupportRequestPage() {
 
       if (!ALLOWED_MIME_TYPES.has(file.type)) {
         errors.push(
-          `${file.name} : Type de fichier non autorisé. Types acceptés : JPG, PNG, PDF, TXT, DOC, DOCX`
+          `${file.name} : Type de fichier non autorisé. Types acceptés : JPG, PNG, PDF, TXT, DOC, DOCX`,
         );
         continue;
       }
@@ -198,7 +201,7 @@ export default function SupportRequestPage() {
       }
 
       toast.success(
-        result.message || "Votre demande a été envoyée avec succès !"
+        result.message || "Votre demande a été envoyée avec succès !",
       );
       router.push("/help");
     } catch (error) {
@@ -212,30 +215,48 @@ export default function SupportRequestPage() {
     }
   };
 
+  const fieldClass = cn(
+    "rounded-xl border-border bg-background text-foreground",
+  );
+
   return (
-    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
-      <BackButton href="/help" label="Retour à l'aide" />
+    <PageContainer>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <BackButton href="/help" label="Retour à l'aide" />
+      </motion.div>
 
-      <div className="mb-6 sm:mb-8">
-        <div className="bg-[#26547c] dark:bg-[#1a1720] text-white inline-block px-8 py-4 rounded-tl-[36px] rounded-br-[36px] rounded-tr-[4px] rounded-bl-[4px] mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black">
-            Contacter le support
-          </h1>
-        </div>
-        <p className="text-base sm:text-xl md:text-2xl text-[#161616] dark:text-[#e6e6e6] mt-4 sm:mt-6">
-          Comment pouvons-nous t'aider aujourd'hui ?
+      <motion.div
+        className="mb-6 sm:mb-8 mt-4"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.05 }}
+      >
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+          <ShinyText text="Contacter le support" />
+        </h1>
+        <p className="mt-2 max-w-3xl text-base text-ls-muted sm:text-lg">
+          Comment pouvons-nous t&apos;aider aujourd&apos;hui ?
         </p>
-      </div>
+      </motion.div>
 
-      <div className="bg-white dark:bg-[#1a1720] border border-[#d6dae4] dark:border-[#d6dae4] rounded-2xl p-5 sm:p-8">
+      <motion.div
+        className="rounded-2xl border border-border/50 bg-card/95 p-5 shadow-xl backdrop-blur-md sm:p-8"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="space-y-4">
-              <div className="bg-[#FF8C42]/10 dark:bg-[#FF8C42]/5 border border-[#FF8C42]/20 rounded-2xl p-6">
-                <h2 className="text-xl font-bold text-[#26547c] dark:text-[#e6e6e6] mb-3">
+              <div className="rounded-2xl border border-brand/25 bg-linear-to-br from-brand/10 via-card/80 to-transparent p-6 shadow-sm backdrop-blur-sm dark:from-brand/5">
+                <h2 className="mb-3 text-xl font-bold text-ls-heading">
                   Décris ton problème
                 </h2>
-                <p className="text-[rgba(38,84,124,0.8)] dark:text-[rgba(230,230,230,0.8)] text-sm leading-relaxed">
+                <p className="text-sm leading-relaxed text-ls-muted">
                   Décris le problème que tu rencontres avec autant de détails
                   que possible. Cela nous aidera à comprendre ce qui se passe et
                   à te fournir la meilleure solution.
@@ -245,11 +266,8 @@ export default function SupportRequestPage() {
 
             <div className="space-y-5">
               <div className="space-y-2">
-                <Label
-                  htmlFor="email"
-                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
-                >
-                  Ton adresse e-mail <span className="text-[#FF8C42]">*</span>
+                <Label htmlFor="email" className="font-semibold text-ls-heading">
+                  Ton adresse e-mail <span className="text-brand">*</span>
                 </Label>
                 <Input
                   id="email"
@@ -257,23 +275,20 @@ export default function SupportRequestPage() {
                   placeholder="exemple@email.com"
                   {...register("email")}
                   className={cn(
-                    "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl",
-                    errors.email && "border-red-500 dark:border-red-400"
+                    fieldClass,
+                    errors.email && "border-destructive",
                   )}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
+                  <p className="text-sm text-destructive">
                     {errors.email.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label
-                  htmlFor="subject"
-                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
-                >
-                  Objet <span className="text-[#FF8C42]">*</span>
+                <Label htmlFor="subject" className="font-semibold text-ls-heading">
+                  Objet <span className="text-brand">*</span>
                 </Label>
                 <Input
                   id="subject"
@@ -281,17 +296,17 @@ export default function SupportRequestPage() {
                   maxLength={200}
                   {...register("subject")}
                   className={cn(
-                    "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl",
-                    errors.subject && "border-red-500 dark:border-red-400"
+                    fieldClass,
+                    errors.subject && "border-destructive",
                   )}
                 />
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   {errors.subject && (
-                    <p className="text-sm text-red-600 dark:text-red-400">
+                    <p className="text-sm text-destructive">
                       {errors.subject.message}
                     </p>
                   )}
-                  <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] ml-auto">
+                  <p className="ml-auto text-xs text-ls-muted">
                     {watch("subject")?.length || 0}/200
                   </p>
                 </div>
@@ -300,9 +315,9 @@ export default function SupportRequestPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="description"
-                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+                  className="font-semibold text-ls-heading"
                 >
-                  Description <span className="text-[#FF8C42]">*</span>
+                  Description <span className="text-brand">*</span>
                 </Label>
                 <Textarea
                   id="description"
@@ -311,17 +326,18 @@ export default function SupportRequestPage() {
                   maxLength={5000}
                   {...register("description")}
                   className={cn(
-                    "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl resize-none",
-                    errors.description && "border-red-500 dark:border-red-400"
+                    fieldClass,
+                    "resize-none",
+                    errors.description && "border-destructive",
                   )}
                 />
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   {errors.description && (
-                    <p className="text-sm text-red-600 dark:text-red-400">
+                    <p className="text-sm text-destructive">
                       {errors.description.message}
                     </p>
                   )}
-                  <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] ml-auto">
+                  <p className="ml-auto text-xs text-ls-muted">
                     {watch("description")?.length || 0}/5000
                   </p>
                 </div>
@@ -330,9 +346,9 @@ export default function SupportRequestPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="problemType"
-                  className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+                  className="font-semibold text-ls-heading"
                 >
-                  Type de problème <span className="text-[#FF8C42]">*</span>
+                  Type de problème <span className="text-brand">*</span>
                 </Label>
                 <Select
                   value={problemType}
@@ -341,18 +357,18 @@ export default function SupportRequestPage() {
                   <SelectTrigger
                     id="problemType"
                     className={cn(
-                      "border-[#d6dae4] dark:border-[#d6dae4] bg-white dark:bg-[rgba(255,255,255,0.08)] text-[#26547c] dark:text-[#e6e6e6] rounded-xl",
-                      errors.problemType && "border-red-500 dark:border-red-400"
+                      fieldClass,
+                      errors.problemType && "border-destructive",
                     )}
                   >
                     <SelectValue placeholder="Sélectionne une option..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#1a1720] border-[#d6dae4]">
+                  <SelectContent className="border-border bg-popover">
                     {problemTypes.map((type) => (
                       <SelectItem
                         key={type}
                         value={type}
-                        className="text-[#26547c] dark:text-[#e6e6e6]"
+                        className="text-foreground"
                       >
                         {type}
                       </SelectItem>
@@ -360,7 +376,7 @@ export default function SupportRequestPage() {
                   </SelectContent>
                 </Select>
                 {errors.problemType && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
+                  <p className="text-sm text-destructive">
                     {errors.problemType.message}
                   </p>
                 )}
@@ -371,10 +387,10 @@ export default function SupportRequestPage() {
           <div className="space-y-3">
             <Label
               htmlFor="attachments"
-              className="text-[#26547c] dark:text-[#e6e6e6] font-semibold"
+              className="font-semibold text-ls-heading"
             >
               Pièces jointes{" "}
-              <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)] font-normal">
+              <span className="text-xs font-normal text-ls-muted">
                 (max {MAX_TOTAL_FILES} fichiers, 10 MB chacun)
               </span>
             </Label>
@@ -386,10 +402,10 @@ export default function SupportRequestPage() {
               onDragLeave={handleDragLeave}
               aria-label="Zone de dépôt de fichiers. Glissez-déposez des fichiers ou cliquez pour les sélectionner."
               className={cn(
-                "w-full border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-200 bg-transparent cursor-pointer",
+                "w-full cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-200",
                 isDragging
-                  ? "border-[#FF8C42] bg-[#FF8C42]/5"
-                  : "border-[#d6dae4] dark:border-[#d6dae4] hover:border-[#FF8C42]/50"
+                  ? "border-brand bg-brand/5"
+                  : "border-border hover:border-brand/50",
               )}
             >
               <input
@@ -402,14 +418,14 @@ export default function SupportRequestPage() {
                 accept=".jpg,.jpeg,.png,.pdf,.txt,.doc,.docx"
               />
               <span className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-[#FF8C42]/10 dark:bg-[#FF8C42]/20 flex items-center justify-center">
-                  <Upload className="w-8 h-8 text-[#FF8C42]" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand/15">
+                  <Upload className="h-8 w-8 text-brand" />
                 </div>
                 <div>
-                  <span className="text-[#26547c] dark:text-[#e6e6e6] text-base font-semibold block mb-1">
+                  <span className="mb-1 block text-base font-semibold text-ls-heading">
                     Ajoute des fichiers ou fais-les glisser ici
                   </span>
-                  <span className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                  <span className="text-xs text-ls-muted">
                     JPG, PNG, PDF, TXT, DOC, DOCX
                   </span>
                 </div>
@@ -418,10 +434,7 @@ export default function SupportRequestPage() {
             {fileErrors.length > 0 && (
               <div className="space-y-1">
                 {fileErrors.map((error) => (
-                  <p
-                    key={error}
-                    className="text-sm text-red-600 dark:text-red-400"
-                  >
+                  <p key={error} className="text-sm text-destructive">
                     {error}
                   </p>
                 ))}
@@ -429,15 +442,15 @@ export default function SupportRequestPage() {
             )}
             {files.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs text-[rgba(38,84,124,0.64)] dark:text-[rgba(230,230,230,0.64)]">
+                <p className="text-xs text-ls-muted">
                   {files.length}/{MAX_TOTAL_FILES} fichier(s) sélectionné(s)
                 </p>
                 {files.map((file, index) => (
                   <div
                     key={`${file.name}-${file.size}-${file.lastModified}`}
-                    className="flex items-center justify-between p-3 bg-[rgba(214,218,228,0.16)] dark:bg-[rgba(255,255,255,0.08)] border border-[#d6dae4] dark:border-[#d6dae4] rounded-xl text-sm"
+                    className="flex items-center justify-between rounded-xl border border-border bg-muted/30 p-3 text-sm"
                   >
-                    <span className="truncate flex-1 text-[#26547c] dark:text-[#e6e6e6]">
+                    <span className="flex-1 truncate text-ls-heading">
                       {file.name}
                     </span>
                     <Button
@@ -445,7 +458,7 @@ export default function SupportRequestPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => removeFile(index)}
-                      className="ml-2 h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400"
+                      className="ml-2 h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -460,11 +473,11 @@ export default function SupportRequestPage() {
               type="submit"
               size="lg"
               disabled={isSubmitting}
-              className="bg-[#FF8C42] hover:bg-[#FF8C42]/90 text-white font-bold px-12 py-6 text-base shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 rounded-xl"
+              className="bg-brand px-12 py-6 text-base font-bold text-white shadow-lg hover:bg-brand/90 hover:shadow-xl"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Envoi en cours...
                 </>
               ) : (
@@ -473,7 +486,7 @@ export default function SupportRequestPage() {
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </PageContainer>
   );
 }
