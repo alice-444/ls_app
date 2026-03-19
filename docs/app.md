@@ -1,10 +1,10 @@
-# Front — Application LearnSup
+# App — Application LearnSup
 
 Application Next.js (client) : pages, UI, appels API via tRPC, authentification Better Auth et routes custom (onboarding, profil).
 
 ---
 
-## Schéma de l’application
+## Schéma de l'application
 
 ```mermaid
 flowchart TB
@@ -63,8 +63,8 @@ sequenceDiagram
 
 - **Next.js 16** (App Router)
 - **React 19**
-- **tRPC** (client) + **TanStack Query** — appels API type-safe, cache, toasts d’erreur sur échec
-- **Better Auth** — client d’authentification (session, login) ; basePath `/api/auth`
+- **tRPC** (client) + **TanStack Query** — appels API type-safe, cache, toasts d'erreur sur échec
+- **Better Auth** — client d'authentification (session, login) ; basePath `/api/auth`
 - **Tailwind CSS 4** — styles (variables CSS `--primary-orange`, `--primary-purple`, etc.)
 - **shadcn/ui** (Radix) — boutons, cartes, dialogs, dropdowns, inputs, etc.
 - **Lucide React** — icônes
@@ -76,13 +76,13 @@ sequenceDiagram
 - **Sonner** — toasts
 - **Police** : Omnes (chargée dans `index.css`)
 
-Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "include"`. Le type du router est importé depuis un stub local `@/types/trpc-router` (pas d’import direct depuis le back pour le build).
+Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "include"`. Le type du router est importé depuis un stub local `@/types/trpc-router` (pas d'import direct depuis le back pour le build).
 
 ---
 
 ## Structure des dossiers
 
-- **`src/app/`** — Routes (App Router). Chaque route = un dossier avec `page.tsx` ; `layout.tsx` à la racine enveloppe toute l’app (Providers, Sidebar, Header, Footer, ScrollToTopButton). Onboarding : `onboarding/` avec composants (RoleSelectionStep, ProfFormStep, ApprenantCompleteStep), hooks (`useOnboarding`), schémas. Pages d’erreur : `not-found.tsx` (404), `error.tsx` (500), `forbidden.tsx` (403), `405/page.tsx` (405).
+- **`src/app/`** — Routes (App Router). Chaque route = un dossier avec `page.tsx` ; `layout.tsx` à la racine enveloppe toute l'app (Providers, Sidebar, Header, Footer, ScrollToTopButton). Onboarding : `onboarding/` avec composants (RoleSelectionStep, ProfFormStep, ApprenantCompleteStep), hooks (`useOnboarding`), schémas. Pages d'erreur : `not-found.tsx` (404), `error.tsx` (500), `forbidden.tsx` (403), `405/page.tsx` (405).
 - **`src/components/`** — Composants organisés par domaine :
   - `ui/` — Design system shadcn (boutons, cartes, dialogs, inputs, avatar, tabs, etc.).
   - `layout/` — PageContainer, PageHeader, PageCard, SectionSidebar.
@@ -114,7 +114,7 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 - **Auth / onboarding** : `/onboarding` (choix de rôle, formulaire mentor ou apprenant).
 - **Espace utilisateur** : `/dashboard`, `/my-profile`, `/profil`, `/mentor-profile`, `/settings` (profil, mot de passe, email, blocages, suppression de compte).
 - **Ateliers** : `/workshops`, `/workshop/[id]`, `/workshop/[id]/join-video`, `/workshop-editor`, `/my-workshops`, `/catalog`, `/paliers`, `/buy-credits`.
-- **Mentors / catalogue** : `/mentors`, `/mentors/[mentorId]` (profil public avec connexion réseau, demande d’atelier, feedbacks, liste d’ateliers), `/apprentice/[userId]`.
+- **Mentors / catalogue** : `/mentors`, `/mentors/[mentorId]` (profil public avec connexion réseau, demande d'atelier, feedbacks, liste d'ateliers), `/apprentice/[userId]`.
 - **Communauté** : `/community` (Hub : Events Hub, ateliers mentorat, bons plans, Spot Finder, sondage, annuaire membres).
 - **Réseau & messagerie** : `/network`, `/inbox`, `/inbox/[conversationId]`.
 - **Notifications** : `/notifications`.
@@ -153,8 +153,8 @@ flowchart LR
   Sidebar --> Bas
 ```
 
-- **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l’interface admin via `/admin` (sidebar dédiée : Dashboard, Signalements, Modération, Utilisateurs, Support, Communauté).
-- **Catalogue** (APPRENANT) : sous-navigation Live (`/catalog/live`), Replay (`/catalog/replay`), Prochains ateliers (`/catalog/upcoming`). Ces sous-routes peuvent rediriger vers la page principale selon l’implémentation.
+- **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l'interface admin via `/admin` (sidebar dédiée : Dashboard, Signalements, Modération, Utilisateurs, Support, Communauté).
+- **Catalogue** (APPRENANT) : sous-navigation Live (`/catalog/live`), Replay (`/catalog/replay`), Prochains ateliers (`/catalog/upcoming`). Ces sous-routes peuvent rediriger vers la page principale selon l'implémentation.
 
 Voir `src/components/sidebar.tsx` et `src/app/admin/layout.tsx`.
 
@@ -191,18 +191,18 @@ flowchart TB
   Profil --> Back
 ```
 
-- **Session** : `authClient.useSession()` (Better Auth). Si pas de session (ou sur `/login`), la sidebar ne s’affiche pas.
-- **Magic link** : `trpc.auth.requestMagicLink.useMutation` envoie un lien par email ; l’utilisateur clique et est redirigé vers `/api/auth/magic-link-callback` puis `/dashboard`.
-- **Rôle** : `getUserRole()` (api-client) → `"MENTOR" | "APPRENANT" | "ADMIN" | null`. Utilisé pour la nav et l’affichage conditionnel. Si ADMIN, redirection vers `/admin` et sidebar principale masquée.
+- **Session** : `authClient.useSession()` (Better Auth). Si pas de session (ou sur `/login`), la sidebar ne s'affiche pas.
+- **Magic link** : `trpc.auth.requestMagicLink.useMutation` envoie un lien par email ; l'utilisateur clique et est redirigé vers `/api/auth/magic-link-callback` puis `/dashboard`.
+- **Rôle** : `getUserRole()` (api-client) → `"MENTOR" | "APPRENANT" | "ADMIN" | null`. Utilisé pour la nav et l'affichage conditionnel. Si ADMIN, redirection vers `/admin` et sidebar principale masquée.
 - **Inscription / onboarding** : `customAuthClient.signUpEmail`, `customAuthClient.selectRole`, puis formulaires spécifiques (mentor ou apprenant). Mentor : `customAuthClient.saveMentorProfile`, `customAuthClient.publishProfile` / `unpublishProfile`.
 - **Photo de profil** : `customAuthClient.uploadPhoto` (POST multipart vers le back).
 - **Suppression de compte** : `customAuthClient.deleteAccount(reason?)`.
 
 ---
 
-## Variables d’environnement
+## Variables d'environnement
 
-Fichier : `front/.env` (voir `front/.env.example`).
+Fichier : `app/.env` (voir `app/.env.example`).
 
 - **`NEXT_PUBLIC_SERVER_URL`** — URL du back (ex. `http://localhost:3000`). Utilisée par le client tRPC et par `auth-client` / `api-client` pour les appels API. Obligatoire en prod.
 
@@ -210,8 +210,8 @@ Fichier : `front/.env` (voir `front/.env.example`).
 
 ## Scripts (depuis la racine du repo)
 
-- `pnpm dev:front` — Démarre le front en dev (port 3001).
-- `pnpm dev` — Démarre front et back (Turborepo).
+- `pnpm dev:app` — Démarre le front en dev (port 3001).
+- `pnpm dev` — Démarre app et back (Turborepo).
 
 Build : `pnpm build` (à la racine lance le build des workspaces).
 

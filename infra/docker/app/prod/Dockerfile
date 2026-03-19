@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
 # Copy packages package.json
-COPY front/package.json ./front/
+COPY app/package.json ./app/
 COPY shared/package.json ./shared/
 
 # Copy shared source for build
@@ -18,8 +18,8 @@ COPY shared/src ./shared/src
 # Install all dependencies (including shared build)
 RUN pnpm install --frozen-lockfile
 
-# Copy front source code
-COPY front ./front
+# Copy app source code
+COPY app ./app
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ WORKDIR /app
 RUN pnpm --filter @ls-app/shared run build
 
 # Generate Prisma Client (crucial for merged app)
-WORKDIR /app/front
+WORKDIR /app/app
 RUN pnpm db:generate
 
 # Build Next.js application
@@ -43,28 +43,28 @@ RUN corepack enable pnpm
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY front/package.json ./front/
+COPY app/package.json ./app/
 COPY shared/package.json ./shared/
 
 # Copy built shared package and all node_modules (backend approach)
 COPY --from=base /app/shared/dist ./shared/dist
 COPY --from=base /app/node_modules ./node_modules
 COPY --from=base /app/shared/node_modules ./shared/node_modules
-COPY --from=base /app/front/node_modules ./front/node_modules
-COPY --from=base /app/front/.next ./front/.next
+COPY --from=base /app/app/node_modules ./app/node_modules
+COPY --from=base /app/app/.next ./app/.next
 
 # Copy source files needed for production custom server
-COPY front/server.ts ./front/
-COPY front/src ./front/src
-COPY front/prisma ./front/prisma
-COPY --from=base /app/front/prisma/generated ./front/prisma/generated
-COPY front/prisma.config.ts ./front/
-COPY front/next.config.ts ./front/
-COPY front/tsconfig.json ./front/
-COPY front/public ./front/public
-COPY front/start.sh ./front/
+COPY app/server.ts ./app/
+COPY app/src ./app/src
+COPY app/prisma ./app/prisma
+COPY --from=base /app/app/prisma/generated ./app/prisma/generated
+COPY app/prisma.config.ts ./app/
+COPY app/next.config.ts ./app/
+COPY app/tsconfig.json ./app/
+COPY app/public ./app/public
+COPY app/start.sh ./app/
 
-WORKDIR /app/front
+WORKDIR /app/app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

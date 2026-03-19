@@ -3,7 +3,7 @@ services:
   frontend:
     build:
       context: ../../
-      dockerfile: ./infra/docker/front/prod/Dockerfile
+      dockerfile: ./infra/docker/app/prod/Dockerfile
     # image: miho11/front_ls:${FRONT_IMAGE_TAG:-latest}
     ports:
       - "3001:3001"

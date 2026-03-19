@@ -2,7 +2,7 @@
 	"name": "learnsup_app",
 	"private": true,
 	"workspaces": [
-		"front"
+		"app"
 	],
 	"scripts": {
 		"dev": "turbo dev",
@@ -11,7 +11,7 @@
 		"test": "turbo test",
 		"test:unit": "turbo test",
 		"test:coverage": "turbo test:coverage",
-		"dev:front": "turbo -F front dev",
+		"dev:app": "turbo -F app dev",
 		"dev:back": "turbo -F back dev",
 		"db:push": "turbo -F back db:push",
 		"db:studio": "turbo -F back db:studio",

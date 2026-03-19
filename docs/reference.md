@@ -24,9 +24,9 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 
 ## Front
 
-- Structure app, stack, routes, auth, sidebar : [front.md](front.md).
+- Structure app, stack, routes, auth, sidebar : [app.md](app.md).
 - Schémas : layout/Providers, flux tRPC, nav sidebar, auth/profil.
-- Racine code : `front/src/` — `app/`, `components/`, `lib/`, `hooks/`, `types/`, `utils/trpc.ts`. Validation et types partagés : package `shared/` (voir [arborescence](arborescence.md)).
+- Racine code : `app/src/` — `app/`, `components/`, `lib/`, `hooks/`, `types/`, `utils/trpc.ts`. Validation et types partagés : package `shared/` (voir [arborescence](arborescence.md)).
 
 ---
 
@@ -75,7 +75,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 ## Variables d’environnement
 
 - **Back** : `CORS_ORIGIN`, `CRON_SECRET`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `RESEND_*`, `DAILY_*`, `POLAR_*` (paiement), `PORT_BACKEND`, `HOSTNAME_BACKEND`. Voir `back/.env.example`.
-- **Front** : `NEXT_PUBLIC_SERVER_URL`. Voir `front/.env.example`.
+- **Front** : `NEXT_PUBLIC_SERVER_URL`. Voir `app/.env.example`.
 
 ---
 
@@ -95,7 +95,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - `pnpm run test:coverage` — tests avec couverture (rapports HTML + LCOV dans `coverage/`).
 - E2E : Cypress, config dans `cypress.config.js`, specs dans `cypress/e2e/`.
 
-Emplacements : `front/__tests__/units/`, `back/__tests__/units/`, `back/__tests__/api/`, `back/__tests__/trpc/`, `back/__tests__/integration/`. Détail : [procedure.md](procedure.md) § Lancer les tests.
+Emplacements : `app/__tests__/units/`, `back/__tests__/units/`, `back/__tests__/api/`, `back/__tests__/trpc/`, `back/__tests__/integration/`. Détail : [procedure.md](procedure.md) § Lancer les tests.
 
 ---
 

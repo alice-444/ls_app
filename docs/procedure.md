@@ -15,7 +15,7 @@ Procédures pas à pas : environnement, base de données, auth, crons, déploiem
 2. Créer la base PostgreSQL (ex. `createdb learnsup`).
 3. Copier les fichiers d’exemple d’env et renseigner les variables :
    - `back/.env` à partir de `back/.env.example`
-   - `front/.env` à partir de `front/.env.example`
+   - `app/.env` à partir de `app/.env.example`
 4. Synchroniser le schéma Prisma : `pnpm db:push`
 5. Lancer l’app : `pnpm dev` (front :3001, back :3000 ou 4500 selon config).
 
@@ -69,7 +69,7 @@ La CI (`.github/workflows/tests.yml`) exécute des tests unitaires, d’intégra
 - **E2E (Cypress)** : configuration à la racine dans `cypress.config.js`. Les specs sont attendues dans `cypress/e2e/` (ex. `cypress/e2e/**/*.cy.{js,ts}`) et `cypress/e2e/smoke/` pour les smoke tests. En CI, Cypress est lancé après le build ; en local, lancer l’app puis exécuter Cypress selon la config du projet.
 
 Emplacements des tests :
-- **Front** : `front/__tests__/units/**/*.test.{ts,tsx}`
+- **Front** : `app/__tests__/units/**/*.test.{ts,tsx}`
 - **Back** : `back/__tests__/units/**/*.test.ts`, `back/__tests__/api/**/*.test.ts`, `back/__tests__/trpc/**/*.test.ts` (ex. `apprentice.getDashboardData.test.ts`, `mentor.getDashboardData.test.ts`, `workshop.getById.test.ts`)
 - **E2E** : `cypress/e2e/**/*.cy.{js,jsx,ts,tsx}`.
 
@@ -92,6 +92,6 @@ Résultats et artefacts (coverage, junit, screenshots/videos Cypress) sont publi
 
 - [Architecture](architecture.md)
 - [Déploiement](deploiement.md)
-- [Front](front.md)
+- [App](app.md)
 - [Back](back.md)
 - [Référence](reference.md)

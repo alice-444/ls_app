@@ -285,4 +285,4 @@ Le serveur utilise aussi `PORT_BACKEND` (ou défaut dans le code) et `HOSTNAME_B
 ## Documentation
 
 - [Architecture](architecture.md)
-- [Front](front.md)
+- [App](app.md)

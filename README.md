@@ -37,7 +37,7 @@ Application d’accompagnement pédagogique (tuteurs, apprenants, ateliers). Mon
 
 Ce projet est géré en monorepo :
 
-- **[front](./front)** – Application Next.js
+- **[app](./app)** – Application Next.js
 - **[back](./back)** – API et serveur Next.js
 
 ---
@@ -85,7 +85,7 @@ CORS_ORIGIN="http://localhost:3001"
 CRON_SECRET="your-secret-key-min-32-chars"
 ```
 
-**`front/.env`**
+**`app/.env`**
 ```env
 NEXT_PUBLIC_SERVER_URL="http://localhost:4500"
 NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
@@ -98,7 +98,7 @@ NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
 | Script | Description |
 |--------|-------------|
 | `pnpm dev` | Démarre tous les services (front + back) |
-| `pnpm dev:front` | Démarre uniquement le frontend |
+| `pnpm dev:app` | Démarre uniquement le frontend |
 | `pnpm dev:back` | Démarre uniquement le backend |
 | `pnpm build` | Build toutes les applications |
 | `pnpm check-types` | Vérifie les types TypeScript |
@@ -150,7 +150,7 @@ NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
 
 ```
 ls_app/
-├── front/              # Frontend Next.js
+├── app/                # Frontend Next.js
 ├── back/               # Backend (serveur custom + Next.js, Prisma)
 ├── infra/
 │   └── docker/         # Configuration Docker

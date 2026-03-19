@@ -276,7 +276,7 @@ flowchart LR
 | ----- | -------- | ------ |
 | 1 | `release.yml` | Déclenché par tag `[0-9]+.[0-9]+.[0-9]+` |
 | 2 | Build Backend | Build Docker `infra/docker/back/prod/Dockerfile` → push `miho11/back_ls:latest` |
-| 3 | Build Frontend | Build Docker `infra/docker/front/prod/Dockerfile` → push `miho11/front_ls:latest` |
+| 3 | Build Frontend | Build Docker `infra/docker/app/prod/Dockerfile` → push `miho11/front_ls:latest` |
 | 4 | Deploy | SSH vers VPS → `git pull` → `docker compose -f docker-compose-prod.yml up -d` |
 
 **Secrets GitHub** : `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `SSH_HOST`, `SSH_USERNAME`, `SSH_PASSWORD`.
@@ -327,9 +327,9 @@ flowchart LR
 | `infra/docker/docker-compose-prod.yml` | Compose production (front, back, traefik) |
 | `infra/docker/Docker-compose-dev.yml` | Compose dev (front, back, Prometheus, Grafana) |
 | `infra/docker/back/prod/Dockerfile` | Image backend production |
-| `infra/docker/front/prod/Dockerfile` | Image frontend production |
+| `infra/docker/app/prod/Dockerfile` | Image frontend production |
 | `infra/docker/back/Dockerfile.dev` | Image backend dev |
-| `infra/docker/front/Dockerfile.dev` | Image frontend dev |
+| `infra/docker/app/Dockerfile.dev` | Image frontend dev |
 | `.github/workflows/release.yml` | CI/CD : build, push, deploy |
 | `back/start.sh` | Script de démarrage back (migrations + serveur) |
 

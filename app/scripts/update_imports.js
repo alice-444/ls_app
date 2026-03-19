@@ -46,7 +46,7 @@ function updateImports(content, isInsideComponents) {
     newContent = newContent.replace(regex, `$1${target}$2`);
   }
 
-  // 2. Replace relative imports if inside front/src/components
+  // 2. Replace relative imports if inside app/src/components
   if (isInsideComponents) {
     for (const key of sortedKeys) {
       const target = mapping[key];
