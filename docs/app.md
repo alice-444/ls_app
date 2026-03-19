@@ -86,7 +86,8 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 - **`src/components/`** — Composants organisés par domaine :
   - `ui/` — Design system shadcn (boutons, cartes, dialogs, inputs, avatar, tabs, etc.).
   - `layout/` — PageContainer, PageHeader, PageCard, SectionSidebar.
-  - `header.tsx`, `sidebar.tsx`, `footer.tsx`, `back-button.tsx` — Shell de l'app.
+  - `shared/` — `BackButton.tsx`, `Loader.tsx` (animations Framer Motion), `NotificationBell.tsx`, `UserMenu.tsx`.
+  - `header.tsx`, `sidebar.tsx`, `footer.tsx` — Shell de l'app.
   - `apprentice/` — Dashboard et ateliers apprenant (ApprenticeSidebar, UpcomingWorkshopsCard, AvailableWorkshopsGrid, ApprenticeWorkshopDashboard).
   - `dashboard/` — Dashboards (ApprenantDashboard, ApprenantDashboardSidebar, MentorDashboard, FloatingAddButton).
   - `messaging/` — Messagerie (ChatWindow, ChatHeader, ConversationList, ConversationRow, NewConversationDialog, ReplyPreview, MessageReactions).
