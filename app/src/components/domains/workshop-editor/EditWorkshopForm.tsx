@@ -108,7 +108,7 @@ export function EditWorkshopForm({
   };
 
   const onInvalid = (errors: FieldErrors<EditWorkshopFrontendData>) => {
-    console.error("Form validation errors (detailed):", JSON.stringify(errors, null, 2));
+    console.error("Form validation errors (detailed):", errors);
     toast.error("Formulaire invalide", {
       description: formatValidationErrors(errors),
     });

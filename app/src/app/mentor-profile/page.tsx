@@ -80,8 +80,6 @@ export default function MentorProfilePage() {
   };
 
   const onFormError = (formErrors: any) => {
-    console.error("Form validation errors (detailed):", JSON.parse(JSON.stringify(formErrors)));
-    console.log("Current form values:", form.getValues());
     toast.error("Veuillez vérifier les erreurs dans toutes les sections du formulaire.");
 
     // Auto-switch to the first section with an error

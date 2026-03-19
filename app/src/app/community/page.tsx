@@ -216,7 +216,7 @@ function CommunityHubContent() {
                 Crée un atelier de mentorat et aide les autres à progresser. Gagne des crédits et de l'impact.
               </p>
               <Button asChild className="w-full bg-white text-ls-blue hover:bg-white/90 font-bold rounded-full">
-                <Link href="/workshops/create">Créer un atelier</Link>
+                <Link href="/workshop-editor?new=true">Créer un atelier</Link>
               </Button>
             </Card>
           )}

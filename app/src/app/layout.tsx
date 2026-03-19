@@ -8,8 +8,8 @@ import { LayoutSwitch } from "@/components/shared/layout/LayoutSwitch";
 import Loader from "@/components/shared/Loader";
 
 export const metadata: Metadata = {
-  title: "Learning Solidarity",
-  description: "Plateforme d'apprentissage solidaire",
+  title: "LearnSup",
+  description: "Plateforme d'apprentissage entre étudiants",
 };
 
 export default function RootLayout({
