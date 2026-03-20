@@ -125,9 +125,20 @@ export class WorkshopLifecycleService implements IWorkshopLifecycleService {
     assignIfDefined("time", validationData.time);
     assignIfDefined("duration", validationData.duration);
     assignIfDefined("isVirtual", validationData.isVirtual);
-    assignIfDefined("maxParticipants", validationData.maxParticipants);
+    // Prisma: creditCost & maxParticipants are non-nullable Int — never pass null (causes 500).
+    if (
+      validationData.maxParticipants !== undefined &&
+      validationData.maxParticipants !== null
+    ) {
+      updateData.maxParticipants = validationData.maxParticipants;
+    }
     assignIfDefined("topic", validationData.topic);
-    assignIfDefined("creditCost", validationData.creditCost);
+    if (
+      validationData.creditCost !== undefined &&
+      validationData.creditCost !== null
+    ) {
+      updateData.creditCost = validationData.creditCost;
+    }
 
     if (validationData.date !== undefined) {
       if (!isMinimumTomorrow(validationData.date as string)) {

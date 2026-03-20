@@ -70,7 +70,7 @@ exports.createWorkshopBackendSchema = zod_1.z.object({
     creditCost: exports.workshopFieldSchemas.creditCost.optional().nullable(),
 });
 exports.updateWorkshopBackendSchema = zod_1.z.object({
-    workshopId: zod_1.z.string().cuid(),
+    workshopId: zod_1.z.string().min(1),
     title: exports.workshopFieldSchemas.title.optional(),
     description: exports.workshopFieldSchemas.description.optional(),
     topic: exports.workshopFieldSchemas.topic.optional().nullable(),
@@ -107,7 +107,7 @@ exports.createWorkshopFrontendSchema = zod_1.z.object({
     creditCost: exports.workshopFieldSchemas.creditCost.optional().nullable(),
 });
 exports.editWorkshopFrontendSchema = zod_1.z.object({
-    workshopId: zod_1.z.string().cuid(),
+    workshopId: zod_1.z.string().min(1),
     title: exports.workshopFieldSchemas.title,
     description: exports.workshopFieldSchemas.description.optional(),
     date: zod_1.z
@@ -135,14 +135,14 @@ exports.editWorkshopFrontendSchema = zod_1.z.object({
 });
 // --- SCHÉMAS DE CYCLE DE VIE ---
 exports.publishWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string().cuid(),
+    workshopId: zod_1.z.string().min(1),
 });
 exports.unpublishWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string().cuid(),
+    workshopId: zod_1.z.string().min(1),
 });
 exports.deleteWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string().cuid(),
+    workshopId: zod_1.z.string().min(1),
 });
 exports.cancelWorkshopSchema = zod_1.z.object({
-    workshopId: zod_1.z.string().cuid(),
+    workshopId: zod_1.z.string().min(1),
 });

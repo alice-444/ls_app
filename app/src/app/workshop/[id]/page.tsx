@@ -437,6 +437,9 @@ export default function WorkshopDetailPage() {
               requests={workshopRequests}
               onAccept={handleAcceptRequest}
               onReject={handleRejectRequest}
+              onViewApprenticeProfile={(userId) =>
+                dispatch({ type: "OPEN_APPRENTICE_PROFILE", userId })
+              }
               isRejecting={rejectRequest.isPending}
             />
           )}

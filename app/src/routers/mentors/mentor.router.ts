@@ -62,7 +62,7 @@ export const mentorRouter = router({
         return false;
       });
       const students = new Set(
-        workshops.map((w: any) => w.apprenticeId).filter(Boolean),
+        completed.map((w: any) => w.apprenticeId).filter(Boolean),
       );
 
       const mentorStats = {

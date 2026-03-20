@@ -10,6 +10,7 @@ ce qui existe et où le trouver
 - [Stack technique](tech-stack.md) — Technologies, langages et choix technologiques
 - [Fonctionnalités](feat.md) — Fonctionnalités produit par rôle et par domaine
 - [Architecture](#architecture) – Vue d’ensemble front/back
+- [Temps Réel](realtime.md) – Socket.IO, événements et rooms
 - [Design Patterns](patterns.md) – Patterns utilisés dans le projet
 - [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
 - [App](#app) – Application Next.js, tRPC, auth
@@ -30,6 +31,7 @@ Documentation des fonctionnalités produit (vue fonctionnelle par rôle) : [feat
 
 Vue d’ensemble du monorepo (front, back, DB) : [architecture.md](architecture.md).
 Patterns de conception et principes SOLID appliqués : [patterns.md](patterns.md).
+**Temps Réel & Socket.IO** : [realtime.md](realtime.md) — catalogue des événements, rooms et résilience.
 **Modèle physique de données (MPD)** : [mpd.md](mpd.md) — tables, colonnes, types, clés, index.
 Inclut les flux d'authentification, utilisateur, données, atelier, paiement, messagerie, visio, suppression compte, crons et réseau.
 

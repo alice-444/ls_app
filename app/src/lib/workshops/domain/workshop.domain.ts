@@ -35,17 +35,20 @@ export class WorkshopDomain {
   /**
    * Checks if the workshop is currently happening or about to start.
    */
-  static isLive(workshop: WorkshopEntity, windowMinutes: number = 30): boolean {
+  static isLive(
+    workshop: WorkshopEntity,
+    windowMinutes: number = 30,
+    now: Date = new Date()
+  ): boolean {
     if (!workshop.date || !workshop.time) return false;
-    
+
     const startTime = calculateWorkshopStartTime(workshop.date, workshop.time);
     const endTime = calculateWorkshopEndTime(workshop.date, workshop.time, workshop.duration);
-    
+
     if (!startTime || !endTime) return false;
-    
-    const now = new Date();
+
     const bufferStart = new Date(startTime.getTime() - windowMinutes * 60000);
-    
+
     return now >= bufferStart && now <= endTime;
   }
 

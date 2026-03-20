@@ -253,6 +253,7 @@ export class ConversationService implements IConversationService {
                 conversation.id,
                 appUser1.id,
                 workshopId,
+                tx,
               );
             }
           }
@@ -282,6 +283,7 @@ export class ConversationService implements IConversationService {
     conversationId: string,
     senderId: string,
     workshopId: string,
+    tx?: any,
   ): Promise<void> {
     const { workshopTitle, workshopDate } =
       await this.enrichWithWorkshopInfo(workshopId);
@@ -292,13 +294,16 @@ export class ConversationService implements IConversationService {
         workshopTitle,
         workshopDate,
       });
-      await this.messageRepository.create({
-        id: generateInternalId(),
-        conversationId,
-        senderId,
-        content: systemMessageContent,
-        replyToMessageId: null,
-      });
+      await this.messageRepository.create(
+        {
+          id: generateInternalId(),
+          conversationId,
+          senderId,
+          content: systemMessageContent,
+          replyToMessageId: null,
+        },
+        tx,
+      );
     }
   }
 
