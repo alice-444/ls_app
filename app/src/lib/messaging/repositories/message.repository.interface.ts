@@ -17,37 +17,37 @@ export interface IMessageRepository {
   findMessagesForConversation(
     conversationId: string,
     limit?: number,
-    offset?: number
+    offset?: number,
   ): Promise<MessageEntity[]>;
 
   findLastMessageForConversation(
-    conversationId: string
+    conversationId: string,
   ): Promise<MessageEntity | null>;
 
   countUnreadMessagesForUser(
     conversationId: string,
-    userId: string
+    userId: string,
   ): Promise<number>;
 
-  create(data: {
-    id: string;
-    conversationId: string;
-    senderId: string;
-    content: string;
-    replyToMessageId?: string | null;
-  }): Promise<MessageEntity>;
+  create(
+    data: {
+      id: string;
+      conversationId: string;
+      senderId: string;
+      content: string;
+      replyToMessageId?: string | null;
+    },
+    tx?: any,
+  ): Promise<MessageEntity>;
 
   searchMessages(
     userId: string,
     conversationId: string,
     query: string,
-    limit?: number
+    limit?: number,
   ): Promise<MessageEntity[]>;
 
-  markMessagesAsRead(
-    conversationId: string,
-    userId: string
-  ): Promise<string[]>;
+  markMessagesAsRead(conversationId: string, userId: string): Promise<string[]>;
 
   update(
     messageId: string,
@@ -55,9 +55,8 @@ export interface IMessageRepository {
       content: string;
       updatedAt: Date;
       editCount: number;
-    }
+    },
   ): Promise<MessageEntity>;
 
   delete(messageId: string): Promise<MessageEntity>;
 }
-

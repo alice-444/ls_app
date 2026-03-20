@@ -1,5 +1,6 @@
 import type { IDailyService } from "./daily.service.interface";
 import type { DailyConfig } from "../config/daily.config.interface";
+import type { DailyRoomAccessWindow } from "../../workshops/utils/workshop-helpers";
 import type { Result } from "../../common";
 import { success, failure } from "../../common/types";
 import { externalApiErrorsTotal } from "../../metrics/prometheus";
@@ -19,14 +20,14 @@ export class DailyService implements IDailyService {
 
     if (!this.domain) {
       console.warn(
-        "DAILY_DOMAIN n'est pas configuré. Les URLs des rooms seront générées automatiquement par Daily.co."
+        "DAILY_DOMAIN n'est pas configuré. Les URLs des rooms seront générées automatiquement par Daily.co.",
       );
     }
   }
 
   private async apiRequest(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<any> {
     const url = `${this.apiBaseUrl}${endpoint}`;
     const response = await fetch(url, {
@@ -52,9 +53,14 @@ export class DailyService implements IDailyService {
 
   async getOrCreateRoomForWorkshop(
     workshopId: string,
-    workshopTitle: string
+    workshopTitle: string,
+    accessWindow: DailyRoomAccessWindow,
   ): Promise<Result<{ roomId: string; roomUrl: string }>> {
     try {
+      if (accessWindow.nbf >= accessWindow.exp) {
+        return failure("Invalid Daily room access window (nbf >= exp)");
+      }
+
       const roomName = `workshop-${workshopId}`;
 
       let room;
@@ -71,7 +77,8 @@ export class DailyService implements IDailyService {
                 enable_chat: true,
                 enable_screenshare: true,
                 enable_recording: false,
-                exp: Math.floor(Date.now() / 1000) + 60 * 60,
+                nbf: accessWindow.nbf,
+                exp: accessWindow.exp,
                 max_participants: 20,
               },
             }),
@@ -93,7 +100,7 @@ export class DailyService implements IDailyService {
       console.error("Error in getOrCreateRoomForWorkshop:", error);
       return failure(
         error?.message || "Failed to create Daily.co room",
-        error?.status || 500
+        error?.status || 500,
       );
     }
   }
@@ -102,7 +109,7 @@ export class DailyService implements IDailyService {
     roomId: string,
     userId: string,
     userName: string,
-    isOwner: boolean
+    isOwner: boolean,
   ): Promise<Result<{ token: string; roomUrl: string }>> {
     try {
       const room = await this.apiRequest(`/rooms/${roomId}`);
@@ -123,7 +130,7 @@ export class DailyService implements IDailyService {
         }),
       });
 
-      if (!tokenResponse || !tokenResponse.token) {
+      if (!tokenResponse?.token) {
         return failure("Failed to generate Daily.co token");
       }
 
@@ -135,7 +142,7 @@ export class DailyService implements IDailyService {
       console.error("Error in generateToken:", error);
       return failure(
         error?.message || "Failed to generate Daily.co token",
-        error?.status || 500
+        error?.status || 500,
       );
     }
   }
@@ -153,13 +160,13 @@ export class DailyService implements IDailyService {
       }
       return failure(
         error?.message || "Failed to delete Daily.co room",
-        error?.status || 500
+        error?.status || 500,
       );
     }
   }
 
   async getRoomInfo(
-    roomId: string
+    roomId: string,
   ): Promise<Result<{ participantCount: number }>> {
     try {
       const room = await this.apiRequest(`/rooms/${roomId}`);
@@ -168,7 +175,7 @@ export class DailyService implements IDailyService {
       }
 
       const participants = await this.apiRequest(
-        `/rooms/${roomId}/participants`
+        `/rooms/${roomId}/participants`,
       ).catch(() => ({ data: [] }));
 
       const participantCount = participants?.data?.length || 0;
@@ -181,7 +188,7 @@ export class DailyService implements IDailyService {
       }
       return failure(
         error?.message || "Failed to get room info",
-        error?.status || 500
+        error?.status || 500,
       );
     }
   }

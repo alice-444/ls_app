@@ -3,8 +3,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
+import Loader from "@/components/shared/Loader";
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export function ProtectedRoute({ children }: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
 
@@ -16,9 +17,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
   }, [session, isPending, router]);
 
-  // En attente de vérification, afficher un loader ou rien
+  // En attente de vérification, afficher un loader
   if (isPending) {
-    return <div>Vérification de la session...</div>;
+    return <Loader fullScreen message="Vérification de la session..." />;
   }
 
   // Si authentifié, afficher le contenu

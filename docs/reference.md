@@ -12,6 +12,7 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - **Flux utilisateur** : états (non connecté → session → onboarding → dashboard), redirections par rôle (ADMIN/MENTOR/APPRENANT), RoleGate.
 - **Flux de données** : tRPC + TanStack Query, contexte session, procédures protégées, Socket.IO temps réel.
 - **Flux atelier** : création, publication, demande, acceptation, visio, feedback, cashback.
+- **Interactions Mentor-Apprenant** : Accès au `MiniProfileModal` depuis `WorkshopRequestCard` et `WorkshopParticipantsCard`.
 - **Flux paiement/crédits** : achat Polar, webhook, crédit compte.
 - **Flux messagerie** : getOrCreateConversation, envoi (tRPC/Socket), temps réel.
 - **Flux visio** : Daily.co token, webhook, crons.

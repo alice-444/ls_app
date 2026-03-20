@@ -70,7 +70,7 @@ export default function MentorProfilePage() {
     watch,
   } = form;
 
-  if (isSessionPending) return <Loader />;
+  if (isSessionPending) return <Loader fullScreen message="Chargement de ton profil..." />;
   if (!session) return null;
 
   const sectionVariants = {

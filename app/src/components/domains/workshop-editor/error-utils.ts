@@ -22,7 +22,7 @@ export const getFieldLabel = (field: string): string => {
 
 export const formatValidationErrors = (errors: FieldErrors<any>): string => {
   const errorFields = Object.keys(errors)
-    .filter((key) => key !== "root")
+    .filter((key) => key !== "root" && key !== "workshopId")
     .map((key) => getFieldLabel(key))
     .filter((value, index, self) => self.indexOf(value) === index);
 

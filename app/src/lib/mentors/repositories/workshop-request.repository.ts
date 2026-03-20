@@ -22,13 +22,11 @@ function mapToEntity(raw: any): WorkshopRequestEntity {
   } as WorkshopRequestEntity;
 }
 
-export class PrismaWorkshopRequestRepository
-  implements IWorkshopRequestRepository
-{
+export class PrismaWorkshopRequestRepository implements IWorkshopRequestRepository {
   constructor(private readonly prisma: any) {}
 
   async create(
-    input: CreateWorkshopRequestInput
+    input: CreateWorkshopRequestInput,
   ): Promise<WorkshopRequestEntity> {
     const now = new Date();
     const raw = await (this.prisma as any).workshop_request.create({
@@ -61,7 +59,7 @@ export class PrismaWorkshopRequestRepository
 
   async findByIdWithLock(
     id: string,
-    tx?: any
+    tx?: any,
   ): Promise<WorkshopRequestEntity | null> {
     const client = tx || this.prisma;
     const raw = await (client as any).workshop_request.findFirst({
@@ -73,7 +71,7 @@ export class PrismaWorkshopRequestRepository
   }
 
   async findByApprenticeId(
-    apprenticeId: string
+    apprenticeId: string,
   ): Promise<WorkshopRequestEntity[]> {
     const results = await (this.prisma as any).workshop_request.findMany({
       where: { apprenticeId },
@@ -101,9 +99,25 @@ export class PrismaWorkshopRequestRepository
     return results.map(mapToEntity);
   }
 
+  async findExistingActiveRequest(
+    apprenticeId: string,
+    workshopId: string,
+  ): Promise<WorkshopRequestEntity | null> {
+    const raw = await (this.prisma as any).workshop_request.findFirst({
+      where: {
+        apprenticeId,
+        workshopId,
+        status: { in: ["PENDING", "ACCEPTED"] },
+      },
+      include: WORKSHOP_REQUEST_INCLUDE,
+    });
+    if (!raw) return null;
+    return mapToEntity(raw);
+  }
+
   async countAcceptedByWorkshopId(
     workshopId: string,
-    tx?: any
+    tx?: any,
   ): Promise<number> {
     const client = tx || this.prisma;
     return (client as any).workshop_request.count({
@@ -113,7 +127,7 @@ export class PrismaWorkshopRequestRepository
 
   async update(
     id: string,
-    input: UpdateWorkshopRequestInput
+    input: UpdateWorkshopRequestInput,
   ): Promise<WorkshopRequestEntity> {
     const raw = await (this.prisma as any).workshop_request.update({
       where: { id },
@@ -126,7 +140,7 @@ export class PrismaWorkshopRequestRepository
   async updateWithTransaction(
     id: string,
     input: UpdateWorkshopRequestInput,
-    tx: any
+    tx: any,
   ): Promise<WorkshopRequestEntity> {
     const raw = await (tx as any).workshop_request.update({
       where: { id },

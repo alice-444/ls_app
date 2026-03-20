@@ -41,6 +41,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BackButton } from "@/components/shared/BackButton";
+import Loader from "@/components/shared/Loader";
 import type { WorkshopDetailed } from "@ls-app/shared";
 
 type Workshop = WorkshopDetailed;
@@ -148,12 +149,7 @@ function WorkshopEditorContent() {
   if (isLoading) {
     return (
       <PageContainer>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-brand" />
-            <p className="text-ls-muted">Chargement de tes ateliers...</p>
-          </div>
-        </div>
+        <Loader fullScreen message="Récupération de tes ateliers..." />
       </PageContainer>
     );
   }

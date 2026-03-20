@@ -104,6 +104,7 @@ export class WorkshopService implements IWorkshopService {
       workshopRepository,
       accessGuard,
       userBlockService,
+      videoLinkService,
       workshopRequestRepository,
     );
   }

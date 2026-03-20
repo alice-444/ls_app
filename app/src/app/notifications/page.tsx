@@ -24,6 +24,7 @@ import { useState, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
 import { useSocket } from "@/lib/socket-client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PageContainer } from "@/components/shared/layout/PageContainer";
@@ -230,8 +231,8 @@ export default function NotificationsPage() {
             size="sm"
             onClick={() => setFilter("all")}
             className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${filter === "all"
-                ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
-                : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
+              ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
+              : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
               }`}
           >
             <Filter className="h-4 w-4 mr-2" />
@@ -242,8 +243,8 @@ export default function NotificationsPage() {
             size="sm"
             onClick={() => setFilter("unread")}
             className={`rounded-full h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold ${filter === "unread"
-                ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
-                : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
+              ? "bg-brand border-brand text-ls-heading hover:bg-brand-hover"
+              : "border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
               }`}
           >
             Non lues ({unreadCountValue})
@@ -383,8 +384,8 @@ export default function NotificationsPage() {
                 <Card
                   key={notification.id}
                   className={`transition-all duration-200 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl ${isUnread
-                      ? "border-l-4 border-l-brand bg-brand/5"
-                      : ""
+                    ? "border-l-4 border-l-brand bg-brand/5"
+                    : ""
                     } ${notification.actionUrl
                       ? "cursor-pointer hover:shadow-lg hover:border-brand/30"
                       : ""
@@ -395,8 +396,8 @@ export default function NotificationsPage() {
                     <div className="flex items-start gap-3 sm:gap-4">
                       <div
                         className={`p-2 sm:p-3 rounded-2xl shrink-0 ${isUnread
-                            ? "bg-brand/15"
-                            : "bg-muted/50"
+                          ? "bg-brand/15"
+                          : "bg-muted/50"
                           }`}
                       >
                         <div className={isUnread ? "text-brand" : "text-ls-muted"}>
@@ -409,8 +410,8 @@ export default function NotificationsPage() {
                           <div className="flex-1 min-w-0">
                             <h3
                               className={`font-semibold text-sm sm:text-base mb-1 ${isUnread
-                                  ? "text-ls-heading"
-                                  : "text-ls-muted"
+                                ? "text-ls-heading"
+                                : "text-ls-muted"
                                 }`}
                             >
                               {notification.title}
@@ -457,15 +458,18 @@ export default function NotificationsPage() {
 
                             {notification.actionUrl && (
                               <Button
+                                asChild
                                 variant="outline"
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  router.push(notification.actionUrl!);
+                                  if (isUnread) {
+                                    markAsRead(notification.id);
+                                  }
                                 }}
                                 className="rounded-full h-8 px-3 text-xs font-semibold border-border text-ls-heading hover:bg-brand/10 hover:border-brand"
                               >
-                                Voir
+                                <Link href={notification.actionUrl}>Voir</Link>
                               </Button>
                             )}
 

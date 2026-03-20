@@ -48,8 +48,18 @@ export interface IWorkshopRequestRepository {
   findByApprenticeId(apprenticeId: string): Promise<WorkshopRequestEntity[]>;
   findByMentorId(mentorId: string): Promise<WorkshopRequestEntity[]>;
   findByWorkshopId(workshopId: string): Promise<WorkshopRequestEntity[]>;
+  findExistingActiveRequest(
+    apprenticeId: string,
+    workshopId: string,
+  ): Promise<WorkshopRequestEntity | null>;
   countAcceptedByWorkshopId(workshopId: string, tx?: any): Promise<number>;
-  update(id: string, input: UpdateWorkshopRequestInput): Promise<WorkshopRequestEntity>;
-  updateWithTransaction(id: string, input: UpdateWorkshopRequestInput, tx: any): Promise<WorkshopRequestEntity>;
+  update(
+    id: string,
+    input: UpdateWorkshopRequestInput,
+  ): Promise<WorkshopRequestEntity>;
+  updateWithTransaction(
+    id: string,
+    input: UpdateWorkshopRequestInput,
+    tx: any,
+  ): Promise<WorkshopRequestEntity>;
 }
-

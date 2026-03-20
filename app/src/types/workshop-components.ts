@@ -158,6 +158,7 @@ export interface WorkshopRequestCardProps {
   request: WorkshopRequest;
   onAccept?: (request: WorkshopRequest) => void;
   onReject?: (requestId: string) => void;
+  onViewApprenticeProfile?: (userId: string) => void;
   isRejecting?: boolean;
   variant?: "default" | "compact" | "dashboard";
   showTitle?: boolean;

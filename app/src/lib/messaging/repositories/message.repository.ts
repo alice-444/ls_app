@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@/lib/prisma-server';
+import type { PrismaClient } from "@/lib/prisma-server";
 import type {
   IMessageRepository,
   MessageEntity,
@@ -19,7 +19,6 @@ function mapToEntity(raw: any): MessageEntity {
   };
 }
 
-
 export class PrismaMessageRepository implements IMessageRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
@@ -34,7 +33,7 @@ export class PrismaMessageRepository implements IMessageRepository {
   async findMessagesForConversation(
     conversationId: string,
     limit?: number,
-    offset?: number
+    offset?: number,
   ): Promise<MessageEntity[]> {
     const messages = await this.prisma.message.findMany({
       where: { conversationId },
@@ -47,7 +46,7 @@ export class PrismaMessageRepository implements IMessageRepository {
   }
 
   async findLastMessageForConversation(
-    conversationId: string
+    conversationId: string,
   ): Promise<MessageEntity | null> {
     const message = await this.prisma.message.findFirst({
       where: { conversationId },
@@ -59,7 +58,7 @@ export class PrismaMessageRepository implements IMessageRepository {
 
   async countUnreadMessagesForUser(
     conversationId: string,
-    userId: string
+    userId: string,
   ): Promise<number> {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
@@ -76,14 +75,18 @@ export class PrismaMessageRepository implements IMessageRepository {
     });
   }
 
-  async create(data: {
-    id: string;
-    conversationId: string;
-    senderId: string;
-    content: string;
-    replyToMessageId?: string | null;
-  }): Promise<MessageEntity> {
-    const message = await this.prisma.message.create({
+  async create(
+    data: {
+      id: string;
+      conversationId: string;
+      senderId: string;
+      content: string;
+      replyToMessageId?: string | null;
+    },
+    tx?: any,
+  ): Promise<MessageEntity> {
+    const client = tx || this.prisma;
+    const message = await client.message.create({
       data: {
         id: data.id,
         conversationId: data.conversationId,
@@ -97,7 +100,7 @@ export class PrismaMessageRepository implements IMessageRepository {
 
   async markMessagesAsRead(
     conversationId: string,
-    userId: string
+    userId: string,
   ): Promise<string[]> {
     const unreadFilter = {
       conversationId,
@@ -128,7 +131,7 @@ export class PrismaMessageRepository implements IMessageRepository {
       content: string;
       updatedAt: Date;
       editCount: number;
-    }
+    },
   ): Promise<MessageEntity> {
     const message = await this.prisma.message.update({
       where: { id: messageId },
@@ -145,7 +148,7 @@ export class PrismaMessageRepository implements IMessageRepository {
     userId: string,
     conversationId: string,
     query: string,
-    limit: number = 50
+    limit: number = 50,
   ): Promise<MessageEntity[]> {
     const messages = await this.prisma.message.findMany({
       where: {

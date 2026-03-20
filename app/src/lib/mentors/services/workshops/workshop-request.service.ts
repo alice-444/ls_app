@@ -13,7 +13,7 @@ import { sanitizeString } from "../../../utils/sanitize";
 import { logger } from "../../../common/logger";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { ICreditService } from "../../../credits/services/credit.service.interface";
-import type { PrismaClient } from '@/lib/prisma-server';
+import type { PrismaClient } from "@/lib/prisma-server";
 import { generateInternalId } from "../../../utils/id-generator";
 
 export class WorkshopRequestService implements IWorkshopRequestService {
@@ -27,15 +27,15 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     private readonly workshopRepository: IWorkshopRepository,
     private readonly notificationService: IWorkshopRequestNotificationService,
     private readonly creditService?: ICreditService,
-    private readonly prisma?: PrismaClient
+    private readonly prisma?: PrismaClient,
   ) {
     this.queryService = new WorkshopRequestQueryService(
       workshopRequestRepository,
-      mentorRepository
+      mentorRepository,
     );
     this.workshopFactory = new WorkshopForRequestFactory(
       workshopRepository,
-      workshopRequestRepository
+      workshopRequestRepository,
     );
   }
 
@@ -49,28 +49,42 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       preferredDate?: Date | null;
       preferredTime?: string | null;
       workshopId?: string | null;
-    }
+    },
   ): Promise<Result<{ requestId: string }>> {
     try {
       const mentor = await this.mentorRepository.findPublishedMentorById(
-        input.mentorId
+        input.mentorId,
       );
       if (!mentor) {
         return failure("Mentor introuvable ou non publié", 404);
       }
 
-      const apprentice = await this.mentorRepository.findApprenticeByUserId(
-        userId
-      );
+      const apprentice =
+        await this.mentorRepository.findApprenticeByUserId(userId);
       if (!apprentice) {
         return failure(
           "Utilisateur introuvable. Veuillez compléter votre profil d'apprenant.",
-          404
+          404,
         );
       }
 
       if (mentor.id === apprentice.id) {
         return failure("Vous ne pouvez pas faire une demande à vous-même", 400);
+      }
+
+      // Check for duplicate request
+      if (input.workshopId) {
+        const existingRequest =
+          await this.workshopRequestRepository.findExistingActiveRequest(
+            apprentice.id,
+            input.workshopId,
+          );
+        if (existingRequest) {
+          return failure(
+            "Tu as déjà une demande en cours ou acceptée pour cet atelier.",
+            400,
+          );
+        }
       }
 
       const sanitizedTitle = sanitizeString(input.title, {
@@ -91,13 +105,13 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         sanitizedTitle,
         sanitizedDescription,
         sanitizedMessage,
-        input
+        input,
       );
 
       await this.notificationService.notifyMentorOfNewRequest(
         workshopRequest,
         userId,
-        sanitizedTitle
+        sanitizedTitle,
       );
 
       return success({ requestId: workshopRequest.id });
@@ -107,7 +121,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         createErrorContext("submitWorkshopRequest", {
           userId,
           details: { mentorId: input.mentorId },
-        })
+        }),
       );
     }
   }
@@ -119,14 +133,14 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     sanitizedTitle: string,
     sanitizedDescription: string | null,
     sanitizedMessage: string | null,
-    input: any
+    input: any,
   ): Promise<any> {
     const result = await this.prisma!.$transaction(async (tx) => {
       const debitResult = await this.creditService!.debitCreditsInTransaction(
         userId,
         this.WORKSHOP_REQUEST_COST,
         `Demande d'atelier: ${sanitizedTitle}`,
-        tx
+        tx,
       );
 
       if (!debitResult.ok) {
@@ -164,10 +178,8 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
       return {
         ...workshopRequest,
-        apprentice:
-          workshopRequest.apprentice,
-        mentor:
-          workshopRequest.mentor,
+        apprentice: workshopRequest.apprentice,
+        mentor: workshopRequest.mentor,
       };
     });
 
@@ -188,7 +200,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
     sanitizedTitle: string,
     sanitizedDescription: string | null,
     sanitizedMessage: string | null,
-    input: any
+    input: any,
   ): Promise<any> {
     const workshopRequest = await this.workshopRequestRepository.create({
       title: sanitizedTitle,
@@ -233,7 +245,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       location?: string | null;
       isVirtual?: boolean;
       maxParticipants?: number | null;
-    }
+    },
   ): Promise<Result<{ workshopId: string; requestId: string }>> {
     let mentor: any = null;
     let request: any = null;
@@ -251,7 +263,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       if (request.mentorId !== mentor.id) {
         return failure(
           "Vous n'êtes pas autorisé à accepter cette demande",
-          403
+          403,
         );
       }
 
@@ -264,7 +276,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
           const lockedRequest =
             await this.workshopRequestRepository.findByIdWithLock(
               requestId,
-              tx
+              tx,
             );
 
           if (!lockedRequest) {
@@ -273,7 +285,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
           if (lockedRequest.status !== "PENDING") {
             throw new Error(
-              `Cette demande ne peut pas être acceptée. Statut actuel: ${lockedRequest.status}`
+              `Cette demande ne peut pas être acceptée. Statut actuel: ${lockedRequest.status}`,
             );
           }
 
@@ -284,13 +296,13 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
           if (updateResult.count === 0) {
             throw new Error(
-              "Cette demande ne peut pas être acceptée. Le statut a changé entre temps."
+              "Cette demande ne peut pas être acceptée. Le statut a changé entre temps.",
             );
           }
 
           if (lockedRequest.workshopId) {
             const existingWorkshop = await this.workshopRepository.findById(
-              lockedRequest.workshopId
+              lockedRequest.workshopId,
             );
 
             if (existingWorkshop) {
@@ -301,12 +313,12 @@ export class WorkshopRequestService implements IWorkshopRequestService {
                 const acceptedCount =
                   await this.workshopRequestRepository.countAcceptedByWorkshopId(
                     lockedRequest.workshopId,
-                    tx
+                    tx,
                   );
 
                 if (acceptedCount + 1 > maxParticipants) {
                   throw new Error(
-                    `Cet atelier est complet. Nombre maximum de participants atteint (${acceptedCount + 1}/${maxParticipants}).`
+                    `Cet atelier est complet. Nombre maximum de participants atteint (${acceptedCount + 1}/${maxParticipants}).`,
                   );
                 }
               }
@@ -318,7 +330,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
               lockedRequest,
               mentor.id,
               input,
-              tx
+              tx,
             );
 
           if (!workshop.ok) {
@@ -332,7 +344,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
 
           return { workshop, request: lockedRequest };
         },
-        { isolationLevel: "Serializable", timeout: 10000 }
+        { isolationLevel: "Serializable", timeout: 10000 },
       );
 
       const { workshop, request: updatedRequest } = result;
@@ -348,7 +360,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         requestId,
         workshop.data.id,
         request.title,
-        userId
+        userId,
       );
 
       return success({
@@ -365,7 +377,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
             mentorId: mentor?.id,
             apprenticeId: request?.apprenticeId,
           },
-        })
+        }),
       );
     }
   }
@@ -373,7 +385,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
   async rejectWorkshopRequest(
     userId: string,
     requestId: string,
-    reason?: string | null
+    reason?: string | null,
   ): Promise<Result<{ success: boolean }>> {
     try {
       const mentor = await this.mentorRepository.findMentorById(userId);
@@ -381,23 +393,19 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         return failure("Mentor introuvable", 404);
       }
 
-      const request =
-        await this.workshopRequestRepository.findById(requestId);
+      const request = await this.workshopRequestRepository.findById(requestId);
       if (!request) {
         return failure("Demande d'atelier introuvable", 404);
       }
 
       if (request.mentorId !== mentor.id) {
-        return failure(
-          "Vous n'êtes pas autorisé à rejeter cette demande",
-          403
-        );
+        return failure("Vous n'êtes pas autorisé à rejeter cette demande", 403);
       }
 
       if (request.status !== "PENDING") {
         return failure(
           `Cette demande ne peut pas être rejetée. Statut actuel: ${request.status}`,
-          400
+          400,
         );
       }
 
@@ -409,10 +417,10 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         await this.prisma.$transaction(async (tx) => {
           await (tx as any).workshop_request.update({
             where: { id: requestId },
-            data: { 
-              status: "REJECTED", 
+            data: {
+              status: "REJECTED",
               rejectionReason: sanitizedReason,
-              updatedAt: new Date() 
+              updatedAt: new Date(),
             },
           });
 
@@ -427,7 +435,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
               apprentice.userId,
               this.WORKSHOP_REQUEST_COST,
               `Remboursement demande rejetée: ${request.title}`,
-              tx
+              tx,
             );
           }
         });
@@ -449,7 +457,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         requestId,
         request.title,
         userId,
-        sanitizedReason
+        sanitizedReason,
       );
 
       return success({ success: true });
@@ -459,18 +467,17 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         createErrorContext("rejectWorkshopRequest", {
           userId,
           resourceId: requestId,
-        })
+        }),
       );
     }
   }
 
   async cancelWorkshopRequest(
     userId: string,
-    requestId: string
+    requestId: string,
   ): Promise<Result<{ success: boolean }>> {
     try {
-      const request =
-        await this.workshopRequestRepository.findById(requestId);
+      const request = await this.workshopRequestRepository.findById(requestId);
       if (!request) {
         return failure("Demande d'atelier introuvable", 404);
       }
@@ -483,10 +490,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       const isMentor = mentor?.id === request.mentorId;
 
       if (!isApprentice && !isMentor) {
-        return failure(
-          "Vous n'êtes pas autorisé à annuler cette demande",
-          403
-        );
+        return failure("Vous n'êtes pas autorisé à annuler cette demande", 403);
       }
 
       if (request.status === "CANCELLED") {
@@ -498,18 +502,18 @@ export class WorkshopRequestService implements IWorkshopRequestService {
           // If request was already accepted, we need to update the associated workshop
           if (request.status === "ACCEPTED" && request.workshopId) {
             const workshop = await (tx as any).workshop.findUnique({
-              where: { id: request.workshopId }
+              where: { id: request.workshopId },
             });
 
-            if (workshop && workshop.status === "PUBLISHED") {
+            if (workshop?.status === "PUBLISHED") {
               // Clear apprentice from the workshop to free the slot
               await (tx as any).workshop.update({
                 where: { id: request.workshopId },
                 data: {
                   apprenticeId: null,
                   apprenticeAttendanceStatus: null,
-                  updatedAt: new Date()
-                }
+                  updatedAt: new Date(),
+                },
               });
             }
           }
@@ -532,7 +536,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
               apprenticeUser.userId,
               this.WORKSHOP_REQUEST_COST,
               `Remboursement demande annulée: ${request.title}`,
-              tx
+              tx,
             );
           }
         });
@@ -552,7 +556,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         requestId,
         request.title,
         userId,
-        isApprentice
+        isApprentice,
       );
 
       return success({ success: true });
@@ -562,7 +566,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         createErrorContext("cancelWorkshopRequest", {
           userId,
           resourceId: requestId,
-        })
+        }),
       );
     }
   }
@@ -577,35 +581,34 @@ export class WorkshopRequestService implements IWorkshopRequestService {
       preferredDate?: Date | null;
       preferredTime?: string | null;
       mentorId?: string;
-    }
+    },
   ): Promise<Result<{ requestId: string }>> {
     try {
-      const request =
-        await this.workshopRequestRepository.findById(requestId);
+      const request = await this.workshopRequestRepository.findById(requestId);
       if (!request) {
         return failure("Demande d'atelier introuvable", 404);
       }
 
       const apprentice =
         await this.mentorRepository.findApprenticeByUserId(userId);
-      if (!apprentice || apprentice.id !== request.apprenticeId) {
+      if (apprentice?.id !== request.apprenticeId) {
         return failure(
           "Vous n'êtes pas autorisé à modifier cette demande",
-          403
+          403,
         );
       }
 
       if (request.status !== "REJECTED" && request.status !== "CANCELLED") {
         return failure(
           `Cette demande ne peut pas être modifiée. Statut actuel: ${request.status}`,
-          400
+          400,
         );
       }
 
       let mentorId = request.mentorId;
       if (input.mentorId && input.mentorId !== request.mentorId) {
         const newMentor = await this.mentorRepository.findMentorById(
-          input.mentorId
+          input.mentorId,
         );
         if (!newMentor) {
           return failure("Mentor introuvable", 404);
@@ -637,7 +640,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         requestId,
         request,
         input,
-        userId
+        userId,
       );
 
       return success({ requestId });
@@ -647,7 +650,7 @@ export class WorkshopRequestService implements IWorkshopRequestService {
         createErrorContext("updateWorkshopRequest", {
           userId,
           resourceId: requestId,
-        })
+        }),
       );
     }
   }

@@ -59,10 +59,11 @@ LearnSup est une plateforme d'accompagnement mettant en relation **mentors** et 
 | **Création atelier**    | Créer un atelier (brouillon), définir titre, description, crédits, date, lieu, visio | `/workshop-editor`                  |
 | **Publication atelier** | Publier un atelier pour le rendre visible                                            | `/my-workshops`                     |
 | **Mes ateliers**        | Liste des ateliers, calendrier, filtres, prochain atelier                            | `/my-workshops`                     |
-| **Demandes reçues**     | Voir et accepter/rejeter les demandes d'atelier des apprenants                       | Depuis mes ateliers / notifications |
+| **Demandes reçues**     | Voir et accepter/rejeter les demandes d'atelier des apprenants, consulter leurs profils | Depuis mes ateliers / notifications |
 | **Acceptation demande** | Accepter une demande : définir date, heure, lieu, créer la salle visio               | Depuis demande                      |
 | **Visio**               | Rejoindre la salle Daily.co pour l'atelier                                           | `/workshop/[id]/join-video`         |
 | **Feedbacks reçus**     | Consulter les feedbacks des apprenants                                               | Profil mentor                       |
+| **Profils Apprenants**  | Consulter le mini-profil des apprenants inscrits ou demandeurs                       | Page atelier / messagerie           |
 
 
 ---
@@ -100,6 +101,8 @@ LearnSup est une plateforme d'accompagnement mettant en relation **mentors** et 
 ### Ateliers (workshops)
 
 - **Cycle** : Création (DRAFT) → Publication (PUBLISHED) → Demande apprenant (débit crédits) → Acceptation/rejet mentor → Visio Daily.co → Feedback apprenant → Cashback apprenant
+- **Sécurité** : Un apprenant ne peut pas s'inscrire deux fois à un même atelier (vérification des demandes actives `PENDING` ou `ACCEPTED`).
+- **Statistiques** : Le compteur "Apprenants aidés" du mentor n'est incrémenté qu'après la réalisation effective de l'atelier (ateliers passés ou terminés).
 - **Visio** : Salle Daily.co créée à la demande, token généré pour mentor et apprenant
 - **Cashback** : Crédit automatique de l'apprenant après participation (cron)
 
