@@ -5,8 +5,6 @@ import { logger } from "../../../common/logger";
 
 export class WorkshopVideoLinkService implements IWorkshopVideoLinkService {
   private readonly TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
-  private readonly THREE_HOURS_MS = 3 * 60 * 60 * 1000;
-  private readonly TIME_WINDOW_MS = 30 * 60 * 1000; // ±30 minutes
 
   constructor(private readonly workshopRepository: IWorkshopRepository) {}
 
@@ -40,21 +38,19 @@ export class WorkshopVideoLinkService implements IWorkshopVideoLinkService {
     }
 
     const timeUntilStart = startTime.getTime() - currentTime.getTime();
-    const lowerBound = this.TWELVE_HOURS_MS - this.TIME_WINDOW_MS;
-    const upperBound = this.TWELVE_HOURS_MS + this.TIME_WINDOW_MS;
-
-    return timeUntilStart >= lowerBound && timeUntilStart <= upperBound;
+    return timeUntilStart >= 0 && timeUntilStart <= this.TWELVE_HOURS_MS;
   }
 
   shouldExposeLink(
-    workshop: WorkshopEntity
+    workshop: WorkshopEntity,
+    currentTime: Date = new Date()
   ): boolean {
     if (!workshop.isVirtual) {
       return false;
     }
 
-    // Standard window for exposing the link is 3 hours before start
-    return WorkshopDomain.isLive(workshop, 180);
+    // Expose the link from 3 hours before start through end of workshop
+    return WorkshopDomain.isLive(workshop, 180, currentTime);
   }
 
   async findWorkshopsEligibleForLinkGeneration(): Promise<WorkshopEntity[]> {
