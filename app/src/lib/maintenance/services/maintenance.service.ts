@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@/lib/prisma-server';
+import type { PrismaClient } from "@/lib/prisma-server";
 import { IMaintenanceService } from "./maintenance.service.interface";
 import { logger } from "../../common/logger";
 import { generateInternalId } from "../../utils/id-generator";
@@ -7,16 +7,20 @@ import { renderEmailTemplate } from "../../email/utils/render-email";
 import { WorkshopReminderEmail } from "../../email/templates/WorkshopReminder";
 import { FeedbackReminderEmail } from "../../email/templates/FeedbackReminder";
 import * as React from "react";
+import { calculateDailyRoomAccessWindow } from "../../workshops/utils/workshop-helpers";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export class MaintenanceService implements IMaintenanceService {
   constructor(
     private readonly prisma: PrismaClient,
-    private readonly services: ServicesContainer
+    private readonly services: ServicesContainer,
   ) {}
 
-  async purgeScheduledDeletions(): Promise<{ processed: number; errors: number }> {
+  async purgeScheduledDeletions(): Promise<{
+    processed: number;
+    errors: number;
+  }> {
     const now = new Date();
     const result = { processed: 0, errors: 0 };
 
@@ -130,7 +134,7 @@ export class MaintenanceService implements IMaintenanceService {
               userName: workshop.apprentice.name || "Apprenti",
               workshopTitle: workshop.title,
               feedbackUrl: `${APP_URL}/workshop/${workshop.id}/feedback`,
-            })
+            }),
           );
 
           await this.services.emailService.sendEmail({
@@ -140,7 +144,10 @@ export class MaintenanceService implements IMaintenanceService {
             text,
           });
         } catch (error) {
-          logger.error("Failed to send feedback reminder email", { error, workshopId: workshop.id });
+          logger.error("Failed to send feedback reminder email", {
+            error,
+            workshopId: workshop.id,
+          });
         }
       }
 
@@ -191,11 +198,14 @@ export class MaintenanceService implements IMaintenanceService {
           ? `Rappel : Votre atelier "${workshop.title}" commence dans 1 heure !`
           : `Rappel : Votre atelier "${workshop.title}" commence demain`;
 
-        const formattedDate = new Date(workshop.date).toLocaleDateString('fr-FR', { 
-          weekday: 'long', 
-          day: 'numeric', 
-          month: 'long' 
-        });
+        const formattedDate = new Date(workshop.date).toLocaleDateString(
+          "fr-FR",
+          {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          },
+        );
 
         const { html, text } = await renderEmailTemplate(
           React.createElement(WorkshopReminderEmail, {
@@ -204,7 +214,7 @@ export class MaintenanceService implements IMaintenanceService {
             date: formattedDate,
             time: workshop.time || "Heure à confirmer",
             workshopUrl: `${APP_URL}/workshop/${workshop.id}`,
-          })
+          }),
         );
 
         const emailResult = await this.services.emailService.sendEmail({
@@ -220,7 +230,10 @@ export class MaintenanceService implements IMaintenanceService {
           result.errors++;
         }
       } catch (error) {
-        logger.error("Error sending workshop reminder", { workshopId: workshop.id, error });
+        logger.error("Error sending workshop reminder", {
+          workshopId: workshop.id,
+          error,
+        });
         result.errors++;
       }
     }
@@ -241,10 +254,24 @@ export class MaintenanceService implements IMaintenanceService {
 
     for (const workshop of eligibleWorkshops) {
       try {
+        const accessWindow = calculateDailyRoomAccessWindow({
+          date: workshop.date,
+          time: workshop.time,
+          duration: workshop.duration,
+        });
+        if (!accessWindow) {
+          errorCount++;
+          logger.error(
+            `Cannot compute Daily access window for workshop ${workshop.id}`,
+          );
+          continue;
+        }
+
         const roomResult =
           await this.services.dailyService.getOrCreateRoomForWorkshop(
             workshop.id,
-            workshop.title
+            workshop.title,
+            accessWindow,
           );
 
         if (roomResult.ok) {
@@ -255,11 +282,15 @@ export class MaintenanceService implements IMaintenanceService {
           generatedCount++;
         } else {
           errorCount++;
-          logger.error(`Failed to generate room for workshop ${workshop.id}: ${roomResult.error}`);
+          logger.error(
+            `Failed to generate room for workshop ${workshop.id}: ${roomResult.error}`,
+          );
         }
       } catch (error: any) {
         errorCount++;
-        logger.error(`Error processing workshop ${workshop.id}: ${error.message}`);
+        logger.error(
+          `Error processing workshop ${workshop.id}: ${error.message}`,
+        );
       }
     }
 
@@ -287,7 +318,8 @@ export class MaintenanceService implements IMaintenanceService {
     });
 
     const eligibleWorkshops = workshops.filter((workshop) => {
-      const lastActivity = (workshop as any).dailyRoomLastActivityAt || workshop.createdAt;
+      const lastActivity =
+        (workshop as any).dailyRoomLastActivityAt || workshop.createdAt;
       return lastActivity < cutoffTime;
     });
 
@@ -295,43 +327,9 @@ export class MaintenanceService implements IMaintenanceService {
     let errorCount = 0;
 
     for (const workshop of eligibleWorkshops) {
-      if (!workshop.dailyRoomId) continue;
-
-      try {
-        const roomInfo = await this.services.dailyService.getRoomInfo(
-          workshop.dailyRoomId
-        );
-
-        if (roomInfo.ok && roomInfo.data) {
-          const participantCount = roomInfo.data.participantCount || 0;
-          if (participantCount === 0) {
-            const deleteResult = await this.services.dailyService.deleteRoom(
-              workshop.dailyRoomId
-            );
-
-            if (deleteResult.ok) {
-              await this.prisma.workshop.update({
-                where: { id: workshop.id },
-                data: {
-                  dailyRoomId: null,
-                  dailyRoomLastActivityAt: null,
-                } as any,
-              });
-              closedCount++;
-            } else {
-              errorCount++;
-            }
-          } else {
-            await this.prisma.workshop.update({
-              where: { id: workshop.id },
-              data: { dailyRoomLastActivityAt: now } as any,
-            });
-          }
-        }
-      } catch (error: any) {
-        errorCount++;
-        logger.error(`Error cleaning up room for workshop ${workshop.id}: ${error.message}`);
-      }
+      const outcome = await this.tryCleanupInactiveDailyRoom(workshop, now);
+      if (outcome === "closed") closedCount++;
+      if (outcome === "error") errorCount++;
     }
 
     return {
@@ -341,6 +339,55 @@ export class MaintenanceService implements IMaintenanceService {
     };
   }
 
+  private async tryCleanupInactiveDailyRoom(
+    workshop: { id: string; dailyRoomId: string | null },
+    now: Date,
+  ): Promise<"closed" | "error" | "noop"> {
+    if (!workshop.dailyRoomId) {
+      return "noop";
+    }
+
+    try {
+      const roomInfo = await this.services.dailyService.getRoomInfo(
+        workshop.dailyRoomId,
+      );
+
+      if (!roomInfo.ok || !roomInfo.data) {
+        return "noop";
+      }
+
+      const participantCount = roomInfo.data.participantCount || 0;
+      if (participantCount !== 0) {
+        await this.prisma.workshop.update({
+          where: { id: workshop.id },
+          data: { dailyRoomLastActivityAt: now } as any,
+        });
+        return "noop";
+      }
+
+      const deleteResult = await this.services.dailyService.deleteRoom(
+        workshop.dailyRoomId,
+      );
+      if (!deleteResult.ok) {
+        return "error";
+      }
+
+      await this.prisma.workshop.update({
+        where: { id: workshop.id },
+        data: {
+          dailyRoomId: null,
+          dailyRoomLastActivityAt: null,
+        } as any,
+      });
+      return "closed";
+    } catch (error: any) {
+      logger.error(
+        `Error cleaning up room for workshop ${workshop.id}: ${error.message}`,
+      );
+      return "error";
+    }
+  }
+
   async processCashbackMaintenance(): Promise<{
     processed: number;
     failed: number;
@@ -348,13 +395,16 @@ export class MaintenanceService implements IMaintenanceService {
     integrityIssues: number;
   }> {
     // 1. Process queue
-    const queueResult = await this.services.workshopCashbackService.processQueuedCashbacks();
-    
+    const queueResult =
+      await this.services.workshopCashbackService.processQueuedCashbacks();
+
     // 2. Retry failed
-    const retryResult = await this.services.workshopCashbackService.retryFailedCashbacks();
-    
+    const retryResult =
+      await this.services.workshopCashbackService.retryFailedCashbacks();
+
     // 3. Check integrity
-    const integrityCheck = await this.services.workshopCashbackService.checkDataIntegrity();
+    const integrityCheck =
+      await this.services.workshopCashbackService.checkDataIntegrity();
 
     return {
       processed: queueResult.ok ? queueResult.data.processed : 0,
@@ -365,7 +415,8 @@ export class MaintenanceService implements IMaintenanceService {
   }
 
   async retryFailedCashbacks(): Promise<{ retried: number; errors: number }> {
-    const retryResult = await this.services.workshopCashbackService.retryFailedCashbacks();
+    const retryResult =
+      await this.services.workshopCashbackService.retryFailedCashbacks();
     return {
       retried: retryResult.ok ? retryResult.data.retried : 0,
       errors: retryResult.ok ? 0 : 1,
@@ -373,7 +424,8 @@ export class MaintenanceService implements IMaintenanceService {
   }
 
   async checkCashbackIntegrity(): Promise<{ issues: number }> {
-    const integrityCheck = await this.services.workshopCashbackService.checkDataIntegrity();
+    const integrityCheck =
+      await this.services.workshopCashbackService.checkDataIntegrity();
     return {
       issues: integrityCheck.ok ? integrityCheck.data.length : 0,
     };

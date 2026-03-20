@@ -3,23 +3,33 @@ import { success } from "../../../common";
 import { handleError, createErrorContext } from "../../../common/error-handler";
 import type { IMentorWorkshopService } from "./mentor-workshop.service.interface";
 import type { IMentorRepository } from "../../repositories/mentor.repository.interface";
+import type { IWorkshopVideoLinkService } from "../../../workshops/services/video/workshop-video-link.service.interface";
+import type { WorkshopEntity } from "../../../workshops/repositories/workshop.repository.interface";
 import {
   verifyMentorAccess,
   calculateAverageRating,
 } from "../../utils/mentor-helpers";
-import { WorkshopResponseDTO, mapWorkshopToDTO } from "../../../workshops/dto/workshop.dto";
+import {
+  WorkshopResponseDTO,
+  mapWorkshopToDTO,
+} from "../../../workshops/dto/workshop.dto";
 
 export class MentorWorkshopService implements IMentorWorkshopService {
-  constructor(private readonly mentorRepository: IMentorRepository) {}
+  constructor(
+    private readonly mentorRepository: IMentorRepository,
+    private readonly workshopVideoLinkService: IWorkshopVideoLinkService,
+  ) {}
 
-  async getMentorPublicWorkshops(mentorId: string): Promise<Result<{
-    upcoming: WorkshopResponseDTO[];
-    past: WorkshopResponseDTO[];
-  }>> {
+  async getMentorPublicWorkshops(mentorId: string): Promise<
+    Result<{
+      upcoming: WorkshopResponseDTO[];
+      past: WorkshopResponseDTO[];
+    }>
+  > {
     try {
       const mentorCheck = await verifyMentorAccess(
         this.mentorRepository,
-        mentorId
+        mentorId,
       );
       if (!mentorCheck.ok) {
         return mentorCheck as any;
@@ -28,9 +38,8 @@ export class MentorWorkshopService implements IMentorWorkshopService {
       const now = new Date();
       now.setHours(0, 0, 0, 0);
 
-      const workshops = await this.mentorRepository.findMentorPublicWorkshops(
-        mentorId
-      );
+      const workshops =
+        await this.mentorRepository.findMentorPublicWorkshops(mentorId);
 
       const upcoming: WorkshopResponseDTO[] = [];
       const past: WorkshopResponseDTO[] = [];
@@ -44,8 +53,11 @@ export class MentorWorkshopService implements IMentorWorkshopService {
         const averageRating =
           ratings.length > 0 ? calculateAverageRating(ratings) : null;
 
+        const filtered = this.workshopVideoLinkService.filterVideoLink(
+          workshop as WorkshopEntity,
+        );
         const workshopDTO = mapWorkshopToDTO({
-          ...workshop,
+          ...filtered,
           feedbackCount: feedbacks.length,
           averageRating,
         });
@@ -66,7 +78,7 @@ export class MentorWorkshopService implements IMentorWorkshopService {
         error,
         createErrorContext("getMentorPublicWorkshops", {
           resourceId: mentorId,
-        })
+        }),
       );
     }
   }
