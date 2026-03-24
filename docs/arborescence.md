@@ -6,17 +6,29 @@ Structure du monorepo : vue macro (niveau projet) et vue micro (détail des doss
 
 ## Sommaire
 
-- [Vue macro](#vue-macro)
-- [Légende](#légende)
-- [Schéma des dépendances](#schéma-des-dépendances)
-- [Schéma système et flux](#schéma-système-et-flux)
-- [Vue micro — Racine](#vue-micro--racine)
-- [Vue micro — Shared](#vue-micro--shared)
-- [Vue micro — Front](#vue-micro--front)
-- [Vue micro — Back](#vue-micro--back)
-- [Index rapide](#index-rapide)
-- [Conventions de nommage](#conventions-de-nommage)
-- [Liens](#liens)
+- [Arborescence LearnSup](#arborescence-learnsup)
+  - [Sommaire](#sommaire)
+  - [Légende](#légende)
+  - [Vue macro](#vue-macro)
+  - [Schéma des dépendances](#schéma-des-dépendances)
+  - [Schéma système et flux](#schéma-système-et-flux)
+    - [Flux de routage back (entrée requête)](#flux-de-routage-back-entrée-requête)
+  - [Vue micro — Racine](#vue-micro--racine)
+    - [`infra/` — Structure détaillée](#infra--structure-détaillée)
+  - [Vue micro — Shared](#vue-micro--shared)
+  - [Vue micro — App](#vue-micro--app)
+    - [Schéma : hiérarchie des composants front](#schéma--hiérarchie-des-composants-front)
+    - [`app/src/lib/`, `hooks/`](#appsrclib-hooks)
+  - [Vue micro — Back](#vue-micro--back)
+    - [Schéma : flux Router → Service → Repository](#schéma--flux-router--service--repository)
+    - [`back/src/app/` — Routes API](#backsrcapp--routes-api)
+    - [`back/src/routers/` — tRPC](#backsrcrouters--trpc)
+    - [`back/src/lib/` — Services et infrastructure](#backsrclib--services-et-infrastructure)
+  - [Index rapide](#index-rapide)
+    - [Par besoin](#par-besoin)
+    - [Cas d'usage](#cas-dusage)
+  - [Conventions de nommage](#conventions-de-nommage)
+  - [Liens](#liens)
 
 ---
 
@@ -34,17 +46,14 @@ Structure du monorepo : vue macro (niveau projet) et vue micro (détail des doss
 
 ```
 ls_app/
-├── back/                    # Backend Next.js (API, tRPC, Prisma)
-├── front/                   # Frontend Next.js (App Router, React)
+├── app/                     # Application Next.js (Front + Back tRPC/API)
 ├── shared/                  # Package partagé (validation Zod, types, constantes)
 ├── infra/                   # Infrastructure (Docker, Grafana, Prometheus)
-├── cypress/                 # Tests E2E Cypress
 ├── docs/                    # Documentation technique
 ├── .github/                 # CI/CD (workflows, linters)
 ├── package.json             # Racine pnpm workspace
 ├── pnpm-workspace.yaml
 ├── turbo.json
-├── cypress.config.js
 └── README.md
 ```
 ---
@@ -55,15 +64,12 @@ ls_app/
 flowchart TB
   subgraph Workspace["pnpm workspace"]
     shared["shared"]
-    front["front"]
-    back["back"]
+    app["app"]
   end
 
-  front --> shared
-  back --> shared
+  app --> shared
 
-  shared -.->|"Zod, types, constantes"| front
-  shared -.->|"Zod, types, constantes"| back
+  shared -.->|"Zod, types, constantes"| app
 ```
 
 ---
@@ -111,8 +117,7 @@ flowchart TB
 
 ```
 ls_app/
-├── back/
-├── front/
+├── app/
 ├── shared/
 │   ├── src/
 │   │   ├── validation/      # Schémas Zod
@@ -122,7 +127,7 @@ ls_app/
 ├── infra/
 │   └── docker/
 │       ├── back/
-│       ├── front/
+│       ├── app/
 │       ├── grafana/
 │       └── prometheus/
 ├── cypress/
@@ -144,7 +149,7 @@ infra/
     ├── back/
     │   ├── Dockerfile.dev
     │   └── Dockerfile.prod
-    ├── front/
+    ├── app/
     │   ├── Dockerfile.dev
     │   └── Dockerfile.prod
     ├── grafana/
@@ -161,7 +166,7 @@ infra/
 
 ## Vue micro — Shared
 
-Package workspace `@ls-app/shared` : source de vérité pour la validation, les types et les constantes partagés entre front et back. **À ne pas confondre** avec `front/src/shared/` (qui n'existe pas) : le front importe via `@ls-app/shared`.
+Package workspace `@ls-app/shared` : source de vérité pour la validation, les types et les constantes partagés entre front et back. **À ne pas confondre** avec `app/src/shared/` (qui n'existe pas) : l'app importe via `@ls-app/shared`.
 
 ```
 shared/
@@ -195,10 +200,10 @@ shared/
 
 ---
 
-## Vue micro — Front
+## Vue micro — App
 
 ```
-front/
+app/
 ├── public/                  # Assets statiques
 │   ├── typo/omnes/          # Police Omnes
 │   ├── logo/
@@ -249,7 +254,7 @@ flowchart TB
   Domain --> UI
 ```
 
-### `front/src/lib/`, `hooks/`
+### `app/src/lib/`, `hooks/`
 
 > **Note** : Le front n'a pas de dossier `shared/` local. Les schémas Zod, types et constantes sont importés depuis le package `@ls-app/shared` (voir [Vue micro — Shared](#vue-micro--shared)).
 
@@ -463,11 +468,11 @@ lib/
 
 | Besoin | Emplacement |
 |--------|-------------|
-| Page d'accueil | `front/src/app/page.tsx` |
-| Layout global | `front/src/app/layout.tsx` |
-| Sidebar | `front/src/components/sidebar.tsx` |
-| Client tRPC | `front/src/utils/trpc.ts` |
-| Auth client | `front/src/lib/auth-client.ts` |
+| Page d'accueil | `app/src/app/page.tsx` |
+| Layout global | `app/src/app/layout.tsx` |
+| Sidebar | `app/src/components/sidebar.tsx` |
+| Client tRPC | `app/src/utils/trpc.ts` |
+| Auth client | `app/src/lib/auth-client.ts` |
 | Point d'entrée back | `back/server.ts` |
 | AppRouter tRPC | `back/src/routers/index.ts` |
 | Schéma Prisma | `back/.prisma/schema/schema.prisma` |
@@ -482,8 +487,8 @@ lib/
 | Où sont les types partagés ? | `shared/src/types/` |
 | Où ajouter une route API ? | `back/src/app/api/` |
 | Où ajouter une procédure tRPC ? | `back/src/routers/` |
-| Où ajouter une page front ? | `front/src/app/[route]/page.tsx` |
-| Où sont les composants UI réutilisables ? | `front/src/components/ui/` |
+| Où ajouter une page front ? | `app/src/app/[route]/page.tsx` |
+| Où sont les composants UI réutilisables ? | `app/src/components/ui/` |
 | Où configurer l'auth ? | `back/src/lib/auth.ts` |
 
 ---
@@ -506,6 +511,6 @@ lib/
 ## Liens
 
 - [Architecture](architecture.md) — schémas système détaillés, flux auth, atelier, messagerie, etc.
-- [Front](front.md)
+- [App](app.md)
 - [Back](back.md)
 - [Référence](reference.md)
