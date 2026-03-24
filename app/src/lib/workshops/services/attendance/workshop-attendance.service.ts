@@ -1,0 +1,272 @@
+import type { Result } from "../../../common";
+import { failure, success } from "../../../common";
+import { handleError, createErrorContext } from "../../../common/error-handler";
+import type {
+  IWorkshopAttendanceService,
+  WorkshopParticipant,
+  AttendanceUpdateResult,
+} from "./workshop-attendance.service.interface";
+import type { IWorkshopService } from "../workshop.service.interface";
+import type { IWorkshopRepository } from "../../repositories/workshop.repository.interface";
+import type { IUserTitleService } from "../../../users/services/profile/user-title.service.interface";
+import type { IWorkshopCashbackService } from "../rewards/workshop-cashback.service.interface";
+import type { IWorkshopNoShowPenaltyService } from "../rewards/workshop-no-show-penalty.service.interface";
+import type { PrismaClient } from '@/lib/prisma-server';
+import { calculateWorkshopEndTime } from "../../utils/workshop-helpers";
+import { logger } from "../../../common/logger";
+
+export class WorkshopAttendanceService implements IWorkshopAttendanceService {
+  constructor(
+    private readonly workshopService: IWorkshopService,
+    private readonly workshopRepository: IWorkshopRepository,
+    private readonly userTitleService: IUserTitleService,
+    private readonly workshopCashbackService: IWorkshopCashbackService,
+    private readonly workshopNoShowPenaltyService: IWorkshopNoShowPenaltyService,
+    private readonly prisma: PrismaClient
+  ) {}
+
+  async getWorkshopParticipants(
+    userId: string,
+    workshopId: string
+  ): Promise<Result<{ participants: WorkshopParticipant[] }>> {
+    try {
+      const workshopResult =
+        await this.workshopService.getWorkshopById(workshopId);
+      if (!workshopResult.ok) return workshopResult as any;
+      const workshop = workshopResult.data;
+
+      if (workshop.creatorId !== userId) {
+        return failure("You are not the creator of this workshop", 403);
+      }
+
+      const participants: WorkshopParticipant[] = [];
+
+      if (workshop.apprenticeId && workshop.apprentice) {
+        participants.push({
+          id: workshop.apprentice.userId,
+          name: workshop.apprentice.name || null,
+          email: workshop.apprentice.email || null,
+          title: workshop.apprentice.title || null,
+          attendanceStatus:
+            (workshop.apprenticeAttendanceStatus as
+              | "PENDING"
+              | "PRESENT"
+              | "NO_SHOW"
+              | null) || "PENDING",
+        });
+      }
+
+      return success({ participants });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("getWorkshopParticipants", {
+          userId,
+          resourceId: workshopId,
+        })
+      );
+    }
+  }
+
+  async updateAttendance(
+    userId: string,
+    workshopId: string,
+    participantId: string,
+    attendanceStatus: "PENDING" | "PRESENT" | "NO_SHOW"
+  ): Promise<Result<AttendanceUpdateResult>> {
+    try {
+      const workshopResult =
+        await this.workshopService.getWorkshopById(workshopId);
+      if (!workshopResult.ok) return workshopResult as any;
+      const workshop = workshopResult.data;
+
+      if (workshop.creatorId !== userId) {
+        return failure("You are not the creator of this workshop", 403);
+      }
+
+      if (
+        !workshop.apprenticeId ||
+        workshop.apprentice?.userId !== participantId
+      ) {
+        return failure("Participant not found", 404);
+      }
+
+      if (
+        (attendanceStatus === "PRESENT" || attendanceStatus === "NO_SHOW") &&
+        workshop.date &&
+        workshop.time &&
+        workshop.duration
+      ) {
+        let endTime: Date | null = null;
+        try {
+          endTime = calculateWorkshopEndTime(
+            workshop.date,
+            workshop.time,
+            workshop.duration
+          );
+        } catch (e) {
+          logger.error("Error calculating end time", e);
+        }
+
+        if (!endTime) {
+          return failure(
+            "Impossible de calculer l'heure de fin de l'atelier",
+            400
+          );
+        }
+        if (endTime > new Date()) {
+          return failure(
+            "La présence ou l'absence ne peut être confirmée qu'après la fin de l'atelier",
+            400
+          );
+        }
+      }
+
+      const previousStatus = workshop.apprenticeAttendanceStatus;
+      const shouldProcessCashback =
+        attendanceStatus === "PRESENT" &&
+        previousStatus !== "PRESENT" &&
+        workshop.date &&
+        workshop.time &&
+        workshop.duration;
+
+      const shouldApplyPenalty =
+        attendanceStatus === "NO_SHOW" && previousStatus !== "NO_SHOW";
+
+      let workshopEndTime: Date | null = null;
+      if (shouldProcessCashback) {
+        workshopEndTime = calculateWorkshopEndTime(
+          workshop.date,
+          workshop.time,
+          workshop.duration
+        );
+      }
+
+      await this.prisma.workshop.update({
+        where: { id: workshopId },
+        data: { apprenticeAttendanceStatus: attendanceStatus },
+      });
+
+      let titleChanged = false;
+      let newTitle: string | null = null;
+
+      if (shouldProcessCashback && workshop.apprentice?.userId) {
+        const titleResult =
+          await this.userTitleService.updateTitleBasedOnWorkshops(
+            workshop.apprentice.userId
+          );
+
+        if (titleResult.ok && titleResult.data.titleChanged) {
+          titleChanged = true;
+          newTitle = titleResult.data.newTitle;
+        }
+
+        if (workshopEndTime) {
+          try {
+            await this.workshopCashbackService.processCashback(
+              workshopId,
+              workshop.apprentice.userId,
+              workshopEndTime
+            );
+          } catch (error) {
+            logger.error("Failed to process cashback", { workshopId, error });
+          }
+        }
+      }
+
+      if (shouldApplyPenalty && workshop.apprentice?.userId) {
+        try {
+          await this.workshopNoShowPenaltyService.applyPenalty(
+            workshopId,
+            workshop.apprentice.userId
+          );
+        } catch (error) {
+          logger.error("Failed to apply penalty", { workshopId, error });
+        }
+      }
+
+      return success({ success: true, titleChanged, newTitle });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("updateAttendance", {
+          userId,
+          resourceId: workshopId,
+        })
+      );
+    }
+  }
+
+  async confirmAttendance(
+    userId: string,
+    workshopId: string
+  ): Promise<Result<{ success: boolean; message: string }>> {
+    try {
+      const workshopResult =
+        await this.workshopService.getWorkshopById(workshopId);
+      if (!workshopResult.ok) return workshopResult as any;
+      const workshop = workshopResult.data;
+
+      if (workshop.creatorId !== userId) {
+        return failure("You are not the creator of this workshop", 403);
+      }
+
+      if (!workshop.date || !workshop.time || !workshop.duration) {
+        return failure(
+          "Le workshop doit avoir une date, une heure et une durée définies pour confirmer l'attendance",
+          400
+        );
+      }
+
+      const workshopEndTime = calculateWorkshopEndTime(
+        workshop.date,
+        workshop.time,
+        workshop.duration
+      );
+
+      if (!workshopEndTime) {
+        return failure(
+          "Impossible de calculer l'heure de fin du workshop",
+          500
+        );
+      }
+
+      if (new Date() < workshopEndTime) {
+        return failure(
+          `Le workshop n'est pas encore terminé. L'heure de fin prévue est le ${workshopEndTime.toLocaleString("fr-FR")}`,
+          400
+        );
+      }
+
+      if (
+        workshop.apprenticeId &&
+        workshop.apprenticeAttendanceStatus === "PENDING"
+      ) {
+        await this.workshopRepository.update(workshopId, {
+          apprenticeAttendanceStatus: "NO_SHOW",
+        } as any);
+
+        if (workshop.apprentice?.userId) {
+          await this.workshopNoShowPenaltyService.applyPenalty(
+            workshopId,
+            workshop.apprentice.userId
+          );
+        }
+      }
+
+      await this.workshopRepository.update(workshopId, {
+        status: "COMPLETED",
+      });
+
+      return success({ success: true, message: "Attendance confirmed" });
+    } catch (error) {
+      return handleError(
+        error,
+        createErrorContext("confirmAttendance", {
+          userId,
+          resourceId: workshopId,
+        })
+      );
+    }
+  }
+}

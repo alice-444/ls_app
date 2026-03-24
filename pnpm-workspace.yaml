@@ -1,6 +1,5 @@
 packages:
-  - front
-  - back
+  - app
   - shared
 
 onlyBuiltDependencies:

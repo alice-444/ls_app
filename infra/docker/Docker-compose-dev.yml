@@ -3,86 +3,116 @@ services:
   frontend:
     build:
       context: ../../
-      dockerfile: ./infra/docker/front/Dockerfile.dev
+      dockerfile: ./infra/docker/app/prod/Dockerfile
+    # image: miho11/front_ls:${FRONT_IMAGE_TAG:-latest}
     ports:
       - "3001:3001"
     environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_SERVER_URL=http://localhost:3000
-    # volumes:
-    #   - ../../front:/app
-    depends_on:
-      - backend
-    networks:
-      - app-network
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: https://app.learnsup.fr/api/auth
+      CORS_ORIGIN: https://app.learnsup.fr
+      TRUST_PROXY: "true"
+      NEXT_PUBLIC_SERVER_URL: https://app.learnsup.fr
+      NEXT_PUBLIC_SOCKET_URL: https://app.learnsup.fr
+      INTERNAL_API_URL: "http://localhost:3001"
+      SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+      CRON_SECRET: ${CRON_SECRET}
+      POLAR_LEARNSUP: ${POLAR_LEARNSUP}
+      POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
+      SEND_EMAILS: ${SEND_EMAILS}
+      DAILY_API_KEY: ${DAILY_API_KEY}
+      DAILY_DOMAIN: ${DAILY_DOMAIN}
+      DAILY_WEBHOOK_SECRET: ${DAILY_WEBHOOK_SECRET}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    # depends_on:
+    #   - backend
+    # networks:
+    #   - app-network
 
   # Service Backend
-  backend:
-    build:
-      context: ../../
-      dockerfile: ./infra/docker/back/Dockerfile.dev
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - NEXT_TELEMETRY_DISABLED=1
-      - PORT=3000
-      - DATABASE_URL=${DATABASE_URL}
-      - CORS_ORIGIN=${CORS_ORIGIN}
-      - CRON_SECRET=${CRON_SECRET}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
-    volumes:
-      # - ../../:/app
-      - /app/node_modules
-    networks:
-      - app-network
-    env_file:
-      - .env
+  # backend:
+  #   build:
+  #     context: ../../
+  #     dockerfile: ./infra/docker/back/prod/Dockerfile
+  #   # image: miho11/back_ls:${BACK_IMAGE_TAG:-latest}
+  #   ports:
+  #     - "4500:4500"
+  #   environment:
+  #     DATABASE_URL: ${DATABASE_URL}
+  #     CORS_ORIGIN: ${CORS_ORIGIN}
+  #     CRON_SECRET: ${CRON_SECRET}
+  #     BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+  #     BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+  #     NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+  #     POLAR_LEARNSUP: ${POLAR_LEARNSUP}
+  #     POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN}
+  #     RESEND_API_KEY: ${RESEND_API_KEY}
+  #     RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
+  #     SEND_EMAILS: ${SEND_EMAILS}
+  #     DAILY_API_KEY: ${DAILY_API_KEY}
+  #     DAILY_DOMAIN: ${DAILY_DOMAIN}
+  #     DAILY_WEBHOOK_SECRET: ${DAILY_WEBHOOK_SECRET}
+  #     CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+  #     CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+  #     CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+  #     PORT_BACKEND: 4500
+  #     HOSTNAME_BACKEND: ${HOSTNAME_BACKEND}
+  #   volumes:
+  #     - /app/node_modules
+    # networks:
+    #   - app-network
 
   # Service Prometheus
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
-      - "--web.console.templates=/usr/share/prometheus/consoles"
-    networks:
-      - app-network
-    depends_on:
-      - backend
+#   prometheus:
+#     image: prom/prometheus:latest
+#     container_name: prometheus
+#     ports:
+#       - "9090:9090"
+#     volumes:
+#       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#       - prometheus_data:/prometheus
+#     command:
+#       - "--config.file=/etc/prometheus/prometheus.yml"
+#       - "--storage.tsdb.path=/prometheus"
+#       - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+#       - "--web.console.templates=/usr/share/prometheus/consoles"
+#     networks:
+#       - app-network
+#     depends_on:
+#       - backend
 
-  # Service Grafana
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3003:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-    networks:
-      - app-network
-    depends_on:
-      - prometheus
+#   # Service Grafana
+#   grafana:
+#     image: grafana/grafana:latest
+#     container_name: grafana
+#     ports:
+#       - "3003:3000"
+#     environment:
+#       - GF_SECURITY_ADMIN_USER=admin
+#       - GF_SECURITY_ADMIN_PASSWORD=admin
+#       - GF_USERS_ALLOW_SIGN_UP=false
+#     volumes:
+#       - grafana_data:/var/lib/grafana
+#       - ./grafana/provisioning:/etc/grafana/provisioning
+#       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+#     networks:
+#       - app-network
+#     depends_on:
+#       - prometheus
 
-volumes:
-  prometheus_data:
-  grafana_data:
+# volumes:
+#   prometheus_data:
+#   grafana_data:
 
-networks:
-  app-network:
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.enable_ip_masquerade: "true"
+# networks:
+#   app-network:
+#     driver: bridge
+#     driver_opts:
+#       com.docker.network.bridge.enable_ip_masquerade: "true"

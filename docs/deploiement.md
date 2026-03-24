@@ -87,8 +87,7 @@ flowchart TB
     end
 
     subgraph Docker["Docker Compose"]
-      Front["frontend\n:3001"]
-      Back["backend\n:4500\n(API + Socket.IO)"]
+      App["app\n:3001\n(Front + API + Socket.IO)"]
     end
 
     subgraph External["Externe"]
@@ -105,16 +104,13 @@ flowchart TB
   end
 
   User -->|HTTPS| TLS
-  TLS --> Front
-  TLS --> Back
-  Front -->|API| Back
-  Back --> DB
-  Back --> Polar
-  Back --> Resend
-  Back --> Daily
-  Back --> Cloudinary
-  Front --> Sentry
-  Back --> Sentry
+  TLS --> App
+  App --> DB
+  App --> Polar
+  App --> Resend
+  App --> Daily
+  App --> Cloudinary
+  App --> Sentry
   TLS -.->|ACME| ACME
 ```
 
@@ -128,13 +124,11 @@ flowchart TB
 flowchart TB
   subgraph Serveur
     T[Traefik\nPort 443]
-    F[Frontend\nPort 3001]
-    B[Backend\nPort 4500]
+    A[App\nPort 3001]
   end
   DB[(PostgreSQL\nexterne)]
-  T --> F
-  T --> B
-  B --> DB
+  T --> A
+  A --> DB
 ```
 
 ---
@@ -148,11 +142,11 @@ flowchart LR
   A[Dev local] --> B[Dev Docker] --> C[Production]
 ```
 
-| Environnement | Front | Back | Base | Accès |
-| ------------- | ----- | ---- | ---- | ----- |
-| Dev local | :3001 | :4500 | Local | localhost |
-| Dev Docker | :3001 | :3000 | .env | localhost |
-| Production | :3001 | :4500 | Externe | HTTPS |
+| Environnement | App | Base | Accès |
+| ------------- | --- | ---- | ----- |
+| Dev local | :3001 | Local | localhost |
+| Dev Docker | :3001 | .env | localhost |
+| Production | :3001 | Externe | HTTPS |
 
 ---
 
@@ -160,11 +154,10 @@ flowchart LR
 
 | Service | Image | Port interne | Rôle |
 | ------- | ----- | ------------ | ---- |
-| **frontend** | `miho11/front_ls:latest` | 3001 | Application Next.js (client) |
-| **backend** | `miho11/back_ls:latest` | 4500 | API tRPC, REST, Socket.IO, Prisma |
+| **app** | `miho11/front_ls:latest` | 3001 | Application Next.js Unifiée (Client + API + Socket.IO) |
 | **traefik** | `traefik:v3.2.1` | 80, 443 | Reverse proxy, TLS, routage |
 
-**Backend** : un seul processus sert l’API HTTP et Socket.IO (même port 4500, path `/socket.io`).
+**App** : un seul processus sert le Front, l'API HTTP et Socket.IO (port 3001, path `/socket.io`).
 
 ---
 
@@ -173,24 +166,23 @@ flowchart LR
 ### Développement local
 
 - **Commande** : `pnpm dev` (Turborepo)
-- **Front** : `http://localhost:3001`
-- **Back** : `http://localhost:4500` (ou 3000 selon config)
-- **Socket.IO** : même URL que le back (`/socket.io`)
+- **App** : `http://localhost:3001`
+- **Socket.IO** : même URL (`/socket.io`)
 - **Base** : PostgreSQL local (`pnpm db:push`)
 
 ### Développement Docker
 
 - **Fichier** : `infra/docker/Docker-compose-dev.yml`
-- **Services** : frontend, backend, Prometheus, Grafana
+- **Services** : app, Prometheus, Grafana
 - **Réseau** : `app-network`
 - **Commandes** : `docker compose -f Docker-compose-dev.yml up -d`
 
 ### Production (Docker)
 
 - **Fichier** : `infra/docker/docker-compose-prod.yml`
-- **Services** : frontend, backend, traefik
+- **Services** : app, traefik
 - **Réseau** : `vps-mds` (externe)
-- **Images** : Docker Hub `miho11/front_ls`, `miho11/back_ls`
+- **Images** : Docker Hub `miho11/front_ls`
 
 ---
 
@@ -202,16 +194,13 @@ flowchart LR
 sequenceDiagram
   participant U as Utilisateur
   participant T as Traefik
-  participant F as Frontend
-  participant B as Backend
+  participant A as App
   participant D as Base de données
   U->>T: HTTPS
-  T->>F: Page web
-  U->>T: Action (clic, formulaire)
-  T->>B: API
-  B->>D: Requête
-  D->>B: Données
-  B->>T: Réponse
+  T->>A: Page web / API
+  A->>D: Requête
+  D->>A: Données
+  A->>T: Réponse
   T->>U: Mise à jour
 ```
 
@@ -227,14 +216,12 @@ flowchart LR
   end
 
   subgraph Actions["GitHub Actions"]
-    BuildBack["Build & Push Backend"]
-    BuildFront["Build & Push Frontend"]
+    BuildApp["Build & Push App"]
     Deploy["Deploy via SSH"]
   end
 
   subgraph Registry["Docker Hub"]
-    ImgBack["miho11/back_ls"]
-    ImgFront["miho11/front_ls"]
+    ImgApp["miho11/front_ls"]
   end
 
   subgraph VPS["VPS"]
@@ -242,12 +229,9 @@ flowchart LR
     Up["docker compose up -d"]
   end
 
-  Tag --> BuildBack
-  Tag --> BuildFront
-  BuildBack --> ImgBack
-  BuildFront --> ImgFront
-  ImgBack --> Deploy
-  ImgFront --> Deploy
+  Tag --> BuildApp
+  BuildApp --> ImgApp
+  ImgApp --> Deploy
   Deploy --> Pull
   Pull --> Up
 ```
@@ -423,9 +407,8 @@ Le point d'entrée du conteneur (`CMD ["./start.sh"]`) exécute les étapes suiv
 | Étape | Workflow | Action |
 | ----- | -------- | ------ |
 | 1 | `release.yml` | Déclenché par tag `[0-9]+.[0-9]+.[0-9]+` |
-| 2 | Build Backend | Build Docker `infra/docker/back/prod/Dockerfile` → push `miho11/back_ls:latest` |
-| 3 | Build Frontend | Build Docker `infra/docker/front/prod/Dockerfile` → push `miho11/front_ls:latest` |
-| 4 | Deploy | SSH vers VPS → `git pull` → `docker compose -f docker-compose-prod.yml up -d` |
+| 2 | Build App | Build Docker `infra/docker/app/prod/Dockerfile` → push `miho11/front_ls:latest` |
+| 3 | Deploy | SSH vers VPS → `git pull` → `docker compose -f docker-compose-prod.yml up -d` |
 
 **Secrets GitHub** : `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `SSH_HOST`, `SSH_USERNAME`, `SSH_PASSWORD`.
 
@@ -433,26 +416,20 @@ Le point d'entrée du conteneur (`CMD ["./start.sh"]`) exécute les étapes suiv
 
 ## Variables d'environnement (production)
 
-### Frontend
+### Application Unifiée (App)
 
 | Variable | Description |
 | -------- | ----------- |
-| `NEXT_PUBLIC_SERVER_URL` | URL publique du backend (ex. `https://api.learnsup.example.com`) |
-| `NEXT_PUBLIC_SOCKET_URL` | URL du backend (Socket.IO sur le même host) |
+| `NEXT_PUBLIC_SERVER_URL` | URL publique de l'app (ex. `https://app.learnsup.example.com`) |
+| `NEXT_PUBLIC_SOCKET_URL` | URL de l'app (Socket.IO sur le même host) |
 | `NEXT_PUBLIC_SENTRY_DSN` | DSN Sentry (optionnel) |
 | `SENTRY_AUTH_TOKEN` | Token Sentry pour upload sourcemaps (build) |
-
-### Backend
-
-| Variable | Description |
-| -------- | ----------- |
 | `DATABASE_URL` | URL PostgreSQL |
-| `CORS_ORIGIN` | Origine autorisée (URL du front) |
+| `CORS_ORIGIN` | Origine autorisée |
 | `CRON_SECRET` | Secret pour les routes `/api/cron/*` |
 | `BETTER_AUTH_SECRET` | Secret Better Auth (min 32 caractères) |
-| `BETTER_AUTH_URL` | URL publique du backend |
-| `PORT_BACKEND` | 4500 |
-| `HOSTNAME_BACKEND` | `0.0.0.0` |
+| `BETTER_AUTH_URL` | URL publique de l'app (ex. `https://app.learnsup.fr/api/auth`) |
+| `PORT` | 3001 |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Emails (Resend) |
 | `SEND_EMAILS` | `true` / `false` |
 | `DAILY_API_KEY`, `DAILY_DOMAIN`, `DAILY_WEBHOOK_SECRET` | Visio (Daily.co) |
@@ -463,8 +440,7 @@ Le point d'entrée du conteneur (`CMD ["./start.sh"]`) exécute les étapes suiv
 
 | Variable | Description |
 | -------- | ----------- |
-| `FRONTEND_URL` | Host du front (ex. `app.learnsup.example.com`) |
-| `BACKEND_URL` | Host du back (ex. `api.learnsup.example.com`) |
+| `FRONT_IMAGE_TAG` | Tag de l'image (ex. latest) |
 
 ---
 
@@ -472,14 +448,12 @@ Le point d'entrée du conteneur (`CMD ["./start.sh"]`) exécute les étapes suiv
 
 | Fichier | Rôle |
 | ------- | ---- |
-| `infra/docker/docker-compose-prod.yml` | Compose production (front, back, traefik) |
-| `infra/docker/Docker-compose-dev.yml` | Compose dev (front, back, Prometheus, Grafana) |
-| `infra/docker/back/prod/Dockerfile` | Image backend production |
-| `infra/docker/front/prod/Dockerfile` | Image frontend production |
-| `infra/docker/back/Dockerfile.dev` | Image backend dev |
-| `infra/docker/front/Dockerfile.dev` | Image frontend dev |
+| `infra/docker/docker-compose-prod.yml` | Compose production (app, traefik) |
+| `infra/docker/Docker-compose-dev.yml` | Compose dev (app, Prometheus, Grafana) |
+| `infra/docker/app/prod/Dockerfile` | Image app production |
+| `infra/docker/app/Dockerfile.dev` | Image app dev |
 | `.github/workflows/release.yml` | CI/CD : build, push, deploy |
-| `back/start.sh` | Script de démarrage back (migrations + serveur) |
+| `app/start.sh` | Script de démarrage app (migrations + serveur) |
 
 ---
 

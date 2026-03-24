@@ -226,7 +226,7 @@ Document de référence pour les technologies, langages et outils utilisés dans
 ## Liens
 
 - [Architecture](architecture.md)
-- [Front](front.md)
+- [App](app.md)
 - [Back](back.md)
 - [Référence](reference.md)
 

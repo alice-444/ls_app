@@ -18,3 +18,4 @@ coverage
 .alchemy
 .env
 .turbo
+.env.dev

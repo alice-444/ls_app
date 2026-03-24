@@ -1,0 +1,109 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { authClient } from "@/lib/auth-server-client";
+import { trpc } from "@/utils/trpc";
+import { PageContainer, SectionSidebar } from "@/components/shared/layout";
+import ShinyText from "@/components/ui/ShinyText";
+import { motion } from "framer-motion";
+import { BlockedUsersSection } from "@/components/domains/Settings/BlockedUsersSection";
+import { CreditsHistorySection } from "@/components/domains/Settings/CreditsHistorySection";
+import { SIDEBAR_ITEMS } from "@/components/domains/Settings/constants";
+import type { SettingsSection } from "@/components/domains/Settings/constants";
+import {
+  AccountSection,
+  PersonalInformationSection,
+  NotificationsSection,
+  SystemSettingsSection,
+  FeedbackSection,
+  SupportInfoSection,
+  ExportDataSection,
+} from "@/components/domains/Settings";
+
+export default function SettingsPage() {
+  const { data: session } = authClient.useSession();
+  const { data: profileData } = trpc.user.getProfile.useQuery(undefined, {
+    enabled: !!session?.user?.id,
+  });
+  const [activeSection, setActiveSection] = useState<SettingsSection>(
+    "informations-personnelles"
+  );
+  const [privacyMode, setPrivacyMode] = useState(false);
+
+  useEffect(() => {
+    const handleSectionChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ section: SettingsSection }>;
+      if (customEvent.detail?.section) {
+        setActiveSection(customEvent.detail.section);
+      }
+    };
+
+    window.addEventListener(
+      "settings:change-section",
+      handleSectionChange
+    );
+
+    return () => {
+      window.removeEventListener(
+        "settings:change-section",
+        handleSectionChange
+      );
+    };
+  }, []);
+
+  const sectionContent: Record<SettingsSection, React.ReactNode> = {
+    profil: (
+      <AccountSection
+        session={session}
+        profileData={profileData}
+        privacyMode={privacyMode}
+        setPrivacyMode={setPrivacyMode}
+      />
+    ),
+    "informations-personnelles": <PersonalInformationSection />,
+    "utilisateurs-bloques": <BlockedUsersSection />,
+    "mes-credits": <CreditsHistorySection />,
+    notifications: <NotificationsSection />,
+    "parametres-systeme": <SystemSettingsSection />,
+    feedback: <FeedbackSection />,
+    "support-info": <SupportInfoSection />,
+    "export-donnees": <ExportDataSection />,
+  };
+
+  return (
+    <PageContainer>
+      <motion.div
+        className="mb-6 sm:mb-8"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+          <ShinyText text="Paramètres" />
+        </h1>
+        <p className="text-base sm:text-lg text-ls-muted mt-2">
+          Gère tes préférences et paramètres de compte
+        </p>
+      </motion.div>
+
+      <motion.div
+        className="flex flex-col lg:flex-row gap-0 lg:gap-8"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
+        <SectionSidebar
+          items={SIDEBAR_ITEMS}
+          activeSection={activeSection}
+          onSelect={setActiveSection}
+        />
+
+        <div className="flex-1">
+          <div className="border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl p-8 shadow-xl">
+            {sectionContent[activeSection]}
+          </div>
+        </div>
+      </motion.div>
+    </PageContainer>
+  );
+}

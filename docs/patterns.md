@@ -247,6 +247,12 @@ export default function SafeComponent() {
 }
 ```
 
+### Polished Loader Pattern (Animations)
+Utilisation de **Framer Motion** pour des états de chargement immersifs. Le composant `Loader` centralise :
+- **Anneaux de pulsation** : Effets visuels concentriques aux couleurs de la marque.
+- **Messages contextuels** : Texte dynamique ("Récupération de vos ateliers...") avec effet de brillance.
+- **Cohérence globale** : Appliqué sur toutes les transitions de pages et vérifications de sessions.
+
 ### Micro-interactions & Animations (React Bits)
 L'interface utilise des patterns d'animation avancés basés sur **Framer Motion** pour améliorer l'engagement utilisateur :
 
