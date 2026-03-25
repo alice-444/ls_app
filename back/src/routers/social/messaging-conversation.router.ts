@@ -2,21 +2,17 @@ import { protectedProcedure, router } from "../../lib/trpc";
 import { conversationIdSchema } from "@ls-app/shared";
 import { container } from "../../lib/di/container";
 import { z } from "zod";
-import { logger } from "../../lib/common/logger";
-import { getSafeMessagingErrorMessage } from "./messaging-helpers";
+import { handleRouterResult } from "../shared/router-helpers";
 
 export const messagingConversationRouter = router({
   getConversations: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.messagingService.getConversations(
       ctx.session.user.id,
     );
-    if (!result.ok) {
-      logger.error("getConversations error", result.error, {
-        userId: ctx.session.user.id,
-      });
-      throw new Error(getSafeMessagingErrorMessage(result.error));
-    }
-    return result.data;
+    return handleRouterResult(result, {
+      operation: "getConversations",
+      userId: ctx.session.user.id,
+    });
   }),
 
   getOrCreateConversation: protectedProcedure
@@ -32,15 +28,12 @@ export const messagingConversationRouter = router({
         input.otherUserId,
         input.workshopId,
       );
-      if (!result.ok) {
-        logger.error("getOrCreateConversation error", result.error, {
-          userId: ctx.session.user.id,
-          otherUserId: input.otherUserId,
-          workshopId: input.workshopId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "getOrCreateConversation",
+        userId: ctx.session.user.id,
+        otherUserId: input.otherUserId,
+        workshopId: input.workshopId,
+      });
     }),
 
   getConversationDetails: protectedProcedure
@@ -50,24 +43,21 @@ export const messagingConversationRouter = router({
         ctx.session.user.id,
         input.conversationId,
       );
-      if (!result.ok) {
-        logger.error("getConversationDetails error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "getConversationDetails",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+      });
     }),
 
   getUnreadConversationsCount: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.messagingService.getUnreadConversationsCount(
       ctx.session.user.id,
     );
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
-    return result.data;
+    return handleRouterResult(result, {
+      operation: "getUnreadConversationsCount",
+      userId: ctx.session.user.id,
+    });
   }),
 
   deleteConversation: protectedProcedure
@@ -77,14 +67,11 @@ export const messagingConversationRouter = router({
         ctx.session.user.id,
         input.conversationId,
       );
-      if (!result.ok) {
-        logger.error("deleteConversation error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "deleteConversation",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+      });
     }),
 
   pinConversation: protectedProcedure
@@ -94,14 +81,11 @@ export const messagingConversationRouter = router({
         ctx.session.user.id,
         input.conversationId,
       );
-      if (!result.ok) {
-        logger.error("pinConversation error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "pinConversation",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+      });
     }),
 
   unpinConversation: protectedProcedure
@@ -111,13 +95,10 @@ export const messagingConversationRouter = router({
         ctx.session.user.id,
         input.conversationId,
       );
-      if (!result.ok) {
-        logger.error("unpinConversation error", result.error, {
-          userId: ctx.session.user.id,
-          conversationId: input.conversationId,
-        });
-        throw new Error(getSafeMessagingErrorMessage(result.error));
-      }
-      return result.data;
+      return handleRouterResult(result, {
+        operation: "unpinConversation",
+        userId: ctx.session.user.id,
+        conversationId: input.conversationId,
+      });
     }),
 });

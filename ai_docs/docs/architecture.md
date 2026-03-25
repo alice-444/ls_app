@@ -8,7 +8,7 @@ Document de référence pour l’IA : vue d’ensemble du monorepo (front, back,
 
 - **Front** : Next.js 16 (App Router), port 3001 en dev. tRPC client + Better Auth client + Fetch pour API custom + Socket.IO client.
 - **Back** : Next.js servi par un serveur HTTP Node (CORS, Socket.IO). Port 3002 en dev serveur, 4500 par défaut. Routes : `/trpc`, `/api/auth/*`, `/api/profile/*`, `/api/sign-up`, `/api/sign-in`, `/api/onboarding/*`, `/api/cron/*`, webhooks (Daily, Polar), `/api/metrics`.
-- **Base** : PostgreSQL. Schéma et migrations dans `back/prisma/schema/schema.prisma`.
+- **Base** : PostgreSQL. Schéma et migrations dans `back/.prisma/schema/schema.prisma`.
 
 ---
 

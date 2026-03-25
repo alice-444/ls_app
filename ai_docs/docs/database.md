@@ -1,6 +1,6 @@
 # LearnSup – Schéma de base de données
 
-Référence pour l’IA. Schéma complet : `back/prisma/schema/schema.prisma`. Migrations dans `back/prisma/schema/`.
+Référence pour l’IA. Schéma complet : `back/.prisma/schema/schema.prisma`. Migrations dans `back/.prisma/migrations/`.
 
 ---
 

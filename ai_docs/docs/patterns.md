@@ -39,7 +39,7 @@ return handleServiceResult(result);
 
 ### 5. Prisma
 
-- Client : `prisma` depuis `@/lib/common` (ou `@/lib/prisma`). Schéma dans `back/prisma/schema/schema.prisma`. Pas de raw SQL sauf besoin explicite ; privilégier les requêtes Prisma typées.
+- Client : `prisma` depuis `@/lib/common` (ou `@/lib/prisma`). Schéma dans `back/.prisma/schema/schema.prisma`. Pas de raw SQL sauf besoin explicite ; privilégier les requêtes Prisma typées.
 
 ---
 

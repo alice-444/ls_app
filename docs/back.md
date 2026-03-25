@@ -62,7 +62,7 @@ flowchart TB
 
 - **Node** + **Next.js 16** — App Next (API routes, possible standalone). Le point d’entrée en prod est le serveur custom (`server.ts`), pas `next start` seul.
 - **tRPC** (serveur) — API type-safe, procédures `publicProcedure` et `protectedProcedure` (session Better Auth).
-- **Prisma** — ORM, client généré dans `back/prisma/generated/client`, schéma dans `prisma/schema/schema.prisma`.
+- **Prisma** — ORM, client généré dans `back/.prisma/generated/client`, schéma dans `back/.prisma/schema/schema.prisma`.
 - **PostgreSQL** — Base de données (URL via `DATABASE_URL`).
 - **Better Auth** — Authentification (sessions, stratégies). Route : `app/api/auth/[...all]/route.ts`.
 - **Zod** — Validation des entrées (routers, shared).
@@ -168,7 +168,7 @@ sequenceDiagram
   - `auth/services/magic-link/` — MagicLinkService (envoi lien par email).
   - `auth/`, `email/`, `daily/`, `di/`, `rate-limit/`, `logger/`, `metrics/` — Inchangés.
 - `**src/shared/**` — Schémas et validation partagés avec le front (Zod, workshop, password, date, etc.).
-- `**prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
+- `**back/.prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
 
 ---
 
@@ -286,4 +286,3 @@ Le serveur utilise aussi `PORT_BACKEND` (ou défaut dans le code) et `HOSTNAME_B
 
 - [Architecture](architecture.md)
 - [Front](front.md)
-

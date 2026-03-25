@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, type KeyboardEvent } from "react";
+import { useState, useEffect, useRef } from "react";
+import type { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
@@ -12,7 +13,7 @@ interface MessageInputProps {
   conversationId: string;
 }
 
-export function MessageInput({ onSend, conversationId }: MessageInputProps) {
+export function MessageInput({ onSend, conversationId }: Readonly<MessageInputProps>) {
   const socket = useSocket();
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
