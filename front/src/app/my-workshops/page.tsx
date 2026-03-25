@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useEffect } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -100,8 +100,6 @@ export default function MyWorkshopsPage() {
   } = useMyWorkshops();
 
   const prefersReducedMotion = useReducedMotion();
-
-  if (!isSessionLoading && !session) redirect("/login");
 
   if (isSessionLoading || isLoading || isLoadingRole) {
     return (

@@ -162,7 +162,7 @@ export class MentorProfileService {
       }
 
       const fullProfile = await prisma.user.findUnique({
-        where: { userId: userId },
+        where: { id: userId },
         select: { bio: true, domain: true },
       });
 

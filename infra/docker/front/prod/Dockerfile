@@ -42,14 +42,16 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=3001
 
-# Copy standalone output (this contains the node_modules and the server.js)
+# Copy standalone output
 COPY --from=base /app/front/.next/standalone ./
 
-# IMPORTANT: Static and public files must be in the root for standalone to find them
+# IMPORTANT: Copy assets to both root and app folder for maximum compatibility in standalone monorepo
+COPY --from=base /app/front/.next/static ./front/.next/static
+COPY --from=base /app/front/public ./front/public
 COPY --from=base /app/front/.next/static ./.next/static
 COPY --from=base /app/front/public ./public
 
 EXPOSE 3001
 
-# The standalone output generates a server.js file in front/server.js
+# Run the server from the app folder
 CMD ["node", "front/server.js"]

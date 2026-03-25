@@ -15,8 +15,8 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const httpServer = createServer(async (req, res) => {
     try {
-      // Use the actual request origin or fallback to process.env.CORS_ORIGIN
-      const origin = req.headers.origin || process.env.CORS_ORIGIN || "*";
+      // Must use explicit origin for credentials support
+      const origin = req.headers.origin || process.env.CORS_ORIGIN || "https://app.learnsup.fr";
       
       // Set CORS headers
       res.setHeader("Access-Control-Allow-Credentials", "true");

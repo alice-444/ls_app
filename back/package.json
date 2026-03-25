@@ -17,16 +17,15 @@
 		"db:studio": "prisma studio",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
-		"lint": "next lint",
+		"lint": "eslint . --ext .js,.jsx,.ts,.tsx",
 		"check-types": "tsc --noEmit",
-		"test:db": "vitest run __tests__/integration/database.test.ts",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage"
 	},
 	"dependencies": {
-		"@ls-app/shared": "workspace:*",
 		"@daily-co/daily-js": "^0.87.0",
+		"@ls-app/shared": "workspace:*",
 		"@prisma/adapter-pg": "^7.4.2",
 		"@prisma/client": "^7.4.2",
 		"@prisma/extension-accelerate": "^3.0.1",
@@ -54,12 +53,18 @@
 		"typescript": "^5.9.3"
 	},
 	"devDependencies": {
+		"@eslint/eslintrc": "^3.3.5",
+		"@eslint/js": "^10.0.1",
 		"@types/jsdom": "^28.0.0",
 		"@types/node": "^25.4.0",
 		"@types/pg": "^8.18.0",
 		"@types/react": "^19.2.14",
+		"@typescript-eslint/eslint-plugin": "^8.57.0",
+		"@typescript-eslint/parser": "^8.57.0",
 		"@vitest/coverage-v8": "^4.0.18",
 		"concurrently": "^9.2.1",
+		"eslint": "^8.57.1",
+		"eslint-config-next": "^16.1.6",
 		"prisma": "^7.4.2",
 		"vitest": "^4.0.18",
 		"zod": "^4.3.6"

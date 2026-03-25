@@ -1,90 +1,50 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// Routes that don't require authentication
+// Routes qui ne nécessitent PAS d'être connecté
 const PUBLIC_ROUTES = [
   "/",
   "/login",
+  "/sign-up",
   "/forgot-password",
   "/reset-password",
-  "/mentors",
+  "/help",
   "/legal",
   "/terms",
   "/privacy",
   "/info",
-  "/help",
-  "/faq",
+  "/mentors"
 ];
 
-// Routes that are strictly for mentors
-const MENTOR_ROUTES = [
-  "/my-workshops",
-  "/workshop-editor",
-  "/mentor-profile",
-];
+export default async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  
+  // Détection large du cookie de session
+  const allCookies = request.cookies.getAll();
+  const sessionCookie = allCookies.find(c => c.name.includes("session_token"));
+  const hasSession = !!sessionCookie;
 
-// Routes that are strictly for admin
-const ADMIN_ROUTES = [
-  "/admin",
-];
-
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Handle preflight OPTIONS requests
-  if (request.method === "OPTIONS") {
-    return new NextResponse(null, {
-      status: 200,
-      headers: {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Origin": request.headers.get("origin") || "*",
-        "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
-    });
-  }
-
-  // 1. Check if the route is public
   const isPublicRoute = PUBLIC_ROUTES.some(route => 
     pathname === route || pathname.startsWith(route + "/")
   );
 
-  // 2. Check for session cookie
-  const sessionToken = request.cookies.get("better-auth.session_token") || 
-                       request.cookies.get("__Secure-better-auth.session_token");
-
-  // 3. Redirect logged-in users away from /login
-  if (sessionToken && pathname === "/login") {
+  // 1. Si connecté et sur une page d'auth -> vers dashboard
+  if (hasSession && (pathname === "/login" || pathname === "/sign-up")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (isPublicRoute) {
-    return NextResponse.next();
-  }
-
-  // 4. Redirect unauthenticated users to /login
-  if (!sessionToken) {
+  // 2. Si PAS connecté et page NON publique -> vers login
+  if (!hasSession && !isPublicRoute) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
-
-  // Note: Role-based protection and onboarding redirects are handled in 
-  // the RoleGate component (layout.tsx) because they require a backend call 
-  // to fetch the user role, which is inefficient to do in every middleware execution.
 
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public (public files)
-     */
-    "/((?!api|trpc|_next/static|_next/image|favicon.ico|public|logo|bg|typo).*)",
+    "/((?!api|trpc|_next/static|_next/image|favicon.ico|public|bg|logo|typo).*)",
   ],
 };

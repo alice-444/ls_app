@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/shared/loader";
 import { useOnboarding } from "./hooks/useOnboarding";
@@ -38,7 +37,6 @@ function OnboardingContent() {
   const progress = stepProgress[currentStep] || 0;
 
   if (isSessionPending) return <Loader />;
-  if (!session) redirect("/login");
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-[#0a0510] transition-colors duration-300">

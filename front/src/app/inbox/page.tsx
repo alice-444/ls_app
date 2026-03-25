@@ -1,6 +1,5 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
@@ -21,7 +20,6 @@ export default function InboxPage() {
       </PageContainer>
     );
   }
-  if (!session) redirect("/login");
 
   return (
     <PageContainer>

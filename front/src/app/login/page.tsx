@@ -3,7 +3,7 @@
 import SignInForm from "@/components/domains/auth/sign-in-form";
 import SignUpForm from "@/components/domains/auth/sign-up-form";
 import { useState, useEffect, Suspense } from "react";
-import { redirect, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/shared/loader";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,7 +19,6 @@ function LoginContent() {
   }, [mode]);
 
   if (isPending) return <Loader fullScreen size="lg" />;
-  if (session) redirect("/dashboard");
 
   return (
     <div className="w-full max-w-md">

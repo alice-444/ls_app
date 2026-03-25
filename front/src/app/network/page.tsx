@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 import { PageContainer } from "@/components/shared/layout";
@@ -72,8 +72,6 @@ export default function NetworkPage() {
       }
     );
   };
-
-  if (!isSessionPending && !session) redirect("/login");
 
   if (isSessionPending || isLoadingPending || isLoadingConnections || isLoadingSent) {
     return (

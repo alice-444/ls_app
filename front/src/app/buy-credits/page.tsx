@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import {
   Card,
@@ -47,8 +47,17 @@ function BuyCreditsContent() {
 
   const [loadingPackage, setLoadingPackage] = useState<string | null>(null);
 
-  if (!isPending && !session) redirect("/login");
-  if (session && userRole && userRole !== "APPRENANT") redirect("/dashboard");
+  useEffect(() => {
+    if (isPending || isLoadingRole) return;
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+    if (userRole && userRole !== "APPRENANT") {
+      router.push("/dashboard");
+      return;
+    }
+  }, [session, userRole, isPending, isLoadingRole, router]);
 
   useEffect(() => {
     const success = searchParams.get("success");

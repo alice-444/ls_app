@@ -21,7 +21,9 @@ export const workshopFieldSchemas = {
       WORKSHOP_ERROR_MESSAGES.description.max,
     ),
 
-  date: z.coerce.date(),
+  date: z.coerce
+    .date()
+    .refine(isMinimumToday, "La date ne peut pas être dans le passé"),
 
   time: z
     .string()
@@ -114,7 +116,7 @@ export const createWorkshopBackendSchema = z.object({
 });
 
 export const updateWorkshopBackendSchema = z.object({
-  workshopId: z.string(),
+  workshopId: z.string().cuid(),
   title: workshopFieldSchemas.title.optional(),
   description: workshopFieldSchemas.description.optional(),
   topic: workshopFieldSchemas.topic.optional().nullable(),
@@ -156,7 +158,7 @@ export const createWorkshopFrontendSchema = z.object({
 });
 
 export const editWorkshopFrontendSchema = z.object({
-  workshopId: z.string(),
+  workshopId: z.string().cuid(),
   title: workshopFieldSchemas.title,
   description: workshopFieldSchemas.description.optional(),
   date: z
@@ -191,19 +193,19 @@ export const editWorkshopFrontendSchema = z.object({
 
 // --- SCHÉMAS DE CYCLE DE VIE ---
 export const publishWorkshopSchema = z.object({
-  workshopId: z.string(),
+  workshopId: z.string().cuid(),
 });
 
 export const unpublishWorkshopSchema = z.object({
-  workshopId: z.string(),
+  workshopId: z.string().cuid(),
 });
 
 export const deleteWorkshopSchema = z.object({
-  workshopId: z.string(),
+  workshopId: z.string().cuid(),
 });
 
 export const cancelWorkshopSchema = z.object({
-  workshopId: z.string(),
+  workshopId: z.string().cuid(),
 });
 
 // Types partagés

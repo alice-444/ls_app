@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { redirect, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
@@ -74,11 +74,9 @@ export default function ApprenticeProfilePage() {
         toast.error("Erreur lors de la suppression", {
           description: error.message,
         });
-      },
+      }
     }
   );
-
-  if (!isSessionPending && !session) redirect("/login");
 
   const handleSendConnectionRequest = async () => {
     if (!userId) return;

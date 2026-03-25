@@ -5,6 +5,7 @@ describe("mentorProfileSchema", () => {
   const validData = {
     name: "Jean Dupont",
     bio: "Un mentor passionné par le développement et l'enseignement.",
+    domain: "Développement Web",
     areasOfExpertise: ["Programmation"],
   };
 

@@ -14,10 +14,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import ShinyText from "@/components/ui/ShinyText";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function MentorAnalyticsPage() {
   const router = useRouter();
   const [dateRange, setDateRange] = useState<{ from?: string; to?: string }>({});
+
+  const breadcrumbItems = [
+    { label: "Tableau de bord", href: "/dashboard" },
+    { label: "Analyses et Gains" },
+  ];
 
   const { data: summary, isLoading: isLoadingSummary } =
     trpc.cashbackAnalytics.getSummary.useQuery({
@@ -88,6 +94,7 @@ export default function MentorAnalyticsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
+        <Breadcrumb items={breadcrumbItems} />
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-start gap-4">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useMemo } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-client";
@@ -81,22 +81,24 @@ export function useDashboard() {
   const userStatus = userData?.status || "ACTIVE";
   const userRole = mapServerRole(actualUserRole);
 
-  if (
-    !isLoadingUserData &&
-    !isPending &&
-    session !== undefined &&
-    actualUserRole === "ADMIN"
-  ) {
-    redirect("/admin");
-  }
-  if (
-    !isLoadingUserData &&
-    !isPending &&
-    session &&
-    actualUserRole === undefined
-  ) {
-    redirect("/onboarding");
-  }
+  useEffect(() => {
+    if (isLoadingUserData || isPending) return;
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    if (actualUserRole === "ADMIN") {
+      router.push("/admin");
+      return;
+    }
+
+    if (actualUserRole === null) {
+      router.push("/onboarding");
+      return;
+    }
+  }, [session, actualUserRole, isLoadingUserData, isPending, router]);
 
   const isMentor =
     (userRole === "mentor" || userRole === "both") &&
@@ -212,8 +214,6 @@ export function useDashboard() {
     hasShownFeedbackModal,
     session?.user?.id,
   ]);
-
-  if (!isPending && !session) redirect("/login");
 
   return {
     router,

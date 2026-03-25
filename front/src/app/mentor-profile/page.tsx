@@ -86,13 +86,13 @@ export default function MentorProfilePage() {
   };
 
   const onFormError = (formErrors: any) => {
-    console.error("Form validation errors:", formErrors);
+    console.error("Form validation errors (detailed):", JSON.parse(JSON.stringify(formErrors)));
     console.log("Current form values:", form.getValues());
     toast.error("Veuillez vérifier les erreurs dans toutes les sections du formulaire.");
 
     // Auto-switch to the first section with an error
     const sectionsWithErrors: ProfileSection[] = [];
-    if (formErrors.name || formErrors.bio || formErrors.domain || formErrors.displayName || formErrors.iceBreakerTags) sectionsWithErrors.push("informations-base");
+    if (formErrors.name || formErrors.bio || formErrors.domain || formErrors.displayName || formErrors.iceBreakerTags || formErrors.photo) sectionsWithErrors.push("informations-base");
     if (formErrors.areasOfExpertise) sectionsWithErrors.push("domaines-expertise");
     if (formErrors.mentorshipTopics) sectionsWithErrors.push("sujets-mentorat");
     if (formErrors.qualifications || formErrors.experience) sectionsWithErrors.push("qualifications-experience");
@@ -105,7 +105,7 @@ export default function MentorProfilePage() {
 
   const sidebarItemsWithErrors = SIDEBAR_ITEMS.map(item => {
     let hasError = false;
-    if (item.id === "informations-base") hasError = !!(errors.name || errors.bio || errors.domain || errors.displayName || errors.iceBreakerTags);
+    if (item.id === "informations-base") hasError = !!(errors.name || errors.bio || errors.domain || errors.displayName || errors.iceBreakerTags || errors.photo);
     if (item.id === "domaines-expertise") hasError = !!errors.areasOfExpertise;
     if (item.id === "sujets-mentorat") hasError = !!errors.mentorshipTopics;
     if (item.id === "qualifications-experience") hasError = !!(errors.qualifications || errors.experience);
@@ -307,7 +307,7 @@ export default function MentorProfilePage() {
                           exit="exit"
                           transition={{ duration: 0.25 }}
                         >
-                          <SocialMediaSection register={register} />
+                          <SocialMediaSection register={register} errors={errors} />
                         </motion.div>
                       )}
 
