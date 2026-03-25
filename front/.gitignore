@@ -35,6 +35,10 @@
 *.pem
 *.local
 
+# Sentry
+.env.sentry-build-plugin
+.sentryclirc
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

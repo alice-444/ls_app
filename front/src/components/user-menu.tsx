@@ -28,7 +28,7 @@ import {
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -42,6 +42,12 @@ interface MenuLink {
 }
 
 export default function UserMenu() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
@@ -143,7 +149,7 @@ export default function UserMenu() {
     return matching?.href ?? null;
   }, [filteredMenuLinks, pathname]);
 
-  if (isPending) {
+  if (!mounted || isPending) {
     return (
       <div className="flex items-center gap-2 rounded-full p-1">
         <Skeleton className="h-9 w-9 rounded-full" />
