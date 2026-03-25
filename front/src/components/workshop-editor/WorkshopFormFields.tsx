@@ -15,8 +15,9 @@ import {
   Tag,
   Coins,
 } from "lucide-react";
-import type {
-  CreateWorkshopFrontendData,
+import {
+  WORKSHOP_VALIDATION,
+  type CreateWorkshopFrontendData,
 } from "@ls-app/shared";
 
 
@@ -37,7 +38,7 @@ export function getDescriptionStatus(length: number) {
       text: "Trop court",
       textColor: "text-orange-600",
     };
-  if (length <= 90)
+  if (length <= WORKSHOP_VALIDATION.description.max * 0.9)
     return {
       color: "bg-green-500",
       text: "Parfait",
@@ -77,7 +78,7 @@ export function WorkshopFormFields({
   description,
 }: Readonly<WorkshopFormFieldsProps>) {
   const descriptionLength = description.length;
-  const descriptionProgress = Math.min((descriptionLength / 100) * 100, 100);
+  const descriptionProgress = Math.min((descriptionLength / WORKSHOP_VALIDATION.description.max) * 100, 100);
   const descStatus = getDescriptionStatus(descriptionLength);
 
   return (
@@ -105,8 +106,8 @@ export function WorkshopFormFields({
           id="description"
           placeholder="Description courte de l'atelier..."
           rows={3}
-          maxLength={100}
-          {...register("description")}
+          maxLength={WORKSHOP_VALIDATION.description.max}
+          {...register("description" as any)}
           className={`rounded-2xl ${errors.description ? "border-red-500" : ""}`}
         />
 
@@ -118,7 +119,7 @@ export function WorkshopFormFields({
             />
           </div>
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>{descriptionLength} / 100 caractères</span>
+            <span>{descriptionLength} / {WORKSHOP_VALIDATION.description.max} caractères</span>
             <span className={`font-medium ${descStatus.textColor}`}>
               {descStatus.text}
             </span>

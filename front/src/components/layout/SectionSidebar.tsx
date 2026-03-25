@@ -6,6 +6,7 @@ export interface SidebarItem<T extends string> {
   readonly id: T;
   readonly label: string;
   readonly icon: React.ComponentType<{ className?: string }>;
+  readonly hasError?: boolean;
 }
 
 interface SectionSidebarProps<T extends string> {
@@ -34,7 +35,7 @@ export function SectionSidebar<T extends string>({
               type="button"
               onClick={() => onSelect(item.id)}
               className={cn(
-                "w-full flex items-center gap-3 h-12 px-6 py-4 transition-all duration-200 text-sm",
+                "w-full flex items-center justify-between h-12 px-6 py-4 transition-all duration-200 text-sm",
                 isFirst && "rounded-tl-2xl rounded-tr-2xl",
                 isLast && "rounded-bl-2xl rounded-br-2xl",
                 isActive
@@ -43,8 +44,13 @@ export function SectionSidebar<T extends string>({
                 !isFirst && !isActive && "border-t border-border/30"
               )}
             >
-              <Icon className="h-[18px] w-[18px] shrink-0" />
-              <span className="text-sm font-medium truncate">{item.label}</span>
+              <div className="flex items-center gap-3 overflow-hidden">
+                <Icon className="h-[18px] w-[18px] shrink-0" />
+                <span className="text-sm font-medium truncate">{item.label}</span>
+              </div>
+              {item.hasError && (
+                <div className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
+              )}
             </button>
           );
         })}

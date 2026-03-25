@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bulkNotificationSchema = exports.segmentationCriteriaSchema = void 0;
 const zod_1 = require("zod");
 exports.segmentationCriteriaSchema = zod_1.z.object({
-    role: zod_1.z.enum(['MENTOR', 'APPRENANT', 'ADMIN']).optional(),
-    status: zod_1.z.enum(['PENDING', 'ACTIVE', 'SUSPENDED']).optional(),
+    role: zod_1.z.enum(["MENTOR", "APPRENANT", "ADMIN"]).optional(),
+    status: zod_1.z.enum(["PENDING", "ACTIVE", "SUSPENDED"]).optional(),
     isPublished: zod_1.z.boolean().optional(),
     hasPublishedWorkshop: zod_1.z.boolean().optional(),
     minCredits: zod_1.z.number().optional(),

@@ -9,6 +9,7 @@
 		"dev": "turbo dev",
 		"build": "turbo build",
 		"check-types": "turbo check-types",
+		"test": "turbo test",
 		"test:unit": "turbo test",
 		"test:integration": "turbo test",
 		"test:coverage": "turbo test:coverage",

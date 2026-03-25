@@ -33,14 +33,14 @@ export function WorkshopDetails({
   return (
     <>
       {workshop.topic && (
-        <div className={`flex items-center gap-2 ${textSize} ${textColor}`}>
-          <Tag className={iconSize} />
-          {workshop.topic}
+        <div className={`flex items-center gap-2 min-w-0 ${textSize} ${textColor}`}>
+          <Tag className={`${iconSize} shrink-0`} />
+          <span className="truncate">{workshop.topic}</span>
         </div>
       )}
       {workshop.date && (
-        <div className={`flex items-center gap-2 ${textSize} ${textColor}`}>
-          <Calendar className={iconSize} />
+        <div className={`flex items-center gap-2 min-w-0 ${textSize} ${textColor}`}>
+          <Calendar className={`${iconSize} shrink-0`} />
           {formatDate(workshop.date, {
             includeWeekday: variant === "hero",
           })}
@@ -60,9 +60,9 @@ export function WorkshopDetails({
         </div>
       ) : (
         workshop.location && (
-          <div className={`flex items-center gap-2 ${textSize} ${textColor}`}>
+          <div className={`flex items-center gap-2 min-w-0 ${textSize} ${textColor}`}>
             <MapPin className={iconSize} />
-            {workshop.location}
+            <span className="truncate">{workshop.location}</span>
           </div>
         )
       )}

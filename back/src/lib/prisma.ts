@@ -9,13 +9,11 @@ import { PrismaClient } from "../../prisma/generated/client/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable must be set");
-}
+const databaseUrl = process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy";
 
 // Un seul pool de connexions pour toute l'application
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: databaseUrl,
   connectionTimeoutMillis: 10000,
   idleTimeoutMillis: 30000,
   max: 10, // Réduit à 10 pour être sûr de ne pas saturer la DB

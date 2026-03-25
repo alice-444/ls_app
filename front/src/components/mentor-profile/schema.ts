@@ -1,4 +1,4 @@
-import { z } from "zod/v3";
+import { z } from "zod";
 
 export const mentorProfileSchema = z.object({
   name: z
@@ -15,8 +15,7 @@ export const mentorProfileSchema = z.object({
     .string()
     .trim()
     .min(2, "Le domaine doit contenir au moins 2 caractères")
-    .max(60, "Le domaine ne peut pas dépasser 60 caractères")
-    .optional(),
+    .max(60, "Le domaine ne peut pas dépasser 60 caractères"),
   photo: z
     .union([
       z

@@ -51,6 +51,12 @@ const getNavItems = (
       href: "/dashboard",
       icon: LayoutDashboard,
     },
+    {
+      key: "/community",
+      name: "Communauté",
+      href: "/community",
+      icon: Users,
+    },
     // --- MENTOR SPACE ---
     {
       key: "/my-workshops",
@@ -103,12 +109,6 @@ const getNavItems = (
       roles: ["APPRENANT"],
     },
     // --- COMMON ---
-    {
-      key: "/community",
-      name: "Communauté",
-      href: "/community",
-      icon: Users,
-    },
     {
       key: "/inbox",
       name: "Messages",

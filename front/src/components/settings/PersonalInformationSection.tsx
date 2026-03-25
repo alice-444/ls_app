@@ -17,7 +17,6 @@ export function PersonalInformationSection() {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -98,18 +97,6 @@ export function PersonalInformationSection() {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Begozi"
-              className="h-10 px-6 py-1.5 border border-border rounded-full text-xs text-ls-heading tracking-[-0.6px]"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-6">
-          <div className="flex-1 flex flex-col gap-1.5">
-            <Label className="text-xs text-ls-muted">Téléphone</Label>
-            <Input
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="06 35 36 90 91"
               className="h-10 px-6 py-1.5 border border-border rounded-full text-xs text-ls-heading tracking-[-0.6px]"
             />
           </div>

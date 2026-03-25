@@ -11,6 +11,7 @@ import { DealsGrid } from "@/components/community/DealsGrid";
 import { SpotFinder } from "@/components/community/SpotFinder";
 import { CommunityPoll } from "@/components/community/CommunityPoll";
 import { ImpactStats } from "@/components/community/ImpactStats";
+import { COMMUNITY_HUB_LIMITS } from "@ls-app/shared";
 import { Loader2, PlusCircle, Rocket, Calendar, Tag, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -107,8 +108,11 @@ function CommunityHubContent() {
               <span>Mentorship Workshops</span>
             </h2>
             <EventsTabs
-              upcoming={hubData?.upcomingWorkshops || []}
-              past={[]} // On focus on upcoming here
+              upcoming={(hubData?.upcomingWorkshops || []).slice(
+                0,
+                COMMUNITY_HUB_LIMITS.upcomingWorkshops
+              )}
+              past={[]}
             />
           </section>
 

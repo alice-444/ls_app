@@ -2,15 +2,15 @@ import { z } from "zod";
 import { router, protectedProcedure, adminProcedure } from "../../lib/trpc";
 import { prisma } from "../../lib/common/prisma";
 import { TRPCError } from "@trpc/server";
-import { 
-  pollIdSchema, 
-  optionIdSchema, 
-  studentDealSchema, 
-  communityEventSchema, 
-  communitySpotSchema, 
+import {
+  COMMUNITY_HUB_LIMITS,
+  pollIdSchema,
+  optionIdSchema,
+  studentDealSchema,
+  communityEventSchema,
+  communitySpotSchema,
   communityPollSchema,
-  bulkIdsSchema,
-  bulkReviewProposalsSchema
+  bulkReviewProposalsSchema,
 } from "@ls-app/shared";
 
 export const communityRouter = router({
@@ -32,30 +32,30 @@ export const communityRouter = router({
       // Prochains ateliers (Mentorat)
       prisma.workshop.findMany({
         where: { status: "PUBLISHED", date: { gte: now } },
-        take: 4,
+        take: COMMUNITY_HUB_LIMITS.upcomingWorkshops,
         orderBy: { date: "asc" },
         include: {
           creator: {
-            select: { name: true, photoUrl: true, displayName: true },
+            select: { id: true, name: true, photoUrl: true, displayName: true },
           },
         },
       }),
       // Events Hub (Community Events - Approved only)
       prisma.community_event.findMany({
         where: { status: "APPROVED", date: { gte: now } },
-        take: 6,
+        take: COMMUNITY_HUB_LIMITS.communityEvents,
         orderBy: { date: "asc" },
       }),
       // Student Deals (Approved only)
       prisma.student_deal.findMany({
         where: { status: "APPROVED" },
-        take: 8,
+        take: COMMUNITY_HUB_LIMITS.deals,
         orderBy: { createdAt: "desc" },
       }),
       // Spot Finder (Approved only)
       prisma.community_spot.findMany({
         where: { status: "APPROVED" },
-        take: 6,
+        take: COMMUNITY_HUB_LIMITS.spots,
         orderBy: { rating: "desc" },
       }),
       // Active Poll (Approved only)
@@ -84,7 +84,7 @@ export const communityRouter = router({
       // Featured Members
       prisma.user.findMany({
         where: { status: "ACTIVE", role: { in: ["MENTOR", "APPRENANT"] } },
-        take: 5,
+        take: COMMUNITY_HUB_LIMITS.featuredMembers,
         orderBy: { createdAt: "desc" },
         select: {
           id: true,

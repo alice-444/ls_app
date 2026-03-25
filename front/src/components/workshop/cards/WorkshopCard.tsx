@@ -35,7 +35,6 @@ export function WorkshopCard({
   const isPast = variant === "past";
   const isHero = variant === "hero";
   const isCatalogue = variant === "catalogue";
-  const isCardClickable = !isCatalogue && onViewDetails;
 
   const getWorkshopDetailsVariant = (): "hero" | "catalogue" | "default" => {
     if (isHero) return "hero";
@@ -43,14 +42,18 @@ export function WorkshopCard({
     return "default";
   };
 
-  // Logic to get the creator's name - now simplified thanks to DTOs
-  const creatorName = workshop.creator?.displayName || "Mentor";
+  // Logic to get the creator's name (displayName, name, or fallback)
+  const creatorName =
+    workshop.creator?.displayName ||
+    workshop.creator?.name ||
+    "Mentor";
 
   return (
     <Card
-      className={`hover:shadow-lg transition-shadow relative ${
+      className={`hover:shadow-lg transition-shadow relative overflow-hidden min-w-0 ${
         isHero ? "lg:col-span-full" : ""
-      } ${isCatalogue ? "cursor-pointer" : ""} ${className}`}
+      } ${onViewDetails ? "cursor-pointer" : ""} ${className}`}
+      onClick={handleCardClick}
     >
       <CardHeader>
         <div className="flex justify-between items-start gap-4">
@@ -59,7 +62,7 @@ export function WorkshopCard({
               {workshop.title}
             </CardTitle>
             {workshop.description && !isHero && (
-              <CardDescription className="line-clamp-2 mt-2 text-ls-muted">
+              <CardDescription className="line-clamp-2 mt-2 text-ls-muted min-w-0 overflow-hidden break-all">
                 {workshop.description}
               </CardDescription>
             )}
@@ -79,31 +82,18 @@ export function WorkshopCard({
         </div>
       </CardHeader>
       <CardContent>
-        {isCardClickable ? (
-          <button
-            type="button"
-            className="w-full text-left space-y-2 cursor-pointer border-none bg-transparent p-0 font-inherit"
-            onClick={handleCardClick}
-          >
-            <WorkshopDetails
-              workshop={workshop}
-              variant={getWorkshopDetailsVariant()}
-            />
-          </button>
-        ) : (
-          <div className="space-y-2">
-            {isCatalogue && workshop.creator && (
-              <div className="flex items-center gap-2 text-sm mb-3">
-                <User className="h-4 w-4 text-ls-muted" />
-                <span className="text-ls-heading font-medium">{creatorName}</span>
-              </div>
-            )}
-            <WorkshopDetails
-              workshop={workshop}
-              variant={getWorkshopDetailsVariant()}
-            />
-          </div>
-        )}
+        <div className="space-y-2 min-w-0 overflow-hidden">
+          {isCatalogue && workshop.creator && (
+            <div className="flex items-center gap-2 text-sm mb-3 min-w-0">
+              <User className="h-4 w-4 text-ls-muted shrink-0" />
+              <span className="text-ls-heading font-medium truncate">{creatorName}</span>
+            </div>
+          )}
+          <WorkshopDetails
+            workshop={workshop}
+            variant={getWorkshopDetailsVariant()}
+          />
+        </div>
         
         {isPast && onDuplicate && (
           <div className="mt-4 pt-4 border-t border-ls-border">
@@ -111,7 +101,10 @@ export function WorkshopCard({
               variant="ctaOutline"
               size="cta"
               className="w-full"
-              onClick={() => onDuplicate(workshop.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate(workshop.id);
+              }}
             >
               Reprogrammer cet atelier
             </Button>

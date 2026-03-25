@@ -58,5 +58,3 @@ lerna-debug.log*
 next-env.d.ts
 
 .cursor
-
-.prisma
