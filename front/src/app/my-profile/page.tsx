@@ -31,7 +31,7 @@ import { formatPhotoUrl } from "@/utils/photo";
 import { WorkshopCalendar } from "@/components/workshop/calendar/WorkshopCalendar";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 interface MentorProfile {
   name: string | null;

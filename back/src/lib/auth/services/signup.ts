@@ -1,24 +1,15 @@
-import { z } from "zod";
+import { signUpInputSchema } from "@ls-app/shared";
 import { auth } from "../../auth";
 import { Result, failure, validateInput, prisma } from "../../common";
 import type { AppUserRepository } from "../../users/repositories";
 import { container } from "../../di/container";
-
-export const signUpInputSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  name: z.string().min(1).max(120),
-  username: z.string().min(3).max(30),
-});
-
-type SignUpInput = z.infer<typeof signUpInputSchema>;
 
 export class SignUpService {
   constructor(private readonly appUserRepository: AppUserRepository) {}
 
   async execute(
     input: unknown,
-    headers: Headers
+    headers: Headers,
   ): Promise<Result<{ userId: string }>> {
     // Validation
     const validation = validateInput(signUpInputSchema, input);
@@ -30,48 +21,57 @@ export class SignUpService {
       const { email, password, username } = validation.data;
       const name = validation.data.name ?? email.split("@")[0];
 
-      const authResult = await auth.api.signUpEmail({
-        body: { email, password, name, username },
-        headers,
-      }).catch((err: any) => {
-        console.error("Better-auth signUpEmail error:", err);
-        throw err;
-      });
+      const authResult = await auth.api
+        .signUpEmail({
+          body: { email, password, name, username },
+          headers,
+        })
+        .catch((err: any) => {
+          console.error("Better-auth signUpEmail error:", err);
+          throw err;
+        });
 
-      console.log("Better-auth result:", JSON.stringify(authResult.user, null, 2));
+      console.log(
+        "Better-auth result:",
+        JSON.stringify(authResult.user, null, 2),
+      );
       const id = authResult.user.id;
 
       // Sync business fields: userId (for backward compat), status, role
       // Utilisation d'un upsert pour être plus robuste si l'id n'est pas encore synchro
-      await prisma.user.update({
-        where: { id },
-        data: {
-          userId: id,
-          status: "PENDING",
-          role: null,
-        },
-      }).catch(async (err: any) => {
-        console.warn("Prisma update by id failed, trying by email...", err.message);
-        return prisma.user.update({
-          where: { email },
+      await prisma.user
+        .update({
+          where: { id },
           data: {
             userId: id,
             status: "PENDING",
             role: null,
           },
+        })
+        .catch(async (err: any) => {
+          console.warn(
+            "Prisma update by id failed, trying by email...",
+            err.message,
+          );
+          return prisma.user.update({
+            where: { email },
+            data: {
+              userId: id,
+              status: "PENDING",
+              role: null,
+            },
+          });
+        })
+        .catch((err: any) => {
+          console.error("Prisma user synchronization error (final):", err);
+          throw err;
         });
-      }).catch((err: any) => {
-        console.error("Prisma user synchronization error (final):", err);
-        throw err;
-      });
 
       try {
-        const { renderEmailTemplate } = await import(
-          "../../email/utils/render-email"
-        );
-        const { WelcomeEmail } = await import(
-          "../../email/templates/WelcomeEmail"
-        );
+        const { renderEmailTemplate } =
+          await import("../../email/utils/render-email");
+        const { WelcomeEmail } =
+          await import("../../email/templates/WelcomeEmail");
         const React = await import("react");
 
         const onboardingUrl = `${
@@ -84,7 +84,7 @@ export class SignUpService {
             username,
             email,
             onboardingUrl,
-          })
+          }),
         );
 
         const emailResult = await container.emailService.sendEmail({

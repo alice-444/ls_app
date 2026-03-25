@@ -6,7 +6,7 @@ import {
   publishWorkshopSchema,
   unpublishWorkshopSchema,
   deleteWorkshopSchema,
-} from "../../../../src/shared/validation/workshop.schemas";
+} from "@ls-app/shared";
 
 const VALID_UUID = "550e8400-e29b-41d4-a716-446655440000";
 
@@ -347,14 +347,14 @@ describe("updateWorkshopBackendSchema", () => {
 describe("publishWorkshopSchema", () => {
   it("accepts a valid UUID", () => {
     expect(
-      publishWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success
+      publishWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success,
     ).toBe(true);
   });
 
   it("rejects a non-UUID string", () => {
-    expect(
-      publishWorkshopSchema.safeParse({ workshopId: "abc" }).success
-    ).toBe(false);
+    expect(publishWorkshopSchema.safeParse({ workshopId: "abc" }).success).toBe(
+      false,
+    );
   });
 
   it("rejects missing workshopId", () => {
@@ -365,13 +365,13 @@ describe("publishWorkshopSchema", () => {
 describe("unpublishWorkshopSchema", () => {
   it("accepts a valid UUID", () => {
     expect(
-      unpublishWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success
+      unpublishWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success,
     ).toBe(true);
   });
 
   it("rejects a non-UUID string", () => {
     expect(
-      unpublishWorkshopSchema.safeParse({ workshopId: "not-valid" }).success
+      unpublishWorkshopSchema.safeParse({ workshopId: "not-valid" }).success,
     ).toBe(false);
   });
 });
@@ -379,19 +379,19 @@ describe("unpublishWorkshopSchema", () => {
 describe("deleteWorkshopSchema", () => {
   it("accepts a valid UUID", () => {
     expect(
-      deleteWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success
+      deleteWorkshopSchema.safeParse({ workshopId: VALID_UUID }).success,
     ).toBe(true);
   });
 
   it("rejects a non-UUID string", () => {
-    expect(
-      deleteWorkshopSchema.safeParse({ workshopId: "123" }).success
-    ).toBe(false);
+    expect(deleteWorkshopSchema.safeParse({ workshopId: "123" }).success).toBe(
+      false,
+    );
   });
 
   it("rejects empty string", () => {
-    expect(
-      deleteWorkshopSchema.safeParse({ workshopId: "" }).success
-    ).toBe(false);
+    expect(deleteWorkshopSchema.safeParse({ workshopId: "" }).success).toBe(
+      false,
+    );
   });
 });

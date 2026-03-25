@@ -2,17 +2,22 @@ import { publicProcedure, protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { unwrapResult } from "../shared/router-helpers";
 import { z } from "zod";
+import {
+  mentorIdSchema,
+  requestIdSchema,
+  workshopIdSchema,
+} from "@ls-app/shared";
 
 export const mentorRouter = router({
   getPublicProfile: publicProcedure
-    .input(z.object({ mentorId: z.string() }))
+    .input(mentorIdSchema)
     .query(async ({ ctx, input }) =>
       unwrapResult(
         await container.mentorProfileService.getPublicProfile(
           input.mentorId,
-          ctx.session?.user?.id
-        )
-      )
+          ctx.session?.user?.id,
+        ),
+      ),
     ),
 
   getPublicMentors: publicProcedure
@@ -22,10 +27,12 @@ export const mentorRouter = router({
         topic: z.string().optional(),
         limit: z.number().min(1).max(100).default(20),
         cursor: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ input }) =>
-      unwrapResult(await container.mentorProfileService.getPublicMentors(input))
+      unwrapResult(
+        await container.mentorProfileService.getPublicMentors(input),
+      ),
     ),
 
   sendContactRequest: protectedProcedure
@@ -37,7 +44,7 @@ export const mentorRouter = router({
           .min(10, "Le message doit contenir au moins 10 caractères")
           .max(200, "Le message ne peut pas dépasser 200 caractères"),
         subject: z.string().max(100).optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
@@ -45,9 +52,9 @@ export const mentorRouter = router({
           ctx.session.user.id,
           input.mentorId,
           input.message,
-          input.subject
-        )
-      )
+          input.subject,
+        ),
+      ),
     ),
 
   contactMentor: protectedProcedure
@@ -58,16 +65,16 @@ export const mentorRouter = router({
           .string()
           .max(1000, "Le message ne peut pas dépasser 1000 caractères")
           .optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.mentorContactService.contactMentor(
           ctx.session.user.id,
           input.mentorId,
-          input.message
-        )
-      )
+          input.message,
+        ),
+      ),
     ),
 
   getFeedbacks: publicProcedure
@@ -75,25 +82,25 @@ export const mentorRouter = router({
       z.object({
         mentorId: z.string(),
         workshopId: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ input }) =>
       unwrapResult(
         await container.mentorFeedbackService.getMentorFeedbacks(
           input.mentorId,
-          { workshopId: input.workshopId }
-        )
-      )
+          { workshopId: input.workshopId },
+        ),
+      ),
     ),
 
   getPublicWorkshops: protectedProcedure
-    .input(z.object({ mentorId: z.string() }))
+    .input(mentorIdSchema)
     .query(async ({ input }) =>
       unwrapResult(
         await container.mentorWorkshopService.getMentorPublicWorkshops(
-          input.mentorId
-        )
-      )
+          input.mentorId,
+        ),
+      ),
     ),
 
   submitWorkshopRequest: protectedProcedure
@@ -117,33 +124,33 @@ export const mentorRouter = router({
         preferredDate: z.coerce.date().optional().nullable(),
         preferredTime: z.string().optional().nullable(),
         workshopId: z.string().optional().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopRequestService.submitWorkshopRequest(
           ctx.session.user.id,
-          input
-        )
-      )
+          input,
+        ),
+      ),
     ),
 
   getReceivedRequests: protectedProcedure.query(async ({ ctx }) =>
     unwrapResult(
       await container.workshopRequestService.getMentorRequests(
-        ctx.session.user.id
-      )
-    )
+        ctx.session.user.id,
+      ),
+    ),
   ),
 
   getWorkshopRequests: protectedProcedure
-    .input(z.object({ workshopId: z.string() }))
+    .input(workshopIdSchema)
     .query(async ({ input }) =>
       unwrapResult(
         await container.workshopRequestService.getWorkshopRequests(
-          input.workshopId
-        )
-      )
+          input.workshopId,
+        ),
+      ),
     ),
 
   acceptRequest: protectedProcedure
@@ -156,7 +163,7 @@ export const mentorRouter = router({
         location: z.string().max(200).optional().nullable(),
         isVirtual: z.boolean().optional().default(false),
         maxParticipants: z.number().int().min(1).optional().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
@@ -170,35 +177,41 @@ export const mentorRouter = router({
             location: input.location ?? null,
             isVirtual: input.isVirtual ?? false,
             maxParticipants: input.maxParticipants ?? null,
-          }
-        )
-      )
+          },
+        ),
+      ),
     ),
 
   rejectRequest: protectedProcedure
-    .input(z.object({ 
-      requestId: z.string(),
-      reason: z.string().max(500, "Le motif ne peut pas dépasser 500 caractères").optional().nullable()
-    }))
+    .input(
+      z.object({
+        requestId: z.string(),
+        reason: z
+          .string()
+          .max(500, "Le motif ne peut pas dépasser 500 caractères")
+          .optional()
+          .nullable(),
+      }),
+    )
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopRequestService.rejectWorkshopRequest(
           ctx.session.user.id,
           input.requestId,
-          input.reason
-        )
-      )
+          input.reason,
+        ),
+      ),
     ),
 
   cancelRequest: protectedProcedure
-    .input(z.object({ requestId: z.string() }))
+    .input(requestIdSchema)
     .mutation(async ({ ctx, input }) =>
       unwrapResult(
         await container.workshopRequestService.cancelWorkshopRequest(
           ctx.session.user.id,
-          input.requestId
-        )
-      )
+          input.requestId,
+        ),
+      ),
     ),
 
   updateWorkshopRequest: protectedProcedure
@@ -223,7 +236,7 @@ export const mentorRouter = router({
         preferredDate: z.coerce.date().optional().nullable(),
         preferredTime: z.string().optional().nullable(),
         mentorId: z.string().optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { requestId, ...updateData } = input;
@@ -231,8 +244,8 @@ export const mentorRouter = router({
         await container.workshopRequestService.updateWorkshopRequest(
           ctx.session.user.id,
           requestId,
-          updateData
-        )
+          updateData,
+        ),
       );
     }),
 });

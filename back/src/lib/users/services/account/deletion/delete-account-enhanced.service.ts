@@ -1,23 +1,30 @@
-import type { PrismaClient } from '@/lib/prisma';
-import type { IDeleteAccountEnhancedService } from "./delete-account-enhanced.service.interface";
+import type { PrismaClient } from "@/lib/prisma";
+import type {
+  IDeleteAccountEnhancedService,
+  DeletionEligibility,
+} from "./delete-account-enhanced.service.interface";
 import type { IWorkshopRepository } from "../../../../workshops/repositories/workshop.repository.interface";
 import type { AppUserRepository } from "../../../repositories";
 import type { IFileStorageService } from "../shared/file-storage.service.interface";
 import { Result, failure, success } from "../../../../common";
+import type { IEmailService } from "../../../../email/services/email.service.interface";
+import { renderEmailTemplate } from "../../../../email/utils/render-email";
+import { AccountDeletionConfirmedEmail } from "../../../../email/templates/AccountDeletionConfirmedEmail";
+import * as React from "react";
+import { logger } from "../../../../common/logger";
 
-export class DeleteAccountEnhancedService
-  implements IDeleteAccountEnhancedService
-{
+export class DeleteAccountEnhancedService implements IDeleteAccountEnhancedService {
   constructor(
     private readonly appUserRepository: AppUserRepository,
     private readonly workshopRepository: IWorkshopRepository,
     private readonly prisma: PrismaClient,
-    private readonly fileStorageService: IFileStorageService
+    private readonly fileStorageService: IFileStorageService,
+    private readonly emailService?: IEmailService,
   ) {}
 
   async checkCanDeleteAccount(
-    userId: string
-  ): Promise<Result<{ canDelete: boolean; reason?: string }>> {
+    userId: string,
+  ): Promise<Result<DeletionEligibility>> {
     try {
       const appUser = await this.appUserRepository.findByUserId(userId);
 
@@ -28,7 +35,7 @@ export class DeleteAccountEnhancedService
       const now = new Date();
 
       const creatorWorkshops = await this.workshopRepository.findByCreatorId(
-        appUser.id
+        appUser.id,
       );
 
       const apprenticeWorkshops =
@@ -59,14 +66,14 @@ export class DeleteAccountEnhancedService
         error instanceof Error ? error.message : "Unknown error";
       return failure(
         `Failed to check deletion eligibility: ${errorMessage}`,
-        500
+        500,
       );
     }
   }
 
   async initiateDeletion(
     userId: string,
-    reason?: string
+    reason?: string,
   ): Promise<Result<{ success: boolean }>> {
     try {
       const canDeleteResult = await this.checkCanDeleteAccount(userId);
@@ -74,12 +81,38 @@ export class DeleteAccountEnhancedService
         return failure(canDeleteResult.error, 400);
       }
       if (!canDeleteResult.data.canDelete) {
-        return failure(canDeleteResult.data.reason || "Cannot delete account", 400);
+        return failure(
+          canDeleteResult.data.reason || "Cannot delete account",
+          400,
+        );
       }
 
       const appUser = await this.appUserRepository.findByUserId(userId);
       if (!appUser) {
         return failure("App user not found", 404);
+      }
+
+      // Send confirmation email BEFORE anonymizing
+      if (this.emailService && appUser.email) {
+        try {
+          const { html, text } = await renderEmailTemplate(
+            React.createElement(AccountDeletionConfirmedEmail, {
+              userName: appUser.displayName || appUser.name || "Utilisateur",
+            }),
+          );
+
+          await this.emailService.sendEmail({
+            to: appUser.email,
+            subject: "Confirmation de la suppression de votre compte LearnSup",
+            html,
+            text,
+          });
+        } catch (err) {
+          logger.error("Failed to send deletion confirmation email", {
+            userId,
+            error: err,
+          });
+        }
       }
 
       await this.prisma.$transaction(async (tx: any) => {
@@ -114,9 +147,7 @@ export class DeleteAccountEnhancedService
     }
   }
 
-  async scrubPII(
-    userId: string
-  ): Promise<Result<{ success: boolean }>> {
+  async scrubPII(userId: string): Promise<Result<{ success: boolean }>> {
     try {
       const appUser = await this.appUserRepository.findByUserId(userId);
 
@@ -126,7 +157,7 @@ export class DeleteAccountEnhancedService
 
       if (appUser.photoUrl) {
         const deleteResult = await this.fileStorageService.deleteFile(
-          appUser.photoUrl
+          appUser.photoUrl,
         );
         if (!deleteResult.ok) {
           console.error("Failed to delete photo file:", deleteResult.error);

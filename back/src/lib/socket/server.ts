@@ -7,7 +7,10 @@ import { socketConnections, connectedUsers } from "../metrics/prometheus";
 
 let io: SocketIOServer | null = null;
 
-function buildHeadersAdapter(cookies: string, handshakeHeaders: Record<string, any>) {
+function buildHeadersAdapter(
+  cookies: string,
+  handshakeHeaders: Record<string, any>,
+) {
   return {
     get: (name: string) => {
       if (name.toLowerCase() === "cookie") return cookies;
@@ -30,6 +33,8 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       methods: ["GET", "POST"],
     },
     path: "/socket.io",
+    pingTimeout: 20000, // Considère le client déconnecté après 20s sans ping
+    pingInterval: 10000, // Envoie un ping toutes les 10s
   });
 
   io.use(async (socket, next) => {
@@ -69,7 +74,7 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
     }
 
     socketConnections.inc();
-    
+
     // Track user role for business metrics
     let userRole = "UNKNOWN";
     try {
@@ -93,7 +98,7 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       if (userRole !== "UNKNOWN") {
         connectedUsers.labels(userRole).dec();
       }
-      
+
       await container.presenceService.updateUserPresence(userId, false);
       socket.broadcast.emit("user-offline", { userId });
     });
