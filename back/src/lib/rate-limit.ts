@@ -84,6 +84,9 @@ class InMemoryRateLimiter {
 // Rate limiter for onboarding endpoints (10 requests per minute)
 export const onboardingRateLimit = new InMemoryRateLimiter(10, 60);
 
+// Rate limiter for auth-sensitive actions (export, etc.) (5 requests per minute)
+export const authRateLimit = new InMemoryRateLimiter(5, 60);
+
 // Rate limiter for file uploads (5 requests per minute)
 export const uploadRateLimit = new InMemoryRateLimiter(5, 60);
 

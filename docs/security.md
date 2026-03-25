@@ -24,6 +24,12 @@ Toutes les actions de modification effectuées via une `adminProcedure` sont aut
 
 ## 🛡️ Protection contre les Abus
 
+### Rate Limiting (Limitation de débit)
+Pour prévenir le spam et les attaques par déni de service, des limites de débit sont appliquées via `rate-limiter-flexible` :
+- **Authentification & Export** : Limite stricte (`authRateLimit`) sur les tentatives de connexion et les demandes d'export de données (5 requêtes par minute).
+- **Mutations tRPC** : Protection globale sur toutes les actions d'écriture (`mutationRateLimiter`).
+- **Uploads** : Limite spécifique sur les routes d'upload de fichiers pour éviter la saturation du stockage.
+
 ### Onboarding & Découverte
 Le parcours d'onboarding est isolé de l'espace de travail principal pour maximiser la sécurité et la clarté :
 
@@ -65,8 +71,15 @@ Le flux de suppression est le suivant :
    - `name`, `email`, `displayName`, `bio` sont réinitialisés.
    - Les fichiers uploadés (photos) sont supprimés.
 
+### Droit à la Portabilité (Export)
+Le flux d'export est asynchrone et sécurisé par email pour garantir que seul le titulaire du compte peut télécharger les données :
+1. L'utilisateur demande l'export dans ses paramètres.
+2. Le serveur génère un **jeton sécurisé (32 octets)** et une date d'expiration (24h).
+3. Un email est envoyé avec un lien de téléchargement unique : `/api/profile/export?token=...`.
+4. Le téléchargement vérifie le jeton, livre le fichier JSON, puis **invalide immédiatement le jeton** (usage unique).
+
 ### Transparence
-Toutes les données collectées sont visibles par l'utilisateur via son profil et ses paramètres. L'utilisateur peut demander un export de ses données (implémenté via les services de profil).
+Toutes les données collectées sont visibles par l'utilisateur via son profil et ses paramètres.
 
 ---
 
@@ -78,11 +91,13 @@ Pour prévenir les fuites de données sensibles (mots de passe, tokens, emails i
 - **Au niveau de la Session** : L'objet `ctx.session.user` fourni par Better Auth est pré-filtré par le framework pour ne contenir que les informations publiques de la session (id, name, email, image).
 
 ### Sécurité des Uploads
-Le point d'entrée `/api/support-request` implémente une politique de sécurité stricte pour la gestion des fichiers :
-- **Validation MIME** : Seuls les types `image/*`, `application/pdf`, `text/plain` et les formats Office (`.doc`, `.docx`) sont autorisés via une liste blanche (`Set`).
-- **Limites de taille** : Max **10 Mo** par fichier et maximum **5 fichiers** par requête.
-- **Assainissement (Sanitization)** : Les noms de fichiers sont générés via `randomUUID()` et les extensions sont nettoyées pour empêcher toute exécution de script ou injection de chemin (`path traversal`).
-- **Stockage** : Actuellement stockés localement dans `/uploads/support/` avec un accès contrôlé. *Note : Une migration vers un stockage S3 avec URLs pré-signées est recommandée pour une isolation totale.*
+Le système implémente une politique de "Defense in Depth" pour les fichiers :
+- **Vérification du contenu (Magic Bytes)** : Contrairement à une simple vérification d'extension, le serveur analyse les premiers octets du fichier via `file-type` pour valider son type MIME réel.
+- **Validation MIME** : Liste blanche stricte (Images, PDF, Text, Office).
+- **Limites de taille** : Max **5 Mo** pour les avatars (avec redimensionnement via `sharp`) et **10 Mo** pour le support.
+- **Assainissement (Sanitization)** : Les noms de fichiers originaux sont ignorés. Le système génère un `randomUUID()` et force une extension sûre.
+- **Traitement d'Image** : Les photos de profil sont retraitées par `sharp` pour supprimer les métadonnées (EXIF) pouvant contenir des données de géolocalisation.
+- **Stockage** : Stockage local isolé ou Cloudinary (avec URLs sécurisées).
 
 ### Configuration CORS
 Le serveur (`server.ts`) implémente une gestion dynamique des headers CORS :
