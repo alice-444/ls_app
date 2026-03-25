@@ -38,11 +38,15 @@ describe("ExportDataService", () => {
     },
   };
 
+  const mockEmailService = {
+    sendEmail: vi.fn().mockResolvedValue({ ok: true }),
+  };
+
   let service: ExportDataService;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    service = new ExportDataService(mockPrisma as any);
+    service = new ExportDataService(mockPrisma as any, mockEmailService as any);
   });
 
   it("should return failure if user is not found", async () => {
@@ -81,9 +85,13 @@ describe("ExportDataService", () => {
     mockPrisma.workshop_request.findMany.mockResolvedValue([]);
     mockPrisma.mentor_feedback.findMany.mockResolvedValue([]);
     mockPrisma.conversation.findMany.mockResolvedValue([{ id: "conv-1" }]);
-    mockPrisma.message.findMany.mockResolvedValue([{ id: "msg-1", content: "Hello" }]);
+    mockPrisma.message.findMany.mockResolvedValue([
+      { id: "msg-1", content: "Hello" },
+    ]);
     mockPrisma.user_connection.findMany.mockResolvedValue([]);
-    mockPrisma.credit_transaction.findMany.mockResolvedValue([{ id: "tx-1", amount: 10 }]);
+    mockPrisma.credit_transaction.findMany.mockResolvedValue([
+      { id: "tx-1", amount: 10 },
+    ]);
     mockPrisma.notification.findMany.mockResolvedValue([]);
     mockPrisma.user_block.findMany.mockResolvedValue([]);
     mockPrisma.user_report.findMany.mockResolvedValue([]);
@@ -102,9 +110,11 @@ describe("ExportDataService", () => {
     }
 
     // Verify Prisma calls
-    expect(mockPrisma.user.findUnique).toHaveBeenCalledWith(expect.objectContaining({
-      where: { id: "user-1" }
-    }));
+    expect(mockPrisma.user.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "user-1" },
+      }),
+    );
     expect(mockPrisma.workshop.findMany).toHaveBeenCalledTimes(2); // as mentor and as apprentice
   });
 

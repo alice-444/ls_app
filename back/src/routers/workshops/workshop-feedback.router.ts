@@ -2,14 +2,15 @@ import { z } from "zod";
 import { router, protectedProcedure, adminProcedure } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { handleRouterResult } from "../shared/router-helpers";
+import { workshopIdSchema, feedbackIdSchema } from "@ls-app/shared";
 
 export const workshopFeedbackRouter = router({
   canSubmitFeedback: protectedProcedure
-    .input(z.object({ workshopId: z.string() }))
+    .input(workshopIdSchema)
     .query(async ({ ctx, input }) => {
       const result = await container.workshopFeedbackService.canSubmitFeedback(
         ctx.session.user.id,
-        input.workshopId
+        input.workshopId,
       );
       return handleRouterResult(result, {
         operation: "canSubmitFeedback",
@@ -21,7 +22,7 @@ export const workshopFeedbackRouter = router({
   getEligibleWorkshopsForFeedback: protectedProcedure.query(async ({ ctx }) => {
     const result =
       await container.workshopFeedbackService.getEligibleWorkshopsForFeedback(
-        ctx.session.user.id
+        ctx.session.user.id,
       );
     return handleRouterResult(result, {
       operation: "getEligibleWorkshopsForFeedback",
@@ -36,7 +37,7 @@ export const workshopFeedbackRouter = router({
         rating: z.number().min(1).max(5),
         comment: z.string().max(1000).optional().nullable(),
         isAnonymous: z.boolean().default(false),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopFeedbackService.submitFeedback(
@@ -46,7 +47,7 @@ export const workshopFeedbackRouter = router({
           rating: input.rating,
           comment: input.comment ?? null,
           isAnonymous: input.isAnonymous,
-        }
+        },
       );
       return handleRouterResult(result, {
         operation: "submitFeedback",
@@ -61,7 +62,7 @@ export const workshopFeedbackRouter = router({
         workshopId: z.string(),
         limit: z.number().min(1).max(100).default(50).optional(),
         offset: z.number().min(0).default(0).optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const result =
@@ -70,7 +71,7 @@ export const workshopFeedbackRouter = router({
           {
             limit: input.limit,
             offset: input.offset,
-          }
+          },
         );
       return handleRouterResult(result, {
         operation: "getFeedbackByWorkshop",
@@ -87,13 +88,13 @@ export const workshopFeedbackRouter = router({
           .string()
           .min(10, "La raison doit contenir au moins 10 caractères")
           .max(500, "La raison ne peut pas dépasser 500 caractères"),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopFeedbackService.reportFeedback(
         ctx.session.user.id,
         input.feedbackId,
-        input.reason
+        input.reason,
       );
       return handleRouterResult(result, {
         operation: "reportFeedback",
@@ -109,14 +110,14 @@ export const workshopFeedbackRouter = router({
           limit: z.number().min(1).max(100).default(50).optional(),
           offset: z.number().min(0).default(0).optional(),
         })
-        .optional()
+        .optional(),
     )
     .query(async ({ ctx, input }) => {
       const result = await container.workshopFeedbackService.getModerationQueue(
         {
           limit: input?.limit,
           offset: input?.offset,
-        }
+        },
       );
       return handleRouterResult(result, {
         operation: "getModerationQueue",
@@ -125,10 +126,10 @@ export const workshopFeedbackRouter = router({
     }),
 
   approveFeedback: adminProcedure
-    .input(z.object({ feedbackId: z.string() }))
+    .input(feedbackIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopFeedbackService.approveFeedback(
-        input.feedbackId
+        input.feedbackId,
       );
       return handleRouterResult(result, {
         operation: "approveFeedback",
@@ -138,10 +139,10 @@ export const workshopFeedbackRouter = router({
     }),
 
   deleteFeedback: adminProcedure
-    .input(z.object({ feedbackId: z.string() }))
+    .input(feedbackIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopFeedbackService.deleteFeedback(
-        input.feedbackId
+        input.feedbackId,
       );
       return handleRouterResult(result, {
         operation: "deleteFeedback",
@@ -151,10 +152,10 @@ export const workshopFeedbackRouter = router({
     }),
 
   warnUser: adminProcedure
-    .input(z.object({ feedbackId: z.string() }))
+    .input(feedbackIdSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopFeedbackService.warnUser(
-        input.feedbackId
+        input.feedbackId,
       );
       return handleRouterResult(result, {
         operation: "warnUser",
@@ -167,14 +168,18 @@ export const workshopFeedbackRouter = router({
     .input(
       z.object({
         mentorUserId: z.string(),
-        amount: z.number().int().min(1, "Le pourboire minimum est de 1 crédit.").max(100, "Le pourboire maximum est de 100 crédits."),
-      })
+        amount: z
+          .number()
+          .int()
+          .min(1, "Le pourboire minimum est de 1 crédit.")
+          .max(100, "Le pourboire maximum est de 100 crédits."),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.workshopTippingService.sendTip(
         ctx.session.user.id,
         input.mentorUserId,
-        input.amount
+        input.amount,
       );
       return handleRouterResult(result, {
         operation: "sendTip",

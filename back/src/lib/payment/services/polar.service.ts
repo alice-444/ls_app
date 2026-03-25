@@ -1,5 +1,6 @@
 import type { IPolarService } from "./polar.service.interface";
-import { failure, success, type Result } from "../../common/types";
+import { failure, success } from "../../common/types";
+import type { Result } from "../../common/types";
 
 export class PolarService implements IPolarService {
   private readonly apiKey: string;
@@ -17,7 +18,7 @@ export class PolarService implements IPolarService {
   async createCheckoutSession(
     userId: string,
     credits: number,
-    amount: number
+    amount: number,
   ): Promise<Result<{ url: string; sessionId: string }>> {
     try {
       const baseUrl =
@@ -47,7 +48,7 @@ export class PolarService implements IPolarService {
           `Erreur lors de la création de la session: ${
             errorData.message || response.statusText
           }`,
-          500
+          500,
         );
       }
 
@@ -66,14 +67,14 @@ export class PolarService implements IPolarService {
         error instanceof Error ? error.message : "Erreur inconnue";
       return failure(
         `Erreur lors de la création de la session: ${errorMessage}`,
-        500
+        500,
       );
     }
   }
 
   verifyWebhookSignature(
     payload: string | Buffer,
-    signature: string
+    signature: string,
   ): { type: string; data: any } | null {
     const webhookSecret = process.env.POLAR_WEBHOOK_SECRET;
     if (!webhookSecret) {

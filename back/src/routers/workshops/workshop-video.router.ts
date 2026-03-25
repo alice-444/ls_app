@@ -1,11 +1,11 @@
 import { protectedProcedure, router } from "../../lib/trpc";
 import { container } from "../../lib/di/container";
 import { unwrapResult } from "../shared/router-helpers";
-import { z } from "zod";
+import { workshopIdSchema } from "@ls-app/shared";
 
 export const workshopVideoRouter = router({
   logVideoLinkClick: protectedProcedure
-    .input(z.object({ workshopId: z.string() }))
+    .input(workshopIdSchema)
     .mutation(async ({ ctx, input }) => {
       try {
         await container.auditLogService.record(
@@ -14,7 +14,7 @@ export const workshopVideoRouter = router({
           {
             workshopId: input.workshopId,
             timestamp: new Date().toISOString(),
-          }
+          },
         );
         return { success: true };
       } catch (error) {
@@ -24,10 +24,10 @@ export const workshopVideoRouter = router({
     }),
 
   getDailyToken: protectedProcedure
-    .input(z.object({ workshopId: z.string() }))
+    .input(workshopIdSchema)
     .query(async ({ ctx, input }) => {
       const workshop = unwrapResult(
-        await container.workshopService.getWorkshopById(input.workshopId)
+        await container.workshopService.getWorkshopById(input.workshopId),
       );
 
       const userId = ctx.session.user.id;
@@ -39,20 +39,20 @@ export const workshopVideoRouter = router({
       }
 
       let roomId = workshop.dailyRoomId;
-      if (!roomId) {
+      if (roomId) {
+        await container.workshopRepository.update(input.workshopId, {
+          dailyRoomLastActivityAt: new Date(),
+        });
+      } else {
         const roomResult =
           await container.dailyService.getOrCreateRoomForWorkshop(
             input.workshopId,
-            workshop.title
+            workshop.title,
           );
         roomId = unwrapResult(roomResult).roomId;
 
         await container.workshopRepository.update(input.workshopId, {
           dailyRoomId: roomId,
-          dailyRoomLastActivityAt: new Date(),
-        });
-      } else {
-        await container.workshopRepository.update(input.workshopId, {
           dailyRoomLastActivityAt: new Date(),
         });
       }
@@ -66,8 +66,8 @@ export const workshopVideoRouter = router({
           roomId,
           userId,
           userName,
-          isCreator
-        )
+          isCreator,
+        ),
       );
     }),
 });

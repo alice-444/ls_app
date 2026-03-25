@@ -38,18 +38,18 @@ describe("createWorkshopFrontendSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject title exceeding 200 chars", () => {
+    it("should reject title exceeding 100 chars", () => {
       const result = createWorkshopFrontendSchema.safeParse({
         ...validBase,
-        title: "A".repeat(201),
+        title: "A".repeat(101),
       });
       expect(result.success).toBe(false);
     });
 
-    it("should accept title at exactly 200 chars", () => {
+    it("should accept title at exactly 100 chars", () => {
       const result = createWorkshopFrontendSchema.safeParse({
         ...validBase,
-        title: "A".repeat(200),
+        title: "A".repeat(100),
       });
       expect(result.success).toBe(true);
     });
@@ -328,18 +328,18 @@ describe("editWorkshopFrontendSchema", () => {
     vi.useRealTimers();
   });
 
-  it("should require workshopId as valid UUID", () => {
+  it("should require workshopId as valid CUID", () => {
     const result = editWorkshopFrontendSchema.safeParse({
       ...validBase,
-      workshopId: "not-a-uuid",
+      workshopId: "not-a-cuid",
     });
     expect(result.success).toBe(false);
   });
 
-  it("should accept valid data with UUID", () => {
+  it("should accept valid data with CUID", () => {
     const result = editWorkshopFrontendSchema.safeParse({
       ...validBase,
-      workshopId: "550e8400-e29b-41d4-a716-446655440000",
+      workshopId: "cktvw5720000010mscuid1234",
     });
     expect(result.success).toBe(true);
   });

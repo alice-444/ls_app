@@ -7,7 +7,7 @@ vi.mock("../../../../../../src/lib/common/logger", () => ({
 
 import { WorkshopLifecycleService } from "../../../../../../src/lib/workshops/services/lifecycle/workshop-lifecycle.service";
 
-const WORKSHOP_ID = "e0389602-728e-439e-9831-51b333287936";
+const WORKSHOP_ID = "cktvw5720000010mscuid1234";
 
 describe("WorkshopLifecycleService", () => {
   const mockWorkshopRepo = {
@@ -30,7 +30,7 @@ describe("WorkshopLifecycleService", () => {
     vi.useRealTimers();
     service = new WorkshopLifecycleService(
       mockWorkshopRepo as any,
-      mockAccessGuard as any
+      mockAccessGuard as any,
     );
   });
 
@@ -80,7 +80,7 @@ describe("WorkshopLifecycleService", () => {
       expect(result.ok).toBe(true);
       if (result.ok) expect(result.data.workshopId).toBe("ws-new");
       expect(mockWorkshopRepo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ creatorId: "app-1" })
+        expect.objectContaining({ creatorId: "app-1" }),
       );
     });
   });
@@ -139,7 +139,7 @@ describe("WorkshopLifecycleService", () => {
       expect(result.ok).toBe(true);
       expect(mockWorkshopRepo.update).toHaveBeenCalledWith(
         WORKSHOP_ID,
-        expect.objectContaining({ title: "Updated Title Here" })
+        expect.objectContaining({ title: "Updated Title Here" }),
       );
     });
   });
@@ -205,7 +205,8 @@ describe("WorkshopLifecycleService", () => {
       });
       mockWorkshopRepo.findById.mockResolvedValue({
         title: "Mon atelier complet",
-        description: "Une description suffisamment longue pour passer la validation minimum",
+        description:
+          "Une description suffisamment longue pour passer la validation minimum",
         topic: "Informatique",
         date: new Date("2025-06-20"),
         time: "14:00",
@@ -223,7 +224,7 @@ describe("WorkshopLifecycleService", () => {
       }
       expect(mockWorkshopRepo.update).toHaveBeenCalledWith(
         WORKSHOP_ID,
-        expect.objectContaining({ status: "PUBLISHED" })
+        expect.objectContaining({ status: "PUBLISHED" }),
       );
 
       vi.useRealTimers();
@@ -239,7 +240,8 @@ describe("WorkshopLifecycleService", () => {
       });
       mockWorkshopRepo.findById.mockResolvedValue({
         title: "Mon atelier complet",
-        description: "Une description suffisamment longue pour passer la validation",
+        description:
+          "Une description suffisamment longue pour passer la validation",
         date: new Date("2025-06-15"),
         time: "14:00",
         duration: 60,

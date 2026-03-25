@@ -18,7 +18,7 @@ describe("trpc workshop.getById", () => {
 
   it("returns workshop when found", async () => {
     const workshop = {
-      id: "w1",
+      id: "cktvw5720000010mscuid1234",
       title: "Test Workshop",
       status: "PUBLISHED",
       creatorId: "user-1",
@@ -26,9 +26,13 @@ describe("trpc workshop.getById", () => {
     mockGetWorkshopById.mockResolvedValue({ ok: true, data: workshop });
     const ctx = createPublicContext();
     const caller = createCaller(ctx);
-    const result = await caller.workshop.getById({ workshopId: "w1" });
+    const result = await caller.workshop.getById({
+      workshopId: "cktvw5720000010mscuid1234",
+    });
     expect(result).toEqual(workshop);
-    expect(mockGetWorkshopById).toHaveBeenCalledWith("w1");
+    expect(mockGetWorkshopById).toHaveBeenCalledWith(
+      "cktvw5720000010mscuid1234",
+    );
   });
 
   it("throws when service returns error", async () => {
@@ -38,6 +42,8 @@ describe("trpc workshop.getById", () => {
     });
     const ctx = createPublicContext();
     const caller = createCaller(ctx);
-    await expect(caller.workshop.getById({ workshopId: "missing" })).rejects.toThrow();
+    await expect(
+      caller.workshop.getById({ workshopId: "missing" }),
+    ).rejects.toThrow();
   });
 });

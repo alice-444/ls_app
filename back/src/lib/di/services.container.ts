@@ -258,18 +258,18 @@ export class ServicesContainer {
   }
 
   get messagingService(): IMessagingService {
-    this._messagingService ??= new MessagingService(
-      this.repositories.appUserRepository,
-      this.repositories.conversationRepository,
-      this.repositories.messageRepository,
-      this.messageValidationService,
-      this.messageEnrichmentService,
-      this.userBlockService,
-      this.notificationService,
-      this.repositories.workshopRepository,
-      this.prisma,
-      this.emailService,
-    );
+    this._messagingService ??= new MessagingService({
+      appUserRepository: this.repositories.appUserRepository,
+      conversationRepository: this.repositories.conversationRepository,
+      messageRepository: this.repositories.messageRepository,
+      validationService: this.messageValidationService,
+      enrichmentService: this.messageEnrichmentService,
+      userBlockService: this.userBlockService,
+      notificationService: this.notificationService,
+      workshopRepository: this.repositories.workshopRepository,
+      prismaClient: this.prisma,
+      emailService: this.emailService,
+    });
     return this._messagingService;
   }
 
