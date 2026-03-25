@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
-import { MentorsGrid } from "@/components/mentor/MentorsGrid";
-import { MentorFilters } from "@/components/mentor/MentorFilters";
+import { MentorsGrid } from "@/components/domains/mentor/MentorsGrid";
+import { MentorFilters } from "@/components/domains/mentor/MentorFilters";
 import { Button } from "@/components/ui/button";
 import { Loader2, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import type { MentorBasic } from "@ls-app/shared";

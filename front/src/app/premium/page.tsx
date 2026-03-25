@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Crown, Check, Sparkles, Headphones, BookOpen, Star } from "lucide-react";
-import { PageContainer } from "@/components/layout";
-import { BackButton } from "@/components/back-button";
+import { PageContainer } from "@/components/shared/layout";
+import { BackButton } from "@/components/shared/back-button";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";

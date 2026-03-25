@@ -4,15 +4,15 @@ import { useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
-import { PageContainer } from "@/components/layout";
+import { PageContainer } from "@/components/shared/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { PendingRequestsList } from "@/components/network/PendingRequestsList";
-import { AcceptedConnectionsList } from "@/components/network/AcceptedConnectionsList";
-import { RemoveConnectionDialog } from "@/components/network/RemoveConnectionDialog";
-import { ProfileModalManager } from "@/components/network/ProfileModalManager";
-import { SentRequestsList } from "@/components/network/SentRequestsList";
+import { PendingRequestsList } from "@/components/domains/network/PendingRequestsList";
+import { AcceptedConnectionsList } from "@/components/domains/network/AcceptedConnectionsList";
+import { RemoveConnectionDialog } from "@/components/domains/network/RemoveConnectionDialog";
+import { ProfileModalManager } from "@/components/domains/network/ProfileModalManager";
+import { SentRequestsList } from "@/components/domains/network/SentRequestsList";
 
 export default function NetworkPage() {
   const router = useRouter();

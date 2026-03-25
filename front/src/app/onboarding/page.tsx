@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Loader from "@/components/loader";
+import Loader from "@/components/shared/loader";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { RoleSelectionStep } from "./components/RoleSelectionStep";
 import { RoleConfirmationStep } from "./components/RoleConfirmationStep";
@@ -11,7 +11,7 @@ import { ProfFormStep } from "./components/ProfFormStep";
 import { ApprenantCompleteStep } from "./components/ApprenantCompleteStep";
 
 import { Progress } from "@/components/ui/progress";
-import { ModeToggle } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/shared/mode-toggle";
 
 function OnboardingContent() {
   const { data: session, isPending: isSessionPending } =

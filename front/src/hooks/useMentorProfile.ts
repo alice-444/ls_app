@@ -11,8 +11,8 @@ import { toast } from "sonner";
 import {
   mentorProfileSchema,
   type MentorProfileFormData,
-} from "@/components/mentor-profile/schema";
-import type { ProfileSection } from "@/components/mentor-profile/constants";
+} from "@/components/domains/mentor-profile/schema";
+import type { ProfileSection } from "@/components/domains/mentor-profile/constants";
 
 function parseStringOrArray(value: unknown): string[] {
   if (Array.isArray(value)) return value;

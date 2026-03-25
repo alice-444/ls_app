@@ -1,8 +1,8 @@
 "use client";
 
 import { faqConfig } from "@/lib/faq-config";
-import { FAQAccordion } from "@/components/faq/FAQAccordion";
-import { BackButton } from "@/components/back-button";
+import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
+import { BackButton } from "@/components/shared/back-button";
 
 export default function FAQPage() {
   return (

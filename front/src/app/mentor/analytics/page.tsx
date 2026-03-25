@@ -1,8 +1,8 @@
 "use client";
 
-import { PageContainer } from "@/components/layout";
-import { CashbackSummaryCard } from "@/components/dashboard/CashbackSummaryCard";
-import { CashbackHistoryList } from "@/components/dashboard/CashbackHistoryList";
+import { PageContainer } from "@/components/shared/layout";
+import { CashbackSummaryCard } from "@/components/domains/dashboard/CashbackSummaryCard";
+import { CashbackHistoryList } from "@/components/domains/dashboard/CashbackHistoryList";
 import { trpc } from "@/utils/trpc";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";

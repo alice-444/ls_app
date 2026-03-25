@@ -8,14 +8,21 @@ ce qui existe et où le trouver
 
 - [README principal](../README.md) — Installation et quick start
 - [Stack technique](tech-stack.md) — Technologies, langages et choix technologiques
+- [Fonctionnalités](feat.md) — Fonctionnalités produit par rôle et par domaine
 - [Architecture](#architecture) – Vue d’ensemble front/back
 - [Design Patterns](patterns.md) – Patterns utilisés dans le projet
 - [Sécurité & RGPD](security.md) – Politique de sécurité et protection des données
 - [Front](#front) – Application Next.js, tRPC, auth
 - [Back](#back) – API, Prisma, auth
 - [Arborescence](#arborescence) – Structure macro et micro
-- [Guides](#guides) – Procédures (déploiement, DB, auth…), PV de recette
+- [Guides](#guides) – Procédures (déploiement, DB, auth…), PV de recette, schéma déploiement
 - [Référence](#référence) – Détails techniques par domaine
+
+---
+
+## Fonctionnalités
+
+Documentation des fonctionnalités produit (vue fonctionnelle par rôle) : [feat.md](feat.md).
 
 ---
 
@@ -49,6 +56,7 @@ Documentation de l’API et du serveur : [back.md](back.md).
 ## Guides
 
 Procédures (déploiement, DB, auth…) : [procedure.md](procedure.md).
+Schéma et procédure de déploiement : [deploiement.md](deploiement.md).
 Procès-verbal de recette : [pv-recette.md](pv-recette.md).
 
 ---
