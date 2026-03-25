@@ -49,7 +49,7 @@ export function WorkshopHeader({
       ]
     : [
         { label: "Tableau de bord", href: "/dashboard" },
-        { label: "e-Atelier", href: "/workshop-room" },
+        { label: "Catalogue", href: "/catalog" },
         { label: workshop.title },
       ];
 

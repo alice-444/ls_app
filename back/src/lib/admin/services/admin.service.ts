@@ -1,16 +1,20 @@
 import { PrismaClient } from "@/lib/prisma";
-import { AdminStats, IAdminService } from "./admin.service.interface";
+import { AdminStats } from "@ls-app/shared";
+import { IAdminService } from "./admin.service.interface";
 import type { IEmailService } from "../../email/services/email.service.interface";
 import { renderEmailTemplate } from "../../email/utils/render-email";
 import { MentorProfileStatusEmail } from "../../email/templates/MentorProfileStatusEmail";
 import * as React from "react";
 import { logger } from "../../common/logger";
+import { IAuditLogService } from "../../common/audit-log.service";
+import { generateInternalId } from "../../utils/id-generator";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export class AdminService implements IAdminService {
   constructor(
     private readonly prisma: PrismaClient,
+    private readonly auditLogService: IAuditLogService,
     private readonly emailService?: IEmailService,
   ) {}
 
@@ -49,21 +53,39 @@ export class AdminService implements IAdminService {
     });
   }
 
-  async approveUser(userId: string): Promise<any> {
+  async approveUser(userId: string, adminId?: string): Promise<any> {
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: { status: "ACTIVE" },
     });
 
+    if (adminId) {
+      await this.auditLogService.record({
+        adminId,
+        action: "APPROVE_USER",
+        targetId: userId,
+        details: { userEmail: user.email, userName: user.name },
+      });
+    }
+
     await this.sendProfileStatusEmail(user, true);
     return user;
   }
 
-  async rejectUser(userId: string, reason?: string): Promise<any> {
+  async rejectUser(userId: string, adminId?: string, reason?: string): Promise<any> {
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: { status: "SUSPENDED", deletionReason: reason },
     });
+
+    if (adminId) {
+      await this.auditLogService.record({
+        adminId,
+        action: "REJECT_USER",
+        targetId: userId,
+        details: { userEmail: user.email, userName: user.name, reason },
+      });
+    }
 
     await this.sendProfileStatusEmail(user, false, reason);
     return user;
@@ -152,5 +174,159 @@ export class AdminService implements IAdminService {
       })),
       total,
     };
+  }
+
+  async getUser360(userId: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        workshops_as_mentor: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+        },
+        workshops_as_apprentice: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+        },
+        creditTransactions: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+        },
+        supportRequests: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+        },
+        reports_received: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+          include: {
+            reporter: { select: { name: true, email: true } }
+          }
+        },
+        reports_made: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+        },
+        notifications: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+        }
+      },
+    });
+
+    if (!user) return null;
+
+    // Get audit logs where this user was the TARGET
+    const auditLogs = await this.prisma.audit_log.findMany({
+      where: { targetId: userId },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      include: {
+        admin: { select: { name: true } }
+      }
+    });
+
+    return {
+      ...user,
+      auditLogs,
+    };
+  }
+
+  async updateUserCredits(params: {
+    adminId: string;
+    userId: string;
+    amount: number;
+    reason: string;
+    type: "ADD" | "REMOVE";
+  }): Promise<any> {
+    const { adminId, userId, amount, reason, type } = params;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) throw new Error("Utilisateur non trouvé");
+
+    const newBalance = type === "ADD" 
+      ? user.creditBalance + amount 
+      : Math.max(0, user.creditBalance - amount);
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { creditBalance: newBalance },
+    });
+
+    // Record in credit_transaction table
+    await this.prisma.credit_transaction.create({
+      data: {
+        id: generateInternalId(),
+        userId: user.id,
+        amount: type === "ADD" ? amount : -amount,
+        description: `Admin Adjustment: ${reason}`,
+        type: type === "ADD" ? "TOP_UP" : "USAGE",
+      },
+    });
+
+    // Record in audit_log table
+    await this.auditLogService.record({
+      adminId,
+      action: type === "ADD" ? "ADD_CREDITS" : "REMOVE_CREDITS",
+      targetId: userId,
+      details: { amount, reason, previousBalance: user.creditBalance, newBalance },
+    });
+
+    return updatedUser;
+  }
+
+  async bulkApproveUsers(userIds: string[], adminId: string): Promise<any> {
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: userIds } },
+    });
+
+    const result = await this.prisma.user.updateMany({
+      where: { id: { in: userIds } },
+      data: { status: "ACTIVE" },
+    });
+
+    // Audit logs for each user
+    await Promise.all(users.map(user => 
+      this.auditLogService.record({
+        adminId,
+        action: "BULK_APPROVE_USER",
+        targetId: user.id,
+        details: { userEmail: user.email, userName: user.name },
+      })
+    ));
+
+    // Send emails (non-blocking for the transaction but we want to notify all)
+    users.forEach(user => this.sendProfileStatusEmail(user, true));
+
+    return result;
+  }
+
+  async bulkRejectUsers(userIds: string[], adminId: string, reason?: string): Promise<any> {
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: userIds } },
+    });
+
+    const result = await this.prisma.user.updateMany({
+      where: { id: { in: userIds } },
+      data: { status: "SUSPENDED", deletionReason: reason },
+    });
+
+    // Audit logs for each user
+    await Promise.all(users.map(user => 
+      this.auditLogService.record({
+        adminId,
+        action: "BULK_REJECT_USER",
+        targetId: user.id,
+        details: { userEmail: user.email, userName: user.name, reason },
+      })
+    ));
+
+    // Send emails
+    users.forEach(user => this.sendProfileStatusEmail(user, false, reason));
+
+    return result;
   }
 }

@@ -3,34 +3,38 @@ import { generateInternalId } from "../utils/id-generator";
 import { logger } from "./logger";
 
 export interface IAuditLogService {
-  record(
-    userId: string,
-    type: string,
-    meta?: Record<string, unknown>
-  ): Promise<void>;
+  record(params: {
+    adminId: string;
+    action: string;
+    targetId?: string;
+    details: Record<string, unknown>;
+  }): Promise<void>;
 }
 
 export class AuditLogService implements IAuditLogService {
-  async record(
-    userId: string,
-    type: string,
-    meta?: Record<string, unknown>
-  ): Promise<void> {
+  async record(params: {
+    adminId: string;
+    action: string;
+    targetId?: string;
+    details: Record<string, unknown>;
+  }): Promise<void> {
     try {
       await (prisma as any).audit_log.create({
         data: {
           id: generateInternalId(),
-          userId,
-          type,
-          meta: meta ?? null,
+          adminId: params.adminId,
+          action: params.action,
+          targetId: params.targetId ?? null,
+          details: params.details,
           createdAt: new Date(),
         },
       });
     } catch (error) {
       logger.error("Failed to record audit log", error, {
-        userId,
-        type,
-        meta,
+        adminId: params.adminId,
+        action: params.action,
+        targetId: params.targetId,
+        details: params.details,
       });
     }
   }

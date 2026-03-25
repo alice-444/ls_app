@@ -2,7 +2,16 @@ import { z } from "zod";
 import { router, protectedProcedure, adminProcedure } from "../../lib/trpc";
 import { prisma } from "../../lib/common/prisma";
 import { TRPCError } from "@trpc/server";
-import { pollIdSchema, optionIdSchema } from "@ls-app/shared";
+import { 
+  pollIdSchema, 
+  optionIdSchema, 
+  studentDealSchema, 
+  communityEventSchema, 
+  communitySpotSchema, 
+  communityPollSchema,
+  bulkIdsSchema,
+  bulkReviewProposalsSchema
+} from "@ls-app/shared";
 
 export const communityRouter = router({
   // --- Public Procedures ---
@@ -143,15 +152,7 @@ export const communityRouter = router({
 
   // --- Proposal Procedures ---
   proposeEvent: protectedProcedure
-    .input(
-      z.object({
-        title: z.string().min(3),
-        description: z.string().min(10),
-        date: z.date(),
-        location: z.string(),
-        link: z.string().url().optional(),
-      }),
-    )
+    .input(communityEventSchema.omit({ imageUrl: true }))
     .mutation(async ({ ctx, input }) => {
       return await prisma.community_event.create({
         data: {
@@ -163,15 +164,7 @@ export const communityRouter = router({
     }),
 
   proposeDeal: protectedProcedure
-    .input(
-      z.object({
-        title: z.string().min(3),
-        description: z.string().min(10),
-        category: z.string(),
-        link: z.string().url(),
-        promoCode: z.string().optional(),
-      }),
-    )
+    .input(studentDealSchema.omit({ imageUrl: true }))
     .mutation(async ({ ctx, input }) => {
       return await prisma.student_deal.create({
         data: {
@@ -183,14 +176,7 @@ export const communityRouter = router({
     }),
 
   proposeSpot: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(3),
-        description: z.string().min(10),
-        address: z.string(),
-        tags: z.array(z.string()),
-      }),
-    )
+    .input(communitySpotSchema.omit({ imageUrl: true }))
     .mutation(async ({ ctx, input }) => {
       return await prisma.community_spot.create({
         data: {
@@ -258,6 +244,34 @@ export const communityRouter = router({
       }
     }),
 
+  bulkReviewProposals: adminProcedure
+    .input(bulkReviewProposalsSchema)
+    .mutation(async ({ input }) => {
+      const status = input.action === "APPROVE" ? "APPROVED" : "REJECTED";
+      switch (input.type) {
+        case "EVENT":
+          return await prisma.community_event.updateMany({
+            where: { id: { in: input.ids } },
+            data: { status },
+          });
+        case "DEAL":
+          return await prisma.student_deal.updateMany({
+            where: { id: { in: input.ids } },
+            data: { status },
+          });
+        case "SPOT":
+          return await prisma.community_spot.updateMany({
+            where: { id: { in: input.ids } },
+            data: { status },
+          });
+        case "POLL":
+          return await prisma.community_poll.updateMany({
+            where: { id: { in: input.ids } },
+            data: { status, active: input.action === "APPROVE" },
+          });
+      }
+    }),
+
   deleteProposal: adminProcedure
     .input(
       z.object({
@@ -283,4 +297,50 @@ export const communityRouter = router({
           });
       }
     }),
-});
+
+  createDeal: adminProcedure
+    .input(studentDealSchema)
+    .mutation(async ({ input }) => {
+      return await prisma.student_deal.create({
+        data: {
+          ...input,
+          status: "APPROVED",
+        },
+      });
+    }),
+
+  createEvent: adminProcedure
+    .input(communityEventSchema)
+    .mutation(async ({ input }) => {
+      return await prisma.community_event.create({
+        data: {
+          ...input,
+          status: "APPROVED",
+        },
+      });
+    }),
+
+  createSpot: adminProcedure
+    .input(communitySpotSchema)
+    .mutation(async ({ input }) => {
+      return await prisma.community_spot.create({
+        data: {
+          ...input,
+          status: "APPROVED",
+        },
+      });
+    }),
+
+  createPoll: adminProcedure
+    .input(communityPollSchema)
+    .mutation(async ({ input }) => {
+      return await prisma.community_poll.create({
+        data: {
+          question: input.question,
+          options: input.options.map(o => ({ ...o, id: Math.random().toString(36).substring(7) })),
+          status: "APPROVED",
+          active: true,
+        },
+      });
+    }),
+  });

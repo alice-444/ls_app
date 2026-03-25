@@ -82,9 +82,12 @@ import type { ISupportRequestService } from "../support/services/support-request
 import type { IMagicLinkService } from "../auth/services/magic-link/magic-link.service.interface";
 import { MaintenanceService } from "../maintenance/services/maintenance.service";
 import type { IMaintenanceService } from "../maintenance/services/maintenance.service.interface";
+import { AnalyticsService } from "../admin/services/analytics/analytics.service";
+import type { IAnalyticsService } from "../admin/services/analytics/analytics.service.interface";
 
 export class ServicesContainer {
   private _adminService?: IAdminService;
+  private _analyticsService?: IAnalyticsService;
   private _supportRequestService?: ISupportRequestService;
   private _magicLinkService?: IMagicLinkService;
   private _maintenanceService?: IMaintenanceService;
@@ -471,15 +474,22 @@ export class ServicesContainer {
   }
 
   get adminService(): IAdminService {
-    this._adminService ??= new AdminService(this.prisma, this.emailService);
+    this._adminService ??= new AdminService(this.prisma, this.auditLogService, this.emailService);
     return this._adminService;
+  }
+
+  get analyticsService(): IAnalyticsService {
+    this._analyticsService ??= new AnalyticsService(this.prisma);
+    return this._analyticsService;
   }
 
   get supportRequestService(): ISupportRequestService {
     this._supportRequestService ??= new SupportRequestService(
+      this.prisma,
       this.repositories.supportRequestRepository,
       this.notificationService,
       this.emailService,
+      this.auditLogService,
     );
     return this._supportRequestService;
   }

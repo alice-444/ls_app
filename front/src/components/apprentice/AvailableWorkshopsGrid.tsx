@@ -49,7 +49,7 @@ export function AvailableWorkshopsGrid({
               Tous les ateliers ouverts sont déjà complets ou vous y êtes déjà
               inscrit.
             </p>
-            <Button onClick={() => router.push("/workshop-room")}>
+            <Button onClick={() => router.push("/catalog")}>
               Voir tous les ateliers
             </Button>
           </CardContent>

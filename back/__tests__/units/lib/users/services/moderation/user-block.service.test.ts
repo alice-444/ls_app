@@ -94,11 +94,12 @@ describe("UserBlockService", () => {
       const result = await service.blockUser("user-1", "user-2");
       expect(result.ok).toBe(true);
       expect(mockBlockRepo.create).toHaveBeenCalledWith("app-1", "app-2");
-      expect(mockAuditLog.record).toHaveBeenCalledWith(
-        "user-1",
-        "USER_BLOCKED",
-        expect.objectContaining({ blockedUserId: "user-2" })
-      );
+      expect(mockAuditLog.record).toHaveBeenCalledWith({
+        adminId: "user-1",
+        action: "USER_BLOCKED",
+        targetId: "user-2",
+        details: expect.objectContaining({ blockId: "block-new" })
+      });
     });
   });
 
@@ -118,6 +119,12 @@ describe("UserBlockService", () => {
       const result = await service.unblockUser("user-1", "user-2");
       expect(result.ok).toBe(true);
       expect(mockBlockRepo.delete).toHaveBeenCalledWith("app-1", "app-2");
+      expect(mockAuditLog.record).toHaveBeenCalledWith({
+        adminId: "user-1",
+        action: "USER_UNBLOCKED",
+        targetId: "user-2",
+        details: expect.any(Object)
+      });
     });
   });
 

@@ -52,10 +52,14 @@ export class UserReportService implements IUserReportService {
       });
 
       if (this.auditLogService) {
-        await this.auditLogService.record(reporterUserId, "USER_REPORTED", {
-          reportId: report.id,
-          reportedUserId,
-          reason,
+        await this.auditLogService.record({
+          adminId: reporterUserId,
+          action: "USER_REPORTED",
+          targetId: reportedUserId,
+          details: {
+            reportId: report.id,
+            reason,
+          }
         });
       }
 
@@ -162,10 +166,14 @@ export class UserReportService implements IUserReportService {
       logger.info("Report reviewed", { reportId, status, reviewedBy: adminUserId });
 
       if (this.auditLogService) {
-        await this.auditLogService.record(adminUserId, "USER_REPORT_REVIEWED", {
-          reportId,
-          status,
-          adminNotes,
+        await this.auditLogService.record({
+          adminId: adminUserId,
+          action: "USER_REPORT_REVIEWED",
+          details: {
+            reportId,
+            status,
+            adminNotes,
+          }
         });
       }
 

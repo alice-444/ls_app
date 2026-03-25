@@ -8,15 +8,14 @@ export const workshopVideoRouter = router({
     .input(workshopIdSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        await container.auditLogService.record(
-          ctx.session.user.id,
-          "VIDEO_LINK_CLICKED",
-          {
+        await container.auditLogService.record({
+          adminId: ctx.session.user.id,
+          action: "VIDEO_LINK_CLICKED",
+          details: {
             workshopId: input.workshopId,
             timestamp: new Date().toISOString(),
-          },
-        );
-        return { success: true };
+          }
+        });
       } catch (error) {
         console.error("Failed to log video link click:", error);
         return { success: false };

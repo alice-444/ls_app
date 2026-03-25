@@ -14,22 +14,26 @@ vi.mock("@/lib/common/prisma", () => ({
       findMany: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
     student_deal: {
       findMany: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
     community_spot: {
       findMany: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
     community_poll: {
       findFirst: vi.fn(),
       findUnique: vi.fn(),
       findMany: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
     poll_vote: {
       findFirst: vi.fn(),
@@ -185,6 +189,29 @@ describe("Community Router", () => {
 
       expect(prisma.community_event.update).toHaveBeenCalledWith({
         where: { id: "ev-1" },
+        data: { status: "APPROVED" },
+      });
+    });
+
+    it("bulkReviewProposals updates multiple statuses", async () => {
+      const ctx = createProtectedContext({ userId: "admin-1" });
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "admin-1",
+        role: "ADMIN",
+        status: "ACTIVE",
+      });
+      (prisma.community_event.updateMany as any).mockResolvedValue({ count: 2 });
+
+      const caller = createCaller(ctx);
+
+      await caller.community.bulkReviewProposals({
+        type: "EVENT",
+        ids: ["ev-1", "ev-2"],
+        action: "APPROVE",
+      });
+
+      expect(prisma.community_event.updateMany).toHaveBeenCalledWith({
+        where: { id: { in: ["ev-1", "ev-2"] } },
         data: { status: "APPROVED" },
       });
     });

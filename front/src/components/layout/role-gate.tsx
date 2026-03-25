@@ -5,7 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 
-const USER_ONLY_ROUTES = ["/dashboard", "/my-workshops", "/workshop-editor", "/mentor-profile", "/workshop-room", "/profil"];
+const USER_ONLY_ROUTES = ["/dashboard", "/my-workshops", "/workshop-editor", "/mentor-profile", "/catalog", "/profil"];
 const ADMIN_ONLY_ROUTES = ["/admin"];
 
 export function RoleGate({

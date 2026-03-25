@@ -43,6 +43,9 @@ Référence rapide par domaine : où trouver le code, quelles API, quels modèle
 - Router racine : `back/src/routers/index.ts` (appRouter).
 - **Renommage** : `workshopFeedback.dismissReport` → `approveFeedback`.
 - Sous-routers : auth, workshop, workshopFeedback, cashbackAnalytics, mentor, apprentice, connection, community, messaging, notification, userBlock, userReport, credits, user, accountSettings, admin, support.
+- **admin** : `getStats`, `getOnboardingQueue`, `getUsers`, `approveUser`, `rejectUser`, `getUser360`, `updateUserCredits`, `bulkApproveUsers`, `bulkRejectUsers`, `sendBulkNotification` (moteur de segmentation).
+- **community** : `getHubData`, `voteInPoll`, propositions, modération (dont `bulkReviewProposals`), création directe (`createDeal`, `createEvent`, etc.).
+- **support** : création, suivi, et système threadé (`addMessage`).
 - Procédures : `publicProcedure` (sans session), `protectedProcedure` (session requise), `mentorProcedure` (MENTOR actif), `adminProcedure` (ADMIN actif, audit log).
 - Point d’entrée HTTP : `/trpc` (POST batch).
 
@@ -102,8 +105,10 @@ Emplacements : `front/__tests__/units/`, `back/__tests__/units/`, `back/__tests_
 - **Atelier** — Synonyme de *workshop* : session d’apprentissage (souvent en visio) créée par un mentor, à laquelle des apprenants peuvent s’inscrire.
 - **Cashback** — Remboursement ou crédit accordé à un apprenant après participation à un atelier (règles métier dans le back).
 - **Mentor** — Utilisateur avec le rôle MENTOR : crée et anime des ateliers, a un profil publié (bio, domaines, disponibilités), reçoit des demandes d’inscription et des feedbacks.
-- **Admin** — Utilisateur avec le rôle ADMIN : accès à l’interface `/admin` (modération, signalements, support, onboarding, audit logs, paramètres).
-- **Workshop** — Atelier : entité métier (titre, date, mentor, statut, inscriptions, visio Daily). Voir modèles `workshop`, `workshop_request`, `mentor_feedback` dans le schéma Prisma.
+- **Admin** : Utilisateur avec le rôle ADMIN : accès à l’interface `/admin` (modération, signalements, support threadé, onboarding, audit logs, Fiche 360°, notifications segmentées, création directe de contenu, bulk actions).
+- **Workshop** : Atelier : entité métier (titre, date, mentor, statut, inscriptions, visio Daily). Voir modèles `workshop`, `workshop_request`, `mentor_feedback` dans le schéma Prisma.
+- **Fiche 360°** : Vue centralisée de l'historique d'un utilisateur (ateliers, crédits, modération, audit log).
+- **Moteur de segmentation** : Outil d'envoi de notifications groupées selon des critères spécifiques (rôle, activité, statut).
 
 ---
 

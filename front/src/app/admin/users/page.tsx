@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Loader2,
   CheckCircle,
@@ -17,11 +18,15 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Trash2,
 } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { useState, Suspense } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -59,6 +64,7 @@ function UsersContent() {
     name: string | null;
     email: string | null;
   } | null>(null);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [rejectionReason, setRejectionReason] = useState("");
 
   const { data, isLoading, refetch } = trpc.admin.getUsers.useQuery({
@@ -77,6 +83,15 @@ function UsersContent() {
     },
   });
 
+  const bulkApproveMutation = trpc.admin.bulkApproveUsers.useMutation({
+    onSuccess: () => {
+      toast.success("Utilisateurs activés en masse");
+      setSelectedUserIds([]);
+      refetch();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const rejectMutation = trpc.admin.rejectUser.useMutation({
     onSuccess: () => {
       toast.success("Utilisateur suspendu");
@@ -90,16 +105,47 @@ function UsersContent() {
     },
   });
 
+  const bulkRejectMutation = trpc.admin.bulkRejectUsers.useMutation({
+    onSuccess: () => {
+      toast.success("Utilisateurs suspendus en masse");
+      setSelectedUserIds([]);
+      setIsRejectDialogOpen(false);
+      setRejectionReason("");
+      refetch();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const toggleSelectAll = () => {
+    if (selectedUserIds.length === items.length) {
+      setSelectedUserIds([]);
+    } else {
+      setSelectedUserIds(items.map((u: any) => u.id));
+    }
+  };
+
+  const toggleSelectUser = (userId: string) => {
+    setSelectedUserIds(prev => 
+      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    );
+  };
+
   const handleApprove = (userId: string) => {
     approveMutation.mutate({ userId });
   };
 
   const handleReject = () => {
-    if (!selectedUser) return;
-    rejectMutation.mutate({
-      userId: selectedUser.id,
-      reason: rejectionReason || undefined,
-    });
+    if (selectedUserIds.length > 0) {
+      bulkRejectMutation.mutate({
+        userIds: selectedUserIds,
+        reason: rejectionReason || undefined,
+      });
+    } else if (selectedUser) {
+      rejectMutation.mutate({
+        userId: selectedUser.id,
+        reason: rejectionReason || undefined,
+      });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -163,44 +209,73 @@ function UsersContent() {
             Consulter et gérer les comptes utilisateurs
           </p>
         </div>
-        <Select
-          value={statusFilter}
-          onValueChange={(v) => {
-            setStatusFilter(v as UserStatus | "ALL");
-            setCursor(null);
-          }}
-        >
-          <SelectTrigger className="w-[180px] rounded-full">
-            <SelectValue placeholder="Filtrer par statut" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">Tous les statuts</SelectItem>
-            <SelectItem value="PENDING">En attente</SelectItem>
-            <SelectItem value="ACTIVE">Actifs</SelectItem>
-            <SelectItem value="SUSPENDED">Suspendus</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-3">
+          {selectedUserIds.length > 0 && (
+            <div className="flex items-center gap-2 mr-4 px-4 py-1.5 bg-brand/5 border border-brand/20 rounded-full animate-in fade-in slide-in-from-right-2">
+              <span className="text-sm font-medium text-brand">{selectedUserIds.length} sélectionnés</span>
+              <div className="h-4 w-px bg-brand/20 mx-1" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-2"
+                onClick={() => bulkApproveMutation.mutate({ userIds: selectedUserIds })}
+              >
+                <CheckCircle className="h-4 w-4 mr-1" /> Approuver
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2"
+                onClick={() => setIsRejectDialogOpen(true)}
+              >
+                <XCircle className="h-4 w-4 mr-1" /> Rejeter
+              </Button>
+            </div>
+          )}
+          <Select
+            value={statusFilter}
+            onValueChange={(v) => {
+              setStatusFilter(v as UserStatus | "ALL");
+              setCursor(null);
+              setSelectedUserIds([]);
+            }}
+          >
+            <SelectTrigger className="w-[180px] rounded-full">
+              <SelectValue placeholder="Filtrer par statut" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Tous les statuts</SelectItem>
+              <SelectItem value="PENDING">En attente</SelectItem>
+              <SelectItem value="ACTIVE">Actifs</SelectItem>
+              <SelectItem value="SUSPENDED">Suspendus</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-border/50 bg-card/95 backdrop-blur-md overflow-hidden shadow-xl">
         <Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead className="w-[40px]">
+                <Checkbox 
+                  checked={items.length > 0 && selectedUserIds.length === items.length}
+                  onCheckedChange={toggleSelectAll}
+                />
+              </TableHead>
               <TableHead className="text-ls-heading">Utilisateur</TableHead>
               <TableHead className="text-ls-heading">Email</TableHead>
               <TableHead className="text-ls-heading">Rôle</TableHead>
               <TableHead className="text-ls-heading">Statut</TableHead>
               <TableHead className="text-ls-heading">Inscription</TableHead>
-              {statusFilter === "PENDING" && (
-                <TableHead className="text-right text-ls-heading">Actions</TableHead>
-              )}
+              <TableHead className="text-right text-ls-heading">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {items.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={statusFilter === "PENDING" ? 6 : 5}
+                  colSpan={7}
                   className="text-center text-ls-muted py-12"
                 >
                   Aucun utilisateur trouvé.
@@ -210,8 +285,17 @@ function UsersContent() {
               items.map((user: any) => (
                 <TableRow
                   key={user.id}
-                  className="border-border/50 hover:bg-brand-soft/20"
+                  className={cn(
+                    "border-border/50 transition-colors",
+                    selectedUserIds.includes(user.id) ? "bg-brand/5" : "hover:bg-brand-soft/20"
+                  )}
                 >
+                  <TableCell>
+                    <Checkbox 
+                      checked={selectedUserIds.includes(user.id)}
+                      onCheckedChange={() => toggleSelectUser(user.id)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       {user.photoUrl ? (
@@ -242,37 +326,48 @@ function UsersContent() {
                         })
                       : "—"}
                   </TableCell>
-                  {statusFilter === "PENDING" && (
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="cta"
-                          size="ctaSm"
-                          onClick={() => handleApprove(user.id)}
-                          disabled={approveMutation.isPending}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Activer
-                        </Button>
-                        <Button
-                          variant="ctaDestructive"
-                          size="ctaSm"
-                          onClick={() => {
-                            setSelectedUser({
-                              id: user.id,
-                              name: user.name,
-                              email: user.email,
-                            });
-                            setIsRejectDialogOpen(true);
-                          }}
-                          disabled={rejectMutation.isPending}
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Rejeter
-                        </Button>
-                      </div>
-                    </TableCell>
-                  )}
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="ctaSm"
+                        title="Voir la fiche 360°"
+                      >
+                        <Link href={`/admin/users/${user.id}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      
+                      {statusFilter === "PENDING" && (
+                        <>
+                          <Button
+                            variant="cta"
+                            size="ctaSm"
+                            onClick={() => handleApprove(user.id)}
+                            disabled={approveMutation.isPending}
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ctaDestructive"
+                            size="ctaSm"
+                            onClick={() => {
+                              setSelectedUser({
+                                id: user.id,
+                                name: user.name,
+                                email: user.email,
+                              });
+                              setIsRejectDialogOpen(true);
+                            }}
+                            disabled={rejectMutation.isPending}
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))
             )}

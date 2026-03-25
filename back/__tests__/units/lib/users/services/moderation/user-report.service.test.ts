@@ -92,6 +92,12 @@ describe("UserReportService", () => {
         details: "Inappropriate behavior",
         messageId: null,
       });
+      expect(mockAuditLogService.record).toHaveBeenCalledWith({
+        adminId: "user-1",
+        action: "USER_REPORTED",
+        targetId: "user-2",
+        details: expect.objectContaining({ reportId: "report-1", reason: "HARASSMENT" })
+      });
       expect(mockNotificationService.notifyAdmin).toHaveBeenCalled();
     });
   });

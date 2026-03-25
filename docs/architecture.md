@@ -139,9 +139,9 @@ vers cette URL via `NEXT_PUBLIC_SERVER_URL`.
 - **Notifications** : notifs in-app, lien avec Socket.IO et routers tRPC dédiés.
 - **Crédits / Paiement** : crédits, achats (Polar), transactions. Webhook Polar côté back.
 - **Modération** : blocage d’utilisateurs, signalements (user block, user report). Côté back : routers tRPC + éventuels crons.
-- **Support** : formulaire de demande de support, pièces jointes, envoi d'emails (Resend).
-- **Hub Communauté** : page `/community` — Events Hub (événements communautaires), ateliers mentorat, bons plans étudiants (student_deal), Spot Finder (lieux recommandés), sondage hebdomage (community_poll), annuaire membres. Propositions utilisateurs (events, deals, spots) avec modération admin.
-- **Admin** : modération des feedbacks, signalements, support, onboarding, audit logs, notifications, paramètres (interface dédiée `/admin`, rôle ADMIN).
+- **Support** : formulaire de demande de support, pièces jointes, envoi d'emails (Resend), **support "threadé" (conversations directes avec l'admin et notifications)**.
+- **Hub Communauté** : page `/community` — Events Hub (événements communautaires), ateliers mentorat, bons plans étudiants (student_deal), Spot Finder (lieux recommandés), sondage hebdomage (community_poll), annuaire membres. Propositions utilisateurs (events, deals, spots) avec modération admin, **ainsi que création directe par les administrateurs**.
+- **Admin** : interface dédiée `/admin` avec **Fiche 360° (historique complet des utilisateurs)**, modération des feedbacks, signalements, support, onboarding. Intègre des **actions en masse (bulk actions)** pour la modération, des audit logs pour une **traçabilité totale**, et un **moteur de segmentation pour l'envoi de notifications groupées**.
 - **Métriques** : endpoint Prometheus (`/api/metrics`) pour monitoring.
 
 ---
@@ -330,7 +330,7 @@ stateDiagram-v2
   MentorEspace --> MesAteliers: /my-workshops
   MentorEspace --> ProfilMentor: /mentor-profile
   ApprenantEspace --> Profil: /profil
-  ApprenantEspace --> EAtelier: /workshop-room
+  ApprenantEspace --> EAtelier: /catalog
 ```
 
 **Redirections selon le rôle** :
@@ -339,7 +339,7 @@ stateDiagram-v2
 |------|-------------------------|---------------------|
 | **ADMIN** | `/admin` | `/admin/*` uniquement (sidebar admin) |
 | **MENTOR** | `/dashboard` | `/dashboard`, `/my-workshops`, `/mentor-profile`, `/workshop-editor`, etc. |
-| **APPRENANT** | `/dashboard` | `/dashboard`, `/profil`, `/workshop-room`, etc. |
+| **APPRENANT** | `/dashboard` | `/dashboard`, `/profil`, `/catalog`, etc. |
 | **Sans rôle** | `/onboarding` | Choix MENTOR ou APPRENANT obligatoire |
 
 **RoleGate** : composant qui redirige ADMIN hors des routes utilisateur (`/dashboard`, `/my-workshops`, etc.) vers `/admin`, et les utilisateurs non-ADMIN hors de `/admin` vers `/dashboard`.
@@ -898,13 +898,14 @@ erDiagram
   app_user ||--o{ user_report : "reporter"
   app_user ||--o{ support_request : creates
   app_user ||--o{ credit_transaction : has
-  app_user ||--o{ audit_log : "admin"
-  app_user ||--o{ student_deal : "propose"
-  app_user ||--o{ community_spot : "propose"
-  app_user ||--o{ community_event : "propose"
-  app_user ||--o{ community_poll : "propose"
+  user ||--o{ audit_log : "adminId"
+  user ||--o{ student_deal : "propose"
+  user ||--o{ community_spot : "propose"
+  user ||--o{ community_event : "propose"
+  user ||--o{ community_poll : "propose"
   community_poll ||--o{ poll_vote : has
   app_user ||--o{ poll_vote : "votes"
+  support_request ||--o{ support_message : has
   account {
     string accountId
     string email

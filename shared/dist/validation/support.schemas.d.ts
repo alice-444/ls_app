@@ -6,6 +6,10 @@ export declare const supportRequestSchema: z.ZodObject<{
     problemType: z.ZodString;
 }, z.core.$strip>;
 export type SupportRequestInput = z.infer<typeof supportRequestSchema>;
+export declare const supportMessageSchema: z.ZodObject<{
+    requestId: z.ZodString;
+    content: z.ZodString;
+}, z.core.$strip>;
 export declare const SUPPORT_ATTACHMENT_CONFIG: {
     maxSize: number;
     maxCount: number;

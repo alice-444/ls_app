@@ -96,11 +96,15 @@ export class UserBlockService implements IUserBlockService {
       });
 
       if (this.auditLogService) {
-        await this.auditLogService.record(blockerUserId, "USER_BLOCKED", {
-          blockedUserId,
-          blockId: block.id,
-          blockerAppUserId: blockerAppUser.id,
-          blockedAppUserId: blockedAppUser.id,
+        await this.auditLogService.record({
+          adminId: blockerUserId,
+          action: "USER_BLOCKED",
+          targetId: blockedUserId,
+          details: {
+            blockId: block.id,
+            blockerAppUserId: blockerAppUser.id,
+            blockedAppUserId: blockedAppUser.id,
+          }
         });
       }
 
@@ -144,10 +148,14 @@ export class UserBlockService implements IUserBlockService {
       });
 
       if (this.auditLogService) {
-        await this.auditLogService.record(blockerUserId, "USER_UNBLOCKED", {
-          blockedUserId,
-          blockerAppUserId: blockerAppUser.id,
-          blockedAppUserId: blockedAppUser.id,
+        await this.auditLogService.record({
+          adminId: blockerUserId,
+          action: "USER_UNBLOCKED",
+          targetId: blockedUserId,
+          details: {
+            blockerAppUserId: blockerAppUser.id,
+            blockedAppUserId: blockedAppUser.id,
+          }
         });
       }
 

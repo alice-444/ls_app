@@ -75,9 +75,9 @@ const getNavItems = (
     },
     // --- APPRENANT SPACE ---
     {
-      key: "/workshop-room",
+      key: "/catalog",
       name: "Catalogue",
-      href: "/workshop-room",
+      href: "/catalog",
       icon: Search,
       roles: ["APPRENANT"],
     },

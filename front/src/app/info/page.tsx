@@ -27,7 +27,7 @@ export default function InfoPage() {
 
   const subtitle =
     userRole === "APPRENANT"
-      ? "Retrouvez les informations utiles pour votre parcours d'apprenant : e-Atelier, crédits, connexions aux mentors."
+      ? "Retrouvez les informations utiles pour votre parcours d'apprenant : Catalogue, crédits, connexions aux mentors."
       : userRole === "MENTOR"
         ? "Retrouvez les informations utiles pour votre activité de mentor : ateliers, demandes, crédits."
         : "Retrouvez l'ensemble des informations sur l'application";
