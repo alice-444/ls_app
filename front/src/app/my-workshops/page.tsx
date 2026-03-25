@@ -37,7 +37,7 @@ import { WorkshopRequests } from "@/components/workshop/requests/WorkshopRequest
 import { PageContainer } from "@/components/layout";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion, useReducedMotion } from "framer-motion";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 import { useMyWorkshops } from "@/hooks/useMyWorkshops";
 import {

@@ -15,7 +15,7 @@ import { formatDate, formatTime, isValidTimeFormat } from "@/lib/workshop-utils"
 import {
   getMinimumDate,
   formatDateForInput,
-} from "@/shared/validation/date.validators";
+} from "@ls-app/shared";
 
 interface RescheduleWorkshopDialogProps {
   open: boolean;
@@ -46,7 +46,7 @@ export function RescheduleWorkshopDialog({
   oldDuration,
   oldLocation,
   isVirtual,
-}: RescheduleWorkshopDialogProps) {
+}: Readonly<RescheduleWorkshopDialogProps>) {
   const [date, setDate] = useState<string>("");
   const [time, setTime] = useState<string>("");
   const [duration, setDuration] = useState<string>("");
@@ -66,14 +66,14 @@ export function RescheduleWorkshopDialog({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!date) {
-      newErrors.date = "La date est requise";
-    } else {
+    if (date) {
       const selectedDate = new Date(date);
       const tomorrow = getMinimumDate();
       if (selectedDate < tomorrow) {
         newErrors.date = "La date doit être au minimum demain";
       }
+    } else {
+      newErrors.date = "La date est requise";
     }
 
     if (!time) {
@@ -83,8 +83,8 @@ export function RescheduleWorkshopDialog({
     }
 
     if (duration) {
-      const durationNum = parseInt(duration, 10);
-      if (isNaN(durationNum) || durationNum < 15 || durationNum > 480) {
+      const durationNum = Number.parseInt(duration, 10);
+      if (Number.isNaN(durationNum) || durationNum < 15 || durationNum > 480) {
         newErrors.duration = "La durée doit être entre 15 et 480 minutes";
       }
     }
@@ -103,7 +103,7 @@ export function RescheduleWorkshopDialog({
     }
 
     const dateObj = new Date(date);
-    const durationNum = duration ? parseInt(duration, 10) : null;
+    const durationNum = duration ? Number.parseInt(duration, 10) : null;
 
     onConfirm({
       date: dateObj,
@@ -133,7 +133,6 @@ export function RescheduleWorkshopDialog({
     if (!oldDate || !oldTime) return true;
     const oldDateObj =
       typeof oldDate === "string" ? new Date(oldDate) : oldDate;
-    const newDateObj = new Date(date);
 
     return (
       oldDateObj.toISOString().split("T")[0] !== date ||
@@ -156,7 +155,7 @@ export function RescheduleWorkshopDialog({
             <span className="font-semibold text-foreground">
               "{workshopTitle}"
             </span>
-            . Les participants seront notifiés automatiquement.
+            {". Les participants seront notifiés automatiquement."}
           </DialogDescription>
         </DialogHeader>
 

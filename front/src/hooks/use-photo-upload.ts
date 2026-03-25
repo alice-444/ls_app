@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { FileValidator } from "@/shared/validation/file.validators";
+import { FileValidator } from "@ls-app/shared";
 import { customAuthClient } from "@/lib/auth-client";
 import { API_BASE_URL } from "@/lib/api-client";
 
@@ -36,7 +36,7 @@ export function usePhotoUpload({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Erreur lors de l'upload de la photo"
+          : "Erreur lors de l'upload de la photo",
       );
     } finally {
       setIsUploading(false);

@@ -16,13 +16,13 @@ import { trpc } from "@/utils/trpc";
 import {
   editWorkshopFrontendSchema,
   type EditWorkshopFrontendData,
-} from "@/shared/validation";
+  type WorkshopDetailed,
+} from "@ls-app/shared";
 import {
   WorkshopFormFields,
   convertDurationToMinutes,
   extractDurationParts,
 } from "./WorkshopFormFields";
-import type { WorkshopDetailed } from "@/types/workshop";
 
 interface EditWorkshopFormProps {
   workshop: WorkshopDetailed;
@@ -34,7 +34,7 @@ export function EditWorkshopForm({
   workshop,
   onSuccess,
   onCancel,
-}: EditWorkshopFormProps) {
+}: Readonly<EditWorkshopFormProps>) {
   const { hours, minutes } = extractDurationParts(workshop.duration);
 
   const {

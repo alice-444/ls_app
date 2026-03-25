@@ -15,11 +15,9 @@ import {
   Tag,
   Coins,
 } from "lucide-react";
-import { WORKSHOP_VALIDATION } from "@/shared/validation";
 import type {
   CreateWorkshopFrontendData,
-  EditWorkshopFrontendData,
-} from "@/shared/validation";
+} from "@ls-app/shared";
 
 
 interface WorkshopFormFieldsProps<T extends CreateWorkshopFrontendData = CreateWorkshopFrontendData> {
@@ -77,7 +75,7 @@ export function WorkshopFormFields({
   errors,
   isVirtual,
   description,
-}: WorkshopFormFieldsProps) {
+}: Readonly<WorkshopFormFieldsProps>) {
   const descriptionLength = description.length;
   const descriptionProgress = Math.min((descriptionLength / 100) * 100, 100);
   const descStatus = getDescriptionStatus(descriptionLength);
@@ -233,12 +231,12 @@ export function WorkshopFormFields({
           </div>
           {(errors.durationHours?.message ||
             errors.durationMinutes?.message) && (
-            <p className="text-sm text-red-500">
-              {String(
-                errors.durationHours?.message || errors.durationMinutes?.message
-              )}
-            </p>
-          )}
+              <p className="text-sm text-red-500">
+                {String(
+                  errors.durationHours?.message || errors.durationMinutes?.message
+                )}
+              </p>
+            )}
         </div>
       </div>
 
@@ -303,7 +301,7 @@ export function WorkshopFormFields({
           placeholder="Ex: 5 (laisse vide si aucune limite)"
           {...register("maxParticipants", {
             setValueAs: (v) =>
-              v === "" || v === null ? undefined : parseInt(v, 10),
+              v === "" || v === null ? undefined : Number.parseInt(v, 10),
           })}
           className={`rounded-full ${errors.maxParticipants ? "border-red-500" : ""}`}
         />

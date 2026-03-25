@@ -5,6 +5,7 @@ import {
 } from "./workshop.constants";
 import { isMinimumTomorrow } from "./date.validators";
 
+// Schémas de base pour chaque champ
 export const workshopFieldSchemas = {
   title: z
     .string()
@@ -17,14 +18,14 @@ export const workshopFieldSchemas = {
     .trim()
     .max(
       WORKSHOP_VALIDATION.description.max,
-      WORKSHOP_ERROR_MESSAGES.description.max
+      WORKSHOP_ERROR_MESSAGES.description.max,
     ),
 
   date: z.coerce
     .date()
     .refine(
       (date) => isMinimumTomorrow(date),
-      WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow
+      WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow,
     ),
 
   time: z
@@ -32,7 +33,7 @@ export const workshopFieldSchemas = {
     .trim()
     .regex(
       WORKSHOP_VALIDATION.time.regex,
-      WORKSHOP_ERROR_MESSAGES.time.invalidFormat
+      WORKSHOP_ERROR_MESSAGES.time.invalidFormat,
     ),
 
   duration: z
@@ -41,7 +42,7 @@ export const workshopFieldSchemas = {
     .min(WORKSHOP_VALIDATION.duration.min, WORKSHOP_ERROR_MESSAGES.duration.min)
     .max(
       WORKSHOP_VALIDATION.duration.max,
-      WORKSHOP_ERROR_MESSAGES.duration.max
+      WORKSHOP_ERROR_MESSAGES.duration.max,
     ),
 
   location: z
@@ -49,7 +50,7 @@ export const workshopFieldSchemas = {
     .trim()
     .max(
       WORKSHOP_VALIDATION.location.max,
-      WORKSHOP_ERROR_MESSAGES.location.max
+      WORKSHOP_ERROR_MESSAGES.location.max,
     ),
 
   isVirtual: z.boolean(),
@@ -59,11 +60,11 @@ export const workshopFieldSchemas = {
     .int(WORKSHOP_ERROR_MESSAGES.maxParticipants.integer)
     .min(
       WORKSHOP_VALIDATION.maxParticipants.min,
-      WORKSHOP_ERROR_MESSAGES.maxParticipants.min
+      WORKSHOP_ERROR_MESSAGES.maxParticipants.min,
     )
     .max(
       WORKSHOP_VALIDATION.maxParticipants.max,
-      WORKSHOP_ERROR_MESSAGES.maxParticipants.max
+      WORKSHOP_ERROR_MESSAGES.maxParticipants.max,
     ),
 
   materialsNeeded: z
@@ -71,7 +72,7 @@ export const workshopFieldSchemas = {
     .trim()
     .max(
       WORKSHOP_VALIDATION.materialsNeeded.max,
-      WORKSHOP_ERROR_MESSAGES.materialsNeeded.max
+      WORKSHOP_ERROR_MESSAGES.materialsNeeded.max,
     ),
 
   topic: z
@@ -82,11 +83,18 @@ export const workshopFieldSchemas = {
 
   creditCost: z
     .number()
-    .int("Le nombre de crédits doit être un nombre entier")
-    .min(20, "Le nombre minimum de crédits est 20")
-    .max(100, "Le nombre maximum de crédits est 100"),
+    .int(WORKSHOP_ERROR_MESSAGES.creditCost.integer)
+    .min(
+      WORKSHOP_VALIDATION.creditCost.min,
+      WORKSHOP_ERROR_MESSAGES.creditCost.min,
+    )
+    .max(
+      WORKSHOP_VALIDATION.creditCost.max,
+      WORKSHOP_ERROR_MESSAGES.creditCost.max,
+    ),
 } as const;
 
+// --- SCHÉMAS BACKEND ---
 export const createWorkshopBackendSchema = z.object({
   title: workshopFieldSchemas.title,
   description: workshopFieldSchemas.description.optional().default(""),
@@ -116,6 +124,36 @@ export const updateWorkshopBackendSchema = z.object({
   creditCost: workshopFieldSchemas.creditCost.optional().nullable(),
 });
 
+// --- SCHÉMAS FRONTEND ---
+export const createWorkshopFrontendSchema = z.object({
+  title: workshopFieldSchemas.title,
+  description: workshopFieldSchemas.description.optional(),
+  date: z
+    .string()
+    .optional()
+    .refine(isMinimumTomorrow, WORKSHOP_ERROR_MESSAGES.date.minimumTomorrow),
+  time: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || WORKSHOP_VALIDATION.time.regex.test(val),
+      WORKSHOP_ERROR_MESSAGES.time.invalidFormat,
+    ),
+  durationHours: z.number().int().min(0).max(8),
+  durationMinutes: z.number().int().min(0).max(59),
+  location: workshopFieldSchemas.location.optional(),
+  isVirtual: workshopFieldSchemas.isVirtual,
+  maxParticipants: workshopFieldSchemas.maxParticipants.optional(),
+  materialsNeeded: workshopFieldSchemas.materialsNeeded.optional(),
+  topic: workshopFieldSchemas.topic.optional().nullable(),
+  creditCost: workshopFieldSchemas.creditCost.optional().nullable(),
+});
+
+export const editWorkshopFrontendSchema = createWorkshopFrontendSchema.extend({
+  workshopId: z.string().uuid(),
+});
+
+// --- SCHÉMAS DE CYCLE DE VIE ---
 export const publishWorkshopSchema = z.object({
   workshopId: z.string().uuid(),
 });
@@ -132,11 +170,20 @@ export const cancelWorkshopSchema = z.object({
   workshopId: z.string().uuid(),
 });
 
+// Types partagés
 export type CreateWorkshopBackendInput = z.infer<
   typeof createWorkshopBackendSchema
 >;
 export type UpdateWorkshopBackendInput = z.infer<
   typeof updateWorkshopBackendSchema
 >;
+export type CreateWorkshopFrontendData = z.infer<
+  typeof createWorkshopFrontendSchema
+>;
+export type EditWorkshopFrontendData = z.infer<
+  typeof editWorkshopFrontendSchema
+>;
 export type PublishWorkshopInput = z.infer<typeof publishWorkshopSchema>;
+export type UnpublishWorkshopInput = z.infer<typeof unpublishWorkshopSchema>;
 export type DeleteWorkshopInput = z.infer<typeof deleteWorkshopSchema>;
+export type CancelWorkshopInput = z.infer<typeof cancelWorkshopSchema>;

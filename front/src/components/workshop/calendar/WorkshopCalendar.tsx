@@ -7,7 +7,7 @@ import { format, parse, getDay } from "date-fns";
 import { fr } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./WorkshopCalendar.css";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 import { calculateEndTime } from "@/lib/workshop-utils";
 import type { WorkshopCalendarProps } from "@/types/workshop-components";
 

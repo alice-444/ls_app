@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import RollingNumber from "@/components/ui/RollingNumber";
-import type { WorkshopBase } from "@/types/workshop";
+import type { WorkshopBase } from "@ls-app/shared";
 
 const getAvatarColorClass = (index: number) => {
   if (index % 4 === 0) return "bg-linear-to-br from-blue-400 to-blue-600";
@@ -246,10 +246,10 @@ function AvatarGridCard({
                       style={
                         c.otherUserPhotoUrl
                           ? {
-                              backgroundImage: `url(${c.otherUserPhotoUrl})`,
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                            }
+                            backgroundImage: `url(${c.otherUserPhotoUrl})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                          }
                           : undefined
                       }
                     />
@@ -294,11 +294,10 @@ function WorkshopHistoryCard({
             {workshopHistory.slice(0, 3).map((workshop, index) => (
               <div
                 key={workshop.id}
-                className={`border-b border-border pb-3 sm:pb-4 ${
-                  index === Math.min(workshopHistory.length, 3) - 1
+                className={`border-b border-border pb-3 sm:pb-4 ${index === Math.min(workshopHistory.length, 3) - 1
                     ? "border-b-0 pb-0"
                     : ""
-                }`}
+                  }`}
               >
                 <p className="text-sm sm:text-base font-semibold text-ls-heading mb-1 sm:mb-2">
                   {workshop.title}

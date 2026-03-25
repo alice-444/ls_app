@@ -23,7 +23,6 @@ import {
 import {
   GraduationCap,
   X,
-  Filter,
   Search,
   ChevronDown,
   Tag,
@@ -34,7 +33,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { RequestWorkshopParticipationDialog } from "@/components/mentor/RequestWorkshopParticipationDialog";
 import { WorkshopCard } from "@/components/workshop/cards/WorkshopCard";
-import type { WorkshopDetailed as Workshop } from "@/types/workshop";
+import type { WorkshopDetailed as Workshop } from "@ls-app/shared";
 
 export default function WorkshopRoomPage() {
   const router = useRouter();

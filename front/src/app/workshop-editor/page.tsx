@@ -40,7 +40,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BackButton } from "@/components/back-button";
-import type { WorkshopDetailed } from "@/types/workshop";
+import type { WorkshopDetailed } from "@ls-app/shared";
 
 type Workshop = WorkshopDetailed;
 

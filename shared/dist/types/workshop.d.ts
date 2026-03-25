@@ -1,11 +1,8 @@
 /**
  * @file workshop.ts
- * Centralized types for Workshop entities following SOLID principles.
- * Segregated into logical interfaces to allow partial usage where needed.
+ * Centralized types for Workshop entities.
  */
-
 export type WorkshopStatus = "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
-
 /** Basic information for any workshop display */
 export interface WorkshopBase {
   id: string;
@@ -22,7 +19,6 @@ export interface WorkshopBase {
   createdAt: Date | string;
   updatedAt?: Date | string;
 }
-
 /** User information structure (Mentor/Apprentice) */
 export interface WorkshopUser {
   id: string;
@@ -34,7 +30,6 @@ export interface WorkshopUser {
     name: string | null;
   } | null;
 }
-
 /** Full workshop entity as received from backend with relations */
 export interface WorkshopDetailed extends WorkshopBase {
   creatorId: string;
@@ -44,15 +39,9 @@ export interface WorkshopDetailed extends WorkshopBase {
   materialsNeeded?: string | null;
   averageRating?: number | null;
   feedbackCount?: number;
-  
-  // Relations
   creator?: WorkshopUser | null;
   apprentice?: WorkshopUser | null;
 }
-
-/** Specialized type for the Catalogue/Feed */
-export type WorkshopCardData = WorkshopDetailed;
-
 /** Type for workshop requests (Apprentice to Mentor) */
 export interface WorkshopRequest {
   id: string;
@@ -85,7 +74,6 @@ export interface WorkshopRequest {
     };
   };
 }
-
 export interface WorkshopParticipant {
   id: string;
   name: string | null;
