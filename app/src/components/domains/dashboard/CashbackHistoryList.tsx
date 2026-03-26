@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
+} from "@/components/ui/table";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";
 

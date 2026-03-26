@@ -9,11 +9,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Coins, Loader2, CheckCircle2, XCircle, Sparkles } from "lucide-react";
 import { trpc } from "@/utils/trpc";
-import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
 import { PageContainer } from "@/components/shared/layout";

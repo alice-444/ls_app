@@ -10,10 +10,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
-import { Badge } from "@/components/ui/Badge";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Eye, Search } from "lucide-react";
@@ -22,7 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog";
+} from "@/components/ui/dialog";
 
 interface AuditLog {
   id: string;

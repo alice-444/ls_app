@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { User, BookOpen } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { MentorCardProps } from "@/types/workshop-components";
 

@@ -7,10 +7,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
-import { Label } from "@/components/ui/Label";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Flag, Loader2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";

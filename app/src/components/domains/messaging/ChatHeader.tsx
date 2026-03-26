@@ -1,13 +1,13 @@
 "use client";
 import { Search, X, MoreVertical, Ban, Flag, ChevronLeft } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/components/ui/dropdown-menu";
 import { PresenceIndicator } from "./PresenceIndicator";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";

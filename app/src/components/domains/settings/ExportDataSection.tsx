@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Download, Loader2, ShieldCheck, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/lib/api-client";
 

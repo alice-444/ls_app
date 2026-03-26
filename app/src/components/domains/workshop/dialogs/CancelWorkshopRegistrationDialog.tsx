@@ -6,10 +6,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
-import { Label } from "@/components/ui/Label";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
 
 interface CancelWorkshopRegistrationDialogProps {

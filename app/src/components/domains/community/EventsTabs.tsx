@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WorkshopCard } from "@/components/domains/workshop/cards/WorkshopCard";
 import { useRouter } from "next/navigation";
 import { Calendar, History } from "lucide-react";

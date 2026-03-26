@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Inbox, Search, ArrowRight, Check, X } from "lucide-react";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";

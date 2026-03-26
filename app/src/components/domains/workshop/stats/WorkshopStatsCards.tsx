@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, CheckCircle, Edit, Clock, BookOpen } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 

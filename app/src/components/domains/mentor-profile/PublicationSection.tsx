@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, CheckCircle2, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 interface PublicationSectionProps {
   readonly isPublished: boolean;

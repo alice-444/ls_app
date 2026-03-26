@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import DailyIframe from "@daily-co/daily-js";
 import { trpc } from "@/utils/trpc";
 import { Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function JoinVideoPage() {
   const params = useParams();

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Info, HelpCircle, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export function SupportInfoSection() {
   return (

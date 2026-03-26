@@ -1,16 +1,16 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
+} from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
-import { PREDEFINED_TOPICS } from "@/components/domains/MentorProfile/constants";
+import { PREDEFINED_TOPICS } from "@/components/domains/mentor-profile/constants";
 
 interface MentorFiltersProps {
   searchQuery: string;
@@ -28,7 +28,7 @@ export function MentorFilters({
   onDomainFilterChange,
   topicFilter,
   onTopicFilterChange,
-}: Readonly<MentorFiltersProps>) {
+}: MentorFiltersProps) {
   return (
     <Card className="mb-8 border border-border/50 bg-card/95 backdrop-blur-md rounded-2xl shadow-xl shadow-black/5 overflow-hidden">
       <CardContent className="pt-6">

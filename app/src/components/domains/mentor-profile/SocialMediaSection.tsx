@@ -1,8 +1,8 @@
 "use client";
 
 import { Linkedin, Twitter, Youtube, Github, Share2 } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { UseFormRegister, FieldErrors } from "react-hook-form";
 import type { MentorProfileFormData } from "./schema";
 

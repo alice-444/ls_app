@@ -11,13 +11,13 @@ import {
   Star,
   Info
 } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/Popover";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import { useSocket } from "@/lib/socket-client";
 import { useEffect } from "react";

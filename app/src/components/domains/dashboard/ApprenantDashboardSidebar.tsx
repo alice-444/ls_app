@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   BookOpen,
   ArrowRight,
@@ -286,8 +286,8 @@ function WorkshopHistoryCard({
               <div
                 key={workshop.id}
                 className={`border-b border-border pb-3 sm:pb-4 ${index === Math.min(workshopHistory.length, 3) - 1
-                  ? "border-b-0 pb-0"
-                  : ""
+                    ? "border-b-0 pb-0"
+                    : ""
                   }`}
               >
                 <p className="text-sm sm:text-base font-semibold text-ls-heading mb-1 sm:mb-2">

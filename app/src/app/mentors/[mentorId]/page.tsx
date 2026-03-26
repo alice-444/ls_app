@@ -5,8 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-server-client";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import {
@@ -37,18 +37,18 @@ import { ReportUserDialog } from "@/components/domains/user/ReportUserDialog";
 import { toast } from "sonner";
 import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer } from "@/components/shared/layout/PageContainer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/components/ui/dropdown-menu";
 import {
   Card,
   CardContent,
-} from "@/components/ui/Card";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
+} from "@/components/ui/card";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function MentorProfileViewPage() {
   const router = useRouter();

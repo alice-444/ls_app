@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { User, Upload, Coffee } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Textarea } from "@/components/ui/Textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import type { UseFormRegister, UseFormWatch, FieldErrors } from "react-hook-form";
 import type { MentorProfileFormData } from "./schema";
 import { TagListSection } from "./TagListSection";

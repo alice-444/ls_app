@@ -11,7 +11,7 @@ import {
   BadgeDelta,
   ProgressBar,
 } from "@tremor/react";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart3,
   TrendingUp,
@@ -34,8 +34,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const TIME_RANGES: { value: AdminTimeRange; label: string }[] = [
   { value: '7d', label: '7 jours' },

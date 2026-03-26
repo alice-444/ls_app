@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 
 interface RequestBadgesProps {
   requests: Array<{ status: string }> | null | undefined;

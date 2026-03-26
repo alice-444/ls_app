@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Label } from "@/components/ui/Label";
-import { Textarea } from "@/components/ui/Textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
@@ -17,9 +17,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog";
-import { Input } from "@/components/ui/Input";
-import { Alert, AlertDescription } from "@/components/ui/Alert";
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function DeleteAccountSection() {
   const router = useRouter();

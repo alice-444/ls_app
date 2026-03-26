@@ -6,8 +6,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { WorkshopCalendar } from "@/components/domains/workshop/calendar/WorkshopCalendar";
 import { formatCalendarMonthYear } from "@/lib/dashboard-utils";

@@ -12,10 +12,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
-import { Label } from "@/components/ui/Label";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";

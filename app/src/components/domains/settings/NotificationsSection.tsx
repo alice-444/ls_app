@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Bell, Loader2 } from "lucide-react";
-import { Label } from "@/components/ui/Label";
-import { Switch } from "@/components/ui/Switch";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 

@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import { trpc } from "@/utils/trpc";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Video, VideoOff, Mic, MicOff, PhoneOff, Loader2 } from "lucide-react";
 import type { DailyVideoCallProps, DailyCallFrame } from "@/types/workshop-components";
 

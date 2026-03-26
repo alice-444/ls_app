@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 import { trpc } from "@/utils/trpc";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Loader2,
   MessageSquare,
@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer } from "@/components/shared/layout";
 

@@ -4,9 +4,9 @@ import { trpc } from "@/utils/trpc";
 import { Coins, History, TrendingDown, TrendingUp, RefreshCcw } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { Badge } from "@/components/ui/Badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 interface Transaction {
   id: string;

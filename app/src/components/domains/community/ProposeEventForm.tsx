@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,9 +15,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/Form";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle2 } from "lucide-react";
 
 const formSchema = z.object({

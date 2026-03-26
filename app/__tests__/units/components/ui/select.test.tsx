@@ -6,7 +6,7 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/Select";
+} from "@/components/ui/select";
 
 describe("Select", () => {
   it("renders trigger with placeholder", () => {

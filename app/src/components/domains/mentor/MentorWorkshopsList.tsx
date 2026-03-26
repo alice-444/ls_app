@@ -1,11 +1,11 @@
 "use client";
 
 import { trpc } from "@/utils/trpc";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Users, ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 
 interface MentorWorkshopsListProps {

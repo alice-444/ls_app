@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
+} from "@/components/ui/card";
 import { Calendar, Clock, MapPin, Users, Link as LinkIcon } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
 import { useRouter } from "next/navigation";

@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
+} from "@/components/ui/card";
 import { GraduationCap } from "lucide-react";
 import type { Role, Step } from "../types";
 

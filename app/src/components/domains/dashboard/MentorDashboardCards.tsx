@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ArrowRight, GraduationCap, History, Users, Coins, TrendingUp } from "lucide-react";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import RollingNumber from "@/components/ui/RollingNumber";

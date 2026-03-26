@@ -7,17 +7,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
-import { Textarea } from "@/components/ui/Textarea";
-import { Label } from "@/components/ui/Label";
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";

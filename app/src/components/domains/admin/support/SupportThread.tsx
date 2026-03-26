@@ -2,13 +2,14 @@
 
 import { useState, useRef, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
-import type { SupportMessage } from "@ls-app/shared";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
-import { Badge } from "@/components/ui/Badge";
+import type { SupportRequestDetailed, SupportMessage } from "@ls-app/shared";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Send, ShieldCheck, Loader2 } from "lucide-react";
+import { Send, User, ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +18,7 @@ interface SupportThreadProps {
   readonly isAdmin?: boolean;
 }
 
-export function SupportThread({ requestId, isAdmin = false }: Readonly<SupportThreadProps>) {
+export function SupportThread({ requestId, isAdmin = false }: SupportThreadProps) {
   const [content, setContent] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -100,7 +101,7 @@ export function SupportThread({ requestId, isAdmin = false }: Readonly<SupportTh
                   {format(new Date(message.createdAt), "HH:mm", { locale: fr })}
                 </span>
               </div>
-
+              
               <div
                 className={cn(
                   "px-4 py-2.5 rounded-2xl text-sm shadow-sm",

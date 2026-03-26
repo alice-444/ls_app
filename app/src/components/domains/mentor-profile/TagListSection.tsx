@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 
 interface TagListSectionProps {
   readonly items: string[];

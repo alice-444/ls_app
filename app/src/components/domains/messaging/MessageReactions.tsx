@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { Smile } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/Popover";
+} from "@/components/ui/popover";
 import EmojiPicker from "emoji-picker-react";
 import type { EmojiClickData } from "emoji-picker-react";
 import { cn } from "@/lib/utils";

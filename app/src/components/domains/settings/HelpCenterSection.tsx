@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { HelpCircle } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export function HelpCenterSection() {
   return (

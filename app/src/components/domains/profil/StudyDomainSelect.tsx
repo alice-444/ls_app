@@ -6,8 +6,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
-import { Label } from "@/components/ui/Label";
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 const STUDY_DOMAINS = [
   "Développement Web",
