@@ -5,8 +5,8 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
 import Loader from "@/components/shared/Loader";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, GraduationCap, Tag, Lock, UserPlus, UserMinus, MoreVertical, Ban, Flag } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/components/ui/dropdown-menu";
 import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
 import { ReportUserDialog } from "@/components/domains/user/ReportUserDialog";
 

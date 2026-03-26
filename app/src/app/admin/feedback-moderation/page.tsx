@@ -8,13 +8,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle, Trash2, AlertTriangle, User, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useEffect, Suspense } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog";
-import { Badge } from "@/components/ui/Badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { useSearchParams } from "next/navigation";
 
 type ModerationFeedback = {

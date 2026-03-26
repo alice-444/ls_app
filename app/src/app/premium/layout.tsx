@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Devenir Premium",
-  description: "Soutiens la plateforme et débloque des fonctionnalités exclusives avec LearnSup Premium.",
-  openGraph: {
-    title: "LearnSup Premium",
-    description: "Accède au meilleur de l'apprentissage entre pairs.",
-  },
+  title: "Profil du Mentor",
+  description: "Découvre l'expertise et les ateliers de ce mentor sur LearnSup.",
 };
 
-export default function PremiumLayout({
+export default function MentorProfileLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return <>{children}</>;

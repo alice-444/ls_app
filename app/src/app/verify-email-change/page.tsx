@@ -8,8 +8,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-server-client";

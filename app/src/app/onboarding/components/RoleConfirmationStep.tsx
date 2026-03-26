@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
+} from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, Loader2, CheckCircle2, BookOpen, GraduationCap } from "lucide-react";
 import { ProgressIndicator } from "./ProgressIndicator";
 import type { Role, Step } from "../types";

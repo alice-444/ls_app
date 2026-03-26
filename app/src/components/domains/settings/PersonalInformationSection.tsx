@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { UserCircle, Save } from "lucide-react";
 import { authClient } from "@/lib/auth-server-client";
 import { trpc } from "@/utils/trpc";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ProfilePhotoUpload } from "@/components/domains/profil/ProfilePhotoUpload";
 

@@ -7,7 +7,7 @@ import { fr } from "date-fns/locale";
 import * as Avatar from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { DeleteConversationDialog } from "./DeleteConversationDialog";
 import { PresenceIndicator } from "./PresenceIndicator";
 import { trpc } from "@/utils/trpc";

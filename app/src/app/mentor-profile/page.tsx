@@ -1,24 +1,24 @@
 "use client";
 
 import { Loader2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { BackButton } from "@/components/shared/BackButton";
 import { PageContainer, SectionSidebar } from "@/components/shared/layout";
 import Loader from "@/components/shared/Loader";
 import ShinyText from "@/components/ui/ShinyText";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 
-import { PREDEFINED_TOPICS, SIDEBAR_ITEMS, type ProfileSection } from "@/components/domains/MentorProfile/constants";
+import { PREDEFINED_TOPICS, SIDEBAR_ITEMS, type ProfileSection } from "@/components/domains/mentor-profile/constants";
 import { useMentorProfile } from "@/hooks/useMentorProfile";
 import {
   BasicInformationSection,
   TagListSection,
   SocialMediaSection,
   PublicationSection,
-} from "@/components/domains/MentorProfile";
+} from "@/components/domains/mentor-profile";
 import { ProfilePreviewCard } from "@/components/domains/profil/ProfilePreviewCard";
 
 export default function MentorProfilePage() {

@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { authClient } from "@/lib/auth-server-client";
 import { RequestWorkshopParticipationDialog } from "@/components/domains/mentor/RequestWorkshopParticipationDialog";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { PageContainer } from "@/components/shared/layout";

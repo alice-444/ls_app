@@ -9,7 +9,7 @@ import { RoleConfirmationStep } from "./components/RoleConfirmationStep";
 import { ProfFormStep } from "./components/ProfFormStep";
 import { ApprenantCompleteStep } from "./components/ApprenantCompleteStep";
 
-import { Progress } from "@/components/ui/Progress";
+import { Progress } from "@/components/ui/progress";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 
 function OnboardingContent() {
@@ -28,7 +28,7 @@ function OnboardingContent() {
 
   // Calcul du pourcentage de progression
   const stepProgress = {
-    select: 25,
+    Select: 25,
     "confirm-features": 50,
     "prof-form": 75,
     "apprenant-flow": 100,

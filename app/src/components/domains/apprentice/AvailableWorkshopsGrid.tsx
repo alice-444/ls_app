@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
-} from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { GraduationCap } from "lucide-react";
 import { WorkshopCard } from "@/components/domains/workshop/cards/WorkshopCard";
 import type { WorkshopDetailed } from "@ls-app/shared";

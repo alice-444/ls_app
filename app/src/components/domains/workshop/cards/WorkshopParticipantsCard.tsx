@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
+} from "@/components/ui/card";
 import { Users, User, ArrowRight } from "lucide-react";
 
 interface WorkshopParticipantsCardProps {

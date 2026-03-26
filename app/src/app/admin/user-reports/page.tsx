@@ -8,8 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
   Loader2,
   CheckCircle,
@@ -31,16 +31,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter
-} from "@/components/ui/Dialog";
-import { Badge } from "@/components/ui/Badge";
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/components/ui/Select";
-import { Textarea } from "@/components/ui/Textarea";
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 

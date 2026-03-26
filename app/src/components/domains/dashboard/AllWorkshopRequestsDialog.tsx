@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog";
+} from "@/components/ui/dialog";
 import { formatWorkshopDate } from "@/lib/dashboard-utils";
 import { StatusBadge } from "./StatusBadge";
 import { MessageSquare } from "lucide-react";

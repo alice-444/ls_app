@@ -7,7 +7,7 @@ import { PageContainer } from "@/components/shared/layout";
 import { BackButton } from "@/components/shared/BackButton";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 const BENEFITS = [
   {

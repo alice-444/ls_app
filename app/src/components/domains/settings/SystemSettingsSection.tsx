@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Settings as SettingsIcon } from "lucide-react";
-import { Label } from "@/components/ui/Label";
-import { Switch } from "@/components/ui/Switch";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export function SystemSettingsSection() {
   const { theme, setTheme } = useTheme();

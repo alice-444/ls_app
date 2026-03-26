@@ -10,7 +10,7 @@ import {
   User,
   ExternalLink,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
   DropdownMenuLabel,
-} from "@/components/ui/DropdownMenu";
+} from "@/components/ui/dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Settings, CreditCard, MessageSquare, Video } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { faqConfig } from "@/lib/faq-config";
 import { FAQAccordion } from "@/components/domains/faq/FAQAccordion";
 import { BackButton } from "@/components/shared/BackButton";

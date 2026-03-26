@@ -2,9 +2,9 @@
 
 import { Controller } from "react-hook-form";
 import type { Control, FieldErrors, UseFormRegister, Path } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/Label";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
   Calendar,

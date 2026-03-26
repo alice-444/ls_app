@@ -704,8 +704,8 @@ sequenceDiagram
 
   Note over B,DB: Phase 3 — Crons
   CRON->>B: /api/cron/generate-video-links
-  B->>DB: workshops sans dailyRoomId
-  B->>D: POST /rooms pour chaque
+  B->>B: ateliers virtuels publiés, sans dailyRoomId, début dans [maintenant ; +12 h]
+  B->>D: POST /rooms (nbf = T−3 h, exp = fin atelier + marge)
   B->>DB: dailyRoomId
 
   CRON->>B: /api/cron/cleanup-inactive-rooms
@@ -717,11 +717,13 @@ sequenceDiagram
   end
 ```
 
-**Procédure tRPC** : `workshop.getDailyToken(workshopId)` — vérifie accès (mentor ou apprenant), crée salle Daily si absente (`workshop-{workshopId}`), génère token (owner pour mentor), met à jour `dailyRoomLastActivityAt`.
+**Procédure tRPC** : `workshop.getDailyToken(workshopId)` — vérifie accès (mentor ou apprenant), crée salle Daily si absente (`workshop-{workshopId}`) avec fenêtre **`nbf` / `exp`** alignée sur le créneau atelier (via `calculateDailyRoomAccessWindow`), génère token (owner pour mentor), met à jour `dailyRoomLastActivityAt`.
+
+**Exposition API** : `WorkshopVideoLinkService.filterVideoLink` masque `dailyRoomId` tant que l’atelier n’est pas dans la fenêtre « live » (≈ **3 h avant le début** jusqu’à la fin). Les listes et la fiche passent par **`workshop-public-dto.mapper`** pour appliquer la même règle partout (catalogue, mentor, apprenti, profil public mentor).
 
 **Webhook** : POST `/api/daily/webhook` — événements `participant-joined` / `participant-left` → mise à jour `dailyRoomLastActivityAt` si room name = `workshop-{id}`.
 
-**Crons** : `generate-video-links` (pré-création salles pour ateliers à venir), `cleanup-inactive-rooms` (fermeture salles inactives > 30 min, 0 participant).
+**Crons** : `generate-video-links` (pré-création salles pour ateliers **virtuels publiés** éligibles : **0–12 h avant le début**, pas encore de `dailyRoomId`), `cleanup-inactive-rooms` (fermeture salles inactives > 30 min, 0 participant).
 
 ---
 
@@ -959,7 +961,7 @@ erDiagram
   }
 ```
 
-Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `workshop_cashback_queue`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. **Modèle physique (MPD)** : [mpd.md](mpd.md). Schéma source : `back/.prisma/schema/schema.prisma`.
+Liste des modèles : `account`, `app_user`, `workshop`, `workshop_request`, `mentor_feedback`, `user_connection`, `conversation`, `message`, `message_reaction`, `notification`, `user_block`, `user_report`, `support_request`, `credit_transaction`, `audit_log`, `magic_link_token`, `workshop_cashback_queue`, `student_deal`, `community_spot`, `community_event`, `community_poll`, `poll_vote`. **Modèle physique (MPD)** : [mpd.md](mpd.md). Schéma source : `app/prisma/schema/schema.prisma`.
 
 ---
 

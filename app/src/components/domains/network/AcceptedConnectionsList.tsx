@@ -6,8 +6,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import { ConnectionItem } from "./ConnectionItem";
 import { useState } from "react";

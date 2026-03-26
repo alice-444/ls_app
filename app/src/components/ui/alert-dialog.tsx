@@ -7,8 +7,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./Dialog";
-import { Button } from "./Button";
+} from "./dialog";
+import { Button } from "./button";
 import { cn } from "@/lib/utils";
 
 interface AlertDialogProps {

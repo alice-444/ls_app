@@ -5,7 +5,7 @@ import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import * as Avatar from "@radix-ui/react-avatar";
 import { Edit2, Check, X, CheckCheck, Reply, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageReactions } from "./MessageReactions";
 import { MessageBubble } from "./MessageBubble";

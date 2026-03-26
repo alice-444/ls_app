@@ -8,8 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
   Loader2,
   ExternalLink,
@@ -32,7 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter
-} from "@/components/ui/Dialog";
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,15 +40,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from "@/components/ui/DropdownMenu";
-import { Badge } from "@/components/ui/Badge";
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/components/ui/Select";
+} from "@/components/ui/select";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { SupportThread } from "@/components/domains/admin/support/SupportThread";

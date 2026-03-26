@@ -4,8 +4,8 @@ import { useState, useMemo } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { trpc } from "@/utils/trpc";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Star, Filter, X, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
+} from "@/components/ui/select";
 
 interface MentorFeedbacksProps {
   mentorId: string;

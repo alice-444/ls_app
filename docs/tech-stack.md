@@ -11,7 +11,7 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | -------------- | -------------- | -------------------------------------------------------------------------------------------- |
 | **TypeScript** | 5.9+           | Langage principal du projet. Typage statique pour le front, le back et les schémas partagés. |
 | **JavaScript** | ES2022+        | Cible de compilation TypeScript. Pas de code JS brut dans le projet.                         |
-| **SQL**        | PostgreSQL 14+ | Requêtes générées par Prisma. Schéma et migrations dans `back/prisma/schema/`.               |
+| **SQL**        | PostgreSQL 14+ | Requêtes générées par Prisma. Schéma et migrations dans `app/prisma/schema/`.                |
 | **CSS**        | Tailwind 4     | Styles via classes utilitaires. Variables CSS pour le thème (couleurs, typographie).         |
 
 
@@ -27,7 +27,6 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | **Node.js**   | v20+    | Runtime JavaScript/TypeScript.                                         |
 | **pnpm**      | 10.30+  | Gestionnaire de paquets. Workspaces pour le monorepo.                  |
 | **Turborepo** | 2.8+    | Orchestration des tâches (build, test, dev). Cache incrémental.        |
-| **@ls-app/shared** | 1.0+ | Package partagé (types, validation Zod, constantes).                    |
 | **Next.js**   | 16.1+   | Framework full-stack React. App Router, API Routes, Server Components. |
 
 
@@ -53,27 +52,15 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | **Better Auth**         | 1.5+     | Client d’authentification (session, login, magic link).            |
 | **Zod**                 | 4.3+     | Validation des formulaires et schémas partagés.                    |
 | **React Hook Form**     | 7.71+    | Gestion des formulaires.                                           |
-| **@hookform/resolvers** | 5.2+     | Intégration Zod + React Hook Form (validation des formulaires).     |
 | **TanStack Form**       | 1.28+    | Formulaires complexes (profil mentor, etc.).                       |
 | **Tailwind CSS**        | 4.2+     | Styles utilitaires. Design tokens via `@theme`.                    |
-| **class-variance-authority** | 0.7+ | Variants de composants (cva). Utilisé par shadcn/ui.               |
-| **clsx** + **tailwind-merge** | 2.x / 3.x | Fusion de classes conditionnelles (`cn()`). Utilitaires shadcn. |
-| **tw-animate-css**      | 1.4+     | Animations CSS (entrées, sorties).                                 |
 | **shadcn/ui**           | Radix UI | Composants accessibles (boutons, dialogs, inputs, etc.).           |
 | **Framer Motion**       | 12.35+   | Animations.                                                        |
 | **Socket.IO client**    | 4.8+     | Temps réel (messagerie, notifications).                            |
 | **Daily.co (daily-js)** | 0.87+    | Visioconférence pour les ateliers.                                 |
 | **Lucide React**        | 0.577+   | Icônes.                                                            |
-| **react-icons**         | 5.6+     | Icônes complémentaires.                                            |
 | **Sonner**              | 2.0+     | Toasts.                                                            |
 | **next-themes**         | 0.4+     | Thème clair/sombre.                                                |
-| **date-fns**            | 4.1+     | Formatage et manipulation des dates.                               |
-| **Cloudinary**          | next-cloudinary 6.x | Stockage et diffusion d’images (photos de profil, etc.).   |
-| **Tremor**              | 3.18+    | Composants dashboard/analytics (graphiques, KPIs).                  |
-| **Recharts**            | 3.8+     | Bibliothèque de graphiques (utilisée par Tremor).                  |
-| **react-big-calendar**  | 1.19+    | Calendrier (ateliers, planification).                              |
-| **emoji-picker-react**  | 4.18+    | Sélecteur d’émojis (messagerie).                                   |
-| **Sentry**              | 10.43+   | Client front (capture d’erreurs, tracing).                         |
 
 
 **Choix tRPC** : Pas de génération de client séparée. Types partagés automatiquement entre back et front. Réduction des erreurs d’API. Alternative à REST : pas de contrat OpenAPI à maintenir, pas de désync types. Alternative à GraphQL : plus simple, pas de sur-fetch/sous-fetch.
@@ -92,7 +79,7 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | Technologie               | Version        | Rôle                                                                   |
 | ------------------------- | -------------- | ---------------------------------------------------------------------- |
 | **Next.js**               | 16.1+          | API Routes, handler HTTP.                                              |
-| **Prisma**                | 7.4+           | ORM TypeScript. Client généré, migrations. Extension Accelerate (optionnel). |
+| **Prisma**                | 7.4+           | ORM TypeScript. Client généré, migrations.                             |
 | **PostgreSQL**            | 14+            | Base de données relationnelle.                                         |
 | **tRPC**                  | 11.12+         | API type-safe. Routers, procédures (public, protected, mentor, admin). |
 | **Better Auth**           | 1.5+           | Authentification (sessions, stratégies, magic link).                   |
@@ -100,18 +87,13 @@ Document de référence pour les technologies, langages et outils utilisés dans
 | **Resend**                | 6.9+           | Envoi d’emails transactionnels.                                        |
 | **React Email**           | 2.0+           | Templates d’emails (HTML) en React.                                    |
 | **Sharp**                 | 0.34+          | Traitement d’images (photos de profil).                                |
-| **Cloudinary**            | 2.9+           | Stockage et diffusion d’images (photos de profil).                      |
-| **next-cloudinary**       | 6.17+          | Intégration Cloudinary pour Next.js (upload, optimisation).            |
 | **Socket.IO**             | 4.8+           | Serveur temps réel (messagerie, notifications).                        |
 | **Daily.co**              | API + webhooks | Création de salles visio, webhooks présence.                           |
 | **Polar**                 | API + webhooks | Paiement (crédits). Webhook checkout.                                  |
 | **rate-limiter-flexible** | 9.1+           | Limitation de requêtes.                                                |
 | **prom-client**           | 15.1+          | Métriques Prometheus (`/api/metrics`).                                 |
 | **DOMPurify**             | 3.3+           | Nettoyage HTML (sécurité).                                             |
-| **dotenv**                | 17.3+          | Chargement des variables d’environnement.                              |
-| **file-type**             | 21.3+          | Détection du type MIME des fichiers (sécurité upload).                 |
 | **tsx**                   | 4.21+          | Exécution TypeScript (serveur, scripts).                               |
-| **concurrently**          | 9.2+           | Exécution parallèle (dev: Next.js + Socket.IO).                        |
 
 
 **Choix Prisma** : ORM type-safe, migrations versionnées, Prisma Studio pour l’exploration. Support PostgreSQL natif. Alternative à Drizzle : écosystème plus mature. Alternative à TypeORM : API plus simple. Client généré = types à jour avec le schéma.
@@ -125,8 +107,6 @@ Document de référence pour les technologies, langages et outils utilisés dans
 **Choix Polar** : Paiement pour développeurs (crédits). Alternative à Stripe : interface plus simple pour cas "crédits". Webhooks pour synchroniser les achats.
 
 **Choix Resend** : API email moderne, bon délivrabilité. React Email pour les templates. Alternative à Nodemailer : pas de config SMTP complexe.
-
-**Choix Cloudinary** : Stockage et diffusion d’images (photos de profil). Optimisation automatique (responsive, formats modernes). Alternative à S3 + CloudFront : moins de configuration. Alternative à stockage local : pas de gestion de fichiers sur le serveur.
 
 **Choix Zod** : Schémas partagés front/back, inférence TypeScript. Alternative à Yup : plus léger. Validation à l'exécution = sécurité des entrées.
 
@@ -173,14 +153,14 @@ Document de référence pour les technologies, langages et outils utilisés dans
 ## DevOps & Qualité
 
 
-| Technologie                | Version | Rôle                                             |
-| -------------------------- | ------- | ------------------------------------------------ |
-| **GitHub Actions**         | —       | CI/CD (lint, tests, build, déploiement).         |
-| **SonarQube / SonarCloud** | —       | Qualité de code, couverture, vulnérabilités.     |
+| Technologie                | Version | Rôle                                         |
+| -------------------------- | ------- | -------------------------------------------- |
+| **GitHub Actions**         | —       | CI/CD (lint, tests, build, déploiement).     |
+| **SonarQube / SonarCloud** | —       | Qualité de code, couverture, vulnérabilités. |
 | **Sentry**                 | 8.x+    | Monitoring d'erreurs, tracing et session replay. |
-| **Docker**                 | —       | Conteneurisation (infra).                        |
-| **ESLint**                 | —       | Linting.                                         |
-| **Turbo**                  | 2.8+    | Cache des tâches, parallélisation.               |
+| **Docker**                 | —       | Conteneurisation (infra).                    |
+| **ESLint**                 | —       | Linting.                                     |
+| **Turbo**                  | 2.8+    | Cache des tâches, parallélisation.           |
 
 
 **Choix Sentry** : Observabilité full-stack. (1) **Erreurs** : Capture en temps réel des crashs front (JS, hydration) et back (tRPC, Prisma). (2) **Tracing** : Identification des goulots d'étranglement (requêtes SQL lentes, appels API). (3) **Session Replay** : Reproduction vidéo des bugs utilisateurs pour un débuggage ultra-rapide. (4) **Tunneling** : Contournement des bloqueurs de pub via une route Next.js dédiée. Alternative à LogRocket : plus complet pour le backend. Alternative à Datadog : plus accessible pour les petites équipes.
@@ -189,28 +169,28 @@ Document de référence pour les technologies, langages et outils utilisés dans
 
 **Choix GitHub Actions** : CI/CD natif GitHub, pas de service externe. Workflows YAML, matrix builds, artefacts. Alternative à GitLab CI : même principe, écosystème GitHub.
 
-**Choix Docker** : Conteneurisation pour déploiement reproductible (front, back). Dockerfiles multi-stage (build + runtime) dans `infra/docker/`. Image Alpine (léger), Node 24, pnpm. Alternative à déploiement bare-metal : environnement identique dev/staging/prod, isolation des dépendances. Compatible Kubernetes, Docker Compose, hébergeurs (Railway, Render, Fly.io). Grafana + Prometheus pour le monitoring (optionnel).
+**Choix Docker** : Conteneurisation pour déploiement reproductible (package `app` et services associés). Dockerfiles multi-stage (build + runtime) dans `infra/docker/`. Image Alpine (léger), Node 24, pnpm. Alternative à déploiement bare-metal : environnement identique dev/staging/prod, isolation des dépendances. Compatible Docker Compose. Grafana + Prometheus pour le monitoring (optionnel).
 
 ---
 
 ## Résumé des choix
 
 
-| Domaine              | Choix             | Justification                                                                                                                                 |
-| -------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Langage**          | TypeScript        | Typage fort, DX, partage de types front/back.                                                                                                 |
-| **Framework**        | Next.js 16        | Full-stack, App Router, API Routes, écosystème mature.                                                                                        |
-| **API**              | tRPC              | Type-safety end-to-end, pas de contrat OpenAPI à maintenir.                                                                                   |
-| **ORM**              | Prisma            | Type-safe, migrations, bon support PostgreSQL.                                                                                                |
-| **Auth**             | Better Auth       | Full-stack type-safe, magic link natif, sessions Prisma, extensible (OAuth, 2FA). Alternative à NextAuth (plus léger) et Clerk (self-hosted). |
-| **Styles**           | Tailwind 4        | Rapide, design tokens, pas de CSS-in-JS.                                                                                                      |
-| **UI**               | shadcn/ui (Radix) | Accessible, personnalisable, pas de dépendance à une lib complète.                                                                            |
-| **Données**          | TanStack Query    | Cache, invalidation, états de chargement.                                                                                                     |
-| **Validation**       | Zod               | Schémas partagés, inférence de types.                                                                                                         |
-| **Tests**            | Vitest            | Rapide, ESM, proche de Jest.                                                                                                                  |
-| **E2E**              | Cypress           | Stable, bon support Next.js.                                                                                                                  |
-| **Observabilité**    | Sentry            | Erreurs, tracing, session replay, tunneling.                                                                                                  |
-| **Conteneurisation** | Docker            | Déploiement reproductible, multi-stage, Alpine.                                                                                               |
+| Domaine        | Choix             | Justification                                                      |
+| -------------- | ----------------- | ------------------------------------------------------------------ |
+| **Langage**    | TypeScript        | Typage fort, DX, partage de types front/back.                      |
+| **Framework**  | Next.js 16        | Full-stack, App Router, API Routes, écosystème mature.             |
+| **API**        | tRPC              | Type-safety end-to-end, pas de contrat OpenAPI à maintenir.        |
+| **ORM**        | Prisma            | Type-safe, migrations, bon support PostgreSQL.                     |
+| **Auth**       | Better Auth       | Full-stack type-safe, magic link natif, sessions Prisma, extensible (OAuth, 2FA). Alternative à NextAuth (plus léger) et Clerk (self-hosted). |
+| **Styles**     | Tailwind 4        | Rapide, design tokens, pas de CSS-in-JS.                           |
+| **UI**         | shadcn/ui (Radix) | Accessible, personnalisable, pas de dépendance à une lib complète. |
+| **Données**    | TanStack Query    | Cache, invalidation, états de chargement.                          |
+| **Validation** | Zod               | Schémas partagés, inférence de types.                              |
+| **Tests**      | Vitest            | Rapide, ESM, proche de Jest.                                       |
+| **E2E**        | Cypress           | Stable, bon support Next.js.                                       |
+| **Observabilité** | Sentry          | Erreurs, tracing, session replay, tunneling.                       |
+| **Conteneurisation** | Docker       | Déploiement reproductible, multi-stage, Alpine.                    |
 
 
 ---

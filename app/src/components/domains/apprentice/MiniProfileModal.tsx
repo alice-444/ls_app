@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import Loader from "@/components/shared/Loader";
 import { User, GraduationCap, Tag, UserPlus, UserMinus, Ban, Flag } from "lucide-react";

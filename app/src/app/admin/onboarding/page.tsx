@@ -9,13 +9,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle, XCircle, User } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog";
-import { Textarea } from "@/components/ui/Textarea";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AdminOnboardingPage() {
   const { data: onboardingUsers, isLoading, refetch } = trpc.admin.getOnboardingQueue.useQuery();

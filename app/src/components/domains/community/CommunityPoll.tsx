@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PieChart, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
