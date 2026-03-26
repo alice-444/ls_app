@@ -1,15 +1,15 @@
 "use client";
 
-import { 
-  Bell, 
-  MessageSquare, 
-  GraduationCap, 
-  Coins, 
-  BookOpen, 
-  Users, 
-  Calendar, 
-  Star, 
-  Info 
+import {
+  Bell,
+  MessageSquare,
+  GraduationCap,
+  Coins,
+  BookOpen,
+  Users,
+  Calendar,
+  Star,
+  Info
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -167,19 +167,18 @@ export function NotificationBell() {
                   >
                     <div className={cn(
                       "p-2 rounded-full h-fit mt-0.5",
-                      notification.isRead 
-                        ? "bg-muted text-muted-foreground" 
+                      notification.isRead
+                        ? "bg-muted text-muted-foreground"
                         : "bg-[#ffb647]/20 text-[#26547c]"
                     )}>
                       {getNotificationIcon(notification.type || "")}
                     </div>
                     <div className="flex flex-col gap-1 flex-1">
                       <p
-                        className={`text-sm font-medium ${
-                          notification.isRead
+                        className={`text-sm font-medium ${notification.isRead
                             ? "text-muted-foreground"
                             : "text-foreground"
-                        }`}
+                          }`}
                       >
                         {notification.title}
                       </p>

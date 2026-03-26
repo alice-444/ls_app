@@ -48,9 +48,9 @@ describe("useOnboarding", () => {
     vi.mocked(useSearchParams).mockReturnValue(new URLSearchParams() as any);
   });
 
-  it("initializes at 'select' step with no role", () => {
+  it("initializes at 'Select' step with no role", () => {
     const { result } = renderHook(() => useOnboarding());
-    expect(result.current.currentStep).toBe("select");
+    expect(result.current.currentStep).toBe("Select");
     expect(result.current.selectedRole).toBeNull();
   });
 
@@ -123,7 +123,7 @@ describe("useOnboarding", () => {
     act(() => {
       result.current.handleGoBack();
     });
-    expect(result.current.currentStep).toBe("select");
+    expect(result.current.currentStep).toBe("Select");
   });
 
   it("handles error during role confirmation", async () => {

@@ -3,7 +3,7 @@
 import { trpc } from "@/utils/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Tag, Users, ArrowRight, Clock } from "lucide-react";
+import { Calendar, Users, ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatTime } from "@/lib/workshop-utils";
@@ -12,7 +12,7 @@ interface MentorWorkshopsListProps {
   mentorId: string;
 }
 
-export function MentorWorkshopsList({ mentorId }: MentorWorkshopsListProps) {
+export function MentorWorkshopsList({ mentorId }: Readonly<MentorWorkshopsListProps>) {
   const { data: workshopsData, isLoading } = trpc.mentor.getPublicWorkshops.useQuery({ mentorId });
 
   if (isLoading) {
@@ -62,9 +62,9 @@ export function MentorWorkshopsList({ mentorId }: MentorWorkshopsListProps) {
               {workshop.description}
             </p>
             <Button asChild variant="cta" size="cta" className="w-full font-bold h-11">
-                <Link href={`/workshop/${workshop.id}`}>
-                    Détails de l'atelier <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+              <Link href={`/workshop/${workshop.id}`}>
+                Détails de l'atelier <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </CardContent>
         </Card>

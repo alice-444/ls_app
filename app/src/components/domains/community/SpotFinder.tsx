@@ -24,7 +24,7 @@ const TAG_ICONS: Record<string, any> = {
   "Wi-Fi Gratuit": Wifi,
 };
 
-export function SpotFinder({ initialSpots }: SpotFinderProps) {
+export function SpotFinder({ initialSpots }: Readonly<SpotFinderProps>) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {initialSpots.length === 0 ? (

@@ -30,7 +30,7 @@ export function DeleteWorkshopDialog({
   open,
   onOpenChange,
   onSuccess,
-}: DeleteWorkshopDialogProps) {
+}: Readonly<DeleteWorkshopDialogProps>) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const deleteMutation = trpc.workshop.delete.useMutation({

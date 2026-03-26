@@ -11,7 +11,7 @@ describe("Input", () => {
 
   it("has data-slot attribute", () => {
     render(<Input placeholder="test" />);
-    expect(screen.getByRole("textbox")).toHaveAttribute("data-slot", "input");
+    expect(screen.getByRole("textbox")).toHaveAttribute("data-slot", "Input");
   });
 
   it("calls onChange when value changes", async () => {

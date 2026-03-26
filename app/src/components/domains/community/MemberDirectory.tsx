@@ -19,7 +19,7 @@ interface MemberDirectoryProps {
   members: Member[];
 }
 
-export function MemberDirectory({ members }: MemberDirectoryProps) {
+export function MemberDirectory({ members }: Readonly<MemberDirectoryProps>) {
   return (
     <Card className="border border-border/50 bg-card/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
       <CardHeader className="pb-4">

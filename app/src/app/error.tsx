@@ -10,7 +10,7 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function Error({ error, reset }: ErrorProps) {
+export default function Error({ error, reset }: Readonly<ErrorProps>) {
   useEffect(() => {
     console.error(error);
   }, [error]);

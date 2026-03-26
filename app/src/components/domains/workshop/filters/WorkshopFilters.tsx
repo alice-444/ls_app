@@ -14,7 +14,6 @@ import { Search } from "lucide-react";
 import type {
   WorkshopFiltersProps,
   SortField,
-  SortOrder,
   StatusFilter,
 } from "@/types/workshop-components";
 
@@ -27,7 +26,7 @@ export function WorkshopFilters({
   onSortFieldChange,
   sortOrder,
   onSortOrderChange,
-}: WorkshopFiltersProps) {
+}: Readonly<WorkshopFiltersProps>) {
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">

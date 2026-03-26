@@ -20,7 +20,7 @@ export function LevelUpModal({
   open,
   onOpenChange,
   newTitle,
-}: LevelUpModalProps) {
+}: Readonly<LevelUpModalProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">

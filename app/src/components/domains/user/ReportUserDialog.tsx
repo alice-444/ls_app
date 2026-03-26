@@ -53,7 +53,7 @@ export function ReportUserDialog({
   userName,
   messageId,
   onReported,
-}: ReportUserDialogProps) {
+}: Readonly<ReportUserDialogProps>) {
   const [reason, setReason] = useState<ReportReason | "">("");
   const [details, setDetails] = useState("");
   const [isReporting, setIsReporting] = useState(false);
@@ -88,7 +88,7 @@ export function ReportUserDialog({
     setIsReporting(true);
     reportUserMutation.mutate({
       reportedUserId: userId,
-      reason: reason as ReportReason,
+      reason,
       details: details.trim() || null,
       messageId: messageId || null,
     });

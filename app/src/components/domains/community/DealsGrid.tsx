@@ -29,11 +29,11 @@ const CATEGORIES = [
   { id: "SERVICES", label: "Services", icon: Briefcase },
 ];
 
-export function DealsGrid({ initialDeals }: DealsGridProps) {
+export function DealsGrid({ initialDeals }: Readonly<DealsGridProps>) {
   const [filter, setFilter] = useState("ALL");
 
-  const filteredDeals = filter === "ALL" 
-    ? initialDeals 
+  const filteredDeals = filter === "ALL"
+    ? initialDeals
     : initialDeals.filter(d => d.category === filter);
 
   return (
@@ -84,10 +84,10 @@ export function DealsGrid({ initialDeals }: DealsGridProps) {
                 <p className="text-sm text-ls-muted line-clamp-2 mb-4">
                   {deal.description}
                 </p>
-                <Button 
-                  asChild 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
                   className="w-full justify-between h-9 text-xs hover:bg-brand/5 dark:hover:bg-brand/10 text-ls-heading font-bold rounded-full"
                 >
                   <a href={deal.link} target="_blank" rel="noopener noreferrer">

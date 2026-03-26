@@ -1,6 +1,4 @@
 "use client";
-
-import { useState } from "react";
 import { Search, X, MoreVertical, Ban, Flag, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

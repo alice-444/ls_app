@@ -28,7 +28,7 @@ function OnboardingContent() {
 
   // Calcul du pourcentage de progression
   const stepProgress = {
-    select: 25,
+    Select: 25,
     "confirm-features": 50,
     "prof-form": 75,
     "apprenant-flow": 100,
@@ -57,7 +57,7 @@ function OnboardingContent() {
       <div className="flex-1 flex items-center justify-center p-4">
         {(() => {
           switch (currentStep) {
-            case "select":
+            case "Select":
               return (
                 <RoleSelectionStep
                   currentStep={currentStep}

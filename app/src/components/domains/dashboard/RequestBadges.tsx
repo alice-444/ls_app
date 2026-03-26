@@ -12,7 +12,7 @@ export function RequestBadges({
   requests,
   showPendingBadge = true,
   showAutoUpdateText = false,
-}: RequestBadgesProps) {
+}: Readonly<RequestBadgesProps>) {
   if (!requests || requests.length === 0) return null;
 
   const pendingCount = requests.filter((r) => r.status === "PENDING").length;

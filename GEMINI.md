@@ -9,48 +9,39 @@ LearnSup is a pedagogical accompaniment application for tutors, learners, and wo
 - **Monorepo Manager:** Turborepo
 - **Package Manager:** pnpm
 - **Workspaces:**
-  - `app/`: Next.js 16 (App Router) frontend.
-  - `back/`: Next.js 16 (API) + custom Socket.IO server + Prisma ORM.
+  - `app/`: Next.js 16 (App Router) — UI, API routes, tRPC, Prisma, `server.ts` (HTTP + Socket.IO).
   - `shared/`: Shared Zod schemas, types, and utilities.
   - `infra/`: Docker configurations for development and production.
   - `docs/`: Comprehensive technical documentation.
 
 ## 🛠 Tech Stack
-### Frontend (`app/`)
-- **Framework:** Next.js 16.1.6, React 19
+### Application (`app/`)
+- **Framework:** Next.js 16.1.6, React 19 (pages + API)
 - **Styling:** Tailwind CSS 4, shadcn/ui (Radix UI)
-- **Data Fetching:** TanStack Query, tRPC (client)
-- **Auth:** Better Auth (client)
+- **Data:** TanStack Query, tRPC (client + server)
+- **Auth:** Better Auth (client + server, e.g. `auth-server.ts`)
 - **State/Forms:** TanStack Form, React Hook Form
-- **Testing:** Vitest, Testing Library
-
-### Backend (`back/`)
-- **Framework:** Next.js 16.1.6 (API Routes)
-- **Real-time:** Socket.IO (running on port 5050)
-- **Database:** PostgreSQL via Prisma ORM
-- **Auth:** Better Auth (server)
-- **API:** tRPC (server)
+- **Real-time:** Socket.IO (see `server.ts` / env for port, often 5050)
+- **Database:** PostgreSQL via Prisma (`app/prisma/`)
 - **Email:** Resend, React Email
 - **Visio:** Daily.co
 - **Image Processing:** Sharp, Cloudinary
-- **Testing:** Vitest
+- **Testing:** Vitest (`app/__tests__/units/`)
 
 ### Shared (`shared/`)
 - **Validation:** Zod
 - **Utilities:** Shared logic across front and back
 
 ## ⚙️ Key Configurations & Ports
-- **Frontend:** `http://localhost:3001`
-- **Backend (Next.js):** `http://localhost:4500`
-- **Socket.IO:** `http://localhost:5050`
+- **Next.js (dev):** souvent `http://localhost:3001` (voir `app/package.json` / `pnpm dev`)
+- **Socket.IO:** URL dans `NEXT_PUBLIC_SOCKET_URL` (souvent port **5050**)
 - **Database:** PostgreSQL (default: `learnsup` DB)
 
 ### Environment Variables (Required)
-- `back/.env`: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `CORS_ORIGIN`, `CRON_SECRET`
-- `app/.env`: `NEXT_PUBLIC_SERVER_URL`, `NEXT_PUBLIC_SOCKET_URL`
+- `app/.env`: secrets (`DATABASE_URL`, `BETTER_AUTH_*`, `CORS_ORIGIN`, `CRON_SECRET`, `RESEND_*`, `DAILY_*`, `POLAR_*`, …) + `NEXT_PUBLIC_SERVER_URL`, `NEXT_PUBLIC_SOCKET_URL` (see `app/.env.example`, `docs/metier-et-ops.md`)
 
 ## 📜 Standard Workflows
-- **Development:** `pnpm dev` (starts front and back via turbo)
+- **Development:** `pnpm dev` (Turborepo → package `app`)
 - **Database Sync:** `pnpm db:push` (syncs Prisma schema)
 - **Type Checking:** `pnpm check-types`
 - **Testing:** `pnpm test:unit` or `pnpm test:coverage`

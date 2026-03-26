@@ -333,7 +333,7 @@ docker compose -f docker-compose-prod.yml up -d --remove-orphans
 
 ### 3. Vérifier les migrations
 
-Le script `back/start.sh` exécute `prisma migrate deploy` au démarrage du backend. Les migrations sont appliquées automatiquement.
+Le script `app/start.sh` exécute `prisma migrate deploy` au démarrage lorsque `NODE_ENV=production`. Les migrations sont appliquées automatiquement.
 
 ### 4. Crons
 

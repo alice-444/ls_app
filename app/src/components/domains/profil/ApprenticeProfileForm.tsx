@@ -31,7 +31,7 @@ export function ApprenticeProfileForm({
   setStudyProgramVal,
   fieldErrors,
   blockCardClass,
-}: ApprenticeProfileFormProps) {
+}: Readonly<ApprenticeProfileFormProps>) {
   return (
     <>
       <div className={blockCardClass}>
@@ -71,7 +71,7 @@ export function ApprenticeProfileForm({
               </p>
             )}
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <Label htmlFor="bio">Bio (optionnelle)</Label>
@@ -118,7 +118,7 @@ export function ApprenticeProfileForm({
             onChange={setStudyDomainVal}
             error={fieldErrors.studyDomain}
           />
-          
+
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <Label htmlFor="studyProgram">Cursus</Label>

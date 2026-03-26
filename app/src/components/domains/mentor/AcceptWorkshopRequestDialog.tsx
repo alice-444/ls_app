@@ -202,7 +202,7 @@ export function AcceptWorkshopRequestDialog({
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
               <input
-                type="checkbox"
+                type="Checkbox"
                 id="isVirtual"
                 className="h-4 w-4 rounded border-gray-300"
                 {...register("isVirtual")}

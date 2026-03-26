@@ -5,11 +5,10 @@ import DailyIframe from "@daily-co/daily-js";
 import { trpc } from "@/utils/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Video, VideoOff, Mic, MicOff, Phone, PhoneOff } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import { Video, VideoOff, Mic, MicOff, PhoneOff, Loader2 } from "lucide-react";
 import type { DailyVideoCallProps, DailyCallFrame } from "@/types/workshop-components";
 
-export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
+export function DailyVideoCall({ workshopId, onLeave }: Readonly<DailyVideoCallProps>) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isJoined, setIsJoined] = useState(false);
@@ -90,13 +89,13 @@ export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
     };
   }, [tokenData, isLoadingToken, onLeave]);
 
-  const toggleVideo = async () => {
+  const toggleVideo = () => {
     if (!callFrameRef.current) return;
     try {
       if (isVideoOn) {
-        await callFrameRef.current.setLocalVideo(false);
+        callFrameRef.current.setLocalVideo(false);
       } else {
-        await callFrameRef.current.setLocalVideo(true);
+        callFrameRef.current.setLocalVideo(true);
       }
       setIsVideoOn(!isVideoOn);
     } catch (error) {
@@ -104,13 +103,13 @@ export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
     }
   };
 
-  const toggleAudio = async () => {
+  const toggleAudio = () => {
     if (!callFrameRef.current) return;
     try {
       if (isAudioOn) {
-        await callFrameRef.current.setLocalAudio(false);
+        callFrameRef.current.setLocalAudio(false);
       } else {
-        await callFrameRef.current.setLocalAudio(true);
+        callFrameRef.current.setLocalAudio(true);
       }
       setIsAudioOn(!isAudioOn);
     } catch (error) {
@@ -126,9 +125,7 @@ export function DailyVideoCall({ workshopId, onLeave }: DailyVideoCallProps) {
         console.error("Error leaving call:", error);
       }
     }
-    if (onLeave) {
-      onLeave();
-    }
+    onLeave?.();
   };
 
   if (isLoadingToken || isLoading) {

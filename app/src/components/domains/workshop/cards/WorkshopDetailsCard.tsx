@@ -22,7 +22,7 @@ export function WorkshopDetailsCard({
   location,
   isVirtual,
   maxParticipants,
-}: WorkshopDetailsCardProps) {
+}: Readonly<WorkshopDetailsCardProps>) {
   return (
     <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">
       <CardHeader>

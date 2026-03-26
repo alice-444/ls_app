@@ -37,7 +37,7 @@ export function AcceptedConnectionsList({
   onRemove,
   onMessage,
   isRemoving,
-}: AcceptedConnectionsListProps) {
+}: Readonly<AcceptedConnectionsListProps>) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredConnections = connections.filter((connection) => {

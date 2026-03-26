@@ -13,7 +13,7 @@ export function SupportInfoSection() {
           Support & Informations
         </h2>
       </div>
-      
+
       <div className="space-y-6">
         <p className="text-base text-ls-heading">
           Besoin d'aide ou envie d'en savoir plus sur l'aventure LearnSup ?
@@ -45,7 +45,7 @@ export function SupportInfoSection() {
               Centre d'aide & FAQ
             </Link>
           </Button>
-          
+
           <Button
             variant="outline"
             className="rounded-full border-ls-border text-ls-heading hover:bg-ls-surface"

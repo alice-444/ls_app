@@ -14,7 +14,6 @@ interface AvailableWorkshopsGridProps {
   readonly workshops: WorkshopDetailed[] | undefined;
   readonly onJoinWorkshop: (workshop: WorkshopDetailed) => void;
 }
-
 export function AvailableWorkshopsGrid({
   workshops,
   onJoinWorkshop,

@@ -205,14 +205,14 @@ flowchart TB
 
 Fichier : `app/.env` (voir `app/.env.example`).
 
-- **`NEXT_PUBLIC_SERVER_URL`** — URL du back (ex. `http://localhost:3000`). Utilisée par le client tRPC et par `auth-client` / `api-client` pour les appels API. Obligatoire en prod.
+- **`NEXT_PUBLIC_SERVER_URL`** — URL de base de l’app Next (API + pages) telle que vue par le navigateur (ex. `http://localhost:3001` si tout est servi sur le même port). Utilisée par le client tRPC et `auth-client` / `api-client`. Obligatoire en prod.
 
 ---
 
 ## Scripts (depuis la racine du repo)
 
-- `pnpm dev:app` — Démarre le front en dev (port 3001).
-- `pnpm dev` — Démarre app et back (Turborepo).
+- `pnpm dev:app` — Filtre Turbo sur le package `app`.
+- `pnpm dev` — Démarre le workspace `app` (Next + socket selon `app/package.json`).
 
 Build : `pnpm build` (à la racine lance le build des workspaces).
 

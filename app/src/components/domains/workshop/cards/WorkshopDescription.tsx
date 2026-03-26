@@ -11,7 +11,7 @@ interface WorkshopDescriptionProps {
 export function WorkshopDescription({
   description,
   materialsNeeded,
-}: WorkshopDescriptionProps) {
+}: Readonly<WorkshopDescriptionProps>) {
   return (
     <>
       <Card className="bg-card/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl">

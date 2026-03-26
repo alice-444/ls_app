@@ -2,7 +2,7 @@
 
 Modèle physique PostgreSQL — tables, colonnes, types, clés et index.
 
-**Emplacement du schéma** : `back/.prisma/schema/schema.prisma` (configuré dans `back/package.json`).
+**Emplacement du schéma** : `app/prisma/schema/schema.prisma` (configuré dans `app/package.json`).
 
 ---
 
@@ -522,6 +522,6 @@ UNIQUE : `(pollId, userId)`
 
 ## Références
 
-- Schéma source : `back/.prisma/schema/schema.prisma`
+- Schéma source : `app/prisma/schema/schema.prisma`
 - Diagramme relationnel (ER) : [architecture.md](architecture.md#modèles-de-données-prisma)
 - Migrations : `pnpm db:migrate`, `pnpm db:push`

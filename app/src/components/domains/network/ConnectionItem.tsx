@@ -27,7 +27,7 @@ export function ConnectionItem({
   onRemove,
   onMessage,
   isRemoving,
-}: ConnectionItemProps) {
+}: Readonly<ConnectionItemProps>) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-border/50 rounded-2xl bg-card/80 hover:bg-brand-soft/30 transition-colors gap-4">
       <div className="flex items-center gap-4">

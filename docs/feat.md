@@ -103,7 +103,7 @@ LearnSup est une plateforme d'accompagnement mettant en relation **mentors** et 
 - **Cycle** : Création (DRAFT) → Publication (PUBLISHED) → Demande apprenant (débit crédits) → Acceptation/rejet mentor → Visio Daily.co → Feedback apprenant → Cashback apprenant
 - **Sécurité** : Un apprenant ne peut pas s'inscrire deux fois à un même atelier (vérification des demandes actives `PENDING` ou `ACCEPTED`).
 - **Statistiques** : Le compteur "Apprenants aidés" du mentor n'est incrémenté qu'après la réalisation effective de l'atelier (ateliers passés ou terminés).
-- **Visio** : Salle Daily.co créée à la demande, token généré pour mentor et apprenant
+- **Visio** : Salle Daily.co **pré-créée par cron** (`generate-video-links`, fenêtre 0–12 h avant le début) ou **à la demande** via `workshop.getDailyToken` si absente ; propriétés Daily **`nbf` / `exp`** calées sur le créneau ; **`dailyRoomId`** masqué dans les réponses API jusqu’à ~3 h avant le début (même règle listes + fiche) ; token pour mentor et apprenant
 - **Cashback** : Crédit automatique de l'apprenant après participation (cron)
 
 ### Crédits et paiement

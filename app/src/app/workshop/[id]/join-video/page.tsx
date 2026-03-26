@@ -27,11 +27,12 @@ export default function JoinVideoPage() {
   );
 
   useEffect(() => {
-    if (!tokenData || isLoading || !videoContainerRef.current) return;
+    const container = videoContainerRef.current;
+    if (!tokenData || isLoading || !container) return;
 
     const initializeCall = async () => {
       try {
-        const callFrame = DailyIframe.createFrame(videoContainerRef.current!, {
+        const callFrame = DailyIframe.createFrame(container, {
           showLeaveButton: true,
           iframeStyle: {
             position: "relative",
