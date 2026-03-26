@@ -4,4 +4,6 @@ export interface INotificationEventEmitter {
   emitNewNotification(userId: string, notification: NotificationEntity): void;
 
   emitNotificationUpdate(userId: string): void;
+
+  emitAdminNotification(type: string, message: string, details?: any): void;
 }

@@ -2,9 +2,7 @@ import type { INotificationEventEmitter } from "./notification-event-emitter.int
 import type { NotificationEntity } from "../repositories/notification.repository.interface";
 import { getSocketServer } from "../../socket/server";
 
-export class SocketNotificationEventEmitter
-  implements INotificationEventEmitter
-{
+export class SocketNotificationEventEmitter implements INotificationEventEmitter {
   emitNewNotification(userId: string, notification: NotificationEntity): void {
     const io = getSocketServer();
     if (!io) {
@@ -31,5 +29,19 @@ export class SocketNotificationEventEmitter
     }
 
     io.to(`user:${userId}`).emit("notification-updated");
+  }
+
+  emitAdminNotification(type: string, message: string, details?: any): void {
+    const io = getSocketServer();
+    if (!io) {
+      return;
+    }
+
+    io.to("admins").emit("admin:new-notification", {
+      type,
+      message,
+      details,
+      createdAt: new Date(),
+    });
   }
 }

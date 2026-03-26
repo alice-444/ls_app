@@ -23,11 +23,20 @@ export interface IUserReportService {
       }>
     >
   >;
-  getAdminReportQueue(params?: { limit?: number; offset?: number }): Promise<any>;
+  getAdminReportQueue(params?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<any>;
   reviewReport(
-    reportId: string, 
-    status: "REVIEWED" | "RESOLVED" | "DISMISSED", 
+    reportId: string,
+    status: "REVIEWED" | "RESOLVED" | "DISMISSED",
     adminUserId: string,
-    adminNotes?: string
+    adminNotes?: string,
+  ): Promise<any>;
+  bulkReviewReports(
+    reportIds: string[],
+    status: "REVIEWED" | "RESOLVED" | "DISMISSED",
+    adminUserId: string,
+    adminNotes?: string,
   ): Promise<any>;
 }

@@ -60,6 +60,7 @@ Documentation de l’API et du serveur : [back.md](back.md).
 Procédures (déploiement, DB, auth…) : [procedure.md](procedure.md).
 Schéma et procédure de déploiement : [deploiement.md](deploiement.md).
 Procès-verbal de recette : [pv-recette.md](pv-recette.md).
+Métier, intégrations (Polar, rate limits), dépannage : [metier-et-ops.md](metier-et-ops.md).
 
 ---
 

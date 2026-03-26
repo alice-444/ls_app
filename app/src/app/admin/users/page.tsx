@@ -20,21 +20,16 @@ import {
   ChevronRight,
   Eye,
   Trash2,
+  Search,
+  Filter,
+  CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -42,21 +37,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { Input } from "@/components/ui/input";
+import { getStatusLabel, getRoleLabel, adminDateFormatters } from "@/lib/admin/admin-utils";
+import { useBatchSelection } from "@/hooks/admin/use-batch-selection";
+import { AdminBulkActions } from "@/components/admin/AdminBulkActions";
+import { RejectUserDialog } from "@/components/admin/modals/RejectUserDialog";
 
 type UserStatus = "PENDING" | "ACTIVE" | "SUSPENDED";
 
 function UsersContent() {
   const searchParams = useSearchParams();
   const statusFromUrl = searchParams.get("status") as UserStatus | null;
+
   const [statusFilter, setStatusFilter] = useState<UserStatus | "ALL">(
     statusFromUrl && ["PENDING", "ACTIVE", "SUSPENDED"].includes(statusFromUrl)
       ? statusFromUrl
-      : "PENDING"
+      : "ALL"
   );
+  const [roleFilter, setRoleFilter] = useState<string>("ALL");
+  const [searchTerm, setSearchTerm] = useState("");
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<{
@@ -64,14 +64,35 @@ function UsersContent() {
     name: string | null;
     email: string | null;
   } | null>(null);
-  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [rejectionReason, setRejectionReason] = useState("");
 
   const { data, isLoading, refetch } = trpc.admin.getUsers.useQuery({
     limit: 20,
     cursor: cursor ?? undefined,
     status: statusFilter === "ALL" ? undefined : statusFilter,
+    role: roleFilter === "ALL" ? undefined : roleFilter,
+    searchTerm: searchTerm || undefined,
+  }, {
+    placeholderData: (previousData: any) => previousData,
   });
+
+  const items = data?.items ?? [];
+  const nextCursor = data?.nextCursor;
+
+  // Use the abstracted hook for selection
+  const {
+    selectedIds,
+    toggleSelect,
+    toggleSelectAll,
+    isAllSelected,
+    resetSelection
+  } = useBatchSelection(items);
+
+  // Reset selection and pagination when filters change
+  useEffect(() => {
+    setCursor(null);
+    resetSelection();
+  }, [statusFilter, roleFilter, searchTerm, resetSelection]);
 
   const approveMutation = trpc.admin.approveUser.useMutation({
     onSuccess: () => {
@@ -86,7 +107,7 @@ function UsersContent() {
   const bulkApproveMutation = trpc.admin.bulkApproveUsers.useMutation({
     onSuccess: () => {
       toast.success("Utilisateurs activés en masse");
-      setSelectedUserIds([]);
+      resetSelection();
       refetch();
     },
     onError: (err: any) => toast.error(err.message),
@@ -108,7 +129,7 @@ function UsersContent() {
   const bulkRejectMutation = trpc.admin.bulkRejectUsers.useMutation({
     onSuccess: () => {
       toast.success("Utilisateurs suspendus en masse");
-      setSelectedUserIds([]);
+      resetSelection();
       setIsRejectDialogOpen(false);
       setRejectionReason("");
       refetch();
@@ -116,28 +137,14 @@ function UsersContent() {
     onError: (err: any) => toast.error(err.message),
   });
 
-  const toggleSelectAll = () => {
-    if (selectedUserIds.length === items.length) {
-      setSelectedUserIds([]);
-    } else {
-      setSelectedUserIds(items.map((u: any) => u.id));
-    }
-  };
-
-  const toggleSelectUser = (userId: string) => {
-    setSelectedUserIds(prev => 
-      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
-    );
-  };
-
   const handleApprove = (userId: string) => {
     approveMutation.mutate({ userId });
   };
 
   const handleReject = () => {
-    if (selectedUserIds.length > 0) {
+    if (selectedIds.length > 0) {
       bulkRejectMutation.mutate({
-        userIds: selectedUserIds,
+        userIds: selectedIds,
         reason: rejectionReason || undefined,
       });
     } else if (selectedUser) {
@@ -149,46 +156,17 @@ function UsersContent() {
   };
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return (
-          <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-200">
-            En attente
-          </Badge>
-        );
-      case "ACTIVE":
-        return (
-          <Badge variant="outline" className="bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200">
-            Actif
-          </Badge>
-        );
-      case "SUSPENDED":
-        return (
-          <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-200">
-            Suspendu
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
+    const colorClasses: Record<string, string> = {
+      PENDING: "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-200",
+      ACTIVE: "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200",
+      SUSPENDED: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-200",
+    };
+    return (
+      <Badge variant="outline" className={cn(colorClasses[status] || "")}>
+        {getStatusLabel(status)}
+      </Badge>
+    );
   };
-
-  const getRoleLabel = (role: string | null) => {
-    if (!role) return "—";
-    switch (role) {
-      case "ADMIN":
-        return "Admin";
-      case "MENTOR":
-        return "Mentor";
-      case "APPRENANT":
-        return "Apprenant";
-      default:
-        return role;
-    }
-  };
-
-  const items = data?.items ?? [];
-  const nextCursor = data?.nextCursor;
 
   if (isLoading) {
     return (
@@ -209,39 +187,42 @@ function UsersContent() {
             Consulter et gérer les comptes utilisateurs
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {selectedUserIds.length > 0 && (
-            <div className="flex items-center gap-2 mr-4 px-4 py-1.5 bg-brand/5 border border-brand/20 rounded-full animate-in fade-in slide-in-from-right-2">
-              <span className="text-sm font-medium text-brand">{selectedUserIds.length} sélectionnés</span>
-              <div className="h-4 w-px bg-brand/20 mx-1" />
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-2"
-                onClick={() => bulkApproveMutation.mutate({ userIds: selectedUserIds })}
-              >
-                <CheckCircle className="h-4 w-4 mr-1" /> Approuver
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2"
-                onClick={() => setIsRejectDialogOpen(true)}
-              >
-                <XCircle className="h-4 w-4 mr-1" /> Rejeter
-              </Button>
-            </div>
-          )}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ls-muted" />
+            <Input
+              placeholder="Rechercher..."
+              value={searchTerm}
+              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setSearchTerm(e.target.value)}
+              className="pl-9 rounded-full bg-card/50"
+            />
+          </div>
+
+          <Select
+            value={roleFilter}
+            onValueChange={setRoleFilter}
+          >
+            <SelectTrigger className="w-[140px] rounded-full bg-card/50">
+              <Filter className="h-4 w-4 mr-2 text-ls-muted" />
+              <SelectValue placeholder="Rôle" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Tous les rôles</SelectItem>
+              <SelectItem value="MENTOR">Mentor</SelectItem>
+              <SelectItem value="APPRENANT">Apprenant</SelectItem>
+              <SelectItem value="ADMIN">Admin</SelectItem>
+            </SelectContent>
+          </Select>
+
           <Select
             value={statusFilter}
             onValueChange={(v) => {
               setStatusFilter(v as UserStatus | "ALL");
               setCursor(null);
-              setSelectedUserIds([]);
             }}
           >
-            <SelectTrigger className="w-[180px] rounded-full">
-              <SelectValue placeholder="Filtrer par statut" />
+            <SelectTrigger className="w-[160px] rounded-full bg-card/50">
+              <SelectValue placeholder="Statut" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">Tous les statuts</SelectItem>
@@ -253,21 +234,40 @@ function UsersContent() {
         </div>
       </div>
 
+      <AdminBulkActions
+        selectedCount={selectedIds.length}
+        actions={[
+          {
+            label: "Approuver",
+            icon: <CheckCircle className="h-4 w-4" />,
+            onClick: () => bulkApproveMutation.mutate({ userIds: selectedIds }),
+            className: "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50",
+            disabled: bulkApproveMutation.isPending
+          },
+          {
+            label: "Rejeter",
+            icon: <XCircle className="h-4 w-4" />,
+            onClick: () => setIsRejectDialogOpen(true),
+            className: "text-rose-600 hover:text-rose-700 hover:bg-rose-50",
+            disabled: bulkRejectMutation.isPending
+          }
+        ]}
+      />
+
       <div className="rounded-2xl border border-border/50 bg-card/95 backdrop-blur-md overflow-hidden shadow-xl">
         <Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead className="w-[40px]">
-                <Checkbox 
-                  checked={items.length > 0 && selectedUserIds.length === items.length}
+                <Checkbox
+                  checked={isAllSelected}
                   onCheckedChange={toggleSelectAll}
                 />
               </TableHead>
               <TableHead className="text-ls-heading">Utilisateur</TableHead>
-              <TableHead className="text-ls-heading">Email</TableHead>
-              <TableHead className="text-ls-heading">Rôle</TableHead>
+              <TableHead className="text-ls-heading">Rôle / Crédits</TableHead>
               <TableHead className="text-ls-heading">Statut</TableHead>
-              <TableHead className="text-ls-heading">Inscription</TableHead>
+              <TableHead className="text-ls-heading">Dernière activité</TableHead>
               <TableHead className="text-right text-ls-heading">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -275,7 +275,7 @@ function UsersContent() {
             {items.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={6}
                   className="text-center text-ls-muted py-12"
                 >
                   Aucun utilisateur trouvé.
@@ -287,13 +287,13 @@ function UsersContent() {
                   key={user.id}
                   className={cn(
                     "border-border/50 transition-colors",
-                    selectedUserIds.includes(user.id) ? "bg-brand/5" : "hover:bg-brand-soft/20"
+                    selectedIds.includes(user.id) ? "bg-brand/5" : "hover:bg-brand-soft/20"
                   )}
                 >
                   <TableCell>
-                    <Checkbox 
-                      checked={selectedUserIds.includes(user.id)}
-                      onCheckedChange={() => toggleSelectUser(user.id)}
+                    <Checkbox
+                      checked={selectedIds.includes(user.id)}
+                      onCheckedChange={() => toggleSelect(user.id)}
                     />
                   </TableCell>
                   <TableCell>
@@ -311,20 +311,33 @@ function UsersContent() {
                           <User className="h-4 w-4 text-brand" />
                         </div>
                       )}
-                      <span className="font-medium text-ls-heading">
-                        {user.name || "—"}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-ls-heading leading-none">
+                          {user.name || "—"}
+                        </span>
+                        <span className="text-[11px] text-ls-muted mt-1 flex items-center gap-1">
+                          {user.email}
+                          {user.emailVerified && <CheckCircle className="h-2.5 w-2.5 text-emerald-500" />}
+                        </span>
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-ls-muted">{user.email || "—"}</TableCell>
-                  <TableCell>{getRoleLabel(user.role)}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-ls-muted">
+                        {getRoleLabel(user.role)}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <CreditCard className="h-3 w-3 text-amber-500" />
+                        <span className="font-bold text-ls-heading">{user.creditBalance}</span>
+                      </div>
+                    </div>
+                  </TableCell>
                   <TableCell>{getStatusBadge(user.status)}</TableCell>
-                  <TableCell className="text-ls-muted">
-                    {user.createdAt
-                      ? format(new Date(user.createdAt), "d MMM yyyy", {
-                          locale: fr,
-                        })
-                      : "—"}
+                  <TableCell className="text-xs text-ls-muted">
+                    {user.lastSeen
+                      ? adminDateFormatters.distance(user.lastSeen)
+                      : "Jamais connecté"}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -338,7 +351,7 @@ function UsersContent() {
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
-                      
+
                       {statusFilter === "PENDING" && (
                         <>
                           <Button
@@ -398,44 +411,16 @@ function UsersContent() {
         )}
       </div>
 
-      <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
-        <DialogContent className="rounded-2xl border-border/50">
-          <DialogHeader>
-            <DialogTitle>Rejeter l&apos;utilisateur</DialogTitle>
-            <DialogDescription>
-              {selectedUser?.name
-                ? `Rejeter ${selectedUser.name} (${selectedUser.email}) ?`
-                : "Rejeter cet utilisateur ?"}
-              {" "}
-              Vous pouvez indiquer une raison (optionnel).
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <Textarea
-              placeholder="Raison du rejet (optionnel)"
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              rows={4}
-              className="rounded-xl"
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsRejectDialogOpen(false);
-                setSelectedUser(null);
-                setRejectionReason("");
-              }}
-            >
-              Annuler
-            </Button>
-            <Button variant="ctaDestructive" size="cta" onClick={handleReject}>
-              Rejeter
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <RejectUserDialog
+        open={isRejectDialogOpen}
+        onOpenChange={setIsRejectDialogOpen}
+        selectedUser={selectedUser}
+        rejectionReason={rejectionReason}
+        setRejectionReason={setRejectionReason}
+        onReject={handleReject}
+        isBulk={selectedIds.length > 0}
+        selectedCount={selectedIds.length}
+      />
     </div>
   );
 }

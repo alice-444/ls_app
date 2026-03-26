@@ -38,8 +38,14 @@ export interface IUserReportRepository {
     id: string,
     status: ReportStatus,
     reviewedBy?: string | null,
-    adminNotes?: string | null
+    adminNotes?: string | null,
   ): Promise<UserReportEntity>;
+  updateStatuses(
+    ids: string[],
+    status: ReportStatus,
+    reviewedBy?: string | null,
+    adminNotes?: string | null,
+  ): Promise<{ count: number }>;
   findMany(params?: {
     skip?: number;
     take?: number;
@@ -47,8 +53,5 @@ export interface IUserReportRepository {
     orderBy?: any;
     include?: any;
   }): Promise<any[]>;
-  update(params: {
-    where: { id: string };
-    data: any;
-  }): Promise<any>;
+  update(params: { where: { id: string }; data: any }): Promise<any>;
 }

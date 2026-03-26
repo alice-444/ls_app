@@ -1,8 +1,11 @@
 import { z } from "zod";
-import { router, protectedProcedure, adminProcedure } from "../../../lib/trpc-server";
+import {
+  router,
+  protectedProcedure,
+  adminProcedure,
+} from "../../../lib/trpc-server";
 import { container } from "../../../lib/di/container";
 import { handleRouterResult } from "../../shared/router-helpers";
-
 
 const ReportReasonSchema = z.enum([
   "HARASSMENT",
@@ -19,7 +22,7 @@ export const userReportRouter = router({
         reason: ReportReasonSchema,
         details: z.string().optional().nullable(),
         messageId: z.string().optional().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.userReportService.createReport({
@@ -38,7 +41,7 @@ export const userReportRouter = router({
 
   getMyReports: protectedProcedure.query(async ({ ctx }) => {
     const result = await container.userReportService.getReportsByReporter(
-      ctx.session.user.id
+      ctx.session.user.id,
     );
     return handleRouterResult(result, {
       operation: "getMyReports",
@@ -48,14 +51,19 @@ export const userReportRouter = router({
 
   getAdminReportQueue: adminProcedure
     .input(
-      z.object({
-        limit: z.number().min(1).max(100).default(50).optional(),
-        offset: z.number().min(0).default(0).optional(),
-        status: z.enum(["PENDING", "REVIEWED", "RESOLVED", "DISMISSED"]).optional(),
-      }).optional()
+      z
+        .object({
+          limit: z.number().min(1).max(100).default(50).optional(),
+          offset: z.number().min(0).default(0).optional(),
+          status: z
+            .enum(["PENDING", "REVIEWED", "RESOLVED", "DISMISSED"])
+            .optional(),
+        })
+        .optional(),
     )
     .query(async ({ input }) => {
-      const result = await container.userReportService.getAdminReportQueue(input);
+      const result =
+        await container.userReportService.getAdminReportQueue(input);
       return handleRouterResult(result, {
         operation: "getAdminReportQueue",
       });
@@ -67,18 +75,40 @@ export const userReportRouter = router({
         reportId: z.string(),
         status: z.enum(["REVIEWED", "RESOLVED", "DISMISSED"]),
         adminNotes: z.string().optional().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const result = await container.userReportService.reviewReport(
         input.reportId,
         input.status,
         ctx.session.user.id,
-        input.adminNotes ?? undefined
+        input.adminNotes ?? undefined,
       );
       return handleRouterResult(result, {
         operation: "reviewReport",
         reportId: input.reportId,
+        adminUserId: ctx.session.user.id,
+      });
+    }),
+
+  bulkReviewReports: adminProcedure
+    .input(
+      z.object({
+        reportIds: z.array(z.string()),
+        status: z.enum(["REVIEWED", "RESOLVED", "DISMISSED"]),
+        adminNotes: z.string().optional().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const result = await container.userReportService.bulkReviewReports(
+        input.reportIds,
+        input.status,
+        ctx.session.user.id,
+        input.adminNotes ?? undefined,
+      );
+      return handleRouterResult(result, {
+        operation: "bulkReviewReports",
+        count: result.data?.count,
         adminUserId: ctx.session.user.id,
       });
     }),

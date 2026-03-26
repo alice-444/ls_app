@@ -10,12 +10,12 @@ Application d’accompagnement pédagogique (tuteurs, apprenants, ateliers). Mon
 
 ---
 
-## 📋 Table des matières
+## Table des matières
 
 - [LearnSup](#learnsup)
-  - [📋 Table des matières](#-table-des-matières)
+  - [Table des matières](#table-des-matières)
   - [📦 Monorepo](#-monorepo)
-  - [🚀 Quick Start](#-quick-start)
+  - [Quick Start](#quick-start)
     - [Prérequis](#prérequis)
     - [Installation](#installation)
   - [⚙️ Configuration](#️-configuration)
@@ -26,10 +26,10 @@ Application d’accompagnement pédagogique (tuteurs, apprenants, ateliers). Mon
     - [Backend](#backend)
     - [DevOps](#devops)
   - [📁 Structure](#-structure)
-  - [Workflow de Développement](#workflow-de-développement)
+  - [Workflow de développement](#workflow-de-développement)
     - [Convention de Commits](#convention-de-commits)
     - [CI/CD](#cicd)
-  - [🤝 Contribution](#-contribution)
+  - [Contribution](#contribution)
 
 ---
 
@@ -37,12 +37,12 @@ Application d’accompagnement pédagogique (tuteurs, apprenants, ateliers). Mon
 
 Ce projet est géré en monorepo :
 
-- **[app](./app)** – Application Next.js
-- **[back](./back)** – API et serveur Next.js
+- **[app](./app)** — Application Next.js (UI, API tRPC, routes `/api/*`, Prisma, `server.ts` pour Socket.IO).
+- **[shared](./shared)** — Package **`@ls-app/shared`** : types et schémas partagés (build TypeScript → `dist/`).
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prérequis
 
@@ -53,8 +53,7 @@ Ce projet est géré en monorepo :
 ### Installation
 
 ```bash
-# Cloner et installer
-git clone https://github.com/votre-org/ls_app.git
+git clone https://github.com/alice-444/ls_app.git
 cd ls_app
 pnpm install
 
@@ -62,34 +61,21 @@ pnpm install
 createdb learnsup
 pnpm db:push
 
-# Démarrer en développement
 pnpm dev
 ```
 
-**URLs :**
-- Frontend : [http://localhost:3001](http://localhost:3001)
-- Backend (Next.js) : [http://localhost:4500](http://localhost:4500)
-- Socket.IO : [http://localhost:5050](http://localhost:5050)
+**URLs (développement)** :
+
+- Application Next : [http://localhost:3001](http://localhost:3001) (`next dev --port 3001` dans le package `app`)
+- Socket.IO : port défini dans `server.ts` — aligner `NEXT_PUBLIC_SOCKET_URL` dans `app/.env`
 
 ---
 
 ## ⚙️ Configuration
 
-Créer les fichiers `.env` à la racine des packages :
-
-**`back/.env`**
-```env
-DATABASE_URL="postgresql://..."
-BETTER_AUTH_SECRET="your-secret-key-min-32-chars"
-CORS_ORIGIN="http://localhost:3001"
-CRON_SECRET="your-secret-key-min-32-chars"
-```
-
-**`app/.env`**
-```env
-NEXT_PUBLIC_SERVER_URL="http://localhost:4500"
-NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
-```
+1. **`app/.env`** — Variables utilisées par Next.js et le serveur custom. Le fichier [`app/.env.example`](./app/.env.example) liste les variables **publiques** documentées (`NEXT_PUBLIC_*`, Sentry, Clarity). Les secrets applicatifs ne sont pas tous dupliqués dans cet exemple : les nommer dans votre `.env` local en vous appuyant sur la doc métier et l’infra.
+2. **`infra/docker/.env.sample`** — Modèle pour Docker / déploiement (PostgreSQL, CORS, auth, intégrations).
+3. **Documentation** — Détails exploitation et intégrations : [`docs/metier-et-ops.md`](./docs/metier-et-ops.md), déploiement : [`docs/deploiement.md`](./docs/deploiement.md).
 
 ---
 
@@ -97,52 +83,58 @@ NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
 
 | Script | Description |
 |--------|-------------|
-| `pnpm dev` | Démarre tous les services (front + back) |
-| `pnpm dev:app` | Démarre uniquement le frontend |
-| `pnpm dev:back` | Démarre uniquement le backend |
-| `pnpm build` | Build toutes les applications |
-| `pnpm check-types` | Vérifie les types TypeScript |
-| `pnpm db:push` | Synchronise le schéma Prisma (dev) |
-| `pnpm db:migrate` | Applique les migrations (prod) |
+| `pnpm dev` | Démarre le workspace `app` (Next + serveur Socket via Turborepo) |
+| `pnpm dev:app` | Équivalent ciblé : `turbo -F app dev` |
+| `pnpm build` | Build monorepo (les tâches `build` des packages, dont `shared` si nécessaire) |
+| `pnpm lint` | ESLint via Turborepo |
+| `pnpm check-types` | Vérification TypeScript |
+| `pnpm test` | Tests (Vitest) |
+| `pnpm test:unit` | Alias de `pnpm test` |
+| `pnpm db:push` | Synchronise le schéma Prisma (développement) |
+| `pnpm db:migrate` | Migrations Prisma (développement) |
+| `pnpm db:deploy` | Applique les migrations (CI / prod) |
 | `pnpm db:generate` | Génère le client Prisma |
 | `pnpm db:studio` | Ouvre Prisma Studio |
-| `pnpm test:coverage` | Lance les tests avec couverture de code (Vitest) |
 
 ---
 
 ## 🛠 Stack Technique
 
 ### Core
-- **[TypeScript](https://www.typescriptlang.org/)** – Typage statique
-- **[Next.js](https://nextjs.org/)** – Framework React full-stack
-- **[Prisma](https://www.prisma.io/)** – ORM TypeScript
-- **[PostgreSQL](https://www.postgresql.org/)** – Base de données
-- **[Turborepo](https://turbo.build/)** – Build et tâches du monorepo
+
+- **[TypeScript](https://www.typescriptlang.org/)** — Typage statique
+- **[Next.js 16](https://nextjs.org/)** — Framework React full-stack
+- **[Prisma](https://www.prisma.io/)** — ORM
+- **[PostgreSQL](https://www.postgresql.org/)** — Base de données
+- **[Turborepo](https://turbo.build/)** — Orchestration des tâches du monorepo
 
 ### Frontend
-- **[React 19](https://react.dev/)** – UI
-- **[Tailwind CSS 4](https://tailwindcss.com/)** – Styles (design tokens)
-- **[shadcn/ui](https://ui.shadcn.com/)** – Composants UI (Radix)
-- **[TanStack Query](https://tanstack.com/query)** – Données serveur et cache
-- **[tRPC](https://trpc.io/)** – API type-safe
-- **[Better Auth](https://www.better-auth.com/)** – Authentification (client)
-- **[Vitest](https://vitest.dev/)** – Tests unitaires
+
+- **[React 19](https://react.dev/)** — UI
+- **[Tailwind CSS 4](https://tailwindcss.com/)** — Styles
+- **[shadcn/ui](https://ui.shadcn.com/)** — Composants (Radix)
+- **[TanStack Query](https://tanstack.com/query)** — Données serveur et cache
+- **[tRPC](https://trpc.io/)** — API type-safe
+- **[Better Auth](https://www.better-auth.com/)** — Authentification
+- **[Vitest](https://vitest.dev/)** — Tests unitaires
 
 ### Backend
-- **[Better Auth](https://www.better-auth.com/)** – Authentification
-- **[Zod](https://zod.dev/)** – Validation
-- **[Sharp](https://sharp.pixelplumbing.com/)** – Traitement d’images - **[Resend](https://resend.com/)** – Envoi d’emails
-- **[Daily.co](https://www.daily.co/)** – Visioconférence
-- **[Socket.IO](https://socket.io/)** – Temps réel (messagerie, notifications)
-- **[Vitest](https://vitest.dev/)** – Tests unitaires
+
+- **[Better Auth](https://www.better-auth.com/)** — Authentification
+- **[Zod](https://zod.dev/)** — Validation
+- **[Sharp](https://sharp.pixelplumbing.com/)** — Traitement d’images
+- **[Resend](https://resend.com/)** — Envoi d’e-mails
+- **[Daily.co](https://www.daily.co/)** — Visioconférence
+- **[Socket.IO](https://socket.io/)** — Temps réel (messagerie, notifications)
+- **[Vitest](https://vitest.dev/)** — Tests unitaires
 
 ### DevOps
-- **[pnpm](https://pnpm.io/)** – Gestion des paquets (workspaces)
-- **[GitHub Actions](https://github.com/features/actions)** – CI/CD
-- **[Docker](https://www.docker.com/)** – Conteneurisation (infra)
-- **[Cypress](https://www.cypress.io/)** – Tests E2E
-- **[Vitest](https://vitest.dev/)** – Tests unitaires + couverture (LCOV pour SonarQube)
-- **SonarQube / SonarCloud** – Qualité de code
+
+- **[pnpm](https://pnpm.io/)** — Paquets et workspaces
+- **[GitHub Actions](https://github.com/features/actions)** — CI/CD
+- **[Docker](https://www.docker.com/)** — Conteneurisation (`infra/docker`)
+- **[Cypress](https://www.cypress.io/)** — Tests E2E
+- **SonarCloud** — Qualité de code
 
 ---
 
@@ -150,29 +142,32 @@ NEXT_PUBLIC_SOCKET_URL="http://localhost:5050"
 
 ```
 ls_app/
-├── app/                # Frontend Next.js
-├── back/               # Backend (serveur custom + Next.js, Prisma)
+├── app/                 # Next.js (front + API tRPC, Prisma, server.ts)
+├── shared/              # @ls-app/shared (types / build tsc)
 ├── infra/
-│   └── docker/         # Configuration Docker
-├── docs/               # Documentation
+│   └── docker/          # Docker et exemples d’env
+├── docs/                # Documentation technique
 ├── .github/
-│   └── workflows/      # Pipelines CI/CD
-├── package.json        # Scripts racine et workspaces
+│   └── workflows/       # CI/CD
+├── package.json         # Scripts racine
 ├── pnpm-workspace.yaml
-├── turbo.json          # Configuration Turborepo
+├── turbo.json
 └── sonar-project.properties
 ```
 
 Documentation complémentaire :
-- [docs/README.md](./docs/README.md) — Sommaire de la doc technique
-- [docs/tech-stack.md](./docs/tech-stack.md) — Stack technique détaillée et choix technologiques
+
+- [`docs/README.md`](./docs/README.md) — Sommaire de la documentation
+- [`docs/tech-stack.md`](./docs/tech-stack.md) — Stack détaillée et choix techniques
 
 ---
 
-## Workflow de Développement
+## Workflow de développement
 
 ### Convention de Commits
+
 Suivre [Conventional Commits](https://www.conventionalcommits.org/) :
+
 - `feat:` Nouvelle fonctionnalité
 - `fix:` Correction de bug
 - `docs:` Documentation
@@ -183,25 +178,22 @@ Suivre [Conventional Commits](https://www.conventionalcommits.org/) :
 - `ci:` CI/CD
 
 ### CI/CD
-Le projet utilise **GitHub Actions** avec des workflows pour :
-- 🔍 **Qualité de code** : Linting et SonarQube
-- 🧪 **Tests** : Unitaires, intégration, E2E
-- 🚀 **Déploiement** : Build et release
+
+GitHub Actions : lint, tests (unitaires), qualité (dont SonarQube), build et déploiement selon configuration du repo.
 
 ---
 
-## 🤝 Contribution
+## Contribution
 
-1. Fork le projet
-2. Créer une branche (`git checkout -b feat/amazing-feature`)
-3. Committer (`git commit -m 'feat: add amazing feature'`)
-4. Pousser (`git push origin feat/amazing-feature`)
-5. Ouvrir une Pull Request
+1. Fork du dépôt
+2. Branche de fonctionnalité (`git checkout -b feat/ma-fonctionnalite`)
+3. Commits au format conventionnel
+4. Push & ouverture d’une Pull Request
 
 ---
 
 <div align="center">
 
-**[⬆ Retour en haut](#learnsup)**
+[Retour en haut](#learnsup)
 
 </div>

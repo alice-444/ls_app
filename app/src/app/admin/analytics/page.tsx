@@ -5,10 +5,9 @@ import { trpc } from "@/utils/trpc";
 import {
   AreaChart,
   BarChart,
-  DonutChart,
+  BarList,
   Flex,
   Text,
-  BadgeDelta,
   ProgressBar,
 } from "@tremor/react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +20,8 @@ import {
   Calendar,
   Maximize2,
   Clock,
-  Layout
+  Layout,
+  Info
 } from "lucide-react";
 import type { AdminBIStats, AdminTimeRange } from "@ls-app/shared";
 import { PageContainer } from "@/components/shared/layout/PageContainer";
@@ -44,23 +44,42 @@ const TIME_RANGES: { value: AdminTimeRange; label: string }[] = [
   { value: 'all', label: 'Tout' },
 ];
 
+const DAYS_FR = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+const DAYS_SHORT_FR = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+
 export default function AdminAnalyticsPage() {
   const [timeRange, setTimeRange] = useState<AdminTimeRange>('30d');
   const { data: stats, isLoading } = trpc.admin.getAnalytics.useQuery({ timeRange });
 
-  const hourlyActivity = useMemo(() => {
-    if (!stats) return [];
-    const heatmap = Array.from({ length: 24 }, (_, i) => ({
-      hour: `${i}h`,
-      messages: 0,
-      logins: 0,
-    }));
+  const activityHeatmapMatrix = useMemo(() => {
+    if (!stats) return { matrix: [], maxCount: 0 };
+
+    // Matrix 7 days x 24 hours
+    const matrix = Array.from({ length: 7 }, () => Array(24).fill(0));
+    let maxCount = 0;
 
     stats.activityHeatmap.forEach((item: AdminBIStats['activityHeatmap'][0]) => {
-      if (item.type === 'MESSAGE') heatmap[item.hour].messages += item.count;
-      else if (item.type === 'LOGIN') heatmap[item.hour].logins += item.count;
+      // Correct for local timezone
+      // Using a reference Sunday (2024-01-07) to handle day shift correctly
+      const refDate = new Date(Date.UTC(2024, 0, 7 + item.dayOfWeek, item.hour));
+      const localDay = refDate.getDay();
+      const localHour = refDate.getHours();
+
+      matrix[localDay][localHour] += item.count;
+      if (matrix[localDay][localHour] > maxCount) maxCount = matrix[localDay][localHour];
     });
-    return heatmap;
+
+    return { matrix, maxCount };
+  }, [stats]);
+
+  const sortedDomains = useMemo(() => {
+    if (!stats) return [];
+    return [...stats.workshops.workshopsByDomain]
+      .sort((a, b) => b.count - a.count)
+      .map(item => ({
+        name: item.domain,
+        value: item.count,
+      }));
   }, [stats]);
 
   if (isLoading) {
@@ -114,8 +133,8 @@ export default function AdminAnalyticsPage() {
                 key={range.value}
                 onClick={() => setTimeRange(range.value)}
                 className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-full z-10 ${timeRange === range.value
-                    ? "text-ls-heading"
-                    : "text-ls-muted hover:text-ls-heading"
+                  ? "text-ls-heading"
+                  : "text-ls-muted hover:text-ls-heading"
                   }`}
               >
                 {timeRange === range.value && (
@@ -183,46 +202,157 @@ export default function AdminAnalyticsPage() {
 
           {/* Activity Heatmap Chart */}
           <AnalyticsChartContainer
-            title="Pics d'Activité par Heure"
-            description="Messages et connexions par heure"
+            title="Pics d'Activité (Heatmap)"
+            description="Activité cumulée par jour et par heure (Heure locale)"
             icon={Clock}
           >
-            <BarChart
-              className="mt-4 h-80"
-              data={hourlyActivity}
-              index="hour"
-              categories={["messages", "logins"]}
-              colors={["blue", "violet"]}
-              stack={true}
-              valueFormatter={(number: number) => `${number.toLocaleString()}`}
-              showGridLines={false}
-            />
+            <div className="mt-4 flex flex-col">
+              <div className="flex justify-end items-center gap-4 mb-4 text-[10px] text-ls-muted">
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-sm bg-brand/10" /> <span>Faible</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-sm bg-brand" /> <span>Élevé</span>
+                </div>
+              </div>
+
+              <div className="relative overflow-x-auto pb-4 custom-scrollbar">
+                <div className="min-w-[500px]">
+                  {/* Hours Header */}
+                  <div className="flex mb-2 ml-10">
+                    {[0, 6, 12, 18, 23].map((h) => (
+                      <div
+                        key={h}
+                        className="text-[9px] text-ls-muted font-medium"
+                        style={{ marginLeft: h === 0 ? '0' : `calc(${(h / 24) * 100}% - ${h === 23 ? '20px' : '10px'})` }}
+                      >
+                        {h}h
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Heatmap Grid */}
+                  <div className="space-y-1">
+                    {DAYS_SHORT_FR.map((day, dayIdx) => (
+                      <div key={day} className="flex items-center">
+                        <div className="w-10 text-[10px] font-bold text-ls-muted uppercase tracking-tighter">
+                          {day}
+                        </div>
+                        <div className="flex flex-1 gap-1">
+                          {Array.from({ length: 24 }).map((_, hourIdx) => {
+                            const count = activityHeatmapMatrix.matrix[dayIdx]?.[hourIdx] || 0;
+                            const intensity = activityHeatmapMatrix.maxCount > 0
+                              ? (count / activityHeatmapMatrix.maxCount)
+                              : 0;
+
+                            return (
+                              <motion.div
+                                key={hourIdx}
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: (dayIdx * 24 + hourIdx) * 0.001 }}
+                                title={`${DAYS_FR[dayIdx]} - ${hourIdx}h : ${count.toLocaleString()} activités`}
+                                className="flex-1 aspect-square rounded-sm transition-all duration-300 hover:ring-2 hover:ring-brand hover:z-10"
+                                style={{
+                                  backgroundColor: count === 0
+                                    ? 'rgba(255, 182, 71, 0.05)'
+                                    : `rgba(255, 182, 71, ${Math.max(0.1, intensity)})`,
+                                  border: count > 0 ? '1px solid rgba(255, 182, 71, 0.2)' : 'none'
+                                }}
+                              />);
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-2 text-[10px] text-ls-muted italic">
+                <Info className="h-3 w-3" />
+                <span>Données ajustées à votre fuseau horaire ({Intl.DateTimeFormat().resolvedOptions().timeZone}).</span>
+              </div>
+            </div>
           </AnalyticsChartContainer>
+        </div>
+
+        {/* Workshop Success & Community Mapping Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Workshop Success Metrics */}
+          <AnalyticsChartContainer
+            title="Succès des Ateliers"
+            description="Taux de complétion vs annulation"
+            icon={TrendingUp}
+          >
+            <div className="mt-6 space-y-6">
+              <div>
+                <Flex>
+                  <Text className="text-ls-muted">Taux de Complétion</Text>
+                  <Text className="font-bold text-emerald-500">{workshops.completionRate.toFixed(1)}%</Text>
+                </Flex>
+                <ProgressBar value={workshops.completionRate} color="emerald" className="mt-2" />
+              </div>
+              <div>
+                <Flex>
+                  <Text className="text-ls-muted">Taux d'Annulation</Text>
+                  <Text className="font-bold text-rose-500">{workshops.cancellationRate.toFixed(1)}%</Text>
+                </Flex>
+                <ProgressBar value={workshops.cancellationRate} color="rose" className="mt-2" />
+              </div>
+              <div className="pt-4 border-t border-border/30">
+                <Flex>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-brand" />
+                    <Text className="text-ls-muted">Temps moyen de complétion</Text>
+                  </div>
+                  <Text className="font-bold text-ls-heading">{workshops.averageCompletionTime.toFixed(1)}h</Text>
+                </Flex>
+              </div>
+            </div>
+          </AnalyticsChartContainer>
+
+          {/* Community Mapping: Supply vs Demand */}
+          <div className="lg:col-span-2">
+            <AnalyticsChartContainer
+              title="Cartographie Offre vs Demande"
+              description="Mentors disponibles vs Ateliers créés par domaine"
+              icon={Users}
+            >
+              <BarChart
+                className="mt-4 h-80"
+                data={stats.communityMap}
+                index="domain"
+                categories={["supply", "demand"]}
+                colors={["emerald", "blue"]}
+                valueFormatter={(number: number) => `${number.toLocaleString()}`}
+                showLegend={true}
+                showGridLines={false}
+              />
+            </AnalyticsChartContainer>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Workshops by Domain */}
           <AnalyticsChartContainer
-            title="Par Domaine"
-            description="Répartition sectorielle"
+            title="Répartition par Domaine"
+            description="Classement des secteurs par volume d'ateliers"
             icon={Layout}
           >
-            <DonutChart
-              className="mt-4 h-64"
-              data={workshops.workshopsByDomain}
-              category="count"
-              index="domain"
-              colors={["slate", "violet", "indigo", "rose", "cyan", "amber"]}
-            />
-            <div className="mt-6 space-y-2 overflow-y-auto max-h-32 pr-2 custom-scrollbar">
-              {workshops.workshopsByDomain.map((item: AdminBIStats['workshops']['workshopsByDomain'][0]) => (
-                <Flex key={item.domain} className="text-sm">
-                  <Text className="truncate max-w-[150px]">{item.domain}</Text>
-                  <BadgeDelta deltaType="unchanged" size="xs">
-                    {item.count}
-                  </BadgeDelta>
-                </Flex>
-              ))}
+            <div className="mt-6">
+              <BarList
+                data={sortedDomains}
+                className="mt-2"
+                color="orange"
+                valueFormatter={(number: number) => `${number} ateliers`}
+              />
+
+              {sortedDomains.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-ls-muted">
+                  <Info className="h-8 w-8 mb-2 opacity-20" />
+                  <p className="text-sm">Aucune donnée disponible</p>
+                </div>
+              )}
             </div>
           </AnalyticsChartContainer>
 

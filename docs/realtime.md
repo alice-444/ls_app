@@ -9,7 +9,7 @@ Ce document détaille l'architecture temps réel de LearnSup basée sur Socket.I
 Le système temps réel est intégré directement au serveur backend Next.js via un serveur Socket.IO personnalisé monté sur le même serveur HTTP.
 
 ### Client (Frontend)
-- **Hook `useSocket`** : Initialise la connexion Socket.IO au montage de l'application si une session utilisateur existe.
+- **Hook `useSocket`** : Initialise la connexion Socket.IO au montage de l'application si une session utilisateur existe (y compris en interface admin : même client, room `admins` côté serveur si rôle ADMIN).
 - **Hook `useChatSocket`** : Gère la logique spécifique à une conversation (join/leave room, écoute des messages et indicateurs de frappe).
 - **Transport** : Tente `websocket` en priorité, avec repli sur `polling`.
 
@@ -27,6 +27,7 @@ Le serveur utilise des "Rooms" pour segmenter la diffusion des événements et g
 | Room | Format | Usage |
 |------|--------|-------|
 | **Utilisateur** | `user:{userId}` | Événements privés : nouvelles notifications, mises à jour globales des conversations. |
+| **Admins** | `admins` | Rejoint automatiquement si le rôle en base est `ADMIN` (après auth socket). Diffusion des alertes métier réservées à l’équipe admin. |
 | **Conversation** | `conversation:{conversationId}` | Événements de discussion : nouveaux messages, indicateurs de frappe, réactions. |
 
 ---
@@ -64,6 +65,14 @@ Le serveur utilise des "Rooms" pour segmenter la diffusion des événements et g
 |-----------|---------|-------------|
 | `new-notification` | `NotificationEntity` | Envoi d'une nouvelle notification in-app. |
 | `notification-updated` | — | Signal qu'un changement a eu lieu dans les notifications (ex: compteur mis à jour). |
+
+#### Alertes admin (room `admins`)
+
+Émis par le serveur lors d’événements métier (ex. via `NotificationService.notifyAdmin` → `SocketNotificationEventEmitter.emitAdminNotification`). Le front admin écoute dans `AdminNotificationListener` (layout admin) et affiche des toasts (Sonner).
+
+| Événement | Données | Description |
+|-----------|---------|-------------|
+| `admin:new-notification` | `{ type, message, details?, createdAt }` | Alerte temps réel pour les admins connectés. `type` typique : `NEW_REPORT`, `NEW_FEEDBACK_MODERATION`, `NEW_SUPPORT_REQUEST`. `details` peut contenir `actionUrl` pour un lien « Voir ». |
 
 ### 🟢 Présence
 

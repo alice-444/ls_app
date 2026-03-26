@@ -2,47 +2,53 @@
 
 import { useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
 } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Loader2, 
-  User, 
-  Mail, 
-  Calendar, 
-  Shield, 
-  CreditCard, 
-  BookOpen, 
-  AlertTriangle, 
+import {
+  Loader2,
+  User,
+  Mail,
+  Calendar,
+  Shield,
+  CreditCard,
+  BookOpen,
+  AlertTriangle,
   History,
   Plus,
   Minus,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Linkedin,
+  Github,
+  Twitter,
+  ExternalLink,
+  GraduationCap,
+  Briefcase
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { BackButton } from "@/components/shared/BackButton";
 import { useState } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
   DialogFooter,
   DialogTrigger
 } from "@/components/ui/dialog";
@@ -157,17 +163,17 @@ export default function User360Page() {
               </DialogHeader>
               <form onSubmit={handleUpdateCredits} className="space-y-4 pt-4">
                 <div className="flex gap-4 p-1 bg-muted rounded-lg">
-                  <Button 
-                    type="button" 
-                    variant={creditType === "ADD" ? "default" : "ghost"} 
+                  <Button
+                    type="button"
+                    variant={creditType === "ADD" ? "default" : "ghost"}
                     className="flex-1 rounded-md"
                     onClick={() => setCreditType("ADD")}
                   >
                     <Plus className="h-4 w-4 mr-2" /> Ajouter
                   </Button>
-                  <Button 
-                    type="button" 
-                    variant={creditType === "REMOVE" ? "default" : "ghost"} 
+                  <Button
+                    type="button"
+                    variant={creditType === "REMOVE" ? "default" : "ghost"}
                     className="flex-1 rounded-md"
                     onClick={() => setCreditType("REMOVE")}
                   >
@@ -176,18 +182,18 @@ export default function User360Page() {
                 </div>
                 <div className="space-y-2">
                   <Label>Montant</Label>
-                  <Input 
-                    type="number" 
-                    value={creditAmount} 
-                    onChange={(e) => setCreditAmount(parseInt(e.target.value))} 
+                  <Input
+                    type="number"
+                    value={creditAmount}
+                    onChange={(e) => setCreditAmount(parseInt(e.target.value))}
                     placeholder="Ex: 50"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Raison de l'ajustement</Label>
-                  <Textarea 
-                    value={creditReason} 
-                    onChange={(e) => setCreditReason(e.target.value)} 
+                  <Textarea
+                    value={creditReason}
+                    onChange={(e) => setCreditReason(e.target.value)}
                     placeholder="Ex: Geste commercial pour problème technique..."
                   />
                 </div>
@@ -246,6 +252,9 @@ export default function User360Page() {
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none bg-transparent h-12 p-0">
               <TabsTrigger value="overview" className="rounded-none border-b-2 border-transparent data-[state=active]:border-brand bg-transparent shadow-none">Général</TabsTrigger>
+              {user.role === "MENTOR" && (
+                <TabsTrigger value="professional" className="rounded-none border-b-2 border-transparent data-[state=active]:border-brand bg-transparent shadow-none">Dossier Pro</TabsTrigger>
+              )}
               <TabsTrigger value="workshops" className="rounded-none border-b-2 border-transparent data-[state=active]:border-brand bg-transparent shadow-none">Ateliers</TabsTrigger>
               <TabsTrigger value="credits" className="rounded-none border-b-2 border-transparent data-[state=active]:border-brand bg-transparent shadow-none">Transactions</TabsTrigger>
               <TabsTrigger value="reports" className="rounded-none border-b-2 border-transparent data-[state=active]:border-brand bg-transparent shadow-none">Litiges</TabsTrigger>
@@ -296,6 +305,77 @@ export default function User360Page() {
                   {user.notifications.length === 0 && <p className="text-center text-ls-muted text-sm py-4">Aucune notification.</p>}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="professional" className="py-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4 text-brand" /> Formation & Diplômes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-xs text-ls-muted uppercase tracking-wider mb-1">Programme d&apos;études</p>
+                      <p className="text-sm font-medium">{user.studyProgram || "Non renseigné"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-ls-muted uppercase tracking-wider mb-1">Domaine d&apos;études</p>
+                      <p className="text-sm font-medium">{user.studyDomain || "Non renseigné"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-ls-muted uppercase tracking-wider mb-1">Qualifications / Certifications</p>
+                      <p className="text-sm whitespace-pre-wrap">{user.qualifications || "Aucune qualification renseignée"}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Briefcase className="h-4 w-4 text-brand" /> Expérience Professionnelle
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm whitespace-pre-wrap">{user.experience || "Aucune expérience renseignée"}</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="md:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4 text-brand" /> Réseaux Sociaux & Liens
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-4">
+                      {user.socialMediaLinks && typeof user.socialMediaLinks === 'object' ? (
+                        Object.entries(user.socialMediaLinks as Record<string, string>).map(([platform, url]) => {
+                          if (!url) return null;
+                          const Icon = platform.toLowerCase().includes('linkedin') ? Linkedin :
+                            platform.toLowerCase().includes('github') ? Github :
+                              platform.toLowerCase().includes('twitter') ? Twitter : ExternalLink;
+                          return (
+                            <a
+                              key={platform}
+                              href={url.startsWith('http') ? url : `https://${url}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 border rounded-full hover:bg-brand/5 hover:border-brand transition-colors text-sm"
+                            >
+                              <Icon className="h-4 w-4" />
+                              <span className="capitalize">{platform}</span>
+                            </a>
+                          );
+                        })
+                      ) : (
+                        <p className="text-sm text-ls-muted italic">Aucun lien social renseigné</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="workshops" className="py-6">

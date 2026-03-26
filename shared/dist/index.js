@@ -37,3 +37,5 @@ __exportStar(require("./types/messaging"), exports);
 __exportStar(require("./types/admin"), exports);
 __exportStar(require("./types/support"), exports);
 __exportStar(require("./types/notification"), exports);
+__exportStar(require("./types/community"), exports);
+__exportStar(require("./types/user-report"), exports);

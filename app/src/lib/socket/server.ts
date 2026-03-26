@@ -29,7 +29,7 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
   const allowedOrigins = [
     process.env.CORS_ORIGIN || "http://localhost:3001",
     "http://localhost:3001",
-    "https://app.learnsup.fr"
+    "https://app.learnsup.fr",
   ];
 
   io = new SocketIOServer(httpServer, {
@@ -69,23 +69,28 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       Object.entries(socket.handshake.headers).forEach(([key, value]) => {
         if (value) {
           if (Array.isArray(value)) {
-            value.forEach(v => headersObj.append(key, v));
+            value.forEach((v) => headersObj.append(key, v));
           } else {
             headersObj.set(key, value as string);
           }
         }
       });
-      
+
       // Timeout de 5s pour Better Auth (si DB est lente/plantée)
       const sessionPromise = auth.api.getSession({ headers: headersObj });
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Auth timeout")), 5000)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Auth timeout")), 5000),
       );
 
-      const session = await Promise.race([sessionPromise, timeoutPromise]) as any;
+      const session = (await Promise.race([
+        sessionPromise,
+        timeoutPromise,
+      ])) as any;
 
       if (!session?.user) {
-        console.warn("WebSocket connection rejected: Session not found or DB error");
+        console.warn(
+          "WebSocket connection rejected: Session not found or DB error",
+        );
         return next(new Error("Unauthorized"));
       }
 
@@ -132,6 +137,13 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
     }
 
     socket.join(`user:${userId}`);
+
+    // Add admins to a special room for notifications
+    if (userRole === "ADMIN") {
+      socket.join("admins");
+      console.info(`Admin joined admins room: ${userId}`);
+    }
+
     await container.presenceService.updateUserPresence(userId, true);
     socket.broadcast.emit("user-online", { userId });
 

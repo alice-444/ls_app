@@ -1,6 +1,6 @@
-# Back — API et serveur LearnSup
+# API et serveur LearnSup
 
-Backend : une app Next.js servie par un serveur HTTP Node qui monte Socket.IO et ajoute CORS. API tRPC, Better Auth, routes API custom (profil, onboarding, cron, webhooks), Prisma, emails, visio Daily, métriques.
+Toute l’API et le serveur HTTP vivent dans le **package `app/`** (Next.js App Router + `server.ts`). Ce document décrit l’entrée des requêtes, tRPC, Prisma, Better Auth, routes custom (profil, cron, webhooks), emails, Daily, métriques, Socket.IO.
 
 ---
 
@@ -62,7 +62,7 @@ flowchart TB
 
 - **Node** + **Next.js 16** — App Next (API routes, possible standalone). Le point d’entrée en prod est le serveur custom (`server.ts`), pas `next start` seul.
 - **tRPC** (serveur) — API type-safe, procédures `publicProcedure` et `protectedProcedure` (session Better Auth).
-- **Prisma** — ORM, client généré dans `back/.prisma/generated/client`, schéma dans `back/.prisma/schema/schema.prisma`.
+- **Prisma** — ORM, client généré dans `app/prisma/generated/client`, schéma dans `app/prisma/schema/schema.prisma`.
 - **PostgreSQL** — Base de données (URL via `DATABASE_URL`).
 - **Better Auth** — Authentification (sessions, stratégies). Route : `app/api/auth/[...all]/route.ts`.
 - **Zod** — Validation des entrées (routers, shared).
@@ -83,7 +83,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  subgraph Racine["back/"]
+  subgraph Racine["app/ (racine package)"]
     Server["server.ts\nHTTP + CORS + Socket.IO"]
     Server --> Next[Next.js getRequestHandler]
     Next --> App["src/app/"]
@@ -142,7 +142,7 @@ sequenceDiagram
   S-->>C: JSON
 ```
 
-- **server.ts** (racine back) — Serveur HTTP Node qui charge `dotenv`, crée l’app Next, gère CORS sur toutes les réponses, monte Socket.IO sur le même `http.Server`, et délègue les requêtes à Next (`app.getRequestHandler()`). Port : `process.env.PORT_BACKEND` (défaut `4500` dans le code) ; en pratique souvent `3000` selon README / env.
+- **server.ts** (racine du package `app/`) — Serveur HTTP Node qui charge l’environnement, crée l’app Next, gère CORS, monte Socket.IO sur le même `http.Server`, et délègue les requêtes à Next (`getRequestHandler()`). Port : `process.env.PORT_BACKEND` ou équivalent selon `server.ts` et l’hébergeur.
 - **src/app/** — Routes Next (App Router) :
   - `**api/auth/[...all]/route.ts**` — Better Auth.
   - `**api/auth/magic-link-callback/route.ts**` — Callback magic link (connexion sans mot de passe).
@@ -160,7 +160,7 @@ sequenceDiagram
   - `social/` — `messaging.router.ts` (agrégation), `messaging-conversation.router.ts`, `messaging-message.router.ts`, `messaging-presence.router.ts`, `messaging-reaction.router.ts`.
   - `shared/router-helpers.ts` — Utilitaires partagés entre routers.
 - `**src/lib/**` — Services métier, repositories, DI. Organisation modulaire :
-  - `workshops/services/` — Découpé en sous-domaines : `lifecycle/` (création, publication, annulation), `query/` (recherche, listing), `scheduling/` (planification, détection de conflits), `attendance/` (présence, check-in), `feedback/` (feedbacks, modération), `rewards/` (cashback, calcul, file de traitement, pénalités no-show), `guards/` (contrôle d'accès), `email/` (templates d'emails atelier), `video/` (liens visio Daily).
+  - `workshops/services/` — Découpé en sous-domaines : `lifecycle/` (création, publication, annulation), `query/` (recherche, listing), `scheduling/` (planification, détection de conflits), `attendance/` (présence, check-in), `feedback/` (feedbacks, modération), `rewards/` (cashback, calcul, file de traitement, pénalités no-show), `guards/` (contrôle d'accès), `email/` (templates d'emails atelier), `video/` (liens visio Daily, exposition `dailyRoomId`). `workshops/utils/` : helpers atelier + `workshop-public-dto.mapper` (filtrage visio cohérent sur les DTO).
   - `messaging/services/` — Découpé en : `core/` (conversation, message-operations, presence), `enrichment/` (enrichissement des messages), `reactions/` (réactions aux messages), `validation/` (validation des messages).
   - `mentors/services/workshops/` — `workshop-request.service.ts`, `workshop-request-query.service.ts`, `workshop-request-notification.service.ts`, `workshop-for-request.factory.ts`.
   - `users/services/connection/` — `user-connection.service.ts`, `user-info-enricher.ts`.
@@ -168,7 +168,7 @@ sequenceDiagram
   - `auth/services/magic-link/` — MagicLinkService (envoi lien par email).
   - `auth/`, `email/`, `daily/`, `di/`, `rate-limit/`, `logger/`, `metrics/` — Inchangés.
 - `**src/shared/**` — Schémas et validation partagés avec le front (Zod, workshop, password, date, etc.).
-- `**back/.prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
+- `**app/prisma/schema/schema.prisma**` — Schéma Prisma (generator client, datasource db). Modèles principaux : account, app_user, workshop, workshop_request, mentor_feedback, user_connection, conversation, message, message_reaction, notification, user_block, user_report, support_request, credit_transaction, audit_log, magic_link_token, workshop_cashback_queue, student_deal, community_spot, community_event, community_poll, poll_vote.
 
 ---
 
@@ -194,7 +194,7 @@ sequenceDiagram
 - **user** — Données utilisateur.
 - **accountSettings** — Paramètres de compte.
 - **community** — Hub communauté : `getHubData`, `voteInPoll`, `proposeEvent`, `proposeDeal`, `proposeSpot`, `getPendingProposals`, `reviewProposal`, `bulkReviewProposals`, `createDeal`, `createEvent`, `createSpot`, `createPoll` (admin).
-- **admin** — Administration : stats, file d’onboarding (approbation/rejet), audit logs, modération communauté, `getUser360`, `updateUserCredits`, `bulkApproveUsers`, `bulkRejectUsers`, `sendBulkNotification`.
+- **admin** — Administration : `getStats`, `getAnalytics` (BI), file d’onboarding (approbation/rejet), audit logs, modération communauté, `getUser360`, `updateUserCredits`, `bulkApproveUsers`, `bulkRejectUsers`, `sendBulkNotification`.
 - **support** — Demandes de support (création, mise à jour, suivi threadé via `addMessage`).
 
 Procédures protégées : utilisation de la session Better Auth (ctx.session). `protectedProcedure` (session requise), `mentorProcedure` (rôle MENTOR + statut ACTIVE), `adminProcedure` (rôle ADMIN + statut ACTIVE, avec audit log des mutations). Health check et données publiques en `publicProcedure`.
@@ -255,14 +255,14 @@ flowchart LR
 
 ## Variables d’environnement
 
-Fichier : `back/.env` (voir `back/.env.example`).
+Fichier : `app/.env` (voir `app/.env.example` + [metier-et-ops.md](metier-et-ops.md)).
 
 - **CORS_ORIGIN** — Origine autorisée (ex. `http://localhost:3001`).
 - **CRON_SECRET** — Secret pour sécuriser les appels aux routes cron.
 - **DATABASE_URL** — URL PostgreSQL (obligatoire). Recommandé : ajouter `?sslmode=verify-full` pour garantir une connexion sécurisée et éviter les avertissements de dépréciation du pilote `pg`.
 - **PRISMA_ACCELERATE_URL** — Optionnel (Prisma Accelerate).
 - **BETTER_AUTH_SECRET** — Secret Better Auth (obligatoire).
-- **BETTER_AUTH_URL** — URL publique du back (ex. `http://localhost:3000`).
+- **BETTER_AUTH_URL** — URL publique de l’app (callback auth).
 - **POLAR_API_KEY**, **POLAR_WEBHOOK_SECRET**, **POLAR_PRODUCT_ID**, **POLAR_API_URL** — Polar (paiement crédits)
 - **RESEND_API_KEY**, **RESEND_FROM_EMAIL** — Resend (emails).
 - **DAILY_API_KEY**, **DAILY_API_BASE_URL** — Daily.co (visio).
@@ -274,7 +274,7 @@ Le serveur utilise aussi `PORT_BACKEND` (ou défaut dans le code) et `HOSTNAME_B
 
 ## Scripts (depuis la racine du repo)
 
-- `pnpm dev:back` — Démarre le back (serveur Next + Socket.IO selon la config du package back).
+- `pnpm dev` / `pnpm dev:app` — Démarre le workspace **`app`** (Next + socket selon `app/package.json`).
 - `pnpm db:push` — Synchronise le schéma Prisma avec la DB (dev).
 - `pnpm db:migrate` — Migrations Prisma (prod).
 - `pnpm db:generate` — Régénère le client Prisma.

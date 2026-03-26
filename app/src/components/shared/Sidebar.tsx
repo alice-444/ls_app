@@ -6,8 +6,10 @@ import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-server-client";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRole } from "@/lib/api-client";
+import { trpc } from "@/utils/trpc";
 import { useState, useEffect } from "react";
 import { useSidebar } from "@/hooks/use-sidebar";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Calendar,
@@ -33,10 +35,12 @@ interface NavItem {
   href: string;
   icon: LucideIcon;
   roles?: ("MENTOR" | "APPRENANT" | "ADMIN")[];
+  badgeKey?: string;
+  badgeColor?: string;
 }
 
 interface SidebarProps {
-  customItems?: { title: string; href: string; icon: LucideIcon }[];
+  customItems?: { title: string; href: string; icon: LucideIcon; badgeKey?: string; badgeColor?: string }[];
   title?: string;
   icon?: LucideIcon;
 }
@@ -134,6 +138,13 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Readonl
   const [isExpanded, setIsExpanded] = useState(true);
   const { isMobileOpen, setMobileOpen } = useSidebar();
 
+  // Fetch admin stats only if we are in admin section
+  const isAdminPath = pathname.startsWith("/admin");
+  const { data: adminStats } = trpc.admin.getStats.useQuery(undefined, {
+    enabled: !!session && isAdminPath,
+    refetchInterval: 30000, // Refresh every 30s
+  });
+
   // Close mobile sidebar on route change
   useEffect(() => {
     setMobileOpen(false);
@@ -165,6 +176,8 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Readonl
       name: item.title,
       href: item.href,
       icon: item.icon,
+      badgeKey: item.badgeKey,
+      badgeColor: item.badgeColor,
       roles: undefined as ("MENTOR" | "APPRENANT" | "ADMIN")[] | undefined
     }))
     : getNavItems(role);
@@ -217,6 +230,8 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Readonl
             })
             .map((item) => {
               const isActive = pathname === item.href || (item.href !== "/admin" && item.href !== "/" && pathname.startsWith(item.href));
+              const badgeValue = item.badgeKey ? (adminStats as any)?.[item.badgeKey] : 0;
+
               return (
                 <div key={item.key} className="relative group">
                   {isActive && (
@@ -229,8 +244,29 @@ export default function Sidebar({ customItems, title, icon: TitleIcon }: Readonl
                       : "text-ls-heading hover:text-brand hover:bg-brand/15"
                       }`}
                   >
-                    <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110 group-hover:rotate-3"}`} />
+                    <div className="relative">
+                      <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110 group-hover:rotate-3"}`} />
+                      {/* Compact badge (dot) when sidebar is collapsed */}
+                      {!isExpanded && badgeValue > 0 && (
+                        <span className={`absolute -top-1 -right-1 flex h-3 w-3 rounded-full border-2 border-card ${item.badgeColor ?? "bg-brand"}`}>
+                          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${item.badgeColor ?? "bg-brand"}`}></span>
+                        </span>
+                      )}
+                    </div>
                     {isExpanded && <span className="ml-4 text-sm tracking-wide">{item.name}</span>}
+
+                    {/* Full badge when sidebar is expanded */}
+                    {isExpanded && badgeValue > 0 && (
+                      <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="ml-auto"
+                      >
+                        <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-black text-white shadow-lg ${item.badgeColor ?? "bg-brand"}`}>
+                          {badgeValue > 99 ? "99+" : badgeValue}
+                        </span>
+                      </motion.div>
+                    )}
                   </Link>
                 </div>
               );

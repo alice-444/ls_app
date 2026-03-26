@@ -21,3 +21,5 @@ export * from "./types/messaging";
 export * from "./types/admin";
 export * from "./types/support";
 export * from "./types/notification";
+export * from "./types/community";
+export * from "./types/user-report";

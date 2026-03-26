@@ -5,11 +5,11 @@ import type {
   ReportStatus,
 } from "./user-report.repository.interface";
 import { generateInternalId } from "../../../utils/id-generator";
-import type { PrismaClient } from '@/lib/prisma-server';
+import type { PrismaClient } from "@/lib/prisma-server";
 
 export class PrismaUserReportRepository implements IUserReportRepository {
   constructor(private readonly prisma: PrismaClient) {}
-  
+
   async create(input: CreateUserReportInput): Promise<UserReportEntity> {
     const report = await this.prisma.user_report.create({
       data: {
@@ -67,20 +67,38 @@ export class PrismaUserReportRepository implements IUserReportRepository {
     id: string,
     status: ReportStatus,
     reviewedById?: string | null,
-    adminNotes?: string | null
+    adminNotes?: string | null,
   ): Promise<UserReportEntity> {
     const report = await this.prisma.user_report.update({
       where: { id },
-      data: { 
-        status, 
+      data: {
+        status,
         reviewedById,
         adminNotes,
         reviewedAt: new Date(),
-        updatedAt: new Date() 
+        updatedAt: new Date(),
       },
     });
 
     return this.mapToEntity(report);
+  }
+
+  async updateStatuses(
+    ids: string[],
+    status: ReportStatus,
+    reviewedById?: string | null,
+    adminNotes?: string | null,
+  ): Promise<{ count: number }> {
+    return this.prisma.user_report.updateMany({
+      where: { id: { in: ids } },
+      data: {
+        status,
+        reviewedById,
+        adminNotes,
+        reviewedAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
   }
 
   async findMany(params?: {
@@ -93,10 +111,7 @@ export class PrismaUserReportRepository implements IUserReportRepository {
     return this.prisma.user_report.findMany(params);
   }
 
-  async update(params: {
-    where: { id: string };
-    data: any;
-  }): Promise<any> {
+  async update(params: { where: { id: string }; data: any }): Promise<any> {
     return this.prisma.user_report.update(params);
   }
 

@@ -74,6 +74,7 @@ LearnSup est une plateforme d'accompagnement mettant en relation **mentors** et 
 | Fonctionnalité             | Description                                                                                  | Pages / accès                |
 | -------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------- |
 | **Dashboard admin**        | Vue d'ensemble, statistiques                                                                 | `/admin`                     |
+| **Analyses (BI)**          | Indicateurs agrégés (crédits, ateliers, activité, carte communauté, etc.) selon la période   | `/admin/analytics`           |
 | **Utilisateurs**           | Liste, recherche, filtres, actions en masse (approbation, rejet)                             | `/admin/users`               |
 | **Fiche 360°**             | Historique complet d'un utilisateur : ateliers, crédits, connexions, messages, support, etc. | `/admin/users/[id]`          |
 | **Onboarding**             | File d'attente des comptes en attente de validation                                          | `/admin/onboarding`          |
@@ -82,6 +83,7 @@ LearnSup est une plateforme d'accompagnement mettant en relation **mentors** et 
 | **Support**                | Conversations threadées avec les utilisateurs                                                | `/admin/support`             |
 | **Communauté**             | Modération des propositions (deals, events, spots), création directe                         | `/admin/community`           |
 | **Notifications groupées** | Moteur de segmentation, envoi de notifications ciblées                                       | `/admin/notifications/bulk`  |
+| **Alertes temps réel**     | Toasts Socket.IO (`admin:new-notification`) pour nouveaux signalements, modération feedback, tickets support | Toute l’interface `/admin` (connecté) |
 | **Audit logs**             | Traçabilité des actions admin                                                                | `/admin/audit-logs`          |
 | **Paramètres admin**       | Configuration                                                                                | `/admin/settings`            |
 
@@ -103,7 +105,7 @@ LearnSup est une plateforme d'accompagnement mettant en relation **mentors** et 
 - **Cycle** : Création (DRAFT) → Publication (PUBLISHED) → Demande apprenant (débit crédits) → Acceptation/rejet mentor → Visio Daily.co → Feedback apprenant → Cashback apprenant
 - **Sécurité** : Un apprenant ne peut pas s'inscrire deux fois à un même atelier (vérification des demandes actives `PENDING` ou `ACCEPTED`).
 - **Statistiques** : Le compteur "Apprenants aidés" du mentor n'est incrémenté qu'après la réalisation effective de l'atelier (ateliers passés ou terminés).
-- **Visio** : Salle Daily.co créée à la demande, token généré pour mentor et apprenant
+- **Visio** : Salle Daily.co **pré-créée par cron** (`generate-video-links`, fenêtre 0–12 h avant le début) ou **à la demande** via `workshop.getDailyToken` si absente ; propriétés Daily **`nbf` / `exp`** calées sur le créneau ; **`dailyRoomId`** masqué dans les réponses API jusqu’à ~3 h avant le début (même règle listes + fiche) ; token pour mentor et apprenant
 - **Cashback** : Crédit automatique de l'apprenant après participation (cron)
 
 ### Crédits et paiement

@@ -98,6 +98,7 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
   - `my-workshops/` — Gestion ateliers mentor (CalendarSection, NextWorkshopBanner, WorkshopFiltersBar).
   - `workshop/`, `workshop-editor/` — Détail et éditeur d'atelier.
   - `user/` — Composants transversaux (BlockUserDialog, ReportUserDialog).
+  - `admin/` — Écouteurs et UI admin : `AdminNotificationListener` (Socket.IO → toasts pour les alertes `admin:new-notification`).
   - `community/` — Hub communauté : DealsGrid, EventsHubGrid, EventsTabs, MemberDirectory, ProposeDealForm, ProposeEventForm, ProposeSpotForm, SpotFinder, CommunityPoll, ImpactStats.
   - `network/`, `faq/` — Réseau et FAQ.
 - **`src/lib/`** — Clients et config : `auth-client.ts` (Better Auth + customAuthClient pour sign-up, onboarding, profil mentor, upload photo, suppression de compte), `api-client.ts` (API_BASE_URL, authenticatedFetch, getMentorProfile, getUserRole), `utils.ts` (cn, etc.).
@@ -120,7 +121,7 @@ Le client tRPC pointe vers `NEXT_PUBLIC_SERVER_URL/trpc` avec `credentials: "inc
 - **Réseau & messagerie** : `/network`, `/inbox`, `/inbox/[conversationId]`.
 - **Notifications** : `/notifications`.
 - **Support** : `/support-request`.
-- **Admin** : `/admin` (dashboard), `/admin/users` (gestion avec bulk actions), `/admin/users/[id]` (Fiche 360°), `/admin/community` (modération propositions et création directe), `/admin/feedback-moderation`, `/admin/audit-logs`, `/admin/user-reports`, `/admin/support` (threadé), `/admin/onboarding`, `/admin/notifications`, `/admin/notifications/bulk` (moteur de segmentation), `/admin/settings`.
+- **Admin** : `/admin` (dashboard), `/admin/analytics` (analyses / BI), `/admin/users` (gestion avec bulk actions), `/admin/users/[id]` (Fiche 360°), `/admin/community` (modération propositions et création directe), `/admin/feedback-moderation`, `/admin/audit-logs`, `/admin/user-reports`, `/admin/support` (threadé), `/admin/onboarding`, `/admin/notifications`, `/admin/notifications/bulk` (moteur de segmentation), `/admin/settings`.
 - **Erreurs** : 404 (not-found), 500 (error), 403 (forbidden), 405 (`/405`).
 
 Navigation connectée (sidebar) selon le rôle — entrées de menu :
@@ -154,10 +155,10 @@ flowchart LR
   Sidebar --> Bas
 ```
 
-- **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l'interface admin via `/admin` (sidebar dédiée : Dashboard, Signalements, Modération, Utilisateurs, Support, Communauté).
+- **ADMIN** : la sidebar principale est masquée ; les admins accèdent à l'interface admin via `/admin` (sidebar dédiée : Tableau de bord, Analyses, Signalements, Modération, Utilisateurs, Support, Communauté, Paramètres — voir `src/lib/admin-nav.ts`). Les alertes temps réel (signalements, support, modération feedback) arrivent via Socket.IO (`admin:new-notification`) et sont affichées en toasts par `AdminNotificationListener` dans `layout-client` admin.
 - **Catalogue** (APPRENANT) : sous-navigation Live (`/catalog/live`), Replay (`/catalog/replay`), Prochains ateliers (`/catalog/upcoming`). Ces sous-routes peuvent rediriger vers la page principale selon l'implémentation.
 
-Voir `src/components/sidebar.tsx` et `src/app/admin/layout.tsx`.
+Voir `src/components/sidebar.tsx`, `src/app/admin/layout.tsx` et le client de layout admin `src/app/admin/layout-client.tsx` (shell + `AdminNotificationListener`).
 
 ---
 
@@ -205,14 +206,14 @@ flowchart TB
 
 Fichier : `app/.env` (voir `app/.env.example`).
 
-- **`NEXT_PUBLIC_SERVER_URL`** — URL du back (ex. `http://localhost:3000`). Utilisée par le client tRPC et par `auth-client` / `api-client` pour les appels API. Obligatoire en prod.
+- **`NEXT_PUBLIC_SERVER_URL`** — URL de base de l’app Next (API + pages) telle que vue par le navigateur (ex. `http://localhost:3001` si tout est servi sur le même port). Utilisée par le client tRPC et `auth-client` / `api-client`. Obligatoire en prod.
 
 ---
 
 ## Scripts (depuis la racine du repo)
 
-- `pnpm dev:app` — Démarre le front en dev (port 3001).
-- `pnpm dev` — Démarre app et back (Turborepo).
+- `pnpm dev:app` — Filtre Turbo sur le package `app`.
+- `pnpm dev` — Démarre le workspace `app` (Next + socket selon `app/package.json`).
 
 Build : `pnpm build` (à la racine lance le build des workspaces).
 

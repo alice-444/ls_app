@@ -5,10 +5,14 @@ import Sidebar from "@/components/shared/Sidebar";
 import Header from "@/components/shared/Header";
 import { cn } from "@/lib/utils";
 import { ADMIN_NAV_ITEMS, ADMIN_SIDEBAR_TITLE, ADMIN_SIDEBAR_ICON } from "@/lib/admin-nav";
+import { AdminNotificationListener } from "@/components/admin/AdminNotificationListener";
+import { AdminCommandPalette } from "@/components/admin/AdminCommandPalette";
 
 export default function AdminLayoutClient({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <div className="flex h-screen bg-ls-bg transition-colors duration-300">
+      <AdminNotificationListener />
+      <AdminCommandPalette />
       <Sidebar customItems={ADMIN_NAV_ITEMS} title={ADMIN_SIDEBAR_TITLE} icon={ADMIN_SIDEBAR_ICON} />
 
       <div className="flex flex-col flex-1 overflow-hidden">
