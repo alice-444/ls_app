@@ -26,7 +26,7 @@ export function WorkshopStatsCards({
   drafts,
   completed,
   pendingRequests,
-}: WorkshopStatsCardsProps) {
+}: Readonly<WorkshopStatsCardsProps>) {
   const prefersReducedMotion = useReducedMotion();
   const values = { total, published, drafts, completed, pendingRequests };
 

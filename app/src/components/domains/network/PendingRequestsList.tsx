@@ -35,7 +35,7 @@ export function PendingRequestsList({
   onAccept,
   onReject,
   isProcessing,
-}: PendingRequestsListProps) {
+}: Readonly<PendingRequestsListProps>) {
   if (requests.length === 0) {
     return null;
   }

@@ -83,40 +83,40 @@ export function NextWorkshopBanner({
             </Button>
           </div>
         </CardHeader>
-      <CardContent className="relative z-10 pt-0">
-        <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
-          <h3 className="font-bold text-xl sm:text-2xl mb-4 sm:mb-6 text-white">
-            {workshop.title}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {workshop.date && (
-              <InfoPill icon={Calendar}>
-                {formatDate(workshop.date, { includeWeekday: true })}
-              </InfoPill>
-            )}
-            {workshop.time && (
-              <InfoPill icon={Clock}>
-                {formatTime(workshop.time)}
-                {workshop.duration && ` • ${workshop.duration} min`}
-              </InfoPill>
-            )}
-            {workshop.isVirtual ? (
-              <InfoPill icon={LinkIcon}>Atelier en ligne</InfoPill>
-            ) : (
-              workshop.location && (
-                <InfoPill icon={MapPin}>
-                  <span className="truncate">{workshop.location}</span>
+        <CardContent className="relative z-10 pt-0">
+          <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+            <h3 className="font-bold text-xl sm:text-2xl mb-4 sm:mb-6 text-white">
+              {workshop.title}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {workshop.date && (
+                <InfoPill icon={Calendar}>
+                  {formatDate(workshop.date, { includeWeekday: true })}
                 </InfoPill>
-              )
-            )}
-            <InfoPill icon={Users}>
-              Inscrits: {workshop.apprenticeId ? 1 : 0} /{" "}
-              {workshop.maxParticipants || "∞"}
-            </InfoPill>
+              )}
+              {workshop.time && (
+                <InfoPill icon={Clock}>
+                  {formatTime(workshop.time)}
+                  {workshop.duration ? ` • ${workshop.duration} min` : ""}
+                </InfoPill>
+              )}
+              {workshop.isVirtual ? (
+                <InfoPill icon={LinkIcon}>Atelier en ligne</InfoPill>
+              ) : (
+                workshop.location && (
+                  <InfoPill icon={MapPin}>
+                    <span className="truncate">{workshop.location}</span>
+                  </InfoPill>
+                )
+              )}
+              <InfoPill icon={Users}>
+                Inscrit.e.s: {workshop.apprenticeId ? 1 : 0} /{" "}
+                {workshop.maxParticipants || "∞"}
+              </InfoPill>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }

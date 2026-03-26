@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export function NotificationsSection() {
   const { data: profile, isLoading, refetch } = trpc.user.getProfile.useQuery();
-  
+
   const updateProfileMutation = trpc.accountSettings.updateProfile.useMutation({
     onSuccess: () => {
       toast.success("Préférences de notifications mises à jour");
@@ -70,8 +70,8 @@ export function NotificationsSection() {
               Recevoir des notifications dans l&apos;application
             </p>
           </div>
-          <Switch 
-            checked={inAppNotifications} 
+          <Switch
+            checked={inAppNotifications}
             onCheckedChange={handleInAppChange}
             disabled={updateProfileMutation.isPending}
           />

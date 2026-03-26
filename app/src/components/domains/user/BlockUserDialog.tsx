@@ -28,7 +28,7 @@ export function BlockUserDialog({
   userId,
   userName,
   onBlocked,
-}: BlockUserDialogProps) {
+}: Readonly<BlockUserDialogProps>) {
   const [isBlocking, setIsBlocking] = useState(false);
   const utils = trpc.useUtils();
   const blockUserMutation = trpc.userBlock.blockUser.useMutation({

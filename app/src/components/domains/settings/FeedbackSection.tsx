@@ -60,8 +60,8 @@ export function FeedbackSection() {
             className="h-10"
           />
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="w-full sm:w-auto bg-brand text-ls-heading hover:bg-brand-hover border-brand rounded-full"
           onClick={handleSubmit}
           disabled={createRequestMutation.isPending}

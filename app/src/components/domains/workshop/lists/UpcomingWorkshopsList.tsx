@@ -27,7 +27,7 @@ interface UpcomingWorkshopsListProps {
 
 export function UpcomingWorkshopsList({
   workshops,
-}: UpcomingWorkshopsListProps) {
+}: Readonly<UpcomingWorkshopsListProps>) {
   const router = useRouter();
 
   if (workshops.length === 0) {

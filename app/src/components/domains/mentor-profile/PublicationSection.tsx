@@ -33,7 +33,7 @@ export function PublicationSection({
       </p>
 
       {isPublished && (
-          <div className="flex items-center gap-2 p-3 bg-ls-success-soft border border-ls-success rounded-2xl">
+        <div className="flex items-center gap-2 p-3 bg-ls-success-soft border border-ls-success rounded-2xl">
           <CheckCircle2 className="h-5 w-5 text-ls-success" />
           <span className="text-sm font-medium text-ls-success">
             Votre profil est publié et visible dans le répertoire des mentors

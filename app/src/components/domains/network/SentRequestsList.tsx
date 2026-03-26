@@ -20,7 +20,7 @@ interface SentRequestsListProps {
   isCanceling: boolean;
 }
 
-export function SentRequestsList({ requests, onCancel, isCanceling }: SentRequestsListProps) {
+export function SentRequestsList({ requests, onCancel, isCanceling }: Readonly<SentRequestsListProps>) {
   if (requests.length === 0) {
     return null;
   }

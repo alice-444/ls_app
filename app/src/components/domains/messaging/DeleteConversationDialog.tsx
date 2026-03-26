@@ -24,7 +24,7 @@ export function DeleteConversationDialog({
   onConfirm,
   isDeleting,
   conversationName = "cette conversation",
-}: DeleteConversationDialogProps) {
+}: Readonly<DeleteConversationDialogProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>

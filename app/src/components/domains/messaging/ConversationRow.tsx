@@ -42,7 +42,8 @@ interface ConversationData {
 
 interface ConversationRowProps {
   readonly conversation: ConversationData;
-  readonly onTogglePin: (conversationId: string, isPinned: boolean) => void;
+  readonly onPin: (conversationId: string) => void;
+  readonly onUnpin: (conversationId: string) => void;
   readonly onDelete: (conversationId: string) => void;
   readonly onBlockUser: (userId: string, displayName: string) => void;
   readonly isDeleting: boolean;
@@ -52,7 +53,8 @@ interface ConversationRowProps {
 
 export function ConversationRow({
   conversation,
-  onTogglePin,
+  onPin,
+  onUnpin,
   onDelete,
   onBlockUser,
   isDeleting,
@@ -81,8 +83,8 @@ export function ConversationRow({
 
   const timestamp = conversation.lastMessage
     ? formatDistanceToNow(new Date(conversation.lastMessage.createdAt), {
-        locale: fr,
-      })
+      locale: fr,
+    })
     : "";
 
   return (
@@ -103,7 +105,7 @@ export function ConversationRow({
           <Avatar.Fallback className="h-full w-full flex items-center justify-center text-xs font-medium">
             {initials}
           </Avatar.Fallback>
-          
+
           <div className="absolute bottom-0 right-0">
             <PresenceIndicator isOnline={isOnline} />
           </div>
@@ -138,7 +140,7 @@ export function ConversationRow({
         <Button
           variant="outline"
           onClick={() =>
-            onTogglePin(conversation.conversationId, conversation.isPinned)
+            conversation.isPinned ? onUnpin(conversation.conversationId) : onPin(conversation.conversationId)
           }
           className="hidden md:flex h-8 px-2.5 py-1 rounded-full border border-border bg-card/50 text-ls-heading text-xs font-semibold transition-colors capitalize hover:bg-brand/10 hover:border-brand"
         >
@@ -166,7 +168,8 @@ export function ConversationRow({
         <ConversationDropdownMenu
           conversation={conversation}
           displayName={displayName}
-          onTogglePin={onTogglePin}
+          onPin={onPin}
+          onUnpin={onUnpin}
           onDelete={onDelete}
           onBlockUser={onBlockUser}
           isDeleting={isDeleting}
@@ -179,14 +182,16 @@ export function ConversationRow({
 function ConversationDropdownMenu({
   conversation,
   displayName,
-  onTogglePin,
+  onPin,
+  onUnpin,
   onDelete,
   onBlockUser,
   isDeleting,
 }: {
   readonly conversation: ConversationData;
   readonly displayName: string;
-  readonly onTogglePin: (conversationId: string, isPinned: boolean) => void;
+  readonly onPin: (conversationId: string) => void;
+  readonly onUnpin: (conversationId: string) => void;
   readonly onDelete: (conversationId: string) => void;
   readonly onBlockUser: (userId: string, displayName: string) => void;
   readonly isDeleting: boolean;
@@ -228,7 +233,7 @@ function ConversationDropdownMenu({
 
         <DropdownMenuItem
           onClick={() =>
-            onTogglePin(conversation.conversationId, conversation.isPinned)
+            conversation.isPinned ? onUnpin(conversation.conversationId) : onPin(conversation.conversationId)
           }
           className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-brand/10 rounded-xl mx-1"
         >

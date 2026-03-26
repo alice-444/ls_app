@@ -28,7 +28,7 @@ export function CancelWorkshopRegistrationDialog({
   isLoading,
   workshopTitle,
   workshopDate,
-}: CancelWorkshopRegistrationDialogProps) {
+}: Readonly<CancelWorkshopRegistrationDialogProps>) {
   const [reason, setReason] = useState("");
 
   const handleConfirm = () => {

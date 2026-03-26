@@ -22,7 +22,7 @@ export function DeleteWorkshopDialog({
   onOpenChange,
   onConfirm,
   isLoading = false,
-}: DeleteWorkshopDialogProps) {
+}: Readonly<DeleteWorkshopDialogProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>

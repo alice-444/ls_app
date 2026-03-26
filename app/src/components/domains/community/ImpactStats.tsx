@@ -11,7 +11,7 @@ interface ImpactStatsProps {
   };
 }
 
-export function ImpactStats({ stats }: ImpactStatsProps) {
+export function ImpactStats({ stats }: Readonly<ImpactStatsProps>) {
   const impactItems = [
     {
       label: "Membres Solidaires",

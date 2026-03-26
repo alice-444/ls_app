@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/utils/trpc";
 import type { JoinVideoButtonProps } from "@/types/workshop-components";
 
-export function JoinVideoButton({ workshop }: JoinVideoButtonProps) {
+export function JoinVideoButton({ workshop }: Readonly<JoinVideoButtonProps>) {
   const [timeUntilAvailable, setTimeUntilAvailable] = useState<number | null>(
     null
   );
@@ -25,10 +25,7 @@ export function JoinVideoButton({ workshop }: JoinVideoButtonProps) {
     const calculateAvailability = () => {
       if (!workshop.date || !workshop.time) return;
 
-      const workshopDate =
-        typeof workshop.date === "string"
-          ? new Date(workshop.date)
-          : new Date(workshop.date);
+      const workshopDate = new Date(workshop.date);
       const [hours, minutes] = workshop.time.split(":").map(Number);
       workshopDate.setHours(hours, minutes, 0, 0);
 
@@ -76,10 +73,7 @@ export function JoinVideoButton({ workshop }: JoinVideoButtonProps) {
   };
 
   if (!hasLink) {
-    const workshopDate =
-      typeof workshop.date === "string"
-        ? new Date(workshop.date)
-        : new Date(workshop.date!);
+    const workshopDate = new Date(workshop.date!);
     const [hours, minutes] = workshop.time!.split(":").map(Number);
     workshopDate.setHours(hours, minutes, 0, 0);
     const linkAvailableAt = new Date(
@@ -100,15 +94,15 @@ export function JoinVideoButton({ workshop }: JoinVideoButtonProps) {
                 Lien disponible{" "}
                 {timeUntilAvailable !== null && timeUntilAvailable > 0
                   ? `dans ${formatDistanceToNow(linkAvailableAt, {
-                      addSuffix: true,
-                      locale: fr,
-                    })}`
+                    addSuffix: true,
+                    locale: fr,
+                  })}`
                   : `le ${linkAvailableAt.toLocaleDateString("fr-FR", {
-                      day: "numeric",
-                      month: "long",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}`}
+                    day: "numeric",
+                    month: "long",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}`}
               </span>
             </div>
           </div>

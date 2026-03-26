@@ -70,8 +70,8 @@ export function AllWorkshopRequestsDialog({
                 {(request.status === "ACCEPTED" ||
                   request.status === "PENDING" ||
                   request.status === "REJECTED") && (
-                  <StatusBadge status={request.status} />
-                )}
+                    <StatusBadge status={request.status} />
+                  )}
               </div>
             ))
           ) : (

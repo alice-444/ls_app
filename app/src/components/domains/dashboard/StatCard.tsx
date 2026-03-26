@@ -26,7 +26,7 @@ export function StatCard({
   onButtonClick,
   className = "",
   children,
-}: StatCardProps) {
+}: Readonly<StatCardProps>) {
   return (
     <Card
       className={`bg-linear-to-br ${gradient} text-white border-0 shadow-lg ${className}`}

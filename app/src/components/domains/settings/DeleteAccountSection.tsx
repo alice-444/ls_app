@@ -173,9 +173,7 @@ export function DeleteAccountSection() {
               disabled={isDeleting || confirmation !== "DELETE"}
             >
               {isDeleting ? (
-                <>
-                  <span className="mr-2">Suppression...</span>
-                </>
+                <span className="mr-2">Suppression...</span>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4 mr-2" />

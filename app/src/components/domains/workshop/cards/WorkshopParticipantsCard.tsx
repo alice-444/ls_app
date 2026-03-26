@@ -44,8 +44,8 @@ export function WorkshopParticipantsCard({
       </CardHeader>
       <CardContent>
         {workshop.status === "PUBLISHED" &&
-        workshop.apprenticeId &&
-        workshop.apprentice ? (
+          workshop.apprenticeId &&
+          workshop.apprentice ? (
           <div className="space-y-2">
             <button
               type="button"

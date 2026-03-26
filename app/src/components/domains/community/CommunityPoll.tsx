@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PieChart, CheckCircle2 } from "lucide-react";
@@ -33,7 +33,7 @@ interface CommunityPollProps {
   onVoteSuccess: () => void;
 }
 
-export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
+export function CommunityPoll({ poll, onVoteSuccess }: Readonly<CommunityPollProps>) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const voteMutation = trpc.community.voteInPoll.useMutation({
     onSuccess: () => {
@@ -74,7 +74,7 @@ export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
             {poll.options.map((option) => {
               const percentage = getPercentage(option.id);
               const isUserChoice = poll.userOptionId === option.id;
-              
+
               return (
                 <div key={option.id} className="space-y-1">
                   <div className="flex justify-between text-sm">
@@ -85,7 +85,7 @@ export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
                     <span className="font-bold text-ls-heading">{percentage}%</span>
                   </div>
                   <div className="h-2 w-full bg-border/30 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className={cn("h-full transition-all duration-1000", isUserChoice ? "bg-brand" : "bg-ls-muted/40")}
                       style={{ width: `${percentage}%` }}
                     />
@@ -100,24 +100,28 @@ export function CommunityPoll({ poll, onVoteSuccess }: CommunityPollProps) {
         ) : (
           <div className="space-y-3">
             {poll.options.map((option) => (
-              <div 
+              <button
+                type="button"
                 key={option.id}
                 onClick={() => setSelectedOption(option.id)}
                 className={cn(
-                  "p-3 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between group",
-                  selectedOption === option.id 
-                    ? "border-brand bg-brand-soft text-ls-heading" 
+                  "w-full p-3 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between group text-left",
+                  selectedOption === option.id
+                    ? "border-brand bg-brand-soft text-ls-heading"
                     : "border-border hover:border-brand/50 text-ls-text"
                 )}
               >
                 <span className="text-sm font-medium">{option.label}</span>
-                <div className={cn(
-                  "w-4 h-4 rounded-full border-2 transition-all",
-                  selectedOption === option.id ? "border-brand bg-brand" : "border-border"
-                )} />
-              </div>
+                <div
+                  className={cn(
+                    "w-4 h-4 rounded-full border-2 transition-all",
+                    selectedOption === option.id ? "border-brand bg-brand" : "border-border"
+                  )}
+                  aria-hidden
+                />
+              </button>
             ))}
-            <Button 
+            <Button
               variant="cta" size="cta" className="w-full mt-4 font-bold h-11"
               disabled={!selectedOption || voteMutation.isPending}
               onClick={handleVote}

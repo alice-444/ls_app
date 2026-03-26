@@ -90,8 +90,122 @@ Utilisation d'un conteneur de dépendances (`di/container.ts`) pour l'inversion 
 ### Repository Pattern
 Abstraction de la couche de données derrière des interfaces (ex: `IWorkshopRepository`). Cela découple la logique métier de l'implémentation spécifique de la base de données (Prisma/PostgreSQL).
 
+```mermaid
+classDiagram
+    class IWorkshopRepository {
+        <<interface>>
+        +findById(id: string)
+        +save(data: any)
+    }
+
+    class PrismaWorkshopRepository {
+        -prisma: PrismaClient
+        +findById(id: string)
+        +save(data: any)
+    }
+
+    class WorkshopService {
+        -repo: IWorkshopRepository
+        +executeBusinessLogic()
+    }
+
+    IWorkshopRepository <|.. PrismaWorkshopRepository : Implémente
+    WorkshopService o-- IWorkshopRepository : Utilise (Injection)
+```
+
 ### Result Pattern
 Gestion des erreurs de manière fonctionnelle via un objet de retour standardisé (ex: `{ success: true, data: ... }` ou `{ success: false, error: ... }`), traité par le helper `unwrapResult`.
+
+---
+
+## ❌ Gestion des erreurs
+
+### Flux de propagation
+Ce diagramme montre comment une erreur est transportée du backend jusqu'à l'utilisateur.
+
+```mermaid
+flowchart TD
+    Service[Service / Repository] -->|Retourne Result.fail| Router[Router tRPC]
+    Router -->|throw TRPCError| Client[Client tRPC / TanStack Query]
+    Client -->|onError callback| UI[Composant React / Toast]
+    UI -->|Visualisation| User[Utilisateur]
+```
+
+### tRPC Errors
+Pour les erreurs interrompant le flux (auth, permissions, validation), nous utilisons `TRPCError` avec les codes standard :
+
+- `UNAUTHORIZED` : Session absente ou invalide.
+- `FORBIDDEN` : Rôle insuffisant (ex: non-admin accédant à `/admin`).
+- `NOT_FOUND` : Ressource inexistante.
+- `BAD_REQUEST` : Validation échouée ou logique métier invalide.
+- `INTERNAL_SERVER_ERROR` : Erreur imprévue (Prisma, crash service).
+
+```tsx
+// Exemple dans un router
+if (!workshop) {
+  throw new TRPCError({
+    code: "NOT_FOUND",
+    message: "L'atelier demandé n'existe pas.",
+  });
+}
+```
+
+---
+
+## ✅ Validation (Zod)
+
+### Localisation des schémas
+- **@ls-app/shared** : Tous les schémas partagés entre front et back (onboarding, profil, ateliers, validation de mot de passe). C'est la source de vérité.
+- **Local au Router** : Uniquement pour les schémas très spécifiques à une procédure backend qui n'ont aucune utilité côté front.
+
+### Pattern de validation
+Nous utilisons `z.object()` pour les entrées de procédures (`input()`) et l'inférence de types pour garantir la cohérence :
+`export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;`
+
+---
+
+## 🏗️ Injection de Dépendances (DI)
+
+Le projet utilise un **Singleton Container** (`back/src/lib/di/container.ts`) pour gérer le cycle de vie des services et repositories.
+
+### Séquence d'instanciation
+L'ordre est critique pour que les dépendances soient disponibles au bon moment.
+
+```mermaid
+sequenceDiagram
+    participant C as DIContainer
+    participant P as PrismaClient
+    participant R as RepositoriesContainer
+    participant S as ServicesContainer
+
+    Note over C: getInstance()
+    C->>P: 1. Instancie Prisma
+    C->>R: 2. Crée les Repositories (injecte Prisma)
+    C->>S: 3. Crée les Services (injecte Repositories + Prisma)
+    Note right of S: Prêts à l'emploi
+```
+
+### Fonctionnement
+1. **Instanciation** : Le `DIContainer` instancie Prisma, puis les Repositories, puis les Services (qui reçoivent les repositories en paramètres).
+2. **Accès** : Partout dans le backend (principalement dans les routers), on accède aux services via l'export `container`.
+
+```tsx
+// Utilisation dans un router
+import { container } from "@/lib/di/container";
+
+export const workshopRouter = router({
+  create: protectedProcedure
+    .input(createWorkshopSchema)
+    .mutation(async ({ input, ctx }) => {
+      return await container.workshopService.createWorkshop(input, ctx.session.user.id);
+    }),
+});
+```
+
+### Avantages
+- **Testabilité** : On peut facilement remplacer un service par un mock dans les tests.
+- **Découplage** : Le router ne sait pas *comment* le service est construit, il l'utilise simplement.
+- **Cohérence** : Une seule instance de Prisma et des services est partagée dans toute l'application.
 
 ---
 

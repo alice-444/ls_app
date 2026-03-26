@@ -10,13 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { 
-  Loader2, 
-  CheckCircle, 
-  XCircle, 
-  AlertTriangle, 
-  User, 
-  Eye, 
+import {
+  Loader2,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  User,
+  Eye,
   MessageSquare,
   Clock,
   Shield,
@@ -24,21 +24,21 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useState, Suspense } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
@@ -46,10 +46,25 @@ import { fr } from "date-fns/locale";
 
 type ReportStatus = "PENDING" | "REVIEWED" | "RESOLVED" | "DISMISSED";
 
+type AdminReport = {
+  id: string;
+  createdAt: string;
+  reporterName?: string;
+  reportedName?: string;
+  reporterUserId?: string;
+  reportedUserId?: string;
+  reason: string;
+  status: string;
+  details?: string | null;
+  messageId?: string | null;
+  adminNotes?: string | null;
+  reviewedAt?: string | null;
+};
+
 function UserReportsContent() {
   const [statusFilter, setStatusFilter] = useState<ReportStatus | "ALL">("PENDING");
   const { data: reports, isLoading, refetch } = trpc.userReport.getAdminReportQueue.useQuery({
-    status: statusFilter === "ALL" ? undefined : statusFilter as ReportStatus
+    status: statusFilter === "ALL" ? undefined : statusFilter,
   });
 
   const reviewMutation = trpc.userReport.reviewReport.useMutation({
@@ -64,11 +79,11 @@ function UserReportsContent() {
     }
   });
 
-  const [selectedReport, setSelectedReport] = useState<any | null>(null);
+  const [selectedReport, setSelectedReport] = useState<AdminReport | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
 
-  const handleOpenDetail = (report: any) => {
+  const handleOpenDetail = (report: AdminReport) => {
     setSelectedReport(report);
     setAdminNotes(report.adminNotes || "");
     setIsDetailDialogOpen(true);
@@ -125,11 +140,11 @@ function UserReportsContent() {
           <h1 className="text-3xl font-bold tracking-tight">Signalements Utilisateurs</h1>
           <p className="text-muted-foreground">Gérer les signalements de comportements inappropriés.</p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">Filtrer par statut:</span>
-          <Select 
-            value={statusFilter} 
+          <Select
+            value={statusFilter}
             onValueChange={(v) => setStatusFilter(v as ReportStatus | "ALL")}
           >
             <SelectTrigger className="w-[180px]">
@@ -169,7 +184,7 @@ function UserReportsContent() {
                 </TableCell>
               </TableRow>
             ) : (
-              reportsList.map((report: any) => (
+              reportsList.map((report: AdminReport) => (
                 <TableRow key={report.id}>
                   <TableCell className="text-xs">
                     {format(new Date(report.createdAt), "dd/MM/yyyy HH:mm", { locale: fr })}
@@ -266,7 +281,7 @@ function UserReportsContent() {
 
                 <div className="space-y-1.5 pt-2">
                   <label className="text-sm font-medium">Notes de l'administrateur:</label>
-                  <Textarea 
+                  <Textarea
                     placeholder="Ajouter des notes sur l'examen de ce signalement..."
                     value={adminNotes}
                     onChange={(e) => setAdminNotes(e.target.value)}
@@ -287,10 +302,10 @@ function UserReportsContent() {
                 <Button variant="outline" onClick={() => setIsDetailDialogOpen(false)}>
                   Fermer
                 </Button>
-                
+
                 {selectedReport.status === "PENDING" && (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => handleAction("REVIEWED")}
                     disabled={reviewMutation.isPending}
                     className="border-blue-200 text-blue-700 hover:bg-blue-50"
@@ -301,8 +316,8 @@ function UserReportsContent() {
 
                 {(selectedReport.status === "PENDING" || selectedReport.status === "REVIEWED") && (
                   <>
-                    <Button 
-                      variant="secondary" 
+                    <Button
+                      variant="secondary"
                       onClick={() => handleAction("DISMISSED")}
                       disabled={reviewMutation.isPending}
                       className="bg-slate-200 hover:bg-slate-300 text-slate-800"
@@ -310,8 +325,8 @@ function UserReportsContent() {
                       <XCircle className="h-4 w-4 mr-2" />
                       Ignorer
                     </Button>
-                    <Button 
-                      variant="default" 
+                    <Button
+                      variant="default"
                       onClick={() => handleAction("RESOLVED")}
                       disabled={reviewMutation.isPending}
                       className="bg-emerald-600 hover:bg-emerald-700 text-white"

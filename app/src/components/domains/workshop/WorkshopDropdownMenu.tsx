@@ -48,7 +48,7 @@ export function WorkshopDropdownMenu({
   onDuplicate,
   onComplete,
   variant = "default",
-}: WorkshopDropdownMenuProps) {
+}: Readonly<WorkshopDropdownMenuProps>) {
   const handleCopyLink = () => {
     if (workshop.location) {
       navigator.clipboard.writeText(workshop.location);

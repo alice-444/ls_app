@@ -10,7 +10,7 @@ export function useOnboarding() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const [currentStep, setCurrentStep] = useState<Step>("select");
+  const [currentStep, setCurrentStep] = useState<Step>("Select");
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -20,7 +20,10 @@ export function useOnboarding() {
 
     if (roleParam && (roleParam === "MENTOR" || roleParam === "APPRENANT")) {
       setSelectedRole(roleParam);
-      if (stepParam && (stepParam === "confirm-features" || stepParam === "prof-form")) {
+      if (
+        stepParam &&
+        (stepParam === "confirm-features" || stepParam === "prof-form")
+      ) {
         setCurrentStep(stepParam);
       } else if (roleParam === "MENTOR") {
         setCurrentStep("confirm-features");
@@ -43,11 +46,11 @@ export function useOnboarding() {
     setIsSubmitting(true);
     try {
       await customAuthClient.selectRole(selectedRole);
-      
+
       // Invalider les requêtes de rôle pour que RoleGate voie le changement immédiatement
       await queryClient.invalidateQueries({ queryKey: ["userRole"] });
       await queryClient.invalidateQueries({ queryKey: ["userData"] });
-      
+
       setIsSubmitting(false);
 
       if (selectedRole === "MENTOR") {
@@ -62,7 +65,7 @@ export function useOnboarding() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Erreur lors de la sélection du rôle"
+          : "Erreur lors de la sélection du rôle",
       );
       setIsSubmitting(false);
     }
@@ -84,7 +87,7 @@ export function useOnboarding() {
             toast.error(
               error instanceof Error
                 ? error.message
-                : "Erreur lors de l'upload de la photo"
+                : "Erreur lors de l'upload de la photo",
             );
             setIsSubmitting(false);
             return;
@@ -112,21 +115,21 @@ export function useOnboarding() {
         toast.error(
           error instanceof Error
             ? error.message
-            : "Erreur lors de la sauvegarde du profil"
+            : "Erreur lors de la sauvegarde du profil",
         );
         setIsSubmitting(false);
       }
     },
-    [router, queryClient]
+    [router, queryClient],
   );
 
   const handleGoBack = useCallback(() => {
     if (currentStep === "confirm-features") {
-      setCurrentStep("select");
+      setCurrentStep("Select");
     } else if (currentStep === "prof-form") {
       setCurrentStep("confirm-features");
     } else {
-      setCurrentStep("select");
+      setCurrentStep("Select");
       setSelectedRole(null);
     }
     setIsSubmitting(false);

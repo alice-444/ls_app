@@ -32,7 +32,7 @@ export function StudyDomainSelect({
   value,
   onChange,
   error,
-}: StudyDomainSelectProps) {
+}: Readonly<StudyDomainSelectProps>) {
   return (
     <div className="space-y-2">
       <Label htmlFor="studyDomain">Domaine d&apos;étude</Label>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { trpc } from "@/utils/trpc";
 import {
   Table,
@@ -23,34 +24,44 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-function LogDetailsModal({ log }: { log: any }) {
-    const [open, setOpen] = useState(false);
-    return (
-        <>
-            <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-                <Eye className="h-4 w-4" />
-            </Button>
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Détails du Log</DialogTitle>
-                    </DialogHeader>
-                    <pre className="mt-2 w-full rounded-md bg-slate-950 p-4 overflow-x-auto">
-                        <code className="text-white">{JSON.stringify(log.details, null, 2)}</code>
-                    </pre>
-                </DialogContent>
-            </Dialog>
-        </>
-    );
+interface AuditLog {
+  id: string;
+  createdAt: string;
+  action: string;
+  adminName: string;
+  adminId: string;
+  targetId: string;
+  details: unknown;
+}
+
+function LogDetailsModal({ log }: Readonly<{ log: AuditLog }>) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+        <Eye className="h-4 w-4" />
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Détails du Log</DialogTitle>
+          </DialogHeader>
+          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4 overflow-x-auto">
+            <code className="text-white">{JSON.stringify(log.details, null, 2)}</code>
+          </pre>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
 
 export default function AuditLogsPage() {
   const [page, setPage] = useState(0);
   const [perPage, setPerPage] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
-  
-  const { data, isLoading } = trpc.admin.getAuditLogs.useQuery({ 
-    limit: perPage, 
+
+  const { data, isLoading } = trpc.admin.getAuditLogs.useQuery({
+    limit: perPage,
     offset: page * perPage,
     searchTerm,
   });
@@ -58,6 +69,37 @@ export default function AuditLogsPage() {
   const logs = data?.logs ?? [];
   const total = data?.total ?? 0;
   const pageCount = Math.ceil(total / perPage);
+
+  let tableBodyContent: ReactNode;
+  if (isLoading) {
+    tableBodyContent = (
+      <TableRow><TableCell colSpan={5} className="text-center">Chargement...</TableCell></TableRow>
+    );
+  } else if (logs.length === 0) {
+    tableBodyContent = (
+      <TableRow><TableCell colSpan={5} className="text-center">Aucun log trouvé.</TableCell></TableRow>
+    );
+  } else {
+    tableBodyContent = logs.map((log: AuditLog) => (
+      <TableRow key={log.id}>
+        <TableCell>
+          {format(new Date(log.createdAt), "d MMM yyyy, HH:mm", { locale: fr })}
+        </TableCell>
+        <TableCell>
+          <Badge variant={log.action.startsWith('delete') ? 'destructive' : 'secondary'}>
+            {log.action}
+          </Badge>
+        </TableCell>
+        <TableCell>{log.adminName} ({log.adminId})</TableCell>
+        <TableCell>
+          <span className="font-mono text-xs">{log.targetId}</span>
+        </TableCell>
+        <TableCell className="text-right">
+          <LogDetailsModal log={log} />
+        </TableCell>
+      </TableRow>
+    ));
+  }
 
   return (
     <div className="space-y-6">
@@ -69,7 +111,7 @@ export default function AuditLogsPage() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Input 
+        <Input
           placeholder="Rechercher par action, admin, ou ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -90,36 +132,12 @@ export default function AuditLogsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading ? (
-              <TableRow><TableCell colSpan={5} className="text-center">Chargement...</TableCell></TableRow>
-            ) : logs.length === 0 ? (
-              <TableRow><TableCell colSpan={5} className="text-center">Aucun log trouvé.</TableCell></TableRow>
-            ) : (
-              logs.map((log: any) => (
-                <TableRow key={log.id}>
-                  <TableCell>
-                    {format(new Date(log.createdAt), "d MMM yyyy, HH:mm", { locale: fr })}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={log.action.startsWith('delete') ? 'destructive' : 'secondary'}>
-                      {log.action}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{log.adminName} ({log.adminId})</TableCell>
-                  <TableCell>
-                    <span className="font-mono text-xs">{log.targetId}</span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <LogDetailsModal log={log} />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+            {tableBodyContent}
           </TableBody>
         </Table>
       </div>
 
-       <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">
           Total de {total} logs.
         </span>

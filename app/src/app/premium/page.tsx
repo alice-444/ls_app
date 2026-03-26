@@ -61,7 +61,7 @@ export default function PremiumPage() {
           <h2 className="text-lg sm:text-xl font-bold text-ls-heading mb-6 flex items-center gap-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/15 text-brand">
               <Sparkles className="h-5 w-5" />
-            </span>
+            </span>{" "}
             Ce que tu obtiens avec Premium
           </h2>
           <div className="grid gap-4 sm:gap-6 md:grid-cols-3">

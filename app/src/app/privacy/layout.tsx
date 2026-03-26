@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Confidentialité - LearnSup",
-  description: "Politique de confidentialité de la plateforme LearnSup.",
+  title: "Politique de Confidentialité",
+  description: "Apprenez-en plus sur la manière dont nous protégeons vos données sur LearnSup.",
 };
 
 export default function PrivacyLayout({

@@ -23,7 +23,7 @@ export function RemoveConnectionDialog({
   onOpenChange,
   onConfirm,
   isRemoving,
-}: RemoveConnectionDialogProps) {
+}: Readonly<RemoveConnectionDialogProps>) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>

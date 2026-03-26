@@ -20,7 +20,7 @@ interface EventsHubGridProps {
   events: CommunityEvent[];
 }
 
-export function EventsHubGrid({ events }: EventsHubGridProps) {
+export function EventsHubGrid({ events }: Readonly<EventsHubGridProps>) {
   if (events.length === 0) {
     return (
       <div className="bg-card/50 border-2 border-dashed border-border rounded-2xl p-12 text-center backdrop-blur-sm">

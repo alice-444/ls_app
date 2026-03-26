@@ -96,7 +96,7 @@ const AlertDialogDescription = React.forwardRef<
 AlertDialogDescription.displayName = "AlertDialogDescription";
 
 interface AlertDialogActionProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> { }
 
 const AlertDialogAction = React.forwardRef<
   HTMLButtonElement,
@@ -107,7 +107,7 @@ const AlertDialogAction = React.forwardRef<
 AlertDialogAction.displayName = "AlertDialogAction";
 
 interface AlertDialogCancelProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> { }
 
 const AlertDialogCancel = React.forwardRef<
   HTMLButtonElement,

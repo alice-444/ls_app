@@ -21,7 +21,7 @@ export function ReportFeedbackDialog({
   onOpenChange,
   feedbackId,
   onSuccess,
-}: ReportFeedbackDialogProps) {
+}: Readonly<ReportFeedbackDialogProps>) {
   const [reason, setReason] = useState<string>("");
 
   const reportMutation = trpc.workshopFeedback.reportFeedback.useMutation({

@@ -32,7 +32,7 @@ export function PendingRequestItem({
   onAccept,
   onReject,
   isProcessing,
-}: PendingRequestItemProps) {
+}: Readonly<PendingRequestItemProps>) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-border/50 rounded-2xl bg-card/80 gap-4">
       <div className="flex items-center gap-4">

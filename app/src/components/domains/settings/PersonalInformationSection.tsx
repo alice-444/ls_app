@@ -46,7 +46,7 @@ export function PersonalInformationSection() {
     e.preventDefault();
     setIsSaving(true);
     const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
-    updateProfileMutation.mutate({ 
+    updateProfileMutation.mutate({
       name: fullName || undefined,
       photoUrl: photoUrl || undefined
     });

@@ -23,7 +23,7 @@ export function TippingModal({
   onOpenChange,
   mentorUserId,
   onSuccess,
-}: TippingModalProps) {
+}: Readonly<TippingModalProps>) {
   const [customAmount, setCustomAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
@@ -56,8 +56,8 @@ export function TippingModal({
   };
 
   const handleCustomTip = () => {
-    const amount = parseInt(customAmount, 10);
-    if (isNaN(amount) || amount <= 0) {
+    const amount = Number.parseInt(customAmount, 10);
+    if (Number.isNaN(amount) || amount <= 0) {
       toast.error("Veuillez entrer un montant valide.");
       return;
     }
@@ -102,7 +102,7 @@ export function TippingModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <Input 
+            <Input
               type="number"
               placeholder="Montant personnalisé"
               value={customAmount}
@@ -116,7 +116,7 @@ export function TippingModal({
               Envoyer
             </Button>
           </div>
-          
+
           <div className="text-center text-sm text-muted-foreground">
             {isLoadingBalance ? (
               <Loader2 className="w-4 h-4 mx-auto animate-spin" />
@@ -125,7 +125,7 @@ export function TippingModal({
             )}
           </div>
         </div>
-        
+
         <DialogFooter>
           <Button
             variant="ghost"

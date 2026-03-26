@@ -163,7 +163,7 @@ export function BasicInformationSection({
           </div>
           {errors.photo && (
             <p className="text-sm text-ls-error">
-              {errors.photo.message as string}
+              {errors.photo.message}
             </p>
           )}
           <p className="text-xs text-ls-muted">
