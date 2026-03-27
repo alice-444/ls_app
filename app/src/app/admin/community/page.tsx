@@ -12,6 +12,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -39,9 +40,9 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Loader2, Check, X, Calendar, MapPin, Trash2, AlertTriangle, Search, ExternalLink, Tag } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { getStatusLabel, adminDateFormatters } from "@/lib/admin/admin-utils";
+import { adminDateFormatters } from "@/lib/admin/admin-utils";
 import { useBatchSelection } from "@/hooks/admin/use-batch-selection";
 import { CreateDealDialog } from "@/components/admin/modals/CreateDealDialog";
 import { AdminBulkActions } from "@/components/admin/AdminBulkActions";
@@ -54,53 +55,69 @@ import {
   CommunityPoll,
   CommunityStatus
 } from "@ls-app/shared";
+import { AdminTableSkeleton } from "@/components/admin/AdminTableSkeleton";
+import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
+import { useAdminFilters } from "@/hooks/admin/use-admin-filters";
+
+type CommunityProposalKind = "EVENT" | "DEAL" | "SPOT" | "POLL";
+type CommunityReviewAction = "APPROVE" | "REJECT";
+type CommunityStatusFilter = CommunityStatus | "ALL";
+type CommunityItemToDelete = { type: CommunityProposalKind; id: string };
 
 const DEAL_CATEGORIES = Object.keys(ADMIN_COMMUNITY_CATEGORIES);
 
 export default function AdminCommunityPage() {
+  const { filters, setFilter } = useAdminFilters({
+    tab: "events",
+    status: "ALL",
+    category: "ALL"
+  });
+
   const { data: proposals, isLoading, refetch } = trpc.community.getPendingProposals.useQuery();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{ type: "EVENT" | "DEAL" | "SPOT" | "POLL", id: string } | null>(null);
-  const [statusFilter, setStatusFilter] = useState<CommunityStatus | "ALL">("ALL");
-  const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
-  const [activeTab, setActiveTab] = useState<string>("events");
+  const [itemToDelete, setItemToDelete] = useState<CommunityItemToDelete | null>(null);
 
   // Filtered lists
   const filteredEvents = useMemo(() => {
     let items = (proposals?.events || []) as CommunityEvent[];
-    if (statusFilter !== "ALL") items = items.filter((i) => i.status === statusFilter);
+    if (filters.status !== "ALL") items = items.filter((i) => i.status === filters.status);
     return items;
-  }, [proposals?.events, statusFilter]);
+  }, [proposals?.events, filters.status]);
 
   const filteredDeals = useMemo(() => {
     let items = (proposals?.deals || []) as CommunityDeal[];
-    if (statusFilter !== "ALL") items = items.filter((i) => i.status === statusFilter);
-    if (categoryFilter !== "ALL") items = items.filter((i) => i.category === categoryFilter);
+    if (filters.status !== "ALL") items = items.filter((i) => i.status === filters.status);
+    if (filters.category !== "ALL") items = items.filter((i) => i.category === filters.category);
     return items;
-  }, [proposals?.deals, statusFilter, categoryFilter]);
+  }, [proposals?.deals, filters.status, filters.category]);
 
   const filteredSpots = useMemo(() => {
     let items = (proposals?.spots || []) as CommunitySpot[];
-    if (statusFilter !== "ALL") items = items.filter((i) => i.status === statusFilter);
+    if (filters.status !== "ALL") items = items.filter((i) => i.status === filters.status);
     return items;
-  }, [proposals?.spots, statusFilter]);
+  }, [proposals?.spots, filters.status]);
 
   const filteredPolls = useMemo(() => {
     let items = (proposals?.polls || []) as CommunityPoll[];
-    if (statusFilter !== "ALL") items = items.filter((i) => i.status === statusFilter);
+    if (filters.status !== "ALL") items = items.filter((i) => i.status === filters.status);
     return items;
-  }, [proposals?.polls, statusFilter]);
+  }, [proposals?.polls, filters.status]);
 
   // Selections - Typed as an array of CommunityProposal (base union) to satisfy useBatchSelection
   const currentTabItems = useMemo((): CommunityProposal[] => {
-    if (activeTab === "events") return filteredEvents;
-    if (activeTab === "deals") return filteredDeals;
-    if (activeTab === "spots") return filteredSpots;
-    if (activeTab === "polls") return filteredPolls;
+    if (filters.tab === "events") return filteredEvents;
+    if (filters.tab === "deals") return filteredDeals;
+    if (filters.tab === "spots") return filteredSpots;
+    if (filters.tab === "polls") return filteredPolls;
     return [];
-  }, [activeTab, filteredEvents, filteredDeals, filteredSpots, filteredPolls]);
+  }, [filters.tab, filteredEvents, filteredDeals, filteredSpots, filteredPolls]);
 
   const { selectedIds, toggleSelect, toggleSelectAll, isAllSelected, resetSelection } = useBatchSelection(currentTabItems);
+
+  // Reset selection when tab or filters change
+  useEffect(() => {
+    resetSelection();
+  }, [filters.tab, filters.status, filters.category, resetSelection]);
 
   // Mutations
   const bulkReviewMutation = trpc.community.bulkReviewProposals.useMutation({
@@ -135,11 +152,11 @@ export default function AdminCommunityPage() {
     onError: (err: any) => toast.error(err.message),
   });
 
-  const handleAction = (type: "EVENT" | "DEAL" | "SPOT" | "POLL", id: string, action: "APPROVE" | "REJECT") => {
+  const handleAction = (type: CommunityProposalKind, id: string, action: CommunityReviewAction) => {
     reviewMutation.mutate({ type, id, action });
   };
 
-  const confirmDelete = (type: "EVENT" | "DEAL" | "SPOT" | "POLL", id: string) => {
+  const confirmDelete = (type: CommunityProposalKind, id: string) => {
     setItemToDelete({ type, id });
     setDeleteConfirmOpen(true);
   };
@@ -148,23 +165,19 @@ export default function AdminCommunityPage() {
     if (itemToDelete) deleteMutation.mutate(itemToDelete);
   };
 
-  const getStatusBadge = (status: string) => {
-    const colorClasses: Record<string, string> = {
-      PENDING: "bg-amber-50 text-amber-700 border-amber-200",
-      APPROVED: "bg-emerald-50 text-emerald-700 border-emerald-200",
-      REJECTED: "bg-rose-50 text-rose-700 border-rose-200",
-    };
-    return (
-      <Badge variant="outline" className={cn("uppercase text-[10px]", colorClasses[status] || "")}>
-        {getStatusLabel(status)}
-      </Badge>
-    );
-  };
-
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-brand" />
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-8 w-48 rounded-full" />
+        </div>
+        <div className="flex gap-2 border-b pb-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-10 w-32" />
+          ))}
+        </div>
+        <AdminTableSkeleton columnCount={5} rowCount={6} />
       </div>
     );
   }
@@ -181,12 +194,10 @@ export default function AdminCommunityPage() {
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase font-bold text-ls-muted tracking-wider">Statut</span>
             <Select
-              value={statusFilter}
-              onValueChange={(v) => {
-                setStatusFilter(v as CommunityStatus | "ALL");
-                resetSelection();
-              }}
+              value={filters.status}
+              onValueChange={(v) => setFilter("status", v)}
             >
+
               <SelectTrigger className="w-[140px] h-8 rounded-full border-ls-border bg-card text-xs">
                 <SelectValue placeholder="Tous les statuts" />
               </SelectTrigger>
@@ -199,16 +210,14 @@ export default function AdminCommunityPage() {
             </Select>
           </div>
 
-          {activeTab === "deals" && (
+          {filters.tab === "deals" && (
             <div className="flex items-center gap-2">
               <span className="text-[10px] uppercase font-bold text-ls-muted tracking-wider">Catégorie</span>
               <Select
-                value={categoryFilter}
-                onValueChange={(v) => {
-                  setCategoryFilter(v);
-                  resetSelection();
-                }}
+                value={filters.category}
+                onValueChange={(v) => setFilter("category", v)}
               >
+
                 <SelectTrigger className="w-[140px] h-8 rounded-full border-ls-border bg-card text-xs">
                   <SelectValue placeholder="Toutes catégories" />
                 </SelectTrigger>
@@ -224,7 +233,7 @@ export default function AdminCommunityPage() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); resetSelection(); }} className="w-full">
+      <Tabs value={filters.tab} onValueChange={(v) => setFilter("tab", v)} className="w-full">
         <TabsList className="grid w-full max-w-[600px] grid-cols-4 mb-6">
           <TabsTrigger value="events">Événements ({filteredEvents.length})</TabsTrigger>
           <TabsTrigger value="deals">Bons Plans ({filteredDeals.length})</TabsTrigger>
@@ -239,19 +248,20 @@ export default function AdminCommunityPage() {
               {
                 label: "Approuver la sélection",
                 icon: <Check className="h-4 w-4" />,
-                onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
+                onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
                 className: "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50",
                 disabled: bulkReviewMutation.isPending
               },
               {
                 label: "Rejeter la sélection",
                 icon: <X className="h-4 w-4" />,
-                onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
+                onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
                 className: "text-rose-600 hover:text-rose-700 hover:bg-rose-50",
                 disabled: bulkReviewMutation.isPending
               }
             ]}
           />
+
           <Card className="border-ls-border">
             <CardHeader>
               <CardTitle className="text-ls-heading text-lg">Events Hub</CardTitle>
@@ -302,7 +312,7 @@ export default function AdminCommunityPage() {
                           <div className="flex items-center gap-1 text-xs text-ls-muted"><Calendar className="w-3 h-3 text-brand" /> {adminDateFormatters.short(event.date)}</div>
                           <div className="flex items-center gap-1 text-xs text-ls-muted mt-1"><MapPin className="w-3 h-3 text-brand" /> {event.location}</div>
                         </TableCell>
-                        <TableCell>{getStatusBadge(event.status)}</TableCell>
+                        <TableCell><AdminStatusBadge status={event.status} /></TableCell>
                         <TableCell className="text-ls-heading text-xs">{event.proposedBy?.name || "Anonyme"}</TableCell>
                         <TableCell className="text-right space-x-1">
                           <Button size="sm" variant="ghost" className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 h-8 p-2" onClick={() => confirmDelete("EVENT", event.id)}>
@@ -331,14 +341,14 @@ export default function AdminCommunityPage() {
               {
                 label: "Approuver la sélection",
                 icon: <Check className="h-4 w-4" />,
-                onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
+                onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
                 className: "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50",
                 disabled: bulkReviewMutation.isPending
               },
               {
                 label: "Rejeter la sélection",
                 icon: <X className="h-4 w-4" />,
-                onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
+                onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
                 className: "text-rose-600 hover:text-rose-700 hover:bg-rose-50",
                 disabled: bulkReviewMutation.isPending
               }
@@ -404,7 +414,7 @@ export default function AdminCommunityPage() {
                             </div>
                           )}
                         </TableCell>
-                        <TableCell>{getStatusBadge(deal.status)}</TableCell>
+                        <TableCell><AdminStatusBadge status={deal.status} /></TableCell>
                         <TableCell className="text-ls-heading text-xs">{deal.proposedBy?.name || "Anonyme"}</TableCell>
                         <TableCell className="text-right space-x-1">
                           <Button size="sm" variant="ghost" className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 h-8 p-2" onClick={() => confirmDelete("DEAL", deal.id)}><Trash2 className="w-4 h-4" /></Button>
@@ -431,14 +441,14 @@ export default function AdminCommunityPage() {
               {
                 label: "Approuver la sélection",
                 icon: <Check className="h-4 w-4" />,
-                onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
+                onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
                 className: "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50",
                 disabled: bulkReviewMutation.isPending
               },
               {
                 label: "Rejeter la sélection",
                 icon: <X className="h-4 w-4" />,
-                onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
+                onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
                 className: "text-rose-600 hover:text-rose-700 hover:bg-rose-50",
                 disabled: bulkReviewMutation.isPending
               }
@@ -493,7 +503,7 @@ export default function AdminCommunityPage() {
                             ))}
                           </div>
                         </TableCell>
-                        <TableCell>{getStatusBadge(spot.status)}</TableCell>
+                        <TableCell><AdminStatusBadge status={spot.status} /></TableCell>
                         <TableCell className="text-ls-heading text-xs">{spot.proposedBy?.name || "Anonyme"}</TableCell>
                         <TableCell className="text-right space-x-1">
                           <Button size="sm" variant="ghost" className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 h-8 p-2" onClick={() => confirmDelete("SPOT", spot.id)}><Trash2 className="w-4 h-4" /></Button>
@@ -521,14 +531,14 @@ export default function AdminCommunityPage() {
                 {
                   label: "Approuver la sélection",
                   icon: <Check className="h-4 w-4" />,
-                  onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
+                  onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "APPROVE" }),
                   className: "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50",
                   disabled: bulkReviewMutation.isPending
                 },
                 {
                   label: "Rejeter la sélection",
                   icon: <X className="h-4 w-4" />,
-                  onClick: () => bulkReviewMutation.mutate({ type: activeTab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
+                  onClick: () => bulkReviewMutation.mutate({ type: filters.tab.toUpperCase() as any, ids: selectedIds, action: "REJECT" }),
                   className: "text-rose-600 hover:text-rose-700 hover:bg-rose-50",
                   disabled: bulkReviewMutation.isPending
                 }
@@ -564,7 +574,7 @@ export default function AdminCommunityPage() {
                         </div>
                         <div className="flex justify-between items-start mb-2 pr-8">
                           <CardTitle className="text-sm text-ls-heading leading-tight pr-2">{poll.question}</CardTitle>
-                          {getStatusBadge(poll.status)}
+                          <AdminStatusBadge status={poll.status} />
                         </div>
                         <div className="flex flex-wrap gap-2 pt-2">
                           {(poll.options as any[]).map(o => (

@@ -22,7 +22,7 @@ import {
   Search
 } from "lucide-react";
 import { toast } from "sonner";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -32,20 +32,31 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { getStatusLabel, getReportReasonLabel, adminDateFormatters } from "@/lib/admin/admin-utils";
+import { getReportReasonLabel, adminDateFormatters } from "@/lib/admin/admin-utils";
 import { useBatchSelection } from "@/hooks/admin/use-batch-selection";
 import { ReportDetailsDialog } from "@/components/admin/modals/ReportDetailsDialog";
 import { AdminBulkActions } from "@/components/admin/AdminBulkActions";
 import { UserReport, ReportStatus } from "@ls-app/shared";
+import { AdminTableSkeleton } from "@/components/admin/AdminTableSkeleton";
+import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
+import { useAdminFilters } from "@/hooks/admin/use-admin-filters";
 
 function UserReportsContent() {
-  const [statusFilter, setStatusFilter] = useState<ReportStatus | "ALL">("PENDING");
+  const { filters, setFilter } = useAdminFilters({
+    status: "PENDING"
+  });
+
   const { data: reports, isLoading, refetch } = trpc.userReport.getAdminReportQueue.useQuery({
-    status: statusFilter === "ALL" ? undefined : statusFilter,
+    status: filters.status === "ALL" ? undefined : filters.status as ReportStatus,
   });
 
   const reportsList = reports || [];
   const { selectedIds, toggleSelect, toggleSelectAll, isAllSelected, resetSelection } = useBatchSelection(reportsList);
+
+  // Reset selection when status filter changes
+  useEffect(() => {
+    resetSelection();
+  }, [filters.status, resetSelection]);
 
   const reviewMutation = trpc.userReport.reviewReport.useMutation({
     onSuccess: () => {
@@ -85,26 +96,8 @@ function UserReportsContent() {
     bulkReviewMutation.mutate({ reportIds: selectedIds, status });
   };
 
-  const getStatusBadge = (status: string) => {
-    const colorClasses: Record<string, string> = {
-      PENDING: "bg-amber-100 text-amber-800 border-amber-200",
-      RESOLVED: "bg-emerald-100 text-emerald-800 border-emerald-200",
-      DISMISSED: "bg-slate-100 text-slate-800 border-slate-200",
-      REVIEWED: "bg-blue-100 text-blue-800 border-blue-200",
-    };
-    return (
-      <Badge variant="outline" className={colorClasses[status] || ""}>
-        {getStatusLabel(status)}
-      </Badge>
-    );
-  };
-
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-48">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <AdminTableSkeleton columnCount={6} rowCount={8} />;
   }
 
   return (
@@ -118,15 +111,13 @@ function UserReportsContent() {
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold uppercase tracking-wider text-ls-muted">Filtrer par statut:</span>
           <Select
-            value={statusFilter}
-            onValueChange={(v) => {
-              setStatusFilter(v as ReportStatus | "ALL");
-              resetSelection();
-            }}
+            value={filters.status}
+            onValueChange={(v) => setFilter("status", v)}
           >
             <SelectTrigger className="w-[180px] h-9 rounded-full bg-card">
               <SelectValue placeholder="Tous les statuts" />
             </SelectTrigger>
+
             <SelectContent>
               <SelectItem value="ALL">Tous les statuts</SelectItem>
               <SelectItem value="PENDING">En attente</SelectItem>
@@ -233,7 +224,7 @@ function UserReportsContent() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {getStatusBadge(report.status)}
+                    <AdminStatusBadge status={report.status} />
                   </TableCell>
                   <TableCell className="text-right px-6">
                     <Button

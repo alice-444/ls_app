@@ -28,7 +28,6 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useState, Suspense, useEffect } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -37,26 +36,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { getStatusLabel, getRoleLabel, adminDateFormatters } from "@/lib/admin/admin-utils";
+import { getRoleLabel, adminDateFormatters } from "@/lib/admin/admin-utils";
 import { useBatchSelection } from "@/hooks/admin/use-batch-selection";
 import { AdminBulkActions } from "@/components/admin/AdminBulkActions";
 import { RejectUserDialog } from "@/components/admin/modals/RejectUserDialog";
+import { AdminTableSkeleton } from "@/components/admin/AdminTableSkeleton";
+import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
+import { useAdminFilters } from "@/hooks/admin/use-admin-filters";
 
 type UserStatus = "PENDING" | "ACTIVE" | "SUSPENDED";
 
 function UsersContent() {
-  const searchParams = useSearchParams();
-  const statusFromUrl = searchParams.get("status") as UserStatus | null;
+  const { filters, setFilter } = useAdminFilters({
+    status: "ALL",
+    role: "ALL",
+    search: ""
+  });
 
-  const [statusFilter, setStatusFilter] = useState<UserStatus | "ALL">(
-    statusFromUrl && ["PENDING", "ACTIVE", "SUSPENDED"].includes(statusFromUrl)
-      ? statusFromUrl
-      : "ALL"
-  );
-  const [roleFilter, setRoleFilter] = useState<string>("ALL");
-  const [searchTerm, setSearchTerm] = useState("");
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<{
@@ -69,9 +66,9 @@ function UsersContent() {
   const { data, isLoading, refetch } = trpc.admin.getUsers.useQuery({
     limit: 20,
     cursor: cursor ?? undefined,
-    status: statusFilter === "ALL" ? undefined : statusFilter,
-    role: roleFilter === "ALL" ? undefined : roleFilter,
-    searchTerm: searchTerm || undefined,
+    status: filters.status === "ALL" ? undefined : filters.status as UserStatus,
+    role: filters.role === "ALL" ? undefined : filters.role,
+    searchTerm: filters.search || undefined,
   }, {
     placeholderData: (previousData: any) => previousData,
   });
@@ -88,12 +85,11 @@ function UsersContent() {
     resetSelection
   } = useBatchSelection(items);
 
-  // Reset selection and pagination when filters change
+  // Reset pagination when filters change (hook handles filter change, we just reset cursor)
   useEffect(() => {
     setCursor(null);
     resetSelection();
-  }, [statusFilter, roleFilter, searchTerm, resetSelection]);
-
+  }, [filters.status, filters.role, filters.search, resetSelection]);
   const approveMutation = trpc.admin.approveUser.useMutation({
     onSuccess: () => {
       toast.success("Utilisateur activé");
@@ -155,25 +151,8 @@ function UsersContent() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const colorClasses: Record<string, string> = {
-      PENDING: "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-200",
-      ACTIVE: "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200",
-      SUSPENDED: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-200",
-    };
-    return (
-      <Badge variant="outline" className={cn(colorClasses[status] || "")}>
-        {getStatusLabel(status)}
-      </Badge>
-    );
-  };
-
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[300px]">
-        <Loader2 className="h-10 w-10 animate-spin text-brand" />
-      </div>
-    );
+    return <AdminTableSkeleton columnCount={5} rowCount={8} />;
   }
 
   return (
@@ -192,15 +171,15 @@ function UsersContent() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ls-muted" />
             <Input
               placeholder="Rechercher..."
-              value={searchTerm}
-              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setSearchTerm(e.target.value)}
+              value={filters.search}
+              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setFilter("search", e.target.value)}
               className="pl-9 rounded-full bg-card/50"
             />
           </div>
 
           <Select
-            value={roleFilter}
-            onValueChange={setRoleFilter}
+            value={filters.role}
+            onValueChange={(v) => setFilter("role", v)}
           >
             <SelectTrigger className="w-[140px] rounded-full bg-card/50">
               <Filter className="h-4 w-4 mr-2 text-ls-muted" />
@@ -215,11 +194,8 @@ function UsersContent() {
           </Select>
 
           <Select
-            value={statusFilter}
-            onValueChange={(v) => {
-              setStatusFilter(v as UserStatus | "ALL");
-              setCursor(null);
-            }}
+            value={filters.status}
+            onValueChange={(v) => setFilter("status", v)}
           >
             <SelectTrigger className="w-[160px] rounded-full bg-card/50">
               <SelectValue placeholder="Statut" />
@@ -333,7 +309,7 @@ function UsersContent() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{getStatusBadge(user.status)}</TableCell>
+                  <TableCell><AdminStatusBadge status={user.status} /></TableCell>
                   <TableCell className="text-xs text-ls-muted">
                     {user.lastSeen
                       ? adminDateFormatters.distance(user.lastSeen)
@@ -352,7 +328,7 @@ function UsersContent() {
                         </Link>
                       </Button>
 
-                      {statusFilter === "PENDING" && (
+                      {filters.status === "PENDING" && (
                         <>
                           <Button
                             variant="cta"
