@@ -15,6 +15,7 @@ export * from "./validation/admin.schemas";
 export * from "./validation/notification.schemas";
 export * from "./utils/date";
 export * from "./utils/photo";
+export * from "./utils/privacy";
 export * from "./types/workshop";
 export * from "./types/user";
 export * from "./types/messaging";

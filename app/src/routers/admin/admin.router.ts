@@ -215,4 +215,25 @@ export const adminRouter = router({
       }
       return result.data;
     }),
+
+  logDataAccess: adminProcedure
+    .input(
+      z.object({
+        targetUserId: z.string(),
+        dataType: z.string(), // e.g., "EMAIL", "PHONE", "FULL_PROFILE"
+        reason: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await container.auditLogService.record({
+        adminId: ctx.session.user.id,
+        action: `DATA_ACCESS_${input.dataType}`,
+        targetId: input.targetUserId,
+        details: {
+          dataType: input.dataType,
+          reason: input.reason || "Standard Admin Review",
+        },
+      });
+      return { success: true };
+    }),
 });

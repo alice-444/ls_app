@@ -43,8 +43,11 @@ import { RejectUserDialog } from "@/components/admin/modals/RejectUserDialog";
 import { AdminTableSkeleton } from "@/components/admin/AdminTableSkeleton";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { useAdminFilters } from "@/hooks/admin/use-admin-filters";
+import { maskEmail } from "@ls-app/shared";
+import { MaskedData } from "@/components/admin/MaskedData";
 
-type UserStatus = "PENDING" | "ACTIVE" | "SUSPENDED";
+type UserStatus = "PENDING" | "ACTIVE" | "SUSPENDED" | "DELETED";
+
 
 function UsersContent() {
   const { filters, setFilter } = useAdminFilters({
@@ -301,10 +304,15 @@ function UsersContent() {
                         <span className="font-medium text-ls-heading leading-none">
                           {user.name || "—"}
                         </span>
-                        <span className="text-[11px] text-ls-muted mt-1 flex items-center gap-1">
-                          {user.email}
-                          {user.emailVerified && <CheckCircle className="h-2.5 w-2.5 text-emerald-500" />}
-                        </span>
+                        <div className="mt-1 flex items-center gap-1">
+                          <MaskedData
+                            data={user.email}
+                            maskedData={maskEmail(user.email)}
+                            targetUserId={user.id}
+                            dataType="EMAIL"
+                          />
+                          {user.emailVerified && <CheckCircle className="h-2.5 w-2.5 text-emerald-500 flex-shrink-0" />}
+                        </div>
                       </div>
                     </div>
                   </TableCell>
