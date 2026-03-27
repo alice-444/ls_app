@@ -59,6 +59,7 @@ export const adminRouter = router({
       const [users, workshops, support] = await Promise.all([
         prisma.user.findMany({
           where: {
+            deletedAt: null, // GDPR: Exclude soft-deleted users from global search
             OR: [
               { name: { contains: query, mode: "insensitive" } },
               { email: { contains: query, mode: "insensitive" } },
@@ -101,7 +102,15 @@ export const adminRouter = router({
       const { limit, cursor, status, searchTerm, role } = input;
 
       const where: any = {};
-      if (status && status !== "ALL") where.status = status;
+
+      // GDPR: By default, exclude soft-deleted users unless specifically requested
+      if (status === "DELETED") {
+        where.deletedAt = { not: null };
+      } else {
+        where.deletedAt = null;
+        if (status && status !== "ALL") where.status = status;
+      }
+
       if (role && role !== "ALL") where.role = role;
 
       if (searchTerm) {

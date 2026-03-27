@@ -19,7 +19,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
-  Trash2,
   Search,
   Filter,
   CreditCard,
@@ -51,8 +50,17 @@ function UsersContent() {
   const { filters, setFilter } = useAdminFilters({
     status: "ALL",
     role: "ALL",
-    search: ""
   });
+
+  // Local state for search to avoid PII (names/emails) in URL history/logs
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce search to avoid excessive tRPC calls
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
@@ -68,7 +76,7 @@ function UsersContent() {
     cursor: cursor ?? undefined,
     status: filters.status === "ALL" ? undefined : filters.status as UserStatus,
     role: filters.role === "ALL" ? undefined : filters.role,
-    searchTerm: filters.search || undefined,
+    searchTerm: debouncedSearch || undefined,
   }, {
     placeholderData: (previousData: any) => previousData,
   });
@@ -85,11 +93,12 @@ function UsersContent() {
     resetSelection
   } = useBatchSelection(items);
 
-  // Reset pagination when filters change (hook handles filter change, we just reset cursor)
+  // Reset pagination when filters change
   useEffect(() => {
     setCursor(null);
     resetSelection();
-  }, [filters.status, filters.role, filters.search, resetSelection]);
+  }, [filters.status, filters.role, debouncedSearch, resetSelection]);
+
   const approveMutation = trpc.admin.approveUser.useMutation({
     onSuccess: () => {
       toast.success("Utilisateur activé");
@@ -171,8 +180,8 @@ function UsersContent() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ls-muted" />
             <Input
               placeholder="Rechercher..."
-              value={filters.search}
-              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setFilter("search", e.target.value)}
+              value={searchTerm}
+              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setSearchTerm(e.target.value)}
               className="pl-9 rounded-full bg-card/50"
             />
           </div>
@@ -205,6 +214,7 @@ function UsersContent() {
               <SelectItem value="PENDING">En attente</SelectItem>
               <SelectItem value="ACTIVE">Actifs</SelectItem>
               <SelectItem value="SUSPENDED">Suspendus</SelectItem>
+              <SelectItem value="DELETED">Supprimés (Purge 30j)</SelectItem>
             </SelectContent>
           </Select>
         </div>

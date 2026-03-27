@@ -13,8 +13,10 @@ export const ADMIN_STATUS_LABELS: Record<string, string> = {
   REVIEWED: "En cours",
   RESOLVED: "Résolu",
   DISMISSED: "Ignoré",
+  DELETED: "Supprimé (Purge)",
 
   // Workshop statuses
+
   DRAFT: "Brouillon",
   PUBLISHED: "Publié",
   CANCELLED: "Annulé",

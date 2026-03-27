@@ -22,6 +22,7 @@ const STATUS_COLORS: Record<string, string> = {
   // Danger / Suspended
   SUSPENDED: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-200",
   REJECTED: "bg-rose-100 text-rose-800 border-rose-200",
+  DELETED: "bg-slate-200 text-slate-600 border-slate-300 italic",
   CANCELLED: "bg-slate-100 text-slate-800 border-slate-200",
 
   // Neutral
