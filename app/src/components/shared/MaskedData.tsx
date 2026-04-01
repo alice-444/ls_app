@@ -7,36 +7,39 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface MaskedDataProps {
-  data: string | null | undefined;
+  data?: string | null;
   maskedData: string;
-  targetUserId: string;
-  dataType: "EMAIL" | "PHONE" | "ADDRESS";
+  targetUserId?: string;
+  dataType?: "EMAIL" | "PHONE" | "ADDRESS";
   className?: string;
+  readOnly?: boolean;
 }
 
 /**
  * Privacy by Design component that hides sensitive data.
- * Reveals data only on click and logs the access for GDPR auditing.
+ * Admins can reveal (with audit log), others just see the masked version.
  */
 export function MaskedData({
   data,
   maskedData,
   targetUserId,
   dataType,
-  className
+  className,
+  readOnly = false
 }: Readonly<MaskedDataProps>) {
   const [isRevealed, setIsRevealed] = useState(false);
 
   const logAccess = trpc.admin.logDataAccess.useMutation();
 
   const handleReveal = () => {
+    if (readOnly || !targetUserId || !dataType) return;
     if (!isRevealed) {
       logAccess.mutate({ targetUserId, dataType });
     }
     setIsRevealed(!isRevealed);
   };
 
-  if (!data) return <span className="text-ls-muted">—</span>;
+  if (!maskedData && !data) return <span className="text-ls-muted">—</span>;
 
   return (
     <div className={cn("inline-flex items-center gap-2 group", className)}>
@@ -47,22 +50,25 @@ export function MaskedData({
         {isRevealed ? data : maskedData}
       </span>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-5 w-5 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleReveal();
-        }}
-        title={isRevealed ? "Masquer" : "Révéler (sera enregistré dans les logs d'audit)"}
-      >
-        {isRevealed ? (
-          <EyeOff className="h-3 w-3 text-ls-muted" />
-        ) : (
-          <Eye className="h-3 w-3 text-brand" />
-        )}
-      </Button>
+      {!readOnly && data && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-5 w-5 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleReveal();
+          }}
+          title={isRevealed ? "Masquer" : "Révéler (sera enregistré dans les logs d'audit)"}
+        >
+          {isRevealed ? (
+            <EyeOff className="h-3 w-3 text-ls-muted" />
+          ) : (
+            <Eye className="h-3 w-3 text-brand" />
+          )}
+        </Button>
+      )}
     </div>
   );
 }
+

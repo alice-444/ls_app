@@ -57,6 +57,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import Image from "next/image";
+import { maskEmail } from "@ls-app/shared";
+import { MaskedData } from "@/components/shared/MaskedData";
 
 export default function User360Page() {
   const params = useParams();
@@ -140,9 +142,16 @@ export default function User360Page() {
                 {user.displayName || user.name}
                 {getStatusBadge(user.status)}
               </h1>
-              <p className="text-ls-muted flex items-center gap-2">
-                <Mail className="h-4 w-4" /> {user.email} • ID: {user.id.slice(-8)}
-              </p>
+              <div className="text-ls-muted flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                <MaskedData
+                  data={user.email}
+                  maskedData={maskEmail(user.email)}
+                  targetUserId={user.id}
+                  dataType="EMAIL"
+                />
+                <span className="ml-1">• ID: {user.id.slice(-8)}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -450,7 +459,16 @@ export default function User360Page() {
                         <CardContent className="p-4 pt-0">
                           <p className="text-sm font-bold mt-2">{r.reason}</p>
                           <p className="text-xs text-ls-muted mt-1">{r.details}</p>
-                          <p className="text-[10px] text-ls-muted mt-2 italic">Signalé par: {r.reporter.name} ({r.reporter.email})</p>
+                          <div className="text-[10px] text-ls-muted mt-2 italic flex items-center gap-1">
+                            Signalé par: {r.reporter.name} (
+                            <MaskedData
+                              data={r.reporter.email}
+                              maskedData={maskEmail(r.reporter.email)}
+                              targetUserId={r.reporter.id}
+                              dataType="EMAIL"
+                            />
+                            )
+                          </div>
                         </CardContent>
                       </Card>
                     ))}

@@ -5,8 +5,10 @@ export const metadata: Metadata = {
   description: "Gérez vos ateliers et votre activité de mentorat sur LearnSup.",
 };
 
+import { MentorGuard } from "@/components/admin/MentorGuard";
+
 export default function MentorLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return <>{children}</>;
+  return <MentorGuard>{children}</MentorGuard>;
 }

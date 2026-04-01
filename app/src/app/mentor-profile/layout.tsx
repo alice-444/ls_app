@@ -5,8 +5,10 @@ export const metadata: Metadata = {
   description: "Complétez votre profil de mentor pour être visible dans le répertoire LearnSup.",
 };
 
+import { MentorGuard } from "@/components/admin/MentorGuard";
+
 export default function MentorProfileLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return <>{children}</>;
+  return <MentorGuard>{children}</MentorGuard>;
 }

@@ -44,7 +44,7 @@ import { AdminTableSkeleton } from "@/components/admin/AdminTableSkeleton";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { useAdminFilters } from "@/hooks/admin/use-admin-filters";
 import { maskEmail } from "@ls-app/shared";
-import { MaskedData } from "@/components/admin/MaskedData";
+import { MaskedData } from "@/components/shared/MaskedData";
 
 type UserStatus = "PENDING" | "ACTIVE" | "SUSPENDED" | "DELETED";
 
