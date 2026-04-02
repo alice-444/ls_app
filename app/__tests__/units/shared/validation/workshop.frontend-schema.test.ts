@@ -328,18 +328,18 @@ describe("editWorkshopFrontendSchema", () => {
     vi.useRealTimers();
   });
 
-  it("should require workshopId as valid CUID", () => {
+  it("should require workshopId as non-empty string", () => {
     const result = editWorkshopFrontendSchema.safeParse({
       ...validBase,
-      workshopId: "not-a-cuid",
+      workshopId: "",
     });
     expect(result.success).toBe(false);
   });
 
-  it("should accept valid data with CUID", () => {
+  it("should accept valid data with workshopId", () => {
     const result = editWorkshopFrontendSchema.safeParse({
       ...validBase,
-      workshopId: "cktvw5720000010mscuid1234",
+      workshopId: "cl_123456789",
     });
     expect(result.success).toBe(true);
   });

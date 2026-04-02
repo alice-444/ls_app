@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import Loader from "@/components/shared/Loader";
 
 describe("Loader", () => {
@@ -10,10 +10,11 @@ describe("Loader", () => {
     expect(wrapper.tagName).toBe("DIV");
   });
 
-  it("contains an element with spin animation", () => {
+  it("contains a rotating loader element", () => {
     const { container } = render(<Loader />);
-    const spinner = container.querySelector(".animate-spin");
-    expect(spinner).toBeInTheDocument();
+    // The core loader is a div with specific border classes and framer-motion animation
+    const loader = container.querySelector(".border-b-2.border-r-2.border-ls-blue");
+    expect(loader).toBeInTheDocument();
   });
 
   it("renders without crashing", () => {
