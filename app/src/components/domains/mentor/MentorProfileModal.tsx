@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import Loader from "@/components/shared/Loader";
-import { User, UserPlus, UserMinus, Linkedin, Youtube, Github, Ban, Flag } from "lucide-react";
+import { User, UserPlus, UserMinus, Ban, Flag } from "lucide-react";
+import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { authClient } from "@/lib/auth-server-client";
 import { toast } from "sonner";
 import { BlockUserDialog } from "@/components/domains/user/BlockUserDialog";
@@ -157,7 +158,7 @@ export function MentorProfileModal({ open, onOpenChange, mentorId }: MentorProfi
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-3 py-2 bg-[#0077b5] text-white rounded-[32px] hover:bg-[#005885] transition-colors text-sm font-medium"
                     >
-                      <Linkedin className="h-4 w-4" />
+                      <FaLinkedin className="h-4 w-4" />
                       LinkedIn
                     </a>
                   )}
@@ -168,7 +169,7 @@ export function MentorProfileModal({ open, onOpenChange, mentorId }: MentorProfi
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-3 py-2 bg-[#FF0000] text-white rounded-[32px] hover:bg-[#cc0000] transition-colors text-sm font-medium"
                     >
-                      <Youtube className="h-4 w-4" />
+                      <FaYoutube className="h-4 w-4" />
                       YouTube
                     </a>
                   )}
@@ -179,7 +180,7 @@ export function MentorProfileModal({ open, onOpenChange, mentorId }: MentorProfi
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-3 py-2 bg-[#333] dark:bg-[#24292e] text-white rounded-[32px] hover:bg-[#24292e] dark:hover:bg-[#1a1e22] transition-colors text-sm font-medium"
                     >
-                      <Github className="h-4 w-4" />
+                      <FaGithub className="h-4 w-4" />
                       GitHub
                     </a>
                   )}
