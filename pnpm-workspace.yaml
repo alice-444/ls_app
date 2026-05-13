@@ -2,6 +2,14 @@ packages:
   - app
   - shared
 
+allowBuilds:
+  '@prisma/engines': true
+  '@sentry/cli': false
+  esbuild: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true
+
 onlyBuiltDependencies:
   - '@prisma/engines'
   - prisma

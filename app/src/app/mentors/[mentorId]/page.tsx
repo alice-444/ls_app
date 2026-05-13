@@ -10,11 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import ShinyText from "@/components/ui/ShinyText";
 import { motion } from "framer-motion";
 import {
-  Calendar,
-  Linkedin,
-  Twitter,
-  Youtube,
-  Github,
   GraduationCap,
   Briefcase,
   Award,
