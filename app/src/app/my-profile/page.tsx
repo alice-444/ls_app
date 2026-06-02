@@ -7,7 +7,9 @@ import { authClient, customAuthClient } from "@/lib/auth-server-client";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Linkedin, Youtube, X, Github, Calendar, Edit, Eye, EyeOff, CheckCircle2, Coffee } from "lucide-react";
+import { Calendar, Edit, Eye, EyeOff, CheckCircle2, Coffee } from "lucide-react";
+import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { toast } from "sonner";
 import { getMentorProfile, getUserRole } from "@/lib/api-client";
 import { formatPhotoUrl } from "@/utils/photo";
@@ -315,7 +317,7 @@ export default function MyProfilePage() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-colors font-medium border border-blue-100"
                       >
-                        <Linkedin className="h-5 w-5" />
+                        <FaLinkedin className="h-5 w-5" />
                         LinkedIn
                       </a>
                     )}
@@ -326,7 +328,7 @@ export default function MyProfilePage() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-xl hover:bg-sky-100 transition-colors font-medium border border-sky-100"
                       >
-                        <X className="h-5 w-5" />X
+                        <FaXTwitter className="h-5 w-5" />X
                       </a>
                     )}
                     {profile.socialMediaLinks.github && (
@@ -336,7 +338,7 @@ export default function MyProfilePage() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-xl hover:bg-gray-100 transition-colors font-medium border border-gray-200"
                       >
-                        <Github className="h-5 w-5" />
+                        <FaGithub className="h-5 w-5" />
                         GitHub
                       </a>
                     )}
@@ -347,7 +349,7 @@ export default function MyProfilePage() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 transition-colors font-medium border border-red-100"
                       >
-                        <Youtube className="h-5 w-5" />
+                        <FaYoutube className="h-5 w-5" />
                         YouTube
                       </a>
                     )}

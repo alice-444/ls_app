@@ -1,6 +1,8 @@
 "use client";
 
-import { Linkedin, Twitter, Youtube, Github, Share2 } from "lucide-react";
+import { Share2 } from "lucide-react";
+import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { UseFormRegister, FieldErrors } from "react-hook-form";
@@ -10,25 +12,25 @@ const SOCIAL_FIELDS = [
   {
     id: "linkedin" as const,
     label: "LinkedIn",
-    icon: Linkedin,
+    icon: FaLinkedin,
     placeholder: "https://linkedin.com/in/votre-profil",
   },
   {
     id: "twitter" as const,
     label: "Twitter",
-    icon: Twitter,
+    icon: FaXTwitter,
     placeholder: "https://twitter.com/votre-profil",
   },
   {
     id: "github" as const,
     label: "GitHub",
-    icon: Github,
+    icon: FaGithub,
     placeholder: "https://github.com/votre-profil",
   },
   {
     id: "youtube" as const,
     label: "YouTube",
-    icon: Youtube,
+    icon: FaYoutube,
     placeholder: "https://youtube.com/@votre-chaine",
   },
 ] as const;

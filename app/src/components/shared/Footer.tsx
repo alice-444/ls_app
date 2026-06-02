@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, Linkedin } from "lucide-react";
+import { FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const footerLinks = [
   { href: "/info", label: "Informations" },
@@ -14,12 +14,12 @@ const socialLinks = [
   {
     name: "Instagram",
     href: "https://www.instagram.com/learn_sup/",
-    Icon: Instagram,
+    Icon: FaInstagram,
   },
   {
     name: "LinkedIn",
     href: "https://www.linkedin.com/company/learnsup/",
-    Icon: Linkedin,
+    Icon: FaLinkedin,
   },
 ];
 
