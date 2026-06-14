@@ -30,14 +30,22 @@ const isValidTimeFormat = (time) => {
     return workshop_constants_1.WORKSHOP_VALIDATION.time.regex.test(time);
 };
 exports.isValidTimeFormat = isValidTimeFormat;
+const parseTimeString = (time) => {
+    if (!(0, exports.isValidTimeFormat)(time))
+        return null;
+    const [hours, minutes] = time.split(":").map(Number);
+    return { hours, minutes };
+};
 const calculateEndTime = (date, time, duration) => {
     if (!date || !time || !duration)
         return null;
     try {
+        const parsed = parseTimeString(time);
+        if (!parsed)
+            return null;
         const dateObj = typeof date === "string" ? new Date(date) : date;
-        const [hours, minutes] = time.split(":").map(Number);
         const startTime = new Date(dateObj);
-        startTime.setHours(hours, minutes, 0, 0);
+        startTime.setHours(parsed.hours, parsed.minutes, 0, 0);
         const endTime = new Date(startTime);
         endTime.setMinutes(endTime.getMinutes() + duration);
         return endTime;
@@ -53,7 +61,10 @@ const formatTimeRange = (time, duration) => {
     if (!duration)
         return time;
     try {
-        const [hours, minutes] = time.split(":").map(Number);
+        const parsed = parseTimeString(time);
+        if (!parsed)
+            return time;
+        const { hours, minutes } = parsed;
         const startMinutes = hours * 60 + minutes;
         const endMinutes = startMinutes + duration;
         const endHours = Math.floor(endMinutes / 60);

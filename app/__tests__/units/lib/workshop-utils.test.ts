@@ -74,6 +74,18 @@ describe("calculateEndTime", () => {
     expect(calculateEndTime("2025-06-15", "10:00", null)).toBeNull();
   });
 
+  it("should return null for malformed time missing minutes", () => {
+    expect(calculateEndTime("2025-06-15", "14", 60)).toBeNull();
+  });
+
+  it("should return null for non-numeric time", () => {
+    expect(calculateEndTime("2025-06-15", "abc", 60)).toBeNull();
+  });
+
+  it("should return null for empty time string", () => {
+    expect(calculateEndTime("2025-06-15", "", 60)).toBeNull();
+  });
+
   it("should calculate end time correctly with 60min duration", () => {
     const result = calculateEndTime(new Date(2025, 5, 15), "10:00", 60);
     expect(result).not.toBeNull();
@@ -106,6 +118,14 @@ describe("formatTimeRange", () => {
 
   it("should return time only when duration is 0", () => {
     expect(formatTimeRange("10:00", 0)).toBe("10:00");
+  });
+
+  it("should return original string for malformed time missing minutes", () => {
+    expect(formatTimeRange("14", 60)).toBe("14");
+  });
+
+  it("should return original string for non-numeric time", () => {
+    expect(formatTimeRange("abc", 60)).toBe("abc");
   });
 
   it("should format time range correctly", () => {
@@ -141,6 +161,14 @@ describe("calculateCountdown", () => {
 
   it("should return null for null time", () => {
     expect(calculateCountdown("2025-06-15", null)).toBeNull();
+  });
+
+  it("should return null for malformed time missing minutes", () => {
+    expect(calculateCountdown("2025-06-15", "14")).toBeNull();
+  });
+
+  it("should return null for non-numeric time", () => {
+    expect(calculateCountdown("2025-06-15", "abc")).toBeNull();
   });
 
   it("should return isPast=true when workshop is in the past", () => {

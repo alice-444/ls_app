@@ -8,6 +8,7 @@ import { fr } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/utils/trpc";
 import type { JoinVideoButtonProps } from "@/types/workshop-components";
+import { isValidTimeFormat } from "@/lib/workshop-utils";
 
 export function JoinVideoButton({ workshop }: Readonly<JoinVideoButtonProps>) {
   const [timeUntilAvailable, setTimeUntilAvailable] = useState<number | null>(
@@ -24,6 +25,7 @@ export function JoinVideoButton({ workshop }: Readonly<JoinVideoButtonProps>) {
 
     const calculateAvailability = () => {
       if (!workshop.date || !workshop.time) return;
+      if (!isValidTimeFormat(workshop.time)) return;
 
       const workshopDate = new Date(workshop.date);
       const [hours, minutes] = workshop.time.split(":").map(Number);
@@ -73,8 +75,9 @@ export function JoinVideoButton({ workshop }: Readonly<JoinVideoButtonProps>) {
   };
 
   if (!hasLink) {
+    if (!workshop.time || !isValidTimeFormat(workshop.time)) return null;
     const workshopDate = new Date(workshop.date!);
-    const [hours, minutes] = workshop.time!.split(":").map(Number);
+    const [hours, minutes] = workshop.time.split(":").map(Number);
     workshopDate.setHours(hours, minutes, 0, 0);
     const linkAvailableAt = new Date(
       workshopDate.getTime() - 3 * 60 * 60 * 1000

@@ -31,6 +31,7 @@ import { SubmitFeedbackDialog } from "@/components/domains/workshop/SubmitFeedba
 import { WorkshopReviews } from "@/components/domains/workshop/WorkshopReviews";
 import { DailyVideoCall } from "@/components/domains/workshop/DailyVideoCall";
 import { JoinVideoButton } from "@/components/domains/workshop/JoinVideoButton";
+import { isValidTimeFormat } from "@/lib/workshop-utils";
 
 type WorkshopRequest = {
   id: string;
@@ -284,6 +285,7 @@ export default function WorkshopDetailPage() {
 
   const isWorkshopPast = (workshopData: typeof workshop): boolean => {
     if (!workshopData?.date || !workshopData?.time) return false;
+    if (!isValidTimeFormat(workshopData.time)) return false;
     try {
       const date =
         typeof workshopData.date === "string"
