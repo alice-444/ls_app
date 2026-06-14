@@ -20,8 +20,8 @@
 		"lint": "turbo lint"
 	},
 	"devDependencies": {
-		"@vitest/coverage-v8": "^4.1.6",
-		"turbo": "^2.9.12"
+		"@vitest/coverage-v8": "^4.1.8",
+		"turbo": "^2.9.18"
 	},
 	"packageManager": "pnpm@11.1.1",
 	"dependencies": {
