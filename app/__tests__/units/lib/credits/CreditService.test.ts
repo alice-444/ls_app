@@ -86,6 +86,86 @@ describe("CreditService", () => {
     });
   });
 
+  describe("getHistory", () => {
+    const mockUser = { id: "internal-id-1" };
+    const mockTransactions = [
+      { id: "tx-1", amount: 100,  type: "TOP_UP", description: "Rechargement", createdAt: new Date() },
+      { id: "tx-2", amount: -30,  type: "USAGE",  description: "Atelier React", createdAt: new Date() },
+      { id: "tx-3", amount: 30,   type: "REFUND", description: "Remboursement", createdAt: new Date() },
+    ];
+
+    beforeEach(() => {
+      mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+      mockPrisma.credit_transaction.findMany.mockResolvedValue(mockTransactions);
+      mockPrisma.credit_transaction.count.mockResolvedValue(mockTransactions.length);
+    });
+
+    it("returns all transactions when no type filter", async () => {
+      const result = await creditService.getHistory("user-1");
+
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.data.transactions).toHaveLength(3);
+        expect(result.data.total).toBe(3);
+      }
+      expect(mockPrisma.credit_transaction.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: mockUser.id } })
+      );
+    });
+
+    it("passes type filter to Prisma when type is provided", async () => {
+      const topUpOnly = [mockTransactions[0]];
+      mockPrisma.credit_transaction.findMany.mockResolvedValue(topUpOnly);
+      mockPrisma.credit_transaction.count.mockResolvedValue(1);
+
+      const result = await creditService.getHistory("user-1", { type: "TOP_UP" });
+
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.data.transactions).toHaveLength(1);
+        expect(result.data.total).toBe(1);
+      }
+      expect(mockPrisma.credit_transaction.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: mockUser.id, type: "TOP_UP" } })
+      );
+      expect(mockPrisma.credit_transaction.count).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: mockUser.id, type: "TOP_UP" } })
+      );
+    });
+
+    it("passes USAGE filter correctly", async () => {
+      mockPrisma.credit_transaction.findMany.mockResolvedValue([mockTransactions[1]]);
+      mockPrisma.credit_transaction.count.mockResolvedValue(1);
+
+      const result = await creditService.getHistory("user-1", { type: "USAGE" });
+
+      expect(result.ok).toBe(true);
+      expect(mockPrisma.credit_transaction.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: mockUser.id, type: "USAGE" } })
+      );
+    });
+
+    it("passes REFUND filter correctly", async () => {
+      mockPrisma.credit_transaction.findMany.mockResolvedValue([mockTransactions[2]]);
+      mockPrisma.credit_transaction.count.mockResolvedValue(1);
+
+      const result = await creditService.getHistory("user-1", { type: "REFUND" });
+
+      expect(result.ok).toBe(true);
+      expect(mockPrisma.credit_transaction.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: mockUser.id, type: "REFUND" } })
+      );
+    });
+
+    it("returns failure when user is not found", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(null);
+
+      const result = await creditService.getHistory("unknown-user");
+
+      expect(result.ok).toBe(false);
+    });
+  });
+
   describe("creditCredits", () => {
     it("fails if MAX_BALANCE is reached", async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ creditBalance: 99995 });

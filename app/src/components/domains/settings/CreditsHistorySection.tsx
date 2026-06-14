@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { Coins, History, TrendingDown, TrendingUp, RefreshCcw } from "lucide-react";
 import { format } from "date-fns";
@@ -7,6 +8,10 @@ import { fr } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+type TransactionType = "TOP_UP" | "USAGE" | "REFUND";
+type FilterType = "ALL" | TransactionType;
 
 interface Transaction {
   id: string;
@@ -16,10 +21,20 @@ interface Transaction {
   createdAt: string | Date;
 }
 
+const FILTERS: { value: FilterType; label: string }[] = [
+  { value: "ALL",    label: "Toutes" },
+  { value: "TOP_UP", label: "Rechargements" },
+  { value: "USAGE",  label: "Dépenses" },
+  { value: "REFUND", label: "Remboursements" },
+];
+
 export function CreditsHistorySection() {
+  const [activeFilter, setActiveFilter] = useState<FilterType>("ALL");
+
   const { data: balanceData, isLoading: isLoadingBalance } = trpc.credits.getBalance.useQuery();
   const { data: historyData, isLoading: isLoadingHistory } = trpc.credits.getTransactionHistory.useQuery({
     limit: 50,
+    type: activeFilter === "ALL" ? undefined : activeFilter,
   });
 
   if (isLoadingBalance || isLoadingHistory) {
@@ -58,6 +73,16 @@ export function CreditsHistorySection() {
           Historique des transactions
         </div>
 
+        <Tabs value={activeFilter} onValueChange={(v) => setActiveFilter(v as FilterType)}>
+          <TabsList className="w-full sm:w-auto">
+            {FILTERS.map(({ value, label }) => (
+              <TabsTrigger key={value} value={value}>
+                {label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
         {transactions.length === 0 ? (
           <div className="text-center py-12 border rounded-xl bg-muted/30">
             <p className="text-muted-foreground text-sm">
@@ -68,13 +93,13 @@ export function CreditsHistorySection() {
           <div className="border rounded-xl overflow-hidden divide-y">
             {transactions.map((t) => {
               let typeStyles: string;
-              if (t.type === 'TOP_UP') typeStyles = 'bg-green-100 text-green-600';
-              else if (t.type === 'REFUND') typeStyles = 'bg-blue-100 text-blue-600';
-              else typeStyles = 'bg-orange-100 text-orange-600';
+              if (t.type === "TOP_UP") typeStyles = "bg-green-100 text-green-600";
+              else if (t.type === "REFUND") typeStyles = "bg-blue-100 text-blue-600";
+              else typeStyles = "bg-orange-100 text-orange-600";
 
               let TypeIcon: typeof TrendingUp;
-              if (t.type === 'TOP_UP') TypeIcon = TrendingUp;
-              else if (t.type === 'REFUND') TypeIcon = RefreshCcw;
+              if (t.type === "TOP_UP") TypeIcon = TrendingUp;
+              else if (t.type === "REFUND") TypeIcon = RefreshCcw;
               else TypeIcon = TrendingDown;
 
               return (
@@ -91,9 +116,8 @@ export function CreditsHistorySection() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`font-bold ${t.amount > 0 ? 'text-green-600' : 'text-orange-600'
-                      }`}>
-                      {t.amount > 0 ? '+' : ''}{t.amount}
+                    <div className={`font-bold ${t.amount > 0 ? "text-green-600" : "text-orange-600"}`}>
+                      {t.amount > 0 ? "+" : ""}{t.amount}
                     </div>
                     <Badge variant="outline" className="text-[10px] h-4 px-1 uppercase">
                       {t.type}
