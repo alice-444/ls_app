@@ -65,7 +65,7 @@ export interface ICreditService {
 
   getHistory(
     userId: string,
-    params?: { limit?: number; offset?: number }
+    params?: { limit?: number; offset?: number; type?: "TOP_UP" | "USAGE" | "REFUND" }
   ): Promise<
     Result<{
       transactions: Array<{

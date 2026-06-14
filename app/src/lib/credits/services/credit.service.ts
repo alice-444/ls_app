@@ -218,7 +218,7 @@ export class CreditService implements ICreditService {
 
   async getHistory(
     userId: string,
-    params?: { limit?: number; offset?: number }
+    params?: { limit?: number; offset?: number; type?: "TOP_UP" | "USAGE" | "REFUND" }
   ): Promise<
     Result<{
       transactions: Array<{
@@ -239,16 +239,19 @@ export class CreditService implements ICreditService {
 
       if (!user) return failure(USER_NOT_FOUND, 404);
 
+      const where = {
+        userId: user.id,
+        ...(params?.type ? { type: params.type } : {}),
+      };
+
       const [transactions, total] = await Promise.all([
         this.prisma.credit_transaction.findMany({
-          where: { userId: user.id },
+          where,
           take: params?.limit || 50,
           skip: params?.offset || 0,
           orderBy: { createdAt: "desc" },
         }),
-        this.prisma.credit_transaction.count({
-          where: { userId: user.id },
-        }),
+        this.prisma.credit_transaction.count({ where }),
       ]);
 
       return success({

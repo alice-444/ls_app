@@ -20,6 +20,7 @@ export const creditsRouter = router({
         .object({
           limit: z.number().min(1).max(100).default(50),
           offset: z.number().min(0).default(0),
+          type: z.enum(["TOP_UP", "USAGE", "REFUND"]).optional(),
         })
         .optional()
     )
@@ -27,6 +28,7 @@ export const creditsRouter = router({
       const result = await container.creditService.getHistory(ctx.session.user.id, {
         limit: input?.limit,
         offset: input?.offset,
+        type: input?.type,
       });
 
       return handleRouterResult(result, {
