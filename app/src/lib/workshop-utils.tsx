@@ -1,3 +1,4 @@
+import { isValidTimeFormat } from "@ls-app/shared";
 import { Badge } from "@/components/ui/badge";
 import { Edit, CheckCircle, XCircle } from "lucide-react";
 export {
@@ -81,6 +82,7 @@ export const calculateCountdown = (
   time: string | null
 ): CountdownResult | null => {
   if (!date || !time) return null;
+  if (!isValidTimeFormat(time)) return null;
 
   try {
     const dateObj = typeof date === "string" ? new Date(date) : date;
